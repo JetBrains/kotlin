@@ -397,7 +397,8 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
                 if (virtualFile != null) {
                     val ktFile = PsiManager.getInstance(project).findFile(virtualFile) as? KtFile
                     if (ktFile != null) {
-                        ScriptConfigurationManager.getInstance(project).getConfiguration(ktFile)
+                        DefaultScriptingSupport.getInstance(project)
+                            .ensureUpToDatedConfigurationSuggested(ktFile, skipNotification = true)
                     }
                 }
             }

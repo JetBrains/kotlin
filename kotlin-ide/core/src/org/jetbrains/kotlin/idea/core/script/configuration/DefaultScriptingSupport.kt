@@ -158,7 +158,8 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         file: KtFile,
         isFirstLoad: Boolean,
         forceSync: Boolean,
-        fromCacheOnly: Boolean
+        fromCacheOnly: Boolean,
+        skipNotification: Boolean
     ): Boolean {
         val virtualFile = file.originalFile.virtualFile ?: return false
 
@@ -174,8 +175,8 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                     loaders.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
                 } else {
                     val autoReloadEnabled = KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(scriptDefinition)
-                    val postponeLoading = !autoReloadEnabled && async.any { it.isPostponedLoad(virtualFile) }
-                    val forceSkipNotification = autoReloadEnabled || postponeLoading
+                    val postponeLoading = !skipNotification && !autoReloadEnabled && async.any { it.isPostponedLoad(virtualFile) }
+                    val forceSkipNotification = skipNotification || autoReloadEnabled || postponeLoading
 
                     if (postponeLoading) {
                         LoadScriptConfigurationNotificationFactory.showNotification(virtualFile, project) {
@@ -384,7 +385,8 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         file: KtFile,
         isFirstLoad: Boolean = getAppliedConfiguration(file.originalFile.virtualFile) == null,
         forceSync: Boolean = false,
-        fromCacheOnly: Boolean = false
+        fromCacheOnly: Boolean = false,
+        skipNotification: Boolean = false
     ): Boolean
 
     fun getCachedConfigurationState(file: VirtualFile?): ScriptConfigurationState? {
@@ -420,11 +422,11 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
     /**
      * Load new configuration and suggest to apply it (only if it is changed)
      */
-    fun ensureUpToDatedConfigurationSuggested(file: KtFile) {
-        reloadIfOutOfDate(file)
+    fun ensureUpToDatedConfigurationSuggested(file: KtFile, skipNotification: Boolean = false) {
+        reloadIfOutOfDate(file, skipNotification)
     }
 
-    private fun reloadIfOutOfDate(file: KtFile, isPostponedLoad: Boolean = false) {
+    private fun reloadIfOutOfDate(file: KtFile, skipNotification: Boolean = false) {
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return
 
         manager.updater.update {
@@ -434,7 +436,8 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
                 if (state == null || !state.isUpToDate(project, virtualFile, file)) {
                     reloadOutOfDateConfiguration(
                         file,
-                        isFirstLoad = state == null
+                        isFirstLoad = state == null,
+                        skipNotification = skipNotification
                     )
                 }
             }
