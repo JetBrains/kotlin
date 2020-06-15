@@ -320,7 +320,7 @@ artifacts {
 
 node {
     download = true
-    version = '8.9.4' // The default 6.9.1 has buggy hyperbolic functions implementation
+    version = '12.18.0'
     nodeModulesDir = buildDir
 }
 
@@ -330,11 +330,11 @@ task deleteLegacyNodeModules(type: Delete) {
 }
 
 task installMocha(type: NpmTask, dependsOn: [deleteLegacyNodeModules]) {
-    args = ['install', 'mocha']
+    args = ['install', 'mocha@8.0.1']
 }
 
 task installTeamcityReporter(type: NpmTask, dependsOn: [deleteLegacyNodeModules]) {
-    args = ['install', 'mocha-teamcity-reporter']
+    args = ['install', 'mocha-teamcity-reporter@3.0.0']
 }
 
 task runMocha(type: NodeTask, dependsOn: [testClasses, installMocha, ':kotlin-test:kotlin-test-js:testClasses']) {
