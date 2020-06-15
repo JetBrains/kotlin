@@ -13658,6 +13658,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/j+k/sam/compatibilityResolveToOuterScopeForKotlinFunctions.kt");
                 }
 
+                @TestMetadata("conversionForDerivedGenericClass.kt")
+                public void testConversionForDerivedGenericClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/sam/conversionForDerivedGenericClass.kt");
+                }
+
+                @TestMetadata("conversionsWithNestedGenerics.kt")
+                public void testConversionsWithNestedGenerics() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/sam/conversionsWithNestedGenerics.kt");
+                }
+
                 @TestMetadata("enhancedSamConstructor.kt")
                 public void testEnhancedSamConstructor() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/sam/enhancedSamConstructor.kt");
