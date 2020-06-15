@@ -17,6 +17,10 @@ open class KotlinJvmCompilation(
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")
 
+    @Suppress("UNCHECKED_CAST")
+    override val compileKotlinTaskProvider: TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
+        get() = super.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
+
     override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
         get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 }

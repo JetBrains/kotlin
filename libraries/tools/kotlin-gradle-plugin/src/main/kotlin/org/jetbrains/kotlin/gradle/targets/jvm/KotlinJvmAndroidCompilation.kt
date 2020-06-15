@@ -23,6 +23,11 @@ import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
      override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
          get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+     @Suppress("UNCHECKED_CAST")
+     override val compileKotlinTaskProvider: TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
+         get() = super.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
+
+
      @Suppress("UnstableApiUsage")
      internal val testedVariantArtifacts: Property<FileCollection> = target.project.objects.property(FileCollection::class.java)
 
