@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
@@ -119,9 +120,9 @@ private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
     }
 
 private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean =
-    this is IrAttributeContainer && origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT &&
+    this is IrAttributeContainer && !isStaticInlineClassReplacement &&
             parentAsClass.declarations.find { it is IrAttributeContainer && it.attributeOwnerId == attributeOwnerId && it !== this }
-                ?.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
+                ?.isStaticInlineClassReplacement == true
 
 internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspendOfContinuation() &&
         // These are tail-call bridges and do not require any bytecode modifications.
