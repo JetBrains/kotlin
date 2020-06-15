@@ -6991,6 +6991,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("get.kt")
+            public void testGet() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/get.kt");
+            }
+
             @TestMetadata("in.kt")
             public void testIn() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/in.kt");
@@ -6999,6 +7004,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("plusAssign.kt")
             public void testPlusAssign() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/plusAssign.kt");
+            }
+
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/set.kt");
             }
         }
 
