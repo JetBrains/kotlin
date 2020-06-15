@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
@@ -44,21 +45,24 @@ internal class KotlinProjectNpmResolver(
     init {
         addContainerListeners()
 
-        val nodeJs = resolver.nodeJs
-        project.tasks.implementing(RequiresNpmDependencies::class)
-            .configureEach { task ->
-                if (task.enabled) {
-                    task as RequiresNpmDependencies
-                    // KotlinJsTest delegates npm dependencies to testFramework,
-                    // which can be defined after this configure action
-                    val packageJsonTaskHolder = get(task.compilation).packageJsonTaskHolder
-                    if (task !is KotlinJsTest) {
-                        nodeJs.taskRequirements.addTaskRequirements(task)
+
+        project.whenEvaluated {
+            val nodeJs = resolver.nodeJs
+            project.tasks.implementing(RequiresNpmDependencies::class)
+                .configureEach { task ->
+                    if (task.enabled) {
+                        task as RequiresNpmDependencies
+                        // KotlinJsTest delegates npm dependencies to testFramework,
+                        // which can be defined after this configure action
+                        val packageJsonTaskHolder = get(task.compilation).packageJsonTaskHolder
+                        if (task !is KotlinJsTest) {
+                            nodeJs.taskRequirements.addTaskRequirements(task)
+                        }
+                        task.dependsOn(packageJsonTaskHolder)
+                        task.dependsOn(nodeJs.npmInstallTask)
                     }
-                    task.dependsOn(packageJsonTaskHolder)
-                    task.dependsOn(nodeJs.npmInstallTask)
                 }
-            }
+        }
     }
 
     private fun addContainerListeners() {
