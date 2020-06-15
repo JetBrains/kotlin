@@ -52,8 +52,11 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
 
   override fun dispose() {
     if (ApplicationManager.getApplication().isUnitTestMode) return
-    connectorsMap.values.forEach(GradleProjectConnection::disconnect)
+    disconnectGradleConnections()
+    stopIdleDaemonsOfOldVersions()
+  }
 
+  private fun stopIdleDaemonsOfOldVersions() {
     if (DISABLE_STOP_OLD_IDLE_DAEMONS) return
     try {
       if (ProjectUtil.getOpenProjects().isEmpty()) {
@@ -70,6 +73,11 @@ class GradleConnectorService(@Suppress("UNUSED_PARAMETER") project: Project) : D
     catch (e: Exception) {
       LOG.warn("Failed to stop Gradle daemons during project close", e)
     }
+  }
+
+  private fun disconnectGradleConnections() {
+    connectorsMap.values.forEach(GradleProjectConnection::disconnect)
+    connectorsMap.clear()
   }
 
   private fun getConnection(
