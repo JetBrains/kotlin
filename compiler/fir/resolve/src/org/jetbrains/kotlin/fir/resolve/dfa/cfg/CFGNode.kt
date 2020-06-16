@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.runIf
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -121,6 +122,13 @@ val CFGNode<*>.lastPreviousNode: CFGNode<*> get() = previousNodes.last()
 interface EnterNodeMarker
 interface ExitNodeMarker
 
+// ----------------------------------- EnterNode for declaration with CFG -----------------------------------
+
+sealed class CFGNodeWithCfgOwner<out E : FirControlFlowGraphOwner>(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<E>(owner, level, id) {
+    val subGraph: ControlFlowGraph?
+        get() = fir.controlFlowGraphReference.controlFlowGraph
+}
+
 // ----------------------------------- Named function -----------------------------------
 
 class FunctionEnterNode(owner: ControlFlowGraph, override val fir: FirFunction<*>, level: Int, id: Int) : CFGNode<FirFunction<*>>(owner, level, id), EnterNodeMarker {
@@ -136,7 +144,7 @@ class FunctionExitNode(owner: ControlFlowGraph, override val fir: FirFunction<*>
 
 // ----------------------------------- Default arguments -----------------------------------
 
-class EnterDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirValueParameter, level: Int, id: Int) : CFGNode<FirValueParameter>(owner, level, id), EnterNodeMarker {
+class EnterDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirValueParameter, level: Int, id: Int) : CFGNodeWithCfgOwner<FirValueParameter>(owner, level, id), EnterNodeMarker {
     init {
         owner.enterNode = this
     }
@@ -158,7 +166,7 @@ class ExitDefaultArgumentsNode(owner: ControlFlowGraph, override val fir: FirVal
 
 // ----------------------------------- Anonymous function -----------------------------------
 
-class PostponedLambdaEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunction, level: Int, id: Int) : CFGNode<FirAnonymousFunction>(owner, level, id) {
+class PostponedLambdaEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunction, level: Int, id: Int) : CFGNodeWithCfgOwner<FirAnonymousFunction>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitPostponedLambdaEnterNode(this, data)
     }
@@ -196,13 +204,13 @@ class ClassExitNode(owner: ControlFlowGraph, override val fir: FirClass<*>, leve
     }
 }
 
-class LocalClassExitNode(owner: ControlFlowGraph, override val fir: FirRegularClass, level: Int, id: Int) : CFGNode<FirRegularClass>(owner, level, id) {
+class LocalClassExitNode(owner: ControlFlowGraph, override val fir: FirRegularClass, level: Int, id: Int) : CFGNodeWithCfgOwner<FirRegularClass>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitLocalClassExitNode(this, data)
     }
 }
 
-class AnonymousObjectExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousObject, level: Int, id: Int) : CFGNode<FirAnonymousObject>(owner, level, id) {
+class AnonymousObjectExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousObject, level: Int, id: Int) : CFGNodeWithCfgOwner<FirAnonymousObject>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitAnonymousObjectExitNode(this, data)
     }
@@ -210,7 +218,7 @@ class AnonymousObjectExitNode(owner: ControlFlowGraph, override val fir: FirAnon
 
 // ----------------------------------- Property -----------------------------------
 
-class PropertyInitializerEnterNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int, id: Int) : CFGNode<FirProperty>(owner, level, id), EnterNodeMarker {
+class PropertyInitializerEnterNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int, id: Int) : CFGNodeWithCfgOwner<FirProperty>(owner, level, id), EnterNodeMarker {
     init {
         owner.enterNode = this
     }
@@ -231,7 +239,7 @@ class PropertyInitializerExitNode(owner: ControlFlowGraph, override val fir: Fir
 
 // ----------------------------------- Init -----------------------------------
 
-class InitBlockEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousInitializer, level: Int, id: Int) : CFGNode<FirAnonymousInitializer>(owner, level, id), EnterNodeMarker {
+class InitBlockEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousInitializer, level: Int, id: Int) : CFGNodeWithCfgOwner<FirAnonymousInitializer>(owner, level, id), EnterNodeMarker {
     init {
         owner.enterNode = this
     }
