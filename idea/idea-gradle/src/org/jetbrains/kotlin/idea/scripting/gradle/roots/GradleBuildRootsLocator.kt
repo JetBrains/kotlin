@@ -62,6 +62,7 @@ abstract class GradleBuildRootsLocator {
     @Suppress("EnumEntryName")
     enum class NotificationKind {
         dontCare, // one of: imported, inside linked legacy gradle build
+        legacyOutside, // gradle 6-: suggest to mark as standalone
         outsideAnything, // suggest link related gradle build or just say that there is no one
         wasNotImportedAfterCreation, // project not yet imported after this file was created
         notEvaluatedInLastImport, // all other scripts, suggest to sync or mark as standalone
