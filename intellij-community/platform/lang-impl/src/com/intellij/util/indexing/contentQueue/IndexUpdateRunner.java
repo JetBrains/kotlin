@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.FileNotFoundException;
+import java.nio.file.NoSuchFileException;
 import java.util.Collection;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -317,7 +318,7 @@ public final class IndexUpdateRunner {
     Throwable cause = e.getCause();
     VirtualFile file = e.getFile();
     String fileUrl = "File: " + file.getUrl();
-    if (cause instanceof FileNotFoundException) {
+    if (cause instanceof FileNotFoundException || cause instanceof NoSuchFileException) {
       // It is possible to not observe file system change until refresh finish, we handle missed file properly anyway.
       FileBasedIndexImpl.LOG.debug(fileUrl, e);
     }
