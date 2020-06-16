@@ -1,4 +1,4 @@
 kotlin.mpp.enableGranularSourceSetsMetadata=true
 kotlin.native.enableDependencyPropagation=true
 
-kotlin_version=1.4.0-dev-3273
+kotlin_version=1.4-M2
