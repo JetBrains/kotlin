@@ -58,6 +58,8 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                 checkBooleanExhaustiveness(whenExpression, nullable)
             }
 
+            whenExpression.branches.isEmpty() -> false
+
             else -> {
                 val klass = lookupTag.toSymbol(bodyResolveComponents.session)?.fir as? FirRegularClass ?: return null
                 when {
