@@ -10,12 +10,10 @@ import java.awt.Rectangle
 class InlayContentListener(private val inlay: Inlay<out EditorCustomElementRenderer>) : PresentationListener {
     // TODO more precise redraw, requires changes in Inlay
     override fun contentChanged(area: Rectangle) {
-      assert(inlay.isValid)
       inlay.repaint()
     }
 
     override fun sizeChanged(previous: Dimension, current: Dimension) {
-      assert(inlay.isValid)
       inlay.update()
     }
   }
