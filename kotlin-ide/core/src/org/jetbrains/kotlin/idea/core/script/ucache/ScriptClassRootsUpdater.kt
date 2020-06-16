@@ -255,9 +255,6 @@ abstract class ScriptClassRootsUpdater(
             openedScripts.forEach {
                 PsiManager.getInstance(project).findFile(it)?.let { psiFile ->
                     if (psiFile is KtFile) {
-                        // start loading for files that previously was cached by custom scripting support
-                        ScriptConfigurationManager.getInstance(project).getConfiguration(psiFile)
-
                         DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
                     }
                 }

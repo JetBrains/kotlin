@@ -294,9 +294,18 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         }
     }
 
-    private fun loadLinkedRoot(settings: GradleProjectSettings) =
-        if (!enabled) Legacy(settings)
-        else tryLoadFromFsCache(settings) ?: createOtherLinkedRoot(settings)
+    private fun loadLinkedRoot(settings: GradleProjectSettings): GradleBuildRoot {
+        if (!enabled) {
+            return Legacy(settings)
+        }
+
+        val supported = kotlinDslScriptsModelImportSupported(settings.resolveGradleVersion().version)
+
+        return when {
+            supported -> tryLoadFromFsCache(settings) ?: New(settings)
+            else -> Legacy(settings)
+        }
+    }
 
     private fun tryLoadFromFsCache(settings: GradleProjectSettings) =
         tryCreateImportedRoot(settings.externalProjectPath) {
@@ -309,14 +318,6 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         data: GradleBuildRootData,
         settings: GradleProjectSettings
     ) = data.copy(projectRoots = data.projectRoots.toSet() + settings.modules)
-
-    private fun createOtherLinkedRoot(settings: GradleProjectSettings): GradleBuildRoot {
-        val supported = kotlinDslScriptsModelImportSupported(settings.resolveGradleVersion().version)
-        return when {
-            supported -> New(settings)
-            else -> Legacy(settings)
-        }
-    }
 
     private fun tryCreateImportedRoot(
         externalProjectPath: String,
