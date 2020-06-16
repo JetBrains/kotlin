@@ -726,7 +726,7 @@ class DeclarationsConverter(
             source = anonymousInitializer.toFirSourceElement()
             session = baseSession
             origin = FirDeclarationOrigin.Source
-            body = if (stubMode) buildEmptyExpressionBlock() else firBlock
+            body = if (stubMode) buildEmptyExpressionBlock() else firBlock ?: buildEmptyExpressionBlock()
         }
     }
 
