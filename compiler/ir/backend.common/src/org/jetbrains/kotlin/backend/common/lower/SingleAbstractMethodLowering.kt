@@ -147,13 +147,14 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         val inlinePrefix = if (wrapperVisibility == Visibilities.PUBLIC) "\$i" else ""
         val wrapperName = Name.identifier("sam$inlinePrefix\$$superFqName$SAM_WRAPPER_SUFFIX")
         val superMethod = superClass.functions.single { it.modality == Modality.ABSTRACT }
+        val extensionReceiversCount = if (superMethod.extensionReceiverParameter == null) 0 else 1
         // TODO: have psi2ir cast the argument to the correct function type. Also see the TODO
         //       about type parameters in `visitTypeOperator`.
         val wrappedFunctionClass =
             if (superMethod.isSuspend)
-                context.ir.symbols.suspendFunctionN(superMethod.valueParameters.size).owner
+                context.ir.symbols.suspendFunctionN(superMethod.valueParameters.size + extensionReceiversCount).owner
             else
-                context.ir.symbols.functionN(superMethod.valueParameters.size).owner
+                context.ir.symbols.functionN(superMethod.valueParameters.size + extensionReceiversCount).owner
         val wrappedFunctionType = wrappedFunctionClass.defaultType
 
         val subclass = buildClass {
@@ -204,11 +205,13 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         }.apply {
             overriddenSymbols = listOf(superMethod.symbol)
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
+            extensionReceiverParameter = superMethod.extensionReceiverParameter?.copyTo(this)
             valueParameters = superMethod.valueParameters.map { it.copyTo(this) }
             body = context.createIrBuilder(symbol).irBlockBody {
                 +irReturn(irCall(wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }).apply {
                     dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)
-                    valueParameters.forEachIndexed { i, parameter -> putValueArgument(i, irGet(parameter)) }
+                    extensionReceiverParameter?.let { putValueArgument(0, irGet(it)) }
+                    valueParameters.forEachIndexed { i, parameter -> putValueArgument(extensionReceiversCount + i, irGet(parameter)) }
                 })
             }
         }
