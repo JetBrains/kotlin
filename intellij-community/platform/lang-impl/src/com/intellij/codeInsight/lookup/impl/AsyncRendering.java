@@ -59,7 +59,14 @@ public class AsyncRendering {
 
       Ref<CancellablePromise<?>> promiseRef = Ref.create();
       CancellablePromise<Void> promise = ReadAction
-        .nonBlocking(() -> renderInBackground(element, renderer, promiseRef))
+        .nonBlocking(() -> {
+          if (element.isValid()) {
+            renderInBackground(element, renderer);
+          }
+          synchronized (LAST_COMPUTATION) {
+            element.replace(LAST_COMPUTATION, promiseRef.get(), null);
+          }
+        })
         .expireWith(myLookup)
         .submit(ourExecutor);
       element.putUserData(LAST_COMPUTATION, promise);
@@ -68,7 +75,7 @@ public class AsyncRendering {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private void renderInBackground(LookupElement element, LookupElementRenderer renderer, Ref<CancellablePromise<?>> promiseRef) {
+  private void renderInBackground(LookupElement element, LookupElementRenderer renderer) {
     LookupElementPresentation presentation = new LookupElementPresentation();
     FileBasedIndex.getInstance().ignoreDumbMode(() -> {
       renderer.renderElement(element, presentation);
@@ -76,10 +83,6 @@ public class AsyncRendering {
 
     rememberPresentation(element, presentation);
     scheduleLookupUpdate(element, presentation);
-
-    synchronized (LAST_COMPUTATION) {
-      element.replace(LAST_COMPUTATION, promiseRef.get(), null);
-    }
   }
 
   private void scheduleLookupUpdate(LookupElement element, LookupElementPresentation presentation) {
