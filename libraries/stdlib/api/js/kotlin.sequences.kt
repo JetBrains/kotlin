@@ -223,15 +223,22 @@ public inline fun <T, R : kotlin.Any, C : kotlin.collections.MutableCollection<i
 
 public inline fun <T, R, C : kotlin.collections.MutableCollection<in R>> kotlin.sequences.Sequence<T>.mapTo(destination: C, transform: (T) -> R): C
 
+@kotlin.Deprecated(message = "Use maxOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "maxOrNull()", imports = {}))
 public fun <T : kotlin.Comparable<T>> kotlin.sequences.Sequence<T>.max(): T?
 
+@kotlin.Deprecated(message = "Use maxOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "maxOrNull()", imports = {}))
 @kotlin.SinceKotlin(version = "1.1")
 public fun kotlin.sequences.Sequence<kotlin.Double>.max(): kotlin.Double?
 
+@kotlin.Deprecated(message = "Use maxOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "maxOrNull()", imports = {}))
 @kotlin.SinceKotlin(version = "1.1")
 public fun kotlin.sequences.Sequence<kotlin.Float>.max(): kotlin.Float?
 
+@kotlin.Deprecated(message = "Use maxByOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "maxByOrNull(selector)", imports = {}))
 public inline fun <T, R : kotlin.Comparable<R>> kotlin.sequences.Sequence<T>.maxBy(selector: (T) -> R): T?
+
+@kotlin.SinceKotlin(version = "1.4")
+public inline fun <T, R : kotlin.Comparable<R>> kotlin.sequences.Sequence<T>.maxByOrNull(selector: (T) -> R): T?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.OverloadResolutionByLambdaReturnType
@@ -273,17 +280,37 @@ public inline fun <T, R> kotlin.sequences.Sequence<T>.maxOfWith(comparator: kotl
 @kotlin.internal.InlineOnly
 public inline fun <T, R> kotlin.sequences.Sequence<T>.maxOfWithOrNull(comparator: kotlin.Comparator<in R>, selector: (T) -> R): R?
 
+@kotlin.SinceKotlin(version = "1.4")
+public fun <T : kotlin.Comparable<T>> kotlin.sequences.Sequence<T>.maxOrNull(): T?
+
+@kotlin.SinceKotlin(version = "1.4")
+public fun kotlin.sequences.Sequence<kotlin.Double>.maxOrNull(): kotlin.Double?
+
+@kotlin.SinceKotlin(version = "1.4")
+public fun kotlin.sequences.Sequence<kotlin.Float>.maxOrNull(): kotlin.Float?
+
+@kotlin.Deprecated(message = "Use maxWithOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "maxWithOrNull(comparator)", imports = {}))
 public fun <T> kotlin.sequences.Sequence<T>.maxWith(comparator: kotlin.Comparator<in T>): T?
 
+@kotlin.SinceKotlin(version = "1.4")
+public fun <T> kotlin.sequences.Sequence<T>.maxWithOrNull(comparator: kotlin.Comparator<in T>): T?
+
+@kotlin.Deprecated(message = "Use minOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "minOrNull()", imports = {}))
 public fun <T : kotlin.Comparable<T>> kotlin.sequences.Sequence<T>.min(): T?
 
+@kotlin.Deprecated(message = "Use minOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "minOrNull()", imports = {}))
 @kotlin.SinceKotlin(version = "1.1")
 public fun kotlin.sequences.Sequence<kotlin.Double>.min(): kotlin.Double?
 
+@kotlin.Deprecated(message = "Use minOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "minOrNull()", imports = {}))
 @kotlin.SinceKotlin(version = "1.1")
 public fun kotlin.sequences.Sequence<kotlin.Float>.min(): kotlin.Float?
 
+@kotlin.Deprecated(message = "Use minByOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "minByOrNull(selector)", imports = {}))
 public inline fun <T, R : kotlin.Comparable<R>> kotlin.sequences.Sequence<T>.minBy(selector: (T) -> R): T?
+
+@kotlin.SinceKotlin(version = "1.4")
+public inline fun <T, R : kotlin.Comparable<R>> kotlin.sequences.Sequence<T>.minByOrNull(selector: (T) -> R): T?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.OverloadResolutionByLambdaReturnType
@@ -325,7 +352,20 @@ public inline fun <T, R> kotlin.sequences.Sequence<T>.minOfWith(comparator: kotl
 @kotlin.internal.InlineOnly
 public inline fun <T, R> kotlin.sequences.Sequence<T>.minOfWithOrNull(comparator: kotlin.Comparator<in R>, selector: (T) -> R): R?
 
+@kotlin.SinceKotlin(version = "1.4")
+public fun <T : kotlin.Comparable<T>> kotlin.sequences.Sequence<T>.minOrNull(): T?
+
+@kotlin.SinceKotlin(version = "1.4")
+public fun kotlin.sequences.Sequence<kotlin.Double>.minOrNull(): kotlin.Double?
+
+@kotlin.SinceKotlin(version = "1.4")
+public fun kotlin.sequences.Sequence<kotlin.Float>.minOrNull(): kotlin.Float?
+
+@kotlin.Deprecated(message = "Use minWithOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "minWithOrNull(comparator)", imports = {}))
 public fun <T> kotlin.sequences.Sequence<T>.minWith(comparator: kotlin.Comparator<in T>): T?
+
+@kotlin.SinceKotlin(version = "1.4")
+public fun <T> kotlin.sequences.Sequence<T>.minWithOrNull(comparator: kotlin.Comparator<in T>): T?
 
 public operator fun <T> kotlin.sequences.Sequence<T>.minus(element: T): kotlin.sequences.Sequence<T>
 
