@@ -81,7 +81,8 @@ public interface FileBasedIndexInfrastructureExtension {
    * This method and {@link FileBasedIndexInfrastructureExtension#shutdown()} synchronize
    * lifecycle of an extension with {@link FileBasedIndexImpl}.
    **/
-  void initialize();
+  @NotNull
+  InitializationResult initialize();
 
   /**
    * Executed when IntelliJ is shutting down it's indexes (IDE shutdown or plugin load/unload). It is the best time
@@ -97,4 +98,8 @@ public interface FileBasedIndexInfrastructureExtension {
    * all indexed data should be invalidate and full index rebuild will be requested
    */
   int getVersion();
+
+  enum InitializationResult {
+    SUCCESSFULLY, INDEX_REBUILD_REQUIRED
+  }
 }

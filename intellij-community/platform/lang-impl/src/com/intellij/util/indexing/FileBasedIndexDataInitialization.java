@@ -99,7 +99,11 @@ class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitializ
 
     currentVersionCorrupted = CorruptionMarker.invalidateIndexesIfNeeded();
 
-    FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.initialize());
+    for (FileBasedIndexInfrastructureExtension ex : FileBasedIndexInfrastructureExtension.EP_NAME.getExtensions()) {
+      FileBasedIndexInfrastructureExtension.InitializationResult result = ex.initialize();
+      currentVersionCorrupted = currentVersionCorrupted &&
+                                result == FileBasedIndexInfrastructureExtension.InitializationResult.INDEX_REBUILD_REQUIRED;
+    }
   }
 
   @Override
