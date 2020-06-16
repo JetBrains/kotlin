@@ -8,6 +8,7 @@ import com.intellij.lang.Language;
 import com.intellij.navigation.ChooseByNameContributor;
 import com.intellij.navigation.GotoClassContributor;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.openapi.WeakReferenceDisposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -27,8 +28,12 @@ public class GotoClassModel2 extends FilteringGotoByModel<LanguageRef> {
 
   public GotoClassModel2(@NotNull Project project) {
     super(project, new ChooseByNameContributor[0]);
-    ChooseByNameContributor.CLASS_EP_NAME.addChangeListener(
-      () -> mySeparators = null, project);
+
+    WeakReferenceDisposable<GotoClassModel2> reference = WeakReferenceDisposable.create(this, m -> {});
+    ChooseByNameContributor.CLASS_EP_NAME.addChangeListener(() -> {
+      GotoClassModel2 mdl = reference.get();
+      if (mdl != null) mdl.mySeparators = null;
+      }, reference);
   }
 
   @Override
