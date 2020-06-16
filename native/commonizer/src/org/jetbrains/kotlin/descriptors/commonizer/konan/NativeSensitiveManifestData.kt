@@ -56,7 +56,7 @@ internal data class NativeSensitiveManifestData(
         return NativeSensitiveManifestData(
             uniqueName = uniqueName,
             versions = versions,
-            dependencies = (dependencies union other.dependencies).toList(),
+            dependencies = (dependencies intersect other.dependencies).toList(),
             isInterop = isInterop,
             packageFqName = packageFqName,
             exportForwardDeclarations = exportForwardDeclarations,
