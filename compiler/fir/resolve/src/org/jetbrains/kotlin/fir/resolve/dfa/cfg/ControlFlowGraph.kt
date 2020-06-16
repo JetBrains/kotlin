@@ -85,13 +85,18 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     }
 }
 
-enum class EdgeKind(val usedInDfa: Boolean, val isBack: Boolean) {
-    Simple(usedInDfa = true, isBack = false),
-    Dead(usedInDfa = false, isBack = false),
-    Cfg(usedInDfa = false, isBack = false),
-    Dfg(usedInDfa = true, isBack = false),
-    Back(usedInDfa = false, isBack = true),
-    DeadBack(usedInDfa = false, isBack = true)
+enum class EdgeKind(
+    val usedInDfa: Boolean,
+    val usedInCfa: Boolean,
+    val isBack: Boolean,
+    val isDead: Boolean
+) {
+    Simple(usedInDfa = true, usedInCfa = true, isBack = false, isDead = false),
+    Dead(usedInDfa = false, usedInCfa = true, isBack = false, isDead = true),
+    Cfg(usedInDfa = false, usedInCfa = true, isBack = false, isDead = false),
+    Dfg(usedInDfa = true, usedInCfa = false, isBack = false, isDead = false),
+    Back(usedInDfa = false, usedInCfa = true, isBack = true, isDead = false),
+    DeadBack(usedInDfa = false, usedInCfa = true, isBack = true, isDead = true)
 }
 
 @OptIn(ExperimentalStdlibApi::class)
