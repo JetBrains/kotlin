@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.idea.test.runAll
 
 abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
+    private val scratchFiles: MutableList<VirtualFile> = ArrayList()
     private var vfsDisposable: Ref<Disposable>? = null
 
     protected open fun fileName(): String = getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
@@ -227,6 +228,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             text,
             ScratchFileService.Option.create_if_missing
         ) ?: error("Couldn't create scratch file")
+        scratchFiles.add(scratchVirtualFile)
 
         myFixture.openFileInEditor(scratchVirtualFile)
 
@@ -330,8 +332,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun tearDown() = runAll(
         ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
         ThrowableRunnable {
-            ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
-                runWriteAction { file.delete(this) }
+            for (scratchFile in scratchFiles) {
+                runWriteAction { scratchFile.delete(this) }
             }
         },
         ThrowableRunnable { super.tearDown() },
