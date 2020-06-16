@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration, FirTypeParameterRefsOwner, FirClass<FirRegularClass> {
+abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration, FirTypeParameterRefsOwner, FirControlFlowGraphOwner, FirClass<FirRegularClass> {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
@@ -31,6 +31,7 @@ abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration,
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val classKind: ClassKind
     abstract override val declarations: List<FirDeclaration>
     abstract override val scopeProvider: FirScopeProvider
@@ -39,7 +40,6 @@ abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration,
     abstract val companionObject: FirRegularClass?
     abstract val hasLazyNestedClassifiers: Boolean
     abstract override val superTypeRefs: List<FirTypeRef>
-    abstract val controlFlowGraphReference: FirControlFlowGraphReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRegularClass(this, data)
 
@@ -51,11 +51,11 @@ abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration,
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClass
 
+    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClass
+
     abstract override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClass
 
     abstract fun <D> transformCompanionObject(transformer: FirTransformer<D>, data: D): FirRegularClass
 
     abstract override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass
-
-    abstract fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClass
 }

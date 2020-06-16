@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner, FirCallableMemberDeclaration<FirProperty> {
+abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner, FirControlFlowGraphOwner, FirCallableMemberDeclaration<FirProperty> {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
@@ -40,8 +40,8 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
     abstract override val getter: FirPropertyAccessor?
     abstract override val setter: FirPropertyAccessor?
     abstract override val annotations: List<FirAnnotationCall>
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val containerSource: DeserializedContainerSource?
-    abstract val controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val symbol: FirPropertySymbol
     abstract val backingFieldSymbol: FirBackingFieldSymbol
     abstract val isLocal: Boolean
@@ -70,7 +70,7 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirProperty
 
-    abstract fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty
+    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirProperty
 

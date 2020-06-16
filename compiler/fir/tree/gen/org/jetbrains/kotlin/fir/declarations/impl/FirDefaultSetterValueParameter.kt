@@ -65,8 +65,8 @@ internal class FirDefaultSetterValueParameter(
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
-        defaultValue?.accept(visitor, data)
         controlFlowGraphReference.accept(visitor, data)
+        defaultValue?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {

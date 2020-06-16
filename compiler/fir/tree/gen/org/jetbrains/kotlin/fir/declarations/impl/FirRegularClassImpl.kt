@@ -46,8 +46,8 @@ internal class FirRegularClassImpl(
     override val superTypeRefs: MutableList<FirTypeRef>,
 ) : FirRegularClass() {
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override val hasLazyNestedClassifiers: Boolean get() = false
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
+    override val hasLazyNestedClassifiers: Boolean get() = false
 
     init {
         symbol.bind(this)
@@ -57,19 +57,19 @@ internal class FirRegularClassImpl(
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
+        controlFlowGraphReference.accept(visitor, data)
         declarations.forEach { it.accept(visitor, data) }
         superTypeRefs.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         transformAnnotations(transformer, data)
         typeParameters.transformInplace(transformer, data)
         transformStatus(transformer, data)
+        transformControlFlowGraphReference(transformer, data)
         transformDeclarations(transformer, data)
         companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.status.isCompanion }
         transformSuperTypeRefs(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
         return this
     }
 
@@ -80,6 +80,11 @@ internal class FirRegularClassImpl(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         status = status.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
+        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
     }
 
@@ -95,11 +100,6 @@ internal class FirRegularClassImpl(
 
     override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         superTypeRefs.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
-        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
     }
 

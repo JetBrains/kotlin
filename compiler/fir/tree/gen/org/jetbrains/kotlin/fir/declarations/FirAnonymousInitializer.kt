@@ -19,19 +19,19 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnonymousInitializer : FirPureAbstractElement(), FirDeclaration, FirSymbolOwner<FirAnonymousInitializer> {
+abstract class FirAnonymousInitializer : FirPureAbstractElement(), FirDeclaration, FirSymbolOwner<FirAnonymousInitializer>, FirControlFlowGraphOwner {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
     abstract val body: FirBlock?
     abstract override val symbol: FirAnonymousInitializerSymbol
-    abstract val controlFlowGraphReference: FirControlFlowGraphReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousInitializer(this, data)
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    abstract fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousInitializer
+    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousInitializer
 }

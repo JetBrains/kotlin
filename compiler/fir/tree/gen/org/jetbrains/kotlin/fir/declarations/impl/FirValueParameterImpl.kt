@@ -61,8 +61,8 @@ open class FirValueParameterImpl @FirImplementationDetail constructor(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
-        defaultValue?.accept(visitor, data)
         controlFlowGraphReference.accept(visitor, data)
+        defaultValue?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirValueParameterImpl {
