@@ -8,17 +8,25 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirProperty
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertyFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertyGetterFactory
+import org.jetbrains.kotlin.descriptors.commonizer.core.PropertyCommonizer.ConstCommonizationState.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 class PropertyCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirProperty>(cache) {
     private val setter = PropertySetterCommonizer()
     private var isExternal = true
-    private var constCompileTimeInitializer: ConstantValue<*>? = null
+    private lateinit var constCommonizationState: ConstCommonizationState
 
     override fun commonizationResult(): CirProperty {
         val setter = setter.result
-        val constCompileTimeInitializer = constCompileTimeInitializer
+
+        val constCommonizationState = constCommonizationState
+        val constCompileTimeInitializer = (constCommonizationState as? ConstSameValue)?.compileTimeInitializer
+
+        if (constCommonizationState is ConstMultipleValues) {
+            // fix all commonized properties to make then non-const
+            constCommonizationState.properties.forEach { it.isConst = false }
+        }
 
         return CirPropertyFactory.create(
             annotations = emptyList(),
@@ -46,8 +54,10 @@ class PropertyCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropert
     override fun initialize(first: CirProperty) {
         super.initialize(first)
 
-        if (first.isConst) {
-            constCompileTimeInitializer = first.compileTimeInitializer
+        constCommonizationState = if (first.isConst) {
+            first.compileTimeInitializer?.let(::ConstSameValue) ?: NonConst
+        } else {
+            NonConst
         }
     }
 
@@ -57,16 +67,28 @@ class PropertyCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropert
             return false
         }
 
-        val constCompileTimeInitializer = constCompileTimeInitializer
+        val constCommonizationState = constCommonizationState
         if (next.isConst) {
             // const properties should be lifted up
             // otherwise commonization should fail: expect property can't be const because expect can't have initializer
+            when (constCommonizationState) {
+                NonConst -> {
+                    // previous property was not constant
+                    return false
+                }
+                is Const -> {
+                    // previous property was constant
+                    constCommonizationState.properties += next
 
-            if (constCompileTimeInitializer == null || constCompileTimeInitializer != next.compileTimeInitializer) {
-                // previous property was not constant or const properties have different constants
-                return false
+                    if (constCommonizationState is ConstSameValue) {
+                        if (constCommonizationState.compileTimeInitializer != next.compileTimeInitializer) {
+                            // const properties have different constants
+                            this.constCommonizationState = ConstMultipleValues(constCommonizationState)
+                        }
+                    }
+                }
             }
-        } else if (constCompileTimeInitializer != null) {
+        } else if (constCommonizationState != NonConst) {
             // previous property was constant but this one is not
             return false
         }
@@ -79,5 +101,19 @@ class PropertyCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropert
         }
 
         return result
+    }
+
+    private sealed class ConstCommonizationState {
+        object NonConst : ConstCommonizationState()
+        abstract class Const : ConstCommonizationState() {
+            val properties: MutableList<CirProperty> = mutableListOf()
+        }
+
+        class ConstSameValue(val compileTimeInitializer: ConstantValue<*>) : Const()
+        class ConstMultipleValues(previous: ConstSameValue) : Const() {
+            init {
+                properties += previous.properties
+            }
+        }
     }
 }
