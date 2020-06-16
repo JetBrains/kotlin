@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.LoadScriptConfigurationNotificationFactory
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
@@ -30,7 +30,23 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 class GradleLegacyScriptConfigurationLoader(project: Project) : DefaultScriptConfigurationLoader(project) {
     private val buildRootsManager = GradleBuildRootsManager.getInstance(project)
 
-    override fun isPostponedLoad(virtualFile: VirtualFile): Boolean = isGradleKotlinScript(virtualFile)
+    override fun interceptBackgroundLoading(file: VirtualFile, doLoad: () -> Unit): Boolean {
+        if (!isGradleKotlinScript(file)) return false
+        val info = buildRootsManager.findScriptBuildRoot(file) ?: return false
+
+        if (info.standalone) {
+            val actionsManager = GradleStandaloneScriptActions.getInstance(project)
+            val fileActions = actionsManager.ForFile(file, doLoad)
+            actionsManager.byFile[file] = fileActions
+            fileActions.updateNotification()
+        } else {
+            LoadScriptConfigurationNotificationFactory.showNotification(file, project) {
+                doLoad()
+            }
+        }
+
+        return true
+    }
 
     override fun shouldRunInBackground(scriptDefinition: ScriptDefinition) = true
 
@@ -44,13 +60,16 @@ class GradleLegacyScriptConfigurationLoader(project: Project) : DefaultScriptCon
 
         if (!isGradleKotlinScript(vFile)) return false
 
+        GradleStandaloneScriptActions.getInstance(project)
+            .byFile.remove(vFile)?.updateNotification()
+
         if (!buildRootsManager.isAffectedGradleProjectFile(vFile.path)) {
             // not known gradle file and not configured as standalone script
             // skip
             return true
         }
 
-        // Gradle read files from FS
+        // Gradle read files from FS, so let's save all docs
         GlobalScope.launch(EDT(project)) {
             runWriteAction {
                 FileDocumentManager.getInstance().saveAllDocuments()

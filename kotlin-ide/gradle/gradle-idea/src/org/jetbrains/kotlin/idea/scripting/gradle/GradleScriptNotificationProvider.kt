@@ -14,6 +14,8 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
+import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
+import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActions
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsLocator.NotificationKind.*
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.Imported
@@ -77,7 +79,26 @@ class GradleScriptNotificationProvider(private val project: Project) :
                 contextHelp(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.info"))
             }
             standalone -> EditorNotificationPanel().apply {
-                text(KotlinIdeaGradleBundle.message("notification.standalone.text"))
+                val actions = GradleStandaloneScriptActions.getInstance(project).byFile[file]
+                if (actions != null) {
+                    text(
+                        KotlinIdeaGradleBundle.message("notification.standalone.text") +
+                                ". " +
+                                KotlinIdeaCoreBundle.message("notification.text.script.configuration.has.been.changed")
+                    )
+
+
+                    createActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.load.script.configuration")) {
+                        actions.reload()
+                    }
+
+                    createActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.enable.auto.reload")) {
+                        actions.toggleAutoReload()
+                    }
+                } else {
+                    text(KotlinIdeaGradleBundle.message("notification.standalone.text"))
+                }
+
                 createActionLabel(KotlinIdeaGradleBundle.message("notification.standalone.disableScriptAction")) {
                     rootsManager.updateStandaloneScripts {
                         removeStandaloneScript(file.path)

@@ -15,14 +15,9 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
  * @see [org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManager] for more details.
  */
 interface ScriptConfigurationLoader {
-    /**
-     * Show notification before doing load
-     *
-     * (by default loading notification will be shown only after loading, to check that configuration is changed)
-     */
-    fun isPostponedLoad(virtualFile: VirtualFile): Boolean = false
-
     fun shouldRunInBackground(scriptDefinition: ScriptDefinition): Boolean = false
+
+    fun interceptBackgroundLoading(file: VirtualFile, doLoad: () -> Unit): Boolean = false
 
     /**
      * Implementation should load configuration and call `context.suggestNewConfiguration` or `saveNewConfiguration`.
