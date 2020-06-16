@@ -179,11 +179,10 @@ class ControlFlowGraphBuilder {
 
     fun exitFunction(function: FirFunction<*>): Pair<FunctionExitNode, ControlFlowGraph> {
         require(function !is FirAnonymousFunction)
+        val exitNode = exitTargetsForReturn.pop()
+        popAndAddEdge(exitNode)
         val graph = popGraph()
-        popAndAddEdge(graph.exitNode)
-        exitTargetsForReturn.pop().also {
-            assert(it == graph.exitNode)
-        }
+        assert(exitNode == graph.exitNode)
         exitTargetsForTry.pop().also {
             assert(it == graph.exitNode)
         }
@@ -270,19 +269,21 @@ class ControlFlowGraphBuilder {
         }
 
     fun exitAnonymousFunction(anonymousFunction: FirAnonymousFunction): Triple<FunctionExitNode, PostponedLambdaExitNode?, ControlFlowGraph> {
-        val graph = popGraph().also { graph ->
-            assert(graph.declaration == anonymousFunction)
-            exitsFromCompletedPostponedAnonymousFunctions.removeAll { it.owner == graph }
-        }
-        popAndAddEdge(graph.exitNode)
+
 
         val symbol = anonymousFunction.symbol
         val exitNode = exitsOfAnonymousFunctions.remove(symbol)!!.also {
-            assert(it == graph.exitNode)
             require(it == exitTargetsForReturn.pop())
             require(it == exitTargetsForTry.pop())
         }
+        popAndAddEdge(exitNode)
         exitNode.updateDeadStatus()
+
+        val graph = popGraph().also { graph ->
+            assert(graph.declaration == anonymousFunction)
+            assert(graph.exitNode == exitNode)
+            exitsFromCompletedPostponedAnonymousFunctions.removeAll { it.owner == graph }
+        }
 
         val postponedEnterNode = entersToPostponedAnonymousFunctions.remove(symbol)!!
         val postponedExitNode = exitsFromPostponedAnonymousFunctions.remove(symbol)!!
@@ -407,10 +408,10 @@ class ControlFlowGraphBuilder {
 
     fun exitValueParameter(valueParameter: FirValueParameter): Pair<ExitDefaultArgumentsNode, ControlFlowGraph>? {
         if (valueParameter.defaultValue == null) return null
-        val graph = popGraph()
-        val exitNode = graph.exitNode as ExitDefaultArgumentsNode
-        require(exitTargetsForTry.pop() == exitNode)
+        val exitNode = exitTargetsForTry.pop() as ExitDefaultArgumentsNode
         popAndAddEdge(exitNode)
+        val graph = popGraph()
+        require(exitNode == graph.exitNode)
         return exitNode to graph
     }
 
@@ -450,10 +451,10 @@ class ControlFlowGraphBuilder {
 
     fun exitProperty(property: FirProperty): Pair<PropertyInitializerExitNode, ControlFlowGraph>? {
         if (property.initializer == null && property.delegate == null) return null
-        val graph = popGraph()
         val exitNode = exitTargetsForTry.pop() as PropertyInitializerExitNode
-        assert(exitNode == graph.exitNode)
         popAndAddEdge(exitNode)
+        val graph = popGraph()
+        assert(exitNode == graph.exitNode)
         return exitNode to graph
     }
 
@@ -947,11 +948,11 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitInitBlock(initBlock: FirAnonymousInitializer): Pair<InitBlockExitNode, ControlFlowGraph> {
-        val graph = popGraph()
-        assert(graph.declaration == initBlock)
         val exitNode = initBlockExitNodes.pop()
         require(exitNode == exitTargetsForTry.pop())
         popAndAddEdge(exitNode)
+        val graph = popGraph()
+        assert(graph.declaration == initBlock)
         exitNode.updateDeadStatus()
         return exitNode to graph
     }
