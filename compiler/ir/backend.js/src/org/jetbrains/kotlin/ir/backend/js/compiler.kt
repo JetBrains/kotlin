@@ -46,7 +46,8 @@ fun compile(
     generateDceJs: Boolean = false,
     dceDriven: Boolean = false,
     es6mode: Boolean = false,
-    multiModule: Boolean = false
+    multiModule: Boolean = false,
+    commonJsRelativePath: Boolean = false
 ): CompilerResult {
     stageController = object : StageController {}
 
@@ -94,7 +95,8 @@ fun compile(
             mainArguments,
             fullJs = true,
             dceJs = false,
-            multiModule = multiModule
+            multiModule = multiModule,
+            commonJsRelativePath = commonJsRelativePath
         )
         return transformer.generateModule(allModules)
     } else {
@@ -104,7 +106,8 @@ fun compile(
             mainArguments,
             fullJs = generateFullJs,
             dceJs = generateDceJs,
-            multiModule = multiModule
+            multiModule = multiModule,
+            commonJsRelativePath = commonJsRelativePath
         )
         return transformer.generateModule(allModules)
     }

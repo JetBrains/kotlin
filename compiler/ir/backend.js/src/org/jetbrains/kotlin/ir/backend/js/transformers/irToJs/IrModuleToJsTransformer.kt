@@ -32,7 +32,8 @@ class IrModuleToJsTransformer(
     var namer: NameTables = NameTables(emptyList()),
     private val fullJs: Boolean = true,
     private val dceJs: Boolean = false,
-    private val multiModule: Boolean = false
+    private val multiModule: Boolean = false,
+    private val commonJsRelativePath: Boolean = false
 ) {
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
@@ -204,7 +205,7 @@ class IrModuleToJsTransformer(
             }
 
             val moduleName = declareFreshGlobal(module.safeName)
-            modules += JsImportedModule(moduleName.ident, moduleName, moduleName.makeRef())
+            modules += JsImportedModule(moduleName.ident, moduleName, moduleName.makeRef(), commonJsRelativePath)
 
             names.forEach {
                 imports += JsVars(JsVars.JsVar(JsName(it), JsNameRef(it, JsNameRef("\$crossModule\$", moduleName.makeRef()))))
