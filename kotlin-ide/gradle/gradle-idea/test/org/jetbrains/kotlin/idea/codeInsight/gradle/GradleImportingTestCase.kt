@@ -32,6 +32,7 @@ import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.io.FileUtil
@@ -139,6 +140,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             TestCase.assertNotNull("Cannot create JDK for $myJdkHome", jdk)
             if (!jdkTable.allJdks.contains(jdk)) {
                 jdkTable.addJdk(jdk!!, testRootDisposable)
+                ProjectRootManager.getInstance(myProject).projectSdk = jdk
             }
             FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
 
