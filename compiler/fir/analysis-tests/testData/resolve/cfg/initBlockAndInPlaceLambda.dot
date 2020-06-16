@@ -5,10 +5,10 @@ digraph initBlockAndInPlaceLambda_kt {
 
     subgraph cluster_0 {
         color=red
-        1 [label="Enter class B" style="filled" fillcolor=red];
-        0 [label="Exit class B" style="filled" fillcolor=red];
+        0 [label="Enter class B" style="filled" fillcolor=red];
+        1 [label="Exit class B" style="filled" fillcolor=red];
     }
-    1 -> {0} [color=green];
+    0 -> {1} [color=green];
 
     subgraph cluster_1 {
         color=red
@@ -19,79 +19,79 @@ digraph initBlockAndInPlaceLambda_kt {
 
     subgraph cluster_2 {
         color=red
-        5 [label="Enter class A" style="filled" fillcolor=red];
-        4 [label="Exit class A" style="filled" fillcolor=red];
+        4 [label="Enter class A" style="filled" fillcolor=red];
+        5 [label="Exit class A" style="filled" fillcolor=red];
     }
-    5 -> {4} [color=green];
+    4 -> {5} [color=green];
 
     subgraph cluster_3 {
         color=red
         6 [label="Enter function <init>" style="filled" fillcolor=red];
-        8 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        7 [label="Exit function <init>" style="filled" fillcolor=red];
+        7 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        8 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    6 -> {8};
-    8 -> {7};
+    6 -> {7};
+    7 -> {8};
 
     subgraph cluster_4 {
         color=red
-        30 [label="Enter class C" style="filled" fillcolor=red];
+        29 [label="Enter class C" style="filled" fillcolor=red];
         subgraph cluster_5 {
             color=blue
             16 [label="Enter init block" style="filled" fillcolor=red];
             subgraph cluster_6 {
                 color=blue
-                18 [label="Enter block"];
-                19 [label="Access variable R|<local>/a|"];
-                20 [label="Access variable R|/A.b|"];
-                21 [label="Enter safe call"];
-                23 [label="Postponed enter to lambda"];
+                17 [label="Enter block"];
+                18 [label="Access variable R|<local>/a|"];
+                19 [label="Access variable R|/A.b|"];
+                20 [label="Enter safe call"];
+                21 [label="Postponed enter to lambda"];
                 subgraph cluster_7 {
                     color=blue
                     9 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                     subgraph cluster_8 {
                         color=blue
-                        11 [label="Enter block"];
-                        12 [label="Access variable R|<local>/a|"];
-                        13 [label="Access variable R|<local>/it|"];
-                        14 [label="Function call: R|/C.C|(...)"];
-                        15 [label="Exit block"];
+                        10 [label="Enter block"];
+                        11 [label="Access variable R|<local>/a|"];
+                        12 [label="Access variable R|<local>/it|"];
+                        13 [label="Function call: R|/C.C|(...)"];
+                        14 [label="Exit block"];
                     }
-                    10 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                    15 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                 }
-                26 [label="Call arguments union" style="filled" fillcolor=yellow];
-                24 [label="Postponed exit from lambda"];
-                25 [label="Function call: $subj$.R|kotlin/let|<R|B|, R|C|>(...)"];
-                22 [label="Exit safe call"];
-                27 [label="Variable declaration: lval c: R|C?|"];
-                28 [label="Exit block"];
+                22 [label="Call arguments union" style="filled" fillcolor=yellow];
+                23 [label="Postponed exit from lambda"];
+                24 [label="Function call: $subj$.R|kotlin/let|<R|B|, R|C|>(...)"];
+                25 [label="Exit safe call"];
+                26 [label="Variable declaration: lval c: R|C?|"];
+                27 [label="Exit block"];
             }
-            17 [label="Exit init block" style="filled" fillcolor=red];
+            28 [label="Exit init block" style="filled" fillcolor=red];
         }
-        29 [label="Exit class C" style="filled" fillcolor=red];
+        30 [label="Exit class C" style="filled" fillcolor=red];
     }
-    30 -> {16} [color=green];
-    16 -> {18};
-    17 -> {29} [color=green];
+    29 -> {16} [color=green];
+    16 -> {17};
+    17 -> {18};
     18 -> {19};
-    19 -> {20};
-    20 -> {21 22};
-    21 -> {23};
-    22 -> {27};
-    23 -> {9};
-    23 -> {24} [color=red];
-    24 -> {25} [color=green];
-    25 -> {22};
-    26 -> {25} [color=red];
+    19 -> {20 25};
+    20 -> {21};
+    21 -> {9};
+    21 -> {23} [color=red];
+    22 -> {24} [color=red];
+    23 -> {24} [color=green];
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
     27 -> {28};
-    28 -> {17};
-    9 -> {11};
-    10 -> {24} [color=green];
-    10 -> {26} [color=red];
+    28 -> {30} [color=green];
+    9 -> {10};
+    10 -> {11};
     11 -> {12};
     12 -> {13};
     13 -> {14};
     14 -> {15};
-    15 -> {10};
+    15 -> {23} [color=green];
+    15 -> {22} [color=red];
 
 }

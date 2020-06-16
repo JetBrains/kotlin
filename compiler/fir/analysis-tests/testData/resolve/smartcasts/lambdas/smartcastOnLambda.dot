@@ -8,48 +8,48 @@ digraph smartcastOnLambda_kt {
         0 [label="Enter function test" style="filled" fillcolor=red];
         subgraph cluster_1 {
             color=blue
-            2 [label="Enter block"];
+            1 [label="Enter block"];
             subgraph cluster_2 {
                 color=blue
-                3 [label="Enter when"];
+                2 [label="Enter when"];
                 subgraph cluster_3 {
                     color=blue
-                    5 [label="Enter when branch condition "];
-                    6 [label="Access variable R|<local>/func|"];
-                    7 [label="Const: Null(null)"];
-                    8 [label="Operator !="];
-                    9 [label="Exit when branch condition"];
+                    3 [label="Enter when branch condition "];
+                    4 [label="Access variable R|<local>/func|"];
+                    5 [label="Const: Null(null)"];
+                    6 [label="Operator !="];
+                    7 [label="Exit when branch condition"];
                 }
-                15 [label="Synthetic else branch"];
-                10 [label="Enter when branch result"];
+                8 [label="Synthetic else branch"];
+                9 [label="Enter when branch result"];
                 subgraph cluster_4 {
                     color=blue
-                    11 [label="Enter block"];
-                    12 [label="Function call: R|<local>/func|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
-                    13 [label="Exit block"];
+                    10 [label="Enter block"];
+                    11 [label="Function call: R|<local>/func|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                    12 [label="Exit block"];
                 }
-                14 [label="Exit when branch result"];
-                4 [label="Exit when"];
+                13 [label="Exit when branch result"];
+                14 [label="Exit when"];
             }
-            16 [label="Exit block"];
+            15 [label="Exit block"];
         }
-        1 [label="Exit function test" style="filled" fillcolor=red];
+        16 [label="Exit function test" style="filled" fillcolor=red];
     }
-    0 -> {2};
+    0 -> {1};
+    1 -> {2};
     2 -> {3};
-    3 -> {5};
-    4 -> {16};
+    3 -> {4};
+    4 -> {5};
     5 -> {6};
     6 -> {7};
-    7 -> {8};
-    8 -> {9};
-    9 -> {10 15};
+    7 -> {9 8};
+    8 -> {14};
+    9 -> {10};
     10 -> {11};
     11 -> {12};
     12 -> {13};
     13 -> {14};
-    14 -> {4};
-    15 -> {4};
-    16 -> {1};
+    14 -> {15};
+    15 -> {16};
 
 }

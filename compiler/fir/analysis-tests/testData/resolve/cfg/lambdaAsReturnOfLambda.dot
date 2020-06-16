@@ -13,98 +13,98 @@ digraph lambdaAsReturnOfLambda_kt {
     subgraph cluster_1 {
         color=red
         16 [label="Enter property" style="filled" fillcolor=red];
-        18 [label="Postponed enter to lambda"];
+        17 [label="Postponed enter to lambda"];
         subgraph cluster_2 {
             color=blue
             0 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
             subgraph cluster_3 {
                 color=blue
-                2 [label="Enter block"];
-                3 [label="Postponed enter to lambda"];
+                1 [label="Enter block"];
+                2 [label="Postponed enter to lambda"];
                 subgraph cluster_4 {
                     color=blue
                     8 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                     subgraph cluster_5 {
                         color=blue
-                        10 [label="Enter block"];
-                        11 [label="Access variable R|<local>/foo|"];
-                        12 [label="Function call: R|/bar|(...)"];
-                        13 [label="Exit block"];
+                        9 [label="Enter block"];
+                        10 [label="Access variable R|<local>/foo|"];
+                        11 [label="Function call: R|/bar|(...)"];
+                        12 [label="Exit block"];
                     }
-                    9 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+                    13 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                 }
-                4 [label="Postponed exit from lambda"];
-                5 [label="Jump: ^@run lambda@fun <anonymous>(foo: R|kotlin/String|): R|kotlin/Unit| {
+                3 [label="Postponed exit from lambda"];
+                4 [label="Jump: ^@run lambda@fun <anonymous>(foo: R|kotlin/String|): R|kotlin/Unit| {
     R|/bar|(R|<local>/foo|)
 }
 "];
-                6 [label="Stub" style="filled" fillcolor=gray];
-                7 [label="Exit block" style="filled" fillcolor=gray];
+                5 [label="Stub" style="filled" fillcolor=gray];
+                6 [label="Exit block" style="filled" fillcolor=gray];
             }
-            1 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            7 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
-        19 [label="Postponed exit from lambda"];
+        18 [label="Postponed exit from lambda"];
         subgraph cluster_6 {
             color=blue
-            20 [label="Enter block"];
-            21 [label="Exit block"];
+            19 [label="Enter block"];
+            20 [label="Exit block"];
         }
-        22 [label="Function call: R|/run|<R|(kotlin/String) -> kotlin/Unit|>(...)"];
-        17 [label="Exit property" style="filled" fillcolor=red];
+        21 [label="Function call: R|/run|<R|(kotlin/String) -> kotlin/Unit|>(...)"];
+        22 [label="Exit property" style="filled" fillcolor=red];
     }
-    16 -> {18};
-    18 -> {19 0};
+    16 -> {17};
+    17 -> {18 0};
+    18 -> {19};
     19 -> {20};
     20 -> {21};
     21 -> {22};
-    22 -> {17};
-    0 -> {2};
-    2 -> {3};
-    3 -> {4 8};
-    4 -> {5};
-    5 -> {1};
+    0 -> {1};
+    1 -> {2};
+    2 -> {3 8};
+    3 -> {4};
+    4 -> {7};
+    4 -> {5} [style=dotted];
     5 -> {6} [style=dotted];
     6 -> {7} [style=dotted];
-    7 -> {1} [style=dotted];
-    8 -> {10};
+    8 -> {9};
+    9 -> {10};
     10 -> {11};
     11 -> {12};
     12 -> {13};
-    13 -> {9};
 
     subgraph cluster_7 {
         color=red
         23 [label="Enter function bar" style="filled" fillcolor=red];
         subgraph cluster_8 {
             color=blue
-            25 [label="Enter block"];
-            26 [label="Exit block"];
+            24 [label="Enter block"];
+            25 [label="Exit block"];
         }
-        24 [label="Exit function bar" style="filled" fillcolor=red];
+        26 [label="Exit function bar" style="filled" fillcolor=red];
     }
-    23 -> {25};
+    23 -> {24};
+    24 -> {25};
     25 -> {26};
-    26 -> {24};
 
     subgraph cluster_9 {
         color=red
         27 [label="Enter function run" style="filled" fillcolor=red];
         subgraph cluster_10 {
             color=blue
-            29 [label="Enter block"];
-            30 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()"];
-            31 [label="Jump: ^run R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()"];
-            32 [label="Stub" style="filled" fillcolor=gray];
-            33 [label="Exit block" style="filled" fillcolor=gray];
+            28 [label="Enter block"];
+            29 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()"];
+            30 [label="Jump: ^run R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()"];
+            31 [label="Stub" style="filled" fillcolor=gray];
+            32 [label="Exit block" style="filled" fillcolor=gray];
         }
-        28 [label="Exit function run" style="filled" fillcolor=red];
+        33 [label="Exit function run" style="filled" fillcolor=red];
     }
-    27 -> {29};
+    27 -> {28};
+    28 -> {29};
     29 -> {30};
-    30 -> {31};
-    31 -> {28};
+    30 -> {33};
+    30 -> {31} [style=dotted];
     31 -> {32} [style=dotted];
     32 -> {33} [style=dotted];
-    33 -> {28} [style=dotted];
 
 }

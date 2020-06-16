@@ -6,11 +6,11 @@ digraph boundSmartcastsInBranches_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        2 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        1 [label="Exit function <init>" style="filled" fillcolor=red];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    0 -> {2};
-    2 -> {1};
+    0 -> {1};
+    1 -> {2};
 
     subgraph cluster_1 {
         color=red
@@ -21,189 +21,190 @@ digraph boundSmartcastsInBranches_kt {
 
     subgraph cluster_2 {
         color=red
-        9 [label="Enter class A" style="filled" fillcolor=red];
+        8 [label="Enter class A" style="filled" fillcolor=red];
         subgraph cluster_3 {
             color=blue
             5 [label="Enter property" style="filled" fillcolor=red];
-            7 [label="Const: String()"];
-            6 [label="Exit property" style="filled" fillcolor=red];
+            6 [label="Const: String()"];
+            7 [label="Exit property" style="filled" fillcolor=red];
         }
-        8 [label="Exit class A" style="filled" fillcolor=red];
+        9 [label="Exit class A" style="filled" fillcolor=red];
     }
-    9 -> {5} [color=green];
-    5 -> {7};
-    6 -> {8} [color=green];
-    7 -> {6};
+    8 -> {5} [color=green];
+    5 -> {6};
+    6 -> {7};
+    7 -> {9} [color=green];
 
     subgraph cluster_4 {
         color=red
         10 [label="Enter function test_0" style="filled" fillcolor=red];
         subgraph cluster_5 {
             color=blue
-            12 [label="Enter block"];
-            13 [label="Const: Null(null)"];
-            14 [label="Variable declaration: lvar goodA: R|A?|"];
-            15 [label="Access variable R|<local>/list|"];
-            16 [label="Function call: R|<local>/list|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()"];
-            17 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<A>|"];
+            11 [label="Enter block"];
+            12 [label="Const: Null(null)"];
+            13 [label="Variable declaration: lvar goodA: R|A?|"];
+            14 [label="Access variable R|<local>/list|"];
+            15 [label="Function call: R|<local>/list|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()"];
+            16 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<A>|"];
             subgraph cluster_6 {
                 color=blue
-                18 [label="Enter while loop"];
+                17 [label="Enter while loop"];
                 subgraph cluster_7 {
                     color=blue
-                    20 [label="Enter loop condition"];
-                    21 [label="Access variable R|<local>/<iterator>|"];
-                    22 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()"];
-                    23 [label="Exit loop condition"];
+                    18 [label="Enter loop condition"];
+                    19 [label="Access variable R|<local>/<iterator>|"];
+                    20 [label="Function call: R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()"];
+                    21 [label="Exit loop condition"];
                 }
                 subgraph cluster_8 {
                     color=blue
-                    24 [label="Enter loop block"];
+                    22 [label="Enter loop block"];
                     subgraph cluster_9 {
                         color=blue
-                        25 [label="Enter block"];
-                        26 [label="Access variable R|<local>/<iterator>|"];
-                        27 [label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|A|>|()"];
-                        28 [label="Variable declaration: lval a: R|A|"];
+                        23 [label="Enter block"];
+                        24 [label="Access variable R|<local>/<iterator>|"];
+                        25 [label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|A|>|()"];
+                        26 [label="Variable declaration: lval a: R|A|"];
                         subgraph cluster_10 {
                             color=blue
-                            29 [label="Enter when"];
+                            27 [label="Enter when"];
                             subgraph cluster_11 {
                                 color=blue
-                                31 [label="Enter when branch condition "];
-                                32 [label="Access variable R|<local>/goodA|"];
-                                33 [label="Const: Null(null)"];
-                                34 [label="Operator =="];
-                                35 [label="Exit when branch condition"];
+                                28 [label="Enter when branch condition "];
+                                29 [label="Access variable R|<local>/goodA|"];
+                                30 [label="Const: Null(null)"];
+                                31 [label="Operator =="];
+                                32 [label="Exit when branch condition"];
                             }
-                            44 [label="Synthetic else branch"];
-                            36 [label="Enter when branch result"];
+                            33 [label="Synthetic else branch"];
+                            34 [label="Enter when branch result"];
                             subgraph cluster_12 {
                                 color=blue
-                                37 [label="Enter block"];
-                                38 [label="Access variable R|<local>/a|"];
-                                39 [label="Assignment: R|<local>/goodA|"];
-                                40 [label="Jump: continue@@@[R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()] "];
-                                41 [label="Stub" style="filled" fillcolor=gray];
-                                42 [label="Exit block" style="filled" fillcolor=gray];
+                                35 [label="Enter block"];
+                                36 [label="Access variable R|<local>/a|"];
+                                37 [label="Assignment: R|<local>/goodA|"];
+                                38 [label="Jump: continue@@@[R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()] "];
+                                39 [label="Stub" style="filled" fillcolor=gray];
+                                40 [label="Exit block" style="filled" fillcolor=gray];
                             }
-                            43 [label="Exit when branch result" style="filled" fillcolor=gray];
-                            30 [label="Exit when"];
+                            41 [label="Exit when branch result" style="filled" fillcolor=gray];
+                            42 [label="Exit when"];
                         }
-                        45 [label="Access variable R|<local>/goodA|"];
-                        46 [label="Access variable R|/A.s|"];
-                        47 [label="Exit block"];
+                        43 [label="Access variable R|<local>/goodA|"];
+                        44 [label="Access variable R|/A.s|"];
+                        45 [label="Exit block"];
                     }
-                    48 [label="Exit loop block"];
+                    46 [label="Exit loop block"];
                 }
-                19 [label="Exit whileloop"];
+                47 [label="Exit whileloop"];
             }
-            49 [label="Exit block"];
+            48 [label="Exit block"];
         }
-        11 [label="Exit function test_0" style="filled" fillcolor=red];
+        49 [label="Exit function test_0" style="filled" fillcolor=red];
     }
-    10 -> {12};
+    10 -> {11};
+    11 -> {12};
     12 -> {13};
     13 -> {14};
     14 -> {15};
     15 -> {16};
     16 -> {17};
     17 -> {18};
-    18 -> {20};
-    19 -> {49};
+    18 -> {19};
+    19 -> {20};
     20 -> {21};
-    21 -> {22};
+    21 -> {47 22};
     22 -> {23};
-    23 -> {19 24};
+    23 -> {24};
     24 -> {25};
     25 -> {26};
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    29 -> {31};
-    30 -> {45};
+    29 -> {30};
+    30 -> {31};
     31 -> {32};
-    32 -> {33};
-    33 -> {34};
+    32 -> {34 33};
+    33 -> {42};
     34 -> {35};
-    35 -> {36 44};
+    35 -> {36};
     36 -> {37};
     37 -> {38};
-    38 -> {39};
-    39 -> {40};
+    38 -> {39} [style=dotted];
+    38 -> {17} [color=green style=dashed];
+    39 -> {40} [style=dotted];
     40 -> {41} [style=dotted];
-    40 -> {18} [color=green style=dashed];
     41 -> {42} [style=dotted];
-    42 -> {43} [style=dotted];
-    43 -> {30} [style=dotted];
-    44 -> {30};
+    42 -> {43};
+    43 -> {44};
+    44 -> {45};
     45 -> {46};
-    46 -> {47};
+    46 -> {18} [color=green style=dashed];
     47 -> {48};
-    48 -> {20} [color=green style=dashed];
-    49 -> {11};
+    48 -> {49};
 
     subgraph cluster_13 {
         color=red
         50 [label="Enter function test_1" style="filled" fillcolor=red];
         subgraph cluster_14 {
             color=blue
-            52 [label="Enter block"];
-            53 [label="Variable declaration: lval x: R|kotlin/Any|"];
+            51 [label="Enter block"];
+            52 [label="Variable declaration: lval x: R|kotlin/Any|"];
             subgraph cluster_15 {
                 color=blue
-                54 [label="Enter when"];
+                53 [label="Enter when"];
                 subgraph cluster_16 {
                     color=blue
-                    56 [label="Enter when branch condition "];
-                    57 [label="Access variable R|<local>/b|"];
-                    58 [label="Exit when branch condition"];
+                    54 [label="Enter when branch condition "];
+                    55 [label="Access variable R|<local>/b|"];
+                    56 [label="Exit when branch condition"];
                 }
                 subgraph cluster_17 {
                     color=blue
-                    65 [label="Enter when branch condition else"];
-                    66 [label="Exit when branch condition"];
+                    57 [label="Enter when branch condition else"];
+                    58 [label="Exit when branch condition"];
                 }
-                67 [label="Enter when branch result"];
+                59 [label="Enter when branch result"];
                 subgraph cluster_18 {
                     color=blue
-                    68 [label="Enter block"];
-                    69 [label="Access variable R|<local>/a|"];
-                    70 [label="Assignment: R|<local>/x|"];
-                    71 [label="Exit block"];
-                }
-                72 [label="Exit when branch result"];
-                59 [label="Enter when branch result"];
-                subgraph cluster_19 {
-                    color=blue
                     60 [label="Enter block"];
-                    61 [label="Function call: R|/A.A|()"];
+                    61 [label="Access variable R|<local>/a|"];
                     62 [label="Assignment: R|<local>/x|"];
                     63 [label="Exit block"];
                 }
                 64 [label="Exit when branch result"];
-                55 [label="Exit when"];
+                65 [label="Enter when branch result"];
+                subgraph cluster_19 {
+                    color=blue
+                    66 [label="Enter block"];
+                    67 [label="Function call: R|/A.A|()"];
+                    68 [label="Assignment: R|<local>/x|"];
+                    69 [label="Exit block"];
+                }
+                70 [label="Exit when branch result"];
+                71 [label="Exit when"];
             }
-            73 [label="Access variable R|<local>/x|"];
-            74 [label="Access variable R|/A.s|"];
-            75 [label="Exit block"];
+            72 [label="Access variable R|<local>/x|"];
+            73 [label="Access variable R|/A.s|"];
+            74 [label="Exit block"];
         }
-        51 [label="Exit function test_1" style="filled" fillcolor=red];
+        75 [label="Exit function test_1" style="filled" fillcolor=red];
     }
-    50 -> {52};
+    50 -> {51};
+    51 -> {52};
     52 -> {53};
     53 -> {54};
-    54 -> {56};
-    55 -> {73};
-    56 -> {57};
+    54 -> {55};
+    55 -> {56};
+    56 -> {65 57};
     57 -> {58};
-    58 -> {59 65};
+    58 -> {59};
     59 -> {60};
     60 -> {61};
     61 -> {62};
     62 -> {63};
     63 -> {64};
-    64 -> {55};
+    64 -> {71};
     65 -> {66};
     66 -> {67};
     67 -> {68};
@@ -211,76 +212,76 @@ digraph boundSmartcastsInBranches_kt {
     69 -> {70};
     70 -> {71};
     71 -> {72};
-    72 -> {55};
+    72 -> {73};
     73 -> {74};
     74 -> {75};
-    75 -> {51};
 
     subgraph cluster_20 {
         color=red
         76 [label="Enter function test_2" style="filled" fillcolor=red];
         subgraph cluster_21 {
             color=blue
-            78 [label="Enter block"];
-            79 [label="Variable declaration: lval x: R|kotlin/Any|"];
+            77 [label="Enter block"];
+            78 [label="Variable declaration: lval x: R|kotlin/Any|"];
             subgraph cluster_22 {
                 color=blue
-                80 [label="Enter when"];
+                79 [label="Enter when"];
                 subgraph cluster_23 {
                     color=blue
-                    82 [label="Enter when branch condition "];
-                    83 [label="Access variable R|<local>/b|"];
-                    84 [label="Exit when branch condition"];
+                    80 [label="Enter when branch condition "];
+                    81 [label="Access variable R|<local>/b|"];
+                    82 [label="Exit when branch condition"];
                 }
                 subgraph cluster_24 {
                     color=blue
-                    91 [label="Enter when branch condition else"];
-                    92 [label="Exit when branch condition"];
+                    83 [label="Enter when branch condition else"];
+                    84 [label="Exit when branch condition"];
                 }
-                93 [label="Enter when branch result"];
+                85 [label="Enter when branch result"];
                 subgraph cluster_25 {
                     color=blue
-                    94 [label="Enter block"];
-                    95 [label="Access variable R|<local>/a|"];
-                    96 [label="Assignment: R|<local>/x|"];
-                    97 [label="Access variable R|<local>/a|"];
-                    98 [label="Type operator: (R|<local>/a| as R|A|)"];
-                    99 [label="Exit block"];
+                    86 [label="Enter block"];
+                    87 [label="Access variable R|<local>/a|"];
+                    88 [label="Assignment: R|<local>/x|"];
+                    89 [label="Access variable R|<local>/a|"];
+                    90 [label="Type operator: (R|<local>/a| as R|A|)"];
+                    91 [label="Exit block"];
                 }
-                100 [label="Exit when branch result"];
-                85 [label="Enter when branch result"];
+                92 [label="Exit when branch result"];
+                93 [label="Enter when branch result"];
                 subgraph cluster_26 {
                     color=blue
-                    86 [label="Enter block"];
-                    87 [label="Function call: R|/A.A|()"];
-                    88 [label="Assignment: R|<local>/x|"];
-                    89 [label="Exit block"];
+                    94 [label="Enter block"];
+                    95 [label="Function call: R|/A.A|()"];
+                    96 [label="Assignment: R|<local>/x|"];
+                    97 [label="Exit block"];
                 }
-                90 [label="Exit when branch result"];
-                81 [label="Exit when"];
+                98 [label="Exit when branch result"];
+                99 [label="Exit when"];
             }
-            101 [label="Access variable R|<local>/x|"];
-            102 [label="Access variable R|/A.s|"];
-            103 [label="Exit block"];
+            100 [label="Access variable R|<local>/x|"];
+            101 [label="Access variable R|/A.s|"];
+            102 [label="Exit block"];
         }
-        77 [label="Exit function test_2" style="filled" fillcolor=red];
+        103 [label="Exit function test_2" style="filled" fillcolor=red];
     }
-    76 -> {78};
+    76 -> {77};
+    77 -> {78};
     78 -> {79};
     79 -> {80};
-    80 -> {82};
-    81 -> {101};
-    82 -> {83};
+    80 -> {81};
+    81 -> {82};
+    82 -> {93 83};
     83 -> {84};
-    84 -> {85 91};
+    84 -> {85};
     85 -> {86};
     86 -> {87};
     87 -> {88};
     88 -> {89};
     89 -> {90};
-    90 -> {81};
+    90 -> {91};
     91 -> {92};
-    92 -> {93};
+    92 -> {99};
     93 -> {94};
     94 -> {95};
     95 -> {96};
@@ -288,76 +289,76 @@ digraph boundSmartcastsInBranches_kt {
     97 -> {98};
     98 -> {99};
     99 -> {100};
-    100 -> {81};
+    100 -> {101};
     101 -> {102};
     102 -> {103};
-    103 -> {77};
 
     subgraph cluster_27 {
         color=red
         104 [label="Enter function test_3" style="filled" fillcolor=red];
         subgraph cluster_28 {
             color=blue
-            106 [label="Enter block"];
-            107 [label="Variable declaration: lval x: R|kotlin/Any|"];
+            105 [label="Enter block"];
+            106 [label="Variable declaration: lval x: R|kotlin/Any|"];
             subgraph cluster_29 {
                 color=blue
-                108 [label="Enter when"];
+                107 [label="Enter when"];
                 subgraph cluster_30 {
                     color=blue
-                    110 [label="Enter when branch condition "];
-                    111 [label="Access variable R|<local>/b|"];
-                    112 [label="Exit when branch condition"];
+                    108 [label="Enter when branch condition "];
+                    109 [label="Access variable R|<local>/b|"];
+                    110 [label="Exit when branch condition"];
                 }
                 subgraph cluster_31 {
                     color=blue
-                    119 [label="Enter when branch condition else"];
-                    120 [label="Exit when branch condition"];
+                    111 [label="Enter when branch condition else"];
+                    112 [label="Exit when branch condition"];
                 }
-                121 [label="Enter when branch result"];
+                113 [label="Enter when branch result"];
                 subgraph cluster_32 {
                     color=blue
-                    122 [label="Enter block"];
-                    123 [label="Access variable R|<local>/a|"];
-                    124 [label="Type operator: (R|<local>/a| as R|A|)"];
-                    125 [label="Access variable R|<local>/a|"];
-                    126 [label="Assignment: R|<local>/x|"];
-                    127 [label="Exit block"];
+                    114 [label="Enter block"];
+                    115 [label="Access variable R|<local>/a|"];
+                    116 [label="Type operator: (R|<local>/a| as R|A|)"];
+                    117 [label="Access variable R|<local>/a|"];
+                    118 [label="Assignment: R|<local>/x|"];
+                    119 [label="Exit block"];
                 }
-                128 [label="Exit when branch result"];
-                113 [label="Enter when branch result"];
+                120 [label="Exit when branch result"];
+                121 [label="Enter when branch result"];
                 subgraph cluster_33 {
                     color=blue
-                    114 [label="Enter block"];
-                    115 [label="Function call: R|/A.A|()"];
-                    116 [label="Assignment: R|<local>/x|"];
-                    117 [label="Exit block"];
+                    122 [label="Enter block"];
+                    123 [label="Function call: R|/A.A|()"];
+                    124 [label="Assignment: R|<local>/x|"];
+                    125 [label="Exit block"];
                 }
-                118 [label="Exit when branch result"];
-                109 [label="Exit when"];
+                126 [label="Exit when branch result"];
+                127 [label="Exit when"];
             }
-            129 [label="Access variable R|<local>/x|"];
-            130 [label="Access variable R|/A.s|"];
-            131 [label="Exit block"];
+            128 [label="Access variable R|<local>/x|"];
+            129 [label="Access variable R|/A.s|"];
+            130 [label="Exit block"];
         }
-        105 [label="Exit function test_3" style="filled" fillcolor=red];
+        131 [label="Exit function test_3" style="filled" fillcolor=red];
     }
-    104 -> {106};
+    104 -> {105};
+    105 -> {106};
     106 -> {107};
     107 -> {108};
-    108 -> {110};
-    109 -> {129};
-    110 -> {111};
+    108 -> {109};
+    109 -> {110};
+    110 -> {121 111};
     111 -> {112};
-    112 -> {113 119};
+    112 -> {113};
     113 -> {114};
     114 -> {115};
     115 -> {116};
     116 -> {117};
     117 -> {118};
-    118 -> {109};
+    118 -> {119};
     119 -> {120};
-    120 -> {121};
+    120 -> {127};
     121 -> {122};
     122 -> {123};
     123 -> {124};
@@ -365,43 +366,33 @@ digraph boundSmartcastsInBranches_kt {
     125 -> {126};
     126 -> {127};
     127 -> {128};
-    128 -> {109};
+    128 -> {129};
     129 -> {130};
     130 -> {131};
-    131 -> {105};
 
     subgraph cluster_34 {
         color=red
         132 [label="Enter function test_4" style="filled" fillcolor=red];
         subgraph cluster_35 {
             color=blue
-            134 [label="Enter block"];
-            135 [label="Variable declaration: lval x: R|kotlin/Any|"];
+            133 [label="Enter block"];
+            134 [label="Variable declaration: lval x: R|kotlin/Any|"];
             subgraph cluster_36 {
                 color=blue
-                136 [label="Enter when"];
+                135 [label="Enter when"];
                 subgraph cluster_37 {
                     color=blue
-                    138 [label="Enter when branch condition "];
-                    139 [label="Access variable R|<local>/b|"];
-                    140 [label="Exit when branch condition"];
+                    136 [label="Enter when branch condition "];
+                    137 [label="Access variable R|<local>/b|"];
+                    138 [label="Exit when branch condition"];
                 }
                 subgraph cluster_38 {
                     color=blue
-                    147 [label="Enter when branch condition else"];
-                    148 [label="Exit when branch condition"];
+                    139 [label="Enter when branch condition else"];
+                    140 [label="Exit when branch condition"];
                 }
-                149 [label="Enter when branch result"];
-                subgraph cluster_39 {
-                    color=blue
-                    150 [label="Enter block"];
-                    151 [label="Access variable R|<local>/a|"];
-                    152 [label="Assignment: R|<local>/x|"];
-                    153 [label="Exit block"];
-                }
-                154 [label="Exit when branch result"];
                 141 [label="Enter when branch result"];
-                subgraph cluster_40 {
+                subgraph cluster_39 {
                     color=blue
                     142 [label="Enter block"];
                     143 [label="Access variable R|<local>/a|"];
@@ -409,32 +400,42 @@ digraph boundSmartcastsInBranches_kt {
                     145 [label="Exit block"];
                 }
                 146 [label="Exit when branch result"];
-                137 [label="Exit when"];
+                147 [label="Enter when branch result"];
+                subgraph cluster_40 {
+                    color=blue
+                    148 [label="Enter block"];
+                    149 [label="Access variable R|<local>/a|"];
+                    150 [label="Assignment: R|<local>/x|"];
+                    151 [label="Exit block"];
+                }
+                152 [label="Exit when branch result"];
+                153 [label="Exit when"];
             }
-            155 [label="Access variable R|<local>/x|"];
-            156 [label="Type operator: (R|<local>/x| as R|A|)"];
-            157 [label="Access variable R|<local>/x|"];
-            158 [label="Access variable R|/A.s|"];
-            159 [label="Access variable R|<local>/a|"];
-            160 [label="Access variable R|/A.s|"];
-            161 [label="Exit block"];
+            154 [label="Access variable R|<local>/x|"];
+            155 [label="Type operator: (R|<local>/x| as R|A|)"];
+            156 [label="Access variable R|<local>/x|"];
+            157 [label="Access variable R|/A.s|"];
+            158 [label="Access variable R|<local>/a|"];
+            159 [label="Access variable R|/A.s|"];
+            160 [label="Exit block"];
         }
-        133 [label="Exit function test_4" style="filled" fillcolor=red];
+        161 [label="Exit function test_4" style="filled" fillcolor=red];
     }
-    132 -> {134};
+    132 -> {133};
+    133 -> {134};
     134 -> {135};
     135 -> {136};
-    136 -> {138};
-    137 -> {155};
-    138 -> {139};
+    136 -> {137};
+    137 -> {138};
+    138 -> {147 139};
     139 -> {140};
-    140 -> {141 147};
+    140 -> {141};
     141 -> {142};
     142 -> {143};
     143 -> {144};
     144 -> {145};
     145 -> {146};
-    146 -> {137};
+    146 -> {153};
     147 -> {148};
     148 -> {149};
     149 -> {150};
@@ -442,47 +443,37 @@ digraph boundSmartcastsInBranches_kt {
     151 -> {152};
     152 -> {153};
     153 -> {154};
-    154 -> {137};
+    154 -> {155};
     155 -> {156};
     156 -> {157};
     157 -> {158};
     158 -> {159};
     159 -> {160};
     160 -> {161};
-    161 -> {133};
 
     subgraph cluster_41 {
         color=red
         162 [label="Enter function test_5" style="filled" fillcolor=red];
         subgraph cluster_42 {
             color=blue
-            164 [label="Enter block"];
-            165 [label="Variable declaration: lval x: R|kotlin/Any|"];
+            163 [label="Enter block"];
+            164 [label="Variable declaration: lval x: R|kotlin/Any|"];
             subgraph cluster_43 {
                 color=blue
-                166 [label="Enter when"];
+                165 [label="Enter when"];
                 subgraph cluster_44 {
                     color=blue
-                    168 [label="Enter when branch condition "];
-                    169 [label="Access variable R|<local>/b|"];
-                    170 [label="Exit when branch condition"];
+                    166 [label="Enter when branch condition "];
+                    167 [label="Access variable R|<local>/b|"];
+                    168 [label="Exit when branch condition"];
                 }
                 subgraph cluster_45 {
                     color=blue
-                    177 [label="Enter when branch condition else"];
-                    178 [label="Exit when branch condition"];
+                    169 [label="Enter when branch condition else"];
+                    170 [label="Exit when branch condition"];
                 }
-                179 [label="Enter when branch result"];
-                subgraph cluster_46 {
-                    color=blue
-                    180 [label="Enter block"];
-                    181 [label="Access variable R|<local>/a|"];
-                    182 [label="Assignment: R|<local>/x|"];
-                    183 [label="Exit block"];
-                }
-                184 [label="Exit when branch result"];
                 171 [label="Enter when branch result"];
-                subgraph cluster_47 {
+                subgraph cluster_46 {
                     color=blue
                     172 [label="Enter block"];
                     173 [label="Access variable R|<local>/a|"];
@@ -490,32 +481,42 @@ digraph boundSmartcastsInBranches_kt {
                     175 [label="Exit block"];
                 }
                 176 [label="Exit when branch result"];
-                167 [label="Exit when"];
+                177 [label="Enter when branch result"];
+                subgraph cluster_47 {
+                    color=blue
+                    178 [label="Enter block"];
+                    179 [label="Access variable R|<local>/a|"];
+                    180 [label="Assignment: R|<local>/x|"];
+                    181 [label="Exit block"];
+                }
+                182 [label="Exit when branch result"];
+                183 [label="Exit when"];
             }
-            185 [label="Access variable R|<local>/a|"];
-            186 [label="Type operator: (R|<local>/a| as R|A|)"];
-            187 [label="Access variable R|<local>/x|"];
-            188 [label="Access variable R|/A.s|"];
-            189 [label="Access variable R|<local>/a|"];
-            190 [label="Access variable R|/A.s|"];
-            191 [label="Exit block"];
+            184 [label="Access variable R|<local>/a|"];
+            185 [label="Type operator: (R|<local>/a| as R|A|)"];
+            186 [label="Access variable R|<local>/x|"];
+            187 [label="Access variable R|/A.s|"];
+            188 [label="Access variable R|<local>/a|"];
+            189 [label="Access variable R|/A.s|"];
+            190 [label="Exit block"];
         }
-        163 [label="Exit function test_5" style="filled" fillcolor=red];
+        191 [label="Exit function test_5" style="filled" fillcolor=red];
     }
-    162 -> {164};
+    162 -> {163};
+    163 -> {164};
     164 -> {165};
     165 -> {166};
-    166 -> {168};
-    167 -> {185};
-    168 -> {169};
+    166 -> {167};
+    167 -> {168};
+    168 -> {177 169};
     169 -> {170};
-    170 -> {171 177};
+    170 -> {171};
     171 -> {172};
     172 -> {173};
     173 -> {174};
     174 -> {175};
     175 -> {176};
-    176 -> {167};
+    176 -> {183};
     177 -> {178};
     178 -> {179};
     179 -> {180};
@@ -523,220 +524,220 @@ digraph boundSmartcastsInBranches_kt {
     181 -> {182};
     182 -> {183};
     183 -> {184};
-    184 -> {167};
+    184 -> {185};
     185 -> {186};
     186 -> {187};
     187 -> {188};
     188 -> {189};
     189 -> {190};
     190 -> {191};
-    191 -> {163};
 
     subgraph cluster_48 {
         color=red
         192 [label="Enter function test_6" style="filled" fillcolor=red];
         subgraph cluster_49 {
             color=blue
-            194 [label="Enter block"];
-            195 [label="Variable declaration: lval x: R|kotlin/Any|"];
-            196 [label="Access variable R|<local>/a|"];
-            197 [label="Assignment: R|<local>/x|"];
-            198 [label="Access variable R|<local>/x|"];
-            199 [label="Access variable R|/A.s|"];
-            200 [label="Exit block"];
+            193 [label="Enter block"];
+            194 [label="Variable declaration: lval x: R|kotlin/Any|"];
+            195 [label="Access variable R|<local>/a|"];
+            196 [label="Assignment: R|<local>/x|"];
+            197 [label="Access variable R|<local>/x|"];
+            198 [label="Access variable R|/A.s|"];
+            199 [label="Exit block"];
         }
-        193 [label="Exit function test_6" style="filled" fillcolor=red];
+        200 [label="Exit function test_6" style="filled" fillcolor=red];
     }
-    192 -> {194};
+    192 -> {193};
+    193 -> {194};
     194 -> {195};
     195 -> {196};
     196 -> {197};
     197 -> {198};
     198 -> {199};
     199 -> {200};
-    200 -> {193};
 
     subgraph cluster_50 {
         color=red
         201 [label="Enter function test_7" style="filled" fillcolor=red];
         subgraph cluster_51 {
             color=blue
-            203 [label="Enter block"];
-            204 [label="Const: Null(null)"];
-            205 [label="Variable declaration: lval z: R|kotlin/String?|"];
-            206 [label="Access variable R|<local>/z|"];
-            207 [label="Variable declaration: lvar y: R|kotlin/String?|"];
-            208 [label="Access variable R|<local>/y|"];
-            209 [label="Variable declaration: lval x: R|kotlin/String?|"];
+            202 [label="Enter block"];
+            203 [label="Const: Null(null)"];
+            204 [label="Variable declaration: lval z: R|kotlin/String?|"];
+            205 [label="Access variable R|<local>/z|"];
+            206 [label="Variable declaration: lvar y: R|kotlin/String?|"];
+            207 [label="Access variable R|<local>/y|"];
+            208 [label="Variable declaration: lval x: R|kotlin/String?|"];
             subgraph cluster_52 {
                 color=blue
-                210 [label="Enter when"];
+                209 [label="Enter when"];
                 subgraph cluster_53 {
                     color=blue
-                    212 [label="Enter when branch condition "];
-                    213 [label="Access variable R|<local>/x|"];
-                    214 [label="Const: Null(null)"];
-                    215 [label="Operator !="];
-                    216 [label="Exit when branch condition"];
+                    210 [label="Enter when branch condition "];
+                    211 [label="Access variable R|<local>/x|"];
+                    212 [label="Const: Null(null)"];
+                    213 [label="Operator !="];
+                    214 [label="Exit when branch condition"];
                 }
-                227 [label="Synthetic else branch"];
-                217 [label="Enter when branch result"];
+                215 [label="Synthetic else branch"];
+                216 [label="Enter when branch result"];
                 subgraph cluster_54 {
                     color=blue
-                    218 [label="Enter block"];
-                    219 [label="Access variable R|<local>/x|"];
-                    220 [label="Access variable R|kotlin/String.length|"];
-                    221 [label="Access variable R|<local>/y|"];
-                    222 [label="Access variable R|kotlin/String.length|"];
-                    223 [label="Access variable R|<local>/z|"];
-                    224 [label="Access variable R|kotlin/String.length|"];
-                    225 [label="Exit block"];
+                    217 [label="Enter block"];
+                    218 [label="Access variable R|<local>/x|"];
+                    219 [label="Access variable R|kotlin/String.length|"];
+                    220 [label="Access variable R|<local>/y|"];
+                    221 [label="Access variable R|kotlin/String.length|"];
+                    222 [label="Access variable R|<local>/z|"];
+                    223 [label="Access variable R|kotlin/String.length|"];
+                    224 [label="Exit block"];
                 }
-                226 [label="Exit when branch result"];
-                211 [label="Exit when"];
+                225 [label="Exit when branch result"];
+                226 [label="Exit when"];
             }
             subgraph cluster_55 {
                 color=blue
-                228 [label="Enter when"];
+                227 [label="Enter when"];
                 subgraph cluster_56 {
                     color=blue
-                    230 [label="Enter when branch condition "];
-                    231 [label="Access variable R|<local>/y|"];
-                    232 [label="Const: Null(null)"];
-                    233 [label="Operator !="];
-                    234 [label="Exit when branch condition"];
+                    228 [label="Enter when branch condition "];
+                    229 [label="Access variable R|<local>/y|"];
+                    230 [label="Const: Null(null)"];
+                    231 [label="Operator !="];
+                    232 [label="Exit when branch condition"];
                 }
-                245 [label="Synthetic else branch"];
-                235 [label="Enter when branch result"];
+                233 [label="Synthetic else branch"];
+                234 [label="Enter when branch result"];
                 subgraph cluster_57 {
                     color=blue
-                    236 [label="Enter block"];
-                    237 [label="Access variable R|<local>/x|"];
-                    238 [label="Access variable R|kotlin/String.length|"];
-                    239 [label="Access variable R|<local>/y|"];
-                    240 [label="Access variable R|kotlin/String.length|"];
-                    241 [label="Access variable R|<local>/z|"];
-                    242 [label="Access variable R|kotlin/String.length|"];
-                    243 [label="Exit block"];
+                    235 [label="Enter block"];
+                    236 [label="Access variable R|<local>/x|"];
+                    237 [label="Access variable R|kotlin/String.length|"];
+                    238 [label="Access variable R|<local>/y|"];
+                    239 [label="Access variable R|kotlin/String.length|"];
+                    240 [label="Access variable R|<local>/z|"];
+                    241 [label="Access variable R|kotlin/String.length|"];
+                    242 [label="Exit block"];
                 }
-                244 [label="Exit when branch result"];
-                229 [label="Exit when"];
+                243 [label="Exit when branch result"];
+                244 [label="Exit when"];
             }
             subgraph cluster_58 {
                 color=blue
-                246 [label="Enter when"];
+                245 [label="Enter when"];
                 subgraph cluster_59 {
                     color=blue
-                    248 [label="Enter when branch condition "];
-                    249 [label="Access variable R|<local>/z|"];
-                    250 [label="Const: Null(null)"];
-                    251 [label="Operator !="];
-                    252 [label="Exit when branch condition"];
+                    246 [label="Enter when branch condition "];
+                    247 [label="Access variable R|<local>/z|"];
+                    248 [label="Const: Null(null)"];
+                    249 [label="Operator !="];
+                    250 [label="Exit when branch condition"];
                 }
-                263 [label="Synthetic else branch"];
-                253 [label="Enter when branch result"];
+                251 [label="Synthetic else branch"];
+                252 [label="Enter when branch result"];
                 subgraph cluster_60 {
                     color=blue
-                    254 [label="Enter block"];
-                    255 [label="Access variable R|<local>/x|"];
-                    256 [label="Access variable R|kotlin/String.length|"];
-                    257 [label="Access variable R|<local>/y|"];
-                    258 [label="Access variable R|kotlin/String.length|"];
-                    259 [label="Access variable R|<local>/z|"];
-                    260 [label="Access variable R|kotlin/String.length|"];
-                    261 [label="Exit block"];
+                    253 [label="Enter block"];
+                    254 [label="Access variable R|<local>/x|"];
+                    255 [label="Access variable R|kotlin/String.length|"];
+                    256 [label="Access variable R|<local>/y|"];
+                    257 [label="Access variable R|kotlin/String.length|"];
+                    258 [label="Access variable R|<local>/z|"];
+                    259 [label="Access variable R|kotlin/String.length|"];
+                    260 [label="Exit block"];
                 }
-                262 [label="Exit when branch result"];
-                247 [label="Exit when"];
+                261 [label="Exit when branch result"];
+                262 [label="Exit when"];
             }
-            264 [label="Const: Null(null)"];
-            265 [label="Assignment: R|<local>/y|"];
+            263 [label="Const: Null(null)"];
+            264 [label="Assignment: R|<local>/y|"];
             subgraph cluster_61 {
                 color=blue
-                266 [label="Enter when"];
+                265 [label="Enter when"];
                 subgraph cluster_62 {
                     color=blue
-                    268 [label="Enter when branch condition "];
-                    269 [label="Access variable R|<local>/x|"];
-                    270 [label="Const: Null(null)"];
-                    271 [label="Operator !="];
-                    272 [label="Exit when branch condition"];
+                    266 [label="Enter when branch condition "];
+                    267 [label="Access variable R|<local>/x|"];
+                    268 [label="Const: Null(null)"];
+                    269 [label="Operator !="];
+                    270 [label="Exit when branch condition"];
                 }
-                283 [label="Synthetic else branch"];
-                273 [label="Enter when branch result"];
+                271 [label="Synthetic else branch"];
+                272 [label="Enter when branch result"];
                 subgraph cluster_63 {
                     color=blue
-                    274 [label="Enter block"];
-                    275 [label="Access variable R|<local>/x|"];
-                    276 [label="Access variable R|kotlin/String.length|"];
-                    277 [label="Access variable R|<local>/y|"];
-                    278 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
-                    279 [label="Access variable R|<local>/z|"];
-                    280 [label="Access variable R|kotlin/String.length|"];
-                    281 [label="Exit block"];
+                    273 [label="Enter block"];
+                    274 [label="Access variable R|<local>/x|"];
+                    275 [label="Access variable R|kotlin/String.length|"];
+                    276 [label="Access variable R|<local>/y|"];
+                    277 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    278 [label="Access variable R|<local>/z|"];
+                    279 [label="Access variable R|kotlin/String.length|"];
+                    280 [label="Exit block"];
                 }
-                282 [label="Exit when branch result"];
-                267 [label="Exit when"];
+                281 [label="Exit when branch result"];
+                282 [label="Exit when"];
             }
             subgraph cluster_64 {
                 color=blue
-                284 [label="Enter when"];
+                283 [label="Enter when"];
                 subgraph cluster_65 {
                     color=blue
-                    286 [label="Enter when branch condition "];
-                    287 [label="Access variable R|<local>/y|"];
-                    288 [label="Const: Null(null)"];
-                    289 [label="Operator !="];
-                    290 [label="Exit when branch condition"];
+                    284 [label="Enter when branch condition "];
+                    285 [label="Access variable R|<local>/y|"];
+                    286 [label="Const: Null(null)"];
+                    287 [label="Operator !="];
+                    288 [label="Exit when branch condition"];
                 }
-                301 [label="Synthetic else branch"];
-                291 [label="Enter when branch result"];
+                289 [label="Synthetic else branch"];
+                290 [label="Enter when branch result"];
                 subgraph cluster_66 {
                     color=blue
-                    292 [label="Enter block"];
-                    293 [label="Access variable R|<local>/x|"];
-                    294 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
-                    295 [label="Access variable R|<local>/y|"];
-                    296 [label="Access variable R|kotlin/String.length|"];
-                    297 [label="Access variable R|<local>/z|"];
-                    298 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
-                    299 [label="Exit block"];
+                    291 [label="Enter block"];
+                    292 [label="Access variable R|<local>/x|"];
+                    293 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    294 [label="Access variable R|<local>/y|"];
+                    295 [label="Access variable R|kotlin/String.length|"];
+                    296 [label="Access variable R|<local>/z|"];
+                    297 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    298 [label="Exit block"];
                 }
-                300 [label="Exit when branch result"];
-                285 [label="Exit when"];
+                299 [label="Exit when branch result"];
+                300 [label="Exit when"];
             }
             subgraph cluster_67 {
                 color=blue
-                302 [label="Enter when"];
+                301 [label="Enter when"];
                 subgraph cluster_68 {
                     color=blue
-                    304 [label="Enter when branch condition "];
-                    305 [label="Access variable R|<local>/z|"];
-                    306 [label="Const: Null(null)"];
-                    307 [label="Operator !="];
-                    308 [label="Exit when branch condition"];
+                    302 [label="Enter when branch condition "];
+                    303 [label="Access variable R|<local>/z|"];
+                    304 [label="Const: Null(null)"];
+                    305 [label="Operator !="];
+                    306 [label="Exit when branch condition"];
                 }
-                319 [label="Synthetic else branch"];
-                309 [label="Enter when branch result"];
+                307 [label="Synthetic else branch"];
+                308 [label="Enter when branch result"];
                 subgraph cluster_69 {
                     color=blue
-                    310 [label="Enter block"];
-                    311 [label="Access variable R|<local>/x|"];
-                    312 [label="Access variable R|kotlin/String.length|"];
-                    313 [label="Access variable R|<local>/y|"];
-                    314 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
-                    315 [label="Access variable R|<local>/z|"];
-                    316 [label="Access variable R|kotlin/String.length|"];
-                    317 [label="Exit block"];
+                    309 [label="Enter block"];
+                    310 [label="Access variable R|<local>/x|"];
+                    311 [label="Access variable R|kotlin/String.length|"];
+                    312 [label="Access variable R|<local>/y|"];
+                    313 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    314 [label="Access variable R|<local>/z|"];
+                    315 [label="Access variable R|kotlin/String.length|"];
+                    316 [label="Exit block"];
                 }
-                318 [label="Exit when branch result"];
-                303 [label="Exit when"];
+                317 [label="Exit when branch result"];
+                318 [label="Exit when"];
             }
-            320 [label="Exit block"];
+            319 [label="Exit block"];
         }
-        202 [label="Exit function test_7" style="filled" fillcolor=red];
+        320 [label="Exit function test_7" style="filled" fillcolor=red];
     }
-    201 -> {203};
+    201 -> {202};
+    202 -> {203};
     203 -> {204};
     204 -> {205};
     205 -> {206};
@@ -744,13 +745,13 @@ digraph boundSmartcastsInBranches_kt {
     207 -> {208};
     208 -> {209};
     209 -> {210};
-    210 -> {212};
-    211 -> {228};
+    210 -> {211};
+    211 -> {212};
     212 -> {213};
     213 -> {214};
-    214 -> {215};
-    215 -> {216};
-    216 -> {217 227};
+    214 -> {216 215};
+    215 -> {226};
+    216 -> {217};
     217 -> {218};
     218 -> {219};
     219 -> {220};
@@ -760,15 +761,15 @@ digraph boundSmartcastsInBranches_kt {
     223 -> {224};
     224 -> {225};
     225 -> {226};
-    226 -> {211};
-    227 -> {211};
-    228 -> {230};
-    229 -> {246};
+    226 -> {227};
+    227 -> {228};
+    228 -> {229};
+    229 -> {230};
     230 -> {231};
     231 -> {232};
-    232 -> {233};
-    233 -> {234};
-    234 -> {235 245};
+    232 -> {234 233};
+    233 -> {244};
+    234 -> {235};
     235 -> {236};
     236 -> {237};
     237 -> {238};
@@ -778,15 +779,15 @@ digraph boundSmartcastsInBranches_kt {
     241 -> {242};
     242 -> {243};
     243 -> {244};
-    244 -> {229};
-    245 -> {229};
-    246 -> {248};
-    247 -> {264};
+    244 -> {245};
+    245 -> {246};
+    246 -> {247};
+    247 -> {248};
     248 -> {249};
     249 -> {250};
-    250 -> {251};
-    251 -> {252};
-    252 -> {253 263};
+    250 -> {252 251};
+    251 -> {262};
+    252 -> {253};
     253 -> {254};
     254 -> {255};
     255 -> {256};
@@ -796,17 +797,17 @@ digraph boundSmartcastsInBranches_kt {
     259 -> {260};
     260 -> {261};
     261 -> {262};
-    262 -> {247};
-    263 -> {247};
+    262 -> {263};
+    263 -> {264};
     264 -> {265};
     265 -> {266};
-    266 -> {268};
-    267 -> {284};
+    266 -> {267};
+    267 -> {268};
     268 -> {269};
     269 -> {270};
-    270 -> {271};
-    271 -> {272};
-    272 -> {273 283};
+    270 -> {272 271};
+    271 -> {282};
+    272 -> {273};
     273 -> {274};
     274 -> {275};
     275 -> {276};
@@ -816,15 +817,15 @@ digraph boundSmartcastsInBranches_kt {
     279 -> {280};
     280 -> {281};
     281 -> {282};
-    282 -> {267};
-    283 -> {267};
-    284 -> {286};
-    285 -> {302};
+    282 -> {283};
+    283 -> {284};
+    284 -> {285};
+    285 -> {286};
     286 -> {287};
     287 -> {288};
-    288 -> {289};
-    289 -> {290};
-    290 -> {291 301};
+    288 -> {290 289};
+    289 -> {300};
+    290 -> {291};
     291 -> {292};
     292 -> {293};
     293 -> {294};
@@ -834,15 +835,15 @@ digraph boundSmartcastsInBranches_kt {
     297 -> {298};
     298 -> {299};
     299 -> {300};
-    300 -> {285};
-    301 -> {285};
-    302 -> {304};
-    303 -> {320};
+    300 -> {301};
+    301 -> {302};
+    302 -> {303};
+    303 -> {304};
     304 -> {305};
     305 -> {306};
-    306 -> {307};
-    307 -> {308};
-    308 -> {309 319};
+    306 -> {308 307};
+    307 -> {318};
+    308 -> {309};
     309 -> {310};
     310 -> {311};
     311 -> {312};
@@ -852,8 +853,7 @@ digraph boundSmartcastsInBranches_kt {
     315 -> {316};
     316 -> {317};
     317 -> {318};
-    318 -> {303};
-    319 -> {303};
-    320 -> {202};
+    318 -> {319};
+    319 -> {320};
 
 }
