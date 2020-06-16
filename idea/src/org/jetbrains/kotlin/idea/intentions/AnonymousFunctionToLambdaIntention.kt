@@ -32,22 +32,14 @@ class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFu
     KotlinBundle.lazyMessage("convert.anonymous.function.to.lambda.expression")
 ) {
     override fun applicabilityRange(element: KtNamedFunction): TextRange? {
-        if (element.name != null) return null
-
-        if (!element.hasBody()) return null
-
-        val callElement = element.getParentOfTypeAndBranch<KtCallElement> { valueArgumentList } ?: return null
-        if (callElement.getCalleeExpressionIfAny() !is KtNameReferenceExpression) {
-            return null
-        }
-
+        if (element.name != null || !element.hasBody()) return null
         return element.funKeyword?.textRange
     }
 
     override fun applyTo(element: KtNamedFunction, editor: Editor?) {
-        val argument = element.getStrictParentOfType<KtValueArgument>() ?: return
-        val callElement = argument.getStrictParentOfType<KtCallElement>() ?: return
-        val typeParameterIndexes = if (callElement.typeArgumentList == null) {
+        val argument = element.getStrictParentOfType<KtValueArgument>()
+        val callElement = argument?.getStrictParentOfType<KtCallElement>()
+        val typeParameterIndexes = if (callElement != null && callElement.typeArgumentList == null) {
             val functionalType = callElement.resolveToCall()?.getParameterForArgument(argument)?.let {
                 if (it.isVararg) it.original.type.arguments.firstOrNull()?.type else it.original.type
             }
@@ -62,7 +54,7 @@ class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFu
         }
 
         val commentSaver = CommentSaver(element)
-        val returnSaver = ReturnSaver(element)
+        val returnSaver = if (callElement != null) ReturnSaver(element) else null
 
         val body = element.bodyExpression!!
 
@@ -71,9 +63,10 @@ class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFu
 
             val parameters = element.valueParameters
 
-            val needParameters = typeParameterIndexes.isNotEmpty() || parameters.count() > 1 || parameters.any { parameter ->
-                ReferencesSearch.search(parameter, LocalSearchScope(body)).any()
-            }
+            val needParameters = callElement == null
+                    || typeParameterIndexes.isNotEmpty()
+                    || parameters.count() > 1
+                    || parameters.any { parameter -> ReferencesSearch.search(parameter, LocalSearchScope(body)).any() }
             if (needParameters) {
                 parameters.forEachIndexed { index, parameter ->
                     if (index > 0) {
@@ -81,7 +74,7 @@ class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFu
                     }
                     appendName(parameter.nameAsSafeName)
                     val typeReference = parameter.typeReference
-                    if (typeReference != null && index in typeParameterIndexes) {
+                    if (typeReference != null && (callElement == null || index in typeParameterIndexes)) {
                         appendFixedText(": ")
                         appendTypeReference(typeReference)
                     }
@@ -102,12 +95,14 @@ class AnonymousFunctionToLambdaIntention : SelfTargetingRangeIntention<KtNamedFu
         val replaced = element.replaced(newExpression) as KtLambdaExpression
         commentSaver.restore(replaced, forceAdjustIndent = true/* by some reason lambda body is sometimes not properly indented */)
 
-        val callExpression = replaced.parents.firstIsInstance<KtCallExpression>()
-        val callee = callExpression.getCalleeExpressionIfAny()!! as KtNameReferenceExpression
+        if (returnSaver != null) {
+            val callExpression = replaced.parents.firstIsInstance<KtCallExpression>()
+            val callee = callExpression.getCalleeExpressionIfAny()!! as KtNameReferenceExpression
 
-        val returnLabel = callee.getReferencedNameAsName()
-        returnSaver.restore(replaced, returnLabel)
+            val returnLabel = callee.getReferencedNameAsName()
+            returnSaver.restore(replaced, returnLabel)
 
-        callExpression.getLastLambdaExpression()?.moveFunctionLiteralOutsideParenthesesIfPossible()
+            callExpression.getLastLambdaExpression()?.moveFunctionLiteralOutsideParenthesesIfPossible()
+        }
     }
 }

@@ -4,6 +4,7 @@
 // ACTION: Enable a trailing comma by default in the formatter
 // ACTION: Remove explicit lambda parameter types (may break code)
 // ACTION: Rename to _
+// ACTION: Convert to anonymous function
 fun test(i: Int) {
     val p: (String) -> Boolean =
         when (i) {

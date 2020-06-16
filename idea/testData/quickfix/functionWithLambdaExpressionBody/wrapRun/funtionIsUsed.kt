@@ -6,6 +6,7 @@
 // ACTION: Specify explicit lambda signature
 // ACTION: Specify explicit lambda signature
 // ACTION: Specify return type explicitly
+// ACTION: Convert to anonymous function
 fun test(a: Int, b: Int) = <caret>{ a + b }
 
 val foo = test(1, 2)()

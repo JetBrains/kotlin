@@ -1,0 +1,1 @@
+val test = <caret>{ i: Int, s: String -> "$i:$s" }

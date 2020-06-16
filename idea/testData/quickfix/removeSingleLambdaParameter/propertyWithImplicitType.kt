@@ -5,6 +5,7 @@
 // ACTION: Convert to apply
 // ACTION: Convert to multi-line lambda
 // ACTION: Enable a trailing comma by default in the formatter
+// ACTION: Convert to anonymous function
 fun test() {
     val f = { <caret>i: Int -> foo() }
     bar(f)

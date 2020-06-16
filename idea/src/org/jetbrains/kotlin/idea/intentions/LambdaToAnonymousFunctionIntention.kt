@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescript
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.ErrorType
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -39,15 +40,15 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
     KotlinBundle.lazyMessage("convert.lambda.expression.to.anonymous.function")
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
-        val argument = element.getStrictParentOfType<KtValueArgument>() ?: return false
-        val call = argument.getStrictParentOfType<KtCallElement>() ?: return false
-        if (call.getStrictParentOfType<KtFunction>()?.hasModifier(KtTokens.INLINE_KEYWORD) == true) return false
+        val argument = element.getStrictParentOfType<KtValueArgument>()
+        val call = argument?.getStrictParentOfType<KtCallElement>()
+        if (call?.getStrictParentOfType<KtFunction>()?.hasModifier(KtTokens.INLINE_KEYWORD) == true) return false
 
-        val context = call.analyze(BodyResolveMode.PARTIAL)
-        if (call.getResolvedCall(context)?.getParameterForArgument(argument)?.type?.isSuspendFunctionType == true) return false
+        val context = element.analyze(BodyResolveMode.PARTIAL)
+        if (call?.getResolvedCall(context)?.getParameterForArgument(argument)?.type?.isSuspendFunctionType == true) return false
         val descriptor =
             context[BindingContext.DECLARATION_TO_DESCRIPTOR, element.functionLiteral] as? AnonymousFunctionDescriptor ?: return false
-        if (descriptor.valueParameters.any { it.name.isSpecial }) return false
+        if (descriptor.valueParameters.any { it.name.isSpecial || it.type is ErrorType }) return false
 
         val lastElement = element.functionLiteral.arrow ?: element.functionLiteral.lBrace
         return caretOffset <= lastElement.endOffset

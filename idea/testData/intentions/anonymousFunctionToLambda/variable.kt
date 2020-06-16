@@ -1,0 +1,1 @@
+val test = <caret>fun(i: Int, s: String) = "$i:$s"

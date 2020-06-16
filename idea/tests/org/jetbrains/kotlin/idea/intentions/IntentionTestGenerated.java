@@ -2130,6 +2130,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testTypeParameterWithVararg() throws Exception {
             runTest("idea/testData/intentions/anonymousFunctionToLambda/typeParameterWithVararg.kt");
         }
+
+        @TestMetadata("variable.kt")
+        public void testVariable() throws Exception {
+            runTest("idea/testData/intentions/anonymousFunctionToLambda/variable.kt");
+        }
     }
 
     @TestMetadata("idea/testData/intentions/branched")
@@ -10684,6 +10689,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("variable.kt")
         public void testVariable() throws Exception {
             runTest("idea/testData/intentions/lambdaToAnonymousFunction/variable.kt");
+        }
+
+        @TestMetadata("variable2.kt")
+        public void testVariable2() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/variable2.kt");
+        }
+
+        @TestMetadata("variable3.kt")
+        public void testVariable3() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/variable3.kt");
+        }
+
+        @TestMetadata("variable4.kt")
+        public void testVariable4() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/variable4.kt");
         }
 
         @TestMetadata("withPackage.kt")

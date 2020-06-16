@@ -1,0 +1,3 @@
+val test = fun(i: Int, s: String): String {
+    return "$i:$s"
+}

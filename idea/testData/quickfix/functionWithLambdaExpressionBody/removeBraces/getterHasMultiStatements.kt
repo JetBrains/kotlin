@@ -8,6 +8,7 @@
 // ACTION: Specify explicit lambda signature
 // ACTION: Specify type explicitly
 // ACTION: Specify type explicitly
+// ACTION: Convert to anonymous function
 val test get() = <caret>{
     foo()
     foo()

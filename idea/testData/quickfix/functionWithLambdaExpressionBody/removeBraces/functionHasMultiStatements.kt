@@ -6,6 +6,7 @@
 // ACTION: Enable a trailing comma by default in the formatter
 // ACTION: Specify explicit lambda signature
 // ACTION: Specify return type explicitly
+// ACTION: Convert to anonymous function
 fun test(a: Int, b: Int) = <caret>{
     foo()
     foo()
