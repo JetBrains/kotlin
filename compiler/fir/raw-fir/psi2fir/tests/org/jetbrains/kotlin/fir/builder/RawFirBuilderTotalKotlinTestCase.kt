@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
@@ -52,7 +51,8 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         println("BASE PATH: $testDataPath")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            if (file.path.contains("testData") || file.path.contains("resources")) continue
+            val path = file.path
+            if ("testData" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
             if (file.extension != "kt") continue
             try {
                 val ktFile = createKtFile(file.toRelativeString(root))
@@ -175,7 +175,8 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         val root = File(testDataPath)
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            if (file.path.contains("testData") || file.path.contains("resources")) continue
+            val path = file.path
+            if ("testData" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
             if (file.extension != "kt") continue
             val ktFile = createKtFile(file.toRelativeString(root))
             val firFile = ktFile.toFirFile(stubMode = false)
@@ -201,7 +202,8 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         var counter = 0
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            if (file.path.contains("testData") || file.path.contains("resources")) continue
+            val path = file.path
+            if ("testData" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
             if (file.extension != "kt") continue
             val ktFile = createKtFile(file.toRelativeString(root))
             val firFile: FirFile = ktFile.toFirFile(stubMode = false)
