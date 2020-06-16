@@ -29,24 +29,31 @@ class CommentedDeclarationHandler : MatchingHandler() {
             is KtDeclaration -> {
                 val patternComment = patternNode.getNonKDocCommentChild()
 
-                return when {
+                when {
                     // Comment already matched
                     PsiTreeUtil.skipWhitespacesBackward(patternNode) is PsiComment ->
-                        context.matcher.match(patternNode, matchedNode)
+                        return context.matcher.match(patternNode, matchedNode)
 
                     // Match [PROPERTY[PsiComment]] with [PROPERTY[PsiComment]]
                     matchedNode is KtDeclaration && patternComment != null ->
-                        context.matcher.match(patternNode, matchedNode)
+                        return context.matcher.match(patternNode, matchedNode)
                                 && context.matcher.match(patternComment, matchedNode.getNonKDocCommentChild())
 
                     // Match [PROPERTY[]] with [PROPERTY[PsiComment?]]
-                    matchedNode is KtDeclaration -> context.matcher.match(patternNode, matchedNode)
+                    matchedNode is KtDeclaration ->
+                        return context.matcher.match(patternNode, matchedNode)
 
                     // Match [PROPERTY[PsiComment]] with [PsiComment, PROPERTY]
-                    matchedNode is PsiComment && PsiTreeUtil.skipWhitespacesForward(matchedNode) is KtDeclaration ->
-                        patternComment != null
-                                && context.matcher.match(patternComment, matchedNode)
-                    else -> false
+                    matchedNode is PsiComment && PsiTreeUtil.skipWhitespacesForward(matchedNode) is KtDeclaration -> {
+                        val firstMatch = patternComment != null && context.matcher.match(patternComment, matchedNode)
+                        val secondMatch = context.matcher.match(patternNode, PsiTreeUtil.skipWhitespacesForward(matchedNode))
+                        if (firstMatch && secondMatch) {
+                            context.addMatchedNode(PsiTreeUtil.skipWhitespacesForward(matchedNode))
+                            return true
+                        }
+                    }
+
+                    else -> return false
                 }
             }
         }
@@ -56,11 +63,6 @@ class CommentedDeclarationHandler : MatchingHandler() {
     override fun shouldAdvanceTheMatchFor(patternElement: PsiElement?, matchedElement: PsiElement?): Boolean {
         if (patternElement is PsiComment && matchedElement is KtDeclaration) return false
         return super.shouldAdvanceTheMatchFor(patternElement, matchedElement)
-    }
-
-    override fun shouldAdvanceThePatternFor(patternElement: PsiElement?, matchedElement: PsiElement?): Boolean {
-        if (patternElement is KtDeclaration && matchedElement is PsiComment) return false
-        return super.shouldAdvanceThePatternFor(patternElement, matchedElement)
     }
 
 }

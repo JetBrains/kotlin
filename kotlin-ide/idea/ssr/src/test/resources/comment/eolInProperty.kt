@@ -12,11 +12,11 @@ val foo6 = 1
 val foo7 = 1
 
 fun main() {
-    <warning descr="SSR">//
-    val bar1 = 1</warning>
+    //
+    <warning descr="SSR">val bar1 = 1</warning>
     <warning descr="SSR">val bar2 = 1 //</warning>
-    <warning descr="SSR">/**/
-    val bar3 = 1</warning>
+    /**/
+    <warning descr="SSR">val bar3 = 1</warning>
     <warning descr="SSR">val bar4 = 1 /**/</warning>
     <warning descr="SSR">val bar5 /**/ = 1</warning>
     /**
