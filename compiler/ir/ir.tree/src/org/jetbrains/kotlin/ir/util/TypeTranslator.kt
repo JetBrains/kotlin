@@ -32,7 +32,8 @@ class TypeTranslator(
     val languageVersionSettings: LanguageVersionSettings,
     builtIns: KotlinBuiltIns,
     private val typeParametersResolver: TypeParametersResolver = ScopedTypeParametersResolver(),
-    private val enterTableScope: Boolean = false
+    private val enterTableScope: Boolean = false,
+    private val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ) {
 
     private val erasureStack = Stack<PropertyDescriptor>()
@@ -108,7 +109,7 @@ class TypeTranslator(
 
         return IrSimpleTypeBuilder().apply {
             this.kotlinType = flexibleApproximatedType
-            this.hasQuestionMark = approximatedType.isMarkedNullable
+            this.hasQuestionMark = approximatedType.isMarkedNullable || extensions.enhancedNullability.hasEnhancedNullability(approximatedType)
             this.variance = variance
             this.abbreviation = approximatedType.getAbbreviation()?.toIrTypeAbbreviation()
             when (ktTypeDescriptor) {

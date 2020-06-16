@@ -44,7 +44,7 @@ class DeclarationStubGenerator(
     val moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
     languageVersionSettings: LanguageVersionSettings,
-    val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
+    val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
 ) : IrProvider {
     private val lazyTable = symbolTable.lazyWrapper
 
@@ -61,7 +61,14 @@ class DeclarationStubGenerator(
     }
 
     val typeTranslator =
-        TypeTranslator(lazyTable, languageVersionSettings, moduleDescriptor.builtIns, LazyScopedTypeParametersResolver(lazyTable), true)
+        TypeTranslator(
+            lazyTable,
+            languageVersionSettings,
+            moduleDescriptor.builtIns,
+            LazyScopedTypeParametersResolver(lazyTable),
+            true,
+            extensions
+        )
     private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, lazyTable)
 
     private val facadeClassMap = mutableMapOf<DeserializedContainerSource, IrClass?>()

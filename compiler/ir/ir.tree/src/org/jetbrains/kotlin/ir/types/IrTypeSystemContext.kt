@@ -305,9 +305,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean =
-        // TODO: don't fall back to KotlinType to check annotations. Currently testIdentityEquals fails on JVM without it
-        (this as IrAnnotationContainer).hasAnnotation(fqName) ||
-                (this as IrType).toKotlinType().annotations.hasAnnotation(fqName)
+        (this as IrAnnotationContainer).hasAnnotation(fqName)
 
     override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? =
         (this as? IrType)?.annotations?.firstOrNull { annotation ->

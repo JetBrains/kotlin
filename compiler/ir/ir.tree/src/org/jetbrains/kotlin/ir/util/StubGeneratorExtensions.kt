@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.types.KotlinType
 
 open class StubGeneratorExtensions {
     open fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin? = null
@@ -17,6 +18,17 @@ open class StubGeneratorExtensions {
     open fun generateFacadeClass(source: DeserializedContainerSource): IrClass? = null
 
     open fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean = false
+
+    open val enhancedNullability: EnhancedNullability
+        get() = EnhancedNullability
+
+    open class EnhancedNullability {
+        open fun hasEnhancedNullability(kotlinType: KotlinType): Boolean = false
+
+        open fun stripEnhancedNullability(kotlinType: KotlinType): KotlinType = kotlinType
+
+        companion object Instance : EnhancedNullability()
+    }
 
     companion object {
         @JvmField

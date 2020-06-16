@@ -30,7 +30,9 @@ fun createGeneratorContext(
     symbolTable: SymbolTable,
     extensions: GeneratorExtensions
 ): GeneratorContext {
-    val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, builtIns = moduleDescriptor.builtIns)
+    val typeTranslator = TypeTranslator(
+        symbolTable, languageVersionSettings, builtIns = moduleDescriptor.builtIns, extensions = extensions
+    )
     val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
     typeTranslator.constantValueGenerator = constantValueGenerator
     constantValueGenerator.typeTranslator = typeTranslator
