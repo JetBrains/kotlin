@@ -319,14 +319,6 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
   }
 
   protected PsiFile doReformat(final Project project, final PsiFile psiFile) {
-    Language language = getDefaultLanguage();
-    if (language != null) {
-      LanguageCodeStyleSettingsProvider provider = LanguageCodeStyleSettingsProvider.forLanguage(language);
-      if (provider != null && provider.useTextReformat()) {
-        CodeStyleManager.getInstance(project).reformatText(psiFile, 0, psiFile.getTextLength());
-        return psiFile;
-      }
-    }
     CodeStyleManager.getInstance(project).reformat(psiFile);
     return psiFile;
   }
