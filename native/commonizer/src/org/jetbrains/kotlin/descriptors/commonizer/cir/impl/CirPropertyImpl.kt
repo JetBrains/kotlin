@@ -25,7 +25,7 @@ data class CirPropertyImpl(
     override val kind: CallableMemberDescriptor.Kind,
     override val isVar: Boolean,
     override val isLateInit: Boolean,
-    override val isConst: Boolean,
+    override var isConst: Boolean,
     override val isDelegate: Boolean,
     override val getter: CirPropertyGetter?,
     override val setter: CirPropertySetter?,
