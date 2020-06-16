@@ -7,31 +7,34 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitor
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
 
-enum class TraverseDirection {
-    Forward, Backward
+fun ControlFlowGraph.getEnterNode(direction: TraverseDirection): CFGNode<*> = when (direction) {
+    TraverseDirection.Forward -> enterNode
+    TraverseDirection.Backward -> exitNode
 }
 
-@OptIn(ExperimentalStdlibApi::class)
-fun <D> ControlFlowGraph.traverse(
-    direction: TraverseDirection,
-    visitor: ControlFlowGraphVisitor<*, D>,
-    data: D
-) {
-    val nodes = when (direction) {
-        TraverseDirection.Forward -> nodes
-        TraverseDirection.Backward -> nodes.reversed()
+fun ControlFlowGraph.getNodesInOrder(direction: TraverseDirection): List<CFGNode<*>> = when (direction) {
+    TraverseDirection.Forward -> nodes
+    TraverseDirection.Backward -> nodes.asReversed()
+}
+
+fun CFGNode<*>.isEnterNode(direction: TraverseDirection): Boolean = when (direction) {
+    TraverseDirection.Forward -> owner.enterNode == this
+    TraverseDirection.Backward -> owner.exitNode == this
+}
+
+val CFGNode<*>.previousCfgNodes: List<CFGNode<*>>
+    get() = previousNodes.filter {
+        val kind = incomingEdges.getValue(it)
+        if (this.isDead) {
+            kind.usedInCfa
+        } else {
+            kind.usedInCfa && !kind.isDead
+        }
     }
-    for (node in nodes) {
-        node.accept(visitor, data)
-    }
-}
 
-fun ControlFlowGraph.traverse(
-    direction: TraverseDirection,
-    visitor: ControlFlowGraphVisitorVoid
-) {
-    traverse(direction, visitor, null)
-}
+val CFGNode<*>.followingCfgNodes: List<CFGNode<*>>
+    get() = followingNodes.filter {
+        val kind = outgoingEdges.getValue(it)
+        kind.usedInCfa && !kind.isDead
+    }
