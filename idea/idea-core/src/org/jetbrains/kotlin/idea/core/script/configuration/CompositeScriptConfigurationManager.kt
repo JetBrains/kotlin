@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangesNotifier
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
+import org.jetbrains.kotlin.idea.core.script.ucache.ScriptClassRootsBuilder
 import org.jetbrains.kotlin.idea.core.script.ucache.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.ucache.ScriptClassRootsUpdater
 import org.jetbrains.kotlin.psi.KtFile
@@ -52,9 +53,15 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
 
     val default = DefaultScriptingSupport(this)
 
-    val updater = ScriptClassRootsUpdater(project, this) { builder ->
-        default.collectConfigurations(builder)
-        plugins.forEach { it.collectConfigurations(builder) }
+    val updater = object : ScriptClassRootsUpdater(project, this) {
+        override fun gatherRoots(builder: ScriptClassRootsBuilder) {
+            default.collectConfigurations(builder)
+            plugins.forEach { it.collectConfigurations(builder) }
+        }
+
+        override fun afterUpdate() {
+            plugins.forEach { it.afterUpdate() }
+        }
     }
 
     fun tryGetScriptDefinitionFast(locationId: String): ScriptDefinition? {

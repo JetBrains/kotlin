@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import java.io.File
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * [GradleBuildRoot] is a linked gradle build (don't confuse with gradle project and included build).
@@ -28,8 +29,11 @@ import java.io.File
 sealed class GradleBuildRoot(
     private val lastModifiedFiles: LastModifiedFiles
 ) {
-    @Volatile
-    var importing = false
+    enum class ImportingStatus {
+        importing, updatingCaches, updated
+    }
+
+    val importing = AtomicReference(ImportingStatus.updated)
 
     abstract val pathPrefix: String
 

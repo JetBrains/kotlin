@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.core.script.ucache.ScriptClassRootsBuilder
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.scripting.gradle.*
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslGradleBuildSync
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot.ImportingStatus.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -88,8 +89,8 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     }
 
     override fun isConfigurationLoadingInProgress(file: KtFile): Boolean {
-        return when (val root = findScriptBuildRoot(file.originalFile.virtualFile)?.root) {
-            is GradleBuildRoot -> root.importing
+        return when (val root = findScriptBuildRoot(file.originalFile.virtualFile)?.nearest) {
+            is GradleBuildRoot -> root.importing.get() != updated
             else -> false
         }
     }
@@ -104,6 +105,14 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         roots.list.forEach { root ->
             if (root is Imported) {
                 root.collectConfigurations(builder)
+            }
+        }
+    }
+
+    override fun afterUpdate() {
+        roots.list.forEach { root ->
+            if (root.importing.compareAndSet(updatingCaches, updated)) {
+                updateNotifications { it.startsWith(root.pathPrefix) }
             }
         }
     }
@@ -126,7 +135,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     }
 
     fun markImportingInProgress(workingDir: String, inProgress: Boolean = true) {
-        actualizeBuildRoot(workingDir)?.importing = inProgress
+        actualizeBuildRoot(workingDir)?.importing?.set(if (inProgress) importing else updated)
         updateNotifications { it.startsWith(workingDir) }
     }
 
@@ -137,10 +146,10 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             if (root is Imported && root.data.models.isEmpty()) return
         }
 
-        try {
-            val oldRoot = actualizeBuildRoot(sync.workingDir) ?: return
-            oldRoot.importing = false
+        val oldRoot = actualizeBuildRoot(sync.workingDir) ?: return
+        oldRoot.importing.set(updatingCaches)
 
+        try {
             if (oldRoot is Legacy) return
 
             val templateClasspath = GradleScriptDefinitionsContributor.getDefinitionsTemplateClasspath(project)
@@ -153,8 +162,9 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             newRoot.saveLastModifiedFiles()
 
             add(newRoot)
-        } finally {
-            updateNotifications { it.startsWith(sync.workingDir) }
+        } catch (e: Throwable) {
+            markImportingInProgress(sync.workingDir, false)
+            throw e
         }
     }
 
