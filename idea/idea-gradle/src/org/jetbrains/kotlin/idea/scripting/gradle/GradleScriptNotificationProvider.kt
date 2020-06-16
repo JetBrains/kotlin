@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsLocator.
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.Imported
 
-class MissingGradleScriptConfigurationNotificationProvider(private val project: Project) :
+class GradleScriptNotificationProvider(private val project: Project) :
     EditorNotifications.Provider<EditorNotificationPanel>() {
     override fun getKey(): Key<EditorNotificationPanel> = KEY
 

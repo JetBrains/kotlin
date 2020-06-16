@@ -29,7 +29,7 @@
         <externalSystemTaskNotificationListener
             implementation="org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslSyncListener"
         />
-        <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.scripting.gradle.MissingGradleScriptConfigurationNotificationProvider"/>
+        <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptNotificationProvider"/>
 
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinJvmTestClassGradleConfigurationProducer"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinMultiplatformJvmTestClassGradleConfigurationProducer"/>
