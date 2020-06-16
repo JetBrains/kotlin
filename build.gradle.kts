@@ -1053,7 +1053,7 @@ if (disableVerificationTasks) {
     gradle.taskGraph.whenReady {
         allTasks.forEach {
             if (it is VerificationTask) {
-                println("DISABLED: '$it'")
+                logger.info("DISABLED: '$it'")
                 it.enabled = false
             }
         }
