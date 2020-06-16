@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.ImportPath
 
 class KotlinUnusedImportInspection : AbstractKotlinInspection() {
-    data class ImportData(val unusedImports: List<KtImportDirective>, val optimizerData: OptimizedImportsBuilder.InputData)
+    class ImportData(val unusedImports: List<KtImportDirective>, val optimizerData: OptimizedImportsBuilder.InputData)
 
     companion object {
         fun analyzeImports(file: KtFile): ImportData? {
@@ -128,6 +128,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             if (!KotlinCodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) {
                 fixes.add(EnableOptimizeImportsOnTheFlyFix(file))
             }
+
             manager.createProblemDescriptor(
                 it,
                 KotlinBundle.message("unused.import.directive"),
