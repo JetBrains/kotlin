@@ -342,6 +342,17 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         LoadScriptConfigurationNotificationFactory.hideNotification(file, project)
     }
 
+    fun updateScriptDefinitionsReferences() {
+        // remove notification for all files
+        cache.allApplied().forEach { (file, _) ->
+            saveReports(file, listOf())
+            file.removeScriptDependenciesNotificationPanel(project)
+            LoadScriptConfigurationNotificationFactory.hideNotification(file, project)
+        }
+
+        cache.clear()
+    }
+
     companion object {
         fun getInstance(project: Project) =
             (ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager).default
@@ -507,10 +518,6 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         manager.updater.update {
             reloadOutOfDateConfiguration(file, forceSync = true)
         }
-    }
-
-    fun updateScriptDefinitionsReferences() {
-        cache.clear()
     }
 
     fun collectConfigurations(builder: ScriptClassRootsBuilder) {
