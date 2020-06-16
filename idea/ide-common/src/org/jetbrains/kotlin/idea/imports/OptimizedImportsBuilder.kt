@@ -49,13 +49,13 @@ class OptimizedImportsBuilder(
         fun resolve(bindingContext: BindingContext): Collection<DeclarationDescriptor>
     }
 
-    data class InputData(
+    class InputData(
         val descriptorsToImport: Set<DeclarationDescriptor>,
         val namesToImport: Map<FqName, Set<Name>>,
         val references: Collection<AbstractReference>
     )
 
-    data class Options(
+    class Options(
         val nameCountToUseStarImport: Int,
         val nameCountToUseStarImportForMembers: Int,
         val isInPackagesToUseStarImport: (FqName) -> Boolean
@@ -106,9 +106,7 @@ class OptimizedImportsBuilder(
 
     private fun tryBuildOptimizedImports(): List<ImportPath>? {
         val importsToGenerate = HashSet<ImportPath>()
-        importRules
-            .filterIsInstance<ImportRule.Add>()
-            .mapTo(importsToGenerate) { it.importPath }
+        importRules.filterIsInstance<ImportRule.Add>().mapTo(importsToGenerate) { it.importPath }
 
         val descriptorsByParentFqName = HashMap<FqName, MutableSet<DeclarationDescriptor>>()
         for (descriptor in data.descriptorsToImport) {
@@ -141,13 +139,11 @@ class OptimizedImportsBuilder(
             val nameCountToUseStar = descriptors.first().nameCountToUseStar()
             val useExplicitImports = fqNames.size < nameCountToUseStar && !options.isInPackagesToUseStarImport(parentFqName)
                     || !starImportPath.isAllowedByRules()
+
             if (useExplicitImports) {
-                fqNames
-                    .filter(this::needExplicitImport)
-                    .mapTo(importsToGenerate) { ImportPath(it, false) }
+                fqNames.filter(this::needExplicitImport).mapTo(importsToGenerate) { ImportPath(it, false) }
             } else {
-                descriptors
-                    .asSequence()
+                descriptors.asSequence()
                     .filterIsInstance<ClassDescriptor>()
                     .map { it.importableFqName!! }
                     .filterTo(classNamesToCheck, this::needExplicitImport)
@@ -183,8 +179,11 @@ class OptimizedImportsBuilder(
                     val element = ref.element
                     val bindingContext = element.analyze()
                     val expressionToAnalyze = getExpressionToAnalyze(element) ?: continue
-                    val newScope =
-                        element.getResolutionScope(bindingContext, file.getResolutionFacade()).replaceImportingScopes(newFileScope)
+                    val newScope = element.getResolutionScope(
+                        bindingContext,
+                        file.getResolutionFacade()
+                    ).replaceImportingScopes(newFileScope)
+
                     val newBindingContext = expressionToAnalyze.analyzeAsReplacement(
                         expressionToAnalyze,
                         bindingContext,
@@ -272,10 +271,12 @@ class OptimizedImportsBuilder(
                 append("\n")
             }
         }
+
         val fileWithImports = KtPsiFactory(originalFile).createAnalyzableFile("Dummy_" + originalFile.name, fileText, originalFile)
         if (file.isScript()) {
             fileWithImports.originalFile = originalFile
         }
+
         return fileWithImports.getFileResolutionScope()
     }
 
@@ -312,12 +313,10 @@ class OptimizedImportsBuilder(
             .filter { it.isNotEmpty() }
     }
 
-    private fun canUseStarImport(descriptor: DeclarationDescriptor, fqName: FqName): Boolean {
-        return when {
-            fqName.parent().isRoot -> false
-            (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.OBJECT -> false
-            else -> true
-        }
+    private fun canUseStarImport(descriptor: DeclarationDescriptor, fqName: FqName): Boolean = when {
+        fqName.parent().isRoot -> false
+        (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.OBJECT -> false
+        else -> true
     }
 
     private fun needExplicitImport(fqName: FqName): Boolean = hasAlias(fqName) || !isImportedByDefault(fqName)

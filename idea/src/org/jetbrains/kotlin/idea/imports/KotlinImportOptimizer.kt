@@ -102,6 +102,7 @@ class KotlinImportOptimizer : ImportOptimizer {
                     element.acceptChildren(this)
                 }
             })
+
             size
         } else {
             0
@@ -205,12 +206,14 @@ class KotlinImportOptimizer : ImportOptimizer {
                 get() {
                     val resolvesByNames = reference.resolvesByNames
                     if (reference is KtInvokeFunctionReference) {
-                        val additionalNames = (reference.element.calleeExpression as? KtNameReferenceExpression)
-                            ?.mainReference?.resolvesByNames
+                        val additionalNames =
+                            (reference.element.calleeExpression as? KtNameReferenceExpression)?.mainReference?.resolvesByNames
+
                         if (additionalNames != null) {
                             return resolvesByNames + additionalNames
                         }
                     }
+
                     return resolvesByNames
                 }
 
@@ -223,6 +226,7 @@ class KotlinImportOptimizer : ImportOptimizer {
                         if (reference.getter) "Getter" else "Setter"
                     )
                 }
+
                 else -> reference.toString().replace("DescriptorsImpl", "")
             }
         }
