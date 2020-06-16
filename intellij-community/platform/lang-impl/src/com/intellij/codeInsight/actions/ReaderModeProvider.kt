@@ -8,5 +8,5 @@ import com.intellij.openapi.project.Project
  * Use it to provide an activity that should be applied for editor in Read Mode
  */
 interface ReaderModeProvider {
-  fun applyModeChanged(project: Project, editor: Editor, readerMode: Boolean, alreadyOpenedFilesOnly: Boolean) {}
+  fun applyModeChanged(project: Project, editor: Editor, readerMode: Boolean, fileIsOpenAlready: Boolean) {}
 }
