@@ -126,24 +126,43 @@ public class UnknownSdkTracker {
       .run(new Task.Backgroundable(myProject, ProjectBundle.message("progress.title.resolving.sdks"), false, ALWAYS_BACKGROUND) {
              @Override
              public void run(@NotNull ProgressIndicator indicator) {
-               indicator.setText(ProjectBundle.message("progress.text.resolving.missing.sdks"));
-               List<UnknownSdkLookup> lookups = collectSdkLookups(indicator);
+               List<UnknownInvalidSdk> invalidSdks = new ArrayList<>();
+               Map<UnknownSdk, UnknownSdkLocalSdkFix> localFixes = new HashMap<>();
+               Map<UnknownSdk, UnknownSdkDownloadableSdkFix> downloadFixes = new HashMap<>();
 
-               indicator.setText(ProjectBundle.message("progress.text.resolving.existing.sdks"));
-               List<UnknownInvalidSdk> invalidSdks = UnknownInvalidSdk.resolveInvalidSdks(usedSdks);
-               fixable.addAll(invalidSdks);
+               if (!usedSdks.isEmpty()) {
+                 indicator.pushState();
+                 indicator.setText(ProjectBundle.message("progress.text.resolving.existing.sdks"));
+                 invalidSdks = UnknownInvalidSdk.resolveInvalidSdks(usedSdks);
+                 fixable.addAll(invalidSdks);
+                 indicator.popState();
+               }
 
-               indicator.setText(ProjectBundle.message("progress.text.looking.for.local.sdks"));
-               Map<UnknownSdk, UnknownSdkLocalSdkFix> localFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeLocalFix);
+               if (!fixable.isEmpty()) {
+                 indicator.pushState();
+                 indicator.setText(ProjectBundle.message("progress.text.resolving.missing.sdks"));
+                 List<UnknownSdkLookup> lookups = collectSdkLookups(indicator);
 
-               indicator.setText(ProjectBundle.message("progress.text.looking.for.downloadable.sdks"));
-               Map<UnknownSdk, UnknownSdkDownloadableSdkFix> downloadFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
+                 if (!lookups.isEmpty()) {
+                   indicator.setText(ProjectBundle.message("progress.text.looking.for.local.sdks"));
+                   localFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeLocalFix);
+
+                   if (!fixable.isEmpty()) {
+                     indicator.setText(ProjectBundle.message("progress.text.looking.for.downloadable.sdks"));
+                     downloadFixes = findFixesAndRemoveFixable(indicator, fixable, lookups, UnknownSdkLookup::proposeDownload);
+                   }
+                 }
+
+                 indicator.popState();
+               }
 
                UnknownInvalidSdk.removeAndUpdate(invalidSdks, fixable, localFixes, downloadFixes);
 
                if (!localFixes.isEmpty()) {
+                 indicator.pushState();
                  indicator.setText(ProjectBundle.message("progress.text.configuring.sdks"));
                  configureLocalSdks(localFixes);
+                 indicator.popState();
                }
 
                showStatus(fixable, localFixes, downloadFixes, invalidSdks);
