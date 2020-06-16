@@ -318,7 +318,7 @@ class ControlFlowGraphBuilder {
 
     fun enterClass() {
         pushGraph(
-            ControlFlowGraph(null, "STUB_CLASS_GRAPH", ControlFlowGraph.Kind.ClassInitializer),
+            ControlFlowGraph(null, "STUB_CLASS_GRAPH", ControlFlowGraph.Kind.Stub),
             mode = Mode.ClassInitializer
         )
     }

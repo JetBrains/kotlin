@@ -35,6 +35,7 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     internal fun complete() {
         assertState(State.Building)
         state = State.Completed
+        if (kind == Kind.Stub) return
         val sortedNodes = orderNodes()
         assert(sortedNodes.size == _nodes.size)
         for (node in _nodes) {
@@ -80,6 +81,7 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         TopLevel(withBody = false),
         AnnotationCall(withBody = true),
         DefaultArgument(withBody = false),
+        Stub(withBody = true)
     }
 }
 
