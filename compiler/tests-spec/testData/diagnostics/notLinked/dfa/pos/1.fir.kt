@@ -485,19 +485,19 @@ fun case_25(b: Boolean) {
     val y = if (b) x else null
 
     if (y !== null) {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("anonymous?")!>y()<!>
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>y()<!>
 
         if (z != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("anonymous & anonymous?")!>z<!>.a
-            <!DEBUG_INFO_EXPRESSION_TYPE("anonymous & anonymous?")!>z<!>.a.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("anonymous & anonymous?")!>z<!>.a.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("anonymous & anonymous?")!>z<!>.a.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("anonymous & anonymous?")!>z<!>.a.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("anonymous & anonymous?")!>z<!>.a.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("anonymous & anonymous?")!>z<!>.a.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("anonymous & anonymous?")!>z<!>.a.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("anonymous & anonymous?")!>z<!>.a.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("anonymous & anonymous?")!>z<!>.a.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous> & <anonymous>?")!>z<!>.a
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous> & <anonymous>?")!>z<!>.a.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous> & <anonymous>?")!>z<!>.a.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous> & <anonymous>?")!>z<!>.a.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous> & <anonymous>?")!>z<!>.a.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous> & <anonymous>?")!>z<!>.a.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous> & <anonymous>?")!>z<!>.a.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous> & <anonymous>?")!>z<!>.a.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous> & <anonymous>?")!>z<!>.a.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous> & <anonymous>?")!>z<!>.a.funNullableAny()
         }
     }
 }

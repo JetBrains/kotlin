@@ -68,15 +68,15 @@ fun case_3(b: Boolean) {
 
     if (false || false || false || false || y !== null) {
         val z = <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!><!INAPPLICABLE_CANDIDATE!>y<!>()<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.funNullableAny()
 
         if (z != null || false) {
             <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z<!>.<!UNRESOLVED_REFERENCE!>a<!>
@@ -275,15 +275,15 @@ fun case_11(b: Boolean) {
 
     if (y === null && true) else {
         val z = <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!><!INAPPLICABLE_CANDIDATE!>y<!>()<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<anonymous?>?")!>y<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.funNullableAny()
 
         if (z != null || b) {
 

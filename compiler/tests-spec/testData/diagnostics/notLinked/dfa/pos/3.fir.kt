@@ -287,10 +287,10 @@ fun case_25(b: Boolean) {
     val y = if (b) x else null
 
     if (y != null) {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("anonymous?")!>y()<!>
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>y()<!>
 
         if (z == null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("anonymous?")!>z<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z<!>
         }
     }
 }
