@@ -272,8 +272,8 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
             accessor.addValueParameter(
                 "constructor_marker".synthesizedString,
-                context.ir.symbols.defaultConstructorMarker.defaultType,
-                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable(),
+                JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
             )
 
             accessor.body = IrExpressionBodyImpl(

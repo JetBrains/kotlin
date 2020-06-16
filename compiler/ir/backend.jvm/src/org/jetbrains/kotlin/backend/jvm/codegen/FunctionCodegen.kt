@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.inline.*
+import org.jetbrains.kotlin.codegen.inline.MethodBodyVisitor
+import org.jetbrains.kotlin.codegen.inline.SMAP
+import org.jetbrains.kotlin.codegen.inline.SMAPAndMethodNode
+import org.jetbrains.kotlin.codegen.inline.wrapWithMaxLocalCalc
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
@@ -23,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -237,7 +239,7 @@ private fun generateParameterAnnotations(
             else -> iterator.next()
         }
 
-        if (!kind.isSkippedInGenericSignature) {
+        if (annotated != null && !kind.isSkippedInGenericSignature && !annotated.isSyntheticMarkerParameter()) {
             object : AnnotationCodegen(innerClassConsumer, context) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
                     return mv.visitParameterAnnotation(
@@ -253,10 +255,14 @@ private fun generateParameterAnnotations(
                         path, descr, visible
                     )
                 }
-            }.genAnnotations(annotated, parameterSignature.asmType, annotated?.type)
+            }.genAnnotations(annotated, parameterSignature.asmType, annotated.type)
         }
     }
 }
+
+private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
+    origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER ||
+            origin == JvmLoweredDeclarationOrigin.SYNTHETIC_MARKER_PARAMETER
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, jvmSignature: JvmMethodSignature, state: GenerationState) {
     val iterator = irFunction.valueParameters.iterator()
