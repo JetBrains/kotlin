@@ -30,6 +30,14 @@ class GradleScriptNotificationProvider(private val project: Project) :
         val scriptUnderRoot = rootsManager.findScriptBuildRoot(file) ?: return null
         return when (scriptUnderRoot.notificationKind) {
             dontCare -> null
+            legacyOutside -> EditorNotificationPanel().apply {
+                text("Out of project script")
+                createActionLabel(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.addAsStandaloneAction")) {
+                    rootsManager.updateStandaloneScripts {
+                        addStandaloneScript(file.path)
+                    }
+                }
+            }
             outsideAnything -> EditorNotificationPanel().apply {
                 text(KotlinIdeaGradleBundle.message("notification.outsideAnything.text"))
                 createActionLabel(KotlinIdeaGradleBundle.message("notification.outsideAnything.linkAction")) {
