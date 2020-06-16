@@ -63,7 +63,7 @@ fun getGradleScriptInputsStamp(
                     }
                 }
 
-            val buildRoot = GradleBuildRootsManager.getInstance(project).findScriptBuildRoot(file)?.root as? GradleBuildRoot
+            val buildRoot = GradleBuildRootsManager.getInstance(project).findScriptBuildRoot(file)?.nearest as? GradleBuildRoot
             GradleKotlinScriptConfigurationInputs(result.toString(), givenTimeStamp, buildRoot?.pathPrefix)
         } else null
     }

@@ -83,7 +83,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
 
     override fun isApplicable(file: VirtualFile): Boolean {
         val scriptUnderRoot = findScriptBuildRoot(file) ?: return false
-        if (scriptUnderRoot.root is Legacy) return false
+        if (scriptUnderRoot.nearest is Legacy) return false
         if (roots.isStandaloneScript(file.path)) return false
         return true
     }

@@ -89,7 +89,10 @@ abstract class GradleBuildRootsLocator {
                 nearest == null -> NotificationKind.outsideAnything
                 importing -> NotificationKind.dontCare
                 else -> when (nearest) {
-                    is Legacy -> NotificationKind.dontCare
+                    is Legacy -> when {
+                        root == null -> NotificationKind.legacyOutside
+                        else -> NotificationKind.dontCare
+                    }
                     is New -> NotificationKind.wasNotImportedAfterCreation
                     is Imported -> when {
                         wasImportedAndNotEvaluated -> NotificationKind.notEvaluatedInLastImport
@@ -141,14 +144,10 @@ abstract class GradleBuildRootsLocator {
             return ScriptUnderRoot(filePath, standaloneScriptRoot, standalone = true)
         }
 
-        if (searchNearestLegacy) {
-            val nearest = roots.findNearestRoot(filePath)
-            return when (nearest) {
-                is Legacy -> ScriptUnderRoot(filePath, nearest)
-                else -> ScriptUnderRoot(filePath, null, nearest = nearest)
-            }
-        } else {
-            return ScriptUnderRoot(filePath, null)
-        }
+        val nearest =
+            if (searchNearestLegacy) roots.findNearestRoot(filePath)
+            else null
+
+        return ScriptUnderRoot(filePath, null, nearest = nearest)
     }
 }
