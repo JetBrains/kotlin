@@ -175,14 +175,15 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                     loaders.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
                 } else {
                     val autoReloadEnabled = KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(scriptDefinition)
-                    val postponeLoading = !skipNotification && !autoReloadEnabled && async.any { it.isPostponedLoad(virtualFile) }
-                    val forceSkipNotification = skipNotification || autoReloadEnabled || postponeLoading
+                    val forceSkipNotification = skipNotification || autoReloadEnabled
 
-                    if (postponeLoading) {
-                        LoadScriptConfigurationNotificationFactory.showNotification(virtualFile, project) {
-                            runAsyncLoaders(file, virtualFile, scriptDefinition, async, forceSkipNotification)
+                    val intercepted = !forceSkipNotification && async.any {
+                        it.interceptBackgroundLoading(virtualFile) {
+                            runAsyncLoaders(file, virtualFile, scriptDefinition, listOf(it), true)
                         }
-                    } else {
+                    }
+
+                    if (!intercepted) {
                         runAsyncLoaders(file, virtualFile, scriptDefinition, async, forceSkipNotification)
                     }
                 }
