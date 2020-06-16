@@ -254,6 +254,7 @@ public final class IndexUpdateRunner {
       return new ContentLoadingResult(fileContent, fileLength);
     }
     catch (ProcessCanceledException e) {
+      signalThatFileIsUnloaded(fileLength);
       indexingJob.myQueueOfFiles.add(file);
       throw e;
     }
