@@ -33,14 +33,15 @@ class DebuggerConnection(
     val project: Project,
     val configuration: RunConfigurationBase<*>,
     val params: JavaParameters?,
-    val runnerSettings: DebuggingRunnerData?
+    val runnerSettings: DebuggingRunnerData?,
+    modifyArgs: Boolean = true
 ) : XDebuggerManagerListener {
     var disposable: Disposable? = null
     var connection: MessageBusConnection? = null
     private val log by logger
 
     init {
-        if (params is JavaParameters) {
+        if (params is JavaParameters && modifyArgs) {
             // gradle related logic in KotlinGradleCoroutineDebugProjectResolver
             val kotlinxCoroutinesCore = params.classPath?.pathList?.firstOrNull { it.contains("kotlinx-coroutines-core") }
             val kotlinxCoroutinesDebug = params.classPath?.pathList?.firstOrNull { it.contains("kotlinx-coroutines-debug") }
