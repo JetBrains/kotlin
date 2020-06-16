@@ -11,6 +11,7 @@ import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.FileEditorManagerTestCase
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
+    private val scratchFiles: MutableList<VirtualFile> = ArrayList()
+
     fun doScratchTest(path: String) {
         val fileText = FileUtil.loadFile(File(path))
 
@@ -33,6 +36,7 @@ abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
             fileText,
             ScratchFileService.Option.create_if_missing
         ) ?: error("Couldn't create scratch file")
+        scratchFiles.add(scratchVirtualFile)
 
         myFixture.openFileInEditor(scratchVirtualFile)
 
@@ -59,8 +63,8 @@ abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
     override fun tearDown() {
         super.tearDown()
 
-        ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
-            runWriteAction { file.delete(this) }
+        for (scratchFile in scratchFiles) {
+            runWriteAction { scratchFile.delete(this) }
         }
     }
 
