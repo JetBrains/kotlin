@@ -25,10 +25,7 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -48,7 +45,8 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
   @Override
   @NotNull
   public List<ProjectDataService<?, ?>> findService(@NotNull Key<?> key) {
-    List<ProjectDataService<?, ?>> result = ProjectDataService.EP_NAME.getByGroupingKey(key, ProjectDataManagerImpl.class, KEY_MAPPER);
+    List<ProjectDataService<?, ?>> result =
+      new ArrayList<>(ProjectDataService.EP_NAME.getByGroupingKey(key, ProjectDataManagerImpl.class, KEY_MAPPER));
     ExternalSystemApiUtil.orderAwareSort(result);
     return result;
   }
