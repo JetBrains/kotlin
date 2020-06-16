@@ -455,12 +455,14 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         return new AnalyzerStatus(AllIcons.General.InspectionsPause,
                                   DaemonBundle.message("analysis.suspended"),
                                   status.reasonWhySuspended, () -> createUIController(editor)).
-          withTextStatus(status.heavyProcessType != null ? status.heavyProcessType.toString() : DaemonBundle.message("iw.status.paused"));
+          withTextStatus(status.heavyProcessType != null ? status.heavyProcessType.toString() : DaemonBundle.message("iw.status.paused")).
+          withAnalyzingType(AnalyzingType.SUSPENDED);
       }
       if (status.errorAnalyzingFinished) {
         return isDumb ?
           new AnalyzerStatus(AllIcons.General.InspectionsPause, title, details, () -> createUIController(editor)).
-            withTextStatus(UtilBundle.message("heavyProcess.type.indexing")) :
+            withTextStatus(UtilBundle.message("heavyProcess.type.indexing")).
+            withAnalyzingType(AnalyzingType.SUSPENDED) :
           new AnalyzerStatus(AllIcons.General.InspectionsOK, DaemonBundle.message("no.errors.or.warnings.found"), details, () -> createUIController(editor));
       }
 

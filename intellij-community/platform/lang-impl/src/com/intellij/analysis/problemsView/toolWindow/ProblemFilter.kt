@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareToggleAction
 import com.intellij.profile.codeInspection.ui.SingleInspectionProfilePanel.renderSeverity
+import com.intellij.util.ui.tree.TreeUtil.promiseExpandAll
 
 internal class ProblemFilter(val state: ProblemsViewState) : (Problem) -> Boolean {
   override fun invoke(problem: Problem) = !state.hideBySeverity.contains(problem.severity)
@@ -32,9 +33,12 @@ private class SeverityFilterAction(name: String, val severity: Int, val panel: H
   override fun setSelected(event: AnActionEvent, selected: Boolean) {
     val changed = with(panel.state.hideBySeverity) { if (selected) remove(severity) else add(severity) }
     if (changed) {
+      val wasEmpty = panel.tree.isEmpty
       panel.state.intIncrementModificationCount()
       panel.treeModel.structureChanged()
-      panel.requestStatusUpdating()
+      panel.powerSaveStateChanged()
+      // workaround to expand a root without handle
+      if (wasEmpty) promiseExpandAll(panel.tree)
     }
   }
 }
