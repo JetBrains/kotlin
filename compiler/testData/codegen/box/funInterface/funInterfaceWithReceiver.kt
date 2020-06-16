@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
+// SKIP_DCE_DRIVEN
 
 fun interface FunWithReceiver {
     fun String.foo(): String
