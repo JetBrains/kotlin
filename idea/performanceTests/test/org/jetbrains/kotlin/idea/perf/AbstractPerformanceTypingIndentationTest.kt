@@ -39,8 +39,8 @@ abstract class AbstractPerformanceTypingIndentationTest : KotlinLightPlatformCod
             performanceTest<Unit, Unit> {
                 name(testName)
                 stats(stats)
-                warmUpIterations(20)
-                iterations(30)
+                warmUpIterations(25)
+                iterations(38)
                 setUp {
                     configureByFile(originFilePath)
                 }
