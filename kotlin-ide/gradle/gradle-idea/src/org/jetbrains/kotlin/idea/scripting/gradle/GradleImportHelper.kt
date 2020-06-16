@@ -23,35 +23,42 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelResolver
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.plugins.gradle.service.project.GradlePartialResolverPolicy
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-fun runPartialGradleImport(project: Project) {
-    getGradleProjectSettings(project).forEach { gradleProjectSettings ->
-        ExternalSystemUtil.refreshProject(
-            gradleProjectSettings.externalProjectPath,
-            ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-                .projectResolverPolicy(
-                    GradlePartialResolverPolicy { it is KotlinDslScriptModelResolver }
-                )
-        )
+fun runPartialGradleImportForAllRoots(project: Project) {
+    GradleBuildRootsManager.getInstance(project).getAllRoots().forEach { root ->
+        runPartialGradleImport(project, root)
     }
+}
+
+fun runPartialGradleImport(project: Project, root: GradleBuildRoot) {
+    ExternalSystemUtil.refreshProject(
+        root.pathPrefix,
+        ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
+            .projectResolverPolicy(
+                GradlePartialResolverPolicy { it is KotlinDslScriptModelResolver }
+            )
+    )
 }
 
 fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.text.load.script.configurations")
 
 fun autoReloadScriptConfigurations(project: Project, file: VirtualFile): Boolean {
-    val buildRoot = GradleBuildRootsManager.getInstance(project).getScriptInfo(file)?.buildRoot ?: return false
-    return GradleScriptDefinitionsContributor.getDefinitions(project, buildRoot.pathPrefix, buildRoot.data.gradleHome)?.any {
-        KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(it)
-    } ?: return false
+    val definition = file.findScriptDefinition(project) ?: return false
+
+    return KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(definition)
 }
 
 fun scriptConfigurationsNeedToBeUpdated(project: Project, file: VirtualFile) {
     if (autoReloadScriptConfigurations(project, file)) {
-        runPartialGradleImport(project)
+        GradleBuildRootsManager.getInstance(project).getScriptInfo(file)?.buildRoot?.let {
+            runPartialGradleImport(project, it)
+        }
     } else {
         // notification is shown in LoadConfigurationAction
     }
@@ -66,7 +73,11 @@ class LoadConfigurationAction : AnAction(
 ) {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        runPartialGradleImport(project)
+        val editor = e.getData(CommonDataKeys.EDITOR) ?: return
+        val file = getKotlinScriptFile(editor) ?: return
+        val root = GradleBuildRootsManager.getInstance(project).getScriptInfo(file)?.buildRoot ?: return
+
+        runPartialGradleImport(project, root)
     }
 
     override fun update(e: AnActionEvent) {

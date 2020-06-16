@@ -49,18 +49,22 @@ class GradleScriptNotificationProvider(private val project: Project) :
             wasNotImportedAfterCreation -> EditorNotificationPanel().apply {
                 text(KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.text"))
                 createActionLabel(getMissingConfigurationActionText()) {
-                    runPartialGradleImport(project)
+                    val root = scriptUnderRoot.nearest
+                    if (root != null) {
+                        runPartialGradleImport(project, root)
+                    }
                 }
             }
             notEvaluatedInLastImport -> EditorNotificationPanel().apply {
                 text(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.text"))
 
                 // suggest to reimport project if something changed after import
-                val importTs = (scriptUnderRoot.nearest as? Imported)?.data?.importTs
-                if (importTs != null && !scriptUnderRoot.nearest.areRelatedFilesChangedBefore(file, importTs)) {
+                val root = scriptUnderRoot.nearest as? Imported
+                val importTs = root?.data?.importTs
+                if (root != null && importTs != null && !root.areRelatedFilesChangedBefore(file, importTs)) {
                     createActionLabel(getMissingConfigurationActionText()) {
                         rootsManager.updateStandaloneScripts {
-                            runPartialGradleImport(project)
+                            runPartialGradleImport(project, root)
                         }
                     }
                 }
