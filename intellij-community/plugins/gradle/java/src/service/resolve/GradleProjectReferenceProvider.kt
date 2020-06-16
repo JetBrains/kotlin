@@ -10,7 +10,6 @@ import com.intellij.model.search.SearchRequest
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.ElementManipulators
-import com.intellij.util.SmartList
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrArgumentList
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral
@@ -47,10 +46,22 @@ class GradleProjectReferenceProvider : PsiSymbolReferenceProvider {
     if (!value.startsWith(":")) {
       return emptyList()
     }
-    val path = value.split(":")
-    val result = SmartList<PsiSymbolReference>()
+    if (value.toString() == ":") {
+      // in this special case we want the root project reference to span over the colon symbol
+      return listOf(GradleProjectReference(element, rangeInHost, emptyList()))
+    }
+
+    val path = value.split(":").drop(1) // drop first empty string
+    val result = ArrayList<PsiSymbolReference>(path.size + 1)
+
+    val rootOffsetInHost = escaper.getOffsetInHost(0, rangeInHost)
+    if (rootOffsetInHost >= 0) {
+      // add a root project reference just before the first colon, i.e. it has an empty range
+      result += GradleProjectReference(element, TextRange(rootOffsetInHost, rootOffsetInHost), emptyList())
+    }
+
     val subPath = ArrayList<String>()
-    var currentOffsetInPath = 0
+    var currentOffsetInPath = 1 // skip first ":"
     for (part in path) {
       subPath.add(part)
       val partStart = escaper.getOffsetInHost(currentOffsetInPath, rangeInHost)

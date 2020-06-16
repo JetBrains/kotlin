@@ -17,18 +17,23 @@ import org.jetbrains.plugins.gradle.model.ExternalProject
 import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataCache
 import org.jetbrains.plugins.gradle.util.GradleBundle
 
+/**
+ * Empty [myQualifiedName] means root project.
+ */
 @Internal
-class GradleProjectSymbol(private val myQualifiedName: List<String>, private val myRootProjectPath: String) : PresentableSymbol, NavigatableSymbol {
+class GradleProjectSymbol(
+  private val myQualifiedName: List<String>,
+  private val myRootProjectPath: String
+) : PresentableSymbol, NavigatableSymbol {
 
   init {
-    require(myQualifiedName.isNotEmpty())
     require(myRootProjectPath.isNotBlank())
   }
 
   override fun createPointer(): Pointer<GradleProjectSymbol> = Pointer.hardPointer(this)
 
-  val projectName: String get() = myQualifiedName.last()
-  val qualifiedName: String get() = myQualifiedName.joinToString(separator = ":")
+  val projectName: String get() = if (myQualifiedName.isEmpty()) ":" else myQualifiedName.last()
+  val qualifiedName: String get() = qualifiedName(myQualifiedName)
 
   private val myPresentation = SymbolPresentation.create(
     GradleIcons.Gradle,
@@ -48,23 +53,18 @@ class GradleProjectSymbol(private val myQualifiedName: List<String>, private val
   }
 
   private fun findBuildFile(project: Project): PsiElement? {
-    val rootProject = ExternalProjectDataCache.getInstance(project)
-                            .getRootExternalProject(myRootProjectPath)
-                          ?: return null
-
-    val externalProject = if (":" == qualifiedName) {
+    val rootProject = ExternalProjectDataCache.getInstance(project).getRootExternalProject(myRootProjectPath) ?: return null
+    val externalProject = if (myQualifiedName.isEmpty()) {
       rootProject
-    } else {
-      myQualifiedName
-        .drop(1)
-        .fold(rootProject as ExternalProject?) { extProject, name ->
-          extProject?.childProjects?.get(name)
-        } ?: return null
+    }
+    else {
+      myQualifiedName.fold(rootProject as ExternalProject?) { extProject, name ->
+        extProject?.childProjects?.get(name)
+      } ?: return null
     }
 
     val buildFile = externalProject.buildFile ?: return null
     val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(buildFile) ?: return null
-
     return PsiManager.getInstance(project).findFile(virtualFile)
   }
 
@@ -75,11 +75,26 @@ class GradleProjectSymbol(private val myQualifiedName: List<String>, private val
     other as GradleProjectSymbol
 
     if (myQualifiedName != other.myQualifiedName) return false
+    if (myRootProjectPath != other.myRootProjectPath) return false
 
     return true
   }
 
   override fun hashCode(): Int {
-    return myQualifiedName.hashCode()
+    var result = myQualifiedName.hashCode()
+    result = 31 * result + myRootProjectPath.hashCode()
+    return result
+  }
+
+  companion object {
+
+    fun qualifiedName(qualifiedNameParts: List<String>): String {
+      return if (qualifiedNameParts.isEmpty()) {
+        ":"
+      }
+      else {
+        qualifiedNameParts.joinToString("") { ":$it" }
+      }
+    }
   }
 }

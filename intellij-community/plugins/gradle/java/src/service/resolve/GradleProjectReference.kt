@@ -13,46 +13,38 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals
 
 @Internal
 class GradleProjectReference(
-  private val literal: GrLiteral,
-  private val range: TextRange,
-  private val projectPath: List<String>
+  private val myElement: GrLiteral,
+  private val myRange: TextRange,
+  private val myQualifiedName: List<String>
 ) : SingleTargetReference(), PsiCompletableReference {
 
-  init {
-    require(projectPath.isNotEmpty())
-  }
+  override fun getElement(): PsiElement = myElement
 
-  private val projectPathString = projectPath.joinToString(":")
-
-  override fun getElement(): PsiElement = literal
-
-  override fun getRangeInElement(): TextRange = range
+  override fun getRangeInElement(): TextRange = myRange
 
   override fun resolveSingleTarget(): Symbol? {
-    val gradleProject = GradleExtensionsSettings.getRootProject(literal) ?: return null
-    val rootProjectPath = GradleExtensionsSettings.getRootProjectPath(literal) ?: return null
-    if (projectPathString in gradleProject.extensions) {
-      return GradleProjectSymbol(projectPath, rootProjectPath)
+    val gradleProject = GradleExtensionsSettings.getRootProject(myElement) ?: return null
+    val rootProjectPath = GradleExtensionsSettings.getRootProjectPath(myElement) ?: return null
+    if (GradleProjectSymbol.qualifiedName(myQualifiedName) in gradleProject.extensions) {
+      return GradleProjectSymbol(myQualifiedName, rootProjectPath)
     }
     return null
   }
 
   /**
-   * This could be much easier if we could query list of sub-projects by project fqn.
+   * This could've been much easier if we could query list of sub-projects by project fqn.
    */
   override fun getCompletionVariants(): Collection<Any> {
-    val gradleProject: GradleProject = GradleExtensionsSettings.getRootProject(literal) ?: return emptyList()
-    val allProjectFqns: Set<String> = gradleProject.extensions.keys
-    val parentProjectFqn: List<String> = projectPath // ["com", "IntellijIdeaRulezzz"]
-      .run { take(size - 1) } // ["com"]
-    val parentProjectPrefix: String = parentProjectFqn.joinToString("") { "$it:" } // "com:"
+    val gradleProject: GradleProject = GradleExtensionsSettings.getRootProject(myElement) ?: return emptyList()
+    val parentProjectFqn: List<String> = myQualifiedName.dropLast(1) // ["com", "foo", "IntellijIdeaRulezzz "] -> ["com", "foo"]
+    val parentProjectPrefix: String = parentProjectFqn.joinToString(separator = "", postfix = ":") { ":$it" } // ":com:foo:"
     val result = LinkedHashSet<String>()
-    for (projectFqn in allProjectFqns) { // "com:foo:bar"
+    for (projectFqn in gradleProject.extensions.keys) { // let's say there is ":com:foo:bar:baz" among keys
       if (!projectFqn.startsWith(parentProjectPrefix)) {
         continue
       }
-      val relativeFqn = projectFqn.removePrefix(parentProjectPrefix) // "foo:bar"
-      val childProjectName = relativeFqn.split(':').firstOrNull() // "foo"
+      val relativeFqn = projectFqn.removePrefix(parentProjectPrefix) // "bar:baz"
+      val childProjectName = relativeFqn.split(':').firstOrNull() // "bar"
       if (childProjectName.isNullOrEmpty()) {
         continue
       }
