@@ -104,6 +104,16 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
             "src" / "main" / "AndroidManifest.xml"
         )
 
+        val colorsXml = FileTemplateDescriptor(
+            "android/colors.xml",
+            "src" / "main" / "res" / "values" / "colors.xml"
+        )
+
+        val stylesXml = FileTemplateDescriptor(
+            "android/styles.xml",
+            "src" / "main" / "res" / "values" / "styles.xml"
+        )
+
         fun mainActivityKt(javaPackage: JavaPackage) = FileTemplateDescriptor(
             "android/MainActivity.kt.vm",
             "src" / "main" / "java" / javaPackage.asPath() / "MainActivity.kt"
