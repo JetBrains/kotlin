@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.*
 
@@ -116,12 +117,16 @@ class KotlinImportOptimizer : ImportOptimizer {
             .mapNotNull { it.importPath }
             .groupBy(keySelector = { it.fqName }, valueTransform = { it.importedName as Name })
 
-        private val descriptorsToImport = LinkedHashSet<DeclarationDescriptor>()
-        private val namesToImport = LinkedHashMap<FqName, HashSet<Name>>()
+        private val descriptorsToImport = hashSetOf<DeclarationDescriptor>()
+        private val namesToImport = hashMapOf<FqName, MutableSet<Name>>()
         private val abstractRefs = ArrayList<OptimizedImportsBuilder.AbstractReference>()
 
         val data: OptimizedImportsBuilder.InputData
-            get() = OptimizedImportsBuilder.InputData(descriptorsToImport, namesToImport, abstractRefs)
+            get() = OptimizedImportsBuilder.InputData(
+                descriptorsToImport,
+                namesToImport,
+                abstractRefs,
+            )
 
         override fun visitElement(element: PsiElement) {
             ProgressIndicatorProvider.checkCanceled()
@@ -144,7 +149,7 @@ class KotlinImportOptimizer : ImportOptimizer {
 
                 val names = reference.resolvesByNames
 
-                val bindingContext = element.analyze()
+                val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
                 val targets = reference.targets(bindingContext)
                 for (target in targets) {
                     val importableDescriptor = target.getImportableDescriptor()
@@ -160,7 +165,7 @@ class KotlinImportOptimizer : ImportOptimizer {
                     if (isAccessibleAsMember(importableDescriptor, element, bindingContext)) continue
 
                     val descriptorNames = (aliases[importableFqName].orEmpty() + importableFqName.shortName()).intersect(names)
-                    namesToImport.getOrPut(importableFqName) { LinkedHashSet() } += descriptorNames
+                    namesToImport.getOrPut(importableFqName) { hashSetOf() } += descriptorNames
                     descriptorsToImport += importableDescriptor
                 }
             }
