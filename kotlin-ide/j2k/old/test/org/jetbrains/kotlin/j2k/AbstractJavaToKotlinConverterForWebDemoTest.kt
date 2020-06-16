@@ -109,7 +109,7 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
         CoreApplicationEnvironment.registerExtensionPoint(area, JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider::class.java)
 
         CoreApplicationEnvironment.registerExtensionPoint(area, ContainerProvider.EP_NAME, ContainerProvider::class.java)
-        CoreApplicationEnvironment.registerExtensionPoint(area, ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler::class.java)
+        CoreApplicationEnvironment.registerExtensionPoint(area, ClassFileDecompilers.getInstance().EP_NAME, ClassFileDecompilers.Decompiler::class.java)
 
         CoreApplicationEnvironment.registerExtensionPoint(area, TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier::class.java)
         CoreApplicationEnvironment.registerExtensionPoint(area, MetaLanguage.EP_NAME, MetaLanguage::class.java)
