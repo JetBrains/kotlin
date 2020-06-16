@@ -86,7 +86,7 @@ abstract class GradleBuildRootsLocator {
                 isImported -> NotificationKind.dontCare
                 standalone -> NotificationKind.standalone
                 nearest == null -> NotificationKind.outsideAnything
-                nearest.importing -> NotificationKind.dontCare
+                importing -> NotificationKind.dontCare
                 else -> when (nearest) {
                     is Legacy -> NotificationKind.dontCare
                     is New -> NotificationKind.wasNotImportedAfterCreation
@@ -96,6 +96,10 @@ abstract class GradleBuildRootsLocator {
                     }
                 }
             }
+
+        private val importing: Boolean
+            get() = nearest != null &&
+                    nearest.importing.get() != GradleBuildRoot.ImportingStatus.updated
 
         private val isImported: Boolean
             get() = script != null

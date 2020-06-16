@@ -35,6 +35,7 @@ interface ScriptingSupport {
     fun isApplicable(file: VirtualFile): Boolean
     fun isConfigurationLoadingInProgress(file: KtFile): Boolean
     fun collectConfigurations(builder: ScriptClassRootsBuilder)
+    fun afterUpdate()
 
     companion object {
         val EPN: ExtensionPointName<ScriptingSupport> =
