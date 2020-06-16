@@ -10293,6 +10293,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/inference/resolveWithUnknownLambdaParameterType.kt");
             }
 
+            @TestMetadata("returningLambdaInSuspendContext.kt")
+            public void testReturningLambdaInSuspendContext() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/returningLambdaInSuspendContext.kt");
+            }
+
             @TestMetadata("starApproximation.kt")
             public void testStarApproximation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/starApproximation.kt");

@@ -1,0 +1,14 @@
+package
+
+public fun main(): kotlin.Unit
+public fun </*0*/ T> runBlocking(/*0*/ block: suspend () -> T): T
+public inline fun </*0*/ T, /*1*/ R> T.run(/*0*/ block: T.() -> R): R
+
+public final class Foo {
+    public constructor Foo()
+    public final suspend fun </*0*/ T> bar(/*0*/ body: suspend (kotlin.Int) -> T): T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final suspend operator fun </*0*/ T> invoke(/*0*/ body: suspend (kotlin.Int) -> T): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
