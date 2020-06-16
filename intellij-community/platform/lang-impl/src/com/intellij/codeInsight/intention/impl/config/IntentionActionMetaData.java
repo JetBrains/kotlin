@@ -76,4 +76,8 @@ public final class IntentionActionMetaData extends BeforeAfterActionMetaData {
   private static String getResourceLocationStatic(String dirName, String resourceName) {
     return INTENTION_DESCRIPTION_FOLDER + "/" + dirName + "/" + resourceName;
   }
+
+  public String getDescriptionDirectoryName() {
+    return myDescriptionDirectoryName;
+  }
 }
