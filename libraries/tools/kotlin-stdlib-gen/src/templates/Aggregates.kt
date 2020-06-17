@@ -451,6 +451,61 @@ object Aggregates : TemplateGroupBase() {
         body(Maps) { "return entries.minWith(comparator)" }
     }
 
+    val f_lastMaxBy = fn("lastMaxBy(selector: (T) -> R)") {
+        includeDefault()
+        include(Maps, CharSequences, ArraysOfUnsigned)
+    } builder {
+        inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
+        doc { "Returns the last ${f.element} yielding the largest value of the given function or `null` if there are no ${f.element.pluralize()}." }
+        sample("samples.collections.Collections.Aggregates.lastMaxBy")
+        typeParam("R : Comparable<R>")
+        returns("T?")
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return null
+
+            var maxElem = iterator.next()
+            if (!iterator.hasNext()) return maxElem
+            var maxValue = selector(maxElem)
+            do {
+                val e = iterator.next()
+                val v = selector(e)
+                if (maxValue <= v) {
+                    maxElem = e
+                    maxValue = v
+                }
+            } while (iterator.hasNext())
+            return maxElem
+            """
+        }
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            if (isEmpty()) return null
+
+            var maxElem = this[0]
+            val lastIndex = this.lastIndex
+            if (lastIndex == 0) return maxElem
+            var maxValue = selector(maxElem)
+            for (i in 1..lastIndex) {
+                val e = this[i]
+                val v = selector(e)
+                if (maxValue <= v) {
+                    maxElem = e
+                    maxValue = v
+                }
+            }
+            return maxElem
+            """
+        }
+        specialFor(Maps) {
+            inlineOnly()
+            body { "return entries.lastMaxBy(selector)" }
+        }
+    }
+
     val f_maxBy = fn("maxBy(selector: (T) -> R)") {
         includeDefault()
         include(Maps, CharSequences, ArraysOfUnsigned)

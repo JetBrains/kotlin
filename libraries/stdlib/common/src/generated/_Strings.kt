@@ -1089,6 +1089,28 @@ public inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit
 }
 
 /**
+ * Returns the last character yielding the largest value of the given function or `null` if there are no characters.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+public inline fun <R : Comparable<R>> CharSequence.lastMaxBy(selector: (Char) -> R): Char? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
  * Returns the largest character or `null` if there are no characters.
  */
 public fun CharSequence.max(): Char? {

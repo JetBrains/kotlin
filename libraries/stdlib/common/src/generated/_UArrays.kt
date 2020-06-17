@@ -5703,6 +5703,106 @@ public inline fun UShortArray.forEachIndexed(action: (index: Int, UShort) -> Uni
 }
 
 /**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UIntArray.lastMaxBy(selector: (UInt) -> R): UInt? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> ULongArray.lastMaxBy(selector: (ULong) -> R): ULong? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UByteArray.lastMaxBy(selector: (UByte) -> R): UByte? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <R : Comparable<R>> UShortArray.lastMaxBy(selector: (UShort) -> R): UShort? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
  * Returns the largest element or `null` if there are no elements.
  */
 @SinceKotlin("1.3")

@@ -666,6 +666,17 @@ class Collections {
         }
 
         @Sample
+        fun lastMaxBy() {
+            val nameToAge = listOf("Alice" to 28, "Bob" to 42, "Carol" to 42)
+            val oldestPerson = nameToAge.lastMaxBy { it.second }
+            assertPrints(oldestPerson, "(Carol, 42)")
+
+            val emptyList = emptyList<Pair<String, Int>>()
+            val emptyLastMax = emptyList.lastMaxBy { it.second }
+            assertPrints(emptyLastMax, "null")
+        }
+
+        @Sample
         fun minBy() {
             val list = listOf("abcd", "abc", "ab", "abcde")
             val shortestString = list.minBy { it.length }

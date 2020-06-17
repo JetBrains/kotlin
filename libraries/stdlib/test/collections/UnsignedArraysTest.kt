@@ -499,6 +499,28 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun lastMaxBy() {
+        expect(null, { arrayOf<UByte>().lastMaxBy { it + 1 } })
+        expect(1u, { arrayOf<UShort>(1).lastMaxBy { it + 1 } })
+        expect(
+            'c',
+            { arrayOf(Pair<Char, UInt>('a', 2), Pair<Char, UInt>('b', 3), Pair<Char, UInt>('c', 2)).lastMaxBy { it.second - 3 }?.first }
+        )
+        expect(
+            'c',
+            { arrayOf(Pair<Char, ULong>('a', 3), Pair<Char, ULong>('b', 2), Pair<Char, ULong>('c', 3)).lastMaxBy { it.second + 1 }?.first }
+        )
+    }
+
+    @Test
+    fun lastMaxByInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().lastMaxBy { it + 1 } }
+        expect(1u) { ushortArrayOf(1, 1).lastMaxBy { it + 1 } }
+        expect(2u) { uintArrayOf(2, 3, 2).lastMaxBy { it - 3 } }
+        expect(3uL) { ulongArrayOf(3, 2, 3).lastMaxBy { it + 1 } }
+    }
+
+    @Test
     fun maxBy() {
         expect(null) { arrayOf<UByte>().maxBy { it + 1 } }
         expect(1u) { arrayOf<UShort>(1).maxBy { it + 1 } }

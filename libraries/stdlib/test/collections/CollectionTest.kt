@@ -875,6 +875,16 @@ class CollectionTest {
         expect(3, { listOf(2, 3).asSequence().minBy { -it } })
     }
 
+    @Test fun lastMaxBy() {
+        expect(null, { listOf<Int>().lastMaxBy { it } })
+        expect(1, { listOf(1).lastMaxBy { it } })
+        expect('c', { listOf(Pair('a', 2), Pair('b', 3), Pair('c', 2)).lastMaxBy { -it.second }?.first })
+        expect(2, { listOf(Pair(1, 'b'), Pair(2, 'b'), Pair(3, 'a')).lastMaxBy { "x${it.second}" }?.first })
+        expect(3, { listOf(Pair(1, "b"), Pair(2, "abc"), Pair(3, "abc")).lastMaxBy { it.second.length }?.first })
+        expect(null, { listOf<Int>().asSequence().lastMaxBy { it } })
+        expect('c', { listOf(Pair('a', 2), Pair('b', 3), Pair('c', 2)).asSequence().lastMaxBy { -it.second }?.first })
+    }
+
     @Test fun maxBy() {
         expect(null, { listOf<Int>().maxBy { it } })
         expect(1, { listOf(1).maxBy { it } })

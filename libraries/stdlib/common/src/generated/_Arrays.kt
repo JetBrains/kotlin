@@ -13058,6 +13058,204 @@ public inline fun CharArray.forEachIndexed(action: (index: Int, Char) -> Unit): 
 }
 
 /**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+public inline fun <T, R : Comparable<R>> Array<out T>.lastMaxBy(selector: (T) -> R): T? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+public inline fun <R : Comparable<R>> ByteArray.lastMaxBy(selector: (Byte) -> R): Byte? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+public inline fun <R : Comparable<R>> ShortArray.lastMaxBy(selector: (Short) -> R): Short? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+public inline fun <R : Comparable<R>> IntArray.lastMaxBy(selector: (Int) -> R): Int? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+public inline fun <R : Comparable<R>> LongArray.lastMaxBy(selector: (Long) -> R): Long? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+public inline fun <R : Comparable<R>> FloatArray.lastMaxBy(selector: (Float) -> R): Float? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+public inline fun <R : Comparable<R>> DoubleArray.lastMaxBy(selector: (Double) -> R): Double? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+public inline fun <R : Comparable<R>> BooleanArray.lastMaxBy(selector: (Boolean) -> R): Boolean? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+public inline fun <R : Comparable<R>> CharArray.lastMaxBy(selector: (Char) -> R): Char? {
+    if (isEmpty()) return null
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
  * Returns the largest element or `null` if there are no elements.
  * 
  * If any of elements is `NaN` returns `NaN`.

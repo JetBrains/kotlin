@@ -431,6 +431,25 @@ class ArraysTest {
         expect(2.0, { doubleArrayOf(2.0, 3.0).minBy { it * it } })
     }
 
+    @Test fun lastMaxBy() {
+        expect(null, { arrayOf<Int>().lastMaxBy { it } })
+        expect(1, { arrayOf(1).lastMaxBy { it } })
+        expect('c', { arrayOf(Pair('a', 2), Pair('b', 3), Pair('c', 2)).lastMaxBy { -it.second }?.first })
+        expect(2, { arrayOf(Pair(1, 'b'), Pair(2, 'b'), Pair(3, 'a')).lastMaxBy { "x${it.second}" }?.first })
+        expect(3, { arrayOf(Pair(1, "b"), Pair(2, "abc"), Pair(3, "abc")).lastMaxBy { it.second.length }?.first })
+    }
+
+    @Test fun lastMaxByInPrimitiveArrays() {
+        expect(null, { intArrayOf().lastMaxBy { it } })
+        expect(1, { intArrayOf(1, 1).lastMaxBy { it } })
+        expect(2, { intArrayOf(2, 3, 2).lastMaxBy { -it } })
+        expect(3000000000000, { longArrayOf(3000000000000, 2000000000000, 3000000000000).lastMaxBy { it + 1 } })
+        expect(3, { byteArrayOf(1, 3, 2, 3).lastMaxBy { it * it } })
+        expect(2, { shortArrayOf(3, 2, 2).lastMaxBy { "a" } })
+        expect(3.0F, { floatArrayOf(3.0F, 2.0F, 3.0F).lastMaxBy { it.toString() } })
+        expect(3.0, { doubleArrayOf(2.0, 3.0, 3.0).lastMaxBy { it * it } })
+    }
+
     @Test fun maxBy() {
         expect(null, { arrayOf<Int>().maxBy { it } })
         expect(1, { arrayOf(1).maxBy { it } })

@@ -180,6 +180,16 @@ public inline fun <K, V> Map<out K, V>.forEach(action: (Map.Entry<K, V>) -> Unit
 }
 
 /**
+ * Returns the last entry yielding the largest value of the given function or `null` if there are no entries.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.lastMaxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
+    return entries.lastMaxBy(selector)
+}
+
+/**
  * Returns the first entry yielding the largest value of the given function or `null` if there are no entries.
  * 
  * @sample samples.collections.Collections.Aggregates.maxBy

@@ -1720,6 +1720,28 @@ public inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit
 }
 
 /**
+ * Returns the last element yielding the largest value of the given function or `null` if there are no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.lastMaxBy
+ */
+public inline fun <T, R : Comparable<R>> Iterable<T>.lastMaxBy(selector: (T) -> R): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var maxElem = iterator.next()
+    if (!iterator.hasNext()) return maxElem
+    var maxValue = selector(maxElem)
+    do {
+        val e = iterator.next()
+        val v = selector(e)
+        if (maxValue <= v) {
+            maxElem = e
+            maxValue = v
+        }
+    } while (iterator.hasNext())
+    return maxElem
+}
+
+/**
  * Returns the largest element or `null` if there are no elements.
  * 
  * If any of elements is `NaN` returns `NaN`.

@@ -1316,6 +1316,15 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun lastIndexOf ([Ljava/lang/Object;Ljava/lang/Object;)I
 	public static final fun lastIndexOf ([SS)I
 	public static final fun lastIndexOf ([ZZ)I
+	public static final fun lastMaxBy ([BLkotlin/jvm/functions/Function1;)Ljava/lang/Byte;
+	public static final fun lastMaxBy ([CLkotlin/jvm/functions/Function1;)Ljava/lang/Character;
+	public static final fun lastMaxBy ([DLkotlin/jvm/functions/Function1;)Ljava/lang/Double;
+	public static final fun lastMaxBy ([FLkotlin/jvm/functions/Function1;)Ljava/lang/Float;
+	public static final fun lastMaxBy ([ILkotlin/jvm/functions/Function1;)Ljava/lang/Integer;
+	public static final fun lastMaxBy ([JLkotlin/jvm/functions/Function1;)Ljava/lang/Long;
+	public static final fun lastMaxBy ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun lastMaxBy ([SLkotlin/jvm/functions/Function1;)Ljava/lang/Short;
+	public static final fun lastMaxBy ([ZLkotlin/jvm/functions/Function1;)Ljava/lang/Boolean;
 	public static final fun lastOrNull ([B)Ljava/lang/Byte;
 	public static final fun lastOrNull ([BLkotlin/jvm/functions/Function1;)Ljava/lang/Byte;
 	public static final fun lastOrNull ([C)Ljava/lang/Character;
@@ -2175,6 +2184,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun last (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun lastIndexOf (Ljava/lang/Iterable;Ljava/lang/Object;)I
 	public static final fun lastIndexOf (Ljava/util/List;Ljava/lang/Object;)I
+	public static final fun lastMaxBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun lastOrNull (Ljava/lang/Iterable;)Ljava/lang/Object;
 	public static final fun lastOrNull (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun lastOrNull (Ljava/util/List;)Ljava/lang/Object;
@@ -4816,6 +4826,7 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun last (Lkotlin/sequences/Sequence;)Ljava/lang/Object;
 	public static final fun last (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun lastIndexOf (Lkotlin/sequences/Sequence;Ljava/lang/Object;)I
+	public static final fun lastMaxBy (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun lastOrNull (Lkotlin/sequences/Sequence;)Ljava/lang/Object;
 	public static final fun lastOrNull (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun map (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Lkotlin/sequences/Sequence;
@@ -5219,6 +5230,7 @@ public final class kotlin/text/StringsKt {
 	public static final fun lastIndexOfAny (Ljava/lang/CharSequence;[CIZ)I
 	public static synthetic fun lastIndexOfAny$default (Ljava/lang/CharSequence;Ljava/util/Collection;IZILjava/lang/Object;)I
 	public static synthetic fun lastIndexOfAny$default (Ljava/lang/CharSequence;[CIZILjava/lang/Object;)I
+	public static final fun lastMaxBy (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Character;
 	public static final fun lastOrNull (Ljava/lang/CharSequence;)Ljava/lang/Character;
 	public static final fun lastOrNull (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Character;
 	public static final fun lineSequence (Ljava/lang/CharSequence;)Lkotlin/sequences/Sequence;
