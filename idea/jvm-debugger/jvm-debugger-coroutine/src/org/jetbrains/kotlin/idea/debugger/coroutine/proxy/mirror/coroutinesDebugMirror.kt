@@ -112,7 +112,7 @@ class CoroutineInfo private constructor(
         private const val AGENT_135_AND_UP_CLASS_NAME = "kotlinx.coroutines.debug.internal.DebugCoroutineInfo"
 
         fun instance(debugProbesImplMirror: DebugProbesImpl, context: DefaultExecutionContext): CoroutineInfo? {
-            val classType = context.findClassSafe(AGENT_134_CLASS_NAME) ?: context.findClassSafe(AGENT_135_AND_UP_CLASS_NAME) ?: return null
+            val classType = context.findClassSafe(AGENT_135_AND_UP_CLASS_NAME) ?: context.findClassSafe(AGENT_134_CLASS_NAME) ?: return null
             return try {
                 CoroutineInfo(debugProbesImplMirror, context, classType.name())
             } catch (e: IllegalStateException) {
