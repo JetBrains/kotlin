@@ -72,16 +72,13 @@ internal sealed class DeprecatedByAnnotation(
         }
 
         private fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVersion: ApiVersion): DeprecationLevelValue? {
-            fun getSinceVersion(name: String): ApiVersion? =
-                annotation.argumentValue(name)?.safeAs<StringValue>()?.value?.takeUnless(String::isEmpty)?.let(ApiVersion.Companion::parse)
-
-            val hiddenSince = getSinceVersion("hiddenSince")
+            val hiddenSince = annotation.getSinceVersion("hiddenSince")
             if (hiddenSince != null && apiVersion >= hiddenSince) return HIDDEN
 
-            val errorSince = getSinceVersion("errorSince")
+            val errorSince = annotation.getSinceVersion("errorSince")
             if (errorSince != null && apiVersion >= errorSince) return ERROR
 
-            val warningSince = getSinceVersion("warningSince")
+            val warningSince = annotation.getSinceVersion("warningSince")
             if (warningSince != null && apiVersion >= warningSince) return WARNING
 
             return null
