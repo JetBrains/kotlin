@@ -23,6 +23,10 @@ import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
+fun evaluateConstants(irModuleFragment: IrModuleFragment) {
+    irModuleFragment.files.forEach { it.transformChildren(IrConstTransformer(irModuleFragment), null) }
+}
+
 //TODO create abstract class that will be common for this and lowering
 class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransformerVoid() {
     private val interpreter = IrInterpreter(irModuleFragment)
