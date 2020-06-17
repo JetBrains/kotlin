@@ -22,19 +22,10 @@ class SequencePresentation(val presentations: List<InlayPresentation>) : BasePre
     }
   }
 
-  fun calcDimensions() {
-    width = presentations.sumBy { it.width }
-    height = presentations.maxBy { it.height }!!.height
-  }
-
-  override var width: Int = 0
-    private set
-  override var height: Int = 0
-    private set
-
-  init {
-    calcDimensions()
-  }
+  override val width: Int
+    get() = presentations.sumBy { it.width }
+  override val height: Int
+    get() = presentations.maxBy { it.height }!!.height
 
   private var presentationUnderCursor: InlayPresentation? = null
 
@@ -122,7 +113,6 @@ class SequencePresentation(val presentations: List<InlayPresentation>) : BasePre
 
     override fun sizeChanged(previous: Dimension, current: Dimension) {
       val old = dimension()
-      calcDimensions()
       val new = dimension()
       this@SequencePresentation.fireSizeChanged(old, new)
     }
