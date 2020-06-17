@@ -61,7 +61,7 @@ private fun findLibrary(
         ?.getChild(kind.name)
         ?.getChildren("root")
         ?.singleOrNull { (it.getAttributeValue("url") ?: "").startsWith(pathPrefix) }
-        ?: error("Root '$pathInRepository' not found in library $library")
+        ?: throw IllegalStateException("Root '$pathInRepository' not found in library $library")
 
     val url = root.getAttributeValue("url") ?: ""
     val path = url.drop(urlScheme.length).dropLast(2) // last '!/'
@@ -146,7 +146,7 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     }
 
     override val kotlinTestJs by lazy {
-        findLibrary(MAVEN_REPOSITORY, "kotlin_test_js.xml", "org.jetbrains.kotlin", "kotlin-test-js")
+        findLibrary(repoPath, "kotlin_test_js.xml", "org.jetbrains.kotlin", "kotlin-test-js")
     }
 
     override val kotlinMainKts by lazy {
@@ -155,5 +155,13 @@ object TestKotlinArtifacts : KotlinArtifacts() {
 
     override val kotlinScriptRuntime by lazy {
         findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_script_runtime.xml", "org.jetbrains.kotlin", "kotlin-script-runtime")
+    }
+
+    override val kotlinScriptingCommon by lazy {
+        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_scripting_common.xml", "org.jetbrains.kotlin", "kotlin-scripting-common")
+    }
+
+    override val kotlinScriptingJvm by lazy {
+        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_scripting_jvm.xml", "org.jetbrains.kotlin", "kotlin-scripting-jvm")
     }
 }

@@ -36,6 +36,8 @@ object ProductionKotlinArtifacts : KotlinArtifacts() {
     override val kotlinTestJs by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_TEST_JS) }
     override val kotlinMainKts by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_MAIN_KTS) }
     override val kotlinScriptRuntime by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPT_RUNTIME) }
+    override val kotlinScriptingCommon by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMMON) }
+    override val kotlinScriptingJvm by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_JVM) }
 
     override val kotlinStdlibCommon get() = throw error("'stdlib-common' artifact is not available")
     override val kotlinStdlibCommonSources get() = throw error("'stdlib-common' artifact is not available")
