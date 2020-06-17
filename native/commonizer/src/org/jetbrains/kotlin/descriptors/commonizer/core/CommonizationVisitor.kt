@@ -78,7 +78,7 @@ internal class CommonizationVisitor(
 
         if (commonClass != null) {
             // companion object should have the same FQ name for each target class, then it could be set to common class
-            val companionObjectFqName = node.targetDeclarations.toList().mapTo(HashSet()) { it!!.companion }.singleOrNull()
+            val companionObjectFqName = node.targetDeclarations.mapTo(HashSet()) { it!!.companion }.singleOrNull()
             if (companionObjectFqName != null) {
                 val companionObjectNode = root.cache.classes[companionObjectFqName]
                     ?: error("Can't find companion object with FQ name $companionObjectFqName")
@@ -91,7 +91,7 @@ internal class CommonizationVisitor(
 
             // find out common (and commonized) supertypes
             val supertypesMap = CommonizedGroupMap<String, CirType>(node.targetDeclarations.size)
-            node.targetDeclarations.toList().forEachIndexed { index, clazz ->
+            node.targetDeclarations.forEachIndexed { index, clazz ->
                 for (supertype in clazz!!.supertypes) {
                     supertypesMap[supertype.fqNameWithTypeParameters][index] = supertype
                 }

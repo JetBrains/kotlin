@@ -25,14 +25,14 @@ internal fun CirClassNode.buildDescriptors(
     val commonClass = commonDeclaration()
     val markAsActual = commonClass != null && commonClass.kind != ClassKind.ENUM_ENTRY
 
-    targetDeclarations.toList().forEachIndexed { index, clazz ->
+    targetDeclarations.forEachIndexed { index, clazz ->
         clazz?.buildDescriptor(components, output, index, containingDeclarations, fqName, isActual = markAsActual)
     }
 
     commonClass?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, fqName, isExpect = true)
 
     // log stats
-    components.statsCollector?.logStats(output.toList())
+    components.statsCollector?.logStats(output)
 }
 
 internal fun CirClass.buildDescriptor(
@@ -81,14 +81,14 @@ internal fun CirClassConstructorNode.buildDescriptors(
     val commonConstructor = commonDeclaration()
     val markAsActual = commonConstructor != null
 
-    targetDeclarations.toList().forEachIndexed { index, constructor ->
+    targetDeclarations.forEachIndexed { index, constructor ->
         constructor?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsActual)
     }
 
     commonConstructor?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = true)
 
     // log stats
-    components.statsCollector?.logStats(output.toList())
+    components.statsCollector?.logStats(output)
 }
 
 private fun CirClassConstructor.buildDescriptor(

@@ -27,7 +27,7 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
                 append("fqName=").append(node.fqName).append(", ")
             }
             append("target=")
-            node.targetDeclarations.toList().joinTo(this)
+            node.targetDeclarations.joinTo(this)
             append(", common=")
             append(if (node.commonDeclaration.isComputed()) node.commonDeclaration() else "<NOT COMPUTED>")
         }

@@ -110,7 +110,7 @@ class DeclarationsBuilderCache(private val dimension: Int) {
 
     companion object {
         private inline fun <reified K, reified V : DeclarationDescriptor> CommonizedGroupMap<K, V>.getOrFail(key: K): List<V?> =
-            getOrNull(key)?.toList() ?: error("No cached ${V::class.java} with key $key found")
+            getOrNull(key) ?: error("No cached ${V::class.java} with key $key found")
     }
 }
 
