@@ -1,5 +1,6 @@
 import cunion.*
 import kotlinx.cinterop.*
+import kotlin.native.*
 import kotlin.test.*
 
 fun main() {
@@ -7,7 +8,12 @@ fun main() {
         val basicUnion = alloc<BasicUnion>()
         for (value in Short.MIN_VALUE..Short.MAX_VALUE) {
             basicUnion.ll = value.toLong()
-            assertEquals(value.toShort(), basicUnion.s)
+            val expected =  if (Platform.isLittleEndian) {
+                value
+            } else {
+                value.toLong() ushr (Long.SIZE_BITS - Short.SIZE_BITS)
+            }
+            assertEquals(expected.toShort(), basicUnion.s)
         }
     }
     memScoped {
@@ -18,7 +24,12 @@ fun main() {
     memScoped {
         val union = alloc<Packed>()
         union.b = 1u
-        assertEquals(1u, union.i)
+        var expected = if (Platform.isLittleEndian) {
+            1u
+        } else {
+            1u shl (Int.SIZE_BITS - Byte.SIZE_BITS)
+        }
+        assertEquals(expected, union.i)
         union.i = 0u
         assertEquals(0u, union.b)
     }
