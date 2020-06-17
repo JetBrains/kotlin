@@ -99,6 +99,8 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected cons
                 if (firstFailure != null)
                     return firstFailure
 
+                if (messageCollector.hasErrors()) return failure(messageCollector)
+
                 if (history.isEmpty()) {
                     val updatedConfiguration = ScriptDependenciesProvider.getInstance(context.environment.project)
                         ?.getScriptConfiguration(snippetKtFile)?.configuration

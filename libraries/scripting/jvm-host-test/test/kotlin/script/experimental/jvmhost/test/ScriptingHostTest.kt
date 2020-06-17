@@ -286,13 +286,13 @@ class ScriptingHostTest : TestCase() {
 
     @Test
     fun testCompileOptionsLanguageVersion() {
-        val script = "typealias MyInt = Int\nval x: MyInt = 3"
+        val script = "fun interface FunInterface {\n    fun invoke()\n}"
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
-            compilerOptions("-language-version", "1.0")
+            compilerOptions("-language-version", "1.3")
         }
         val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        res.reports.find { it.message.startsWith("The feature \"type aliases\" is only available since language version 1.1") }
+        res.reports.find { it.message.startsWith("The feature \"functional interface conversion\" is only available since language version 1.4") }
             ?: fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
     }
 
@@ -318,6 +318,50 @@ class ScriptingHostTest : TestCase() {
         }
         // -no-stdlib in refined configuration has no effect
         assertTrue(res2 is ResultWithDiagnostics.Success)
+    }
+
+    @Test
+    fun testErrorOnParsingOptions() {
+        val script = "println(\"Hi\")"
+
+        val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            compilerOptions("-jvm-target=1.8")
+        }
+        val res1 = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
+        assertTrue(res1 is ResultWithDiagnostics.Failure)
+        assertNotNull(res1.reports.find { it.message == "Invalid argument: -jvm-target=1.8" })
+
+        val compilationConfiguration2 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            refineConfiguration {
+                beforeCompiling { ctx ->
+                    ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                        compilerOptions.append("-jvm-target=1.6")
+                    }.asSuccess()
+                }
+            }
+        }
+        val res2 = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration2, null)
+        assertTrue(res2 is ResultWithDiagnostics.Failure)
+        assertNotNull(res2.reports.find { it.message == "Invalid argument: -jvm-target=1.6" })
+    }
+
+    @Test
+    fun testInvalidOptionsWarning() {
+        val script = "1"
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            compilerOptions("-Xunknown1")
+            refineConfiguration {
+                beforeCompiling { ctx ->
+                    ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                        compilerOptions.append("-Xunknown2")
+                    }.asSuccess()
+                }
+            }
+        }
+        val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
+        assertTrue(res is ResultWithDiagnostics.Success)
+        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: -Xunknown1" })
+        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: -Xunknown2" })
     }
 
     @Test
