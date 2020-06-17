@@ -381,6 +381,7 @@ fun isOverriding(
 ): Boolean {
     val typeCheckerContext = IrTypeCheckerContext(irBuiltIns) as AbstractTypeCheckerContext
     fun equalTypes(first: IrType, second: IrType): Boolean {
+        if (first is IrErrorType || second is IrErrorType) return false
         return AbstractTypeChecker.equalTypes(
             typeCheckerContext, first, second
         ) ||
