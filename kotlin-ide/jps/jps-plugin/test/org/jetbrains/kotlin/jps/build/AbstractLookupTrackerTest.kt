@@ -321,20 +321,21 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
                 val end = column - 1
                 parts.add(lineContent.subSequence(start, end))
 
-                val lookups = lookupsFromColumn.distinct().joinToString(separator = " ", prefix = "/*", postfix = "*/") {
+                val lookups = lookupsFromColumn.mapTo(sortedSetOf()) {
                     val rest = lineContent.substring(end)
 
                     val name =
-                            when {
-                                rest.startsWith(it.name) || // same name
+                        when {
+                            rest.startsWith(it.name) || // same name
                                 rest.startsWith("$" + it.name) || // backing field
                                 DECLARATION_STARTS_WITH.any { rest.startsWith(it) } // it's declaration
-                                -> ""
-                                else -> "(" + it.name + ")"
-                            }
+                            -> ""
+                            else -> "(" + it.name + ")"
+                        }
 
-                    it.scopeKind.toString()[0].toLowerCase().toString() + ":" + it.scopeFqName.let { if (it.isNotEmpty()) it else "<root>" } + name
-                }
+                    it.scopeKind.toString()[0].toLowerCase()
+                        .toString() + ":" + it.scopeFqName.let { if (it.isNotEmpty()) it else "<root>" } + name
+                }.joinToString(separator = " ", prefix = "/*", postfix = "*/")
 
                 parts.add(lookups)
 
