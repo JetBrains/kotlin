@@ -14130,6 +14130,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/innerNested/innerGenericClassFromJava.kt");
         }
 
+        @TestMetadata("innerImplicitParameter.kt")
+        public void testInnerImplicitParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/innerNested/innerImplicitParameter.kt");
+        }
+
         @TestMetadata("innerJavaClass.kt")
         public void testInnerJavaClass() throws Exception {
             runTest("compiler/testData/codegen/box/innerNested/innerJavaClass.kt");

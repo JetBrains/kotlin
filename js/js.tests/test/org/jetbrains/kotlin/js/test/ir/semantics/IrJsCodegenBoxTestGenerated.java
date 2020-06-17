@@ -12295,6 +12295,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/innerNested/innerGeneric.kt");
         }
 
+        @TestMetadata("innerImplicitParameter.kt")
+        public void testInnerImplicitParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/innerNested/innerImplicitParameter.kt");
+        }
+
         @TestMetadata("innerLabeledThis.kt")
         public void testInnerLabeledThis() throws Exception {
             runTest("compiler/testData/codegen/box/innerNested/innerLabeledThis.kt");
