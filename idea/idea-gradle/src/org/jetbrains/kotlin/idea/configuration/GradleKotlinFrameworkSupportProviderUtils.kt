@@ -63,3 +63,22 @@ internal fun addBrowserSupport(module: Module) {
         )
     }
 }
+
+internal fun browserConfiguration(): String {
+    return """
+        webpackTask {
+            cssSupport.enabled = true
+        }
+        
+        runTask {
+            cssSupport.enabled = true
+        }
+        
+        testTask {
+            useKarma {
+                useChromeHeadless()
+                webpackConfig.cssSupport.enabled = true
+           }
+        }
+    """.trimIndent()
+}

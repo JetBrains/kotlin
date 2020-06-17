@@ -20,7 +20,12 @@ kotlin {
     }
     js {
         browser {
-
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                    cssSupport.enabled = true
+                }
+            }
         }
     }
     def hostOs = System.getProperty("os.name")

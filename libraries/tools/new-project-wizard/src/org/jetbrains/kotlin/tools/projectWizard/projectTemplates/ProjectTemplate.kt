@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.tools.projectWizard.projectTemplates
 
 import org.jetbrains.annotations.NonNls
@@ -207,7 +212,7 @@ object MultiplatformLibraryProjectTemplate : ProjectTemplate() {
                         ModuleType.common.createDefaultTarget(),
                         ModuleType.jvm.createDefaultTarget(),
                         ModuleType.js.createDefaultTarget().withConfiguratorSettings(JsBrowserTargetConfigurator) {
-                            JsTargetConfigurator.kind withValue JsTargetKind.LIBRARY
+                            JSConfigurator.kind withValue JsTargetKind.LIBRARY
                         },
                         ModuleType.native.createDefaultTarget()
                     )
