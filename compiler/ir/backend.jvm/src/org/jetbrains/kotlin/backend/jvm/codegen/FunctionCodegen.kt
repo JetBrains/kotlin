@@ -69,7 +69,9 @@ class FunctionCodegen(
             generateParameterNames(irFunction, methodVisitor, signature, context.state)
         }
 
-        if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+        if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
+            irFunction.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+        ) {
             object : AnnotationCodegen(classCodegen, context) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotation(descr, visible)

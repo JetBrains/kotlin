@@ -277,11 +277,14 @@ abstract class AnnotationCodegen(
 
     companion object {
         private fun isInvisibleFromTheOutside(declaration: IrDeclaration?): Boolean {
-            if (declaration is IrSimpleFunction && declaration.origin === JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR) {
+            if (declaration is IrSimpleFunction && declaration.origin.isSynthetic) {
                 return true
             }
             if (declaration is IrDeclarationWithVisibility) {
                 return !declaration.visibility.isVisibleOutside()
+            }
+            if (declaration is IrValueParameter && (declaration.parent as IrDeclaration).origin.isSynthetic) {
+                return true
             }
             return false
         }

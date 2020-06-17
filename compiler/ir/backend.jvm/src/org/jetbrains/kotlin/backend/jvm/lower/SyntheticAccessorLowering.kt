@@ -217,12 +217,13 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         get() = this in context.hiddenConstructors || (
                 !Visibilities.isPrivate(visibility) && !constructedClass.isInline && hasMangledParameters &&
                         origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
-                        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+                        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
+                        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR)
 
     private fun handleHiddenConstructor(declaration: IrConstructor): IrConstructorImpl {
         require(declaration.isOrShouldBeHidden, declaration::render)
         return context.hiddenConstructors.getOrPut(declaration) {
-            declaration.makeConstructorAccessor().also { accessor ->
+            declaration.makeConstructorAccessor(JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR).also { accessor ->
                 // There's a special case in the JVM backend for serializing the metadata of hidden
                 // constructors - we serialize the descriptor of the original constructor, but the
                 // signature of the accessor. We implement this special case in the JVM IR backend by
@@ -249,11 +250,14 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             candidates.lastOrNull { parent is IrClass && it.isSubclassOf(parent) } ?: classes.last()
         } else parent
 
-    private fun IrConstructor.makeConstructorAccessor(): IrConstructorImpl {
+    private fun IrConstructor.makeConstructorAccessor(
+        originForConstructorAccessor: IrDeclarationOrigin =
+            JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+    ): IrConstructorImpl {
         val source = this
 
         return buildConstructor {
-            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            origin = originForConstructorAccessor
             name = source.name
             visibility = Visibilities.PUBLIC
         }.also { accessor ->
