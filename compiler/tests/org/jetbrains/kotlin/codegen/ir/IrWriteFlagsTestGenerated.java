@@ -515,6 +515,11 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("deprecatedSinceKotlin.kt")
+            public void testDeprecatedSinceKotlin() throws Exception {
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/deprecatedSinceKotlin.kt");
+            }
+
             @TestMetadata("emptyGetter.kt")
             public void testEmptyGetter() throws Exception {
                 runTest("compiler/testData/writeFlags/function/deprecatedFlag/emptyGetter.kt");
