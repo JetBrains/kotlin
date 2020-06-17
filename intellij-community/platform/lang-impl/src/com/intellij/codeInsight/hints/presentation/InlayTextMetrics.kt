@@ -14,7 +14,7 @@ import java.awt.font.FontRenderContext
 import kotlin.math.ceil
 import kotlin.math.max
 
-internal class InlayTextMetricsStorage(private val editor: EditorImpl) {
+internal class InlayTextMetricsStorage(val editor: EditorImpl) {
   private var smallTextMetrics : InlayTextMetrics? = null
   private var normalTextMetrics : InlayTextMetrics? = null
 

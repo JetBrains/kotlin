@@ -57,9 +57,14 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
     return ContainerInlayPresentation(presentation, padding, roundedCorners, background, backgroundAlpha)
   }
 
-
   override fun mouseHandling(base: InlayPresentation, clickListener: ClickListener?, hoverListener: HoverListener?): InlayPresentation {
     return MouseHandlingPresentation(base, clickListener, hoverListener)
+  }
+
+  @ApiStatus.Experimental
+  @Contract(pure = true)
+  fun textSpacePlaceholder(length: Int, isSmall: Boolean) : InlayPresentation {
+    return TextPlaceholderPresentation(length, textMetricsStorage, isSmall)
   }
 
   @Contract(pure = true)
