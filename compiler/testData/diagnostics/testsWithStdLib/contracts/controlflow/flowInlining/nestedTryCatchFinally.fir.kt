@@ -45,7 +45,7 @@ fun outerFinallyInitializes() {
     }
 
     // Properly initialized
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 fun innerFinallyInitializes() {
@@ -62,14 +62,14 @@ fun innerFinallyInitializes() {
         }
 
         // Properly initialized
-        x.inc()
+        <!UNINITIALIZED_VARIABLE!>x<!>.inc()
     } catch (e: java.lang.Exception) {
         log()
     }
 
     // Still can be unitialized because we don't know what can happen in try-block
     // (e.g., OutOfMemory exception could've happened even before myRun was executed)
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 
@@ -87,12 +87,12 @@ fun innerFinallyInitializesOuterRethrows() {
         }
 
         // Properly initialized
-        x.inc()
+        <!UNINITIALIZED_VARIABLE!>x<!>.inc()
     } catch (e: java.lang.Exception) {
         log()
         throw e
     }
 
     // Guaranteed to be initialized because all catch-clauses are rethrowing
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }

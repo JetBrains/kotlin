@@ -43,7 +43,7 @@ fun possibleReassignmentInTryCatch() {
         }
         x.inc()
     }
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 fun tryCatchOuter() {
@@ -53,6 +53,6 @@ fun tryCatchOuter() {
         x.inc()
     }
     catch (e: java.lang.Exception) {
-        x.inc()
+        <!UNINITIALIZED_VARIABLE!>x<!>.inc()
     }
 }
