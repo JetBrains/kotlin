@@ -267,6 +267,10 @@ public final class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIco
     return isDone() ? myScaledDelegateIcon : evaluate();
   }
 
+  public boolean isNeedReadAction() {
+    return myNeedReadAction;
+  }
+
   @NotNull
   @Override
   public Icon evaluate() {
