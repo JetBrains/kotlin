@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassConstructor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassConstructorNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.FqName
 
@@ -22,10 +22,10 @@ internal fun CirClassNode.buildDescriptors(
     output: CommonizedGroup<ClassifierDescriptorWithTypeParameters>,
     containingDeclarations: List<DeclarationDescriptor?>
 ) {
-    val commonClass = common()
+    val commonClass = commonDeclaration()
     val markAsActual = commonClass != null && commonClass.kind != ClassKind.ENUM_ENTRY
 
-    target.forEachIndexed { index, clazz ->
+    targetDeclarations.toList().forEachIndexed { index, clazz ->
         clazz?.buildDescriptor(components, output, index, containingDeclarations, fqName, isActual = markAsActual)
     }
 
@@ -78,10 +78,10 @@ internal fun CirClassConstructorNode.buildDescriptors(
     output: CommonizedGroup<ClassConstructorDescriptor>,
     containingDeclarations: List<CommonizedClassDescriptor?>
 ) {
-    val commonConstructor = common()
+    val commonConstructor = commonDeclaration()
     val markAsActual = commonConstructor != null
 
-    target.forEachIndexed { index, constructor ->
+    targetDeclarations.toList().forEachIndexed { index, constructor ->
         constructor?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsActual)
     }
 

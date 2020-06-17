@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifier
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeAlias
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTypeAliasNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.FqName
 
@@ -20,7 +20,7 @@ internal fun CirTypeAliasNode.buildDescriptors(
     output: CommonizedGroup<ClassifierDescriptorWithTypeParameters>,
     containingDeclarations: List<DeclarationDescriptor?>
 ) {
-    val commonClassifier: CirClassifier? = common()
+    val commonClassifier: CirClassifier? = commonDeclaration()
     // Note: 'expect class' and lifted up 'typealias' both can't be non-null
     val commonTypeAlias: CirTypeAlias? = commonClassifier as? CirTypeAlias?
 
@@ -28,7 +28,7 @@ internal fun CirTypeAliasNode.buildDescriptors(
     val markAsActual = commonClassifier != null
 
     if (!isLiftedUp) {
-        target.forEachIndexed { index, typeAlias ->
+        targetDeclarations.toList().forEachIndexed { index, typeAlias ->
             typeAlias?.buildDescriptor(components, output, index, containingDeclarations, fqName, isActual = markAsActual)
         }
     }

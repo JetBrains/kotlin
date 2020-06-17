@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirProperty
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirPropertyNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -23,7 +23,7 @@ internal fun CirPropertyNode.buildDescriptors(
     output: CommonizedGroup<PropertyDescriptor>,
     containingDeclarations: List<DeclarationDescriptor?>
 ) {
-    val commonProperty = common()
+    val commonProperty = commonDeclaration()
 
     val isLiftedUp = commonProperty?.isLiftedUp == true
     val markAsExpectAndActual = commonProperty != null
@@ -31,7 +31,7 @@ internal fun CirPropertyNode.buildDescriptors(
             && !isLiftedUp
 
     if (!isLiftedUp) {
-        target.forEachIndexed { index, property ->
+        targetDeclarations.toList().forEachIndexed { index, property ->
             property?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsExpectAndActual)
         }
     }

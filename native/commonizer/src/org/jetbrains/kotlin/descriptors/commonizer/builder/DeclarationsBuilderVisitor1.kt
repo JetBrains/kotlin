@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.Target
 import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedMemberScope.Companion.plusAssign
 import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedPackageFragmentProvider.Companion.plusAssign
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.dimension
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -29,12 +31,12 @@ internal class DeclarationsBuilderVisitor1(
         check(data.isEmpty()) // root node may not have containing declarations
         check(components.targetComponents.size == node.dimension)
 
-        val allTargets = (node.target + node.common()!!).map { it!!.target }
+        val allTargets = (node.targetDeclarations.toList() + node.commonDeclaration()!!).map { it!!.target }
 
         val modulesByTargets = HashMap<Target, MutableList<ModuleDescriptorImpl>>()
 
         // collect module descriptors:
-        for (moduleNode in node.modules) {
+        for (moduleNode in node.modules.values) {
             val modules = moduleNode.accept(this, noContainingDeclarations()).asListContaining<ModuleDescriptorImpl>()
             modules.forEachIndexed { index, module ->
                 val target = allTargets[index]
@@ -58,7 +60,7 @@ internal class DeclarationsBuilderVisitor1(
 
         // build package fragments:
         val packageFragmentProviders = CommonizedPackageFragmentProvider.createArray(node.dimension)
-        for (packageNode in node.packages) {
+        for (packageNode in node.packages.values) {
             val packageFragments = packageNode.accept(this, moduleDescriptors).asListContaining<PackageFragmentDescriptor>()
             packageFragmentProviders += packageFragments
         }
@@ -81,10 +83,10 @@ internal class DeclarationsBuilderVisitor1(
 
         // build package members:
         val packageMemberScopes = CommonizedMemberScope.createArray(node.dimension)
-        for (classNode in node.classes) {
+        for (classNode in node.classes.values) {
             packageMemberScopes += classNode.accept(this, packageFragments)
         }
-        for (typeAliasNode in node.typeAliases) {
+        for (typeAliasNode in node.typeAliases.values) {
             packageMemberScopes += typeAliasNode.accept(this, packageFragments)
         }
 
@@ -109,7 +111,7 @@ internal class DeclarationsBuilderVisitor1(
 
         // build class members:
         val classMemberScopes = CommonizedMemberScope.createArray(node.dimension)
-        for (classNode in node.classes) {
+        for (classNode in node.classes.values) {
             classMemberScopes += classNode.accept(this, classes)
         }
 

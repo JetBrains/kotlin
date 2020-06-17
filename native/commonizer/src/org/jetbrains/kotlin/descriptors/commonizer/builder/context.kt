@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.Target
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.dimension
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.dimension
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
@@ -172,7 +172,7 @@ fun CirRootNode.createGlobalBuilderComponents(
 
     val targetContexts = (0 until dimension).map { index ->
         val isCommon = index == indexOfCommon
-        val root = if (isCommon) common()!! else target[index]!!
+        val root = if (isCommon) commonDeclaration()!! else targetDeclarations[index]!!
 
         val builtIns = root.builtInsProvider.loadBuiltIns()
         check(builtIns::class.java.name == root.builtInsClass) {

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 /** Fixed-size ordered collection with no extra space that represents a commonized group of same-rank elements */
-internal class CommonizedGroup<T : Any>(
+class CommonizedGroup<T : Any>(
     val size: Int,
     initialize: (Int) -> T?
 ) {
@@ -30,6 +30,7 @@ internal class CommonizedGroup<T : Any>(
         elements[index] = value
     }
 
+    // TODO: consider removing this method
     fun toList(): List<T?> = object : AbstractList<T?>() {
         override val size
             get() = this@CommonizedGroup.size
