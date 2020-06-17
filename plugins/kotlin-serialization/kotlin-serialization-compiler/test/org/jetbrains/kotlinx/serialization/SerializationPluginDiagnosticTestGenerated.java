@@ -33,6 +33,11 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/DuplicateSerialName.kt");
     }
 
+    @TestMetadata("LazyRecursionBug.kt")
+    public void testLazyRecursionBug() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/LazyRecursionBug.kt");
+    }
+
     @TestMetadata("NoSuitableCtorInParent.kt")
     public void testNoSuitableCtorInParent() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/NoSuitableCtorInParent.kt");
