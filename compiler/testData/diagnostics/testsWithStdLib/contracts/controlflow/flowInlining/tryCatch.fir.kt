@@ -22,7 +22,7 @@ fun tryCatchInlined() {
             x.inc()
         }
         catch (e: java.lang.Exception) {
-            x.inc()
+            <!UNINITIALIZED_VARIABLE!>x<!>.inc()
         }
     }
     x = 42

@@ -5,112 +5,112 @@ digraph secondaryConstructorCfg_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        2 [label="Exit function <init>" style="filled" fillcolor=red];
+        0 [label="Enter class B" style="filled" fillcolor=red];
+        subgraph cluster_1 {
+            color=blue
+            2 [label="Enter property" style="filled" fillcolor=red];
+            3 [label="Access variable R|<local>/p0|"];
+            4 [label="Exit property" style="filled" fillcolor=red];
+        }
+        subgraph cluster_2 {
+            color=blue
+            5 [label="Enter property" style="filled" fillcolor=red];
+            6 [label="Access variable R|<local>/p0|"];
+            7 [label="Access variable R|kotlin/String.length|"];
+            8 [label="Exit property" style="filled" fillcolor=red];
+        }
+        subgraph cluster_3 {
+            color=blue
+            9 [label="Enter init block" style="filled" fillcolor=red];
+            subgraph cluster_4 {
+                color=blue
+                10 [label="Enter block"];
+                11 [label="Access variable R|<local>/p0|"];
+                12 [label="Access variable R|kotlin/String.length|"];
+                13 [label="Assignment: R|/B.p1|"];
+                14 [label="Const: String()"];
+                15 [label="Assignment: R|/B.p3|"];
+                16 [label="Exit block"];
+            }
+            17 [label="Exit init block" style="filled" fillcolor=red];
+        }
+        1 [label="Exit class B" style="filled" fillcolor=red];
     }
-    0 -> {1};
-    1 -> {2};
-
-    subgraph cluster_1 {
-        color=red
-        3 [label="Enter function getter" style="filled" fillcolor=red];
-        4 [label="Exit function getter" style="filled" fillcolor=red];
-    }
+    0 -> {2} [color=green];
+    2 -> {3};
     3 -> {4};
-
-    subgraph cluster_2 {
-        color=red
-        8 [label="Enter function getter" style="filled" fillcolor=red];
-        9 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    8 -> {9};
-
-    subgraph cluster_3 {
-        color=red
-        14 [label="Enter function getter" style="filled" fillcolor=red];
-        15 [label="Exit function getter" style="filled" fillcolor=red];
-    }
+    4 -> {5} [color=green];
+    5 -> {6};
+    6 -> {7};
+    7 -> {8};
+    8 -> {9} [color=green];
+    9 -> {10};
+    10 -> {11};
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
     14 -> {15};
-
-    subgraph cluster_4 {
-        color=red
-        16 [label="Enter function setter" style="filled" fillcolor=red];
-        17 [label="Exit function setter" style="filled" fillcolor=red];
-    }
+    15 -> {16};
     16 -> {17};
+    17 -> {1} [color=green];
 
     subgraph cluster_5 {
         color=red
         18 [label="Enter function <init>" style="filled" fillcolor=red];
-        19 [label="Access variable R|<local>/p0|"];
-        20 [label="Delegated constructor call: this<R|B|>(...)"];
-        subgraph cluster_6 {
-            color=blue
-            21 [label="Enter block"];
-            22 [label="Access variable R|<local>/p1|"];
-            23 [label="Assignment: R|/B.p3|"];
-            24 [label="Exit block"];
-        }
-        25 [label="Exit function <init>" style="filled" fillcolor=red];
+        19 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        20 [label="Exit function <init>" style="filled" fillcolor=red];
     }
     18 -> {19};
     19 -> {20};
-    20 -> {21};
+
+    subgraph cluster_6 {
+        color=red
+        21 [label="Enter function getter" style="filled" fillcolor=red];
+        22 [label="Exit function getter" style="filled" fillcolor=red];
+    }
     21 -> {22};
-    22 -> {23};
-    23 -> {24};
-    24 -> {25};
 
     subgraph cluster_7 {
         color=red
-        35 [label="Enter class B" style="filled" fillcolor=red];
-        subgraph cluster_8 {
-            color=blue
-            5 [label="Enter property" style="filled" fillcolor=red];
-            6 [label="Access variable R|<local>/p0|"];
-            7 [label="Exit property" style="filled" fillcolor=red];
-        }
-        subgraph cluster_9 {
-            color=blue
-            10 [label="Enter property" style="filled" fillcolor=red];
-            11 [label="Access variable R|<local>/p0|"];
-            12 [label="Access variable R|kotlin/String.length|"];
-            13 [label="Exit property" style="filled" fillcolor=red];
-        }
-        subgraph cluster_10 {
-            color=blue
-            26 [label="Enter init block" style="filled" fillcolor=red];
-            subgraph cluster_11 {
-                color=blue
-                27 [label="Enter block"];
-                28 [label="Access variable R|<local>/p0|"];
-                29 [label="Access variable R|kotlin/String.length|"];
-                30 [label="Assignment: R|/B.p1|"];
-                31 [label="Const: String()"];
-                32 [label="Assignment: R|/B.p3|"];
-                33 [label="Exit block"];
-            }
-            34 [label="Exit init block" style="filled" fillcolor=red];
-        }
-        36 [label="Exit class B" style="filled" fillcolor=red];
+        23 [label="Enter function getter" style="filled" fillcolor=red];
+        24 [label="Exit function getter" style="filled" fillcolor=red];
     }
-    35 -> {5} [color=green];
-    5 -> {6};
-    6 -> {7};
-    7 -> {10} [color=green];
-    10 -> {11};
-    11 -> {12};
-    12 -> {13};
-    13 -> {26} [color=green];
-    26 -> {27};
+    23 -> {24};
+
+    subgraph cluster_8 {
+        color=red
+        25 [label="Enter function getter" style="filled" fillcolor=red];
+        26 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+    25 -> {26};
+
+    subgraph cluster_9 {
+        color=red
+        27 [label="Enter function setter" style="filled" fillcolor=red];
+        28 [label="Exit function setter" style="filled" fillcolor=red];
+    }
     27 -> {28};
-    28 -> {29};
+
+    subgraph cluster_10 {
+        color=red
+        29 [label="Enter function <init>" style="filled" fillcolor=red];
+        30 [label="Access variable R|<local>/p0|"];
+        31 [label="Delegated constructor call: this<R|B|>(...)"];
+        subgraph cluster_11 {
+            color=blue
+            32 [label="Enter block"];
+            33 [label="Access variable R|<local>/p1|"];
+            34 [label="Assignment: R|/B.p3|"];
+            35 [label="Exit block"];
+        }
+        36 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
     29 -> {30};
     30 -> {31};
     31 -> {32};
     32 -> {33};
     33 -> {34};
-    34 -> {36} [color=green];
+    34 -> {35};
+    35 -> {36};
 
 }

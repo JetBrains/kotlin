@@ -19,11 +19,11 @@ fun indefiniteFlow() {
 
     funWithUnknownInvocations { runTwice { x = 42 } }
 
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 fun shadowing() {
     var x: Int
     runTwice { val x: Int; x = 42; x.inc() }
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }

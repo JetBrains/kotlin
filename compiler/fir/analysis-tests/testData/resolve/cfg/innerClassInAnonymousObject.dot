@@ -14,33 +14,33 @@ digraph innerClassInAnonymousObject_kt {
 
     subgraph cluster_1 {
         color=red
-        3 [label="Enter function <init>" style="filled" fillcolor=red];
-        4 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        5 [label="Exit function <init>" style="filled" fillcolor=red];
+        3 [label="Enter class Nested" style="filled" fillcolor=red];
+        4 [label="Exit class Nested" style="filled" fillcolor=red];
     }
-    3 -> {4};
-    4 -> {5};
+    3 -> {4} [color=green];
 
     subgraph cluster_2 {
         color=red
-        6 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_3 {
-            color=blue
-            7 [label="Enter block"];
-            8 [label="Exit block"];
-        }
-        9 [label="Exit function foo" style="filled" fillcolor=red];
+        5 [label="Enter function <init>" style="filled" fillcolor=red];
+        6 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        7 [label="Exit function <init>" style="filled" fillcolor=red];
     }
+    5 -> {6};
     6 -> {7};
-    7 -> {8};
-    8 -> {9};
 
-    subgraph cluster_4 {
+    subgraph cluster_3 {
         color=red
-        10 [label="Enter class Nested" style="filled" fillcolor=red];
-        11 [label="Exit class Nested" style="filled" fillcolor=red];
+        8 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            9 [label="Enter block"];
+            10 [label="Exit block"];
+        }
+        11 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    10 -> {11} [color=green];
+    8 -> {9};
+    9 -> {10};
+    10 -> {11};
 
     subgraph cluster_5 {
         color=red
@@ -61,7 +61,7 @@ digraph innerClassInAnonymousObject_kt {
         18 [label="Exit property" style="filled" fillcolor=red];
     }
     16 -> {17};
-    16 -> {0 3 6} [color=red];
+    16 -> {0 5 8} [color=red];
     17 -> {18};
     12 -> {13} [color=green];
 

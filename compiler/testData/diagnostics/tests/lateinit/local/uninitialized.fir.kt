@@ -2,7 +2,7 @@
 
 fun test1() {
     lateinit var s: String
-    s.length
+    <!UNINITIALIZED_VARIABLE!>s<!>.length
 }
 
 fun test2() {
@@ -20,5 +20,5 @@ fun test3() {
     if (almostAlwaysTrue()) {
         s = ""
     }
-    s.length
+    <!UNINITIALIZED_VARIABLE!>s<!>.length
 }

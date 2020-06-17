@@ -8,7 +8,7 @@ fun foo() {
         }
     }
     // Error! See KT-10042
-    x.length
+    <!UNINITIALIZED_VARIABLE!>x<!>.length
 }
 
 fun bar() {
@@ -19,7 +19,7 @@ fun bar() {
         }
     }
     // Ok
-    x.length
+    <!UNINITIALIZED_VARIABLE!>x<!>.length
 }
 
 fun gav() {
@@ -31,7 +31,7 @@ fun gav() {
         }
     }
     // Error! See KT-10042
-    x.length
+    <!UNINITIALIZED_VARIABLE!>x<!>.length
     val y: String
     class C(val s: String) {
         constructor(): this("") {
@@ -39,7 +39,7 @@ fun gav() {
             y = s
         }
     }
-    y.length
+    <!UNINITIALIZED_VARIABLE!>y<!>.length
 }
 
 open class Gau(val s: String)
@@ -53,7 +53,7 @@ fun gau() {
         }
     }
     // Ok
-    x.length
+    <!UNINITIALIZED_VARIABLE!>x<!>.length
     val y: String
     fun local() {
         object: Any() {

@@ -85,6 +85,6 @@ fun case_6() {
         null!!
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!AMBIGUITY!>minus<!>(10.0)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), UNINITIALIZED_VARIABLE!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), UNINITIALIZED_VARIABLE!>x<!>.<!AMBIGUITY!>minus<!>(10.0)
 }

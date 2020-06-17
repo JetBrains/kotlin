@@ -37,7 +37,7 @@ fun innerTryCatchInitializes() {
         // Can get here if innerComputation() threw an exception that wasn't catched by the inner catch (x is not initialized)
         // OR if outerComputation() threw an exception (x is initialized because we reach outer computation only when inner finished ok)
         // So, x=I? here
-        x.inc()
+        <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 
         // Potential reasignment
         x = 42

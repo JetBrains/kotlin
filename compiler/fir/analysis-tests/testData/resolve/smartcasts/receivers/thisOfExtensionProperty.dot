@@ -12,17 +12,17 @@ digraph thisOfExtensionProperty_kt {
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter function getter" style="filled" fillcolor=red];
-        3 [label="Exit function getter" style="filled" fillcolor=red];
+        2 [label="Enter class B" style="filled" fillcolor=red];
+        3 [label="Exit class B" style="filled" fillcolor=red];
     }
-    2 -> {3};
+    2 -> {3} [color=green];
 
     subgraph cluster_2 {
         color=red
-        4 [label="Enter class B" style="filled" fillcolor=red];
-        5 [label="Exit class B" style="filled" fillcolor=red];
+        4 [label="Enter function getter" style="filled" fillcolor=red];
+        5 [label="Exit function getter" style="filled" fillcolor=red];
     }
-    4 -> {5} [color=green];
+    4 -> {5};
 
     subgraph cluster_3 {
         color=red

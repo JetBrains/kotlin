@@ -116,51 +116,51 @@ digraph smartcastToNothing_kt {
 
     subgraph cluster_10 {
         color=red
-        38 [label="Enter function <init>" style="filled" fillcolor=red];
-        39 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        40 [label="Exit function <init>" style="filled" fillcolor=red];
+        38 [label="Enter class A" style="filled" fillcolor=red];
+        subgraph cluster_11 {
+            color=blue
+            40 [label="Enter property" style="filled" fillcolor=red];
+            41 [label="Const: Int(1)"];
+            42 [label="Exit property" style="filled" fillcolor=red];
+        }
+        subgraph cluster_12 {
+            color=blue
+            43 [label="Enter property" style="filled" fillcolor=red];
+            44 [label="Const: Boolean(true)"];
+            45 [label="Exit property" style="filled" fillcolor=red];
+        }
+        39 [label="Exit class A" style="filled" fillcolor=red];
     }
-    38 -> {39};
-    39 -> {40};
-
-    subgraph cluster_11 {
-        color=red
-        41 [label="Enter function getter" style="filled" fillcolor=red];
-        42 [label="Exit function getter" style="filled" fillcolor=red];
-    }
+    38 -> {40} [color=green];
+    40 -> {41};
     41 -> {42};
-
-    subgraph cluster_12 {
-        color=red
-        46 [label="Enter function getter" style="filled" fillcolor=red];
-        47 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    46 -> {47};
+    42 -> {43} [color=green];
+    43 -> {44};
+    44 -> {45};
+    45 -> {39} [color=green];
 
     subgraph cluster_13 {
         color=red
-        51 [label="Enter class A" style="filled" fillcolor=red];
-        subgraph cluster_14 {
-            color=blue
-            43 [label="Enter property" style="filled" fillcolor=red];
-            44 [label="Const: Int(1)"];
-            45 [label="Exit property" style="filled" fillcolor=red];
-        }
-        subgraph cluster_15 {
-            color=blue
-            48 [label="Enter property" style="filled" fillcolor=red];
-            49 [label="Const: Boolean(true)"];
-            50 [label="Exit property" style="filled" fillcolor=red];
-        }
-        52 [label="Exit class A" style="filled" fillcolor=red];
+        46 [label="Enter function <init>" style="filled" fillcolor=red];
+        47 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        48 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    51 -> {43} [color=green];
-    43 -> {44};
-    44 -> {45};
-    45 -> {48} [color=green];
-    48 -> {49};
+    46 -> {47};
+    47 -> {48};
+
+    subgraph cluster_14 {
+        color=red
+        49 [label="Enter function getter" style="filled" fillcolor=red];
+        50 [label="Exit function getter" style="filled" fillcolor=red];
+    }
     49 -> {50};
-    50 -> {52} [color=green];
+
+    subgraph cluster_15 {
+        color=red
+        51 [label="Enter function getter" style="filled" fillcolor=red];
+        52 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+    51 -> {52};
 
     subgraph cluster_16 {
         color=red

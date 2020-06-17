@@ -44,10 +44,10 @@ import contracts.*
 fun case_1(value_1: Int?) {
     val value_2: Int
     if (contracts.case_1(value_1) { value_2 = 10 }) {
-        println(value_2)
+        println(<!UNINITIALIZED_VARIABLE!>value_2<!>)
     } else {
         value_1.inv()
-        println(value_2)
+        println(<!UNINITIALIZED_VARIABLE!>value_2<!>)
     }
 }
 
@@ -57,18 +57,18 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
     when (value_1.case_2(value_2, value_3) { value_4 = 10 }) {
         true -> {
             <!AMBIGUITY!>println<!>(value_3?.xor(true))
-            println(value_4)
+            println(<!UNINITIALIZED_VARIABLE!>value_4<!>)
             <!AMBIGUITY!>println<!>(value_1.inv())
             <!AMBIGUITY!>println<!>(value_2.inv())
         }
         false -> {
-            println(value_4)
+            println(<!UNINITIALIZED_VARIABLE!>value_4<!>)
             println(value_1)
             println(value_2)
         }
         null -> {
             println(value_3?.xor(true))
-            println(value_4)
+            println(<!UNINITIALIZED_VARIABLE!>value_4<!>)
             println(value_1)
             println(value_2)
         }

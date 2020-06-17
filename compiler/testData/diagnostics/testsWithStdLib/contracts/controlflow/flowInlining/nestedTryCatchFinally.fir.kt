@@ -36,7 +36,7 @@ fun outerFinallyInitializes() {
         x = outerComputation()
     } catch (e: java.lang.Exception) {
         // can catch exception thrown by the inner, so x can be not initialized
-        x.inc()
+        <!UNINITIALIZED_VARIABLE!>x<!>.inc()
         log()
     } finally {
         // Possible reassignment (e.g. if everything finished)

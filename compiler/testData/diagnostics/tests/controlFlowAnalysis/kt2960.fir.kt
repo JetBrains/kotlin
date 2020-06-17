@@ -15,7 +15,7 @@ val o = object {
         p.x = 4
 
         val z : Int
-        doSmth(z)
+        doSmth(<!UNINITIALIZED_VARIABLE!>z<!>)
     }
 }
 
@@ -28,7 +28,7 @@ class A {
     val a : Int = 1
       get() {
           val x : Int
-          doSmth(x)
+          doSmth(<!UNINITIALIZED_VARIABLE!>x<!>)
           return field
       }
 }

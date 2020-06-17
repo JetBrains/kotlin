@@ -1,7 +1,7 @@
 //FILE: foo.kt
 fun main() {
     val c: Type
-    when (c)  {
+    when (<!UNINITIALIZED_VARIABLE!>c<!>)  {
 
     }
 }

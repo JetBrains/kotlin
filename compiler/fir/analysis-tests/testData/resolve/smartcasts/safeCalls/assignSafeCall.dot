@@ -5,70 +5,70 @@ digraph assignSafeCall_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        2 [label="Exit function <init>" style="filled" fillcolor=red];
-    }
-    0 -> {1};
-    1 -> {2};
-
-    subgraph cluster_1 {
-        color=red
-        3 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_2 {
+        0 [label="Enter class A" style="filled" fillcolor=red];
+        subgraph cluster_1 {
             color=blue
-            4 [label="Enter block"];
-            5 [label="Const: Int(1)"];
-            6 [label="Jump: ^foo Int(1)"];
-            7 [label="Stub" style="filled" fillcolor=gray];
-            8 [label="Exit block" style="filled" fillcolor=gray];
+            2 [label="Enter property" style="filled" fillcolor=red];
+            3 [label="Const: Int(1)"];
+            4 [label="Exit property" style="filled" fillcolor=red];
         }
-        9 [label="Exit function foo" style="filled" fillcolor=red];
+        1 [label="Exit class A" style="filled" fillcolor=red];
     }
+    0 -> {2} [color=green];
+    2 -> {3};
     3 -> {4};
-    4 -> {5};
+    4 -> {1} [color=green];
+
+    subgraph cluster_2 {
+        color=red
+        5 [label="Enter function <init>" style="filled" fillcolor=red];
+        6 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        7 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
     5 -> {6};
-    6 -> {9};
-    6 -> {7} [style=dotted];
-    7 -> {8} [style=dotted];
-    8 -> {9} [style=dotted];
+    6 -> {7};
 
     subgraph cluster_3 {
         color=red
-        10 [label="Enter function getter" style="filled" fillcolor=red];
-        11 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    10 -> {11};
-
-    subgraph cluster_4 {
-        color=red
-        15 [label="Enter function bar" style="filled" fillcolor=red];
-        subgraph cluster_5 {
+        8 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_4 {
             color=blue
-            16 [label="Enter block"];
-            17 [label="Exit block"];
+            9 [label="Enter block"];
+            10 [label="Const: Int(1)"];
+            11 [label="Jump: ^foo Int(1)"];
+            12 [label="Stub" style="filled" fillcolor=gray];
+            13 [label="Exit block" style="filled" fillcolor=gray];
         }
-        18 [label="Exit function bar" style="filled" fillcolor=red];
+        14 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    8 -> {9};
+    9 -> {10};
+    10 -> {11};
+    11 -> {14};
+    11 -> {12} [style=dotted];
+    12 -> {13} [style=dotted];
+    13 -> {14} [style=dotted];
+
+    subgraph cluster_5 {
+        color=red
+        15 [label="Enter function getter" style="filled" fillcolor=red];
+        16 [label="Exit function getter" style="filled" fillcolor=red];
     }
     15 -> {16};
-    16 -> {17};
-    17 -> {18};
 
     subgraph cluster_6 {
         color=red
-        19 [label="Enter class A" style="filled" fillcolor=red];
+        17 [label="Enter function bar" style="filled" fillcolor=red];
         subgraph cluster_7 {
             color=blue
-            12 [label="Enter property" style="filled" fillcolor=red];
-            13 [label="Const: Int(1)"];
-            14 [label="Exit property" style="filled" fillcolor=red];
+            18 [label="Enter block"];
+            19 [label="Exit block"];
         }
-        20 [label="Exit class A" style="filled" fillcolor=red];
+        20 [label="Exit function bar" style="filled" fillcolor=red];
     }
-    19 -> {12} [color=green];
-    12 -> {13};
-    13 -> {14};
-    14 -> {20} [color=green];
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
 
     subgraph cluster_8 {
         color=red
@@ -278,31 +278,31 @@ digraph assignSafeCall_kt {
 
     subgraph cluster_25 {
         color=red
-        98 [label="Enter function foo" style="filled" fillcolor=red];
-        99 [label="Exit function foo" style="filled" fillcolor=red];
+        98 [label="Enter class B" style="filled" fillcolor=red];
+        99 [label="Exit class B" style="filled" fillcolor=red];
     }
-    98 -> {99};
+    98 -> {99} [color=green];
 
     subgraph cluster_26 {
         color=red
-        100 [label="Enter function getter" style="filled" fillcolor=red];
-        101 [label="Exit function getter" style="filled" fillcolor=red];
+        100 [label="Enter function foo" style="filled" fillcolor=red];
+        101 [label="Exit function foo" style="filled" fillcolor=red];
     }
     100 -> {101};
 
     subgraph cluster_27 {
         color=red
-        102 [label="Enter function bar" style="filled" fillcolor=red];
-        103 [label="Exit function bar" style="filled" fillcolor=red];
+        102 [label="Enter function getter" style="filled" fillcolor=red];
+        103 [label="Exit function getter" style="filled" fillcolor=red];
     }
     102 -> {103};
 
     subgraph cluster_28 {
         color=red
-        104 [label="Enter class B" style="filled" fillcolor=red];
-        105 [label="Exit class B" style="filled" fillcolor=red];
+        104 [label="Enter function bar" style="filled" fillcolor=red];
+        105 [label="Exit function bar" style="filled" fillcolor=red];
     }
-    104 -> {105} [color=green];
+    104 -> {105};
 
     subgraph cluster_29 {
         color=red

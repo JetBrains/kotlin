@@ -23,14 +23,14 @@ fun test2() {
 fun test3() {
     val f = {
         val a : Int
-        doSmth(a)
+        doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)
     }
 }
 
 fun test4() {
     doSmth {
         val a : Int
-        doSmth(a)
+        doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)
     }
 }
 
