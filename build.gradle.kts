@@ -513,6 +513,10 @@ val dist = tasks.register("dist") {
     dependsOn(":kotlin-compiler:dist")
 }
 
+val syncMutedTests = tasks.register("syncMutedTests") {
+    dependsOn(":compiler:tests-mutes:run")
+}
+
 val copyCompilerToIdeaPlugin by task<Copy> {
     dependsOn(dist)
     into(ideaPluginDir)
