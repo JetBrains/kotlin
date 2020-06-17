@@ -11,8 +11,8 @@ import com.intellij.openapi.project.ex.ProjectManagerEx
 // FIX ME WHEN BUNCH 193 REMOVED
 fun ProjectManagerEx.forceCloseProjectEx(project: Project, dispose: Boolean): Boolean {
     if (!dispose) error("dispose should be true")
-    return this.forceCloseProject(project, true)
+    return this.forceCloseProject(project)
 }
 
 // FIX ME WHEN BUNCH 193 REMOVED
-typealias TestApplicationManager = com.intellij.idea.IdeaTestApplication
+typealias TestApplicationManager = com.intellij.testFramework.TestApplicationManager

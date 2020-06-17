@@ -8,4 +8,4 @@ package org.jetbrains.kotlin.codegen.coroutines
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 
-typealias SourceFrames = Array<Frame<SourceValue>?>
+typealias SourceFrames = Array<Frame<SourceValue>>

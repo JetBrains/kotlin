@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.idea.completion.test.handlers
 
+import com.intellij.codeInsight.lookup.LookupFocusDegree
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 
 // FIX ME WHEN BUNCH 193 REMOVED
 fun LookupImpl.setFocusedFocusDegree() {
-    focusDegree = LookupImpl.FocusDegree.FOCUSED
+    this.lookupFocusDegree = LookupFocusDegree.FOCUSED
 }

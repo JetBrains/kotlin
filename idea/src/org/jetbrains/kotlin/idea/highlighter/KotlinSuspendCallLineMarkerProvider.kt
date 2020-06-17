@@ -48,7 +48,7 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? = null
 
     override fun collectSlowLineMarkers(
-        elements: MutableList<PsiElement>,
+        elements: MutableList<out PsiElement>,
         result: LineMarkerInfos
     ) {
         val markedLineNumbers = HashSet<Int>()

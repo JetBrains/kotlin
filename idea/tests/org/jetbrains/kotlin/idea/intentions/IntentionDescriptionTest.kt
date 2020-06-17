@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.IntentionActionBean
 import com.intellij.codeInsight.intention.IntentionManager
+import com.intellij.codeInsight.intention.impl.config.IntentionManagerImpl
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
@@ -56,7 +57,7 @@ class IntentionDescriptionTest : LightPlatformTestCase() {
     private fun String.isXmlIntentionName() = startsWith("Add") && endsWith("ToManifest")
 
     private fun loadKotlinIntentions(): List<IntentionActionBean> {
-        val extensionPoint = Extensions.getRootArea().getExtensionPoint(IntentionManager.EP_INTENTION_ACTIONS)
+        val extensionPoint = Extensions.getRootArea().getExtensionPoint(IntentionManagerImpl.EP_INTENTION_ACTIONS)
         return extensionPoint.extensions.toList().filter {
             it.pluginDescriptor.pluginId == KotlinPluginUtil.KOTLIN_PLUGIN_ID
         }

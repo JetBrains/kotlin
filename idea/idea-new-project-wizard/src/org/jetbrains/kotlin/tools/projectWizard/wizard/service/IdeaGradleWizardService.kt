@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradleProject
 import java.nio.file.Path
 
+// FIX ME WHEN BUNCH 201 REMOVED
 class IdeaGradleWizardService(private val project: Project) : ProjectImportingWizardService,
     IdeaWizardService {
     override fun isSuitableFor(buildSystemType: BuildSystemType): Boolean =

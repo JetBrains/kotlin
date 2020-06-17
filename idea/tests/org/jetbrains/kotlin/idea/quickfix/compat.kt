@@ -12,5 +12,5 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
 // FIX ME WHEN BUNCH 193 REMOVED
 fun invokeIntentionCompat(action: IntentionAction, file: PsiFile, editor: Editor) {
-    CodeInsightTestFixtureImpl.invokeIntention(action, file, editor, action.text)
+    CodeInsightTestFixtureImpl.invokeIntention(action, file, editor)
 }
