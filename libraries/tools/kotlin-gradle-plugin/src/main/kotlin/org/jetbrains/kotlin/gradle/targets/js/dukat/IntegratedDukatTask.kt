@@ -16,7 +16,7 @@ open class IntegratedDukatTask
 @Inject
 constructor(
     compilation: KotlinJsCompilation
-) : AbstractDukatTask(compilation) {
+) : DukatTask(compilation) {
 
     override val considerGeneratingFlag: Boolean = true
 
