@@ -41,13 +41,12 @@ public abstract class ModuleGroupNode extends ProjectViewNode<ModuleGroup> imple
   @Override
   @NotNull
   public Collection<AbstractTreeNode<?>> getChildren() {
-    ModuleGrouper grouper = ModuleGrouper.instanceFor(getProject());
-    final Collection<ModuleGroup> childGroups = getValue().childGroups(grouper);
+    final Collection<ModuleGroup> childGroups = getValue().childGroups(getProject());
     final List<AbstractTreeNode<?>> result = new ArrayList<>();
     for (final ModuleGroup childGroup : childGroups) {
       result.add(createModuleGroupNode(childGroup));
     }
-    Collection<Module> modules = getValue().modulesInGroup(grouper, false);
+    Collection<Module> modules = getValue().modulesInGroup(getProject());
     try {
       for (Module module : modules) {
         result.add(createModuleNode(module));

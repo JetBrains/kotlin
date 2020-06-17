@@ -52,6 +52,14 @@ public class ModuleGroup {
     return modulesInGroup(ModuleGrouper.instanceFor(project), recursively);
   }
 
+  /**
+   * Returns modules in this group (without modules in sub-groups) using cache built for default project grouper.
+   */
+  @NotNull
+  public Collection<Module> modulesInGroup(@NotNull Project project) {
+    return ModuleGroupsTree.getModuleGroupTree(project).getModulesInGroup(this);
+  }
+
   @NotNull
   public Collection<Module> modulesInGroup(@NotNull ModuleGrouper grouper, boolean recursively) {
     List<Module> result = new ArrayList<>();
@@ -67,6 +75,14 @@ public class ModuleGroup {
 
   private static boolean isUnderGroupWithSameNameAsSomeModule(@NotNull List<String> parent, @NotNull List<String> descendant, @NotNull Set<List<String>> moduleNamesAsGroups) {
     return descendant.size() > parent.size() && moduleNamesAsGroups.contains(descendant.subList(0, parent.size() + 1));
+  }
+
+  /**
+   * Returns direct subgroups of this group using cache built for default project grouper.
+   */
+  @NotNull
+  public Collection<ModuleGroup> childGroups(@NotNull Project project) {
+    return ModuleGroupsTree.getModuleGroupTree(project).getChildGroups(this);
   }
 
   @NotNull
