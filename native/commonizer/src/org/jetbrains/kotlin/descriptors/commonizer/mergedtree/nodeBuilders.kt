@@ -149,7 +149,7 @@ internal fun <T : Any, R> commonize(
     targetDeclarations: CommonizedGroup<T>,
     commonizer: Commonizer<T, R>
 ): R? {
-    for (targetDeclaration in targetDeclarations.toList()) {
+    for (targetDeclaration in targetDeclarations) {
         if (targetDeclaration == null || !commonizer.commonizeWith(targetDeclaration))
             return null
     }

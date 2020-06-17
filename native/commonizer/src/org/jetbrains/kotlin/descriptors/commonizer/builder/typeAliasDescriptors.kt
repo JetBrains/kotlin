@@ -28,7 +28,7 @@ internal fun CirTypeAliasNode.buildDescriptors(
     val markAsActual = commonClassifier != null
 
     if (!isLiftedUp) {
-        targetDeclarations.toList().forEachIndexed { index, typeAlias ->
+        targetDeclarations.forEachIndexed { index, typeAlias ->
             typeAlias?.buildDescriptor(components, output, index, containingDeclarations, fqName, isActual = markAsActual)
         }
     }
@@ -40,7 +40,7 @@ internal fun CirTypeAliasNode.buildDescriptors(
     }
 
     // log stats
-    components.statsCollector?.logStats(output.toList())
+    components.statsCollector?.logStats(output)
 }
 
 private fun CirTypeAlias.buildDescriptor(

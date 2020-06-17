@@ -19,7 +19,7 @@ internal fun CirPackageNode.buildDescriptors(
     output: CommonizedGroup<CommonizedPackageFragmentDescriptor>,
     modules: List<ModuleDescriptorImpl?>
 ) {
-    targetDeclarations.toList().forEachIndexed { index, pkg ->
+    targetDeclarations.forEachIndexed { index, pkg ->
         pkg?.buildDescriptor(components, output, index, modules)
     }
 

@@ -484,7 +484,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                 null,
                 fqName
             ).also {
-                classesGroup.toList().forEachIndexed { index, clazz ->
+                classesGroup.forEachIndexed { index, clazz ->
                     if (clazz != null) {
                         it.targetDeclarations[index] = CirClassFactory.create(clazz)
                     }
@@ -499,7 +499,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                 cache,
                 fqName
             ).also {
-                typeAliasesGroup.toList().forEachIndexed { index, typeAlias ->
+                typeAliasesGroup.forEachIndexed { index, typeAlias ->
                     if (typeAlias != null) {
                         it.targetDeclarations[index] = CirTypeAliasFactory.create(typeAlias)
                     }

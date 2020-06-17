@@ -15,14 +15,14 @@ internal fun CirModuleNode.buildDescriptors(
     components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<ModuleDescriptorImpl>
 ) {
-    targetDeclarations.toList().forEachIndexed { index, module ->
+    targetDeclarations.forEachIndexed { index, module ->
         module?.buildDescriptor(components, output, index)
     }
 
     commonDeclaration()?.buildDescriptor(components, output, indexOfCommon)
 
     // log stats
-    components.statsCollector?.logStats(output.toList())
+    components.statsCollector?.logStats(output)
 }
 
 private fun CirModule.buildDescriptor(

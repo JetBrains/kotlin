@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 /** Fixed-size ordered collection with no extra space that represents a commonized group of same-rank elements */
 class CommonizedGroup<T : Any>(
-    val size: Int,
+    override val size: Int,
     initialize: (Int) -> T?
-) {
+) : AbstractList<T?>() {
     constructor(elements: List<T?>) : this(elements.size, elements::get)
 
     constructor(size: Int) : this(size, { null })
@@ -18,7 +18,7 @@ class CommonizedGroup<T : Any>(
     // so let's use `Any?` instead if `T` here
     private val elements = Array<Any?>(size, initialize)
 
-    operator fun get(index: Int): T? {
+    override operator fun get(index: Int): T? {
         @Suppress("UNCHECKED_CAST")
         return elements[index] as T?
     }
@@ -28,14 +28,6 @@ class CommonizedGroup<T : Any>(
         check(oldValue == null) { "$oldValue can not be overwritten with $value at index $index" }
 
         elements[index] = value
-    }
-
-    // TODO: consider removing this method
-    fun toList(): List<T?> = object : AbstractList<T?>() {
-        override val size
-            get() = this@CommonizedGroup.size
-
-        override fun get(index: Int): T? = this@CommonizedGroup[index]
     }
 }
 

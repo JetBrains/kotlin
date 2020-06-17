@@ -66,17 +66,17 @@ internal class DeclarationsBuilderVisitor2(
     }
 
     override fun visitPropertyNode(node: CirPropertyNode, data: List<DeclarationDescriptor?>): List<PropertyDescriptor?> {
-        val propertyDescriptorsGroup = CommonizedGroup<PropertyDescriptor>(node.dimension)
-        node.buildDescriptors(components, propertyDescriptorsGroup, data)
+        val propertyDescriptors = CommonizedGroup<PropertyDescriptor>(node.dimension)
+        node.buildDescriptors(components, propertyDescriptors, data)
 
-        return propertyDescriptorsGroup.toList()
+        return propertyDescriptors
     }
 
     override fun visitFunctionNode(node: CirFunctionNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
-        val functionDescriptorsGroup = CommonizedGroup<SimpleFunctionDescriptor>(node.dimension)
-        node.buildDescriptors(components, functionDescriptorsGroup, data)
+        val functionDescriptors = CommonizedGroup<SimpleFunctionDescriptor>(node.dimension)
+        node.buildDescriptors(components, functionDescriptors, data)
 
-        return functionDescriptorsGroup.toList()
+        return functionDescriptors
     }
 
     override fun visitClassNode(node: CirClassNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
@@ -115,10 +115,10 @@ internal class DeclarationsBuilderVisitor2(
     override fun visitClassConstructorNode(node: CirClassConstructorNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
         val containingDeclarations = data.asListContaining<CommonizedClassDescriptor>()
 
-        val constructorsGroup = CommonizedGroup<ClassConstructorDescriptor>(node.dimension)
-        node.buildDescriptors(components, constructorsGroup, containingDeclarations)
+        val constructors = CommonizedGroup<ClassConstructorDescriptor>(node.dimension)
+        node.buildDescriptors(components, constructors, containingDeclarations)
 
-        return constructorsGroup.toList()
+        return constructors
     }
 
     override fun visitTypeAliasNode(node: CirTypeAliasNode, data: List<DeclarationDescriptor?>) =

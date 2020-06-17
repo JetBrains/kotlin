@@ -23,14 +23,14 @@ internal fun CirFunctionNode.buildDescriptors(
     val commonFunction = commonDeclaration()
     val markAsExpectAndActual = commonFunction != null && commonFunction.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
 
-    targetDeclarations.toList().forEachIndexed { index, function ->
+    targetDeclarations.forEachIndexed { index, function ->
         function?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsExpectAndActual)
     }
 
     commonFunction?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)
 
     // log stats
-    components.statsCollector?.logStats(output.toList())
+    components.statsCollector?.logStats(output)
 }
 
 private fun CirFunction.buildDescriptor(

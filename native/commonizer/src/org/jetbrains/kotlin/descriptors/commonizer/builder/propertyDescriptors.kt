@@ -31,7 +31,7 @@ internal fun CirPropertyNode.buildDescriptors(
             && !isLiftedUp
 
     if (!isLiftedUp) {
-        targetDeclarations.toList().forEachIndexed { index, property ->
+        targetDeclarations.forEachIndexed { index, property ->
             property?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsExpectAndActual)
         }
     }
@@ -39,7 +39,7 @@ internal fun CirPropertyNode.buildDescriptors(
     commonProperty?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)
 
     // log stats
-    components.statsCollector?.logStats(output.toList())
+    components.statsCollector?.logStats(output)
 }
 
 private fun CirProperty.buildDescriptor(
