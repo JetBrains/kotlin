@@ -91,6 +91,14 @@ class LexicalChainedScope private constructor(
         p.println("}")
     }
 
+    override fun definitelyDoesNotContainName(name: Name): Boolean {
+        return memberScopes.all { it.definitelyDoesNotContainName(name) }
+    }
+
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        memberScopes.forEach { it.recordLookup(name, location) }
+    }
+
     companion object {
 
         @JvmOverloads
