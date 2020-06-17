@@ -292,7 +292,7 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
       .preferringStartMatches()
       .build();
 
-    if (pattern.trim().contains(" ")) matcher = new ActionsPriorityMatcher(matcher);
+    if (pattern.trim().contains(" ")) matcher = new ActionPriorityWrapper(matcher);
     return matcher;
   }
 
@@ -304,10 +304,10 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
     return null;
   }
 
-  private static class ActionsPriorityMatcher extends MinusculeMatcherWrapper {
+  private static class ActionPriorityWrapper extends MinusculeMatcherWrapper {
     private static final int ACTION_BONUS = 100;
 
-    protected ActionsPriorityMatcher(MinusculeMatcher delegate) {
+    protected ActionPriorityWrapper(MinusculeMatcher delegate) {
       super(delegate);
     }
 

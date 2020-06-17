@@ -222,7 +222,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
     @NotNull final String pattern;
     final int matchingDegree;
 
-    public MatchedValue(@NotNull Object value, @NotNull String pattern) {
+    MatchedValue(@NotNull Object value, @NotNull String pattern) {
       assert value instanceof OptionDescription || value instanceof ActionWrapper;
       this.value = value;
       this.pattern = pattern;
