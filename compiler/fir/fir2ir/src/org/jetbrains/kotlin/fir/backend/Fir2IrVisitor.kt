@@ -581,11 +581,15 @@ class Fir2IrVisitor(
             KtNodeTypes.POSTFIX_EXPRESSION -> IrStatementOrigin.EXCLEXCL
             else -> null
         }
+        // If the constant true branch has empty body, it won't be converted. Thus, the entire `when` expression is effectively _not_
+        // exhaustive anymore. In that case, coerce the return type of `when` expression to Unit as per the backend expectation.
+        val effectivelyNotExhaustive = !whenExpression.isExhaustive ||
+                whenExpression.branches.any { it.condition is FirElseIfTrueCondition && it.result.statements.isEmpty() }
         return conversionScope.withWhenSubject(subjectVariable) {
             whenExpression.convertWithOffsets { startOffset, endOffset ->
                 val irWhen = IrWhenImpl(
                     startOffset, endOffset,
-                    whenExpression.typeRef.toIrType(),
+                    if (effectivelyNotExhaustive) irBuiltIns.unitType else whenExpression.typeRef.toIrType(),
                     origin
                 ).apply {
                     var unconditionalBranchFound = false
