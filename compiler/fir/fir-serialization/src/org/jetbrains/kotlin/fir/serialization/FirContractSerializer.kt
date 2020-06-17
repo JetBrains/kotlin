@@ -197,7 +197,7 @@ class FirContractSerializer {
             InvocationKind.AT_MOST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE
             InvocationKind.EXACTLY_ONCE -> ProtoBuf.Effect.InvocationKind.EXACTLY_ONCE
             InvocationKind.AT_LEAST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE
-            InvocationKind.UNKNOWN -> null
+            else -> null
         }
 
         private fun constantValueProtobufEnum(constantReference: ConeConstantReference): ProtoBuf.Expression.ConstantValue? =
