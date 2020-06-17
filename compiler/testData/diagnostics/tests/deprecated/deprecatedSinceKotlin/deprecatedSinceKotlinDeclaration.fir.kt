@@ -1,42 +1,42 @@
 @Deprecated("", ReplaceWith(""))
-@DeprecatedSinceKotlin("", warningSince = "1.0", errorSince = "1.1", hiddenSince = "1.2")
+@DeprecatedSinceKotlin(warningSince = "1.0", errorSince = "1.1", hiddenSince = "1.2")
 fun good() {}
 
-@DeprecatedSinceKotlin("")
+@DeprecatedSinceKotlin()
 class Clazz
 
 @Deprecated("", level = DeprecationLevel.WARNING)
-@DeprecatedSinceKotlin("")
+@DeprecatedSinceKotlin()
 fun fooWarning() {}
 
 @Deprecated("", ReplaceWith(""), DeprecationLevel.WARNING)
-@DeprecatedSinceKotlin("")
+@DeprecatedSinceKotlin()
 fun fooDefaultWarning() {}
 
 @Deprecated("", level = DeprecationLevel.ERROR)
-@DeprecatedSinceKotlin("")
+@DeprecatedSinceKotlin()
 fun fooError() {}
 
 @Deprecated("", level = DeprecationLevel.HIDDEN)
-@DeprecatedSinceKotlin("")
+@DeprecatedSinceKotlin()
 fun fooHidden() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin("", warningSince = "1.1", errorSince = "1.0")
+@DeprecatedSinceKotlin(warningSince = "1.1", errorSince = "1.0")
 fun fooWarningIsGreater1() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin("", warningSince = "1.1", hiddenSince = "1.0")
+@DeprecatedSinceKotlin(warningSince = "1.1", hiddenSince = "1.0")
 fun fooWarningIsGreater2() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin("", warningSince = "1.1", errorSince = "1.3", hiddenSince = "1.2")
+@DeprecatedSinceKotlin(warningSince = "1.1", errorSince = "1.3", hiddenSince = "1.2")
 fun fooErrorIsGreater() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin("", ReplaceWith(""), "1.2", "1.1", "1.1")
+@DeprecatedSinceKotlin("1.2", "1.1", "1.1")
 fun fooDefault() {}
 
 @Deprecated("")
-@DeprecatedSinceKotlin("", ReplaceWith(""), "1.1", "1.1", "1.1")
+@DeprecatedSinceKotlin("1.1", "1.1", "1.1")
 fun fooEqual() {}
