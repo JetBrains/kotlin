@@ -101,7 +101,11 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
         val testDataDir = TestMetadataUtil.getTestData(this::class.java)
         val testFile = listOf(File(testDataDir, "$testName.kt"), File(testDataDir, "$testName.kts")).first { it.exists() }
 
-        val extraClasspath = listOf(TestKotlinArtifacts.jetbrainsAnnotations)
+        val extraClasspath = mutableListOf(TestKotlinArtifacts.jetbrainsAnnotations)
+        if (testFile.extension == "kts") {
+            extraClasspath += TestKotlinArtifacts.kotlinScriptRuntime
+        }
+
         val libraryJar = KotlinCompilerStandalone(listOf(testFile), classpath = extraClasspath).compile()
 
         val jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/"
