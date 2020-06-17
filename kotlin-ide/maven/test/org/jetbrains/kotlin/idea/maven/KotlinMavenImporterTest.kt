@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.idea.maven
 
 import com.intellij.application.options.CodeStyle
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
@@ -2526,10 +2528,12 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
     }
 
     fun testJDKImport() {
+        val mockJdkPath = "${PathManager.getHomePath()}/community/java/mockJDK-1.8"
         object : WriteAction<Unit>() {
             override fun run(result: Result<Unit>) {
-                val jdk = JavaSdk.getInstance().createJdk("myJDK", "my/path/to/jdk")
+                val jdk = JavaSdk.getInstance().createJdk("myJDK", mockJdkPath)
                 getProjectJdkTableSafe().addJdk(jdk)
+                ProjectRootManager.getInstance(myProject).projectSdk = jdk
             }
         }.execute()
 
@@ -2568,7 +2572,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                                 </execution>
                             </executions>
                             <configuration>
-                                <jdkHome>my/path/to/jdk</jdkHome>
+                                <jdkHome>${mockJdkPath}</jdkHome>
                             </configuration>
                         </plugin>
                     </plugins>
@@ -2582,12 +2586,13 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             val moduleSDK = ModuleRootManager.getInstance(getModule("project")).sdk!!
             Assert.assertTrue(moduleSDK.sdkType is JavaSdk)
             Assert.assertEquals("myJDK", moduleSDK.name)
-            Assert.assertEquals("my/path/to/jdk", moduleSDK.homePath)
+            Assert.assertEquals(mockJdkPath, moduleSDK.homePath)
         } finally {
             object : WriteAction<Unit>() {
                 override fun run(result: Result<Unit>) {
                     val jdkTable = getProjectJdkTableSafe()
                     jdkTable.removeJdk(jdkTable.findJdk("myJDK")!!)
+                    ProjectRootManager.getInstance(myProject).projectSdk = null
                 }
             }.execute()
         }
