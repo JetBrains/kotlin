@@ -234,6 +234,10 @@ open class FirJvmMangleComputer(
                     tBuilder.appendSignature(suffix)
                 }
             }
+            is ConeDefinitelyNotNullType -> {
+                // E.g. not-null type parameter in Java
+                mangleType(tBuilder, type.original)
+            }
             else -> error("Unexpected type $type")
         }
     }
