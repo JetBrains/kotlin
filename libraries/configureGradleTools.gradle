@@ -1,5 +1,5 @@
 
-configure([project(':kotlin-gradle-plugin'), project(':kotlin-allopen'), project(':kotlin-noarg'), project(':kotlin-serialization')]) { project ->
+configure([project(':kotlin-gradle-plugin'), project(':kotlin-allopen'), project(':kotlin-noarg'), project(':kotlin-serialization'), project(':atomicfu')]) { project ->
     apply plugin: 'com.gradle.plugin-publish'
 
     afterEvaluate {

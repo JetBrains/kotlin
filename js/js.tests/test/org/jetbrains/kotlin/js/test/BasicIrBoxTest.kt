@@ -99,11 +99,13 @@ abstract class BasicIrBoxTest(
 
         val transitiveLibraries = config.configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map { File(it).name }
 
+        val libraries = config.configuration[JSConfigurationKeys.LIBRARIES] ?: emptyList()
+
         val allKlibPaths = (runtimeKlibs + transitiveLibraries.map {
             compilationCache[it] ?: error("Can't find compiled module for dependency $it")
         }).map { File(it).absolutePath }
 
-        val resolvedLibraries = jsResolveLibraries(allKlibPaths, emptyList(), messageCollectorLogger(MessageCollector.NONE))
+        val resolvedLibraries = jsResolveLibraries(allKlibPaths + libraries, emptyList(), messageCollectorLogger(MessageCollector.NONE))
 
         val actualOutputFile = outputFile.absolutePath.let {
             if (!isMainModule) it.replace("_v5.js", "/") else it
