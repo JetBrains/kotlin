@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.runReadAction
@@ -23,6 +24,7 @@ import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import junit.framework.TestCase
 import org.jetbrains.jps.model.java.JavaResourceRootType
@@ -48,14 +50,14 @@ import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
-import org.junit.*
-import java.util.*
+import org.junit.Assert
+import org.junit.Test
 
 internal fun GradleImportingTestCase.facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings
 
@@ -730,10 +732,12 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJDKImport() {
+        val mockJdkPath = "${PathManager.getHomePath()}/community/java/mockJDK-1.8"
         object : WriteAction<Unit>() {
             override fun run(result: Result<Unit>) {
-                val jdk = JavaSdk.getInstance().createJdk("myJDK", "my/path/to/jdk")
+                val jdk = JavaSdk.getInstance().createJdk("myJDK", mockJdkPath)
                 getProjectJdkTableSafe().addJdk(jdk)
+                ProjectRootManager.getInstance(myProject).projectSdk = jdk
             }
         }.execute()
 
@@ -744,12 +748,13 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             val moduleSDK = ModuleRootManager.getInstance(getModule("project_main")).sdk!!
             Assert.assertTrue(moduleSDK.sdkType is JavaSdk)
             Assert.assertEquals("myJDK", moduleSDK.name)
-            Assert.assertEquals("my/path/to/jdk", moduleSDK.homePath)
+            Assert.assertEquals(mockJdkPath, moduleSDK.homePath)
         } finally {
             object : WriteAction<Unit>() {
                 override fun run(result: Result<Unit>) {
                     val jdkTable = getProjectJdkTableSafe()
                     jdkTable.removeJdk(jdkTable.findJdk("myJDK")!!)
+                    ProjectRootManager.getInstance(myProject).projectSdk = null
                 }
             }.execute()
         }
