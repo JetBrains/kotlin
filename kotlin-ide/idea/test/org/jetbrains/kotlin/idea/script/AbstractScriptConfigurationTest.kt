@@ -10,8 +10,6 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -19,7 +17,6 @@ import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ui.UIUtil
 import org.jdom.Element
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
@@ -38,7 +35,6 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.projectLibrary
 import java.io.File
-import java.util.regex.Pattern
 import kotlin.script.dependencies.Environment
 import kotlin.script.experimental.api.ScriptDiagnostic
 
@@ -232,9 +228,9 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     private fun defaultEnvironment(path: String): Map<String, File?> {
         val templateOutDir = File("${path}template").takeIf { it.isDirectory }?.let {
-            compileLibToDir(it, *scriptClasspath())
+            compileLibToDir(it, getScriptingClasspath())
         } ?: File("idea/testData/script/definition/defaultTemplate").takeIf { it.isDirectory }?.let {
-            compileLibToDir(it, *scriptClasspath())
+            compileLibToDir(it, getScriptingClasspath())
         }
 
         if (templateOutDir != null) {
@@ -243,7 +239,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
         val libSrcDir = File("${path}lib").takeIf { it.isDirectory }
 
-        val libClasses = libSrcDir?.let { compileLibToDir(it) }
+        val libClasses = libSrcDir?.let { compileLibToDir(it, emptyList()) }
 
         return mapOf(
             "runtime-classes" to TestKotlinArtifacts.kotlinStdlib,
@@ -254,14 +250,12 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         )
     }
 
-    private fun scriptClasspath(): Array<String> {
-        return with(KotlinArtifacts.getInstance()) {
-            arrayOf(
-                kotlinScriptRuntime.path,
-                kotlinScriptingCommon.path,
-                kotlinScriptingJvm.path
-            )
-        }
+    private fun getScriptingClasspath(): List<File> {
+        return listOf(
+            TestKotlinArtifacts.kotlinScriptRuntime,
+            TestKotlinArtifacts.kotlinScriptingCommon,
+            TestKotlinArtifacts.kotlinScriptingJvm
+        )
     }
 
     protected fun createFileAndSyncDependencies(scriptFile: File) {
@@ -302,22 +296,9 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
     }
 
-    private fun compileLibToDir(srcDir: File, vararg classpath: String): File {
-        //TODO: tmpDir would be enough, but there is tricky fail under AS otherwise
+    private fun compileLibToDir(srcDir: File, classpath: List<File>): File {
         val outDir = KotlinTestUtils.tmpDirForReusableFolder("${getTestName(false)}${srcDir.name}Out")
-
-        val kotlinSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt$"), srcDir)
-        if (kotlinSourceFiles.isNotEmpty()) {
-            KotlinCompilerStandalone(listOf(srcDir), target = outDir, classpath = classpath.map { File(it) }).compile()
-        }
-
-        val javaSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.java$"), srcDir)
-        if (javaSourceFiles.isNotEmpty()) {
-            KotlinTestUtils.compileJavaFiles(
-                javaSourceFiles,
-                listOf("-cp", StringUtil.join(listOf(*classpath, outDir), File.pathSeparator), "-d", outDir.path)
-            )
-        }
+        KotlinCompilerStandalone(listOf(srcDir), target = outDir, classpath = classpath).compile()
         return outDir
     }
 
