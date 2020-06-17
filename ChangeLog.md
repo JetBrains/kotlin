@@ -1,5 +1,32 @@
 ## Changelog
 
+## 1.3.72 - IDE plugins update
+
+### Backend. JVM
+
+- [`KT-39013`](https://youtrack.jetbrains.com/issue/KT-39013) 202, ASM 8: "AnalyzerException: Execution can fall off the end of the code"
+
+### IDE. Decompiler, Indexing, Stubs
+
+- [`KT-37896`](https://youtrack.jetbrains.com/issue/KT-37896) IAE: "Argument for @NotNull parameter 'file' of IndexTodoCacheManagerImpl.getTodoCount must not be null" through KotlinTodoSearcher.processQuery()
+
+### IDE. Gradle Integration 
+
+- [`KT-38037`](https://youtrack.jetbrains.com/issue/KT-38037) UnsupportedOperationException on sync gradle Kotlin project with at least two multiplatform modules
+
+### IDE. Highlighting 
+
+- [`KT-39590`](https://youtrack.jetbrains.com/issue/KT-39590) Turn new inference in IDE for 1.3.70 version off
+
+### IDE. Refactorings 
+
+- [`KT-38527`](https://youtrack.jetbrains.com/issue/KT-38527) Move nested class to upper level fails silently: MissingResourceException
+
+### Tools.JPS
+
+- [`KT-27458`](https://youtrack.jetbrains.com/issue/KT-27458) The Kotlin standard library is not found in the module graph ... in a non-Kotlin project.
+
+
 ## 1.3.72
 
 ### Compiler
