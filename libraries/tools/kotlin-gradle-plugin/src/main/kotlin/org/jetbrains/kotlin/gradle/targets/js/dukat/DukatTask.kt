@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import java.io.File
 
-abstract class AbstractDukatTask(
+abstract class DukatTask(
     @Internal
     override val compilation: KotlinJsCompilation
 ) : AbstractTask(), RequiresNpmDependencies {

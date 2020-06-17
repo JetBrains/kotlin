@@ -15,7 +15,7 @@ open class SeparateDukatTask
 @Inject
 constructor(
     compilation: KotlinJsCompilation
-) : AbstractDukatTask(compilation) {
+) : DukatTask(compilation) {
     override val considerGeneratingFlag: Boolean = false
 
     @get:OutputDirectory
