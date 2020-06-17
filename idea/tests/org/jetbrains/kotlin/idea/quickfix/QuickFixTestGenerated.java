@@ -6220,6 +6220,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/classLiteralAndTypeArgsRuntime.kt");
         }
 
+        @TestMetadata("deprecatedSinceKotlinAndReplaceWith.kt")
+        public void testDeprecatedSinceKotlinAndReplaceWith() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedSymbolUsage/deprecatedSinceKotlinAndReplaceWith.kt");
+        }
+
         @TestMetadata("deprecationLevel.kt")
         public void testDeprecationLevel() throws Exception {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/deprecationLevel.kt");
