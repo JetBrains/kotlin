@@ -26,10 +26,33 @@ enum class ReturnLabel {
     NEXT, RETURN, BREAK_LOOP, BREAK_WHEN, CONTINUE, EXCEPTION
 }
 
-interface ExecutionResult {
-    val returnLabel: ReturnLabel
+open class ExecutionResult(val returnLabel: ReturnLabel, private val owner: IrElement? = null) {
+    suspend fun getNextLabel(irElement: IrElement, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult {
+        return when (returnLabel) {
+            ReturnLabel.RETURN -> when (irElement) {
+                is IrCall, is IrReturnableBlock, is IrFunctionImpl, is IrLazyFunction -> if (owner == irElement) Next else this
+                else -> this
+            }
+            ReturnLabel.BREAK_WHEN -> when (irElement) {
+                is IrWhen -> Next
+                else -> this
+            }
+            ReturnLabel.BREAK_LOOP -> when (irElement) {
+                is IrWhileLoop -> if (owner == irElement) Next else this
+                else -> this
+            }
+            ReturnLabel.CONTINUE -> when (irElement) {
+                is IrWhileLoop -> if (owner == irElement) irElement.interpret() else this
+                else -> this
+            }
+            ReturnLabel.EXCEPTION -> Exception
+            ReturnLabel.NEXT -> Next
+        }
+    }
 
-    suspend fun getNextLabel(irElement: IrElement, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult
+    fun addOwnerInfo(owner: IrElement): ExecutionResult {
+        return ExecutionResult(returnLabel, owner)
+    }
 }
 
 inline fun ExecutionResult.check(toCheckLabel: ReturnLabel = ReturnLabel.NEXT, returnBlock: (ExecutionResult) -> Unit): ExecutionResult {
@@ -55,56 +78,9 @@ internal fun ExecutionResult.implicitCastIfNeeded(expectedType: IrType, actualTy
     return this
 }
 
-open class ExecutionResultWithoutInfoAboutOwner(override val returnLabel: ReturnLabel) : ExecutionResult {
-    override suspend fun getNextLabel(irElement: IrElement, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult {
-        return when (returnLabel) {
-            ReturnLabel.RETURN -> this
-            ReturnLabel.BREAK_WHEN -> when (irElement) {
-                is IrWhen -> Next
-                else -> this
-            }
-            ReturnLabel.BREAK_LOOP -> this
-            ReturnLabel.CONTINUE -> this
-            ReturnLabel.EXCEPTION -> this
-            ReturnLabel.NEXT -> this
-        }
-    }
-
-    fun addOwnerInfo(owner: IrElement): ExecutionResultWithInfoAboutOwner {
-        return ExecutionResultWithInfoAboutOwner(returnLabel, owner)
-    }
-}
-
-class ExecutionResultWithInfoAboutOwner(
-    override val returnLabel: ReturnLabel, private val owner: IrElement
-) : ExecutionResultWithoutInfoAboutOwner(returnLabel) {
-    override suspend fun getNextLabel(irElement: IrElement, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult {
-        return when (returnLabel) {
-            ReturnLabel.RETURN -> when (irElement) {
-                is IrCall, is IrReturnableBlock, is IrFunctionImpl, is IrLazyFunction -> if (owner == irElement) Next else this
-                else -> this
-            }
-            ReturnLabel.BREAK_WHEN -> when (irElement) {
-                is IrWhen -> Next
-                else -> this
-            }
-            ReturnLabel.BREAK_LOOP -> when (irElement) {
-                is IrWhileLoop -> if (owner == irElement) Next else this
-                else -> this
-            }
-            ReturnLabel.CONTINUE -> when (irElement) {
-                is IrWhileLoop -> if (owner == irElement) irElement.interpret() else this
-                else -> this
-            }
-            ReturnLabel.EXCEPTION -> Exception
-            ReturnLabel.NEXT -> Next
-        }
-    }
-}
-
-object Next : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.NEXT)
-object Return : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.RETURN)
-object BreakLoop : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.BREAK_LOOP)
-object BreakWhen : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.BREAK_WHEN)
-object Continue : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.CONTINUE)
-object Exception : ExecutionResultWithoutInfoAboutOwner(ReturnLabel.EXCEPTION)
+object Next : ExecutionResult(ReturnLabel.NEXT)
+object Return : ExecutionResult(ReturnLabel.RETURN)
+object BreakLoop : ExecutionResult(ReturnLabel.BREAK_LOOP)
+object BreakWhen : ExecutionResult(ReturnLabel.BREAK_WHEN)
+object Continue : ExecutionResult(ReturnLabel.CONTINUE)
+object Exception : ExecutionResult(ReturnLabel.EXCEPTION)
