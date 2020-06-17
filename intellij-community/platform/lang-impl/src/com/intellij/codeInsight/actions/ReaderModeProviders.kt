@@ -11,6 +11,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.impl.AppEditorFontOptions
 import com.intellij.openapi.editor.colors.impl.FontPreferencesImpl
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
+import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
@@ -69,11 +70,17 @@ class FontReaderModeProvider : ReaderModeProvider {
   override fun applyModeChanged(project: Project, editor: Editor, readerMode: Boolean, alreadyOpenedFilesOnly: Boolean) {
     if (readerMode) {
       if (ReaderModeSettings.instance(project).increaseLineSpacing) {
-        editor.colorsScheme.lineSpacing = 1.4f
+        setLineSpacing(editor, 1.4f)
       }
     }
     else {
-      editor.colorsScheme.lineSpacing = AppEditorFontOptions.getInstance().fontPreferences.lineSpacing
+      setLineSpacing(editor, AppEditorFontOptions.getInstance().fontPreferences.lineSpacing)
+    }
+  }
+
+  private fun setLineSpacing(editor: Editor, lineSpacing: Float) {
+    EditorScrollingPositionKeeper.perform(editor, false) {
+      editor.colorsScheme.lineSpacing = lineSpacing
     }
   }
 }
