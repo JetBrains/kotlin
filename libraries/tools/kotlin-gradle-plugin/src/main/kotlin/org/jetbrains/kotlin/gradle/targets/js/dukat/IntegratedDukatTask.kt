@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
 
-open class DukatTask
+open class IntegratedDukatTask
 @Inject
 constructor(
     compilation: KotlinJsCompilation
