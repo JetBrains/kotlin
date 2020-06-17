@@ -395,7 +395,6 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                 isFinal = true,
                 isExternal = false,
                 isStatic = false,
-                isFakeOverride = false
         )
         irField.parent = declaration
 

@@ -78,7 +78,6 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     isFinal = true,
                     isExternal = false,
                     isStatic = false,
-                    isFakeOverride = false
             ).apply {
                 it.bind(this)
                 parent = implObject

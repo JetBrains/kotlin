@@ -97,7 +97,6 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                     isFinal = true,
                     isExternal = false,
                     isStatic = true,
-                    isFakeOverride = false
             ).apply {
                 it.bind(this)
                 parent = irFile

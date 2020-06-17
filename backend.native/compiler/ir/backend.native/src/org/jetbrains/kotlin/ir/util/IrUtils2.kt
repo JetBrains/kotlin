@@ -79,7 +79,6 @@ internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: Ko
             isFinal = true,
             isExternal = false,
             isStatic = true,
-            isFakeOverride = false
     ).apply {
         descriptor.bind(this)
 
@@ -364,7 +363,6 @@ fun createField(
             !isMutable,
             false,
             false,
-            false
     ).apply {
         it.bind(this)
         owner.declarations += this
