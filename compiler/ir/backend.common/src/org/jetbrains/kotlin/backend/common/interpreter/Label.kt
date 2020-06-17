@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
 
 enum class ReturnLabel {
-    NEXT, RETURN, BREAK_LOOP, BREAK_WHEN, CONTINUE, EXCEPTION
+    REGULAR, RETURN, BREAK_LOOP, BREAK_WHEN, CONTINUE, EXCEPTION
 }
 
 open class ExecutionResult(val returnLabel: ReturnLabel, private val owner: IrElement? = null) {
@@ -46,7 +46,7 @@ open class ExecutionResult(val returnLabel: ReturnLabel, private val owner: IrEl
                 else -> this
             }
             ReturnLabel.EXCEPTION -> Exception
-            ReturnLabel.NEXT -> Next
+            ReturnLabel.REGULAR -> Next
         }
     }
 
@@ -55,7 +55,7 @@ open class ExecutionResult(val returnLabel: ReturnLabel, private val owner: IrEl
     }
 }
 
-inline fun ExecutionResult.check(toCheckLabel: ReturnLabel = ReturnLabel.NEXT, returnBlock: (ExecutionResult) -> Unit): ExecutionResult {
+inline fun ExecutionResult.check(toCheckLabel: ReturnLabel = ReturnLabel.REGULAR, returnBlock: (ExecutionResult) -> Unit): ExecutionResult {
     if (this.returnLabel != toCheckLabel) returnBlock(this)
     return this
 }
@@ -78,7 +78,7 @@ internal fun ExecutionResult.implicitCastIfNeeded(expectedType: IrType, actualTy
     return this
 }
 
-object Next : ExecutionResult(ReturnLabel.NEXT)
+object Next : ExecutionResult(ReturnLabel.REGULAR)
 object Return : ExecutionResult(ReturnLabel.RETURN)
 object BreakLoop : ExecutionResult(ReturnLabel.BREAK_LOOP)
 object BreakWhen : ExecutionResult(ReturnLabel.BREAK_WHEN)

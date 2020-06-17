@@ -75,7 +75,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return try {
             runBlocking {
                 return@runBlocking when (val returnLabel = withContext(this.coroutineContext) { expression.interpret().returnLabel }) {
-                    ReturnLabel.NEXT -> stack.popReturnValue().toIrExpression(expression)
+                    ReturnLabel.REGULAR -> stack.popReturnValue().toIrExpression(expression)
                     ReturnLabel.EXCEPTION -> {
                         val message = (stack.popReturnValue() as ExceptionState).getFullDescription()
                         IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
