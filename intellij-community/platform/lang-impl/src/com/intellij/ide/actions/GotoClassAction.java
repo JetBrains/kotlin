@@ -9,6 +9,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.playback.commands.ActionCommand;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
@@ -33,11 +34,22 @@ public class GotoClassAction extends SearchEverywhereBaseAction implements DumbA
     if (project == null) return;
 
     boolean dumb = DumbService.isDumb(project);
-    if (!dumb || new ClassSearchEverywhereContributor(e).isDumbAware()) {
+    if (!dumb){
       showInSearchEverywherePopup(ClassSearchEverywhereContributor.class.getSimpleName(), e, true, true);
+      return;
     }
-    else {
-      invokeGoToFile(project, e);
+
+    ClassSearchEverywhereContributor contributor = new ClassSearchEverywhereContributor(e);
+    try {
+      if (contributor.isDumbAware()) {
+        showInSearchEverywherePopup(ClassSearchEverywhereContributor.class.getSimpleName(), e, true, true);
+      }
+      else {
+        invokeGoToFile(project, e);
+      }
+    }
+    finally {
+      Disposer.dispose(contributor);
     }
   }
 
