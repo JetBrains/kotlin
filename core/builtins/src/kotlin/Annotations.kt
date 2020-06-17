@@ -45,9 +45,6 @@ public annotation class Deprecated(
  * the usage will be marked as an error (as with [DeprecationLevel.ERROR]), otherwise if the API version is greater or equal
  * than [warningSince], the usage will be marked as a warning (as with [DeprecationLevel.WARNING]), otherwise the annotation is ignored.
  *
- * @property message the message explaining the deprecation and recommending an alternative API to use.
- * @property replaceWith if present, specifies a code fragment which should be used as a replacement for
- *     the deprecated API usage.
  * @property warningSince the version, since which this deprecation should be reported as a warning.
  * @property errorSince the version, since which this deprecation should be reported as a error.
  * @property hiddenSince the version, since which the annotated declaration should not be available in code.
@@ -56,8 +53,6 @@ public annotation class Deprecated(
 @MustBeDocumented
 @SinceKotlin("1.3")
 public annotation class DeprecatedSinceKotlin(
-    val message: String,
-    val replaceWith: ReplaceWith = ReplaceWith(""),
     val warningSince: String = "",
     val errorSince: String = "",
     val hiddenSince: String = ""

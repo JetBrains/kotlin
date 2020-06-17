@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.deprecation
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -59,16 +58,17 @@ internal sealed class DeprecatedByAnnotation(
 
     companion object {
         fun create(
-            annotation: AnnotationDescriptor,
+            deprecatedAnnotation: AnnotationDescriptor,
+            deprecatedSinceKotlinAnnotation: AnnotationDescriptor?,
             target: DeclarationDescriptor,
             propagatesToOverrides: Boolean,
             apiVersion: ApiVersion
         ): DeprecatedByAnnotation? {
-            if (annotation.fqName == KotlinBuiltIns.FQ_NAMES.deprecatedSinceKotlin) {
-                val level = computeLevelForDeprecatedSinceKotlin(annotation, apiVersion) ?: return null
-                return DeprecatedSince(annotation, target, propagatesToOverrides, level)
+            if (deprecatedSinceKotlinAnnotation != null) {
+                val level = computeLevelForDeprecatedSinceKotlin(deprecatedSinceKotlinAnnotation, apiVersion) ?: return null
+                return DeprecatedSince(deprecatedAnnotation, target, propagatesToOverrides, level)
             }
-            return StandardDeprecated(annotation, target, propagatesToOverrides)
+            return StandardDeprecated(deprecatedAnnotation, target, propagatesToOverrides)
         }
 
         private fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVersion: ApiVersion): DeprecationLevelValue? {
