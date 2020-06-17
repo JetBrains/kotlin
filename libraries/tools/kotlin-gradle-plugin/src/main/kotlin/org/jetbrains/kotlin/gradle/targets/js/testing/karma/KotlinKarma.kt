@@ -58,6 +58,15 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     override val settingsState: String
         get() = "KotlinKarma($config)"
 
+    val webpackConfig = KotlinWebpackConfig(
+        configDirectory = project.projectDir.resolve("webpack.config.d"),
+        sourceMaps = true,
+        devtool = null,
+        export = false,
+        progressReporter = true,
+        progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
+    )
+
     init {
         requiredDependencies.add(versions.kotlinJsTestRunner)
         requiredDependencies.add(versions.karma)
@@ -175,15 +184,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(versions.webpack)
 
-        val webpackConfigWriter = KotlinWebpackConfig(
-            configDirectory = project.projectDir.resolve("webpack.config.d"),
-            sourceMaps = true,
-            devtool = null,
-            export = false,
-            progressReporter = true,
-            progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
-        )
-        requiredDependencies.addAll(webpackConfigWriter.getRequiredDependencies(versions))
+        requiredDependencies.addAll(webpackConfig.getRequiredDependencies(versions))
 
         addPreprocessor("webpack")
         confJsWriters.add {
@@ -191,7 +192,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
             it.appendln("// webpack config")
             it.appendln("function createWebpackConfig() {")
 
-            webpackConfigWriter.appendTo(it)
+            webpackConfig.appendTo(it)
             //language=ES6
             it.appendln(
                 """
