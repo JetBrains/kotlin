@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
@@ -20,21 +19,31 @@ internal class DukatCompilationResolverPlugin(
     val nodeJs get() = resolver.nodeJs
     val npmProject get() = resolver.npmProject
     val compilation get() = npmProject.compilation
-    val taskName = npmProject.compilation.disambiguateName("generateExternals")
+    val integratedTaskName = npmProject.compilation.disambiguateName("generateExternalsIntegrated")
+    val separateTaskName = npmProject.compilation.disambiguateName("generateExternals")
 
     init {
         compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
 
-        val task = project.registerTask<DukatTask>(
-            taskName,
+        val integratedTask = project.registerTask<DukatTask>(
+            integratedTaskName,
             listOf(compilation)
         ) {
-            it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
-            it.description = "Generate Kotlin/JS external declarations for .d.ts files in ${compilation}"
+            it.group = DUKAT_TASK_GROUP
+            it.description = "Integrated generation Kotlin/JS external declarations for .d.ts files in ${compilation}"
             it.dependsOn(nodeJs.npmInstallTask, npmProject.packageJsonTask)
         }
 
-        compilation.compileKotlinTask.dependsOn(task)
+        compilation.compileKotlinTask.dependsOn(integratedTask)
+
+        project.registerTask<SeparateDukatTask>(
+            separateTaskName,
+            listOf(compilation)
+        ) {
+            it.group = DUKAT_TASK_GROUP
+            it.description = "Generate Kotlin/JS external declarations for .d.ts files of all NPM dependencies in ${compilation}"
+            it.dependsOn(nodeJs.npmInstallTask, npmProject.packageJsonTask)
+        }
     }
 
     override fun hookDependencies(
