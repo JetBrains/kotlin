@@ -25,7 +25,7 @@ internal class DukatCompilationResolverPlugin(
     init {
         compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
 
-        val integratedTask = project.registerTask<DukatTask>(
+        val integratedTask = project.registerTask<IntegratedDukatTask>(
             integratedTaskName,
             listOf(compilation)
         ) {
