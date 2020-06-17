@@ -5,186 +5,152 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassRecursionMarker
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassifierRecursionMarker
 import org.jetbrains.kotlin.descriptors.commonizer.core.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.ClassifiersCacheImpl
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.CirClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal fun buildRootNode(
     storageManager: StorageManager,
-    targetProviders: List<TargetProvider>
+    size: Int
 ): CirRootNode = buildNode(
     storageManager = storageManager,
-    descriptors = targetProviders,
-    targetDeclarationProducer = { CirRootFactory.create(it.target, it.builtInsClass.name, it.builtInsProvider) },
-    commonValueProducer = { commonize(it, RootCommonizer()) },
-    recursionMarker = null,
+    size = size,
+    commonizerProducer = ::RootCommonizer,
     nodeProducer = ::CirRootNode
 )
 
 internal fun buildModuleNode(
     storageManager: StorageManager,
-    modules: List<ModuleDescriptor?>
+    size: Int
 ): CirModuleNode = buildNode(
     storageManager = storageManager,
-    descriptors = modules,
-    targetDeclarationProducer = CirModuleFactory::create,
-    commonValueProducer = { commonize(it, ModuleCommonizer()) },
-    recursionMarker = null,
+    size = size,
+    commonizerProducer = ::ModuleCommonizer,
     nodeProducer = ::CirModuleNode
 )
 
 internal fun buildPackageNode(
     storageManager: StorageManager,
-    moduleName: Name,
-    packageFqName: FqName,
-    packageMemberScopes: List<MemberScope?>
+    size: Int,
+    fqName: FqName,
+    moduleName: Name
 ): CirPackageNode = buildNode(
     storageManager = storageManager,
-    descriptors = packageMemberScopes,
-    targetDeclarationProducer = { CirPackageFactory.create(packageFqName) },
-    commonValueProducer = { CirPackageFactory.create(packageFqName) },
-    recursionMarker = null,
-    nodeProducer = ::CirPackageNode
-).also { node ->
-    node.moduleName = moduleName
-    node.fqName = packageFqName
-}
+    size = size,
+    commonizerProducer = ::PackageCommonizer,
+    nodeProducer = { targetDeclarations, commonDeclaration ->
+        CirPackageNode(targetDeclarations, commonDeclaration, fqName, moduleName)
+    }
+)
 
 internal fun buildPropertyNode(
     storageManager: StorageManager,
+    size: Int,
     cache: CirClassifiersCache,
-    containingDeclarationCommon: NullableLazyValue<*>?,
-    properties: List<PropertyDescriptor?>
+    parentCommonDeclaration: NullableLazyValue<*>?
 ): CirPropertyNode = buildNode(
     storageManager = storageManager,
-    descriptors = properties,
-    targetDeclarationProducer = CirPropertyFactory::create,
-    commonValueProducer = { commonize(containingDeclarationCommon, it, PropertyCommonizer(cache)) },
-    recursionMarker = null,
+    size = size,
+    parentCommonDeclaration = parentCommonDeclaration,
+    commonizerProducer = { PropertyCommonizer(cache) },
     nodeProducer = ::CirPropertyNode
 )
 
 internal fun buildFunctionNode(
     storageManager: StorageManager,
+    size: Int,
     cache: CirClassifiersCache,
-    containingDeclarationCommon: NullableLazyValue<*>?,
-    functions: List<SimpleFunctionDescriptor?>
+    parentCommonDeclaration: NullableLazyValue<*>?
 ): CirFunctionNode = buildNode(
     storageManager = storageManager,
-    descriptors = functions,
-    targetDeclarationProducer = CirFunctionFactory::create,
-    commonValueProducer = { commonize(containingDeclarationCommon, it, FunctionCommonizer(cache)) },
-    recursionMarker = null,
+    size = size,
+    parentCommonDeclaration = parentCommonDeclaration,
+    commonizerProducer = { FunctionCommonizer(cache) },
     nodeProducer = ::CirFunctionNode
 )
 
 internal fun buildClassNode(
     storageManager: StorageManager,
-    cacheRW: ClassifiersCacheImpl,
-    containingDeclarationCommon: NullableLazyValue<*>?,
-    classes: List<ClassDescriptor?>
+    size: Int,
+    cacheRW: CirClassifiersCacheImpl,
+    parentCommonDeclaration: NullableLazyValue<*>?,
+    fqName: FqName
 ): CirClassNode = buildNode(
     storageManager = storageManager,
-    descriptors = classes,
-    targetDeclarationProducer = CirClassFactory::create,
-    commonValueProducer = { commonize(containingDeclarationCommon, it, ClassCommonizer(cacheRW)) },
+    size = size,
+    parentCommonDeclaration = parentCommonDeclaration,
+    commonizerProducer = { ClassCommonizer(cacheRW) },
     recursionMarker = CirClassRecursionMarker,
-    nodeProducer = ::CirClassNode
-).also { node ->
-    classes.firstNonNull().fqNameSafe.intern().let { fqName ->
-        node.fqName = fqName
-        cacheRW.classes.putSafe(fqName, node)
+    nodeProducer = { targetDeclarations, commonDeclaration ->
+        CirClassNode(targetDeclarations, commonDeclaration, fqName).also {
+            cacheRW.classes[fqName] = it
+        }
     }
-}
+)
 
 internal fun buildClassConstructorNode(
     storageManager: StorageManager,
+    size: Int,
     cache: CirClassifiersCache,
-    containingDeclarationCommon: NullableLazyValue<*>?,
-    constructors: List<ClassConstructorDescriptor?>
+    parentCommonDeclaration: NullableLazyValue<*>?
 ): CirClassConstructorNode = buildNode(
     storageManager = storageManager,
-    descriptors = constructors,
-    targetDeclarationProducer = CirClassConstructorFactory::create,
-    commonValueProducer = { commonize(containingDeclarationCommon, it, ClassConstructorCommonizer(cache)) },
-    recursionMarker = null,
+    size = size,
+    parentCommonDeclaration = parentCommonDeclaration,
+    commonizerProducer = { ClassConstructorCommonizer(cache) },
     nodeProducer = ::CirClassConstructorNode
 )
 
 internal fun buildTypeAliasNode(
     storageManager: StorageManager,
-    cacheRW: ClassifiersCacheImpl,
-    typeAliases: List<TypeAliasDescriptor?>
+    size: Int,
+    cacheRW: CirClassifiersCacheImpl,
+    fqName: FqName
 ): CirTypeAliasNode = buildNode(
     storageManager = storageManager,
-    descriptors = typeAliases,
-    targetDeclarationProducer = CirTypeAliasFactory::create,
-    commonValueProducer = { commonize(it, TypeAliasCommonizer(cacheRW)) },
+    size = size,
+    commonizerProducer = { TypeAliasCommonizer(cacheRW) },
     recursionMarker = CirClassifierRecursionMarker,
-    nodeProducer = ::CirTypeAliasNode
-).also { node ->
-    typeAliases.firstNonNull().fqNameSafe.intern().let { fqName ->
-        node.fqName = fqName
-        cacheRW.typeAliases.putSafe(fqName, node)
+    nodeProducer = { targetDeclarations, commonDeclaration ->
+        CirTypeAliasNode(targetDeclarations, commonDeclaration, fqName).also {
+            cacheRW.typeAliases[fqName] = it
+        }
     }
-}
+)
 
-private fun <D : Any, T : CirDeclaration, R : CirDeclaration, N : CirNode<T, R>> buildNode(
+private fun <T : CirDeclaration, R : CirDeclaration, N : CirNode<T, R>> buildNode(
     storageManager: StorageManager,
-    descriptors: List<D?>,
-    targetDeclarationProducer: (D) -> T,
-    commonValueProducer: (List<T?>) -> R?,
-    recursionMarker: R?,
-    nodeProducer: (List<T?>, NullableLazyValue<R>) -> N
+    size: Int,
+    parentCommonDeclaration: NullableLazyValue<*>? = null,
+    commonizerProducer: () -> Commonizer<T, R>,
+    recursionMarker: R? = null,
+    nodeProducer: (CommonizedGroup<T>, NullableLazyValue<R>) -> N
 ): N {
-    val declarationsGroup = CommonizedGroup<T>(descriptors.size)
-    var canHaveCommon = descriptors.size > 1
+    val targetDeclarations = CommonizedGroup<T>(size)
 
-    descriptors.forEachIndexed { index, descriptor ->
-        if (descriptor != null)
-            declarationsGroup[index] = targetDeclarationProducer(descriptor)
-        else
-            canHaveCommon = false
-    }
-
-    val declarations = declarationsGroup.toList()
-
-    val commonComputable: () -> R? = if (canHaveCommon) {
-        { commonValueProducer(declarations) }
-    } else {
-        { null }
-    }
+    val commonComputable = { commonize(parentCommonDeclaration, targetDeclarations, commonizerProducer()) }
 
     val commonLazyValue = if (recursionMarker != null)
         storageManager.createRecursionTolerantNullableLazyValue(commonComputable, recursionMarker)
     else
         storageManager.createNullableLazyValue(commonComputable)
 
-    return nodeProducer(declarations, commonLazyValue)
+    return nodeProducer(targetDeclarations, commonLazyValue)
 }
 
-@Suppress("NOTHING_TO_INLINE")
-private inline fun <K, V : Any> MutableMap<K, V>.putSafe(key: K, value: V) = put(key, value)?.let { oldValue ->
-    error("${oldValue::class.java} with key=$key has been overwritten: $oldValue")
-}
-
-internal fun <T, R> commonize(declarations: List<T?>, commonizer: Commonizer<T, R>): R? {
-    for (declaration in declarations) {
-        if (declaration == null || !commonizer.commonizeWith(declaration))
+internal fun <T : Any, R> commonize(
+    targetDeclarations: CommonizedGroup<T>,
+    commonizer: Commonizer<T, R>
+): R? {
+    for (targetDeclaration in targetDeclarations.toList()) {
+        if (targetDeclaration == null || !commonizer.commonizeWith(targetDeclaration))
             return null
     }
 
@@ -192,15 +158,15 @@ internal fun <T, R> commonize(declarations: List<T?>, commonizer: Commonizer<T, 
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun <T, R> commonize(
-    containingDeclarationCommon: NullableLazyValue<*>?,
-    declarations: List<T?>,
+private inline fun <T : Any, R> commonize(
+    parentCommonDeclaration: NullableLazyValue<*>?,
+    targetDeclarations: CommonizedGroup<T>,
     commonizer: Commonizer<T, R>
 ): R? {
-    if (containingDeclarationCommon != null && containingDeclarationCommon.invoke() == null) {
-        // don't commonize declaration if it has commonizable containing declaration that has not been successfully commonized
+    if (parentCommonDeclaration != null && parentCommonDeclaration.invoke() == null) {
+        // don't commonize declaration if it's parent failed to commonize
         return null
     }
 
-    return commonize(declarations, commonizer)
+    return commonize(targetDeclarations, commonizer)
 }

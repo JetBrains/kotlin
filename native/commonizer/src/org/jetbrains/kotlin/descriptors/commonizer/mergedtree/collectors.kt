@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
+import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.core.Commonizer
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.utils.alwaysTrue
 
 internal fun MemberScope.collectMembers(vararg collectors: (DeclarationDescriptor) -> Boolean) =
     getContributedDescriptors().forEach { member ->
@@ -60,35 +62,34 @@ internal inline fun FunctionCollector(
     }
 }
 
-/** Used for approximation of [PropertyDescriptor]s before running concrete [Commonizer]s */
-internal data class PropertyApproximationKey(
-    val name: Name,
-    val extensionReceiverParameter: String?
-) {
-    constructor(property: PropertyDescriptor) : this(
-        property.name.intern(),
-        property.extensionReceiverParameter?.type?.fqNameWithTypeParameters
-    )
-}
+// collects member scopes for every non-empty package provided by this module
+internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(collector: (FqName, MemberScope) -> Unit) {
+    // we don's need to process fragments from other modules which are the dependencies of this module, so
+    // let's use the appropriate package fragment provider
+    val packageFragmentProvider = this.packageFragmentProvider
 
-/** Used for approximation of [SimpleFunctionDescriptor]s before running concrete [Commonizer]s */
-internal data class FunctionApproximationKey(
-    val name: Name,
-    val valueParameters: List<Pair<Name, String>>,
-    val extensionReceiverParameter: String?
-) {
-    constructor(function: SimpleFunctionDescriptor) : this(
-        function.name.intern(),
-        function.valueParameters.map { it.name.intern() to it.type.fqNameWithTypeParameters },
-        function.extensionReceiverParameter?.type?.fqNameWithTypeParameters
-    )
-}
+    fun recurse(packageFqName: FqName) {
+        if (packageFqName.isUnderStandardKotlinPackages || packageFqName.isUnderKotlinNativeSyntheticPackages)
+            return
 
-/** Used for approximation of [ConstructorDescriptor]s before running concrete [Commonizer]s */
-internal data class ConstructorApproximationKey(
-    val valueParameters: List<Pair<Name, String>>
-) {
-    constructor(constructor: ConstructorDescriptor) : this(
-        constructor.valueParameters.map { it.name.intern() to it.type.fqNameWithTypeParameters }
-    )
+        val ownPackageFragments = packageFragmentProvider.getPackageFragments(packageFqName)
+        val ownPackageMemberScopes = ownPackageFragments.asSequence()
+            .filter { it !is ExportedForwardDeclarationsPackageFragmentDescriptor }
+            .map { it.getMemberScope() }
+            .filter { it != MemberScope.Empty }
+            .toList(ownPackageFragments.size)
+
+        if (ownPackageMemberScopes.isNotEmpty()) {
+            // don't include subpackages into chained member scope
+            val memberScope = ChainedMemberScope.create(
+                "package member scope for $packageFqName in $name",
+                ownPackageMemberScopes
+            )
+            collector(packageFqName, memberScope)
+        }
+
+        packageFragmentProvider.getSubPackagesOf(packageFqName, alwaysTrue()).toSet().map { recurse(it) }
+    }
+
+    recurse(FqName.ROOT)
 }

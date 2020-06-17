@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeAliasFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.ClassifiersCacheImpl
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.CirClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildTypeAliasNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
@@ -25,11 +27,11 @@ import org.junit.Test
 
 class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
-    private lateinit var cache: ClassifiersCacheImpl
+    private lateinit var cache: CirClassifiersCacheImpl
 
     @Before
     fun initialize() {
-        cache = ClassifiersCacheImpl() // reset cache
+        cache = CirClassifiersCacheImpl() // reset cache
     }
 
     @Test
@@ -454,10 +456,8 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     private fun prepareCache(variants: Array<out KotlinType>) {
         check(variants.isNotEmpty())
 
-        val classesMap =
-            CommonizedGroupMap<FqName, ClassDescriptor>(variants.size)
-        val typeAliasesMap =
-            CommonizedGroupMap<FqName, TypeAliasDescriptor>(variants.size)
+        val classesMap = CommonizedGroupMap<FqName, ClassDescriptor>(variants.size)
+        val typeAliasesMap = CommonizedGroupMap<FqName, TypeAliasDescriptor>(variants.size)
 
         fun recurse(type: KotlinType, index: Int) {
             @Suppress("MoveVariableDeclarationIntoWhen")
@@ -476,12 +476,35 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
             recurse(type, index)
         }
 
-        for ((_, classesGroup) in classesMap) {
-            buildClassNode(LockBasedStorageManager.NO_LOCKS, cache, null, classesGroup.toList())
+        for ((fqName, classesGroup) in classesMap) {
+            buildClassNode(
+                LockBasedStorageManager.NO_LOCKS,
+                classesGroup.size,
+                cache,
+                null,
+                fqName
+            ).also {
+                classesGroup.toList().forEachIndexed { index, clazz ->
+                    if (clazz != null) {
+                        it.targetDeclarations[index] = CirClassFactory.create(clazz)
+                    }
+                }
+            }
         }
 
-        for ((_, typeAliasesGroup) in typeAliasesMap) {
-            buildTypeAliasNode(LockBasedStorageManager.NO_LOCKS, cache, typeAliasesGroup.toList())
+        for ((fqName, typeAliasesGroup) in typeAliasesMap) {
+            buildTypeAliasNode(
+                LockBasedStorageManager.NO_LOCKS,
+                typeAliasesGroup.size,
+                cache,
+                fqName
+            ).also {
+                typeAliasesGroup.toList().forEachIndexed { index, typeAlias ->
+                    if (typeAlias != null) {
+                        it.targetDeclarations[index] = CirTypeAliasFactory.create(typeAlias)
+                    }
+                }
+            }
         }
     }
 

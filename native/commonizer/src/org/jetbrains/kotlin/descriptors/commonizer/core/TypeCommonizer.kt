@@ -98,5 +98,5 @@ private inline fun CirNode<*, *>?.canBeCommonized() =
         true
     } else {
         // If entry is present, then contents (common declaration) should not be null.
-        common() != null
+        commonDeclaration() != null
     }
