@@ -183,7 +183,9 @@ abstract class AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
             """
                 kotlin {
                     js {
-                        $jsSubTargetName { }
+                        $jsSubTargetName {
+                            ${additionalSubTargetSettings() ?: ""}
+                        }
                         binaries.executable()
                     }
                 }
@@ -192,6 +194,8 @@ abstract class AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
         val artifactId = MAVEN_JS_STDLIB_ID.removePrefix("kotlin-")
         buildScriptData.addDependencyNotation(composeDependency(buildScriptData, artifactId))
     }
+
+    abstract fun additionalSubTargetSettings(): String?
 
     override fun getOldSyntaxPluginDefinition(): String = "plugin(\"${KotlinJsGradleModuleConfigurator.KOTLIN_JS}\")"
     override fun getPluginDefinition(): String = "id(\"org.jetbrains.kotlin.js\")"
@@ -216,6 +220,9 @@ class KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider :
         super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
         addBrowserSupport(module)
     }
+
+    override fun additionalSubTargetSettings(): String? =
+        browserConfiguration()
 }
 
 class KotlinDslGradleKotlinJSNodeFrameworkSupportProvider :
@@ -225,6 +232,9 @@ class KotlinDslGradleKotlinJSNodeFrameworkSupportProvider :
     ) {
     override val jsSubTargetName: String
         get() = "nodejs"
+
+    override fun additionalSubTargetSettings(): String? =
+        null
 }
 
 class KotlinDslGradleKotlinMPPFrameworkSupportProvider :

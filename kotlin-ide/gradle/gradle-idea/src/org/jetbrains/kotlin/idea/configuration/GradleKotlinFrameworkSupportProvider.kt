@@ -208,13 +208,17 @@ abstract class GradleKotlinJSFrameworkSupportProvider(
             """
                 kotlin {
                     js {
-                        $jsSubTargetName { }
+                        $jsSubTargetName {
+                            ${additionalSubTargetSettings() ?: ""}
+                        }
                         binaries.executable()
                     }
                 }
             """.trimIndent()
         )
     }
+
+    abstract fun additionalSubTargetSettings(): String?
 
     override fun getPluginId() = KotlinJsGradleModuleConfigurator.KOTLIN_JS
     override fun getPluginExpression() = "id 'org.jetbrains.kotlin.js'"
@@ -244,6 +248,9 @@ open class GradleKotlinJSBrowserFrameworkSupportProvider(
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
         addBrowserSupport(module)
     }
+
+    override fun additionalSubTargetSettings(): String? =
+        browserConfiguration()
 }
 
 open class GradleKotlinJSNodeFrameworkSupportProvider(
@@ -252,6 +259,9 @@ open class GradleKotlinJSNodeFrameworkSupportProvider(
 ) : GradleKotlinJSFrameworkSupportProvider(frameworkTypeId, displayName) {
     override val jsSubTargetName: String
         get() = "nodejs"
+
+    override fun additionalSubTargetSettings(): String? =
+        null
 
     override fun getDescription() =
         KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.js.for.node.js")
