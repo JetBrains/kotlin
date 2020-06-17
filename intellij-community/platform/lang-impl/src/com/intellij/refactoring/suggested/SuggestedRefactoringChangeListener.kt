@@ -328,7 +328,7 @@ class SuggestedRefactoringChangeListener(
 
       isFirstChangeInsideCommand = false
 
-      if (!(psiFile as PsiFileImpl).isContentsLoaded) return // no AST loaded
+      if (psiFile !is PsiFileImpl || !psiFile.isContentsLoaded) return // no AST loaded
 
       val refactoringSupport = SuggestedRefactoringSupport.forLanguage(psiFile.language) ?: return
       event as PsiTreeChangeEventImpl
