@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.*
+import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl
 
 class KotlinImportOptimizer : ImportOptimizer {
     override fun supports(file: PsiFile) = file is KtFile
@@ -145,17 +147,27 @@ class KotlinImportOptimizer : ImportOptimizer {
         }
 
         override fun visitKtElement(element: KtElement) {
-            for (reference in element.references) {
+            super.visitKtElement(element)
+
+            val references = element.references.ifEmpty { return }
+            val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+            val isResolved = if (element is KtCallElement)
+                element.getResolvedCall(bindingContext) != null
+            else
+                element.mainReference?.resolveToDescriptors(bindingContext)?.let { descriptors ->
+                    descriptors.isNotEmpty() && descriptors.none { it is ErrorSimpleFunctionDescriptorImpl }
+                } == true
+
+            for (reference in references) {
                 if (reference !is KtReference) continue
                 abstractRefs.add(AbstractReferenceImpl(reference))
 
                 val names = reference.resolvesByNames
-                var isResolved = false
+                if (!isResolved) {
+                    unresolvedNames += names
+                }
 
-                val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
                 for (target in reference.targets(bindingContext)) {
-                    isResolved = true
-
                     val importableDescriptor = target.getImportableDescriptor()
                     val importableFqName = target.importableFqName ?: continue
                     val parentFqName = importableFqName.parent()
@@ -171,11 +183,7 @@ class KotlinImportOptimizer : ImportOptimizer {
                     namesToImport.getOrPut(importableFqName) { hashSetOf() } += descriptorNames
                     descriptorsToImport += importableDescriptor
                 }
-
-                if (!isResolved && reference is KtSimpleNameReference) unresolvedNames += names
             }
-
-            super.visitKtElement(element)
         }
 
         private fun isAccessibleAsMember(target: DeclarationDescriptor, place: KtElement, bindingContext: BindingContext): Boolean {

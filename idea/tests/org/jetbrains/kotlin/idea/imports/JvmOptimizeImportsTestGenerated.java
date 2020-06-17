@@ -331,6 +331,11 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             runTest("idea/testData/editor/optimizeImports/common/IteratorFunction.kt");
         }
 
+        @TestMetadata("IteratorFunction2.kt")
+        public void testIteratorFunction2() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/common/IteratorFunction2.kt");
+        }
+
         @TestMetadata("KT11640.kt")
         public void testKT11640() throws Exception {
             runTest("idea/testData/editor/optimizeImports/common/KT11640.kt");
