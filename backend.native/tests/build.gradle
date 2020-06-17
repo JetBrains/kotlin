@@ -4428,6 +4428,11 @@ task metadata_compare_typedefs(type: MetadataComparisonTest) {
     defFile = "interop/basics/typedefs.def"
 }
 
+task metadata_compare_unable_to_import(type: MetadataComparisonTest) {
+    enabled = (project.testTarget != 'wasm32')
+    defFile = "interop/basics/unable_to_import.def"
+}
+
 standaloneTest("local_ea_arraysfieldwrite") {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     goldValue = "Array (constructor init):\nSize: 2\nContents: [1, 2]\n" +

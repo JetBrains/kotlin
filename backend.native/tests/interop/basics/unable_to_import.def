@@ -1,0 +1,6 @@
+---
+int global;
+#define global bad macro
+
+void foo(void);
+#define foo <
