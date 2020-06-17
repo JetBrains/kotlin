@@ -13,6 +13,7 @@ import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
+import org.jetbrains.kotlin.utils.checkWithAttachment
 
 class LocationCache(val context: DefaultExecutionContext) {
     private val classesByName = ClassesByNameProvider.createCache(context.vm.allClasses())
@@ -39,8 +40,13 @@ class LocationCache(val context: DefaultExecutionContext) {
             } catch (ignored: AbsentInformationException) {
             }
         }
+        checkWithAttachment(type != null, {
+            "Bad type: $type"
+        }) {
+            it.withAttachment("type", type)
+            it.withAttachment("methodName", methodName)
+            it.withAttachment("line", line)
+        }
         return GeneratedLocation(context.debugProcess, type, methodName, line)
     }
-
-
 }
