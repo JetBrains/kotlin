@@ -6,32 +6,28 @@ import com.intellij.codeInsight.hint.HintManagerImpl
 import com.intellij.codeInsight.hint.HintUtil
 import com.intellij.codeInsight.hints.InlayPresentationFactory
 import com.intellij.codeInsight.hints.InlayPresentationFactory.*
-import com.intellij.ide.ui.AntialiasingType
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.EditorColors
-import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.impl.EditorImpl
-import com.intellij.openapi.editor.impl.FontInfo
 import com.intellij.openapi.editor.markup.TextAttributes
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
 import com.intellij.ui.LightweightHint
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.Contract
-import java.awt.*
+import java.awt.Color
+import java.awt.Component
+import java.awt.Cursor
+import java.awt.Point
 import java.awt.event.MouseEvent
-import java.awt.font.FontRenderContext
 import java.util.*
 import javax.swing.Icon
-import kotlin.math.ceil
 import kotlin.math.max
 
 /**
@@ -39,18 +35,11 @@ import kotlin.math.max
  */
 @ApiStatus.Experimental
 class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFactory {
+  private val textMetricsStorage = InlayTextMetricsStorage(editor)
+
   @Contract(pure = true)
   override fun smallText(text: String): InlayPresentation {
-    val fontData = getFontData(editor)
-    val plainFont = fontData.font
-    val width = editor.contentComponent.getFontMetrics(plainFont).stringWidth(text)
-    val ascent = editor.ascent
-    val descent = editor.descent
-    val height = editor.lineHeight
-    val textWithoutBox = InsetPresentation(
-      TextInlayPresentation(width, fontData.lineHeight, text, fontData.baseline, height, ascent, descent) {
-        plainFont
-      }, top = 1, down = 1)
+    val textWithoutBox = InsetPresentation(TextInlayPresentation(textMetricsStorage, true, text), top = 1, down = 1)
     return withInlayAttributes(textWithoutBox)
   }
 
@@ -91,20 +80,7 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
 
   @Contract(pure = true)
   override fun text(text: String): InlayPresentation {
-    val font = UIUtil.getFontWithFallbackIfNeeded(editor.colorsScheme.getFont(EditorFontType.PLAIN), text)
-    val width = editor.contentComponent.getFontMetrics(font).stringWidth(text)
-    val ascent = editor.ascent
-    val descent = editor.descent
-    val height = editor.lineHeight
-    return withInlayAttributes(TextInlayPresentation(
-      width,
-      height,
-      text,
-      ascent,
-      height,
-      ascent,
-      descent
-    ) { font })
+    return withInlayAttributes(TextInlayPresentation(textMetricsStorage, false, text))
   }
 
   /**
@@ -125,7 +101,7 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
       8,
       8
     ))
-    val offsetFromTop = getFontData(editor).offsetFromTop(editor)
+    val offsetFromTop = textMetricsStorage.getFontMetrics(true).offsetFromTop()
     return InsetPresentation(rounding, top = offsetFromTop)
   }
 
@@ -439,65 +415,6 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
     if (target is Navigatable) {
       CommandProcessor.getInstance().executeCommand(target.project, { target.navigate(true) }, null, null)
     }
-  }
-
-  private class FontData constructor(editor: Editor, familyName: String, size: Int) {
-    val metrics: FontMetrics
-    val lineHeight: Int
-    val baseline: Int
-
-    val font: Font
-      get() = metrics.font
-
-    init {
-      val font = UIUtil.getFontWithFallback(familyName, Font.PLAIN, size)
-      val context = getCurrentContext(editor)
-      metrics = FontInfo.getFontMetrics(font, context)
-      // We assume this will be a better approximation to a real line height for a given font
-      lineHeight = ceil(font.createGlyphVector(context, "Albpq@").visualBounds.height).toInt()
-      baseline = ceil(font.createGlyphVector(context, "Alb").visualBounds.height).toInt()
-    }
-
-    fun isActual(editor: Editor, familyName: String, size: Int): Boolean {
-      val font = metrics.font
-      if (familyName != font.family || size != font.size) return false
-      val currentContext = getCurrentContext(editor)
-      return currentContext.equals(metrics.fontRenderContext)
-    }
-
-    private fun getCurrentContext(editor: Editor): FontRenderContext {
-      val editorContext = FontInfo.getFontRenderContext(editor.contentComponent)
-      return FontRenderContext(editorContext.transform,
-                               AntialiasingType.getKeyForCurrentScope(false),
-                               if (editor is EditorImpl)
-                                 editor.myFractionalMetricsHintValue
-                               else
-                                 RenderingHints.VALUE_FRACTIONALMETRICS_OFF)
-    }
-
-    /**
-     * Offset from the top edge of drawing rectangle to rectangle with text.
-     */
-    fun offsetFromTop(editor: Editor): Int = (editor.lineHeight - lineHeight) / 2
-  }
-
-  private fun getFontData(editor: Editor): FontData {
-    val familyName = UIUtil.getLabelFont().family
-    val size = max(1, editor.colorsScheme.editorFontSize - 1)
-    var metrics = editor.getUserData(FONT_DATA)
-    if (metrics != null && !metrics.isActual(editor, familyName, size)) {
-      metrics = null
-    }
-    if (metrics == null) {
-      metrics = FontData(editor, familyName, size)
-      editor.putUserData(FONT_DATA, metrics)
-    }
-    return metrics
-  }
-
-  companion object {
-    @JvmStatic
-    private val FONT_DATA = Key.create<FontData>("InlayHintFontData")
   }
 }
 
