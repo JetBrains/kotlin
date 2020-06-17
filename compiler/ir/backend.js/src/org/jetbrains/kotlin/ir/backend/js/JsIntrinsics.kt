@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.findDeclaration
@@ -300,6 +301,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsBoxIntrinsic = getInternalFunction("boxIntrinsic")
     val jsUnboxIntrinsic = getInternalFunction("unboxIntrinsic")
 
+    val createSharedBox = defineCreateSharedBox()
+    val readSharedBox = defineReadSharedBox()
+    val writeSharedBox = defineWriteSharedBox()
+
     // Helpers:
 
     private fun getInternalFunction(name: String) =
@@ -326,6 +331,68 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
             origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
         }.apply {
             returnType = addTypeParameter("T", irBuiltIns.anyType).defaultType
+        }
+    }
+
+    private fun defineCreateSharedBox(): IrSimpleFunction {
+        return externalPackageFragment.addFunction {
+            name = Name.identifier("\$sharedBox\$create")
+            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
+            returnType = context.dynamicType
+        }.apply {
+            val tp = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter {
+                index = 0
+                name = Name.identifier("v")
+                type = IrSimpleTypeBuilder().run {
+                    classifier = tp.symbol
+                    hasQuestionMark = true
+                    buildSimpleType()
+                }
+            }
+        }
+    }
+
+    private fun defineReadSharedBox(): IrSimpleFunction {
+        return externalPackageFragment.addFunction {
+            name = Name.identifier("\$sharedBox\$read")
+            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
+        }.apply {
+            val tp = addTypeParameter("T", irBuiltIns.anyNType)
+            returnType = IrSimpleTypeBuilder().run {
+                classifier = tp.symbol
+                hasQuestionMark = true
+                buildSimpleType()
+            }
+            addValueParameter {
+                index = 0
+                name = Name.identifier("box")
+                type = context.dynamicType
+            }
+        }
+    }
+
+    private fun defineWriteSharedBox(): IrSimpleFunction {
+        return externalPackageFragment.addFunction {
+            name = Name.identifier("\$sharedBox\$write")
+            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
+            returnType = irBuiltIns.unitType
+        }.apply {
+            val tp = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter {
+                index = 0
+                name = Name.identifier("box")
+                type = context.dynamicType
+            }
+            addValueParameter {
+                index = 1
+                name = Name.identifier("nv")
+                type = IrSimpleTypeBuilder().run {
+                    classifier = tp.symbol
+                    hasQuestionMark = true
+                    buildSimpleType()
+                }
+            }
         }
     }
 
