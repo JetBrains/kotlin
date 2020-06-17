@@ -39,10 +39,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.types.Variance
 
-interface FakeOverrideBuilder {
-    fun buildFakeOverridesForClass(clazz: IrClass)
-}
-
 interface PlatformFakeOverrideClassFilter {
     fun constructFakeOverrides(clazz: IrClass): Boolean = true
 }
@@ -52,19 +48,20 @@ object DefaultFakeOverrideClassFilter : PlatformFakeOverrideClassFilter
 object FakeOverrideControl {
     // If set to true: all fake overrides go to klib serialized IR.
     // If set to false: eligible fake overrides are not serialized.
-    val serializeFakeOverrides: Boolean = false
+    val serializeFakeOverrides: Boolean = true
 
     // If set to true: fake overrides are deserialized from klib serialized IR.
     // If set to false: eligible fake overrides are constructed within IR linker.
+    // This is the default in the absence of -Xdeserialize-fake-overrides flag.
     val deserializeFakeOverrides: Boolean = false
 }
 
-class FakeOverrideBuilderImpl(
+class FakeOverrideBuilder(
     val symbolTable: SymbolTable,
     val signaturer: IdSignatureSerializer,
     val irBuiltIns: IrBuiltIns,
-    private val platformSpecificClassFilter: PlatformFakeOverrideClassFilter = DefaultFakeOverrideClassFilter
-) : FakeOverrideBuilder, FakeOverrideBuilderStrategy {
+    val platformSpecificClassFilter: PlatformFakeOverrideClassFilter = DefaultFakeOverrideClassFilter
+) : FakeOverrideBuilderStrategy {
     private val haveFakeOverrides = mutableSetOf<IrClass>()
     override val propertyOverriddenSymbols = mutableMapOf<IrOverridableMember, List<IrSymbol>>()
     private val irOverridingUtil = IrOverridingUtil(irBuiltIns, this)
@@ -116,8 +113,6 @@ class FakeOverrideBuilderImpl(
 
         irOverridingUtil.buildFakeOverridesForClass(clazz)
     }
-
-    override fun buildFakeOverridesForClass(clazz: IrClass) = irOverridingUtil.buildFakeOverridesForClass(clazz)
 
     override fun linkFakeOverride(fakeOverride: IrOverridableMember) {
         when (fakeOverride) {

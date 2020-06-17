@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilderImpl
+import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideControl
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -54,7 +54,8 @@ abstract class KotlinIrLinker(
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
-    private val exportedDependencies: List<ModuleDescriptor>
+    private val exportedDependencies: List<ModuleDescriptor>,
+    private val deserializeFakeOverrides: Boolean
 ) : IrDeserializer {
 
     // Kotlin-MPP related data. Consider some refactoring
@@ -67,7 +68,7 @@ abstract class KotlinIrLinker(
 
     protected val deserializersForModules = mutableMapOf<ModuleDescriptor, IrModuleDeserializer>()
 
-    abstract val fakeOverrideBuilderImpl: FakeOverrideBuilderImpl
+    abstract val fakeOverrideBuilder: FakeOverrideBuilder
 
     private val haveSeen = mutableSetOf<IrSymbol>()
 
@@ -163,7 +164,7 @@ abstract class KotlinIrLinker(
                                       fileIndex,
                                       !strategy.needBodies,
                                        strategy.inlineBodies,
-                                      !strategy.fakeOverrides,
+                                       deserializeFakeOverrides,
                                       moduleDeserializer).apply {
 
                     // Explicitly exported declarations (e.g. top-level initializers) must be deserialized before all other declarations.
@@ -225,9 +226,9 @@ abstract class KotlinIrLinker(
         private val fileIndex: Int,
         onlyHeaders: Boolean,
         inlineBodies: Boolean,
-        constructFakeOverrrides: Boolean,
-        private val moduleDeserializer: IrModuleDeserializer,
-    ) : IrFileDeserializer(logger, builtIns, symbolTable, constructFakeOverrrides, !onlyHeaders) {
+        deserializeFakeOverrides: Boolean,
+        private val moduleDeserializer: IrModuleDeserializer
+    ) : IrFileDeserializer(logger, builtIns, symbolTable, !onlyHeaders, deserializeFakeOverrides) {
 
         private var fileLoops = mutableMapOf<Int, IrLoopBase>()
 
@@ -236,6 +237,8 @@ abstract class KotlinIrLinker(
         private val irTypeCache = mutableMapOf<Int, IrType>()
 
         override val deserializeInlineFunctions: Boolean = inlineBodies
+
+        override val platformFakeOverrideClassFilter = fakeOverrideBuilder.platformSpecificClassFilter
 
         var reversedSignatureIndex = emptyMap<IdSignature, Int>()
 
@@ -586,9 +589,11 @@ abstract class KotlinIrLinker(
     override fun postProcess() {
         finalizeExpectActualLinker()
 
-        deserializersForModules.values.forEach {
-            it.postProcess {
-                fakeOverrideBuilderImpl.provideFakeOverrides(it)
+        if (!deserializeFakeOverrides) {
+            deserializersForModules.values.forEach {
+                it.postProcess {
+                    fakeOverrideBuilder.provideFakeOverrides(it)
+                }
             }
         }
 
@@ -676,8 +681,7 @@ enum class DeserializationStrategy(
     val needBodies: Boolean,
     val explicitlyExported: Boolean,
     val theWholeWorld: Boolean,
-    val inlineBodies: Boolean,
-    val fakeOverrides: Boolean = FakeOverrideControl.deserializeFakeOverrides
+    val inlineBodies: Boolean
 ) {
     ONLY_REFERENCED(true, false, false, true),
     ALL(true, true, true, true),
