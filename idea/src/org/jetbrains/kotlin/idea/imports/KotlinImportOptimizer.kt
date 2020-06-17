@@ -120,12 +120,14 @@ class KotlinImportOptimizer : ImportOptimizer {
         private val descriptorsToImport = hashSetOf<DeclarationDescriptor>()
         private val namesToImport = hashMapOf<FqName, MutableSet<Name>>()
         private val abstractRefs = ArrayList<OptimizedImportsBuilder.AbstractReference>()
+        private val unresolvedNames = hashSetOf<Name>()
 
         val data: OptimizedImportsBuilder.InputData
             get() = OptimizedImportsBuilder.InputData(
                 descriptorsToImport,
                 namesToImport,
                 abstractRefs,
+                unresolvedNames,
             )
 
         override fun visitElement(element: PsiElement) {
@@ -148,12 +150,13 @@ class KotlinImportOptimizer : ImportOptimizer {
                 abstractRefs.add(AbstractReferenceImpl(reference))
 
                 val names = reference.resolvesByNames
+                var isResolved = false
 
                 val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
-                val targets = reference.targets(bindingContext)
-                for (target in targets) {
-                    val importableDescriptor = target.getImportableDescriptor()
+                for (target in reference.targets(bindingContext)) {
+                    isResolved = true
 
+                    val importableDescriptor = target.getImportableDescriptor()
                     val importableFqName = target.importableFqName ?: continue
                     val parentFqName = importableFqName.parent()
                     if (target is PackageViewDescriptor && parentFqName == FqName.ROOT) continue // no need to import top-level packages
@@ -168,6 +171,8 @@ class KotlinImportOptimizer : ImportOptimizer {
                     namesToImport.getOrPut(importableFqName) { hashSetOf() } += descriptorNames
                     descriptorsToImport += importableDescriptor
                 }
+
+                if (!isResolved && reference is KtSimpleNameReference) unresolvedNames += names
             }
 
             super.visitKtElement(element)

@@ -53,7 +53,8 @@ class OptimizedImportsBuilder(
     class InputData(
         val descriptorsToImport: Set<DeclarationDescriptor>,
         val namesToImport: Map<FqName, Set<Name>>,
-        val references: Collection<AbstractReference>
+        val references: Collection<AbstractReference>,
+        val unresolvedNames: Set<Name>,
     )
 
     class Options(
@@ -81,9 +82,8 @@ class OptimizedImportsBuilder(
     fun buildOptimizedImports(): List<ImportPath>? {
         val facade = file.getResolutionFacade()
         file.importDirectives
-            .filterNot { it.canResolve(facade) }
-            .mapNotNull(KtImportDirective::getImportPath)
-            .mapTo(importRules) { ImportRule.Add(it) }
+            .filter { it.isAllUnder && data.unresolvedNames.isNotEmpty() || it.importedName in data.unresolvedNames && !it.canResolve(facade) }
+            .mapNotNullTo(importRules) { it.importPath?.let { path -> ImportRule.Add(path) } }
 
         while (true) {
             ProgressManager.checkCanceled()
@@ -106,7 +106,7 @@ class OptimizedImportsBuilder(
     }
 
     private fun tryBuildOptimizedImports(): List<ImportPath>? {
-        val importsToGenerate = HashSet<ImportPath>()
+        val importsToGenerate = hashSetOf<ImportPath>()
         importRules.filterIsInstance<ImportRule.Add>().mapTo(importsToGenerate) { it.importPath }
 
         val descriptorsByParentFqName = HashMap<FqName, MutableSet<DeclarationDescriptor>>()
@@ -120,15 +120,14 @@ class OptimizedImportsBuilder(
 
                 val parentFqName = fqName.parent()
                 if (alias == null && canUseStarImport(descriptor, fqName) && ImportPath(parentFqName, true).isAllowedByRules()) {
-                    descriptorsByParentFqName.getOrPut(parentFqName) { LinkedHashSet() }.add(descriptor)
+                    descriptorsByParentFqName.getOrPut(parentFqName) { hashSetOf() }.add(descriptor)
                 } else {
                     importsToGenerate.add(explicitImportPath)
                 }
             }
         }
 
-        val classNamesToCheck = HashSet<FqName>()
-
+        val classNamesToCheck = hashSetOf<FqName>()
         for (parentFqName in descriptorsByParentFqName.keys) {
             ProgressManager.checkCanceled()
 
