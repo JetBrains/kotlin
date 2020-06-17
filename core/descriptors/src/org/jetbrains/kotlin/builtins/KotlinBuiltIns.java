@@ -1117,7 +1117,6 @@ public abstract class KotlinBuiltIns {
         return classFqNameEquals(descriptor, FQ_NAMES.cloneable);
     }
 
-    // TODO: support DeprecatedSinceKotlin
     public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor.getOriginal().getAnnotations().hasAnnotation(FQ_NAMES.deprecated)) return true;
 

@@ -340,7 +340,7 @@ internal fun KtModifierListOwner.isDeprecated(support: KtUltraLightSupport? = nu
 
         val fqName = toQualifiedName(typeElement) ?: continue
 
-        if (fqName == deprecatedFqName || fqName == KotlinBuiltIns.FQ_NAMES.deprecatedSinceKotlin) return true
+        if (fqName == deprecatedFqName) return true
         if (fqName.asString() == deprecatedName) return true
     }
 
