@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
+import org.jetbrains.kotlin.fir.symbols.FirBuiltinSymbols
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -185,7 +185,7 @@ class Fir2IrConverter(
             constantValueGenerator.typeTranslator = typeTranslator
             typeTranslator.constantValueGenerator = constantValueGenerator
             val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-            BuiltinSymbolsBase(builtIns, moduleDescriptor.builtIns, symbolTable)
+            FirBuiltinSymbols(builtIns, moduleDescriptor.builtIns, symbolTable)
             val sourceManager = PsiSourceManager()
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns, mangler)
             val conversionScope = Fir2IrConversionScope()
