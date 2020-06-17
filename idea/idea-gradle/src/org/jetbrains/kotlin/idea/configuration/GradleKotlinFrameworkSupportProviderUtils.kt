@@ -63,3 +63,19 @@ internal fun addBrowserSupport(module: Module) {
         )
     }
 }
+
+internal fun browserConfiguration(): String {
+    return """
+        |val cssSupport = { task: KotlinWebpack
+        |   task.cssSupport.enabled = true
+        |}
+        |
+        |webpackTask {
+        |   cssSupport(it)
+        |}
+        |
+        |runTask {
+        |   cssSupport(it)
+        |}
+    """.trimMargin()
+}
