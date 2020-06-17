@@ -30,7 +30,7 @@ data class KotlinWebpackConfig(
     val bundleAnalyzerReportDir: File? = null,
     val reportEvaluatedConfigFile: File? = null,
     val devServer: DevServer? = null,
-    val cssSettings: KotlinWebpackCssSettings = KotlinWebpackCssSettings(),
+    val cssSupport: KotlinWebpackCssSupport = KotlinWebpackCssSupport(),
     val devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
     val showProgress: Boolean = false,
     val sourceMaps: Boolean = false,
@@ -57,10 +57,10 @@ data class KotlinWebpackConfig(
                 it.add(versions.webpackDevServer)
             }
 
-            if (!cssSettings.enabled || cssSettings.rules.isEmpty()) return@also
+            if (!cssSupport.enabled || cssSupport.rules.isEmpty()) return@also
 
             it.add(versions.cssLoader)
-            cssSettings.rules.forEach { rule ->
+            cssSupport.rules.forEach { rule ->
                 when (rule.mode) {
                     EXTRACT -> it.add(versions.miniCssExtractPlugin)
                     INLINE -> it.add(versions.styleLoader)
@@ -260,7 +260,7 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendCssSettings() {
-        if (!cssSettings.enabled || cssSettings.rules.isEmpty())
+        if (!cssSupport.enabled || cssSupport.rules.isEmpty())
             return
 
         appendln(
@@ -298,7 +298,7 @@ data class KotlinWebpackConfig(
             |       
             """.trimMargin()
 
-        cssSettings.rules.forEach { rule ->
+        cssSupport.rules.forEach { rule ->
             appendln(
                 """
             |    ;(function(config) {

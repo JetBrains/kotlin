@@ -10,9 +10,9 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.INLINE
 
-data class KotlinWebpackCssSettings(
+data class KotlinWebpackCssSupport(
     @Input
-    var enabled: Boolean = true,
+    var enabled: Boolean = false,
 
     @Nested
     var rules: MutableList<KotlinWebpackCssRule> = mutableListOf(
