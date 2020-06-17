@@ -262,7 +262,7 @@ class JavaTypeTest {
         parameterized(nestedGenericType) { type ->
             assertEquals(listOf(IntRange::class.java), type.actualTypeArguments.toList())
             assertEquals(T3::class.java, type.ownerType)
-            assertEquals("reflection.JavaTypeTest\$T3\$Nested<kotlin.ranges.IntRange>", type.typeName)
+            assertEquals("test.reflection.JavaTypeTest\$T3\$Nested<kotlin.ranges.IntRange>", type.typeName)
         }
         assertEqualsAndHashCode(javaTypeOf<T3.Nested<String>>(), javaTypeOf<T3.Nested<String>>())
         assertNotEquals(javaTypeOf<T3.Nested<String>>(), javaTypeOf<T3.Nested<Int>>())
@@ -274,7 +274,7 @@ class JavaTypeTest {
             parameterized(type.ownerType) { ownerType ->
                 assertEquals(listOf(String::class.java, Unit::class.java), ownerType.actualTypeArguments.toList())
             }
-            assertEquals("reflection.JavaTypeTest\$T3<java.lang.String, kotlin.Unit>\$Inner<kotlin.ranges.IntRange>", type.typeName)
+            assertEquals("test.reflection.JavaTypeTest\$T3<java.lang.String, kotlin.Unit>\$Inner<kotlin.ranges.IntRange>", type.typeName)
         }
         assertEqualsAndHashCode(javaTypeOf<T3<String, Unit>.Inner<String>>(), javaTypeOf<T3<String, Unit>.Inner<String>>())
         assertNotEquals(javaTypeOf<T3<String, Unit>.Inner<String>>(), javaTypeOf<T3<String, Unit>.Inner<Int>>())
@@ -295,7 +295,7 @@ class JavaTypeTest {
                 }
             }
             assertEquals(
-                "reflection.JavaTypeTest\$T3<java.lang.Object, java.lang.Integer>\$Inner<java.lang.Character>" +
+                "test.reflection.JavaTypeTest\$T3<java.lang.Object, java.lang.Integer>\$Inner<java.lang.Character>" +
                         "\$NonGeneric\$DeepInner<java.lang.Byte, java.lang.Short>", deepInnerType.typeName
             )
         }
