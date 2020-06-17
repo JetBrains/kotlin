@@ -23,17 +23,17 @@ import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
+//TODO create abstract class that will be common for this and lowering
 class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransformerVoid() {
     private val interpreter = IrInterpreter(irModuleFragment)
 
-    private fun IrExpression.report(original: IrExpression): IrExpression {
-        if (this == original) return this
+    private fun IrExpression.replaceIfError(original: IrExpression): IrExpression {
         return if (this !is IrErrorExpression) this else original
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
         if (expression.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
-            return interpreter.interpret(expression).report(expression)
+            return interpreter.interpret(expression).replaceIfError(expression)
         }
         return super.visitCall(expression)
     }
@@ -47,7 +47,7 @@ class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransfor
         if (isConst && !isCompileTimeComputable) {
             //throw AssertionError("Const property is used only with functions annotated as CompileTimeCalculation: " + declaration.dump())
         } else if (isCompileTimeComputable) {
-            initializer.expression = interpreter.interpret(expression).report(expression)
+            initializer.expression = interpreter.interpret(expression).replaceIfError(expression)
         }
         return declaration
     }
@@ -57,7 +57,7 @@ class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransfor
             for (i in 0 until it.valueArgumentsCount) {
                 val arg = it.getValueArgument(i) ?: continue
                 if (arg.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
-                    val const = interpreter.interpret(arg).report(arg)
+                    val const = interpreter.interpret(arg).replaceIfError(arg)
                     it.putValueArgument(i, const.convertToConstIfPossible(it.symbol.owner.valueParameters[i].type))
                 }
             }
