@@ -252,7 +252,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
                 (valueArguments[i] ?: defaultValues[i])?.interpret()?.check { return@newFrame it }
                     ?: stack.pushReturnValue(listOf<Any?>().toPrimitiveStateArray(expression.getVarargType(i)!!)) // if vararg is empty
 
-                if (stack.peekReturnValue().isNull() && !valueParametersSymbols[i].isNullable()) {
+                stack.peekReturnValue().checkNullability(valueParametersSymbols[i].owner.type) {
                     val method = irFunction.getCapitalizedFileName() + "." + irFunction.fqNameWhenAvailable
                     val parameter = valueParametersSymbols[i].owner.name
                     throw IllegalArgumentException("Parameter specified as non-null is null: method $method, parameter $parameter")

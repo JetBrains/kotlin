@@ -204,17 +204,4 @@ internal fun State?.getCorrectReceiverByFunction(irFunction: IrFunction): State?
     return generateSequence(original) { it.superClass }.firstOrNull { it.irClass.thisReceiver == other } ?: this
 }
 
-internal fun State.checkNullability(irType: IrType?): State {
-    if (irType !is IrSimpleType) return this
-    if (this.isNull() && !irType.hasQuestionMark) {
-        throw NullPointerException()
-    }
-    return this
-}
-
-fun IrValueParameterSymbol.isNullable(): Boolean {
-    val type = this.owner.type as? IrSimpleType ?: return false
-    return type.isNullable()
-}
-
 internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalize()

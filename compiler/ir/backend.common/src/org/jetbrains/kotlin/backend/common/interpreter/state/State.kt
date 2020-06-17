@@ -56,3 +56,14 @@ internal fun State.isSubtypeOf(other: IrType): Boolean {
 
     return this.irClass.defaultType.isSubtypeOfClass(other.classOrNull!!)
 }
+
+/**
+ * This method used to check if for not null parameter there was passed null argument.
+ */
+internal fun State.checkNullability(irType: IrType?, throwException: () -> Nothing = { throw NullPointerException() }): State {
+    if (irType !is IrSimpleType) return this
+    if (this.isNull() && !irType.isNullable()) {
+        throwException()
+    }
+    return this
+}
