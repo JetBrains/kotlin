@@ -10,6 +10,7 @@ dependencies {
     testCompile(project(":core:descriptors.jvm"))
     testCompile(project(":core:deserialization"))
     testCompile(project(":compiler:util"))
+    testCompile(project(":compiler:tests-mutes"))
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:fir:tree"))
     testCompile(project(":compiler:fir:raw-fir:psi2fir"))
