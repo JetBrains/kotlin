@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.fir.deserialization.AbstractAnnotationDeserializer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
-import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
@@ -28,12 +26,12 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class JvmBinaryAnnotationDeserializer(
     val session: FirSession,
-    private var byteContent: ByteArray?
+    kotlinBinaryClass: KotlinJvmBinaryClass,
+    byteContent: ByteArray?
 ) : AbstractAnnotationDeserializer(session) {
-    private val storage: MutableMap<KotlinJvmBinaryClass, MemberAnnotations> = mutableMapOf()
-
-    // TODO: Rename this once property constants are recorded as well
-    private data class MemberAnnotations(val memberAnnotations: Map<MemberSignature, MutableList<FirAnnotationCall>>)
+    private val annotationInfo by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        session.loadMemberAnnotations(kotlinBinaryClass, byteContent)
+    }
 
     private enum class CallableKind {
         PROPERTY_GETTER,
@@ -133,85 +131,73 @@ class JvmBinaryAnnotationDeserializer(
         containerSource: DeserializedContainerSource?,
         memberSignature: MemberSignature
     ): List<FirAnnotationCall> {
-        val kotlinClass = containerSource?.toKotlinJvmBinaryClass() ?: return emptyList()
-        return loadMemberAnnotations(kotlinClass).memberAnnotations[memberSignature] ?: emptyList()
+        return annotationInfo.memberAnnotations[memberSignature] ?: emptyList()
     }
-
-    private fun DeserializedContainerSource.toKotlinJvmBinaryClass(): KotlinJvmBinaryClass? =
-        when (this) {
-            is JvmPackagePartSource -> this.knownJvmBinaryClass
-            is KotlinJvmBinarySourceElement -> this.binaryClass
-            else -> null
-        }
-
-    // TODO: better to be in KotlinDeserializedJvmSymbolsProvider?
-    private fun loadMemberAnnotations(kotlinClass: KotlinJvmBinaryClass): MemberAnnotations {
-        if (storage.containsKey(kotlinClass)) {
-            return storage[kotlinClass] ?: error("$kotlinClass should have been visited and cached.")
-        }
-        val memberAnnotations = hashMapOf<MemberSignature, MutableList<FirAnnotationCall>>()
-
-        kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-            override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
-                return AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString(), desc))
-            }
-
-            override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
-                val signature = MemberSignature.fromFieldNameAndDesc(name.asString(), desc)
-                if (initializer != null) {
-                    // TODO: load constant
-                }
-                return MemberAnnotationVisitor(signature)
-            }
-
-            inner class AnnotationVisitorForMethod(signature: MemberSignature) : MemberAnnotationVisitor(signature),
-                KotlinJvmBinaryClass.MethodAnnotationVisitor {
-
-                override fun visitParameterAnnotation(
-                    index: Int,
-                    classId: ClassId,
-                    source: SourceElement
-                ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                    val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(signature, index)
-                    var result = memberAnnotations[paramSignature]
-                    if (result == null) {
-                        result = arrayListOf()
-                        memberAnnotations[paramSignature] = result
-                    }
-                    return loadAnnotationIfNotSpecial(classId, result)
-                }
-            }
-
-            open inner class MemberAnnotationVisitor(protected val signature: MemberSignature) : KotlinJvmBinaryClass.AnnotationVisitor {
-                private val result = arrayListOf<FirAnnotationCall>()
-
-                override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                    return loadAnnotationIfNotSpecial(classId, result)
-                }
-
-                override fun visitEnd() {
-                    if (result.isNotEmpty()) {
-                        memberAnnotations[signature] = result
-                    }
-                }
-            }
-        }, byteContent)
-
-        byteContent = null
-
-        val result = MemberAnnotations(memberAnnotations)
-        storage[kotlinClass] = result
-        return result
-    }
-
-    // TODO: Or, better to migrate annotation deserialization in KotlinDeserializedJvmSymbolsProvider to here?
-    private fun loadAnnotationIfNotSpecial(
-        annotationClassId: ClassId,
-        result: MutableList<FirAnnotationCall>
-    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? =
-        (session.firSymbolProvider as? FirCompositeSymbolProvider)
-            ?.providers
-            ?.filterIsInstance<KotlinDeserializedJvmSymbolsProvider>()
-            ?.singleOrNull()
-            ?.loadAnnotationIfNotSpecial(annotationClassId, result)
 }
+
+// TODO: Rename this once property constants are recorded as well
+private data class MemberAnnotations(val memberAnnotations: Map<MemberSignature, MutableList<FirAnnotationCall>>)
+
+// TODO: better to be in KotlinDeserializedJvmSymbolsProvider?
+private fun FirSession.loadMemberAnnotations(kotlinBinaryClass: KotlinJvmBinaryClass, byteContent: ByteArray?): MemberAnnotations {
+    val memberAnnotations = hashMapOf<MemberSignature, MutableList<FirAnnotationCall>>()
+
+    kotlinBinaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+        override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
+            return AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString(), desc))
+        }
+
+        override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
+            val signature = MemberSignature.fromFieldNameAndDesc(name.asString(), desc)
+            if (initializer != null) {
+                // TODO: load constant
+            }
+            return MemberAnnotationVisitor(signature)
+        }
+
+        inner class AnnotationVisitorForMethod(signature: MemberSignature) : MemberAnnotationVisitor(signature),
+            KotlinJvmBinaryClass.MethodAnnotationVisitor {
+
+            override fun visitParameterAnnotation(
+                index: Int,
+                classId: ClassId,
+                source: SourceElement
+            ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(signature, index)
+                var result = memberAnnotations[paramSignature]
+                if (result == null) {
+                    result = arrayListOf()
+                    memberAnnotations[paramSignature] = result
+                }
+                return loadAnnotationIfNotSpecial(classId, result)
+            }
+        }
+
+        open inner class MemberAnnotationVisitor(protected val signature: MemberSignature) : KotlinJvmBinaryClass.AnnotationVisitor {
+            private val result = arrayListOf<FirAnnotationCall>()
+
+            override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                return loadAnnotationIfNotSpecial(classId, result)
+            }
+
+            override fun visitEnd() {
+                if (result.isNotEmpty()) {
+                    memberAnnotations[signature] = result
+                }
+            }
+        }
+    }, byteContent)
+
+    return MemberAnnotations(memberAnnotations)
+}
+
+// TODO: Or, better to migrate annotation deserialization in KotlinDeserializedJvmSymbolsProvider to here?
+private fun FirSession.loadAnnotationIfNotSpecial(
+    annotationClassId: ClassId,
+    result: MutableList<FirAnnotationCall>
+): KotlinJvmBinaryClass.AnnotationArgumentVisitor? =
+    (firSymbolProvider as? FirCompositeSymbolProvider)
+        ?.providers
+        ?.filterIsInstance<KotlinDeserializedJvmSymbolsProvider>()
+        ?.singleOrNull()
+        ?.loadAnnotationIfNotSpecial(annotationClassId, result)
