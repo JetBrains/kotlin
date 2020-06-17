@@ -223,7 +223,7 @@ class Fir2IrConverter(
                 converter.processFileAndClassMembers(firFile)
             }
 
-            val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope, fakeOverrideMode)
+            val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope)
             val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
             components.callGenerator = callGenerator
             declarationStorage.annotationGenerator = AnnotationGenerator(components)

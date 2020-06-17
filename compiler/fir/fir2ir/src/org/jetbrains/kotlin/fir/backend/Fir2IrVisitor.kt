@@ -52,8 +52,7 @@ import org.jetbrains.kotlin.psi.KtForExpression
 class Fir2IrVisitor(
     private val converter: Fir2IrConverter,
     private val components: Fir2IrComponents,
-    private val conversionScope: Fir2IrConversionScope,
-    fakeOverrideMode: FakeOverrideMode
+    private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components, FirDefaultVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
 
     private val integerApproximator = IntegerLiteralTypeApproximationTransformer(
