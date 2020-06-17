@@ -22,10 +22,21 @@ private func testIncompatiblePropertyType() throws {
     try assertEquals(actual: pi.value as! String, expected: "cba")
 }
 
+private func testGH3992() throws {
+    let d = TestGH3992.D(a: TestGH3992.B())
+    let c: TestGH3992.C = d
+
+    let b: TestGH3992.B = d.a
+    let a: TestGH3992.A = b
+
+    try assertTrue(a is TestGH3992.B)
+}
+
 class HeaderWarningsTests : SimpleTestProvider {
     override init() {
         super.init()
 
         test("TestIncompatiblePropertyType", testIncompatiblePropertyType)
+        test("TestGH3992", testGH3992)
     }
 }

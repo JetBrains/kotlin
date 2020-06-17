@@ -349,6 +349,39 @@ __attribute__((swift_name("TestIncompatiblePropertyTypeWarning.ClassOverridingIn
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestGH3992")))
+@interface KtTestGH3992 : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((swift_name("TestGH3992.C")))
+@interface KtTestGH3992C : KtBase
+- (instancetype)initWithA:(KtTestGH3992A *)a __attribute__((swift_name("init(a:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) KtTestGH3992A *a __attribute__((swift_name("a")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestGH3992.D")))
+@interface KtTestGH3992D : KtTestGH3992C
+- (instancetype)initWithA:(KtTestGH3992B *)a __attribute__((swift_name("init(a:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) KtTestGH3992B *a __attribute__((swift_name("a")));
+@end;
+
+__attribute__((swift_name("TestGH3992.A")))
+@interface KtTestGH3992A : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestGH3992.B")))
+@interface KtTestGH3992B : KtTestGH3992A
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Kt35940Kt")))
 @interface KtKt35940Kt : KtBase
 + (NSString *)testKt35940 __attribute__((swift_name("testKt35940()")));

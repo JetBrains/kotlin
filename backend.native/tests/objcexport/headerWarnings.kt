@@ -16,3 +16,14 @@ class TestIncompatiblePropertyTypeWarning {
 
     class ClassOverridingInterfaceWithGenericProperty(override val p: Generic<String>) : InterfaceWithGenericProperty<String>
 }
+
+// https://github.com/JetBrains/kotlin-native/issues/3992
+class TestGH3992 {
+    abstract class C(open val a: A)
+
+    class D(override val a: B) : C(a)
+
+    abstract class A
+
+    class B : A()
+}
