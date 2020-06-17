@@ -53,6 +53,7 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
             if (needDump) {
                 checkFir(testDataFile, allFirFiles)
             }
+            checkCfg(allFirFiles, testFiles, testDataFile)
         } else {
             if (!failureFile.exists()) {
                 throw failure

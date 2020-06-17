@@ -83,9 +83,17 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         val allFirFiles = firFilesPerSession.values.flatten()
         checkDiagnostics(testDataFile, testFiles, allFirFiles)
         checkFir(testDataFile, allFirFiles)
+        checkCfg(allFirFiles, testFiles, testDataFile)
+    }
+
+    protected fun checkCfg(
+        allFirFiles: List<FirFile>,
+        testFiles: List<TestFile>,
+        testDataFile: File
+    ) {
         checkCfgEdgeConsistency(allFirFiles)
         if (testFiles.any { it.withDumpCfgDirective }) {
-            checkCfg(testDataFile, allFirFiles)
+            checkCfgDump(testDataFile, allFirFiles)
         } else {
             checkCfgDumpNotExists(testDataFile)
         }
@@ -263,7 +271,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         return FirDiagnosticsCollector.create(session)
     }
 
-    private fun checkCfg(testDataFile: File, firFiles: List<FirFile>) {
+    private fun checkCfgDump(testDataFile: File, firFiles: List<FirFile>) {
         val builder = StringBuilder()
 
         firFiles.first().accept(FirControlFlowGraphRenderVisitor(builder), null)
