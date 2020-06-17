@@ -219,7 +219,7 @@ private class Printer(private val delegate: FramePrinterDelegate, private val co
 
             if (config.shouldRenderExpression() && descriptor is ValueDescriptorImpl) {
                 val expression = debugProcess.invokeInManagerThread {
-                    descriptor.getTreeEvaluation((node as XValueNodeImpl).valueContainer as JavaValue, it) as? PsiExpression
+                    descriptor.getTreeEvaluation((node as XValueNodeImpl).valueContainer as JavaValue, it).get() as? PsiExpression
                 }
 
                 if (expression != null) {
