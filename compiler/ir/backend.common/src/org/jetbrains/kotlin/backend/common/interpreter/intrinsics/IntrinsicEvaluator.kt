@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.interpreter.stack.Stack
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
-class IntrinsicEvaluator {
+internal class IntrinsicEvaluator {
     suspend fun evaluate(irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult {
         return when {
             EmptyArray.equalTo(irFunction) -> EmptyArray.evaluate(irFunction, stack, interpret)

@@ -37,7 +37,10 @@ inline fun ExecutionResult.check(toCheckLabel: ReturnLabel = ReturnLabel.NEXT, r
     return this
 }
 
-fun ExecutionResult.implicitCastIfNeeded(expectedType: IrType, actualType: IrType, stack: Stack): ExecutionResult {
+/**
+ * This method is analog of `checkcast` jvm bytecode operation. Throw exception whenever actual type is not a subtype of expected.
+ */
+internal fun ExecutionResult.implicitCastIfNeeded(expectedType: IrType, actualType: IrType, stack: Stack): ExecutionResult {
     if (actualType.classifierOrNull !is IrTypeParameterSymbol) return this
 
     if (expectedType.classifierOrFail is IrTypeParameterSymbol) return this

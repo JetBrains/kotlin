@@ -30,7 +30,7 @@ import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 
-class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, mutableListOf()) {
+internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, mutableListOf()) {
 
     private val typeFqName = irClass.fqNameForIrSerialization.toUnsafe()
     private val receiverClass = irClass.defaultType.getClass(true)

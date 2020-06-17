@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.overrides
 
-abstract class Complex(override val irClass: IrClass, override val fields: MutableList<Variable>) : State {
+internal abstract class Complex(override val irClass: IrClass, override val fields: MutableList<Variable>) : State {
     var superClass: Complex? = null
     var subClass: Complex? = null
     val interfaces: MutableList<Complex> = mutableListOf() // filled lazily, as needed

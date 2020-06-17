@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : State {
+internal class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : State {
     override val fields: MutableList<Variable> = mutableListOf()
     override val typeArguments: MutableList<Variable> = mutableListOf()
 

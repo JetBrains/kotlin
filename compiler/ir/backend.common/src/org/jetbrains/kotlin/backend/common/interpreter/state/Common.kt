@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isInterface
 
-class Common private constructor(
+internal class Common private constructor(
     override val irClass: IrClass, override val fields: MutableList<Variable>
 ) : Complex(irClass, fields) {
 

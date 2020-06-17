@@ -8,4 +8,5 @@ package org.jetbrains.kotlin.backend.common.interpreter.stack
 import org.jetbrains.kotlin.backend.common.interpreter.state.State
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
-data class Variable(val symbol: IrSymbol, var state: State)
+// TODO maybe switch to typealias and use map instead of list
+internal data class Variable(val symbol: IrSymbol, var state: State)

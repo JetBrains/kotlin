@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.interpreter.state.State
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 
-interface Frame {
+internal interface Frame {
     fun addVar(variable: Variable)
     fun addAll(variables: List<Variable>)
     fun getVariable(symbol: IrSymbol): Variable?
@@ -23,7 +23,7 @@ interface Frame {
 }
 
 // TODO replace exceptions with InterpreterException
-class InterpreterFrame(
+internal class InterpreterFrame(
     private val pool: MutableList<Variable> = mutableListOf(),
     private val typeArguments: List<Variable> = listOf()
 ) : Frame {

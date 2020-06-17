@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import kotlin.math.min
 
-class ExceptionState private constructor(
+internal class ExceptionState private constructor(
     override val irClass: IrClass, override val fields: MutableList<Variable>, stackTrace: List<String>
 ) : Complex(irClass, fields) {
 

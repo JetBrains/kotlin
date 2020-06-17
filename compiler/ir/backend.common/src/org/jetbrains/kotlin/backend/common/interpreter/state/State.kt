@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 
-interface State {
+internal interface State {
     val fields: MutableList<Variable>
     val irClass: IrClass
     val typeArguments: MutableList<Variable>
@@ -36,15 +36,15 @@ interface State {
     fun getIrFunctionByIrCall(expression: IrCall): IrFunction?
 }
 
-fun State.isNull() = this is Primitive<*> && this.value == null
+internal fun State.isNull() = this is Primitive<*> && this.value == null
 
-fun State.asInt() = (this as Primitive<*>).value as Int
-fun State.asBoolean() = (this as Primitive<*>).value as Boolean
-fun State.asString() = (this as Primitive<*>).value.toString()
+internal fun State.asInt() = (this as Primitive<*>).value as Int
+internal fun State.asBoolean() = (this as Primitive<*>).value as Boolean
+internal fun State.asString() = (this as Primitive<*>).value.toString()
 
-fun State.asBooleanOrNull() = (this as? Primitive<*>)?.value as? Boolean
+internal fun State.asBooleanOrNull() = (this as? Primitive<*>)?.value as? Boolean
 
-fun State.isSubtypeOf(other: IrType): Boolean {
+internal fun State.isSubtypeOf(other: IrType): Boolean {
     if (this is Primitive<*> && this.value == null) return other.isNullable()
 
     if (this is Primitive<*> && this.type.isArray() && other.isArray()) {

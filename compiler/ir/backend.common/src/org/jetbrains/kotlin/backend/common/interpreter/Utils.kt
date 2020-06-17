@@ -23,23 +23,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun IrFunction.getDispatchReceiver(): IrValueParameterSymbol? {
-    return this.dispatchReceiverParameter?.symbol
-}
+internal fun IrFunction.getDispatchReceiver(): IrValueParameterSymbol? = this.dispatchReceiverParameter?.symbol
 
-fun IrFunction.getExtensionReceiver(): IrValueParameterSymbol? {
-    return this.extensionReceiverParameter?.symbol
-}
+internal fun IrFunction.getExtensionReceiver(): IrValueParameterSymbol? = this.extensionReceiverParameter?.symbol
 
-fun IrFunction.getReceiver(): IrSymbol? {
-    return this.getDispatchReceiver() ?: this.getExtensionReceiver()
-}
+internal fun IrFunction.getReceiver(): IrSymbol? = this.getDispatchReceiver() ?: this.getExtensionReceiver()
 
-fun IrFunctionAccessExpression.getBody(): IrBody? {
-    return this.symbol.owner.body
-}
+internal fun IrFunctionAccessExpression.getBody(): IrBody? = this.symbol.owner.body
 
-fun State.toIrExpression(expression: IrExpression): IrExpression {
+internal fun State.toIrExpression(expression: IrExpression): IrExpression {
     val start = expression.startOffset
     val end = expression.endOffset
     val type = expression.type.makeNotNull()
@@ -61,7 +53,7 @@ fun State.toIrExpression(expression: IrExpression): IrExpression {
     }
 }
 
-fun Any?.toState(irType: IrType): State {
+internal fun Any?.toState(irType: IrType): State {
     return when (this) {
         is State -> this
         is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double, is Array<*>, is ByteArray,
@@ -92,7 +84,7 @@ fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffse
     }
 }
 
-fun <T> IrConst<T>.toPrimitive(): Primitive<T> {
+internal fun <T> IrConst<T>.toPrimitive(): Primitive<T> {
     return Primitive(this.value, this.type)
 }
 
@@ -109,13 +101,13 @@ fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
         ?: ((this as IrFunction).parent as IrClass).annotations.first { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
 }
 
-fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
+internal fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
     if (this is IrClass && this.fqNameWhenAvailable?.startsWith(Name.identifier("java")) == true) return this.fqNameWhenAvailable?.asString()
     if (!this.hasAnnotation(evaluateIntrinsicAnnotation)) return null
     return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
 }
 
-fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class<*>? {
+internal fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class<*>? {
     return when {
         irType.isBoolean() -> if (asObject) Boolean::class.javaObjectType else Boolean::class.java
         irType.isChar() -> if (asObject) Char::class.javaObjectType else Char::class.java
@@ -130,7 +122,7 @@ fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class<*>? {
     }
 }
 
-fun IrFunction.getArgsForMethodInvocation(args: List<Variable>): List<Any?> {
+internal fun IrFunction.getArgsForMethodInvocation(args: List<Variable>): List<Any?> {
     val argsValues = args.map {
         when (val state = it.state) {
             is ExceptionState -> state.getThisAsCauseForException()
@@ -157,7 +149,7 @@ fun IrFunction.getLastOverridden(): IrFunction {
     return generateSequence(listOf(this)) { it.firstOrNull()?.overriddenSymbols?.map { it.owner } }.flatten().last()
 }
 
-fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
+internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive<*> {
     return when {
         type.isByteArray() -> Primitive(ByteArray(size) { i -> (this[i] as Number).toByte() }, type)
         type.isCharArray() -> Primitive(CharArray(size) { i -> this[i] as Char }, type)
@@ -178,7 +170,7 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
     return this.getTypeArgument(typeParameter.index)
 }
 
-fun getTypeArguments(
+internal fun getTypeArguments(
     container: IrTypeParametersContainer, expression: IrFunctionAccessExpression, mapper: (IrTypeParameterSymbol) -> State
 ): List<Variable> {
     fun IrType.getState(): State {
@@ -198,13 +190,13 @@ fun getTypeArguments(
     return typeArguments
 }
 
-fun State?.extractNonLocalDeclarations(): List<Variable> {
+internal fun State?.extractNonLocalDeclarations(): List<Variable> {
     this ?: return listOf()
     val state = this.takeIf { it !is Complex } ?: (this as Complex).getOriginal()
     return state.fields.filter { it.symbol !is IrFieldSymbol }
 }
 
-fun State?.getCorrectReceiverByFunction(irFunction: IrFunction): State? {
+internal fun State?.getCorrectReceiverByFunction(irFunction: IrFunction): State? {
     if (this !is Complex) return this
 
     val original: Complex? = this.getOriginal()
@@ -212,7 +204,7 @@ fun State?.getCorrectReceiverByFunction(irFunction: IrFunction): State? {
     return generateSequence(original) { it.superClass }.firstOrNull { it.irClass.thisReceiver == other } ?: this
 }
 
-fun State.checkNullability(irType: IrType?): State {
+internal fun State.checkNullability(irType: IrType?): State {
     if (irType !is IrSimpleType) return this
     if (this.isNull() && !irType.hasQuestionMark) {
         throw NullPointerException()
@@ -225,4 +217,4 @@ fun IrValueParameterSymbol.isNullable(): Boolean {
     return type.isNullable()
 }
 
-fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalize()
+internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalize()

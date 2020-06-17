@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 
-sealed class IntrinsicBase {
+internal sealed class IntrinsicBase {
     abstract fun equalTo(irFunction: IrFunction): Boolean
     abstract suspend fun evaluate(irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult
 }
 
-object EmptyArray : IntrinsicBase() {
+internal object EmptyArray : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()
         return fqName in setOf("kotlin.emptyArray", "kotlin.ArrayIntrinsicsKt.emptyArray")
@@ -37,7 +37,7 @@ object EmptyArray : IntrinsicBase() {
     }
 }
 
-object ArrayOf : IntrinsicBase() {
+internal object ArrayOf : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()
         return fqName == "kotlin.arrayOf"
@@ -53,7 +53,7 @@ object ArrayOf : IntrinsicBase() {
     }
 }
 
-object ArrayOfNulls : IntrinsicBase() {
+internal object ArrayOfNulls : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()
         return fqName == "kotlin.arrayOfNulls"
@@ -70,7 +70,7 @@ object ArrayOfNulls : IntrinsicBase() {
     }
 }
 
-object EnumValues : IntrinsicBase() {
+internal object EnumValues : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()
         return (fqName == "kotlin.enumValues" || fqName.endsWith(".values")) && irFunction.valueParameters.isEmpty()
@@ -91,7 +91,7 @@ object EnumValues : IntrinsicBase() {
     }
 }
 
-object EnumValueOf : IntrinsicBase() {
+internal object EnumValueOf : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()
         return (fqName == "kotlin.enumValueOf" || fqName.endsWith(".valueOf")) && irFunction.valueParameters.size == 1
@@ -113,7 +113,7 @@ object EnumValueOf : IntrinsicBase() {
     }
 }
 
-object RegexReplace : IntrinsicBase() {
+internal object RegexReplace : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()
         return fqName == "kotlin.text.Regex.replace" && irFunction.valueParameters.size == 2
@@ -137,7 +137,7 @@ object RegexReplace : IntrinsicBase() {
     }
 }
 
-object EnumHashCode : IntrinsicBase() {
+internal object EnumHashCode : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()
         return fqName == "kotlin.Enum.hashCode"
@@ -152,7 +152,7 @@ object EnumHashCode : IntrinsicBase() {
     }
 }
 
-object JsPrimitives : IntrinsicBase() {
+internal object JsPrimitives : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()
         return fqName == "kotlin.Long.<init>" || fqName == "kotlin.Char.<init>"
@@ -176,7 +176,7 @@ object JsPrimitives : IntrinsicBase() {
     }
 }
 
-object ArrayConstructor : IntrinsicBase() {
+internal object ArrayConstructor : IntrinsicBase() {
     override fun equalTo(irFunction: IrFunction): Boolean {
         val fqName = irFunction.fqNameWhenAvailable.toString()
         return fqName.matches("kotlin\\.(Byte|Char|Short|Int|Long|Float|Double|Boolean|)Array\\.<init>".toRegex())

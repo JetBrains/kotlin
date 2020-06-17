@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-interface Stack {
+internal interface Stack {
     suspend fun newFrame(
         asSubFrame: Boolean = false, initPool: List<Variable> = listOf(), block: suspend () -> ExecutionResult
     ): ExecutionResult
@@ -39,7 +39,7 @@ interface Stack {
     fun peekReturnValue(): State
 }
 
-class StackImpl : Stack {
+internal class StackImpl : Stack {
     private val frameList = mutableListOf(FrameContainer()) // first frame is default, it is easier to work when last() is not null
     private fun getCurrentFrame() = frameList.last()
 
