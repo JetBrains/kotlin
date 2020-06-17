@@ -144,9 +144,11 @@ internal class ClassMemberGenerator(
                         val classId = firFunction?.symbol?.callableId?.classId
                         when {
                             DataClassMembersGenerator.isComponentN(irFunction) ->
-                                DataClassMembersGenerator(components).generateDataClassComponentBody(irFunction, classId!!)
+                                firFunction?.body?.let { irFunction.body = visitor.convertToIrBlockBody(it) }
+                                    ?: DataClassMembersGenerator(components).generateDataClassComponentBody(irFunction, classId!!)
                             DataClassMembersGenerator.isCopy(irFunction) ->
-                                DataClassMembersGenerator(components).generateDataClassCopyBody(irFunction, classId!!)
+                                firFunction?.body?.let { irFunction.body = visitor.convertToIrBlockBody(it) }
+                                    ?: DataClassMembersGenerator(components).generateDataClassCopyBody(irFunction, classId!!)
                             else ->
                                 irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
                         }
