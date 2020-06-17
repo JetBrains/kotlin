@@ -6664,6 +6664,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinDeclaration.kt");
                 }
 
+                @TestMetadata("deprecatedSinceKotlinWithoutArguments.kt")
+                public void testDeprecatedSinceKotlinWithoutArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinWithoutArguments.kt");
+                }
+
                 @TestMetadata("error.kt")
                 public void testError() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/error.kt");
@@ -6672,6 +6677,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("hidden.kt")
                 public void testHidden() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/hidden.kt");
+                }
+
+                @TestMetadata("messageFromDeprecatedAnnotation.kt")
+                public void testMessageFromDeprecatedAnnotation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/messageFromDeprecatedAnnotation.kt");
                 }
 
                 @TestMetadata("warning.kt")
