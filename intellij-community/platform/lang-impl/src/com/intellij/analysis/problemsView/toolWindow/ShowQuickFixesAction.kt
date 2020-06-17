@@ -56,8 +56,8 @@ internal class ShowQuickFixesAction : AnAction() {
     if (panel != null && button != null) {
       point.translate(-mouse.x, -mouse.y)
       when (panel.isVertical) {
-        true -> point.x += button.width
-        else -> point.x += button.height
+        true -> point.y += button.height
+        else -> point.x += button.width
       }
     }
     popup.show(RelativePoint.fromScreen(point))
