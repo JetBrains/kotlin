@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.backend.common.interpreter.state
 
 import org.jetbrains.kotlin.backend.common.interpreter.getLastOverridden
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.overrides
 
 internal class Primitive<T>(var value: T, val type: IrType) : State {
     override val fields: MutableList<Variable> = mutableListOf()
@@ -27,12 +28,11 @@ internal class Primitive<T>(var value: T, val type: IrType) : State {
     }
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
-        val descriptor = expression.symbol.descriptor
+        val owner = expression.symbol.owner
         // must add property's getter to declaration's list because they are not present in ir class for primitives
         val declarations = irClass.declarations.map { if (it is IrProperty) it.getter else it }
         return declarations.filterIsInstance<IrFunction>()
-            .filter { it.descriptor.name == descriptor.name }
-            .firstOrNull { it.descriptor.valueParameters.map { it.type } == descriptor.valueParameters.map { it.type } }
+            .firstOrNull { it.symbol == owner.symbol || (it is IrSimpleFunction && owner is IrSimpleFunction && it.overrides(owner)) }
             ?.let { if (it.isFakeOverride) it.getLastOverridden() else it }
     }
 
