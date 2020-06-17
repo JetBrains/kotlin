@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-    compile(project(":core:descriptors.jvm")) //used to get java classes fq names by kotlin names
     compile(project(":compiler:util"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend-common"))

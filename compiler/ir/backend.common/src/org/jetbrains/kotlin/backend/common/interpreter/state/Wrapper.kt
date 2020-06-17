@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.backend.common.interpreter.state
 
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.backend.common.interpreter.getEvaluateIntrinsicValue
+import org.jetbrains.kotlin.backend.common.interpreter.getLastOverridden
 import org.jetbrains.kotlin.backend.common.interpreter.getPrimitiveClass
 import org.jetbrains.kotlin.backend.common.interpreter.hasAnnotation
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -19,13 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName
-import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
-import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
-import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
@@ -48,21 +40,13 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex(
         return MethodHandles.lookup().findVirtual(receiverClass, methodName, methodType)
     }
 
-    // this method is used to get correct java method name
-    // for example: - method 'get' in kotlin StringBuilder is actually 'charAt' in java StringBuilder
-    //              - method 'keys' in kotlin Map is actually 'keySet' in java
+    // This method is used to get correct java method name
     private fun getJavaOriginalName(irFunction: IrFunction): String? {
-        return when {
-            (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol != null -> {
-                val property = irFunction.descriptor.firstOverridden {
-                    BuiltinSpecialProperties.hasBuiltinSpecialPropertyFqName(it.propertyIfAccessor)
-                }
-                property?.let { BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP[it.propertyIfAccessor.fqNameSafe]?.asString() }
-            }
-            irFunction.descriptor is SimpleFunctionDescriptor -> {
-                val last = irFunction.descriptor.overriddenTreeAsSequence(true).last()
-                BuiltinMethodsWithDifferentJvmName.getJvmName(last as SimpleFunctionDescriptor)?.asString()
-            }
+        return when (irFunction.getLastOverridden().fqNameWhenAvailable?.asString()) {
+            "kotlin.collections.Map.<get-entries>" -> "entrySet"
+            "kotlin.collections.Map.<get-keys>" -> "keySet"
+            "kotlin.CharSequence.get" -> "charAt"
+            "kotlin.collections.MutableList.removeAt" -> "remove"
             else -> null
         }
     }
@@ -124,17 +108,38 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex(
 
         private fun IrType.getClass(asObject: Boolean): Class<out Any> {
             val owner = this.classOrNull?.owner
+            val fqName = owner?.fqNameWhenAvailable?.asString()
+            val notNullType = this.makeNotNull()
+            //TODO check if primitive array is possible here
             return when {
-                this.isPrimitiveType() -> getPrimitiveClass(this.makeNotNull(), asObject)!!
-                this.isArray() -> if (asObject) Array<Any?>::class.javaObjectType else Array<Any?>::class.java
-                //TODO primitive array
+                notNullType.isPrimitiveType() || notNullType.isString() -> getPrimitiveClass(notNullType, asObject)!!
+                notNullType.isArray() -> if (asObject) Array<Any?>::class.javaObjectType else Array<Any?>::class.java
+                notNullType.isNothing() -> Nothing::class.java
+                notNullType.isAny() -> Any::class.java
+                notNullType.isNumber() -> Number::class.java
+                notNullType.isCharSequence() -> CharSequence::class.java
+                notNullType.isComparable() -> Comparable::class.java
+                notNullType.isThrowable() -> Throwable::class.java
+                notNullType.isIterable() -> Iterable::class.java
+
+                // TODO implement function mapping; all complexity is to map big arity to FunctionN
+                //notNullType.isKFunction() -> Class.forName("kotlin.reflect.KFunction")
+                //notNullType.isFunction() -> Class.forName("kotlin.jvm.functions.Function_TODO")
+                //notNullType.isSuspendFunction() || notNullType.isKSuspendFunction() -> throw AssertionError()
+
+                fqName == "kotlin.Enum" -> Enum::class.java
+                fqName == "kotlin.collections.Collection" || fqName == "kotlin.collections.MutableCollection" -> Collection::class.java
+                fqName == "kotlin.collections.List" || fqName == "kotlin.collections.MutableList" -> List::class.java
+                fqName == "kotlin.collections.Set" || fqName == "kotlin.collections.MutableSet" -> Set::class.java
+                fqName == "kotlin.collections.Map" || fqName == "kotlin.collections.MutableMap" -> Map::class.java
+                fqName == "kotlin.collections.ListIterator" || fqName == "kotlin.collections.MutableListIterator" -> ListIterator::class.java
+                fqName == "kotlin.collections.Iterator" || fqName == "kotlin.collections.MutableIterator" -> Iterator::class.java
+                fqName == "kotlin.collections.Map.Entry" || fqName == "kotlin.collections.MutableMap.MutableEntry" -> Map.Entry::class.java
+                fqName == "kotlin.collections.ListIterator" || fqName == "kotlin.collections.MutableListIterator" -> ListIterator::class.java
+
                 owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Class.forName(owner!!.getEvaluateIntrinsicValue())
-                else -> {
-                    val fqName = owner?.fqNameWhenAvailable?.asString() ?: return Any::class.java // null if this.isTypeParameter()
-                    val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(fqName))
-                    val className = javaClassId?.asSingleFqName()?.asString() ?: fqName
-                    Class.forName(className.replaceDotWithDollarForInnerClasses())
-                }
+                fqName == null -> Any::class.java // null if this.isTypeParameter()
+                else -> Class.forName(fqName.replaceDotWithDollarForInnerClasses())
             }
         }
 
