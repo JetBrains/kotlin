@@ -130,7 +130,7 @@ data class KotlinWebpackConfig(
             appendDevServer()
             appendReport()
             appendProgressReporter()
-            appendCssSettings()
+            appendCssSupport()
             appendErrorPlugin()
             appendFromConfigDir()
             appendEvaluatedFileReport()
@@ -259,7 +259,7 @@ data class KotlinWebpackConfig(
         )
     }
 
-    private fun Appendable.appendCssSettings() {
+    private fun Appendable.appendCssSupport() {
         if (!cssSupport.enabled || cssSupport.rules.isEmpty())
             return
 
@@ -424,7 +424,7 @@ data class KotlinWebpackConfig(
     private fun cssError() {
         throw IllegalStateException(
             """
-                    Possible values for cssSettings.mode:
+                    Possible values for cssSupport.mode:
                     - EXTRACT
                     - INLINE
                     - IMPORT

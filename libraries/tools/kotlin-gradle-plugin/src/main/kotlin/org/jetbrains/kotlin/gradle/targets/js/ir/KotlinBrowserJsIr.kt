@@ -83,6 +83,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     it.commonConfigure(
                         compilation = compilation,
                         binary = binary,
+                        configurationActions = commonRunConfigurations,
                         nodeJs = nodeJs
                     )
 
@@ -142,6 +143,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     it.commonConfigure(
                         compilation = compilation,
                         binary = binary,
+                        configurationActions = commonWebpackConfigurations,
                         nodeJs = nodeJs
                     )
 
@@ -173,6 +175,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     private fun KotlinWebpack.commonConfigure(
         compilation: KotlinJsCompilation,
         binary: Executable,
+        configurationActions: List<KotlinWebpack.() -> Unit>,
         nodeJs: NodeJsRootExtension
     ) {
         val type = binary.mode
@@ -186,7 +189,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         entryProperty.set(project.layout.file(binary.linkTask.map { it.outputFile }))
 
-        commonRunConfigurations.forEach { configure ->
+        configurationActions.forEach { configure ->
             configure()
         }
     }

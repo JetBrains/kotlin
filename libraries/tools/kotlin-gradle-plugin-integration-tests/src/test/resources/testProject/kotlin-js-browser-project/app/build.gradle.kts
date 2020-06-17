@@ -11,6 +11,9 @@ dependencies {
 kotlin {
     target {
         browser {
+            webpackTask {
+                cssSupport.enabled = true
+            }
         }
         binaries.executable()
     }
