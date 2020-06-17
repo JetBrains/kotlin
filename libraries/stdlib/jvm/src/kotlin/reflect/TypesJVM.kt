@@ -17,6 +17,8 @@ import kotlin.jvm.internal.KTypeBase
  * - declaration-site variance
  * - variance of types annotated with [JvmSuppressWildcards]
  * - obtaining the containing declaration of a type parameter ([TypeVariable.getGenericDeclaration])
+ * - annotations of type parameters and their bounds ([TypeVariable.getAnnotation], [TypeVariable.getAnnotations],
+ *   [TypeVariable.getDeclaredAnnotations], [TypeVariable.getAnnotatedBounds])
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
@@ -95,9 +97,13 @@ private val KTypeProjection.javaType: Type
 @ExperimentalStdlibApi
 private interface TypeImpl : Type {
     // This is a copy of [Type.getTypeName] which is present on JDK 8+.
+    @Suppress("VIRTUAL_MEMBER_HIDDEN") // This is needed for cases when environment variable JDK_16 points to JDK 8+.
     fun getTypeName(): String
 }
 
+// Suppression of the error is needed for `AnnotatedType[] getAnnotatedBounds()` which is impossible to implement on JDK 6
+// because `AnnotatedType` has only appeared in JDK 8.
+@Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED")
 @ExperimentalStdlibApi
 private class TypeVariableImpl(private val typeParameter: KTypeParameter) : TypeVariable<GenericDeclaration>, TypeImpl {
     override fun getName(): String = typeParameter.name
@@ -116,6 +122,20 @@ private class TypeVariableImpl(private val typeParameter: KTypeParameter) : Type
         name.hashCode() xor genericDeclaration.hashCode()
 
     override fun toString(): String = getTypeName()
+
+    // [TypeVariable] extends [AnnotatedElement] starting from JDK 8. The following are copies of methods from there.
+    // Suppression of VIRTUAL_MEMBER_HIDDEN is needed for cases when environment variable JDK_16 points to JDK 8+.
+    @Suppress("VIRTUAL_MEMBER_HIDDEN")
+    fun <T : Annotation> getAnnotation(annotationClass: Class<T>): T? = null
+
+    @Suppress("VIRTUAL_MEMBER_HIDDEN")
+    fun getAnnotations(): Array<Annotation> = emptyArray()
+
+    @Suppress("VIRTUAL_MEMBER_HIDDEN")
+    fun getDeclaredAnnotations(): Array<Annotation> = emptyArray()
+
+    @Suppress("VIRTUAL_MEMBER_HIDDEN")
+    fun getAnnotatedBounds(): Array<Annotation> = emptyArray()
 }
 
 @ExperimentalStdlibApi
