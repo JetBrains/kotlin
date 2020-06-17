@@ -386,7 +386,7 @@ public final class SourceCrossinline$Factory {
 
 @kotlin.Metadata
 public interface SourceCrossinline {
-    public final static field Factory: SourceCrossinline$Factory
+    public final static @org.jetbrains.annotations.NotNull field Factory: SourceCrossinline$Factory
     inner class SourceCrossinline$Factory
     static method <clinit>(): void
     public abstract @org.jetbrains.annotations.Nullable method consume(@org.jetbrains.annotations.NotNull p0: Sink, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object

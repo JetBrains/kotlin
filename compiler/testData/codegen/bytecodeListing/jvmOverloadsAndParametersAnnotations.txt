@@ -19,7 +19,7 @@ public final class ASimpleClass {
 
 @kotlin.Metadata
 public final class BSimpleObject {
-    public final static field INSTANCE: BSimpleObject
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: BSimpleObject
     static method <clinit>(): void
     private method <init>(): void
     public synthetic static method showSnackbar$default(p0: java.lang.String, p1: int, p2: int, p3: int, p4: java.lang.Object): void
@@ -61,7 +61,7 @@ public final class CClassWithCompanion$Companion {
 
 @kotlin.Metadata
 public final class CClassWithCompanion {
-    public final static field Companion: CClassWithCompanion$Companion
+    public final static @org.jetbrains.annotations.NotNull field Companion: CClassWithCompanion$Companion
     inner class CClassWithCompanion$Companion
     static method <clinit>(): void
     public method <init>(): void

@@ -11,6 +11,7 @@ public final class NonExistentType {
     private static final Function1<ABCDEF, kotlin.Unit> c = null;
     @org.jetbrains.annotations.Nullable()
     private static final ABCDEF<java.lang.String, Function1<java.util.List<ABCDEF>, kotlin.Unit>> d = null;
+    @org.jetbrains.annotations.NotNull()
     public static final NonExistentType INSTANCE = null;
 
     @org.jetbrains.annotations.Nullable()

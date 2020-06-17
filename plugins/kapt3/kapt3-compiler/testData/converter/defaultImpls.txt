@@ -2,6 +2,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public abstract interface Intf {
+    @org.jetbrains.annotations.NotNull()
     public static final Intf.Companion Companion = null;
     public static final int WHITE = 2;
 

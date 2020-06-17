@@ -1,4 +1,5 @@
 public final class A {
+    @org.jetbrains.annotations.NotNull
     public static final A.Companion Companion;
 
     public A() { /* compiled code */ }

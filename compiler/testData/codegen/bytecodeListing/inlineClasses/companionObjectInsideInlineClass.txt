@@ -8,7 +8,7 @@ public final class Foo$Companion {
 
 @kotlin.Metadata
 public final class Foo {
-    public final static field Companion: Foo$Companion
+    public final static @org.jetbrains.annotations.NotNull field Companion: Foo$Companion
     private final static field constValInCompanion: int
     private final field x: int
     inner class Foo$Companion

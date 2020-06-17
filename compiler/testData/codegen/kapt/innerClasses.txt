@@ -14,7 +14,7 @@ public interface test/TopLevel$InnerInterface {
 
 @kotlin.Metadata
 public final class test/TopLevel$InnerObject {
-    public final static field INSTANCE: test.TopLevel$InnerObject
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: test.TopLevel$InnerObject
     inner class test/TopLevel$InnerObject
     private method <init>(): void
 }
@@ -36,7 +36,7 @@ public final class test/TopLevel$NestedClass {
 
 @kotlin.Metadata
 public final class test/TopLevel {
-    public final static field Companion: test.TopLevel$Companion
+    public final static @org.jetbrains.annotations.NotNull field Companion: test.TopLevel$Companion
     private final static @org.jetbrains.annotations.NotNull field q: java.lang.String
     private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     private final field y: int

@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class AnObject {
-    public final static field INSTANCE: AnObject
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: AnObject
     static method <clinit>(): void
     private method <init>(): void
     public synthetic static method foo$default(p0: int, p1: int, p2: java.lang.Object): void
@@ -18,7 +18,7 @@ public final class WithCompanion$Companion {
 
 @kotlin.Metadata
 public final class WithCompanion {
-    public final static field Companion: WithCompanion$Companion
+    public final static @org.jetbrains.annotations.NotNull field Companion: WithCompanion$Companion
     inner class WithCompanion$Companion
     static method <clinit>(): void
     public method <init>(): void

@@ -91,6 +91,7 @@ import java.lang.System;
 public final class JJ {
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String b = null;
+    @org.jetbrains.annotations.NotNull()
     public static final app.JJ INSTANCE = null;
 
     @org.jetbrains.annotations.NotNull()

@@ -7,7 +7,7 @@ public final class TestInternalCompanionInClass$Companion {
 
 @kotlin.Metadata
 public final class TestInternalCompanionInClass {
-    public final static field Companion: TestInternalCompanionInClass$Companion
+    public final static @org.jetbrains.annotations.NotNull field Companion: TestInternalCompanionInClass$Companion
     inner class TestInternalCompanionInClass$Companion
     static method <clinit>(): void
     public method <init>(): void
@@ -22,7 +22,7 @@ final class TestPrivateCompanionInClass$Companion {
 
 @kotlin.Metadata
 public final class TestPrivateCompanionInClass {
-    public deprecated final static @java.lang.Deprecated field Companion: TestPrivateCompanionInClass$Companion
+    public deprecated final static @java.lang.Deprecated @org.jetbrains.annotations.NotNull field Companion: TestPrivateCompanionInClass$Companion
     inner class TestPrivateCompanionInClass$Companion
     static method <clinit>(): void
     public method <init>(): void
@@ -38,7 +38,7 @@ final class TestPrivateCompanionInInterface$Companion {
 
 @kotlin.Metadata
 public interface TestPrivateCompanionInInterface {
-    public deprecated final static @java.lang.Deprecated field Companion: TestPrivateCompanionInInterface$Companion
+    public deprecated final static @java.lang.Deprecated @org.jetbrains.annotations.NotNull field Companion: TestPrivateCompanionInInterface$Companion
     inner class TestPrivateCompanionInInterface$Companion
     static method <clinit>(): void
 }
@@ -52,7 +52,7 @@ public final class TestProtectedCompanionInClass$Companion {
 
 @kotlin.Metadata
 public class TestProtectedCompanionInClass {
-    public deprecated final static @java.lang.Deprecated field Companion: TestProtectedCompanionInClass$Companion
+    public deprecated final static @java.lang.Deprecated @org.jetbrains.annotations.NotNull field Companion: TestProtectedCompanionInClass$Companion
     inner class TestProtectedCompanionInClass$Companion
     static method <clinit>(): void
     public method <init>(): void

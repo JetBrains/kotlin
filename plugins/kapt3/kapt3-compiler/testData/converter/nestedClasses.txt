@@ -38,6 +38,7 @@ public final class A {
 
     @kotlin.Metadata()
     public static final class C {
+        @org.jetbrains.annotations.NotNull()
         public static final A.C INSTANCE = null;
 
         private C() {
@@ -150,6 +151,7 @@ public final class Test {
 
     @kotlin.Metadata()
     public static final class NestedObject {
+        @org.jetbrains.annotations.NotNull()
         public static final Test.NestedObject INSTANCE = null;
 
         private NestedObject() {

@@ -36,6 +36,7 @@ public final class PrimitiveTypes {
     public static final java.lang.String stringQuotes = "quotes \" \'\'quotes";
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String stringRN = "\r\n";
+    @org.jetbrains.annotations.NotNull()
     public static final PrimitiveTypes INSTANCE = null;
 
     public final float getFloatMaxValue() {

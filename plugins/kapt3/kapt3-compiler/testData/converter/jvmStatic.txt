@@ -7,6 +7,7 @@ public final class JvmStaticTest {
     private static final int one = 1;
     public static final int two = 2;
     public static final char c = 'C';
+    @org.jetbrains.annotations.NotNull()
     public static final JvmStaticTest.Companion Companion = null;
 
     public JvmStaticTest() {

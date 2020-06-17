@@ -5,7 +5,7 @@ public final class test/BaseClass$Companion {
 }
 @kotlin.Metadata
 public class test/BaseClass {
-    public final static field Companion: test.BaseClass$Companion
+    public final static @org.jetbrains.annotations.NotNull field Companion: test.BaseClass$Companion
     public final static field basePublicConst: int
     inner class test/BaseClass$Companion
     public method <init>(): void

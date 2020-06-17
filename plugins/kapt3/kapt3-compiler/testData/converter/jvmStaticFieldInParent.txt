@@ -4,6 +4,7 @@ import java.lang.System;
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String test = "";
+    @org.jetbrains.annotations.NotNull()
     public static final Test.A A = null;
 
     public Test() {
