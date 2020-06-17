@@ -91,10 +91,6 @@ class LexicalChainedScope private constructor(
         p.println("}")
     }
 
-    override fun definitelyDoesNotContainName(name: Name): Boolean {
-        return memberScopes.all { it.definitelyDoesNotContainName(name) }
-    }
-
     companion object {
 
         @JvmOverloads
