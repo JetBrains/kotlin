@@ -36,6 +36,10 @@ import kotlin.math.max
 @ApiStatus.Experimental
 class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFactory {
   private val textMetricsStorage = InlayTextMetricsStorage(editor)
+  private val offsetFromTopProvider = object : InsetValueProvider {
+    override val top: Int
+      get() = textMetricsStorage.getFontMetrics(true).offsetFromTop()
+  }
 
   @Contract(pure = true)
   override fun smallText(text: String): InlayPresentation {
@@ -96,13 +100,11 @@ class PresentationFactory(private val editor: EditorImpl) : InlayPresentationFac
         right = 7,
         top = 0,
         down = 0
-
       ),
       8,
       8
     ))
-    val offsetFromTop = textMetricsStorage.getFontMetrics(true).offsetFromTop()
-    return InsetPresentation(rounding, top = offsetFromTop)
+    return DynamicInsetPresentation(rounding, offsetFromTopProvider)
   }
 
   @Contract(pure = true)
