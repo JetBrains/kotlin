@@ -17,7 +17,8 @@ abstract class AbstractDukatTask(
     @Internal
     override val compilation: KotlinJsCompilation
 ) : AbstractTask(), RequiresNpmDependencies {
-    private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
+    @get:Internal
+    protected val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
     @get:Internal
     override val nodeModulesRequired: Boolean
@@ -26,6 +27,16 @@ abstract class AbstractDukatTask(
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = setOf(nodeJs.versions.dukat)
+
+    @get:Internal
+    val dts by lazy {
+        val resolvedCompilation = nodeJs.npmResolutionManager.requireInstalled()[project][compilation]
+        val dtsResolver = DtsResolver(resolvedCompilation.npmProject)
+        dtsResolver.getAllDts(
+            resolvedCompilation.externalNpmDependencies,
+            considerGeneratingFlag
+        )
+    }
 
     /**
      * Package name for the generated file (by default filename.d.ts renamed to filename.d.kt)
@@ -38,13 +49,21 @@ abstract class AbstractDukatTask(
      * Collection of d.ts files
      */
     @get:Internal
-    abstract val dTsFiles: List<File>
+    val dTsFiles: List<File>
+        get() = dts.map { it.file }
+
+    @get:Input
+    val inputs
+        get() = dts.map { it.inputKey }
 
     /**
      * Destination directory for files with converted declarations
      */
     @get:OutputDirectory
-    abstract val destDir: File
+    abstract var destDir: File
+
+    @get:Internal
+    internal abstract val considerGeneratingFlag: Boolean
 
     @get:Internal
     val operation: String = "Generating Kotlin/JS external declarations"
@@ -52,6 +71,8 @@ abstract class AbstractDukatTask(
     @TaskAction
     open fun run() {
         nodeJs.npmResolutionManager.checkRequiredDependencies(this)
+
+        destDir.deleteRecursively()
 
         DukatRunner(
             compilation,
@@ -63,3 +84,5 @@ abstract class AbstractDukatTask(
         ).execute()
     }
 }
+
+internal const val DUKAT_TASK_GROUP = "Dukat"

@@ -18,10 +18,13 @@ class DtsResolver(val npmProject: NpmProject) {
         indexFileSuffixes = listOf(".d.ts")
     )
 
-    fun getAllDts(externalNpmDependencies: Collection<NpmDependency>): List<Dts> {
+    fun getAllDts(
+        externalNpmDependencies: Collection<NpmDependency>,
+        considerGeneratingFlag: Boolean = true
+    ): List<Dts> {
         return externalNpmDependencies
             .asSequence()
-            .filter { it.generateExternals }
+            .filter { !considerGeneratingFlag || it.generateExternals }
             .filter { it.scope == NORMAL || it.scope == OPTIONAL }
             .mapNotNullTo(mutableSetOf()) { typeModules.resolve(it.key)?.let { file -> Dts(file.canonicalFile, it) } }
             .sortedBy { it.inputKey }
