@@ -47,6 +47,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val EXPECT_ACTUAL_LINKER = CompilerConfigurationKey.create<Boolean>("Experimental expext/actual linker")
+
+    @JvmField
+    val DESERIALIZE_FAKE_OVERRIDES = CompilerConfigurationKey.create<Boolean>("Deserialize fake overrides")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
