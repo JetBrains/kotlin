@@ -158,7 +158,7 @@ constructor(
     var sourceMaps: Boolean = true
 
     @Nested
-    val cssSettings: KotlinWebpackCssSettings = KotlinWebpackCssSettings()
+    val cssSupport: KotlinWebpackCssSupport = KotlinWebpackCssSupport()
 
     @Input
     @Optional
@@ -187,7 +187,7 @@ constructor(
             outputFileName = outputFileName,
             configDirectory = configDirectory,
             bundleAnalyzerReportDir = if (report) reportDir else null,
-            cssSettings = cssSettings,
+            cssSupport = cssSupport,
             devServer = devServer,
             devtool = devtool,
             sourceMaps = sourceMaps,
