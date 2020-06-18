@@ -141,7 +141,9 @@ private class IrFunctionRegionsCollector(
             val condition = it.condition
             val result = it.result
 
-            if (it is IrElseBranch) {
+            if (condition is IrConst<*> && condition.value == true && condition.endOffset == result.endOffset) {
+                // Probably an 'else' branch.
+                // Note: can't rely on [IrElseBranch], because IR deserializer doesn't emit it.
                 recordRegion(result)
             } else {
                 recordRegion(condition)
