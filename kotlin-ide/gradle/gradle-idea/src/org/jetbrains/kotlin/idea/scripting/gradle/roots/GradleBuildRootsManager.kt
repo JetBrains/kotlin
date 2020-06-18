@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot.Importin
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import org.jetbrains.plugins.gradle.settings.*
@@ -91,15 +90,13 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     }
 
     override fun isConfigurationLoadingInProgress(file: KtFile): Boolean {
-        return when (val root = findScriptBuildRoot(file.originalFile.virtualFile)?.nearest) {
-            is GradleBuildRoot -> root.importing.get() != updated
-            else -> false
-        }
+        return findScriptBuildRoot(file.originalFile.virtualFile)?.nearest?.isImportingInProgress() ?: return false
     }
 
     @Suppress("MemberVisibilityCanBePrivate") // used in GradleImportHelper.kt.201
     fun isConfigurationOutOfDate(file: VirtualFile): Boolean {
         val script = getScriptInfo(file) ?: return false
+        if (script.buildRoot.isImportingInProgress()) return false
         return !script.model.inputs.isUpToDate(project, file)
     }
 

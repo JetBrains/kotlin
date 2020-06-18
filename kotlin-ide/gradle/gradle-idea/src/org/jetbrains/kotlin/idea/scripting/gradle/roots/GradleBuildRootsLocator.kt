@@ -104,8 +104,7 @@ abstract class GradleBuildRootsLocator {
             }
 
         private val importing: Boolean
-            get() = nearest != null &&
-                    nearest.importing.get() != GradleBuildRoot.ImportingStatus.updated
+            get() = nearest != null && nearest.isImportingInProgress()
 
         private val isImported: Boolean
             get() = script != null
