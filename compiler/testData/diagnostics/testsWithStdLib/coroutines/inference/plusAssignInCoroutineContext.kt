@@ -18,8 +18,6 @@ fun foo(total: Float, next: Int) = 10
 
 fun call(x: String) {}
 
-fun call(x: String) {}
-
 suspend fun foo(x: Int) = flow {
     var y = 1
     y += if (x > 2) 1 else 2
