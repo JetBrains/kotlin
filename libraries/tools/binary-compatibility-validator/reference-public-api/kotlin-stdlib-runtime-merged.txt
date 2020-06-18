@@ -4777,12 +4777,15 @@ public final class kotlin/reflect/KTypeProjection {
 	public fun <init> (Lkotlin/reflect/KVariance;Lkotlin/reflect/KType;)V
 	public final fun component1 ()Lkotlin/reflect/KVariance;
 	public final fun component2 ()Lkotlin/reflect/KType;
+	public static final fun contravariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
 	public final fun copy (Lkotlin/reflect/KVariance;Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
 	public static synthetic fun copy$default (Lkotlin/reflect/KTypeProjection;Lkotlin/reflect/KVariance;Lkotlin/reflect/KType;ILjava/lang/Object;)Lkotlin/reflect/KTypeProjection;
+	public static final fun covariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getType ()Lkotlin/reflect/KType;
 	public final fun getVariance ()Lkotlin/reflect/KVariance;
 	public fun hashCode ()I
+	public static final fun invariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
 	public fun toString ()Ljava/lang/String;
 }
 

@@ -141,15 +141,15 @@ public final data class KTypeProjection {
     public companion object of KTypeProjection {
         public final val STAR: kotlin.reflect.KTypeProjection { get; }
 
-        public final fun contravariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
-
-        public final fun covariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
-
-        public final fun invariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
-    }
-}
-
-@kotlin.SinceKotlin(version = "1.1")
+/*∆*/         public final fun contravariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
+/*∆*/ 
+/*∆*/         public final fun covariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
+/*∆*/ 
+/*∆*/         public final fun invariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
+/*∆*/     }
+/*∆*/ }
+/*∆*/ 
+/*∆*/ @kotlin.SinceKotlin(version = "1.1")
 /*∆*/ public final data class KTypeProjection {
 /*∆*/     public constructor KTypeProjection(variance: kotlin.reflect.KVariance?, type: kotlin.reflect.KType?)
 /*∆*/ 
@@ -172,15 +172,18 @@ public final data class KTypeProjection {
 /*∆*/     public companion object of KTypeProjection {
 /*∆*/         public final val STAR: kotlin.reflect.KTypeProjection { get; }
 /*∆*/ 
-/*∆*/         public final fun contravariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
-/*∆*/ 
-/*∆*/         public final fun covariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
-/*∆*/ 
-/*∆*/         public final fun invariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
-/*∆*/     }
-/*∆*/ }
-/*∆*/ 
-/*∆*/ @kotlin.SinceKotlin(version = "1.1")
+        @kotlin.jvm.JvmStatic
+        public final fun contravariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
+
+        @kotlin.jvm.JvmStatic
+        public final fun covariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
+
+        @kotlin.jvm.JvmStatic
+        public final fun invariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
+    }
+}
+
+@kotlin.SinceKotlin(version = "1.1")
 public final enum class KVariance : kotlin.Enum<kotlin.reflect.KVariance> {
     enum entry INVARIANT
 

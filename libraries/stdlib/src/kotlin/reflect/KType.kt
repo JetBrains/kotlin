@@ -1,9 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.reflect
+
+import kotlin.jvm.JvmStatic
 
 /**
  * Represents a type. Type is usually either a class with optional type arguments,
@@ -92,6 +94,7 @@ public data class KTypeProjection constructor(
          * without any use-site variance modifiers applied to it.
          * For example, in the type `Set<String>`, `String` is an invariant projection of the type represented by the class `String`.
          */
+        @JvmStatic
         public fun invariant(type: KType): KTypeProjection =
             KTypeProjection(KVariance.INVARIANT, type)
 
@@ -99,6 +102,7 @@ public data class KTypeProjection constructor(
          * Creates a contravariant projection of a given type, denoted by the `in` modifier applied to a type.
          * For example, in the type `MutableList<in Number>`, `in Number` is a contravariant projection of the type of class `Number`.
          */
+        @JvmStatic
         public fun contravariant(type: KType): KTypeProjection =
             KTypeProjection(KVariance.IN, type)
 
@@ -106,6 +110,7 @@ public data class KTypeProjection constructor(
          * Creates a covariant projection of a given type, denoted by the `out` modifier applied to a type.
          * For example, in the type `Array<out Number>`, `out Number` is a covariant projection of the type of class `Number`.
          */
+        @JvmStatic
         public fun covariant(type: KType): KTypeProjection =
             KTypeProjection(KVariance.OUT, type)
     }
