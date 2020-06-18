@@ -13691,6 +13691,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/j+k/sam/kt37920.kt");
             }
 
+            @TestMetadata("kt39630.kt")
+            public void testKt39630() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/sam/kt39630.kt");
+            }
+
             @TestMetadata("privateCandidatesWithWrongArguments.kt")
             public void testPrivateCandidatesWithWrongArguments() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/sam/privateCandidatesWithWrongArguments.kt");
