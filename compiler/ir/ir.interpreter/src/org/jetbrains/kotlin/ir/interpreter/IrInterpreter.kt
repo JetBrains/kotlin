@@ -1,21 +1,21 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.interpreter
+package org.jetbrains.kotlin.ir.interpreter
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.*
-import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterException
-import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterMethodNotFoundException
-import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterTimeOutException
-import org.jetbrains.kotlin.backend.common.interpreter.intrinsics.IntrinsicEvaluator
-import org.jetbrains.kotlin.backend.common.interpreter.stack.StackImpl
-import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
-import org.jetbrains.kotlin.backend.common.interpreter.state.*
+import org.jetbrains.kotlin.ir.interpreter.builtins.*
+import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterException
+import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterMethodNotFoundException
+import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterTimeOutException
+import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
+import org.jetbrains.kotlin.ir.interpreter.stack.StackImpl
+import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*

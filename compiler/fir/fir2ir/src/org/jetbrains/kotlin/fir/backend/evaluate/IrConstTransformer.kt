@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.backend.evaluate
 
-import org.jetbrains.kotlin.backend.common.interpreter.EvaluationMode
-import org.jetbrains.kotlin.backend.common.interpreter.IrCompileTimeChecker
-import org.jetbrains.kotlin.backend.common.interpreter.IrInterpreter
-import org.jetbrains.kotlin.backend.common.interpreter.toIrConst
+import org.jetbrains.kotlin.ir.interpreter.EvaluationMode
+import org.jetbrains.kotlin.ir.interpreter.IrCompileTimeChecker
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField

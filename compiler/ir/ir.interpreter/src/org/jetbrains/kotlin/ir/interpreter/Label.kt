@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.interpreter
+package org.jetbrains.kotlin.ir.interpreter
 
-import org.jetbrains.kotlin.backend.common.interpreter.stack.Stack
-import org.jetbrains.kotlin.backend.common.interpreter.state.Primitive
-import org.jetbrains.kotlin.backend.common.interpreter.state.isSubtypeOf
+import org.jetbrains.kotlin.ir.interpreter.stack.Stack
+import org.jetbrains.kotlin.ir.interpreter.state.Primitive
+import org.jetbrains.kotlin.ir.interpreter.state.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction

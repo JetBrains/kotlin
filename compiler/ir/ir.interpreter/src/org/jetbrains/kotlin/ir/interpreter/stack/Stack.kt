@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.interpreter.stack
+package org.jetbrains.kotlin.ir.interpreter.stack
 
-import org.jetbrains.kotlin.backend.common.interpreter.ExecutionResult
-import org.jetbrains.kotlin.backend.common.interpreter.exceptions.InterpreterException
-import org.jetbrains.kotlin.backend.common.interpreter.getCapitalizedFileName
-import org.jetbrains.kotlin.backend.common.interpreter.state.State
+import org.jetbrains.kotlin.ir.interpreter.ExecutionResult
+import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterException
+import org.jetbrains.kotlin.ir.interpreter.getCapitalizedFileName
+import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.symbols.IrSymbol

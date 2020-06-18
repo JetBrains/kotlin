@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.interpreter
+package org.jetbrains.kotlin.ir.interpreter
 
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.compileTimeAnnotation
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.contractsDslAnnotation
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
+import org.jetbrains.kotlin.ir.interpreter.builtins.compileTimeAnnotation
+import org.jetbrains.kotlin.ir.interpreter.builtins.contractsDslAnnotation
+import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*

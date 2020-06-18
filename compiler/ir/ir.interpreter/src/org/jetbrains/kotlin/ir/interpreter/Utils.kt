@@ -1,22 +1,20 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.interpreter
+package org.jetbrains.kotlin.ir.interpreter
 
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
-import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
-import org.jetbrains.kotlin.backend.common.interpreter.state.*
-import org.jetbrains.kotlin.builtins.UnsignedTypes
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
+import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -205,3 +203,17 @@ internal fun State?.getCorrectReceiverByFunction(irFunction: IrFunction): State?
 }
 
 internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalize()
+
+internal fun IrType.isUnsigned() = this.isUByte() || this.isUShort() || this.isUInt() || this.isULong()
+
+internal fun IrType.isPrimitiveArray(): Boolean {
+    return this.getClass()?.fqNameWhenAvailable?.toUnsafe()?.let { KotlinBuiltIns.isPrimitiveArray(it) } ?: false
+}
+
+internal fun IrType.isFunction() = this.getClass()?.fqNameWhenAvailable?.asString()?.startsWith("kotlin.Function") ?: false
+
+internal fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
+
+internal fun IrType.isInterface() = classOrNull?.owner?.kind == ClassKind.INTERFACE
+
+internal fun IrType.isThrowable() = this.getClass()?.fqNameWhenAvailable?.asString() == "kotlin.Throwable"

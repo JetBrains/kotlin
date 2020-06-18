@@ -3,13 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.interpreter.state
+package org.jetbrains.kotlin.ir.interpreter.state
 
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
-import org.jetbrains.kotlin.backend.common.interpreter.getEvaluateIntrinsicValue
-import org.jetbrains.kotlin.backend.common.interpreter.getLastOverridden
-import org.jetbrains.kotlin.backend.common.interpreter.getPrimitiveClass
-import org.jetbrains.kotlin.backend.common.interpreter.hasAnnotation
+import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
+import org.jetbrains.kotlin.ir.interpreter.*
+import org.jetbrains.kotlin.ir.interpreter.getEvaluateIntrinsicValue
+import org.jetbrains.kotlin.ir.interpreter.getPrimitiveClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction

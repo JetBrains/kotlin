@@ -8,10 +8,8 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend-common"))
     compile(project(":compiler:ir.tree"))
+    compile(project(":compiler:ir.interpreter"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { // primary used in ir interpreter
-        isTransitive = false
-    }
 }
 
 sourceSets {

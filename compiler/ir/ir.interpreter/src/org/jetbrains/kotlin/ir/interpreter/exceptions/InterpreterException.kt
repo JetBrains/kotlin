@@ -3,8 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.interpreter.exceptions
+package org.jetbrains.kotlin.ir.interpreter.exceptions
 
-class InterpreterTimeOutException : InterpreterException("Exceeded execution limit of constexpr expression") {
-
+open class InterpreterException(override val message: String) : Exception(message) {
 }
