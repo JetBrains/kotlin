@@ -60,7 +60,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
     loadPolicy = if (value) StateLoadPolicy.NOT_LOAD else StateLoadPolicy.LOAD
   }
 
-  override fun getProjectFilePath() = storageManager.expandMacro(PROJECT_FILE)
+  final override fun getProjectFilePath() = storageManager.expandMacro(PROJECT_FILE)
 
   /**
    * `null` for default or non-directory based project.
@@ -268,7 +268,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
     return if (!ignoreProjectStorageScheme && !isDirectoryBased) null else PathUtil.getParentPath(projectFilePath).nullize()
   }
 
-  override fun getDirectoryStoreFile(): VirtualFile? = directoryStorePath?.let { LocalFileSystem.getInstance().findFileByPath(it) }
+  override fun getDirectoryStoreFile(): VirtualFile? = directoryStorePath?.let { LocalFileSystem.getInstance().findFileByNioFile(it) }
 
   override fun getDirectoryStorePathOrBase(): String = PathUtil.getParentPath(projectFilePath)
 

@@ -32,7 +32,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 internal val IProjectStore.nameFile: Path
-  get() = Paths.get(directoryStorePath, ProjectImpl.NAME_FILE)
+  get() = directoryStorePath.resolve(ProjectImpl.NAME_FILE)
 
 @ApiStatus.Internal
 open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {

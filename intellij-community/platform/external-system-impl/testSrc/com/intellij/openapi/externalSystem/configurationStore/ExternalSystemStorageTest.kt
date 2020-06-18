@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.configurationStore
 
 import com.intellij.facet.FacetManager
@@ -47,9 +47,11 @@ import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.annotations.NotNull
-import org.junit.*
 import org.junit.Assert.assertFalse
+import org.junit.Before
+import org.junit.ClassRule
+import org.junit.Rule
+import org.junit.Test
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -323,21 +325,23 @@ class ExternalSystemStorageTest {
     runBlocking {
       createProjectAndUseInLoadComponentStateMode(tempDirManager, directoryBased = true, useDefaultProjectSettings = false) { project ->
         ExternalProjectsManagerImpl.getInstance(project).setStoreExternally(storeExternally)
-        val projectDir = Paths.get(project.stateStore.directoryStorePath).parent
+        val projectDir = project.stateStore.directoryStorePath.parent
         val cacheDir = ExternalProjectsDataStorage.getProjectConfigurationDir(project)
         cacheDir.delete()
         Disposer.register(disposableRule.disposable, Disposable { cacheDir.delete() })
 
-        withContext(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
-          runWriteAction {
-            //we need to set language level explicitly because otherwise if some tests modifies language level in the default project, we'll
-            // get different content in misc.xml
-            LanguageLevelProjectExtension.getInstance(project)!!.languageLevel = LanguageLevel.JDK_1_8
-            setupProject(project, projectDir)
+        runBlocking {
+          withContext(AppUIExecutor.onWriteThread().coroutineDispatchingContext()) {
+            runWriteAction {
+              //we need to set language level explicitly because otherwise if some tests modifies language level in the default project, we'll
+              // get different content in misc.xml
+              LanguageLevelProjectExtension.getInstance(project)!!.languageLevel = LanguageLevel.JDK_1_8
+              setupProject(project, projectDir)
+            }
           }
-        }
 
-        project.stateStore.save()
+          project.stateStore.save()
+        }
 
         val expectedDir = tempDirManager.newPath("expectedStorage")
         FileUtil.copyDir(testDataRoot.resolve("common").toFile(), expectedDir.toFile())

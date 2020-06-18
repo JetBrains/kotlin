@@ -39,6 +39,7 @@ import org.junit.Assert;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -322,12 +323,12 @@ public abstract class BaseCompilerTestCase extends JavaModuleTestCase {
   @Override
   protected Module doCreateRealModule(@NotNull String moduleName) {
     //todo[nik] reuse code from PlatformTestCase
-    final VirtualFile baseDir = getOrCreateProjectBaseDir();
-    final File moduleFile = new File(baseDir.getPath().replace('/', File.separatorChar), moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION);
-    myFilesToDelete.add(moduleFile);
+    VirtualFile baseDir = getOrCreateProjectBaseDir();
+    Path moduleFile = baseDir.toNioPath().resolve(moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION);
+    myFilesToDelete.add(moduleFile.toFile());
     return WriteAction.computeAndWait(() -> {
       Module module = ModuleManager.getInstance(myProject)
-                                   .newModule(FileUtil.toSystemIndependentName(moduleFile.getAbsolutePath()), getModuleType().getId());
+        .newModule(FileUtil.toSystemIndependentName(moduleFile.toString()), getModuleType().getId());
       module.getModuleFile();
       return module;
     });
