@@ -9,12 +9,16 @@ import org.gradle.api.Project
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.*
 import plugins.KotlinBuildPublishingPlugin
+import plugins.configureRepository
+import java.util.*
 
 internal const val PLUGIN_MARKER_SUFFIX = ".gradle.plugin"
 
+@UseExperimental(ExperimentalStdlibApi::class)
 fun Project.publishPluginMarkers(withEmptyJars: Boolean = true) {
     val pluginDevelopment = extensions.getByType<PluginBundleExtension>()
     val publishingExtension = extensions.getByType<PublishingExtension>()
@@ -25,6 +29,10 @@ fun Project.publishPluginMarkers(withEmptyJars: Boolean = true) {
         if (withEmptyJars) {
             addEmptyJarArtifacts(markerPublication)
         }
+
+        tasks.named<PublishToMavenRepository>(
+            "publish${markerPublication.name.capitalize(Locale.ROOT)}PublicationTo${KotlinBuildPublishingPlugin.REPOSITORY_NAME}Repository"
+        ).configureRepository()
     }
 }
 

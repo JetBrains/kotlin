@@ -15,9 +15,11 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
+import java.net.URI
 import java.util.*
 import javax.inject.Inject
 
@@ -119,25 +121,8 @@ class KotlinBuildPublishingPlugin @Inject constructor(
             dependsOn(tasks.named("publishToMavenLocal"))
         }
 
-        tasks.named<PublishToMavenRepository>("publish${PUBLICATION_NAME}PublicationTo${REPOSITORY_NAME}Repository") {
-            dependsOn(project.rootProject.tasks.named("preparePublication"))
-            doFirst {
-                val preparePublication = project.rootProject.tasks.named("preparePublication").get()
-                val username: String? by preparePublication.extra
-                val password: String? by preparePublication.extra
-                val repoUrl: String by preparePublication.extra
-
-                repository.apply {
-                    url = uri(repoUrl)
-                    if (url.scheme != "file" && username != null && password != null) {
-                        credentials {
-                            this.username = username
-                            this.password = password
-                        }
-                    }
-                }
-            }
-        }
+        tasks.named<PublishToMavenRepository>("publish${PUBLICATION_NAME}PublicationTo${REPOSITORY_NAME}Repository")
+            .configureRepository()
     }
 
     companion object {
@@ -151,5 +136,25 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         @UseExperimental(ExperimentalStdlibApi::class)
         fun humanReadableName(project: Project) =
             project.name.split("-").joinToString(separator = " ") { it.capitalize(Locale.ROOT) }
+    }
+}
+
+fun TaskProvider<PublishToMavenRepository>.configureRepository() = configure {
+    dependsOn(project.rootProject.tasks.named("preparePublication"))
+    doFirst {
+        val preparePublication = project.rootProject.tasks.named("preparePublication").get()
+        val username: String? by preparePublication.extra
+        val password: String? by preparePublication.extra
+        val repoUrl: String by preparePublication.extra
+
+        repository.apply {
+            url = URI(repoUrl)
+            if (url.scheme != "file" && username != null && password != null) {
+                credentials {
+                    this.username = username
+                    this.password = password
+                }
+            }
+        }
     }
 }
