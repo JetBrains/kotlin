@@ -110,7 +110,6 @@ class CallableReferenceResolver(
             chosenCandidate.diagnostics.forEach {
                 val transformedDiagnostic = when (it) {
                     is CompatibilityWarning -> CompatibilityWarningOnArgument(argument, it.candidate)
-                    is LowerPriorityToPreserveCompatibility -> return@forEach
                     else -> it
                 }
                 diagnosticsHolder.addDiagnostic(transformedDiagnostic)

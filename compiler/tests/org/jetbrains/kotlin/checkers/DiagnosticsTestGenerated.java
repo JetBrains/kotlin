@@ -1801,6 +1801,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/callableReference/classVsPackage.kt");
             }
 
+            @TestMetadata("compatibilityResolveWithVarargAndOperatorCall.kt")
+            public void testCompatibilityResolveWithVarargAndOperatorCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/compatibilityResolveWithVarargAndOperatorCall.kt");
+            }
+
             @TestMetadata("constraintFromLHSWithCorrectDirection.kt")
             public void testConstraintFromLHSWithCorrectDirection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/constraintFromLHSWithCorrectDirection.kt");
@@ -1809,6 +1814,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
             @TestMetadata("constraintFromLHSWithCorrectDirectionError.kt")
             public void testConstraintFromLHSWithCorrectDirectionError() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/constraintFromLHSWithCorrectDirectionError.kt");
+            }
+
+            @TestMetadata("correctCandidateWithCompatibilityForSeveralCandidates.kt")
+            public void testCorrectCandidateWithCompatibilityForSeveralCandidates() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/correctCandidateWithCompatibilityForSeveralCandidates.kt");
             }
 
             @TestMetadata("correctInfoAfterArrayLikeCall.kt")
@@ -1979,6 +1989,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
             @TestMetadata("typealiases.kt")
             public void testTypealiases() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/typealiases.kt");
+            }
+
+            @TestMetadata("unitAdaptationForReferenceCompatibility.kt")
+            public void testUnitAdaptationForReferenceCompatibility() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/unitAdaptationForReferenceCompatibility.kt");
             }
 
             @TestMetadata("unused.kt")
