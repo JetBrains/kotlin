@@ -37,6 +37,8 @@ fun runPartialGradleImportForAllRoots(project: Project) {
 }
 
 fun runPartialGradleImport(project: Project, root: GradleBuildRoot) {
+    if (root.isImportingInProgress()) return
+
     ExternalSystemUtil.refreshProject(
         root.pathPrefix,
         ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
