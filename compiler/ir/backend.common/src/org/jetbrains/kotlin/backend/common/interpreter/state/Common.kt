@@ -43,8 +43,8 @@ internal class Common private constructor(
 
     fun getToStringFunction(): IrFunction {
         return irClass.declarations.filterIsInstance<IrFunction>()
-            .filter { it.descriptor.name.asString() == "toString" }
-            .first { it.descriptor.valueParameters.isEmpty() }
+            .filter { it.name.asString() == "toString" }
+            .first { it.valueParameters.isEmpty() }
             .let { getOverridden(it as IrSimpleFunction, this) }
     }
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.overrides
 
@@ -57,6 +58,6 @@ internal class Primitive<T>(var value: T, val type: IrType) : State {
     }
 
     override fun toString(): String {
-        return "Primitive(value=$value, type=${irClass.descriptor.defaultType})"
+        return "Primitive(value=$value, type=${irClass.defaultType})"
     }
 }

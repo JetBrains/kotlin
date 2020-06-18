@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.common.interpreter.intrinsics.IntrinsicEvalu
 import org.jetbrains.kotlin.backend.common.interpreter.stack.StackImpl
 import org.jetbrains.kotlin.backend.common.interpreter.stack.Variable
 import org.jetbrains.kotlin.backend.common.interpreter.state.*
-import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -169,15 +169,14 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     }
 
     private suspend fun calculateBuiltIns(irFunction: IrFunction): ExecutionResult {
-        val descriptor = irFunction.descriptor
         val methodName = when (val property = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol) {
-            null -> descriptor.name.asString()
+            null -> irFunction.name.asString()
             else -> property.owner.name.asString()
         }
         val args = stack.getAll().map { it.state }
 
-        val receiverType = descriptor.dispatchReceiverParameter?.type
-        val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { it.original.type }
+        val receiverType = irFunction.dispatchReceiverParameter?.type
+        val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
         val argsValues = args.map {
             when (it) {
                 is Complex -> when (irFunction.fqNameWhenAvailable?.asString()) {
@@ -190,7 +189,16 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
                 else -> TODO("unsupported type of argument for builtins calculations: ${it::class.java}")
             }
         }
-        val signature = CompileTimeFunction(methodName, argsType.map { it.toString() })
+
+        fun IrType.getOnlyName(): String {
+            return when {
+                this.originalKotlinType != null -> this.originalKotlinType.toString()
+                this is IrSimpleType -> (this.classifierOrFail.owner as IrDeclarationWithName).name.asString() + (if (this.hasQuestionMark) "?" else "")
+                else -> this.render()
+            }
+        }
+
+        val signature = CompileTimeFunction(methodName, argsType.map { it.getOnlyName() })
 
         // TODO replace unary, binary, ternary functions with vararg
         val result = when (argsType.size) {
@@ -424,7 +432,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             }
         }
 
-        return if (UnsignedTypes.isUnsignedType(expression.type.toKotlinType())) {
+        return if (expression.type.isUnsigned()) {
             val unsignedClass = expression.type.classOrNull!!
             val constructor = unsignedClass.constructors.single().owner
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
@@ -608,11 +616,11 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
             val valueArguments = listOf(
                 enumEntry.name.asString().toIrConst(irBuiltIns.stringType), enumEntries.indexOf(enumEntry).toIrConst(irBuiltIns.intType)
             )
-            enumSuperCall.mapValueParameters { valueArguments[it.index] }
+            valueArguments.forEachIndexed { index, irConst -> enumSuperCall.putValueArgument(index, irConst) }
         }
 
         val executionResult = enumEntry.initializerExpression?.interpret()?.check { return it }
-        enumSuperCall?.mapValueParameters { null } // restore to null
+        enumSuperCall?.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
         return executionResult ?: throw InterpreterException("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
     }
 

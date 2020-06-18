@@ -52,8 +52,7 @@ class IrCompileTimeChecker(
 
     private fun IrDeclaration.isMarkedWith(annotation: FqName): Boolean {
         if (this is IrClass && this.isCompanion) return false
-        // must check descriptor annotations too because ir builtins operators don't have annotation on ir element
-        if (this.hasAnnotation(annotation) || this.descriptor.annotations.hasAnnotation(annotation)) return true
+        if (this.hasAnnotation(annotation)) return true
         return (this.parent as? IrClass)?.isMarkedWith(annotation) ?: false
     }
 

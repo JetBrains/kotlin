@@ -43,9 +43,9 @@ internal fun State.toIrExpression(expression: IrExpression): IrExpression {
                 else -> expression // TODO support for arrays
             }
         is Complex -> {
-            val stateType = this.irClass.defaultType.toKotlinType()
+            val stateType = this.irClass.defaultType
             when {
-                UnsignedTypes.isUnsignedType(stateType) -> (this.fields.single().state as Primitive<*>).value.toIrConst(type, start, end)
+                stateType.isUnsigned() -> (this.fields.single().state as Primitive<*>).value.toIrConst(type, start, end)
                 else -> expression
             }
         }
