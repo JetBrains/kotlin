@@ -248,7 +248,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             // Check for '+'
             // We should clear calls info for coroutine inference within right side as here we analyze it a second time in another context
             if (context.inferenceSession instanceof CoroutineInferenceSession) {
-                ((CoroutineInferenceSession) context.inferenceSession).clearCallsInfoByContainingElement(expression);
+                ((CoroutineInferenceSession) context.inferenceSession).clearCallsInfoByContainingElement(right);
             }
             Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
             binaryOperationDescriptors = components.callResolver.resolveBinaryCall(
