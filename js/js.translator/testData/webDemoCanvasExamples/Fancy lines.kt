@@ -3,6 +3,7 @@ This example is based on example from html5 canvas2D docs:
   http://www.w3.org/TR/2dcontext/
 Note that only a subset of the api is supported for now.
 */
+@file:Suppress("DEPRECATION_ERROR")
 
 package fancylines
 

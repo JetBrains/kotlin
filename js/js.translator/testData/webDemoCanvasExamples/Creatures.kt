@@ -3,6 +3,8 @@
  * You can drag'n'drop them as well as the logo. Doubleclick to add
  * more creatures but be careful. They may be watching you!
  */
+@file:Suppress("DEPRECATION_ERROR")
+
 package creatures
 
 import jquery.*

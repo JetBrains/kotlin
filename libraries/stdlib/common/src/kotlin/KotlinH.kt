@@ -60,11 +60,8 @@ public expect fun Float.Companion.fromBits(bits: Int): Float
 
 // From concurrent.kt
 
-// TODO: promote to error? Otherwise it gets to JVM part
-//@Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
-//public typealias Volatile = kotlin.jvm.Volatile
-
-@Deprecated("Synchronization on any object is not supported on every platform and will be removed from the common standard library soon.")
+@Deprecated("Synchronization on any object is not supported on every platform and will be removed from the common standard library soon.", level = DeprecationLevel.ERROR)
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect inline fun <R> synchronized(lock: Any, block: () -> R): R
 
 
