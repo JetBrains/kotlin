@@ -117,16 +117,24 @@ internal data class FileAndFolder(val file: String, val folder: String) {
     fun path() = if (this == NOFILE) file else "$folder/$file"
 }
 
-internal fun String?.toFileAndFolder():FileAndFolder {
+internal fun String?.toFileAndFolder(context: Context):FileAndFolder {
     this ?: return FileAndFolder.NOFILE
     val file = File(this).absoluteFile
-    return FileAndFolder(file.name, file.parent)
+    var parent = file.parent
+    context.configuration.get(KonanConfigKeys.DEBUG_PREFIX_MAP)?.let { debugPrefixMap ->
+      for ((key, value) in debugPrefixMap) {
+        if (parent.startsWith(key)) {
+          parent = value + parent.removePrefix(key)
+        }
+      }
+    }
+    return FileAndFolder(file.name, parent)
 }
 
 internal fun generateDebugInfoHeader(context: Context) {
     if (context.shouldContainAnyDebugInfo()) {
         val path = context.config.outputFile
-            .toFileAndFolder()
+            .toFileAndFolder(context)
         @Suppress("UNCHECKED_CAST")
         context.debugInfo.module   = DICreateModule(
                 builder            = context.debugInfo.builder,

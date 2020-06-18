@@ -1896,7 +1896,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
     private fun IrFile.file(): DIFileRef {
         return context.debugInfo.files.getOrPut(this.fileEntry.name) {
-            val path = this.fileEntry.name.toFileAndFolder()
+            val path = this.fileEntry.name.toFileAndFolder(context)
             DICreateFile(context.debugInfo.builder, path.file, path.folder)!!
         }
     }

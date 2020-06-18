@@ -235,6 +235,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(LIBRARIES_TO_COVER, arguments.coveredLibraries.toNonNullList())
                 arguments.coverageFile?.let { put(PROFRAW_PATH, it) }
                 put(OBJC_GENERICS, !arguments.noObjcGenerics)
+                put(DEBUG_PREFIX_MAP, parseDebugPrefixMap(arguments, configuration))
 
                 put(LIBRARIES_TO_CACHE, parseLibrariesToCache(arguments, configuration, outputKind))
                 val libraryToAddToCache = parseLibraryToAddToCache(arguments, configuration, outputKind)
@@ -421,6 +422,23 @@ private fun parseShortModuleName(
         input
     }
 }
+
+private fun parseDebugPrefixMap(
+        arguments: K2NativeCompilerArguments,
+        configuration: CompilerConfiguration
+): Map<String, String> = arguments.debugPrefixMap?.asList().orEmpty().mapNotNull {
+    val libraryAndCache = it.split("=")
+    if (libraryAndCache.size != 2) {
+        configuration.report(
+                ERROR,
+                "incorrect debug prefix map format: expected '<old>=<new>', got '$it'"
+        )
+        null
+    } else {
+        libraryAndCache[0] to libraryAndCache[1]
+    }
+}.toMap()
+
 
 fun main(args: Array<String>) = K2Native.main(args)
 fun mainNoExitWithGradleRenderer(args: Array<String>) = K2Native.mainNoExitWithGradleRenderer(args)

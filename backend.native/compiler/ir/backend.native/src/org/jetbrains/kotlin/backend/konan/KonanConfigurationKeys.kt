@@ -138,6 +138,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("path to *.profraw coverage output")
         val OBJC_GENERICS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("write objc header with generics support")
+        val DEBUG_PREFIX_MAP: CompilerConfigurationKey<Map<String, String>>
+                = CompilerConfigurationKey.create("remap file source paths in debug info")
     }
 }
 
