@@ -318,6 +318,8 @@ include ":compiler:fir:cones",
         ":compiler:fir:entrypoint",
         ":compiler:fir:analysis-tests"
 
+include ":kotlin-project-build-internal-helper-plugin"
+
 include ":idea:idea-frontend-fir:idea-fir-low-level-api"
 
 include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
@@ -541,6 +543,7 @@ project(':examples:scripting-jvm-embeddable-host').projectDir = "$rootDir/librar
 project(':pill:pill-importer').projectDir = "$rootDir/plugins/pill/pill-importer" as File
 project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate-all-tests" as File
 project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins/imports-dumper" as File
+project(':kotlin-project-build-internal-helper-plugin').projectDir = "$rootDir/libraries/tools/kotlin-project-build-internal-helper-plugin/" as File
 project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
 project(':plugins:jvm-abi-gen').projectDir = "$rootDir/plugins/jvm-abi-gen" as File
 project(':plugins:jvm-abi-gen-embeddable').projectDir = "$rootDir/plugins/jvm-abi-gen/embeddable" as File
