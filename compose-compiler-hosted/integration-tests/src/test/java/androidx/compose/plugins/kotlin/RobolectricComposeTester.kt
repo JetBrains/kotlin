@@ -23,9 +23,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.compose.Composer
 import androidx.compose.Composition
+import androidx.compose.ExperimentalComposeApi
 import androidx.compose.Recomposer
 import androidx.compose.compositionFor
-import androidx.ui.node.UiComposer
+import androidx.ui.core.ContextAmbient
+import androidx.ui.node.UiApplier
 import org.robolectric.Robolectric
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
@@ -77,12 +79,31 @@ class RobolectricComposeTester internal constructor(
         val root = activity.root
         scheduler.advanceToLastPostedRunnable()
 
-        val composition = compositionFor(root, Recomposer.current()) { slotTable, recomposer ->
-            UiComposer(activity, root, slotTable, recomposer)
+        val startProviders = Composer::class.java.methods.first {
+            it.name.startsWith("startProviders")
+        }
+        val endProviders = Composer::class.java.methods.first {
+            it.name.startsWith("endProviders")
         }
         val setContentMethod = Composition::class.java.methods.first { it.name == "setContent" }
+        startProviders.isAccessible = true
+        endProviders.isAccessible = true
         setContentMethod.isAccessible = true
-        fun setContent() { setContentMethod.invoke(composition, composable) }
+
+        val realComposable: (Composer<*>, Int, Int) -> Unit = { composer, _, _ ->
+            startProviders.invoke(
+                composer,
+                listOf(ContextAmbient provides root.context).toTypedArray()
+            )
+            composable(composer, 0, 0)
+            endProviders.invoke(composer)
+        }
+
+        @OptIn(ExperimentalComposeApi::class)
+        val composition = compositionFor(root, UiApplier(root), Recomposer.current())
+        fun setContent() {
+            setContentMethod.invoke(composition, realComposable)
+        }
         setContent()
         scheduler.advanceToLastPostedRunnable()
         block(activity)

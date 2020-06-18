@@ -16,7 +16,6 @@
 
 package androidx.compose.plugins.kotlin.compiler.lower
 
-import androidx.compose.plugins.kotlin.ComposableEmitDescriptor
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -447,20 +446,15 @@ private class IrSourcePrinterVisitor(
         forceParameterNames: Boolean = false,
         forceSingleLine: Boolean = false
     ) {
-        val descriptor = symbol.descriptor
         val arguments = mutableListOf<IrExpression>()
         val paramNames = mutableListOf<String>()
         var trailingLambda: IrExpression? = null
-        val isEmit = descriptor is ComposableEmitDescriptor
-        val isCompoundEmit = descriptor is ComposableEmitDescriptor && descriptor.hasChildren
-        val isLeafEmit = isEmit && !isCompoundEmit
-        var useParameterNames = forceParameterNames || isEmit
+        var useParameterNames = forceParameterNames
         for (i in 0 until valueArgumentsCount) {
             val arg = getValueArgument(i)
             if (arg != null) {
                 val param = symbol.owner.valueParameters[i]
                 val isTrailingLambda = i == symbol.owner.valueParameters.size - 1 &&
-                        !isLeafEmit &&
                         (
                             arg is IrFunctionExpression ||
                             (arg is IrBlock && arg.origin == IrStatementOrigin.LAMBDA)

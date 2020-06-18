@@ -18,12 +18,9 @@ package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
-import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.composableReadonlyContract
 import androidx.compose.plugins.kotlin.composableRestartableContract
 import androidx.compose.plugins.kotlin.hasUntrackedAnnotation
-import androidx.compose.plugins.kotlin.irTrace
-import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -661,9 +658,6 @@ class ComposableFunctionBodyTransformer(
                     )
                 )
                     return false
-                if (it.isEmitInline(context.bindingContext)) {
-                    return false
-                }
             }
         }
 
@@ -2242,13 +2236,6 @@ class ComposableFunctionBodyTransformer(
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val emitMetadata = context.irTrace[
-                ComposeWritableSlices.COMPOSABLE_EMIT_METADATA,
-                expression
-        ]
-        if (emitMetadata != null) {
-            return visitEmitCall(expression)
-        }
         if (expression.isTransformedComposableCall() || expression.isSyntheticComposableCall()) {
             return visitComposableCall(expression)
         }
@@ -2372,12 +2359,6 @@ class ComposableFunctionBodyTransformer(
         }
 
         return expression
-    }
-
-    private fun visitEmitCall(expression: IrCall): IrExpression {
-        encounteredComposableCall()
-        // TODO(lmr): eventually, we want to handle emits in this transform
-        return super.visitCall(expression)
     }
 
     private fun visitKeyCall(expression: IrCall): IrExpression {

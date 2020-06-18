@@ -16,12 +16,10 @@
 
 package androidx.compose.plugins.kotlin
 
-import androidx.compose.plugins.kotlin.compiler.lower.ComposableCallTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerIntrinsicTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerLambdaMemoization
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposableFunctionBodyTransformer
-import androidx.compose.plugins.kotlin.compiler.lower.ComposeResolutionMetadataTransformer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -42,10 +40,6 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
 
         // create a symbol remapper to be used across all transforms
         val symbolRemapper = DeepCopySymbolRemapper()
-
-        // add metadata from the frontend onto IR Nodes so that the metadata will travel
-        // with the ir nodes as they transform and get copied
-        ComposeResolutionMetadataTransformer(pluginContext).lower(moduleFragment)
 
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(pluginContext, symbolRemapper, bindingTrace).lower(moduleFragment)
@@ -70,12 +64,6 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
             symbolRemapper,
             bindingTrace
         ).lower(moduleFragment)
-
-        generateSymbols(pluginContext)
-
-        // transform composable calls and emits into their corresponding calls appealing
-        // to the composer
-        ComposableCallTransformer(pluginContext, symbolRemapper, bindingTrace).lower(moduleFragment)
 
         generateSymbols(pluginContext)
     }

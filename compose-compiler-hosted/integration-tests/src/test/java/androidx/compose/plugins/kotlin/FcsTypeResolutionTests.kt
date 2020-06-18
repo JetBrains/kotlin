@@ -79,7 +79,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
     fun testResolutionInsideWhenExpression() = doTest(
         """
             import androidx.compose.*
-            import android.widget.TextView
+            
+            @Composable fun TextView(text: String) { print(text) }
 
             @Composable fun doSomething(foo: Boolean) {
                 when (foo) {
@@ -107,7 +108,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
                 children2: @Composable () -> Unit,
                 value2: Int
             ) {
-                LinearLayout {
+                Foo(123) {
                     // named argument
                     Foo(x=value)
 
@@ -498,13 +499,6 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
                 <!CANNOT_INFER_PARAMETER_TYPE!>y<!>, <!CANNOT_INFER_PARAMETER_TYPE!>z<!> ->
                     println(x + y + z)
                 }
-
-                Button()
-                LinearLayout()
-
-                LinearLayout {}
-
-                Button <!TOO_MANY_ARGUMENTS!>{}<!>
             }
 
         """.trimIndent()

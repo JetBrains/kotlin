@@ -40,6 +40,7 @@ dependencies {
     testImplementation(project(":ui:ui-core"))
     testImplementation(project(":ui:ui-android-view"))
     testImplementation(project(":compose:compose-compiler-hosted"))
+    testImplementation("androidx.core:core-ktx:1.1.0")
 }
 
 android {
@@ -65,6 +66,7 @@ android {
 tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
 }
 

@@ -274,42 +274,6 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
-    fun testExtensionSetterEmit(): Unit = composerParam(
-        """
-            import android.widget.TextView
-
-            private fun TextView.setRef(ref: (TextView) -> Unit) {}
-
-            @ComposableContract(restartable = false)
-            @Composable
-            fun Test() {
-                TextView(ref = {  })
-            }
-        """,
-        """
-            private fun TextView.setRef(ref: Function1<TextView, Unit>) { }
-            @ComposableContract(restartable = false)
-            @Composable
-            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              val tmp0 = remember({
-                { it: TextView ->
-                }
-              }, %composer, <>, 0)
-              %composer.emit(-1248659431, { context: @[ParameterName(name = 'context')] Context ->
-                TextView(context)
-              }
-              ) {
-                set(tmp0) { p0: Function1<TextView, Unit> ->
-                  setRef(p0)
-                }
-              }
-              %composer.endReplaceableGroup()
-            }
-        """
-    )
-
-    @Test
     fun testDexNaming(): Unit = composerParam(
         """
             @Composable

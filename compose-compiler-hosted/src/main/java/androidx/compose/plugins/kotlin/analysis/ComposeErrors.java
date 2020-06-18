@@ -37,12 +37,6 @@ public interface ComposeErrors {
             SUSPEND_FUNCTION_USED_AS_SFC = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement>
             COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtElement>
-            INVALID_TYPE_SIGNATURE_SFC = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtElement>
-            NO_COMPOSER_FOUND = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory2<KtElement, KotlinType, String>
-            INVALID_COMPOSER_IMPLEMENTATION = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtExpression, Collection<KotlinType>, Collection<KotlinType>>
             ILLEGAL_ASSIGN_TO_UNIONTYPE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement>

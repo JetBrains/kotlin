@@ -60,10 +60,12 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting001() {
         checkFail("""
             import androidx.compose.*;
-            import android.widget.TextView;
+
+            @Composable 
+            fun Leaf() {}
 
             fun myStatelessFunctionalComponent() {
-                TextView(text="Hello World!")
+                Leaf()
             }
 
             fun foo() {
@@ -72,11 +74,13 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
         check("""
             import androidx.compose.*;
-            import android.widget.TextView;
+
+            @Composable 
+            fun Leaf() {}
 
             @Composable
             fun myStatelessFunctionalComponent() {
-                TextView(text="Hello World!")
+                Leaf()
             }
 
             @Composable
@@ -89,17 +93,21 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting002() {
         checkFail("""
             import androidx.compose.*;
-            import android.widget.TextView;
 
-            val myLambda1 = { TextView(text="Hello World!") }
-            val myLambda2: () -> Unit = { TextView(text="Hello World!") }
+            @Composable 
+            fun Leaf() {}
+
+            val myLambda1 = { Leaf() }
+            val myLambda2: () -> Unit = { Leaf() }
         """)
         check("""
             import androidx.compose.*;
-            import android.widget.TextView;
 
-            val myLambda1 = @Composable { TextView(text="Hello World!") }
-            val myLambda2: @Composable ()->Unit = { TextView(text="Hello World!") }
+            @Composable 
+            fun Leaf() {}
+
+            val myLambda1 = @Composable { Leaf() }
+            val myLambda2: @Composable ()->Unit = { Leaf() }
         """)
     }
 
@@ -114,27 +122,16 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    fun testComposableReporting004() {
-        check("""
-            import androidx.compose.*;
-            import android.widget.TextView;
-
-            @Composable
-            fun foo() {
-                val myRandomLambda = { <!NONE_APPLICABLE!>TextView<!>(text="Hello World!") }
-                System.out.println(myRandomLambda)
-            }
-        """)
-    }
-
     fun testComposableReporting006() {
         checkFail("""
             import androidx.compose.*;
-            import android.widget.TextView;
+
+            @Composable 
+            fun Leaf() {}
 
             fun foo() {
                 val bar = {
-                    TextView()
+                    Leaf()
                 }
                 bar()
                 System.out.println(bar)
@@ -142,12 +139,14 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
         check("""
             import androidx.compose.*;
-            import android.widget.TextView;
+
+            @Composable 
+            fun Leaf() {}
 
             @Composable
             fun foo() {
                 val bar = @Composable {
-                    TextView()
+                    Leaf()
                 }
                 bar()
                 System.out.println(bar)
@@ -274,20 +273,23 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting018() {
         checkFail("""
             import androidx.compose.*;
-            import android.widget.TextView;
+
+            @Composable 
+            fun Leaf() {}
 
             fun foo() {
-                val myVariable: ()->Unit = @Composable { TextView(text="Hello World!") }
+                val myVariable: ()->Unit = @Composable { Leaf() }
                 System.out.println(myVariable)
             }
         """)
         check("""
             import androidx.compose.*;
-            import android.widget.TextView;
+
+            @Composable 
+            fun Leaf() {}
 
             fun foo() {
-                val myVariable: ()->Unit = <!TYPE_MISMATCH!>@Composable {
-                 TextView(text="Hello World!") }<!>
+                val myVariable: ()->Unit = <!TYPE_MISMATCH!>@Composable { Leaf() }<!>
                 System.out.println(myVariable)
             }
         """)
@@ -296,13 +298,15 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting021() {
         check("""
             import androidx.compose.*;
-            import android.widget.TextView;
+
+            @Composable 
+            fun Leaf() {}
 
             @Composable
             fun foo() {
                 val myList = listOf(1,2,3,4,5)
                 myList.forEach @Composable { value: Int -> 
-                    TextView(text=value.toString())
+                    Leaf()
                     System.out.println(value)
                 }
             }
@@ -312,12 +316,14 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting022() {
         checkFail("""
             import androidx.compose.*;
-            import android.widget.TextView;
+
+            @Composable 
+            fun Leaf() {}
 
             fun foo() {
                 val myList = listOf(1,2,3,4,5)
                 myList.forEach { value: Int -> 
-                    TextView(text=value.toString()) 
+                    Leaf() 
                     System.out.println(value)
                 }
             }
@@ -326,10 +332,13 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.*;
             import android.widget.TextView;
 
+            @Composable 
+            fun Leaf() {}
+
             fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>() {
                 val myList = listOf(1,2,3,4,5)
                 myList.forEach @Composable { value: Int -> 
-                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>TextView<!>(text=value.toString())
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE, COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Leaf<!>()
                     System.out.println(value) 
                 }
             }
@@ -339,12 +348,14 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting024() {
         check("""
             import androidx.compose.*;
+            import android.widget.LinearLayout
             import androidx.ui.core.setViewContent
-            import android.widget.TextView;
-            import android.widget.LinearLayout;
+
+            @Composable 
+            fun Leaf() {}
 
             fun foo(ll: LinearLayout) {
-                ll.setViewContent { TextView(text="Hello World!") }
+                ll.setViewContent { Leaf() }
             }
         """)
     }
@@ -352,11 +363,13 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting025() {
         check("""
             import androidx.compose.*;
-            import android.widget.TextView;
+
+            @Composable 
+            fun Leaf() {}
 
             @Composable
             fun foo() {
-                listOf(1,2,3,4,5).forEach { TextView(text="Hello World!") }
+                listOf(1,2,3,4,5).forEach { Leaf() }
             }
         """)
     }
@@ -364,13 +377,17 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting026() {
         check("""
             import androidx.compose.*;
-            import android.widget.LinearLayout;
-            import android.widget.TextView;
+
+            @Composable 
+            fun Leaf() {}
+
+            @Composable 
+            fun Group(content: @Composable () -> Unit) { content() }
 
             @Composable
             fun foo() {
-                LinearLayout {
-                    TextView(text="Hello Jim!")
+                Group {
+                    Leaf()
                 }
             }
         """)
@@ -379,14 +396,18 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting027() {
         check("""
             import androidx.compose.*;
-            import android.widget.LinearLayout;
-            import android.widget.TextView;
+
+            @Composable 
+            fun Leaf() {}
+
+            @Composable 
+            fun Group(content: @Composable () -> Unit) { content() }
 
             @Composable
             fun foo() {
-                LinearLayout {
+                Group {
                     listOf(1,2,3).forEach {
-                        TextView(text="Hello Jim!")
+                        Leaf()
                     }
                 }
             }
@@ -442,14 +463,16 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting032() {
         check("""
             import androidx.compose.*;
-            import android.widget.TextView;
 
             @Composable
             fun MyComposable(children: @Composable ()->Unit) { children() }
 
+            @Composable 
+            fun Leaf() {}
+
             @Composable
             fun foo() {
-                MyComposable { TextView(text="Hello") }
+                MyComposable { Leaf() }
             }
         """)
     }
@@ -457,14 +480,16 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting033() {
         check("""
             import androidx.compose.*;
-            import android.widget.TextView;
 
             @Composable
             fun MyComposable(children: @Composable ()->Unit) { children() }
 
+            @Composable 
+            fun Leaf() {}
+
             @Composable
             fun foo() {
-                MyComposable(children={ TextView(text="Hello")})
+                MyComposable(children={ Leaf() })
             }
         """)
     }
@@ -576,19 +601,19 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         check(
             """
             import androidx.compose.*
-            import android.widget.TextView;
 
             fun composeInto(l: @Composable ()->Unit) { System.out.println(l) }
 
             fun Foo() {
                 composeInto {
-                    TextView(text="Hello World")
+                    Baz()
                 }
             }
 
             fun Bar() {
                 Foo()
             }
+            @Composable fun Baz() {}
         """
         )
     }
@@ -643,7 +668,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             fun FancyButton() {}
 
             fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Noise<!>() {
-                <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>FancyButton<!>()
+                <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>FancyButton<!>()
             }
         """)
     }
@@ -651,7 +676,6 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testComposableReporting044() {
         check("""
             import androidx.compose.*
-            import android.widget.TextView;
 
             typealias UNIT_LAMBDA = () -> Unit
 
@@ -674,23 +698,6 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
                 val bar = @Composable {}
                 bar()
                 System.out.println(bar)
-            }
-        """)
-    }
-
-    fun testComposableReporting047() {
-        check("""
-            import androidx.compose.*
-            import android.widget.LinearLayout;
-
-            @Composable
-            fun FancyButton() {}
-
-            @Composable
-            fun Foo() {
-                LinearLayout {
-                    FancyButton()
-                }
             }
         """)
     }
@@ -889,7 +896,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             @Composable fun foo(): Int = 123
 
             fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>App<!>() {
-                val x = <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>()
+                val x = <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>()
                 print(x)
             }
         """)
@@ -902,25 +909,25 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             @Composable fun Foo() {}
 
             val y: Any <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>get() = 
-            <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 1 }<!>
+            <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 1 }<!>
 
             fun App() {
                 val x = object {
                   val a <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>get() = 
-                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 2 }<!>
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 2 }<!>
                   @Composable val c get() = state { 4 }
                   @Composable fun bar() { Foo() }
                   fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>() {
-                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>() 
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>() 
                   }
                 }
                 class Bar {
                   val b <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>get() =
-                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 6 }<!>
+                  <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!> { 6 }<!>
                   @Composable val c get() = state { 7 }
                 }
                 fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Bam<!>() {
-                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>()
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>()
                 }
                 @Composable fun Boo() {
                     Foo()
@@ -942,7 +949,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
                   <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!><!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>state<!><!> { 2 }<!>
                   @Composable val c get() = state { 4 }
                   fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>foo<!>() { 
-                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>() 
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>() 
                   }
                   @Composable fun bar() { Foo() }
                 }
@@ -952,7 +959,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
                   @Composable val c get() = state { 7 }
                 }
                 fun <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Bam<!>() {
-                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>()
+                    <!COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE!>Foo<!>()
                 }
                 @Composable fun Boo() {
                     Foo()
