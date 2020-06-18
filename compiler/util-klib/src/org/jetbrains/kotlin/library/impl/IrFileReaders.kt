@@ -34,7 +34,7 @@ abstract class IrArrayReader(private val buffer: ByteBuffer) {
     }
 }
 
-class IrArrayFileReader(file: File) : IrArrayReader(file.memoryMappedBuffer)
+class IrArrayFileReader(file: File) : IrArrayReader(file.readBuffer)
 class IrArrayMemoryReader(bytes: ByteArray) : IrArrayReader(bytes.buffer)
 
 abstract class IrMultiArrayReader(private val buffer: ByteBuffer) {
@@ -85,7 +85,7 @@ abstract class IrMultiArrayReader(private val buffer: ByteBuffer) {
     }
 }
 
-class IrMultiArrayFileReader(file: File) : IrMultiArrayReader(file.memoryMappedBuffer)
+class IrMultiArrayFileReader(file: File) : IrMultiArrayReader(file.readBuffer)
 class IrMultiArrayMemoryReader(bytes: ByteArray) : IrMultiArrayReader(bytes.buffer)
 
 abstract class IrMultiTableReader<K>(private val buffer: ByteBuffer, private val keyReader: ByteBuffer.() -> K) {
@@ -169,16 +169,16 @@ abstract class IrTableReader<K>(private val buffer: ByteBuffer, keyReader: ByteB
     }
 }
 
-val File.memoryMappedBuffer: ByteBuffer get() = map(FileChannel.MapMode.READ_ONLY)
+val File.readBuffer: ByteBuffer get() = this.readBytes().buffer
 val ByteArray.buffer: ByteBuffer get() = ByteBuffer.wrap(this)
 
-class IndexIrTableFileReader(file: File) : IrTableReader<Long>(file.memoryMappedBuffer, { long })
+class IndexIrTableFileReader(file: File) : IrTableReader<Long>(file.readBuffer, { long })
 class IndexIrTableMemoryReader(bytes: ByteArray) : IrTableReader<Long>(bytes.buffer, { long })
 
 data class DeclarationId(val id: Int)
 
-class DeclarationIrTableFileReader(file: File) : IrTableReader<DeclarationId>(file.memoryMappedBuffer, { DeclarationId(int) })
+class DeclarationIrTableFileReader(file: File) : IrTableReader<DeclarationId>(file.readBuffer, { DeclarationId(int) })
 class DeclarationIrTableMemoryReader(bytes: ByteArray) : IrTableReader<DeclarationId>(bytes.buffer, { DeclarationId(int) })
 
-class DeclarationIrMultiTableFileReader(file: File) : IrMultiTableReader<DeclarationId>(file.memoryMappedBuffer, { DeclarationId(int) })
+class DeclarationIrMultiTableFileReader(file: File) : IrMultiTableReader<DeclarationId>(file.readBuffer, { DeclarationId(int) })
 class DeclarationIrMultiTableMemoryReader(bytes: ByteArray) : IrMultiTableReader<DeclarationId>(bytes.buffer, { DeclarationId(int) })
