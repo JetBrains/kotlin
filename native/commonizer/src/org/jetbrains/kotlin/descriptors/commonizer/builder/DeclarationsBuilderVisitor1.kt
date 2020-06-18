@@ -37,7 +37,7 @@ internal class DeclarationsBuilderVisitor1(
             val modules = moduleNode.accept(this, noContainingDeclarations()).asListContaining<ModuleDescriptorImpl>()
             modules.forEachIndexed { index, module ->
                 val target = allTargets[index]
-                modulesByTargets.computeIfAbsent(target) { mutableListOf() }.addIfNotNull(module)
+                modulesByTargets.getOrPut(target) { mutableListOf() }.addIfNotNull(module)
             }
         }
 

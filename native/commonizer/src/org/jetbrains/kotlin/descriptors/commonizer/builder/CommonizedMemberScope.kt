@@ -19,8 +19,8 @@ class CommonizedMemberScope : MemberScope {
 
     private fun addMember(member: DeclarationDescriptor) {
         when (member) {
-            is SimpleFunctionDescriptor -> functions.computeIfAbsent(member.name) { ArrayList(INITIAL_CAPACITY_FOR_CALLABLES) } += member
-            is PropertyDescriptor -> variables.computeIfAbsent(member.name) { ArrayList(INITIAL_CAPACITY_FOR_CALLABLES) } += member
+            is SimpleFunctionDescriptor -> functions.getOrPut(member.name) { ArrayList(INITIAL_CAPACITY_FOR_CALLABLES) } += member
+            is PropertyDescriptor -> variables.getOrPut(member.name) { ArrayList(INITIAL_CAPACITY_FOR_CALLABLES) } += member
             is ClassifierDescriptorWithTypeParameters -> classifiers[member.name] = member
             else -> error("Unsupported member type: ${member::class.java}, $member")
         }

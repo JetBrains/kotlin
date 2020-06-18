@@ -62,7 +62,7 @@ class CirTreeMerger(
         moduleDescriptor: ModuleDescriptor
     ) {
         val moduleName: Name = moduleDescriptor.name.intern()
-        val moduleNode: CirModuleNode = modules.computeIfAbsent(moduleName) {
+        val moduleNode: CirModuleNode = modules.getOrPut(moduleName) {
             buildModuleNode(storageManager, size)
         }
         moduleNode.targetDeclarations[targetIndex] = CirModuleFactory.create(moduleDescriptor)
@@ -81,7 +81,7 @@ class CirTreeMerger(
         packageMemberScope: MemberScope,
         moduleName: Name
     ) {
-        val packageNode: CirPackageNode = packages.computeIfAbsent(packageFqName) {
+        val packageNode: CirPackageNode = packages.getOrPut(packageFqName) {
             buildPackageNode(storageManager, size, packageFqName, moduleName)
         }
         packageNode.targetDeclarations[targetIndex] = CirPackageFactory.create(packageFqName)
@@ -105,7 +105,7 @@ class CirTreeMerger(
         propertyDescriptor: PropertyDescriptor,
         parentCommonDeclaration: NullableLazyValue<*>?
     ) {
-        val propertyNode: CirPropertyNode = properties.computeIfAbsent(PropertyApproximationKey(propertyDescriptor)) {
+        val propertyNode: CirPropertyNode = properties.getOrPut(PropertyApproximationKey(propertyDescriptor)) {
             buildPropertyNode(storageManager, size, cacheRW, parentCommonDeclaration)
         }
         propertyNode.targetDeclarations[targetIndex] = CirPropertyFactory.create(propertyDescriptor)
@@ -117,7 +117,7 @@ class CirTreeMerger(
         functionDescriptor: SimpleFunctionDescriptor,
         parentCommonDeclaration: NullableLazyValue<*>?
     ) {
-        val functionNode: CirFunctionNode = functions.computeIfAbsent(FunctionApproximationKey(functionDescriptor)) {
+        val functionNode: CirFunctionNode = functions.getOrPut(FunctionApproximationKey(functionDescriptor)) {
             buildFunctionNode(storageManager, size, cacheRW, parentCommonDeclaration)
         }
         functionNode.targetDeclarations[targetIndex] = CirFunctionFactory.create(functionDescriptor)
@@ -129,7 +129,7 @@ class CirTreeMerger(
         classDescriptor: ClassDescriptor,
         parentCommonDeclaration: NullableLazyValue<*>?
     ) {
-        val classNode: CirClassNode = classes.computeIfAbsent(classDescriptor.name.intern()) {
+        val classNode: CirClassNode = classes.getOrPut(classDescriptor.name.intern()) {
             buildClassNode(storageManager, size, cacheRW, parentCommonDeclaration, classDescriptor.fqNameSafe.intern())
         }
         classNode.targetDeclarations[targetIndex] = CirClassFactory.create(classDescriptor)
@@ -156,7 +156,7 @@ class CirTreeMerger(
         constructorDescriptor: ClassConstructorDescriptor,
         parentCommonDeclaration: NullableLazyValue<*>?
     ) {
-        val constructorNode: CirClassConstructorNode = constructors.computeIfAbsent(ConstructorApproximationKey(constructorDescriptor)) {
+        val constructorNode: CirClassConstructorNode = constructors.getOrPut(ConstructorApproximationKey(constructorDescriptor)) {
             buildClassConstructorNode(storageManager, size, cacheRW, parentCommonDeclaration)
         }
         constructorNode.targetDeclarations[targetIndex] = CirClassConstructorFactory.create(constructorDescriptor)
@@ -167,7 +167,7 @@ class CirTreeMerger(
         targetIndex: Int,
         typeAliasDescriptor: TypeAliasDescriptor
     ) {
-        val typeAliasNode: CirTypeAliasNode = typeAliases.computeIfAbsent(typeAliasDescriptor.name.intern()) {
+        val typeAliasNode: CirTypeAliasNode = typeAliases.getOrPut(typeAliasDescriptor.name.intern()) {
             buildTypeAliasNode(storageManager, size, cacheRW, typeAliasDescriptor.fqNameSafe.intern())
         }
         typeAliasNode.targetDeclarations[targetIndex] = CirTypeAliasFactory.create(typeAliasDescriptor)

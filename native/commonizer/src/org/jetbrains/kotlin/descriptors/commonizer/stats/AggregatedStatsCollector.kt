@@ -92,7 +92,7 @@ private class AggregatingOutput : StatsOutput {
     override fun writeRow(row: StatsOutput.StatsRow) {
         check(row is RawStatsCollector.RawStatsRow)
 
-        val aggregatedStatsRow = aggregatedStats.computeIfAbsent(row.declarationType, ::AggregatedStatsRow)
+        val aggregatedStatsRow = aggregatedStats.getOrPut(row.declarationType) { AggregatedStatsRow(row.declarationType) }
         when (row.common) {
             LIFTED_UP -> aggregatedStatsRow.liftedUp++
             EXPECT -> aggregatedStatsRow.successfullyCommonized++
