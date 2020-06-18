@@ -67,8 +67,8 @@ class CreateModuleOrTargetPopup private constructor(
         targetConfiguratorGroup.subItems.filter { it.needToShow() }
     ) {
         override fun getIconFor(value: DisplayableSettingItem): Icon? = when (value) {
-            is DisplayableTargetConfiguratorGroup -> value.moduleType.icon
-            is ModuleConfigurator -> value.moduleType?.icon ?: AllIcons.Nodes.Module
+            is DisplayableTargetConfiguratorGroup -> value.icon
+            is ModuleConfigurator -> value.icon ?: AllIcons.Nodes.Module
             else -> null
         }
 

@@ -61,4 +61,22 @@ public interface KotlinIcons {
     Icon JS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_js.svg");
     Icon MPP = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_multiplatform_project.svg");
     Icon NATIVE = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_native.svg");
+
+    interface Wizard {
+        Icon JVM = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/jvm.svg");
+        Icon JS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/js.svg");
+        Icon CONSOLE = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/console.svg");
+        Icon MULTIPLATFORM = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/multiplatform.svg");
+        Icon MULTIPLATFORM_LIBRARY = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/multiplatformLibrary.svg");
+        Icon MULTIPLATFORM_MOBILE = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/multiplatformMobile.svg");
+        Icon MULTIPLATFORM_MOBILE_LIBRARY = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/multiplatformMobileLibrary.svg");
+        Icon NATIVE = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/native.svg");
+        Icon WEB = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/ppWeb.svg");
+        Icon ANDROID = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/android.svg");
+        Icon IOS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/ios.svg");
+        Icon LINUX = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/linux.svg");
+        Icon MAC_OS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/macOS.svg");
+        Icon WINDOWS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/windows.svg");
+        Icon NODE_JS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/nodejs.svg");
+    }
 }
