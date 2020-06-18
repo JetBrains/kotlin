@@ -187,8 +187,9 @@ class CompositePrioritizedImportingScope(
         nameFilter: (Name) -> Boolean,
         changeNamesForAliased: Boolean
     ): Collection<DeclarationDescriptor> {
-        return primaryScope.getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased)
-            .ifEmpty { secondaryScope.getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased) }
+        return primaryScope.getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased).union(
+            secondaryScope.getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased)
+        )
     }
 
     override fun computeImportedNames(): Set<Name>? {
@@ -206,15 +207,14 @@ class CompositePrioritizedImportingScope(
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
-        return primaryScope.getContributedVariables(name, location).ifEmpty {
+        return primaryScope.getContributedVariables(name, location).union(
             secondaryScope.getContributedVariables(name, location)
-        }
+        )
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        return primaryScope.getContributedFunctions(name, location).ifEmpty {
+        return primaryScope.getContributedFunctions(name, location).union(
             secondaryScope.getContributedFunctions(name, location)
-        }
+        )
     }
-
 }
