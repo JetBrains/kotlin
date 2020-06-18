@@ -5,6 +5,7 @@
 
 package kotlin.reflect
 
+import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
 /**
@@ -91,13 +92,18 @@ public data class KTypeProjection constructor(
     }
 
     public companion object {
+        // provided for compiler access
+        @JvmField
+        @PublishedApi
+        internal val star: KTypeProjection = KTypeProjection(null, null)
+
         /**
          * Star projection, denoted by the `*` character.
          * For example, in the type `KClass<*>`, `*` is the star projection.
          * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/generics.html#star-projections)
          * for more information.
          */
-        public val STAR: KTypeProjection = KTypeProjection(null, null)
+        public val STAR: KTypeProjection get() = star
 
         /**
          * Creates an invariant projection of a given type. Invariant projection is just the type itself,
