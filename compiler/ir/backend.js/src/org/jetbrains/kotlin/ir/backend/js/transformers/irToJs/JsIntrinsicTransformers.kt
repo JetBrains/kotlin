@@ -218,6 +218,23 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(intrinsics.unreachable) { _, _ ->
                 JsInvocation(JsNameRef(Namer.UNREACHABLE_NAME))
             }
+
+            add(intrinsics.createSharedBox) { call, context: JsGenerationContext ->
+                val arg = translateCallArguments(call, context).single()
+                JsObjectLiteral(listOf(JsPropertyInitializer(JsNameRef(Namer.SHARED_BOX_V), arg)))
+            }
+
+            add(intrinsics.readSharedBox) { call, context: JsGenerationContext ->
+                val box = translateCallArguments(call, context).single()
+                JsNameRef(Namer.SHARED_BOX_V, box)
+            }
+
+            add(intrinsics.writeSharedBox) { call, context: JsGenerationContext ->
+                val args = translateCallArguments(call, context)
+                val box = args[0]
+                val value = args[1]
+                jsAssignment(JsNameRef(Namer.SHARED_BOX_V, box), value)
+            }
         }
     }
 
