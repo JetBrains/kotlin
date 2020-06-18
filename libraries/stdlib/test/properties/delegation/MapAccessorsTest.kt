@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -67,16 +67,5 @@ class VarByMapExtensionsTest {
         assertFailsWith<NoSuchElementException> { d }
         map["d"] = null
         assertEquals(null, d)
-    }
-
-    @Test fun deprecatedAccessors() {
-        assertEquals<Int>(
-            expected = map.getValue(this, VarByMapExtensionsTest::c),
-            actual = @Suppress("DEPRECATION_ERROR") map.getValue<Int>(this, VarByMapExtensionsTest::c)
-        )
-        assertEquals<String>(
-            expected = map2.getValue<CharSequence, String>(this, VarByMapExtensionsTest::a2),
-            actual = @Suppress("DEPRECATION_ERROR") map2.getValue<String>(this, VarByMapExtensionsTest::a2)
-        )
     }
 }

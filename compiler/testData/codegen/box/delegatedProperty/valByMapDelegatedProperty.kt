@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
 
 import kotlin.test.*
 
