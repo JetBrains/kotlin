@@ -13,8 +13,11 @@ import com.intellij.find.actions.ShowUsagesAction;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.injected.editor.EditorWindow;
+import com.intellij.internal.statistic.collectors.fus.actions.persistence.ActionsCollectorImpl;
+import com.intellij.internal.statistic.eventLog.EventPair;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -53,6 +56,29 @@ import static com.intellij.codeInsight.navigation.actions.UiKt.notifyNowhereToGo
 public class GotoDeclarationAction extends BaseCodeInsightAction implements CodeInsightActionHandler, DumbAware, CtrlMouseAction {
 
   private static final Logger LOG = Logger.getInstance(GotoDeclarationAction.class);
+  private static List<EventPair<?>> ourCurrentEventData; // accessed from EDT only
+
+  @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
+  @Override
+  public void actionPerformed(@NotNull AnActionEvent e) {
+    try {
+      ourCurrentEventData = ActionsCollectorImpl.actionEventData(e);
+      super.actionPerformed(e);
+    }
+    finally {
+      ourCurrentEventData = null;
+    }
+  }
+
+  static void recordGTD() {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+    GTDUCollector.record(ourCurrentEventData, GTDUCollector.GTDUChoice.GTD);
+  }
+
+  static void recordSU() {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+    GTDUCollector.record(ourCurrentEventData, GTDUCollector.GTDUChoice.SU);
+  }
 
   @NotNull
   @Override
