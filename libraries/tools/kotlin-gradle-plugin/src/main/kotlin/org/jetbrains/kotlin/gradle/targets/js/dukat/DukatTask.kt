@@ -60,7 +60,7 @@ abstract class DukatTask(
      * Destination directory for files with converted declarations
      */
     @get:OutputDirectory
-    abstract var destDir: File
+    abstract val destinationDir: File
 
     @get:Internal
     internal abstract val considerGeneratingFlag: Boolean
@@ -72,12 +72,12 @@ abstract class DukatTask(
     open fun run() {
         nodeJs.npmResolutionManager.checkRequiredDependencies(this)
 
-        destDir.deleteRecursively()
+        destinationDir.deleteRecursively()
 
         DukatRunner(
             compilation,
             dTsFiles,
-            destDir,
+            destinationDir,
             qualifiedPackageName,
             null,
             operation
