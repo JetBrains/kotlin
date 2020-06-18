@@ -41,8 +41,8 @@ class A {
     @AfterClass fun afterClass() { println("afterClass (A)") }
 
     object O {
-        @BeforeEach fun before() { println("before (A.object)") }
-        @AfterEach fun after() { println("after (A.object)") }
+        @BeforeTest fun before() { println("before (A.object)") }
+        @AfterTest fun after() { println("after (A.object)") }
         @Test fun test1() { println("test1 (A.object)") }
         @Ignore @Test fun ignoredTest() { throw AssertionError("Ignored test") }
 
@@ -52,8 +52,8 @@ class A {
 }
 
 object O {
-    @BeforeEach fun before() { println("before (object)") }
-    @AfterEach fun after() { println("after (object)") }
+    @BeforeTest fun before() { println("before (object)") }
+    @AfterTest fun after() { println("after (object)") }
     @Test fun test1() { println("test1 (object)") }
     @Ignore @Test fun ignoredTest() { throw AssertionError("Ignored test") }
 
@@ -61,8 +61,8 @@ object O {
     @AfterClass fun afterClass() { println("afterClass (object)") }
 }
 
-@BeforeEach fun before() { println("before (file)") }
-@AfterEach fun after() { println("after (file)") }
+@BeforeTest fun before() { println("before (file)") }
+@AfterTest fun after() { println("after (file)") }
 @Test fun test1() { println("test1 (file)") }
 @Ignore @Test fun ignoredTest() { throw AssertionError("Ignored test") }
 
