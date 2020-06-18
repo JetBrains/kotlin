@@ -22,8 +22,8 @@ internal fun checkCopyOfRangeArguments(fromIndex: Int, toIndex: Int, size: Int) 
 /**
  * Returns a string representation of the contents of the subarray of the specified array as if it is [List].
  */
-@SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
+@Deprecated("This function will become internal soon.", level = DeprecationLevel.WARNING)
 public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int): String {
     val sb = StringBuilder(2 + length * 3)
     sb.append("[")
