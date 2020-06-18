@@ -7,7 +7,6 @@ package test.reflection
 
 import org.junit.Test
 import java.lang.reflect.*
-import kotlin.internal.OnlyInputTypes
 import kotlin.reflect.javaType
 import kotlin.reflect.typeOf
 import kotlin.test.assertEquals
@@ -322,7 +321,7 @@ class JavaTypeTest {
     private inline fun <reified T> javaTypeOf(): Type =
         typeOf<T>().javaType
 
-    private fun <@OnlyInputTypes T> assertEqualsAndHashCode(expected: T, actual: T, message: String? = null) {
+    private fun <@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER") @kotlin.internal.OnlyInputTypes T> assertEqualsAndHashCode(expected: T, actual: T, message: String? = null) {
         assertEquals(expected, actual, message)
         assertEquals(actual, expected, message)
         assertEquals(expected.hashCode(), actual.hashCode(), message)
