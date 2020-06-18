@@ -21,6 +21,12 @@ public abstract interface annotation class kotlin/Deprecated : java/lang/annotat
 	public abstract fun replaceWith ()Lkotlin/ReplaceWith;
 }
 
+public abstract interface annotation class kotlin/DeprecatedSinceKotlin : java/lang/annotation/Annotation {
+	public abstract fun errorSince ()Ljava/lang/String;
+	public abstract fun hiddenSince ()Ljava/lang/String;
+	public abstract fun warningSince ()Ljava/lang/String;
+}
+
 public final class kotlin/DeprecationLevel : java/lang/Enum {
 	public static final field ERROR Lkotlin/DeprecationLevel;
 	public static final field HIDDEN Lkotlin/DeprecationLevel;
