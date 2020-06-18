@@ -35,14 +35,6 @@ public inline operator fun <V, V1 : V> Map<in String, @Exact V>.getValue(thisRef
 public inline operator fun <V, V1 : V> MutableMap<in String, out @Exact V>.getValue(thisRef: Any?, property: KProperty<*>): V1 =
     @Suppress("UNCHECKED_CAST") (getOrImplicitDefault(property.name) as V1)
 
-@Suppress("UNUSED_PARAMETER")
-@Deprecated("Use getValue() with two type parameters instead", level = DeprecationLevel.ERROR)
-@kotlin.jvm.JvmName("getVarContravariant")
-@kotlin.internal.LowPriorityInOverloadResolution
-@kotlin.internal.InlineOnly
-public inline fun <V> MutableMap<in String, in V>.getValue(thisRef: Any?, property: KProperty<*>): V =
-    @Suppress("UNCHECKED_CAST") (getOrImplicitDefault(property.name) as V)
-
 /**
  * Stores the value of the property for the given object in this mutable map.
  * @param thisRef the object for which the value is requested (not used).
