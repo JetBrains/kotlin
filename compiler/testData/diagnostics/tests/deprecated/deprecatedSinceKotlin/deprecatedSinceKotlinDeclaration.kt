@@ -1,3 +1,5 @@
+package kotlin.sub
+
 @Deprecated("", ReplaceWith(""))
 @DeprecatedSinceKotlin(warningSince = "1.0", errorSince = "1.1", hiddenSince = "1.2")
 fun good() {}

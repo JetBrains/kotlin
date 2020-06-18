@@ -6667,6 +6667,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinDeclaration.kt");
             }
 
+            @TestMetadata("deprecatedSinceKotlinOutsideKotlinPackage.kt")
+            public void testDeprecatedSinceKotlinOutsideKotlinPackage() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinOutsideKotlinPackage.kt");
+            }
+
             @TestMetadata("deprecatedSinceKotlinWithoutArguments.kt")
             public void testDeprecatedSinceKotlinWithoutArguments() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinWithoutArguments.kt");

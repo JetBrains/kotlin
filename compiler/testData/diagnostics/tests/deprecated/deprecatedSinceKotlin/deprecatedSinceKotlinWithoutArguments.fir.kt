@@ -1,3 +1,5 @@
+package kotlin
+
 @Deprecated("")
 @DeprecatedSinceKotlin
 fun foo() {}
