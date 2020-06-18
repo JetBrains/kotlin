@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIRListBuilder
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
@@ -48,9 +49,30 @@ object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWi
     ): List<BuildSystemIR> = irsList {
         "kotlin" {
             "js" {
-                +"browser {}"
+                +"browser" {
+                    applicationCssSupport()
+                    testCssSupport()
+                }
                 +"binaries.executable()"
             }
+        }
+    }
+}
+
+fun GradleIRListBuilder.applicationCssSupport() {
+    "webpackTask" {
+        +"cssSupport.enabled = true"
+    }
+    "runTask" {
+        +"cssSupport.enabled = true"
+    }
+}
+
+fun GradleIRListBuilder.testCssSupport() {
+    "testTask" {
+        "useKarma" {
+            +"useChromeHeadless()"
+            +"cssSupport.enabled = true"
         }
     }
 }
