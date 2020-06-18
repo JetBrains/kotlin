@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.CirClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildTypeAliasNode
-import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockTAType
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -456,16 +454,36 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     private fun prepareCache(variants: Array<out KotlinType>) {
         check(variants.isNotEmpty())
 
-        val classesMap = CommonizedGroupMap<FqName, ClassDescriptor>(variants.size)
-        val typeAliasesMap = CommonizedGroupMap<FqName, TypeAliasDescriptor>(variants.size)
-
         fun recurse(type: KotlinType, index: Int) {
             @Suppress("MoveVariableDeclarationIntoWhen")
             val descriptor = (type.getAbbreviation() ?: type).constructor.declarationDescriptor
             when (descriptor) {
-                is ClassDescriptor -> classesMap[descriptor.fqNameSafe][index] = descriptor
+                is ClassDescriptor -> {
+                    val fqName = descriptor.fqNameSafe
+                    val node = cache.classes.getOrPut(fqName) {
+                        buildClassNode(
+                            storageManager = LockBasedStorageManager.NO_LOCKS,
+                            size = variants.size,
+                            cacheRW = cache,
+                            parentCommonDeclaration = null,
+                            fqName = fqName
+                        )
+                    }
+                    node.targetDeclarations[index] = CirClassFactory.create(descriptor)
+                }
                 is TypeAliasDescriptor -> {
-                    typeAliasesMap[descriptor.fqNameSafe][index] = descriptor
+                    val fqName = descriptor.fqNameSafe
+                    val node = cache.typeAliases.getOrPut(fqName) {
+                        buildTypeAliasNode(
+                            storageManager = LockBasedStorageManager.NO_LOCKS,
+                            size = variants.size,
+                            cacheRW = cache,
+                            fqName = fqName
+
+                        )
+                    }
+                    node.targetDeclarations[index] = CirTypeAliasFactory.create(descriptor)
+
                     recurse(descriptor.underlyingType, index) // expand underlying types recursively
                 }
                 else -> error("Unexpected descriptor of KotlinType: $descriptor, $type")
@@ -474,37 +492,6 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
         variants.forEachIndexed { index, type ->
             recurse(type, index)
-        }
-
-        for ((fqName, classesGroup) in classesMap) {
-            buildClassNode(
-                LockBasedStorageManager.NO_LOCKS,
-                classesGroup.size,
-                cache,
-                null,
-                fqName
-            ).also {
-                classesGroup.forEachIndexed { index, clazz ->
-                    if (clazz != null) {
-                        it.targetDeclarations[index] = CirClassFactory.create(clazz)
-                    }
-                }
-            }
-        }
-
-        for ((fqName, typeAliasesGroup) in typeAliasesMap) {
-            buildTypeAliasNode(
-                LockBasedStorageManager.NO_LOCKS,
-                typeAliasesGroup.size,
-                cache,
-                fqName
-            ).also {
-                typeAliasesGroup.forEachIndexed { index, typeAlias ->
-                    if (typeAlias != null) {
-                        it.targetDeclarations[index] = CirTypeAliasFactory.create(typeAlias)
-                    }
-                }
-            }
         }
     }
 
