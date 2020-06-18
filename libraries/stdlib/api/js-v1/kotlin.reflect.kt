@@ -141,10 +141,13 @@ public final data class KTypeProjection {
     public companion object of KTypeProjection {
         public final val STAR: kotlin.reflect.KTypeProjection { get; }
 
+        @kotlin.jvm.JvmStatic
         public final fun contravariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
 
+        @kotlin.jvm.JvmStatic
         public final fun covariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
 
+        @kotlin.jvm.JvmStatic
         public final fun invariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
     }
 }
@@ -172,10 +175,13 @@ public final data class KTypeProjection {
 /*∆*/     public companion object of KTypeProjection {
 /*∆*/         public final val STAR: kotlin.reflect.KTypeProjection { get; }
 /*∆*/ 
+/*∆*/         @kotlin.jvm.JvmStatic
 /*∆*/         public final fun contravariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
 /*∆*/ 
+/*∆*/         @kotlin.jvm.JvmStatic
 /*∆*/         public final fun covariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
 /*∆*/ 
+/*∆*/         @kotlin.jvm.JvmStatic
 /*∆*/         public final fun invariant(type: kotlin.reflect.KType): kotlin.reflect.KTypeProjection
 /*∆*/     }
 /*∆*/ }
