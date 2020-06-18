@@ -1,5 +1,7 @@
 // !API_VERSION: 1.4
 
+package kotlin
+
 @Deprecated("")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
 class ClassCur

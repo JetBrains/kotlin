@@ -1,11 +1,14 @@
+@Suppress("DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE")
 @Deprecated("")
 @DeprecatedSinceKotlin(warningSince = "1.0")
 fun test1() {}
 
+@Suppress("DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE")
 @Deprecated("")
 @DeprecatedSinceKotlin(warningSince = "1.9")
 fun test2() {}
 
+@Suppress("DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE")
 @Deprecated("")
 @DeprecatedSinceKotlin
 fun test3() {}
