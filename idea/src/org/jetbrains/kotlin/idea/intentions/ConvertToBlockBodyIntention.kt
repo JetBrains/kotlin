@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody>(
     KtDeclarationWithBody::class.java,
@@ -90,6 +92,13 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
             return declaration
         }
 
-        private fun KtNamedFunction.returnType(): KotlinType? = resolveToDescriptorIfAny()?.returnType
+        private fun KtNamedFunction.returnType(): KotlinType? {
+            val descriptor = resolveToDescriptorIfAny()
+            val returnType = descriptor?.returnType ?: return null
+            if (returnType.isNullabilityFlexible()
+                && descriptor.overriddenDescriptors.firstOrNull()?.returnType?.isMarkedNullable == false
+            ) return returnType.makeNotNullable()
+            return returnType
+        }
     }
 }
