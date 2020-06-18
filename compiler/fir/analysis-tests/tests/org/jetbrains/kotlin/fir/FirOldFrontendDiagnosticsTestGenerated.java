@@ -6657,6 +6657,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
+            @TestMetadata("checkValuesAreParseableAsVersion.kt")
+            public void testCheckValuesAreParseableAsVersion() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/checkValuesAreParseableAsVersion.kt");
+            }
+
             @TestMetadata("deprecatedSinceKotlinDeclaration.kt")
             public void testDeprecatedSinceKotlinDeclaration() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinDeclaration.kt");
