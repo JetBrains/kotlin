@@ -25,6 +25,10 @@ fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true, with
 
     append("(")
 
+    extensionReceiverParameter?.let {
+        appendErasedType(it.type)
+    }
+
     for (parameter in valueParameters) {
         appendErasedType(parameter.type)
     }
