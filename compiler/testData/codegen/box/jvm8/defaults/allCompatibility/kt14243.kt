@@ -9,6 +9,7 @@ interface Z<T> {
     }
 }
 
+@JvmDefaultWithoutCompatibility
 open class ZImpl : Z<String>
 
 class ZImpl2 : ZImpl() {

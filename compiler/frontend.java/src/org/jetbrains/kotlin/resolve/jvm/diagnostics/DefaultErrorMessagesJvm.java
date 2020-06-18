@@ -159,6 +159,12 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(FUNCTION_DELEGATE_MEMBER_NAME_CLASH,
                 "Functional interface member cannot have this name on JVM because it clashes with an internal member getFunctionDelegate");
+
+        MAP.put(EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE,
+                "Compatibility mode requires to explicitly override ''{1}'' with specialization ''{0}'', " +
+                "or annotate the class with @JvmDefaultWithoutCompatibility. " +
+                "Please refer to KT-39603 for details",
+                COMPACT, SHORT_NAMES_IN_TYPES);
     }
 
     @NotNull

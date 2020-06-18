@@ -608,7 +608,7 @@ public class FunctionCodegen {
                     true, mv,
                     method.getAsmMethod(),
                     method.getOwner().getInternalName(),
-                    true);
+                    true, signature.getReturnType());
             methodEnd = new Label();
         }
         else {
@@ -850,7 +850,8 @@ public class FunctionCodegen {
             @NotNull Method asmMethod,
             @NotNull String classToDelegateTo,
             int opcode,
-            boolean isInterface
+            boolean isInterface,
+            @NotNull Type returnType
     ) {
         InstructionAdapter iv = new InstructionAdapter(mv);
         Type[] argTypes = asmMethod.getArgumentTypes();
@@ -872,7 +873,8 @@ public class FunctionCodegen {
             paramIndex += argType.getSize();
         }
         iv.visitMethodInsn(opcode, classToDelegateTo, asmMethod.getName(), asmMethod.getDescriptor(), isInterface);
-        iv.areturn(asmMethod.getReturnType());
+        StackValue.onStack(asmMethod.getReturnType()).coerceTo(returnType, null, iv);
+        iv.areturn(returnType);
     }
 
     private static void generateDelegateToStaticErasedVersion(
@@ -911,7 +913,19 @@ public class FunctionCodegen {
             @NotNull String classToDelegateTo,
             boolean isInterfaceMethodCall
     ) {
-        generateDelegateToMethodBody(isStatic ? 0 : 1, mv, asmMethod, classToDelegateTo, Opcodes.INVOKESTATIC, isInterfaceMethodCall);
+        generateDelegateToStaticMethodBody(isStatic, mv, asmMethod, classToDelegateTo, isInterfaceMethodCall, asmMethod.getReturnType());
+    }
+
+
+    private static void generateDelegateToStaticMethodBody(
+            boolean isStatic,
+            @NotNull MethodVisitor mv,
+            @NotNull Method asmMethod,
+            @NotNull String classToDelegateTo,
+            boolean isInterfaceMethodCall,
+            @NotNull Type returnType
+    ) {
+        generateDelegateToMethodBody(isStatic ? 0 : 1, mv, asmMethod, classToDelegateTo, Opcodes.INVOKESTATIC, isInterfaceMethodCall, returnType);
     }
 
     private static boolean needIndexForVar(JvmMethodParameterKind kind) {
