@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.*
@@ -721,7 +723,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun createIrParameter(
+    internal fun createIrParameter(
         valueParameter: FirValueParameter,
         index: Int = -1,
         useStubForDefaultValueStub: Boolean = true,
@@ -833,14 +835,37 @@ class Fir2IrDeclarationStorage(
                 getCachedIrFunction(firDeclaration)?.let { return it.symbol }
                 val signature = signatureComposer.composeSignature(firDeclaration)
                 val irParent = findIrParent(firDeclaration)
+                val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 if (signature != null) {
                     symbolTable.referenceSimpleFunctionIfAny(signature)?.let { irFunctionSymbol ->
                         val irFunction = irFunctionSymbol.owner
                         functionCache[firDeclaration] = irFunction
                         return irFunctionSymbol
                     }
+                    // TODO: package fragment members (?)
+                    if (firDeclaration is FirSimpleFunction && irParent is Fir2IrLazyClass) {
+                        if (parentOrigin == IrDeclarationOrigin.DEFINED) {
+                            throw AssertionError()
+                        }
+                        val symbol = Fir2IrSimpleFunctionSymbol(signature, firDeclaration.containerSource)
+                        val irFunction = firDeclaration.convertWithOffsets { startOffset, endOffset ->
+                            symbolTable.declareSimpleFunction(signature, { symbol }) {
+                                val isFakeOverride =
+                                    firFunctionSymbol is FirNamedFunctionSymbol && firFunctionSymbol.isFakeOverride &&
+                                            firFunctionSymbol.callableId != firFunctionSymbol.overriddenSymbol?.callableId
+                                Fir2IrLazySimpleFunction(
+                                    components, startOffset, endOffset, parentOrigin, firDeclaration, symbol, isFakeOverride
+                                ).apply {
+                                    parent = irParent
+                                }
+                            }
+                        }
+                        functionCache[firDeclaration] = irFunction
+                        // NB: this is needed to prevent recursions in case of self bounds
+                        (irFunction as Fir2IrLazySimpleFunction).prepareTypeParameters()
+                        return symbol
+                    }
                 }
-                val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 createIrFunction(firDeclaration, irParent, origin = parentOrigin).apply {
                     setAndModifyParent(irParent)
                 }.symbol

@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: Generic.java
 class Generic<T> {
     T id(T x) { return x; }

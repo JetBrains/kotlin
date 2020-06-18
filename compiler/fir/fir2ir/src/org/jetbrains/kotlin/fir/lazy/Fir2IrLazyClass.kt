@@ -41,18 +41,6 @@ class Fir2IrLazyClass(
         classifierStorage.preCacheTypeParameters(fir)
     }
 
-    internal fun prepareTypeParameters() {
-        typeParameters = fir.typeParameters.mapIndexedNotNull { index, typeParameter ->
-            if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
-            classifierStorage.getIrTypeParameter(typeParameter, index).apply {
-                parent = this@Fir2IrLazyClass
-                if (superTypes.isEmpty()) {
-                    typeParameter.bounds.mapTo(superTypes) { it.toIrType(typeConverter) }
-                }
-            }
-        }
-    }
-
     override val source: SourceElement
         get() = SourceElement.NO_SOURCE
 
@@ -112,8 +100,6 @@ class Fir2IrLazyClass(
         fir.superTypeRefs.map { it.toIrType(typeConverter) }
     }
 
-    override lateinit var typeParameters: List<IrTypeParameter>
-
     override var thisReceiver: IrValueParameter? by lazyVar {
         symbolTable.enterScope(this)
         val typeArguments = fir.typeParameters.map {
@@ -151,12 +137,12 @@ class Fir2IrLazyClass(
                                     return@processFunctionsByName
                                 }
                                 result += if (!it.isFakeOverride) {
-                                    declarationStorage.createIrFunction(it.fir, irParent = this, origin = origin)
+                                    declarationStorage.getIrFunctionSymbol(it).owner
                                 } else {
                                     val fakeOverrideSymbol =
                                         FirClassSubstitutionScope.createFakeOverrideFunction(session, it.fir, it)
                                     classifierStorage.preCacheTypeParameters(it.fir)
-                                    declarationStorage.createIrFunction(fakeOverrideSymbol.fir, irParent = this)
+                                    declarationStorage.getIrFunctionSymbol(fakeOverrideSymbol).owner
                                 }
                             }
                         }
