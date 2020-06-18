@@ -61,7 +61,7 @@ class WasmBackendContext(
         builtIns.builtInsModule, FqName("kotlin.wasm.internal")
     )
 
-    override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, internalPackageFragment)
+    override val sharedVariablesManager = JsSharedVariablesManager(TODO("..."))
 
     val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext, symbolTable)
     override val ir = object : Ir<WasmBackendContext>(this, irModuleFragment) {

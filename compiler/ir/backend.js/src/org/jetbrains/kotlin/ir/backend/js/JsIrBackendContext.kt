@@ -91,7 +91,7 @@ class JsIrBackendContext(
     val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
 
     private val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
-    val implicitDeclarationFile by lazy2 {
+    val implicitDeclarationFile = run {
         IrFileImpl(object : SourceManager.FileEntry {
             override val name = "<implicitDeclarations>"
             override val maxOffset = UNDEFINED_OFFSET
@@ -124,8 +124,6 @@ class JsIrBackendContext(
             testContainerField = this
             implicitDeclarationFile.declarations += this
         }
-
-    override val sharedVariablesManager = JsSharedVariablesManager(irBuiltIns, implicitDeclarationFile)
 
     override val mapping = JsMapping()
     override val declarationFactory = JsDeclarationFactory(mapping)
@@ -162,7 +160,10 @@ class JsIrBackendContext(
     private val coroutinePackage = module.getPackage(COROUTINE_PACKAGE_FQNAME)
     private val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
 
+    val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
     val intrinsics = JsIntrinsics(irBuiltIns, this)
+
+    override val sharedVariablesManager = JsSharedVariablesManager(this)
 
     override val internalPackageFqn = JS_PACKAGE_FQNAME
 
@@ -175,8 +176,6 @@ class JsIrBackendContext(
 
         return numbers + listOf(Name.identifier("String"), Name.identifier("Boolean"))
     }
-
-    val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
 
     fun getOperatorByName(name: Name, type: IrSimpleType) = operatorMap[name]?.get(type.classifier)
 
