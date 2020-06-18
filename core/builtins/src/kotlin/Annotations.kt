@@ -51,7 +51,7 @@ public annotation class Deprecated(
  */
 @Target(CLASS, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER, TYPEALIAS)
 @MustBeDocumented
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
 public annotation class DeprecatedSinceKotlin(
     val warningSince: String = "",
     val errorSince: String = "",
