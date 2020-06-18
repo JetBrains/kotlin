@@ -44,9 +44,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -64,6 +62,23 @@ class RawFirBuilder(
 
     fun buildTypeReference(reference: KtTypeReference): FirTypeRef {
         return reference.accept(Visitor(), Unit) as FirTypeRef
+    }
+
+    fun buildFunctionWithBody(function: KtNamedFunction): FirFunction<*> {
+        assert(!stubMode) { "Building FIR function with body isn't supported in stub mode" }
+        val parentsUpToFile = function.parents
+        for (parent in parentsUpToFile.toList().asReversed()) {
+            when (parent) {
+                is KtFile -> {
+                    context.packageFqName = parent.packageFqName
+                }
+                is KtClassOrObject -> {
+                    context.className = context.className.child(parent.nameAsSafeName)
+                    context.localBits.add(parent.isLocal || parent.getStrictParentOfType<KtEnumEntry>() != null)
+                }
+            }
+        }
+        return function.accept(Visitor(), Unit) as FirFunction<*>
     }
 
     override fun PsiElement.toFirSourceElement(kind: FirFakeSourceElementKind?): FirPsiSourceElement<*> {

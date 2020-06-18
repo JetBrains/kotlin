@@ -119,7 +119,9 @@ fun CFGNode<*>.render(): String =
         )
     }
 
-private object CfgRenderMode : FirRenderer.RenderMode(renderLambdaBodies = false, renderCallArguments = false)
+private object CfgRenderMode : FirRenderer.RenderMode(
+    renderLambdaBodies = false, renderCallArguments = false, renderCallableFqNames = false
+)
 
 private fun FirFunction<*>.name(): String = when (this) {
     is FirSimpleFunction -> name.asString()
