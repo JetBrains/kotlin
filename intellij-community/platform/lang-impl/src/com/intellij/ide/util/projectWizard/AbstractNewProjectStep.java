@@ -5,6 +5,9 @@ import com.intellij.ide.RecentProjectsManager;
 import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.ide.util.projectWizard.actions.ProjectSpecificAction;
 import com.intellij.idea.ActionsBundle;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
+import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -212,6 +215,18 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
     if (project != null && generator != null) {
       generator.generateProject(project, baseDir, settings, ModuleManager.getInstance(project).getModules()[0]);
     }
+    logProjectGeneratedEvent(generator);
+
     return project;
+  }
+
+  private static void logProjectGeneratedEvent(@Nullable DirectoryProjectGenerator<?> generator) {
+    FeatureUsageData data = new FeatureUsageData();
+    if (generator != null) {
+      data.addData("generator_id", generator.getClass().getName());
+      data.addPluginInfo(PluginInfoDetectorKt.getPluginInfo(generator.getClass()));
+    }
+
+    FUCounterUsageLogger.getInstance().logEvent("new.project.wizard", "project.generated", data);
   }
 }
