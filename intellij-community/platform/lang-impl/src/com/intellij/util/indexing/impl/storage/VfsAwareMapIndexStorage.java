@@ -23,7 +23,9 @@ import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.*;
 import com.intellij.util.io.keyStorage.AppendableObjectStorage;
 import com.intellij.util.io.keyStorage.AppendableStorageBackedByResizableMappedFile;
-import gnu.trove.TIntHashSet;
+import it.unimi.dsi.fastutil.ints.IntIterator;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -169,7 +171,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
       myCache.clear(); // this will ensure that all new keys are made into the map
 
       if (myBuildKeyHashToVirtualFileMapping && idFilter != null) {
-        TIntHashSet hashMaskSet = null;
+        IntSet hashMaskSet = null;
         long l = System.currentTimeMillis();
         GlobalSearchScope filterScope = idFilter.getEffectiveFilteringScope();
         GlobalSearchScope effectiveFilteringScope = filterScope != null ? filterScope : scope;
@@ -195,8 +197,8 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
             FileUtil.asyncDelete(fileWithCaches);
           }
 
-          hashMaskSet = new TIntHashSet(1000);
-          final TIntHashSet finalHashMaskSet = hashMaskSet;
+          hashMaskSet = new IntOpenHashSet(1000);
+          final IntSet finalHashMaskSet = hashMaskSet;
           withLock(() -> {
             myKeyHashToVirtualFileMapping.force();
           }, false);
@@ -219,7 +221,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
         if (LOG.isDebugEnabled()) {
           LOG.debug("Scanned keyHashToVirtualFileMapping of " + myBaseStorageFile + " for " + (System.currentTimeMillis() - l));
         }
-        final TIntHashSet finalHashMaskSet = hashMaskSet;
+        final IntSet finalHashMaskSet = hashMaskSet;
         return doProcessKeys(key -> {
           if (!finalHashMaskSet.contains(myKeyDescriptor.getHashCode(key))) return true;
           return processor.process(key);
@@ -240,10 +242,10 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
 
 
   @NotNull
-  private static TIntHashSet loadHashedIds(@NotNull File fileWithCaches) throws IOException {
+  private static IntSet loadHashedIds(@NotNull File fileWithCaches) throws IOException {
     try (DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(fileWithCaches)))) {
       int capacity = DataInputOutputUtil.readINT(inputStream);
-      TIntHashSet hashMaskSet = new TIntHashSet(capacity);
+      IntSet hashMaskSet = new IntOpenHashSet(capacity);
       while (capacity > 0) {
         hashMaskSet.add(DataInputOutputUtil.readINT(inputStream));
         --capacity;
@@ -252,22 +254,17 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
     }
   }
 
-  private void saveHashedIds(@NotNull TIntHashSet hashMaskSet, int largestId, @NotNull GlobalSearchScope scope) {
+  private void saveHashedIds(@NotNull IntSet hashMaskSet, int largestId, @NotNull GlobalSearchScope scope) {
     File newFileWithCaches = getSavedProjectFileValueIds(largestId, scope);
     assert newFileWithCaches != null;
 
-    boolean savedSuccessfully;
+    boolean savedSuccessfully = true;
     try (DataOutputStream stream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(newFileWithCaches)))) {
       DataInputOutputUtil.writeINT(stream, hashMaskSet.size());
-      savedSuccessfully = hashMaskSet.forEach(value -> {
-        try {
-          DataInputOutputUtil.writeINT(stream, value);
-          return true;
-        }
-        catch (IOException ex) {
-          return false;
-        }
-      });
+      IntIterator iterator = hashMaskSet.iterator();
+      while (iterator.hasNext()) {
+        DataInputOutputUtil.writeINT(stream, iterator.nextInt());
+      }
     }
     catch (IOException ignored) {
       savedSuccessfully = false;
