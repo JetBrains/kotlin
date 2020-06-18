@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.jsr223
 
 import com.intellij.execution.console.IdeConsoleRootType
 import com.intellij.ide.extensionResources.ExtensionsRootType
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.scratch.RootType
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionSourceAsContributor
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.dependenciesFromClassContext
+import kotlin.script.experimental.jvm.dependenciesFromClassloader
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.templates.standard.ScriptTemplateWithBindings
 
@@ -55,6 +57,9 @@ private object ScriptCompilationConfigurationForExtensionAndIdeConsoleRoots : Sc
                 "kotlin-stdlib", "kotlin-script-runtime",
                 wholeClasspath = true
             )
+            PluginManagerCore.getPlugins().forEach {
+                dependenciesFromClassloader(classLoader = it.pluginClassLoader, wholeClasspath = true)
+            }
         }
         ide {
             acceptedLocations(ScriptAcceptedLocation.Everywhere)
