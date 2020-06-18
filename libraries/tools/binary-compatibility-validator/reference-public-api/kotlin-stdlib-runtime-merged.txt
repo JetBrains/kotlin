@@ -3618,6 +3618,10 @@ public class kotlin/jvm/internal/Intrinsics {
 public class kotlin/jvm/internal/Intrinsics$Kotlin {
 }
 
+public abstract interface class kotlin/jvm/internal/KTypeBase : kotlin/reflect/KType {
+	public abstract fun getJavaType ()Ljava/lang/reflect/Type;
+}
+
 public abstract class kotlin/jvm/internal/Lambda : java/io/Serializable, kotlin/jvm/internal/FunctionBase {
 	public fun <init> (I)V
 	public fun getArity ()I
@@ -4725,6 +4729,10 @@ public final class kotlin/reflect/KVisibility : java/lang/Enum {
 	public static final field PUBLIC Lkotlin/reflect/KVisibility;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/reflect/KVisibility;
 	public static fun values ()[Lkotlin/reflect/KVisibility;
+}
+
+public final class kotlin/reflect/TypesJVMKt {
+	public static final fun getJavaType (Lkotlin/reflect/KType;)Ljava/lang/reflect/Type;
 }
 
 public abstract interface class kotlin/sequences/Sequence {
