@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -49,11 +50,15 @@ class CacheSupport(
             library to cachePath
         }
 
+        val optimized = configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
+        if (optimized && (explicitCacheFiles.isNotEmpty() || implicitCacheDirectories.isNotEmpty()))
+            configuration.report(CompilerMessageSeverity.WARNING, "Cached libraries will not be used for optimized compilation")
+
         CachedLibraries(
                 target = target,
                 allLibraries = allLibraries,
-                explicitCaches = explicitCaches,
-                implicitCacheDirectories = implicitCacheDirectories
+                explicitCaches = if (optimized) emptyMap() else explicitCaches,
+                implicitCacheDirectories = if (optimized) emptyList() else implicitCacheDirectories
         )
     }
 
