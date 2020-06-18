@@ -21,10 +21,11 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
-import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActions
+import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActionsManager
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsLocator
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsLocator.NotificationKind.*
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.Imported
 import java.io.File
 
 class GradleScriptNotificationProvider(private val project: Project) :
@@ -35,10 +36,61 @@ class GradleScriptNotificationProvider(private val project: Project) :
         if (!isGradleKotlinScript(file)) return null
         if (file.fileType != KotlinFileType.INSTANCE) return null
 
+        val standaloneScriptActions = GradleStandaloneScriptActionsManager.getInstance(project)
         val rootsManager = GradleBuildRootsManager.getInstance(project)
         val scriptUnderRoot = rootsManager.findScriptBuildRoot(file) ?: return null
+
+        // todo: this actions will be usefull only when gradle fix https://github.com/gradle/gradle/issues/12640
+        fun EditorNotificationPanel.showActionsToFixNotEvaluated() {
+            // suggest to reimport project if something changed after import
+            val build: Imported = scriptUnderRoot.nearest as? Imported ?: return
+            val importTs = build.data.importTs
+            if (!build.areRelatedFilesChangedBefore(file, importTs)) {
+                createActionLabel(getMissingConfigurationActionText()) {
+                    rootsManager.updateStandaloneScripts {
+                        runPartialGradleImport(project, build)
+                    }
+                }
+            }
+
+            // suggest to choose new gradle project
+            createActionLabel(KotlinIdeaGradleBundle.message("notification.outsideAnything.linkAction")) {
+                linkProject(project, scriptUnderRoot)
+            }
+        }
+
         return when (scriptUnderRoot.notificationKind) {
             dontCare -> null
+            legacy -> {
+                val actions = standaloneScriptActions[file]
+                if (actions == null) null
+                else {
+                    object : EditorNotificationPanel() {
+                        val contextHelp = KotlinIdeaGradleBundle.message("notification.oldGradle.firstLoad.info")
+
+                        init {
+                            if (actions.isFirstLoad) {
+                                text(KotlinIdeaGradleBundle.message("notification.oldGradle.firstLoad"))
+                                toolTipText = contextHelp
+                            } else {
+                                text(KotlinIdeaCoreBundle.message("notification.text.script.configuration.has.been.changed"))
+                            }
+
+                            createActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.load.script.configuration")) {
+                                actions.reload()
+                            }
+
+                            createActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.enable.auto.reload")) {
+                                actions.enableAutoReload()
+                            }
+
+                            if (actions.isFirstLoad) {
+                                contextHelp(contextHelp)
+                            }
+                        }
+                    }
+                }
+            }
             legacyOutside -> EditorNotificationPanel().apply {
                 text("Out of project script")
                 createActionLabel(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.addAsStandaloneAction")) {
@@ -66,22 +118,7 @@ class GradleScriptNotificationProvider(private val project: Project) :
                 text(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.text"))
 
                 // todo: this actions will be usefull only when gradle fix https://github.com/gradle/gradle/issues/12640
-                // suggest to reimport project if something changed after import
-//                val root = scriptUnderRoot.nearest as? Imported
-                val importTs = root?.data?.importTs
-//                if (root != null && importTs != null && !root.areRelatedFilesChangedBefore(file, importTs)) {
-//                    createActionLabel(getMissingConfigurationActionText()) {
-//                        rootsManager.updateStandaloneScripts {
-//                            runPartialGradleImport(project, root)
-//                        }
-//                    }
-//                }
-
-                // todo: this actions will be usefull only when gradle fix https://github.com/gradle/gradle/issues/12640
-                // suggest to choose new gradle project
-//                createActionLabel(KotlinIdeaGradleBundle.message("notification.outsideAnything.linkAction")) {
-//                    linkProject(project, scriptUnderRoot)
-//                }
+                // showActionsToFixNotEvaluated()
 
                 createActionLabel(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.addAsStandaloneAction")) {
                     rootsManager.updateStandaloneScripts {
@@ -92,7 +129,7 @@ class GradleScriptNotificationProvider(private val project: Project) :
                 contextHelp(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.info"))
             }
             standalone -> EditorNotificationPanel().apply {
-                val actions = GradleStandaloneScriptActions.getInstance(project).byFile[file]
+                val actions = standaloneScriptActions[file]
                 if (actions != null) {
                     text(
                         KotlinIdeaGradleBundle.message("notification.standalone.text") +
@@ -100,13 +137,12 @@ class GradleScriptNotificationProvider(private val project: Project) :
                                 KotlinIdeaCoreBundle.message("notification.text.script.configuration.has.been.changed")
                     )
 
-
                     createActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.load.script.configuration")) {
                         actions.reload()
                     }
 
                     createActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.enable.auto.reload")) {
-                        actions.toggleAutoReload()
+                        actions.enableAutoReload()
                     }
                 } else {
                     text(KotlinIdeaGradleBundle.message("notification.standalone.text"))
