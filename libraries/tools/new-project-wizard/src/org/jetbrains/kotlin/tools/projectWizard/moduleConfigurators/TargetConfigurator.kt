@@ -1,19 +1,21 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
-
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
-import org.jetbrains.kotlin.tools.projectWizard.core.buildPersistenceList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleStringConstIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetAccessIR
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserTargetConfigurator.isApplication
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeTargetConfigurator.isApplication
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
@@ -60,7 +62,7 @@ interface SimpleTargetConfigurator : TargetConfigurator {
     }
 }
 
-private fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
+internal fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
     TargetAccessIR(
         moduleSubType,
         name.takeIf { it != moduleSubType.name }
@@ -75,13 +77,23 @@ interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexi
         ) {
             defaultValue = value(JsTargetKind.APPLICATION)
         }
+
+        val cssSupport by booleanSetting(
+            KotlinNewProjectWizardBundle.message("module.configurator.js.css"),
+            GenerationPhase.PROJECT_GENERATION
+        ) {
+            defaultValue = value(true)
+        }
     }
 
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
-        super.getConfiguratorSettings() + kind
+        super.getConfiguratorSettings() + kind + cssSupport
 
     fun Reader.isApplication(module: Module): Boolean =
         settingsValue(module, kind) == JsTargetKind.APPLICATION
+
+    fun Reader.hasCssSupport(module: Module): Boolean =
+        settingsValue(module, cssSupport)
 }
 
 enum class JsTargetKind(override val text: String) : DisplayableSettingItem {
@@ -113,6 +125,12 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
             "browser" {
                 if (isApplication(module)) {
                     +"binaries.executable()"
+                }
+                if (hasCssSupport(module)) {
+                    if (isApplication(module)) {
+                        applicationCssSupport()
+                    }
+                    testCssSupport()
                 }
             }
         }
