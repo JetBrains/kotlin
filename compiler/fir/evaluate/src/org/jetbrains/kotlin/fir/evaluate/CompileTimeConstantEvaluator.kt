@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitIntTypeRef
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 
 /**
  * An evaluator that transform numeric operation, such as div, into compile-time constant iff involved operands, such as explicit receiver
@@ -23,15 +24,39 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
  */
 class CompileTimeConstantEvaluator {
 
-    // TODO: Handle boolean operators, const property loading, class reference, array, annotation values, etc.
+    // TODO: Handle const property loading, class reference, array, annotation values, etc.
     fun evaluate(expression: FirExpression): ConstantValue<*>? =
         when (expression) {
-            is FirConstExpression<*> -> expression.value as? ConstantValue<*>
-            is FirFunctionCall -> evaluate(expression)?.value as? ConstantValue<*>
+            is FirConstExpression<*> -> ConstantValueFactory.createConstantValue(expression.typedValue)
+            is FirOperatorCall -> evaluateOperatorCall(expression)?.let { ConstantValueFactory.createConstantValue(it.value) }
+            is FirFunctionCall -> evaluateFunctionCall(expression)?.let { ConstantValueFactory.createConstantValue(it.value) }
             else -> null
         }
 
-    private fun evaluate(functionCall: FirFunctionCall): FirConstExpression<*>? {
+    // TODO: Handle more operator cases and/or more systematic way
+    private fun evaluateOperatorCall(operationCall: FirOperatorCall): FirConstExpression<*>? {
+        return when (operationCall.operation) {
+            FirOperation.EQ -> {
+                val opr1 = evaluate(operationCall.argumentList.arguments[0])
+                val opr2 = evaluate(operationCall.argumentList.arguments[1])
+                if (opr1 is ConstantValue<*> && opr2 is ConstantValue<*>) {
+                    return buildConstExpression(operationCall.source, FirConstKind.Boolean, opr1.value == opr2.value)
+                }
+                null
+            }
+            FirOperation.NOT_EQ -> {
+                val opr1 = evaluate(operationCall.argumentList.arguments[0])
+                val opr2 = evaluate(operationCall.argumentList.arguments[1])
+                if (opr1 is ConstantValue<*> && opr2 is ConstantValue<*>) {
+                    return buildConstExpression(operationCall.source, FirConstKind.Boolean, opr1.value != opr2.value)
+                }
+                null
+            }
+            else -> null
+        }
+    }
+
+    private fun evaluateFunctionCall(functionCall: FirFunctionCall): FirConstExpression<*>? {
         if (!functionCall.isNumericOperatorCall) {
             return null
         }

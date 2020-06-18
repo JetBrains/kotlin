@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.modality
+import org.jetbrains.kotlin.fir.evaluate.CompileTimeConstantEvaluator
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.constants.BooleanValue
+import org.jetbrains.kotlin.resolve.constants.NullValue
 
 class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyResolveComponents) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
@@ -200,16 +203,22 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
     }
 
     private object BooleanExhaustivenessVisitor : FirVisitor<Unit, BooleanExhaustivenessFlags>() {
+        private val constantEvaluator = CompileTimeConstantEvaluator()
+
         override fun visitElement(element: FirElement, data: BooleanExhaustivenessFlags) {}
 
         override fun visitOperatorCall(operatorCall: FirOperatorCall, data: BooleanExhaustivenessFlags) {
             if (operatorCall.operation == FirOperation.EQ) {
-                val argument = operatorCall.arguments[1]
-                if (argument is FirConstExpression<*>) {
-                    when (argument.value) {
-                        true -> data.containsTrue = true
-                        false -> data.containsFalse = true
-                        null -> data.containsNull = true
+                constantEvaluator.evaluate(operatorCall.arguments[1])?.let {
+                    when (it) {
+                        is BooleanValue ->
+                            if (it.value) {
+                                data.containsTrue = true
+                            } else {
+                                data.containsFalse = true
+                            }
+                        is NullValue ->
+                            data.containsNull = true
                     }
                 }
             }

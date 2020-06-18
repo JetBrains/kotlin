@@ -13,6 +13,7 @@ dependencies {
     compile(project(":core:deserialization"))
     compile(project(":compiler:fir:cones"))
     compile(project(":compiler:fir:tree"))
+    compile(project(":compiler:fir:evaluate"))
     compile(project(":compiler:frontend"))
     compile("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${property("versions.kotlinx-collections-immutable")}")
 
