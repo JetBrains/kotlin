@@ -176,6 +176,9 @@ actual class StringBuilder private constructor (
         return this
     }
 
+    @Deprecated("Provided for binary compatibility.", level = DeprecationLevel.HIDDEN)
+    fun append(value: String): StringBuilder = append(value)
+
     /**
      * Appends the specified string [value] to this string builder and returns this instance.
      *
@@ -337,6 +340,9 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     actual fun insert(index: Int, value: Any?): StringBuilder = insert(index, value.toString())
+
+    @Deprecated("Provided for binary compatibility.", level = DeprecationLevel.HIDDEN)
+    fun insert(index: Int, value: String): StringBuilder = insert(index, value)
 
     /**
      * Inserts the string [value] into this string builder at the specified [index] and returns this instance.
