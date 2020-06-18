@@ -517,7 +517,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     @Override
     @NotNull
     public List<InspectionsLevel> getAvailableLevels() {
-      return inLibrary ? Arrays.asList(InspectionsLevel.NONE, InspectionsLevel.ERRORS): Arrays.asList(InspectionsLevel.values());
+      return inLibrary ? Arrays.asList(InspectionsLevel.NONE, InspectionsLevel.SYNTAX) : Arrays.asList(InspectionsLevel.values());
     }
 
     @NotNull
@@ -538,7 +538,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
           if (level.getLevel() == InspectionsLevel.NONE) {
             HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.SKIP_HIGHLIGHTING);
           }
-          else if (level.getLevel() == InspectionsLevel.ERRORS) {
+          else if (level.getLevel() == InspectionsLevel.SYNTAX) {
             HighlightLevelUtil.forceRootHighlighting(root, FileHighlightingSetting.SKIP_INSPECTION);
           }
           else {
@@ -621,7 +621,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   @NotNull
   private static InspectionsLevel getHighlightLevel(boolean highlight, boolean inspect) {
     if (!highlight && !inspect) return InspectionsLevel.NONE;
-    else if (highlight && !inspect) return InspectionsLevel.ERRORS;
+    else if (highlight && !inspect) return InspectionsLevel.SYNTAX;
     else return InspectionsLevel.ALL;
   }
 
