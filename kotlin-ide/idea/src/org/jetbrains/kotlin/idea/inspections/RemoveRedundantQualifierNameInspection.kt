@@ -61,6 +61,7 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                 val expressionParent = expression.parent
                 if (expressionParent is KtDotQualifiedExpression || expressionParent is KtPackageDirective || expressionParent is KtImportDirective) return
                 val expressionForAnalyze = expression.firstExpressionWithoutReceiver() ?: return
+                if (expressionForAnalyze.selectorExpression?.text == expressionParent.getNonStrictParentOfType<KtProperty>()?.name) return
 
                 val originalExpression: KtExpression = expressionForAnalyze.parent as? KtClassLiteralExpression ?: expressionForAnalyze
 
