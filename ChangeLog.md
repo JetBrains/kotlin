@@ -1,6 +1,6 @@
 ## Changelog
 
-## 1.3.72 - IDE plugins update
+## 1.3.73 - IDE plugins update
 
 ### Backend. JVM
 
