@@ -14,7 +14,7 @@ fun test1(s: SubInt, sWrong: SubIntWrong) {
     foo(<!TYPE_MISMATCH!>a<!>)
 
     a <!CAST_NEVER_SUCCEEDS!>as<!> (Int, String) -> String
-    foo(a)
+    foo(<!DEBUG_INFO_SMARTCAST!>a<!>)
 }
 
 fun <T> test2(x: T) where T : (Int, String) -> Int, T : (Double) -> Int {

@@ -287,9 +287,12 @@ class KotlinToResolvedCallTransformer(
                 is ArgumentMatch -> {
                     parameter = argumentMapping.valueParameter
 
+                    // We should take expected type from the last used conversion
+                    // TODO: move this logic into ParameterTypeConversion
                     val expectedType =
-                        resolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument)
+                        resolvedCall.getExpectedTypeForUnitConvertedArgument(valueArgument)
                             ?: resolvedCall.getExpectedTypeForSuspendConvertedArgument(valueArgument)
+                            ?: resolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument)
                             ?: getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument, context)
                     Pair(
                         expectedType,
@@ -667,6 +670,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     private var smartCastDispatchReceiverType: KotlinType? = null
     private var expectedTypeForSamConvertedArgumentMap: MutableMap<ValueArgument, UnwrappedType>? = null
     private var expectedTypeForSuspendConvertedArgumentMap: MutableMap<ValueArgument, UnwrappedType>? = null
+    private var expectedTypeForUnitConvertedArgumentMap: MutableMap<ValueArgument, UnwrappedType>? = null
     private var argumentTypeForConstantConvertedMap: MutableMap<KtExpression, IntegerValueTypeConstant>? = null
 
 
@@ -749,6 +753,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 
         calculateExpectedTypeForSamConvertedArgumentMap(substitutor)
         calculateExpectedTypeForSuspendConvertedArgumentMap(substitutor)
+        calculateExpectedTypeForUnitConvertedArgumentMap(substitutor)
         calculateExpectedTypeForConstantConvertedArgumentMap()
     }
 
@@ -820,6 +825,9 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     fun getExpectedTypeForSuspendConvertedArgument(valueArgument: ValueArgument): UnwrappedType? =
         expectedTypeForSuspendConvertedArgumentMap?.get(valueArgument)
 
+    fun getExpectedTypeForUnitConvertedArgument(valueArgument: ValueArgument): UnwrappedType? =
+        expectedTypeForUnitConvertedArgumentMap?.get(valueArgument)
+
     private fun calculateExpectedTypeForConstantConvertedArgumentMap() {
         if (resolvedCallAtom.argumentsWithConstantConversion.isEmpty()) return
 
@@ -852,6 +860,18 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
             expectedTypeForSuspendConvertedArgumentMap!![argument.psiCallArgument.valueArgument] = expectedType
         }
     }
+
+    private fun calculateExpectedTypeForUnitConvertedArgumentMap(substitutor: NewTypeSubstitutor?) {
+        if (resolvedCallAtom.argumentsWithUnitConversion.isEmpty()) return
+
+        expectedTypeForUnitConvertedArgumentMap = hashMapOf()
+        for ((argument, convertedType) in resolvedCallAtom.argumentsWithUnitConversion) {
+            val typeWithFreshVariables = resolvedCallAtom.freshVariablesSubstitutor.safeSubstitute(convertedType)
+            val expectedType = substitutor?.safeSubstitute(typeWithFreshVariables) ?: typeWithFreshVariables
+            expectedTypeForUnitConvertedArgumentMap!![argument.psiCallArgument.valueArgument] = expectedType
+        }
+    }
+
 
     override fun argumentToParameterMap(
         resultingDescriptor: CallableDescriptor,
@@ -905,7 +925,8 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 fun ResolutionCandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) {
     ResolutionCandidateApplicability.RESOLVED,
     ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY,
-    ResolutionCandidateApplicability.RESOLVED_WITH_ERROR -> ResolutionStatus.SUCCESS
+    ResolutionCandidateApplicability.RESOLVED_WITH_ERROR,
+    ResolutionCandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY -> ResolutionStatus.SUCCESS
     ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ResolutionStatus.RECEIVER_TYPE_ERROR
     else -> ResolutionStatus.OTHER_ERROR
 }
