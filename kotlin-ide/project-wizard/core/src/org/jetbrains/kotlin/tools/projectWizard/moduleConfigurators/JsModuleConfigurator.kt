@@ -21,7 +21,7 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType {
     override val moduleType: ModuleType get() = ModuleType.js
 }
 
-object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator {
+object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator, ModuleConfiguratorWithSettings {
     override val moduleKind = ModuleKind.singleplatformJs
 
     @NonNls
