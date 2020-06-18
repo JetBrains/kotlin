@@ -5,7 +5,7 @@ import com.intellij.ProjectTopics
 import com.intellij.openapi.extensions.ExtensionPointListener
 import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.impl.ProjectImpl
+import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootEvent
@@ -56,7 +56,7 @@ internal class UnknownSdkStartupChecker : StartupActivity.DumbAware {
   private fun checkUnknownSdks(project: Project) {
     if (project.isDisposed || project.isDefault) return
     //TODO: workaround for tests, right not it can happen that project.earlyDisposable is null with @NotNull annotation
-    if (project is ProjectImpl && kotlin.runCatching { project.earlyDisposable }.isFailure) return
+    if (project is ProjectEx && kotlin.runCatching { project.earlyDisposable }.isFailure) return
     UnknownSdkTracker.getInstance(project).updateUnknownSdks()
   }
 }

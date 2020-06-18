@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler;
 
 import com.intellij.openapi.module.Module;
@@ -12,7 +13,6 @@ import java.io.File;
 import static com.intellij.util.io.TestFileSystemBuilder.fs;
 
 public class ModuleCompileScopeTest extends BaseCompilerTestCase {
-
   public void testCompileFile() {
     VirtualFile a = createFile("src/A.java", "class A{}");
     createFile("src/B.java", "class B{}");
@@ -86,7 +86,7 @@ public class ModuleCompileScopeTest extends BaseCompilerTestCase {
     make(module);
     assertOutput(module, fs());
     changeFile(b, bText + "  "); // touch b
-    
+
     compile(true, a);
     assertOutput(module, fs().file("A.class"), false);
     assertOutput(module, fs(), true);  // make sure B is not compiled, even if it is modified

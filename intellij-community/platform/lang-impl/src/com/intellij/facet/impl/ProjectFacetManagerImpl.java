@@ -1,5 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.facet.impl;
 
 import com.intellij.ProjectTopics;
@@ -24,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 @State(name = ProjectFacetManagerImpl.COMPONENT_NAME)
-public class ProjectFacetManagerImpl extends ProjectFacetManagerEx implements PersistentStateComponent<ProjectFacetManagerImpl.ProjectFacetManagerState> {
+public final class ProjectFacetManagerImpl extends ProjectFacetManagerEx implements PersistentStateComponent<ProjectFacetManagerImpl.ProjectFacetManagerState> {
   @NonNls public static final String COMPONENT_NAME = "ProjectFacetManager";
   private static final Logger LOG = Logger.getInstance(ProjectFacetManagerImpl.class);
   private ProjectFacetManagerState myState = new ProjectFacetManagerState();
@@ -74,7 +73,7 @@ public class ProjectFacetManagerImpl extends ProjectFacetManagerEx implements Pe
     if (index == null) {
       index = MultiMap.createLinked();
       for (Module module : ModuleManager.getInstance(myProject).getModules()) {
-        for (Facet facet : FacetManager.getInstance(module).getAllFacets()) {
+        for (Facet<?> facet : FacetManager.getInstance(module).getAllFacets()) {
           index.putValue(facet.getTypeId(), module);
         }
       }

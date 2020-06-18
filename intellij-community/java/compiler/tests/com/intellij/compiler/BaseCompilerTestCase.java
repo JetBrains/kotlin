@@ -123,11 +123,11 @@ public abstract class BaseCompilerTestCase extends JavaModuleTestCase {
     });
   }
 
-  protected Module addModule(final String moduleName, final @Nullable VirtualFile sourceRoot) {
+  protected Module addModule(String moduleName, @Nullable VirtualFile sourceRoot) {
     return addModule(moduleName, sourceRoot, null);
   }
 
-  protected Module addModule(final String moduleName, final @Nullable VirtualFile sourceRoot, final @Nullable VirtualFile testRoot) {
+  protected Module addModule(String moduleName, @Nullable VirtualFile sourceRoot, @Nullable VirtualFile testRoot) {
     return WriteAction.computeAndWait(() -> {
       final Module module = createModule(moduleName);
       if (sourceRoot != null) {
