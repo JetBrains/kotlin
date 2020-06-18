@@ -52,6 +52,8 @@ private class TestModuleStore(module: Module) : ModuleStoreImpl(module) {
 
 // used in upsource
 abstract class ModuleStoreBase : ChildlessComponentStore(), ModuleStore {
+  final override fun isReportStatisticAllowed(stateSpec: State) = false
+
   abstract override val storageManager: StateStorageManagerImpl
 
   override fun <T> getStorageSpecs(component: PersistentStateComponent<T>, stateSpec: State, operation: StateStorageOperation): List<Storage> =

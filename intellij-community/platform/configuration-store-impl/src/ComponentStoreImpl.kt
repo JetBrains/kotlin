@@ -311,7 +311,7 @@ abstract class ComponentStoreImpl : IComponentStore {
           state = (info.component as PersistentStateComponent<*>).state
         }
 
-        if (modificationCountChanged && stateSpec.reportStatistic && state != null) {
+        if (modificationCountChanged && state != null && isReportStatisticAllowed(stateSpec)) {
           LOG.runAndLogException {
             FeatureUsageSettingsEvents.logConfigurationChanged(effectiveComponentName, state, project)
           }
@@ -439,7 +439,7 @@ abstract class ComponentStoreImpl : IComponentStore {
             state = deserializeState(Element("state"), stateClass, null)!!
           }
           else {
-            if (stateSpec.reportStatistic) {
+            if (isReportStatisticAllowed(stateSpec)) {
               FeatureUsageSettingsEvents.logDefaultConfigurationState(name, stateClass, project)
             }
             continue
@@ -448,7 +448,7 @@ abstract class ComponentStoreImpl : IComponentStore {
 
         component.loadState(state)
         val stateAfterLoad = stateGetter.archiveState()
-        if (stateSpec.reportStatistic) {
+        if (isReportStatisticAllowed(stateSpec)) {
           LOG.runAndLogException {
             FeatureUsageSettingsEvents.logConfigurationState(name, stateAfterLoad ?: state, project)
           }
@@ -469,6 +469,8 @@ abstract class ComponentStoreImpl : IComponentStore {
     }
     return true
   }
+
+  protected open fun isReportStatisticAllowed(stateSpec: State) = stateSpec.reportStatistic
 
   private fun isStorageChanged(changedStorages: Set<StateStorage>, storage: StateStorage): Boolean {
     return changedStorages.contains(storage) || storage is ExternalStorageWithInternalPart && changedStorages.contains(storage.internalStorage)

@@ -60,7 +60,10 @@ class DoNotStorePasswordTest {
   }
 
   fun check(clazz: Class<*>) {
-    if (clazz === Attribute::class.java || clazz === Element::class.java || clazz === java.lang.String::class.java || Map::class.java.isAssignableFrom(clazz)) {
+    @Suppress("DEPRECATION")
+    if (clazz.isEnum || clazz === Attribute::class.java || clazz === Element::class.java ||
+        clazz === java.lang.String::class.java || clazz === java.lang.Integer::class.java || clazz === java.lang.Boolean::class.java ||
+        Map::class.java.isAssignableFrom(clazz) || com.intellij.openapi.util.JDOMExternalizable::class.java.isAssignableFrom(clazz)) {
       return
     }
 
