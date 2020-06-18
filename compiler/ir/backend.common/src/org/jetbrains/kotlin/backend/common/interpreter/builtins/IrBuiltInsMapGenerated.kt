@@ -134,8 +134,8 @@ val unaryFunctions = mapOf<CompileTimeFunction, Function1<Any?, Any?>>(
     unaryOperation<LongArray>("iterator", "LongArray") { a -> a.iterator() },
     unaryOperation<DoubleArray>("size", "DoubleArray") { a -> a.size },
     unaryOperation<DoubleArray>("iterator", "DoubleArray") { a -> a.iterator() },
-    unaryOperation<Array<Any?>>("size", "Array<T>") { a -> a.size },
-    unaryOperation<Array<Any?>>("iterator", "Array<T>") { a -> a.iterator() },
+    unaryOperation<Array<Any?>>("size", "Array") { a -> a.size },
+    unaryOperation<Array<Any?>>("iterator", "Array") { a -> a.iterator() },
     unaryOperation<Any>("hashCode", "Any") { a -> a.hashCode() },
     unaryOperation<Any>("toString", "Any") { a -> a.defaultToString() },
     unaryOperation<Any?>("CHECK_NOT_NULL", "T0?") { a -> a!! },
@@ -417,7 +417,7 @@ val binaryFunctions = mapOf<CompileTimeFunction, Function2<Any?, Any?, Any?>>(
     binaryOperation<FloatArray, Int>("get", "FloatArray", "Int") { a, b -> a.get(b) },
     binaryOperation<LongArray, Int>("get", "LongArray", "Int") { a, b -> a.get(b) },
     binaryOperation<DoubleArray, Int>("get", "DoubleArray", "Int") { a, b -> a.get(b) },
-    binaryOperation<Array<Any?>, Int>("get", "Array<T>", "Int") { a, b -> a.get(b) },
+    binaryOperation<Array<Any?>, Int>("get", "Array", "Int") { a, b -> a.get(b) },
     binaryOperation<Any, Any?>("equals", "Any", "Any?") { a, b -> a.equals(b) },
     binaryOperation<Char, Char>("less", "Char", "Char") { a, b -> a < b },
     binaryOperation<Byte, Byte>("less", "Byte", "Byte") { a, b -> a < b },
@@ -465,7 +465,7 @@ val ternaryFunctions = mapOf<CompileTimeFunction, Function3<Any?, Any?, Any?, An
     ternaryOperation<FloatArray, Int, Float>("set", "FloatArray", "Int", "Float") { a, b, c -> a.set(b, c) },
     ternaryOperation<LongArray, Int, Long>("set", "LongArray", "Int", "Long") { a, b, c -> a.set(b, c) },
     ternaryOperation<DoubleArray, Int, Double>("set", "DoubleArray", "Int", "Double") { a, b, c -> a.set(b, c) },
-    ternaryOperation<Array<Any?>, Int, Any?>("set", "Array<T>", "Int", "T") { a, b, c -> a.set(b, c) }
+    ternaryOperation<Array<Any?>, Int, Any?>("set", "Array", "Int", "T") { a, b, c -> a.set(b, c) }
 )
 
 private fun Any.defaultToString(): String {

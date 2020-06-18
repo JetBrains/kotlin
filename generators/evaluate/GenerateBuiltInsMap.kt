@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.generators.evaluate
 
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.compileTimeAnnotation
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -13,7 +12,9 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
@@ -74,14 +75,12 @@ private fun getOperationMap(argumentsCount: Int): MutableMap<CallableDescriptor,
     val allPrimitiveTypes = PrimitiveType.values().map { builtIns.getBuiltInClassByFqName(it.typeFqName) }
     val arrays = PrimitiveType.values().map { builtIns.getPrimitiveArrayClassDescriptor(it) } + builtIns.array
 
-    fun CallableDescriptor.isCompileTime(classDescriptor: ClassDescriptor): Boolean {
-        val thisIsCompileTime = this.annotations.hasAnnotation(compileTimeAnnotation)
-        val classIsCompileTime = classDescriptor.annotations.hasAnnotation(compileTimeAnnotation)
+    fun CallableDescriptor.isFakeOverride(classDescriptor: ClassDescriptor): Boolean {
         val isPrimitive = KotlinBuiltIns.isPrimitiveClass(classDescriptor) || KotlinBuiltIns.isString(classDescriptor.defaultType)
         val isFakeOverridden = (this as? FunctionDescriptor)?.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
         return when {
-            isPrimitive -> thisIsCompileTime || classIsCompileTime
-            else -> !isFakeOverridden && (thisIsCompileTime || classIsCompileTime)
+            isPrimitive -> false
+            else -> isFakeOverridden
         }
     }
 
@@ -89,16 +88,16 @@ private fun getOperationMap(argumentsCount: Int): MutableMap<CallableDescriptor,
         val classTypeParameters = classDescriptor.typeConstructor.parameters.map { it.name.asString() }
         val typeParametersReplacedToAny =
             if (classTypeParameters.isNotEmpty()) classTypeParameters.joinToString(prefix = "<", postfix = ">") { "Any?" } else ""
-        val classType = classDescriptor.defaultType
+        val classType = classDescriptor.defaultType.constructor.toString()
 
         val compileTimeFunctions = classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()
             .filterIsInstance<CallableDescriptor>()
-            .filter { it.isCompileTime(classDescriptor) }
+            .filter { !it.isFakeOverride(classDescriptor) }
 
         for (function in compileTimeFunctions) {
             val operationArguments = (listOf(classType) + function.valueParameters.map { it.type }).joinToString { "\"" + it + "\"" }
 
-            val typeParametersOfFun = listOf(classType.constructor.toString() + typeParametersReplacedToAny) +
+            val typeParametersOfFun = listOf(classType + typeParametersReplacedToAny) +
                     function.valueParameters.map { if (classTypeParameters.contains(it.type.toString())) "Any?" else it.type.toString() }
 
             if (function.valueParameters.size + 1 == argumentsCount) { // +1 for receiver
@@ -110,18 +109,17 @@ private fun getOperationMap(argumentsCount: Int): MutableMap<CallableDescriptor,
     return operationMap
 }
 
-private fun getBinaryIrOperationMap(irBuiltIns: IrBuiltIns): MutableMap<CallableDescriptor, Pair<String, String>> {
-    val operationMap = mutableMapOf<CallableDescriptor, Pair<String, String>>()
+private fun getBinaryIrOperationMap(irBuiltIns: IrBuiltIns): MutableMap<IrFunction, Pair<String, String>> {
+    val operationMap = mutableMapOf<IrFunction, Pair<String, String>>()
     val irFunSymbols =
         (irBuiltIns.lessFunByOperandType.values + irBuiltIns.lessOrEqualFunByOperandType.values +
                 irBuiltIns.greaterFunByOperandType.values + irBuiltIns.greaterOrEqualFunByOperandType.values +
                 irBuiltIns.eqeqSymbol + irBuiltIns.eqeqeqSymbol + irBuiltIns.ieee754equalsFunByOperandType.values +
                 irBuiltIns.andandSymbol + irBuiltIns.ororSymbol)
-            .map { it.descriptor }
-            .filter { it.annotations.hasAnnotation(compileTimeAnnotation) }
+            .map { it.owner }
 
     for (function in irFunSymbols) {
-        val parametersTypes = function.valueParameters.map { it.type }
+        val parametersTypes = function.valueParameters.map { it.type.originalKotlinType!!.toString() }
         val operationArguments = parametersTypes.joinToString { "\"" + it + "\"" }
         val functionTypeParameters = parametersTypes.joinToString(prefix = "<", postfix = ">")
 
@@ -133,7 +131,7 @@ private fun getBinaryIrOperationMap(irBuiltIns: IrBuiltIns): MutableMap<Callable
 }
 
 private fun generateUnaryBody(unaryOperationsMap: Map<CallableDescriptor, Pair<String, String>>, irBuiltIns: IrBuiltIns): String {
-    val irNullCheck = irBuiltIns.checkNotNullSymbol.descriptor
+    val irNullCheck = irBuiltIns.checkNotNullSymbol.owner
     return unaryOperationsMap.entries.joinToString(separator = ",\n", postfix = ",\n") { (function, parameters) ->
         val methodName = "${function.name}"
         val parentheses = if (function is FunctionDescriptor) "()" else ""
@@ -142,13 +140,13 @@ private fun generateUnaryBody(unaryOperationsMap: Map<CallableDescriptor, Pair<S
             else "a.$methodName$parentheses"
         "    unaryOperation${parameters.first}(\"$methodName\", ${parameters.second}) { a -> $body }"
     } +
-            "    unaryOperation<Any?>(\"${irNullCheck.name}\", \"${irNullCheck.valueParameters.first().type}\") { a -> a!! },\n" +
+            "    unaryOperation<Any?>(\"${irNullCheck.name}\", \"${irNullCheck.valueParameters.first().type.originalKotlinType}\") { a -> a!! },\n" +
             "    unaryOperation<ExceptionState>(\"message\", \"Throwable\") { a -> a.getMessage() },\n" +
             "    unaryOperation<ExceptionState>(\"cause\", \"Throwable\") { a -> a.getCause() }"
 }
 
 private fun generateBinaryBody(
-    binaryOperationsMap: Map<CallableDescriptor, Pair<String, String>>, binaryIrOperationsMap: Map<CallableDescriptor, Pair<String, String>>
+    binaryOperationsMap: Map<CallableDescriptor, Pair<String, String>>, binaryIrOperationsMap: Map<IrFunction, Pair<String, String>>
 ): String {
     return binaryOperationsMap.entries.joinToString(separator = ",\n", postfix = ",\n") { (function, parameters) ->
         val methodName = "${function.name}"
