@@ -48,6 +48,15 @@ object DeprecatedSinceKotlinAnnotationChecker : DeclarationChecker {
             return
         }
 
+        if (deprecatedSinceAnnotation.allValueArguments.isEmpty()) {
+            context.trace.report(
+                Errors.DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS.on(
+                    deprecatedSinceAnnotationName
+                )
+            )
+            return
+        }
+
         fun AnnotationDescriptor.getCheckedSinceVersion(name: String) =
             getSinceVersion(name).also { checkVersion(it, name, context, deprecatedSinceAnnotationName) }
 
