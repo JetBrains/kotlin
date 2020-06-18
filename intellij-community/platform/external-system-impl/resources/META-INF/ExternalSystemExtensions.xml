@@ -93,7 +93,7 @@
     <statistics.projectUsagesCollector implementation="com.intellij.openapi.externalSystem.statistics.ExternalSystemUsagesCollector"/>
     <statistics.projectUsagesCollector implementation="com.intellij.openapi.externalSystem.statistics.ExternalSystemSettingsCollector"/>
     <statistics.counterUsagesCollector implementationClass="com.intellij.openapi.externalSystem.statistics.ExternalSystemActionsCollector"/>
-    <notificationWhitelist groupIds="Gradle Import;Unindexed maven repositories gradle detection;Build sync orphan modules;Content root duplicates"/>
+    <notificationAllowlist groupIds="Gradle Import;Unindexed maven repositories gradle detection;Build sync orphan modules;Content root duplicates"/>
   </extensions>
 </idea-plugin>
 

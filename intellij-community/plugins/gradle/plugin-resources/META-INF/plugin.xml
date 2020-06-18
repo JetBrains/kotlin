@@ -130,7 +130,7 @@
                  description="Enable custom serialization of custom tooling objects"/>
 
     <commandLineInspectionProjectConfigurator implementation="org.jetbrains.plugins.gradle.GradleCommandLineProjectConfigurator"/>
-    <notificationWhitelist groupIds="Gradle Notification Group"/>
+    <notificationAllowlist groupIds="Gradle Notification Group"/>
   </extensions>
 
   <actions>
