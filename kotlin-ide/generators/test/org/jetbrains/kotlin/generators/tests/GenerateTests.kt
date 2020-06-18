@@ -211,6 +211,14 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             // TODO: implement mapping logic for terminal operations
             model("sequence/streams/sequence", excludedDirectories = listOf("terminal"))
         }
+
+        testClass<AbstractContinuationStackTraceTest> {
+            model("continuation")
+        }
+
+        testClass<AbstractXCoroutinesStackTraceTest> {
+            model("xcoroutines")
+        }
     }
 
     testGroup("idea") {
@@ -830,6 +838,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
 
         testClass<AbstractSlicerMultiplatformTest> {
+            model("slicer/mpp", isRecursive = false, pattern = DIRECTORY)
+        }
+
+        testClass<AbstractSlicerMultiplatformTest> {
             model("navigationToolbar", isRecursive = false)
         }
     }
@@ -1172,6 +1184,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractPerformanceAddImportTest> {
             model("addImport", testMethodName = "doPerfTest", pattern = KT_WITHOUT_DOTS)
+        }
+
+        testClass<AbstractPerformanceTypingIndentationTest> {
+            model("indentationOnNewline", testMethodName = "doPerfTest", pattern = KT_OR_KTS_WITHOUT_DOTS)
         }
     }
 
