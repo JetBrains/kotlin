@@ -148,7 +148,7 @@ fun TaskProvider<PublishToMavenRepository>.configureRepository() = configure {
         val repoUrl: String by preparePublication.extra
 
         repository.apply {
-            url = URI(repoUrl)
+            url = project.uri(repoUrl)
             if (url.scheme != "file" && username != null && password != null) {
                 credentials {
                     this.username = username
