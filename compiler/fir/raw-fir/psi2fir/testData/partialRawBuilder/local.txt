@@ -1,0 +1,3 @@
+local final? fun <local>/bar(): R|kotlin/Unit| {
+    baz#(i#, x#)
+}

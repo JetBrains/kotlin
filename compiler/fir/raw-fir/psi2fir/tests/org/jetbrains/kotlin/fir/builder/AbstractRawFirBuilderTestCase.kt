@@ -60,7 +60,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         }
     }
 
-    protected fun doRawFirTest(filePath: String) {
+    protected open fun doRawFirTest(filePath: String) {
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(stubMode = false)
         val firFileDump = StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()

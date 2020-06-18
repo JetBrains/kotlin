@@ -50,8 +50,14 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         )
     }
 
-    abstract class RenderMode(val renderLambdaBodies: Boolean, val renderCallArguments: Boolean) {
-        object Normal : RenderMode(renderLambdaBodies = true, renderCallArguments = true)
+    abstract class RenderMode(
+        val renderLambdaBodies: Boolean,
+        val renderCallArguments: Boolean,
+        val renderCallableFqNames: Boolean
+    ) {
+        object Normal : RenderMode(renderLambdaBodies = true, renderCallArguments = true, renderCallableFqNames = false)
+
+        object WithFqNames: RenderMode(renderLambdaBodies = true, renderCallArguments = true, renderCallableFqNames = true)
     }
 
     private val printer = Printer(builder)
@@ -150,8 +156,20 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             print(".")
         }
         when (callableDeclaration) {
-            is FirSimpleFunction -> print(callableDeclaration.name)
-            is FirVariable<*> -> print(callableDeclaration.name)
+            is FirSimpleFunction -> {
+                if (!mode.renderCallableFqNames) {
+                    print(callableDeclaration.name)
+                } else {
+                    print(callableDeclaration.symbol.callableId)
+                }
+            }
+            is FirVariable<*> -> {
+                if (!mode.renderCallableFqNames) {
+                    print(callableDeclaration.name)
+                } else {
+                    print(callableDeclaration.symbol.callableId)
+                }
+            }
         }
 
         if (callableDeclaration is FirFunction<*>) {

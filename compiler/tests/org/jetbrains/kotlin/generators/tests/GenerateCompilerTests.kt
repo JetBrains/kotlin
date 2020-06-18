@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsR
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.AbstractPartialRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
 import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
@@ -541,6 +542,12 @@ fun main(args: Array<String>) {
         testGroup("compiler/fir/raw-fir/psi2fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractRawFirBuilderTestCase> {
                 model("rawBuilder", testMethod = "doRawFirTest")
+            }
+        }
+
+        testGroup("compiler/fir/raw-fir/psi2fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
+            testClass<AbstractPartialRawFirBuilderTestCase> {
+                model("partialRawBuilder", testMethod = "doRawFirTest")
             }
         }
 
