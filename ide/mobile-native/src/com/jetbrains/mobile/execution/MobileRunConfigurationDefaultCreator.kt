@@ -13,12 +13,12 @@ import com.jetbrains.mobile.MobileBundle
 import com.jetbrains.mobile.isAndroid
 import com.jetbrains.mobile.isApple
 
-fun MobileRunConfiguration.Companion.createDefaults(project: Project, modules: List<Module>) {
+fun MobileRunConfigurationBase.Companion.createDefaults(project: Project, modules: List<Module>) {
     val runManager = RunManager.getInstance(project)
     for (module in modules) {
         val type = MobileAppRunConfigurationType.instance
         val factory = type.factory
-        val configuration = factory.createTemplateConfiguration(project, runManager) as MobileRunConfiguration
+        val configuration = factory.createTemplateConfiguration(project, runManager) as MobileRunConfigurationBase
         configuration.module = module
         if (module.isApple && !SystemInfo.isMac) continue
         val name = when {

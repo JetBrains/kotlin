@@ -15,10 +15,7 @@ import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.CidrLauncher
 import com.jetbrains.cidr.execution.testing.*
-import com.jetbrains.mobile.execution.AndroidDevice
-import com.jetbrains.mobile.execution.AppleDevice
-import com.jetbrains.mobile.execution.Device
-import com.jetbrains.mobile.execution.MobileRunConfiguration
+import com.jetbrains.mobile.execution.*
 import com.jetbrains.mobile.isAndroid
 import com.jetbrains.mobile.isApple
 import com.jetbrains.mobile.isMobileAppTest
@@ -26,7 +23,7 @@ import org.jdom.Element
 import java.io.File
 
 class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
-    MobileRunConfiguration(project, factory, name),
+    MobileRunConfigurationBase(project, factory, name),
     CidrTestRunConfiguration {
 
     fun getTestRunnerBundle(environment: ExecutionEnvironment): File {
@@ -58,11 +55,16 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
 
     override fun isSuitable(module: Module): Boolean = module.isMobileAppTest
 
+    override fun createAppleState(environment: ExecutionEnvironment, executor: Executor, device: AppleDevice): CommandLineState =
+        getTestData().createState(environment, executor, null)
+
+    override fun createOtherState(environment: ExecutionEnvironment): CommandLineState = AndroidTestCommandLineState(this, environment)
+
+    override fun createCidrLauncher(environment: ExecutionEnvironment, device: AppleDevice): CidrLauncher =
+        AppleXCTestLauncher(this, environment, device)
+
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         MobileTestRunConfigurationEditor(project, helper, ::isSuitable)
-
-    override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState? =
-        (environment.executionTarget as? Device)?.createState(this, environment)
 
     override fun createTestRunProfile(
         rerunAction: CidrRerunFailedTestsAction,
@@ -72,18 +74,18 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher = throw IllegalStateException()
 
     override fun writeExternal(element: Element) {
-        super<MobileRunConfiguration>.writeExternal(element)
+        super<MobileRunConfigurationBase>.writeExternal(element)
         testData.writeExternal(element)
     }
 
     override fun readExternal(element: Element) {
-        super<MobileRunConfiguration>.readExternal(element)
+        super<MobileRunConfigurationBase>.readExternal(element)
         recreateTestData()
         testData.readExternal(element)
     }
 
     override fun checkConfiguration() {
-        super<MobileRunConfiguration>.checkConfiguration()
+        super<MobileRunConfigurationBase>.checkConfiguration()
         testData.checkData()
     }
 

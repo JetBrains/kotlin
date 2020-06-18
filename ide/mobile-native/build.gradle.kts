@@ -20,9 +20,13 @@ dependencies {
     addIdeaNativeModuleDeps(project)
     compile(project(":kotlin-ultimate:ide:common-cidr-native"))
     compile(project(":kotlin-ultimate:ide:common-cidr-swift-native"))
-    compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion")
-    compileOnly("com.jetbrains.intellij.cidr:cidr-xctest:$cidrVersion")
-    compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion")
+    compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion") { isTransitive = false }
+    compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
+    compileOnly("com.jetbrains.intellij.cidr:cidr-xctest:$cidrVersion") { isTransitive = false }
+    compileOnly("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
+    compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion") { isTransitive = false }
+    compileOnly("com.jetbrains.intellij.swift:swift-language:$cidrVersion") { isTransitive = false }
+    api(project(":kotlin-ultimate:ide:common-cidr-mobile")) { isTransitive = false }
     compileOnly("com.jetbrains.intellij.android:android-kotlin-extensions-common:$cidrVersion") { isTransitive = false }
     compile("com.android.tools.ddms:ddmlib:26.0.0") {
         exclude("com.google.guava", "guava")

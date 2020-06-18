@@ -23,10 +23,10 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
     override fun isSingleton(): Boolean = true
 
     override fun canExecuteTask(configuration: RunConfiguration, task: Task): Boolean =
-        configuration is MobileRunConfiguration
+        configuration is MobileRunConfigurationBase
 
     override fun createTask(configuration: RunConfiguration): Task? =
-        if (configuration !is MobileRunConfiguration) null
+        if (configuration !is MobileRunConfigurationBase) null
         else Task()
 
     override fun executeTask(
@@ -35,7 +35,7 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
         environment: ExecutionEnvironment,
         task: Task
     ): Boolean {
-        if (configuration !is MobileRunConfiguration) return false
+        if (configuration !is MobileRunConfigurationBase) return false
         val device = environment.executionTarget as? Device ?: return false
 
         return MobileBuild.build(configuration, device)

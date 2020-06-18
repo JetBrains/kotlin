@@ -34,11 +34,16 @@ abstract class RunnerBase : DefaultProgramRunner() {
 
     protected fun contentDescriptor(
         environment: ExecutionEnvironment,
+        muteBreakpoints: Boolean = false,
         starter: (session: XDebugSession) -> XDebugProcess
     ): RunContentDescriptor? {
         val session =
             XDebuggerManager.getInstance(environment.project).startSession(environment, object : XDebugProcessConfiguratorStarter() {
-                override fun configure(session: XDebugSessionData?) {}
+                override fun configure(session: XDebugSessionData) {
+                    if (muteBreakpoints) {
+                        session.isBreakpointsMuted = true
+                    }
+                }
 
                 @Throws(ExecutionException::class)
                 override fun start(session: XDebugSession) = starter(session)

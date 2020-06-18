@@ -12,7 +12,6 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.jetbrains.cidr.execution.testing.CidrTestScope
 import com.jetbrains.cidr.execution.testing.xctest.OCUnitRunConfigurationData
 import com.jetbrains.cidr.execution.testing.xctest.OCUnitTestObject
-import com.jetbrains.mobile.execution.AppleDevice
 
 class AppleXCTestRunConfigurationData(configuration: MobileTestRunConfiguration) :
     OCUnitRunConfigurationData<MobileTestRunConfiguration>(configuration) {
@@ -26,7 +25,7 @@ class AppleXCTestRunConfigurationData(configuration: MobileTestRunConfiguration)
         AppleXCTestConsoleProperties(myConfiguration, executor, executionTarget)
 
     override fun createState(environment: ExecutionEnvironment, executor: Executor, failedTests: CidrTestScope?): CommandLineState =
-        (environment.executionTarget as AppleDevice).createState(myConfiguration, environment, failedTests)
+        AppleXCTestCommandLineState(myConfiguration, environment, environment.executor, failedTests)
 
     override fun formatTestMethod(): String = "$testSuite.$testName"
 }

@@ -10,10 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectModelBuildableElement
 import com.intellij.openapi.roots.ProjectModelExternalSource
 import com.intellij.task.*
-import com.jetbrains.cidr.execution.build.CidrBuildUtil
 import com.jetbrains.cidr.execution.build.runners.CidrProjectTaskRunner
 import com.jetbrains.cidr.execution.build.runners.CidrTaskRunner
-import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.concurrency.Promise
 import org.jetbrains.concurrency.resolvedPromise
 
@@ -27,7 +25,7 @@ class MobileProjectTaskRunner : CidrProjectTaskRunner() {
             }
     }
 
-    class Context(sessionId: Any, runConfiguration: MobileRunConfiguration, val device: Device) :
+    class Context(sessionId: Any, runConfiguration: MobileRunConfigurationBase, val device: Device) :
         ProjectTaskContext(sessionId, runConfiguration)
 
     override fun canRun(task: ProjectTask): Boolean = when (task) {
@@ -49,7 +47,7 @@ object MobileBuildTaskRunner : CidrTaskRunner {
         context: ProjectTaskContext
     ): Promise<ProjectTaskRunner.Result> {
         val success = try {
-            val configuration = (context as MobileProjectTaskRunner.Context).runConfiguration as MobileRunConfiguration
+            val configuration = (context as MobileProjectTaskRunner.Context).runConfiguration as MobileRunConfigurationBase
             MobileBuild.build(configuration, context.device)
         } catch (e: Throwable) {
             log.error(e)

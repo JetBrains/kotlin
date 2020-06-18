@@ -21,7 +21,7 @@ open class MobileRunConfigurationEditor(
 ) : CidrRunConfigurationSettingsEditor<
         MobileBuildConfiguration,
         MobileBuildTarget,
-        MobileRunConfiguration,
+        MobileRunConfigurationBase,
         MobileBuildConfigurationHelper>(project, helper) {
 
     protected lateinit var modulesComboBox: ModulesComboBox
@@ -37,12 +37,12 @@ open class MobileRunConfigurationEditor(
         super.createEditorInner(panel, g)
     }
 
-    override fun applyEditorTo(runConfiguration: MobileRunConfiguration) {
+    override fun applyEditorTo(runConfiguration: MobileRunConfigurationBase) {
         super.applyEditorTo(runConfiguration)
         runConfiguration.module = modulesComboBox.selectedModule
     }
 
-    override fun resetEditorFrom(runConfiguration: MobileRunConfiguration) {
+    override fun resetEditorFrom(runConfiguration: MobileRunConfigurationBase) {
         super.resetEditorFrom(runConfiguration)
         modulesComboBox.selectedModule = runConfiguration.module
     }

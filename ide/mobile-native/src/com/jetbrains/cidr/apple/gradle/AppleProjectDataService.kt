@@ -10,7 +10,7 @@ import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjec
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.apple.gradle.AppleProjectResolver.Companion.APPLE_PROJECT
-import com.jetbrains.mobile.execution.MobileRunConfiguration
+import com.jetbrains.mobile.execution.MobileRunConfigurationBase
 import com.jetbrains.mobile.execution.createDefaults
 import com.jetbrains.mobile.gradle.forEachModule
 import com.jetbrains.mobile.isApple
@@ -36,7 +36,7 @@ class AppleProjectDataService : AbstractProjectDataService<AppleProjectModel, Mo
     ) {
         val modules = modelsProvider.getModules(projectData ?: return)
             .filter { it.isMobileAppMain && it.isApple }
-        MobileRunConfiguration.createDefaults(project, modules)
+        MobileRunConfigurationBase.createDefaults(project, modules)
     }
 
     companion object {

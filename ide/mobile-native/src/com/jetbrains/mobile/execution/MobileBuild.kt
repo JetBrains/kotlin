@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil
 
 object MobileBuild {
-    fun build(configuration: MobileRunConfiguration, device: Device): Boolean {
+    fun build(configuration: MobileRunConfigurationBase, device: Device): Boolean {
         val project = configuration.project
         val projectData = ProjectDataManager.getInstance().getExternalProjectData(project, GRADLE_SYSTEM_ID, project.basePath!!)
         if (projectData == null) {

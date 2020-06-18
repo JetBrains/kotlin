@@ -31,8 +31,10 @@ repositories {
 
 dependencies {
     runtime(project(":kotlin-ultimate:ide:cidr-gradle-tooling")) { isTransitive = false }
+    runtime(project(":kotlin-ultimate:ide:common-cidr-mobile")) { isTransitive = false }
     runtime(project(":kotlin-ultimate:ide:common-cidr-native")) { isTransitive = false }
     runtime(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
+    runtime(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:mobile-native")) { isTransitive = false }
     if (isStandaloneBuild) {
         runtime("org.jetbrains.kotlin:kotlin-android-extensions-runtime:$ideaPluginForCidrVersion") { isTransitive = false }

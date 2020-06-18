@@ -7,26 +7,12 @@ package com.jetbrains.mobile.execution
 
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.sdklib.AndroidVersion
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.AtomicClearableLazyValue
-import com.jetbrains.cidr.execution.deviceSupport.AMDeviceManager
-import com.jetbrains.cidr.execution.simulatorSupport.SimulatorsRegistry
 import com.jetbrains.mobile.AndroidToolkit
 
-@Service
-class DeviceService(val project: Project) {
-    fun getAll(): List<Device> = getAppleDevices() + getAndroidDevices() + androidEmulators.value + getAppleSimulators()
-
-    private fun getAppleDevices(): List<ApplePhysicalDevice> =
-        AMDeviceManager.getInstance().devices
-            .filter { it.deviceType.isIOS }
-            .map(::ApplePhysicalDevice)
-
-    private fun getAppleSimulators(): List<AppleSimulator> =
-        SimulatorsRegistry.getInstance().configurations.map(::AppleSimulator)
+class MobileDeviceService(project: Project) : DeviceService(project) {
+    override fun getAll(): List<Device> = getAppleDevices() + getAndroidDevices() + androidEmulators.value + getAppleSimulators()
 
     private fun getAndroidDevices(): List<AndroidPhysicalDevice> =
         adb?.devices
@@ -64,9 +50,4 @@ class DeviceService(val project: Project) {
             }
             return _adb
         }
-
-    companion object {
-        fun getInstance(project: Project): DeviceService = project.service()
-        private val log = logger<DeviceService>()
-    }
 }

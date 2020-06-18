@@ -6,7 +6,6 @@
 package com.jetbrains.mobile.execution
 
 import com.intellij.execution.ExecutionTarget
-import com.intellij.execution.Executor
 import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.RunConfiguration
@@ -27,8 +26,8 @@ import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.plugins.gradle.util.GradleUtil
 import java.io.File
 
-abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
-    CidrRunConfiguration<MobileBuildConfiguration, MobileBuildTarget>(project, factory, name) {
+abstract class MobileRunConfigurationBase(project: Project, factory: ConfigurationFactory, name: String) :
+    CidrRunConfiguration<MobileBuildConfiguration, MobileBuildTarget>(project, factory, name), MobileRunConfiguration {
 
     private var _module = RunConfigurationModule(project).also {
         it.module = project.allModules().firstOrNull { module -> isSuitable(module) }
@@ -46,7 +45,7 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
                 (module?.isApple == true && target is AppleDevice) ||
                 (module?.isAndroid == true && target is AndroidDevice)
 
-    open fun getProductBundle(environment: ExecutionEnvironment): File {
+    override fun getProductBundle(environment: ExecutionEnvironment): File {
         val moduleRoot = ExternalSystemApiUtil.getExternalProjectPath(module!!)?.let { File(it) }
             ?: throw IllegalStateException()
         val binaryName = GradleUtil.findGradleModuleData(module!!)?.data?.externalName
@@ -61,7 +60,6 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
                 val deviceType = when (device) {
                     is ApplePhysicalDevice -> "iphoneos"
                     is AppleSimulator -> "iphonesimulator"
-                    else -> throw IllegalStateException()
                 }
                 File(moduleRoot, FileUtil.join("build", "bin", "iosAppMain", "Debug-$deviceType", "$binaryName.app"))
             }
@@ -75,23 +73,23 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
     override fun getResolveConfiguration(target: ExecutionTarget): OCResolveConfiguration? = null
 
     override fun writeExternal(element: Element) {
-        super.writeExternal(element)
+        super<CidrRunConfiguration>.writeExternal(element)
         _module.writeExternal(element)
     }
 
     override fun readExternal(element: Element) {
-        super.readExternal(element)
+        super<CidrRunConfiguration>.readExternal(element)
         _module.readExternal(element)
     }
 
-    override fun clone(): MobileRunConfiguration {
-        val result = super.clone() as MobileRunConfiguration
+    override fun clone(): MobileRunConfigurationBase {
+        val result = super.clone() as MobileRunConfigurationBase
         result._module = RunConfigurationModule(project).also { it.module = this.module }
         return result
     }
 
     override fun checkConfiguration() {
-        super.checkConfiguration()
+        super<CidrRunConfiguration>.checkConfiguration()
         _module.checkForWarning()
     }
 
@@ -99,13 +97,14 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
 }
 
 class MobileAppRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
-    MobileRunConfiguration(project, factory, name) {
+    MobileRunConfigurationBase(project, factory, name) {
 
     override fun isSuitable(module: Module): Boolean = module.isMobileAppMain
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         MobileRunConfigurationEditor(project, helper, ::isSuitable)
 
-    override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState? =
-        (environment.executionTarget as? Device)?.createState(this, environment)
+    override fun createOtherState(environment: ExecutionEnvironment): CommandLineState {
+        return AndroidAppCommandLineState(this, environment)
+    }
 }

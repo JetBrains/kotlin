@@ -29,7 +29,7 @@ import com.intellij.xdebugger.impl.XDebugSessionImpl
 import java.io.OutputStream
 
 abstract class AndroidCommandLineState(
-    configuration: MobileRunConfiguration,
+    configuration: MobileRunConfigurationBase,
     environment: ExecutionEnvironment
 ) : CommandLineState(environment) {
     protected val project = configuration.project
@@ -98,7 +98,7 @@ abstract class AndroidCommandLineState(
 }
 
 open class AndroidAppCommandLineState(
-    configuration: MobileRunConfiguration,
+    configuration: MobileRunConfigurationBase,
     environment: ExecutionEnvironment
 ) : AndroidCommandLineState(configuration, environment) {
 

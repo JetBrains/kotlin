@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.xml.util.XmlStringUtil
 import com.jetbrains.cidr.execution.CidrCommandLineState
 import com.jetbrains.konan.KonanBundle
+import com.jetbrains.mobile.execution.ApplePhysicalDevice
 import com.jetbrains.mpp.*
 import com.jetbrains.mpp.XcFileExtensions
 import com.jetbrains.mpp.debugger.KonanExternalSystemState
@@ -68,9 +69,8 @@ class AppleRunner : RunnerBase() {
     @Throws(ExecutionException::class)
     override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
         if (environment.executor.id != DefaultDebugExecutor.EXECUTOR_ID) {
-            if (state is CidrCommandLineState && state.launcher is ApplePhysicalDeviceLauncher) {
-                return contentDescriptor(environment) { session ->
-                    (state.launcher as ApplePhysicalDeviceLauncher).withoutBreakpoints = true
+            if (state is CidrCommandLineState && state.executionTarget is ApplePhysicalDevice) {
+                return contentDescriptor(environment, true) { session ->
                     state.startDebugProcess(session)
                 }
             }

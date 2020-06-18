@@ -2,6 +2,7 @@
   <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/KonanCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/android-kotlin-extensions-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/CidrMobile.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <id>com.intellij.kotlin.mobile</id>
   <name>Mobile</name>
@@ -33,9 +34,9 @@
                         serviceInterface="com.jetbrains.cidr.execution.testing.xctest.OCUnitTestLocator"/>
 
     <applicationService serviceImplementation="com.jetbrains.cidr.execution.JBDeviceFramework" preload="true"/>
+    <projectService serviceInterface="com.jetbrains.mobile.execution.DeviceService"
+                    serviceImplementation="com.jetbrains.mobile.execution.MobileDeviceService" overrides="true"/>
     <programRunner implementation="com.jetbrains.mobile.execution.MobileRunner" order="first"/>
-
-    <executionTargetProvider implementation="com.jetbrains.mobile.execution.DeviceExecutionTargetProvider"/>
 
     <externalProjectDataService implementation="com.jetbrains.mobile.gradle.AndroidProjectDataService"/>
 

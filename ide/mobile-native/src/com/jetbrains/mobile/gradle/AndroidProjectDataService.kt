@@ -12,7 +12,7 @@ import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.jetbrains.mobile.execution.MobileRunConfiguration
+import com.jetbrains.mobile.execution.MobileRunConfigurationBase
 import com.jetbrains.mobile.execution.createDefaults
 import com.jetbrains.mobile.isAndroid
 import com.jetbrains.mobile.isMobileAppMain
@@ -30,6 +30,6 @@ class AndroidProjectDataService : AbstractProjectDataService<AndroidProjectModel
     ) {
         val modules = modelsProvider.getModules(projectData ?: return)
             .filter { it.isMobileAppMain && it.isAndroid }
-        MobileRunConfiguration.createDefaults(project, modules)
+        MobileRunConfigurationBase.createDefaults(project, modules)
     }
 }

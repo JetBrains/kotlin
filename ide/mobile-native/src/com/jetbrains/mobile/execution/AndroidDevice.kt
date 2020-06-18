@@ -12,6 +12,7 @@ import com.android.ddmlib.IDevice
 import com.android.ddmlib.testrunner.RemoteAndroidTestRunner
 import com.android.sdklib.AndroidVersion
 import com.intellij.execution.ExecutionException
+import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.*
 import com.intellij.execution.runners.ExecutionEnvironment
@@ -40,12 +41,6 @@ abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidV
     "Android",
     osVersion?.apiString ?: "unknown"
 ) {
-    override fun createState(configuration: MobileAppRunConfiguration, environment: ExecutionEnvironment): AndroidAppCommandLineState =
-        AndroidAppCommandLineState(configuration, environment)
-
-    override fun createState(configuration: MobileTestRunConfiguration, environment: ExecutionEnvironment): AndroidTestCommandLineState =
-        AndroidTestCommandLineState(configuration, environment)
-
     private inline fun execute(
         project: Project, isDebug: Boolean,
         crossinline block: (AndroidProcessHandler, ProgressIndicator) -> Unit
@@ -153,7 +148,7 @@ class AndroidEmulator(avdName: String, osVersion: AndroidVersion?) : AndroidDevi
 ) {
     override fun prepareDevice(project: Project): IDevice {
         // If already running, return immediately
-        DeviceService.getInstance(project).adb?.devices?.find { it.avdName == id }?.let { return it }
+        (DeviceService.getInstance(project) as MobileDeviceService).adb?.devices?.find { it.avdName == id }?.let { return it }
 
         val commandLine = GeneralCommandLine(AndroidToolkit.getInstance(project).emulator!!.path, "-avd", id)
         val avdHandler = OSProcessHandler(commandLine)

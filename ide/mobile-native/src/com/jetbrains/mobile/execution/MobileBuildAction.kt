@@ -18,7 +18,7 @@ import com.jetbrains.mobile.MobileBundle
 
 class MobileBuildAction : CidrBuildTargetAction(true, MobileBundle.message("build"), null, AllIcons.Actions.Compile) {
     private fun selectedRunConfiguration(project: Project) =
-        RunManager.getInstance(project).selectedConfiguration?.configuration as? MobileRunConfiguration
+        RunManager.getInstance(project).selectedConfiguration?.configuration as? MobileRunConfigurationBase
 
     override fun isEnabled(project: Project): Boolean =
         selectedRunConfiguration(project) != null
