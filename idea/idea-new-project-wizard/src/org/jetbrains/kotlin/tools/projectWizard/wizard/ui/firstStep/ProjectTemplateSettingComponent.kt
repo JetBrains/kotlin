@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
 import com.intellij.ui.ScrollPaneFactory
+import com.intellij.ui.SeparatorWithText
 import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
@@ -27,9 +28,15 @@ class ProjectTemplateSettingComponent(
     override val forceLabelCenteringOffset: Int? = 4
     private val templateDescriptionComponent = TemplateDescriptionComponent().asSubComponent()
 
-    private val list = ImmutableSingleSelectableListWithIcon(
-        setting.type.values,
-        renderValue = { value ->
+    private val templateGroups = setting.type.values
+        .groupBy { it.projectKind }
+        .map { (group, templates) ->
+            ListWithSeparators.ListGroup(group.text, templates)
+        }
+
+    private val list = ListWithSeparators(
+        templateGroups,
+        render = { value ->
             icon = value.icon
             append(value.title)
         },
@@ -69,7 +76,7 @@ class ProjectTemplateSettingComponent(
     }
 
     companion object {
-        private const val HEIGHT = 230
+        private const val HEIGHT = 310
     }
 }
 
