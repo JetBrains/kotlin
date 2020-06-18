@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.samWithReceiver
 
 import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
@@ -26,10 +27,7 @@ import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.junit.Assert
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.compilerOptions
-import kotlin.script.experimental.api.fileExtension
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
@@ -58,7 +56,13 @@ abstract class AbstractSamWithReceiverScriptNewDefTest : AbstractDiagnosticsTest
         super.analyzeAndCheck(testDataFile, files)
         for (file in scripts) {
             val res = scriptCompiler.compile(KtFileScriptSource(file.ktFile!!), ScriptForSamWithReceiversNewDefCompilationConfiguration)
-            val x = res
+            if (res is ResultWithDiagnostics.Failure && !file.name.contains("error", ignoreCase = true))
+                throw TestsCompilerError(
+                    RuntimeException(
+                        res.reports.joinToString("\n") { it.exception?.toString() ?: it.message },
+                        res.reports.find { it.exception != null }?.exception
+                    )
+                )
         }
     }
 }

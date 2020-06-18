@@ -19,10 +19,14 @@ public class Exec {
     void exec(Sam sam) { sam.run("a", "b") }
 }
 
-// FILE: test.kts
+// FILE: test_with_error.kts
 val e = Exec()
 
 e.exec <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>a, <!CANNOT_INFER_PARAMETER_TYPE!>b<!><!> -> System.out.println(a) }<!>
+
+// FILE: test.kts
+val e = Exec()
+
 e.exec { b ->
     val a: String = this
     System.out.println(a)
