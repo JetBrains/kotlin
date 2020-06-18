@@ -73,6 +73,16 @@ public data class KTypeProjection constructor(
      */
     public val type: KType?
 ) {
+
+    init {
+        require((variance == null) == (type == null)) {
+            if (variance == null)
+                "Star projection must have no type specified."
+            else
+                "The projection variance $variance requires type to be specified."
+        }
+    }
+
     override fun toString(): String = when (variance) {
         null -> "*"
         KVariance.INVARIANT -> type.toString()
