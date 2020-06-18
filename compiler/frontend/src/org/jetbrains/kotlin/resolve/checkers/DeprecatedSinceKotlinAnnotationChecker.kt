@@ -22,12 +22,12 @@ object DeprecatedSinceKotlinAnnotationChecker : DeclarationChecker {
 
         val deprecatedAnnotation = descriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated)
 
-        val deprecatedSinceAnnotationName = deprecatedSinceAnnotationPsi.typeReference
+        val deprecatedSinceAnnotationName = deprecatedSinceAnnotationPsi.typeReference ?: return
 
         if (deprecatedAnnotation == null) {
             context.trace.report(
                 Errors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED.on(
-                    deprecatedSinceAnnotationName ?: return
+                    deprecatedSinceAnnotationName
                 )
             )
             return
@@ -36,7 +36,7 @@ object DeprecatedSinceKotlinAnnotationChecker : DeclarationChecker {
         if (deprecatedAnnotation.argumentValue(Deprecated::level.name) != null) {
             context.trace.report(
                 Errors.DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL.on(
-                    deprecatedSinceAnnotationName ?: return
+                    deprecatedSinceAnnotationName
                 )
             )
             return
@@ -48,7 +48,7 @@ object DeprecatedSinceKotlinAnnotationChecker : DeclarationChecker {
         if (!lessOrNull(warningSince, errorSince) || !lessOrNull(errorSince, hiddenSince) || !lessOrNull(warningSince, hiddenSince)) {
             context.trace.report(
                 Errors.DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS.on(
-                    deprecatedSinceAnnotationName ?: return
+                    deprecatedSinceAnnotationName
                 )
             )
             return
