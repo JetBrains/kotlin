@@ -1,9 +1,14 @@
-@file: Suppress("DEPRECATION")
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+@file: Suppress("DEPRECATION_ERROR")
 package jquery
 
 import org.w3c.dom.Element
 
-@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.", level = DeprecationLevel.ERROR)
 public external class JQuery() {
     public fun addClass(className: String): JQuery
     public fun addClass(f: (Int, String) -> String): JQuery
@@ -44,7 +49,7 @@ public external class JQuery() {
     public fun `val`(): String?
 }
 
-@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.", level = DeprecationLevel.ERROR)
 open public external class MouseEvent() {
     public val pageX: Double
     public val pageY: Double
@@ -52,26 +57,26 @@ open public external class MouseEvent() {
     public fun isDefaultPrevented(): Boolean
 }
 
-@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.", level = DeprecationLevel.ERROR)
 public external class MouseClickEvent() : MouseEvent {
     public val which: Int
 }
 
-@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.", level = DeprecationLevel.ERROR)
 @JsName("$")
 public external fun jq(selector: String): JQuery
-@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.", level = DeprecationLevel.ERROR)
 @JsName("$")
 public external fun jq(selector: String, context: Element): JQuery
-@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.", level = DeprecationLevel.ERROR)
 @JsName("$")
 public external fun jq(callback: () -> Unit): JQuery
-@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.", level = DeprecationLevel.ERROR)
 @JsName("$")
 public external fun jq(obj: JQuery): JQuery
-@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.", level = DeprecationLevel.ERROR)
 @JsName("$")
 public external fun jq(el: Element): JQuery
-@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.")
+@Deprecated("Use declarations from 'https://bintray.com/kotlin/js-externals/kotlin-js-jquery' package instead.", level = DeprecationLevel.ERROR)
 @JsName("$")
 public external fun jq(): JQuery
