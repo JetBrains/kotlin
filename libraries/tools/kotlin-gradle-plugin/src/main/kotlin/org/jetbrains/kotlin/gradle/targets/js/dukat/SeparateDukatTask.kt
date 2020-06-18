@@ -19,7 +19,7 @@ constructor(
     override val considerGeneratingFlag: Boolean = false
 
     @get:OutputDirectory
-    override var destDir: File by property {
+    override var destinationDir: File by property {
         project.projectDir.resolve("externals")
     }
 }
