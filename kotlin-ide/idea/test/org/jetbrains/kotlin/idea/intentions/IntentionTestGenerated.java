@@ -6426,6 +6426,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/convertToBlockBody/nothingFun.kt");
         }
 
+        @TestMetadata("overrideWithPlatformType.kt")
+        public void testOverrideWithPlatformType() throws Exception {
+            runTest("idea/testData/intentions/convertToBlockBody/overrideWithPlatformType.kt");
+        }
+
         @TestMetadata("setter.kt")
         public void testSetter() throws Exception {
             runTest("testData/intentions/convertToBlockBody/setter.kt");
