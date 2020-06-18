@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.commonizer.Parameters
 import org.jetbrains.kotlin.descriptors.commonizer.Target
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.dimension
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
@@ -166,7 +167,7 @@ class TargetDeclarationsBuilderComponents(
 
 fun CirRootNode.createGlobalBuilderComponents(
     storageManager: StorageManager,
-    statsCollector: StatsCollector?
+    parameters: Parameters
 ): GlobalDeclarationsBuilderComponents {
     val cache = DeclarationsBuilderCache(dimension)
 
@@ -189,7 +190,7 @@ fun CirRootNode.createGlobalBuilderComponents(
         )
     }
 
-    return GlobalDeclarationsBuilderComponents(storageManager, targetContexts, cache, statsCollector)
+    return GlobalDeclarationsBuilderComponents(storageManager, targetContexts, cache, parameters.statsCollector)
 }
 
 interface TypeParameterResolver {

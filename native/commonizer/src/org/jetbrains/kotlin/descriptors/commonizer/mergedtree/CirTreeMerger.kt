@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.commonizer.Parameters
 import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
@@ -20,17 +21,18 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 class CirTreeMerger(
     private val storageManager: StorageManager,
-    private val targetProviders: List<TargetProvider>
+    private val parameters: Parameters
 ) {
-    private val size = targetProviders.size
+    private val size = parameters.targetProviders.size
     private lateinit var cacheRW: CirClassifiersCacheImpl
 
     fun merge(): CirRootNode {
         val rootNode: CirRootNode = buildRootNode(storageManager, size)
         cacheRW = rootNode.cache
 
-        targetProviders.forEachIndexed { targetIndex, targetProvider ->
+        parameters.targetProviders.forEachIndexed { targetIndex, targetProvider ->
             processTarget(rootNode, targetIndex, targetProvider)
+            parameters.progressLogger?.invoke("Loaded declarations for [${targetProvider.target.name}]")
             System.gc()
         }
 

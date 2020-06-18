@@ -20,13 +20,14 @@ fun runCommonization(parameters: Parameters): Result {
     val storageManager = LockBasedStorageManager("Declaration descriptors commonization")
 
     // build merged tree:
-    val mergedTree = CirTreeMerger(storageManager, parameters.targetProviders).merge()
+    val mergedTree = CirTreeMerger(storageManager, parameters).merge()
 
     // commonize:
     mergedTree.accept(CommonizationVisitor(mergedTree), Unit)
+    parameters.progressLogger?.invoke("Commonized declarations")
 
     // build resulting descriptors:
-    val components = mergedTree.createGlobalBuilderComponents(storageManager, parameters.statsCollector)
+    val components = mergedTree.createGlobalBuilderComponents(storageManager, parameters)
     mergedTree.accept(DeclarationsBuilderVisitor1(components), emptyList())
     mergedTree.accept(DeclarationsBuilderVisitor2(components), emptyList())
 
@@ -37,6 +38,8 @@ fun runCommonization(parameters: Parameters): Result {
 
         modulesByTargets[target] = components.cache.getAllModules(it.index)
     }
+
+    parameters.progressLogger?.invoke("Prepared new descriptors")
 
     return CommonizationPerformed(modulesByTargets)
 }

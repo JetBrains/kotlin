@@ -47,8 +47,9 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         val copyEndorsedLibs = getOptional<Boolean, BooleanOptionType> { it == "copy-endorsed-libs" } ?: false
         val statsType = getOptional<StatsType, StatsTypeOptionType> { it == "log-stats" } ?: StatsType.NONE
 
+        val targetNames = targets.joinToString { "[${it.name}]" }
         val descriptionSuffix = estimateLibrariesCount(distribution, targets)?.let { " ($it items)" } ?: ""
-        val description = "${logPrefix}Preparing commonized Kotlin/Native libraries for targets $targets$descriptionSuffix"
+        val description = "${logPrefix}Preparing commonized Kotlin/Native libraries for targets $targetNames$descriptionSuffix"
 
         println(description)
 
