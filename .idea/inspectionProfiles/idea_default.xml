@@ -1382,6 +1382,11 @@
         <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;import com.intellij.psi.util.PsiTreeUtil &#10;&#10;def member = PsiTreeUtil.getParentOfType(__context__, PsiMember)&#10;if ((member instanceof PsiClassInitializer || member instanceof PsiField) &amp;&amp; member.hasModifierProperty(PsiModifier.STATIC)) {&#10;  def clazz = member.parent&#10;  def target = C.resolve()&#10;  def targetName = target?.qualifiedName&#10;  target != null &amp;&amp; clazz != target &amp;&amp; !target.qualifiedName.startsWith(&quot;java.&quot;)&#10;}&#10;else false&quot;" within="" contains="" />
         <constraint name="C" within="" contains="" />
       </searchConfiguration>
+      <searchConfiguration name="Comparing Swift Types without context" description="Whether two types are equal depends on the context" suppressId="swift.type.equals" problemDescriptor="Use equalsInContext" text="$ref1$.equals($ref2$)" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="ref2" nameOfExprType="com\.jetbrains\.swift\.psi\.types\.SwiftType" exprTypeWithinHierarchy="true" within="" contains="" />
+        <constraint name="ref1" nameOfExprType="com\.jetbrains\.swift\.psi\.types\.SwiftType" exprTypeWithinHierarchy="true" within="" contains="" />
+      </searchConfiguration>
     </inspection_tool>
     <inspection_tool class="SafeVarargsDetector" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SeamAnnotationIncorrectSignatureInspection" enabled="false" level="ERROR" enabled_by_default="false" />
