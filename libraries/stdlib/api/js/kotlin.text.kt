@@ -1225,6 +1225,9 @@ public final class StringBuilder : kotlin.text.Appendable, kotlin.CharSequence {
 
     public open override fun append(value: kotlin.CharSequence?, startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.text.StringBuilder
 
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Provided for binary compatibility.")
+    public final fun append(value: kotlin.String): kotlin.text.StringBuilder
+
     @kotlin.SinceKotlin(version = "1.3")
     public final fun append(value: kotlin.String?): kotlin.text.StringBuilder
 
@@ -1284,6 +1287,9 @@ public final class StringBuilder : kotlin.text.Appendable, kotlin.CharSequence {
     @kotlin.SinceKotlin(version = "1.4")
     @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final fun insert(index: kotlin.Int, value: kotlin.CharSequence?): kotlin.text.StringBuilder
+
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Provided for binary compatibility.")
+    public final fun insert(index: kotlin.Int, value: kotlin.String): kotlin.text.StringBuilder
 
     @kotlin.SinceKotlin(version = "1.4")
     @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})

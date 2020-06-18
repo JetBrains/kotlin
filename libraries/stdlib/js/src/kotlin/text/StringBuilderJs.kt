@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -113,6 +113,9 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
         string += value.concatToString()
         return this
     }
+
+    @Deprecated("Provided for binary compatibility.", level = DeprecationLevel.HIDDEN)
+    fun append(value: String): StringBuilder = append(value)
 
     /**
      * Appends the specified string [value] to this string builder and returns this instance.
@@ -278,6 +281,9 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
         string = string.substring(0, index) + value.toString() + string.substring(index)
         return this
     }
+
+    @Deprecated("Provided for binary compatibility.", level = DeprecationLevel.HIDDEN)
+    fun insert(index: Int, value: String): StringBuilder = insert(index, value)
 
     /**
      * Inserts the string [value] into this string builder at the specified [index] and returns this instance.
