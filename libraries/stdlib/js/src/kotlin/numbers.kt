@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -59,7 +59,7 @@ public actual fun Int.countOneBits(): Int {
  */
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @kotlin.internal.InlineOnly
 public actual inline fun Int.countLeadingZeroBits(): Int = kotlin.js.Math.clz32(this)
 
