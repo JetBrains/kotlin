@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
+import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.getSinceVersion
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -29,6 +31,15 @@ object DeprecatedSinceKotlinAnnotationChecker : DeclarationChecker {
         val deprecatedAnnotation = descriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated)
 
         val deprecatedSinceAnnotationName = deprecatedSinceAnnotationPsi.typeReference ?: return
+
+        if (descriptor.fqNameOrNull()?.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) == false) {
+            context.trace.report(
+                Errors.DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE.on(
+                    deprecatedSinceAnnotationName
+                )
+            )
+            return
+        }
 
         if (deprecatedAnnotation == null) {
             context.trace.report(

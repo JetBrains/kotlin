@@ -1,3 +1,5 @@
+package kotlin
+
 @Deprecated("")
 @<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>DeprecatedSinceKotlin<!>("", errorSince = "1.0")
 fun test1() {}
