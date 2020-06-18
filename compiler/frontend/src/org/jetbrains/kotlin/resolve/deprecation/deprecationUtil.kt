@@ -26,6 +26,19 @@ fun Deprecation.deprecatedByAnnotationReplaceWithExpression(): String? = (this a
 fun AnnotationDescriptor.getSinceVersion(name: String): ApiVersion? =
     argumentValue(name)?.safeAs<StringValue>()?.value?.takeUnless(String::isEmpty)?.let(ApiVersion.Companion::parse)
 
+fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVersion: ApiVersion): DeprecationLevelValue? {
+    val hiddenSince = annotation.getSinceVersion("hiddenSince")
+    if (hiddenSince != null && apiVersion >= hiddenSince) return HIDDEN
+
+    val errorSince = annotation.getSinceVersion("errorSince")
+    if (errorSince != null && apiVersion >= errorSince) return ERROR
+
+    val warningSince = annotation.getSinceVersion("warningSince")
+    if (warningSince != null && apiVersion >= warningSince) return WARNING
+
+    return null
+}
+
 internal fun createDeprecationDiagnostic(
     element: PsiElement, deprecation: Deprecation, languageVersionSettings: LanguageVersionSettings
 ): Diagnostic {
