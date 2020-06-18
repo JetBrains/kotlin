@@ -1117,6 +1117,8 @@ public abstract class KotlinBuiltIns {
         return classFqNameEquals(descriptor, FQ_NAMES.cloneable);
     }
 
+    // This function only checks presence of Deprecated annotation at declaration-site, it doesn't take into account @DeprecatedSinceKotlin
+    // To check that a referenced descriptor is actually deprecated at call-site, use DeprecationResolver
     public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor.getOriginal().getAnnotations().hasAnnotation(FQ_NAMES.deprecated)) return true;
 
