@@ -52,6 +52,10 @@ sealed class GradleBuildRoot(
     fun fileChanged(filePath: String, ts: Long) {
         lastModifiedFiles.fileChanged(ts, filePath)
     }
+
+    fun isImportingInProgress(): Boolean {
+        return importing.get() != ImportingStatus.updated
+    }
 }
 
 sealed class WithoutScriptModels(
