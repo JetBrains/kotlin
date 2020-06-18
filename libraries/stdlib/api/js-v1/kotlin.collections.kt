@@ -1043,8 +1043,10 @@ public operator fun kotlin.ByteArray.contains(element: kotlin.Byte): kotlin.Bool
 
 public operator fun kotlin.CharArray.contains(element: kotlin.Char): kotlin.Boolean
 
+@kotlin.Deprecated(message = "The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'any { it == element }' instead to continue using this behavior, or '.asList().contains(element: T)' to get the same search behavior as in a list.", replaceWith = kotlin.ReplaceWith(expression = "any { it == element }", imports = {}))
 public operator fun kotlin.DoubleArray.contains(element: kotlin.Double): kotlin.Boolean
 
+@kotlin.Deprecated(message = "The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'any { it == element }' instead to continue using this behavior, or '.asList().contains(element: T)' to get the same search behavior as in a list.", replaceWith = kotlin.ReplaceWith(expression = "any { it == element }", imports = {}))
 public operator fun kotlin.FloatArray.contains(element: kotlin.Float): kotlin.Boolean
 
 public operator fun kotlin.IntArray.contains(element: kotlin.Int): kotlin.Boolean
@@ -3259,8 +3261,10 @@ public fun kotlin.ByteArray.indexOf(element: kotlin.Byte): kotlin.Int
 
 public fun kotlin.CharArray.indexOf(element: kotlin.Char): kotlin.Int
 
+@kotlin.Deprecated(message = "The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'indexOfFirst { it == element }' instead to continue using this behavior, or '.asList().indexOf(element: T)' to get the same search behavior as in a list.", replaceWith = kotlin.ReplaceWith(expression = "indexOfFirst { it == element }", imports = {}))
 public fun kotlin.DoubleArray.indexOf(element: kotlin.Double): kotlin.Int
 
+@kotlin.Deprecated(message = "The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'indexOfFirst { it == element }' instead to continue using this behavior, or '.asList().indexOf(element: T)' to get the same search behavior as in a list.", replaceWith = kotlin.ReplaceWith(expression = "indexOfFirst { it == element }", imports = {}))
 public fun kotlin.FloatArray.indexOf(element: kotlin.Float): kotlin.Int
 
 public fun kotlin.IntArray.indexOf(element: kotlin.Int): kotlin.Int
@@ -3614,8 +3618,10 @@ public fun kotlin.ByteArray.lastIndexOf(element: kotlin.Byte): kotlin.Int
 
 public fun kotlin.CharArray.lastIndexOf(element: kotlin.Char): kotlin.Int
 
+@kotlin.Deprecated(message = "The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'indexOfLast { it == element }' instead to continue using this behavior, or '.asList().lastIndexOf(element: T)' to get the same search behavior as in a list.", replaceWith = kotlin.ReplaceWith(expression = "indexOfLast { it == element }", imports = {}))
 public fun kotlin.DoubleArray.lastIndexOf(element: kotlin.Double): kotlin.Int
 
+@kotlin.Deprecated(message = "The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'indexOfLast { it == element }' instead to continue using this behavior, or '.asList().lastIndexOf(element: T)' to get the same search behavior as in a list.", replaceWith = kotlin.ReplaceWith(expression = "indexOfLast { it == element }", imports = {}))
 public fun kotlin.FloatArray.lastIndexOf(element: kotlin.Float): kotlin.Int
 
 public fun kotlin.IntArray.lastIndexOf(element: kotlin.Int): kotlin.Int
