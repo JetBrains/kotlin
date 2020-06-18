@@ -736,7 +736,11 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
                 @Composable
                 fun TestHost() {
                    println("START: Iteration - ${'$'}iterations")
-                   Button(id=42, onClick=invalidate)
+                   val recompose = invalidate
+                   emitView(::Button) { 
+                     it.id=42 
+                     it.setOnClickListener(View.OnClickListener { recompose() })
+                   }
                    Example("Iteration ${'$'}iterations")
                    println("END  : Iteration - ${'$'}iterations")
                    validate()

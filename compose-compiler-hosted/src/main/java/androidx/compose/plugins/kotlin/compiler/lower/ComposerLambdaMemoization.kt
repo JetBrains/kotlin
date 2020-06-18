@@ -21,7 +21,6 @@ import androidx.compose.plugins.kotlin.ComposeUtils.composeInternalFqName
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.hasUntrackedAnnotation
 import androidx.compose.plugins.kotlin.irTrace
-import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
@@ -501,9 +500,6 @@ class ComposerLambdaMemoization(
                     )
                 )
                     return true
-                if (it.isEmitInline(context.bindingContext)) {
-                    return true
-                }
             }
         }
         return false

@@ -16,8 +16,9 @@
 
 package androidx.compose.plugins.kotlin
 
+import android.view.View
 import androidx.compose.Composer
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.robolectric.RuntimeEnvironment
 import java.net.URLClassLoader
 
 abstract class AbstractLoweringTests : AbstractCodegenTest() {
@@ -28,10 +29,23 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
            import android.content.Context
            import android.widget.*
            import androidx.compose.*
+           $COMPOSE_VIEW_STUBS_IMPORTS
 
            $text
 
+           $COMPOSE_VIEW_STUBS
+
         """, dumpClasses)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun View.getComposedSet(tagId: Int): Set<String>? = getTag(tagId) as? Set<String>
+
+    protected fun execute(block: () -> Unit) {
+        val scheduler = RuntimeEnvironment.getMasterScheduler()
+        scheduler.pause()
+        block()
+        scheduler.advanceToLastPostedRunnable()
     }
 
     fun codegenNoImports(text: String, dumpClasses: Boolean = false) {
@@ -64,10 +78,11 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
 
         val compiledClasses = classLoader(
             """
-       import android.content.Context
        import android.widget.*
        import androidx.compose.*
        import androidx.ui.androidview.adapters.*
+
+       $COMPOSE_VIEW_STUBS_IMPORTS
 
        $supportingCode
 
@@ -78,6 +93,8 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
            $composeCode
          }
        }
+
+       $COMPOSE_VIEW_STUBS
     """, fileName, dumpClasses
         )
 
@@ -112,23 +129,7 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
         return compose { composer, _, _ ->
             val values = valuesFactory()
             val arguments = values.map { it.value }.toTypedArray()
-            testMethod.invoke(instanceOfClass, *arguments, composer, 0, 0)
+            testMethod.invoke(instanceOfClass, *arguments, composer, 0, 1)
         }
-    }
-
-    private fun ResolvedCall<*>.isEmit(): Boolean = candidateDescriptor is ComposableEmitDescriptor
-    private fun ResolvedCall<*>.isCall(): Boolean =
-        candidateDescriptor is ComposableFunctionDescriptor
-
-    private val callPattern = Regex("(<normal>)|(<emit>)|(<call>)")
-    private fun extractCarets(text: String): Pair<String, List<Pair<Int, String>>> {
-        val indices = mutableListOf<Pair<Int, String>>()
-        var offset = 0
-        val src = callPattern.replace(text) {
-            indices.add(it.range.first - offset to it.value)
-            offset += it.range.last - it.range.first + 1
-            ""
-        }
-        return src to indices
     }
 }

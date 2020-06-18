@@ -21,7 +21,6 @@ import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.generateSymbols
 import androidx.compose.plugins.kotlin.hasComposableAnnotation
 import androidx.compose.plugins.kotlin.irTrace
-import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -612,19 +611,7 @@ class ComposerParamTransformer(
 
                 override fun visitCall(expression: IrCall): IrExpression {
                     val expr = if (!isNestedScope) {
-                        expression.withComposerParamIfNeeded(composerParam).also { call ->
-                            if (
-                                fn.isInline &&
-                                call !== expression &&
-                                call.isInlineParameterLambdaInvoke()
-                            ) {
-                                context.irTrace.record(
-                                    ComposeWritableSlices.IS_INLINE_COMPOSABLE_CALL,
-                                    call,
-                                    true
-                                )
-                            }
-                        }
+                        expression.withComposerParamIfNeeded(composerParam)
                     } else
                         expression
                     return super.visitCall(expr)
@@ -669,13 +656,6 @@ class ComposerParamTransformer(
     }
 
     private fun IrFunction.isEmitInlineChildrenLambda(): Boolean {
-        descriptor.findPsi()?.let { psi ->
-            (psi as? KtFunctionLiteral)?.let {
-                if (it.isEmitInline(context.bindingContext)) {
-                    return true
-                }
-            }
-        }
         return false
     }
 }

@@ -116,6 +116,80 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         if (dumpClasses) dumpClasses(loader)
     }
 
+    protected val COMPOSE_VIEW_STUBS_IMPORTS = """
+        import android.view.View
+        import android.widget.TextView
+        import android.widget.Button
+        import android.view.Gravity
+        import android.widget.LinearLayout
+        import androidx.compose.Composable
+        import androidx.ui.viewinterop.emitView
+    """.trimIndent()
+
+    protected val COMPOSE_VIEW_STUBS = """
+        @Composable
+        fun TextView(
+            id: Int = 0,
+            gravity: Int = Gravity.TOP or Gravity.START,
+            text: String = "",
+            onClick: (() -> Unit)? = null,
+            onClickListener: View.OnClickListener? = null
+        ) {
+            emitView(::TextView) {
+                if (id != 0) it.id = id
+                it.text = text
+                it.gravity = gravity
+                if (onClickListener != null) it.setOnClickListener(onClickListener)
+                if (onClick != null) it.setOnClickListener(View.OnClickListener { onClick() })
+            }
+        }
+
+        @Composable
+        fun Button(
+            id: Int = 0,
+            text: String = "",
+            onClick: (() -> Unit)? = null,
+            onClickListener: View.OnClickListener? = null
+        ) {
+            emitView(::Button) {
+                if (id != 0) it.id = id
+                it.text = text
+                if (onClickListener != null) it.setOnClickListener(onClickListener)
+                if (onClick != null) it.setOnClickListener(View.OnClickListener { onClick() })
+            }
+        }
+
+        @Composable
+        fun LinearLayout(
+            id: Int = 0,
+            orientation: Int = LinearLayout.VERTICAL,
+            onClickListener: View.OnClickListener? = null,
+            children: @Composable () -> Unit
+        ) {
+            emitView(
+                ::LinearLayout,
+                {
+                    if (id != 0) it.id = id
+                    if (onClickListener != null) it.setOnClickListener(onClickListener)
+                    it.orientation = orientation
+                },
+                children
+            )
+        }
+    """.trimIndent()
+
+    protected fun testCompileWithViewStubs(source: String, dumpClasses: Boolean = false) =
+        testCompile(
+        """
+            $COMPOSE_VIEW_STUBS_IMPORTS
+
+            $source
+
+            $COMPOSE_VIEW_STUBS
+        """,
+        dumpClasses
+    )
+
     protected fun testCompileEmittable(source: String, dumpClasses: Boolean = false) = testCompile(
         """
         @file:OptIn(

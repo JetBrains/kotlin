@@ -21,7 +21,6 @@ import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.irTrace
-import androidx.compose.plugins.kotlin.isEmitInline
 import androidx.compose.plugins.kotlin.isMarkedStable
 import androidx.compose.plugins.kotlin.isSpecialType
 import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
@@ -304,9 +303,6 @@ abstract class AbstractComposeLowering(
                     )
                 )
                     return true
-                if (it.isEmitInline(context.bindingContext)) {
-                    return true
-                }
             }
         }
         return false

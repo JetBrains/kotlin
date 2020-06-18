@@ -357,34 +357,6 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
-    fun testSimpleEmits(): Unit = checkApi(
-        """
-            import android.widget.LinearLayout
-            import android.widget.TextView
-
-            @Composable fun Example() {
-                LinearLayout(id=123) {
-                    TextView(text="Hello World")
-                }
-            }
-        """,
-        """
-            public final class TestKt {
-              public final static Example(Landroidx/compose/Composer;II)V
-              final static INNERCLASS TestKt%Example%4 null null
-            }
-            final class TestKt%Example%4 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function3 {
-              <init>(I)V
-              public final invoke(Landroidx/compose/Composer;II)V
-              private final synthetic I %%changed
-              public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-              final static INNERCLASS TestKt%Example%4 null null
-              OUTERCLASS TestKt Example (Landroidx/compose/Composer;II)V
-            }
-        """
-    )
-
-    @Test
     fun testCorrectComposerPassed2(): Unit = checkComposerParam(
         """
             var a: Composer<*>? = null
@@ -468,21 +440,6 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
                                 assertComposer(a)
                             }
                         }
-                    }
-                }
-            }
-        """
-    )
-
-    @Test
-    fun testCorrectComposerPassed6(): Unit = checkComposerParam(
-        """
-            import android.widget.TextView
-
-            fun run() {
-                invokeComposable(makeComposer()) {
-                    LinearLayout(id=123) {
-                        TextView(text="Hello World")
                     }
                 }
             }
@@ -935,33 +892,6 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     }
 
     @Test
-    fun testCustomComposerCall(): Unit = validateBytecode(
-        """
-        class VectorScope(val composer: VectorComposer)
-
-        @Composable fun VectorScope.Test(children: @Composable VectorScope.() -> Unit) {
-            children()
-        }
-
-        internal class AnyApplyAdapter : ApplyAdapter<Any> {
-            override fun Any.start(instance: Any) {}
-            override fun Any.insertAt(index: Int, instance: Any) {}
-            override fun Any.removeAt(index: Int, count: Int) {}
-            override fun Any.move(from: Int, to: Int, count: Int) {}
-            override fun Any.end(instance: Any, parent: Any) {}
-        }
-
-        class VectorComposer(
-            val root: Any,
-            slotTable: SlotTable,
-            recomposer: Recomposer
-        ) : Composer<Any>(slotTable, Applier(root, AnyApplyAdapter()), recomposer)
-        """
-    ) {
-        it.contains("INVOKEVIRTUAL androidx/compose/Composer.startGroup")
-    }
-
-    @Test
     fun testCallingProperties(): Unit = checkApi(
         """
             @Composable val bar: Int get() { return 123 }
@@ -1207,43 +1137,6 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               private final synthetic I %%changed
               public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
               final static INNERCLASS TestKt%Test%2 null null
-              OUTERCLASS TestKt Test (Landroidx/compose/Composer;II)V
-            }
-        """
-    )
-
-    @Test
-    fun testExtensionSetterEmit(): Unit = checkApi(
-        """
-            import android.widget.TextView
-
-            private fun TextView.setRef(ref: (TextView) -> Unit) {}
-
-            @Composable
-            fun Test() {
-                TextView(ref = {  })
-            }
-        """,
-        """
-            public final class TestKt {
-              private final static setRef(Landroid/widget/TextView;Lkotlin/jvm/functions/Function1;)V
-              public final static Test(Landroidx/compose/Composer;II)V
-              final static INNERCLASS TestKt%Test%1%1 null null
-              final static INNERCLASS TestKt%Test%4 null null
-            }
-            final class TestKt%Test%1%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function1 {
-              <init>()V
-              public final invoke(Landroid/widget/TextView;)V
-              public synthetic bridge invoke(Ljava/lang/Object;)Ljava/lang/Object;
-              final static INNERCLASS TestKt%Test%1%1 null null
-              OUTERCLASS TestKt Test (Landroidx/compose/Composer;II)V
-            }
-            final class TestKt%Test%4 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function3 {
-              <init>(I)V
-              public final invoke(Landroidx/compose/Composer;II)V
-              private final synthetic I %%changed
-              public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-              final static INNERCLASS TestKt%Test%4 null null
               OUTERCLASS TestKt Test (Landroidx/compose/Composer;II)V
             }
         """

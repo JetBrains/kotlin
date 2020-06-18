@@ -161,40 +161,6 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testCrossinlineEmittable(): Unit = ensureSetup {
-        compile(
-            mapOf(
-                "library module" to mapOf(
-                    "x/A.kt" to """
-                    package x
-
-                    import androidx.compose.Composable
-                    import android.widget.LinearLayout
-
-                    @Composable inline fun row(crossinline children: @Composable () -> Unit) {
-                        LinearLayout {
-                            children()
-                        }
-                    }
-                 """
-                ),
-                "Main" to mapOf(
-                    "b/B.kt" to """
-                    package b
-
-                    import androidx.compose.Composable
-                    import x.row
-
-                    @Composable fun Test() {
-                        row { }
-                    }
-                """
-                )
-            )
-        )
-    }
-
-    @Test
     fun testParentNotInitializedBug(): Unit = ensureSetup {
         compile(
             mapOf(
@@ -743,6 +709,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                    import android.widget.*
                    import androidx.compose.*
+                   import androidx.ui.viewinterop.emitView
                    import my.test.lib.*
 
                    var bar = 0
@@ -766,7 +733,10 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                    @Composable
                    fun Foo(bar: Int) {
                      InternalComp {
-                       TextView(text="${'$'}bar", id=$tvId)
+                       emitView(::TextView) { 
+                         it.text="${'$'}bar" 
+                         it.id=$tvId
+                       }
                      }
                    }
                 """

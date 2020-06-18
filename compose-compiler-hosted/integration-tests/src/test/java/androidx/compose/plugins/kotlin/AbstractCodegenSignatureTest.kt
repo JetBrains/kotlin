@@ -139,7 +139,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
                 import androidx.compose.*
                 import android.widget.LinearLayout
                 import android.content.Context
-                import androidx.ui.node.UiComposer
+                import androidx.ui.node.UiApplier
 
                 $src
 
@@ -150,12 +150,12 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
 
                 private var __context: Context? = null
 
+                @OptIn(ExperimentalComposeApi::class)
                 fun makeComposer(): Composer<*> {
                     val container = LinearLayout(__context!!)
-                    return UiComposer(
-                        __context!!,
-                        container,
+                    return Composer(
                         SlotTable(),
+                        UiApplier(container),
                         Recomposer.current()
                     )
                 }
