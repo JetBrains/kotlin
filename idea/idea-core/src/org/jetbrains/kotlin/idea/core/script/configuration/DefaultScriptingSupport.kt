@@ -178,7 +178,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                     val forceSkipNotification = skipNotification || autoReloadEnabled
 
                     val intercepted = !forceSkipNotification && async.any {
-                        it.interceptBackgroundLoading(virtualFile) {
+                        it.interceptBackgroundLoading(virtualFile, isFirstLoad) {
                             runAsyncLoaders(file, virtualFile, scriptDefinition, listOf(it), true)
                         }
                     }
@@ -263,7 +263,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
 
             setLoadedConfiguration(file, newResult)
 
-            LoadScriptConfigurationNotificationFactory.hideNotification(file, project)
+            hideInterceptedNotification(file)
 
             val newConfiguration = newResult.configuration
             if (newConfiguration == null) {
@@ -340,7 +340,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         }
 
         // this notification can be shown before something will be in cache
-        LoadScriptConfigurationNotificationFactory.hideNotification(file, project)
+        hideInterceptedNotification(file)
     }
 
     fun updateScriptDefinitionsReferences() {
@@ -348,10 +348,16 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         cache.allApplied().forEach { (file, _) ->
             saveReports(file, listOf())
             file.removeScriptDependenciesNotificationPanel(project)
-            LoadScriptConfigurationNotificationFactory.hideNotification(file, project)
+            hideInterceptedNotification(file)
         }
 
         cache.clear()
+    }
+
+    fun hideInterceptedNotification(file: VirtualFile) {
+        loaders.forEach {
+            it.hideInterceptedNotification(file)
+        }
     }
 
     companion object {

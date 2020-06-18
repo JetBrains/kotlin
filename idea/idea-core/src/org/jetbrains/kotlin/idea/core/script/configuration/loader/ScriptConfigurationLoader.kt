@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 interface ScriptConfigurationLoader {
     fun shouldRunInBackground(scriptDefinition: ScriptDefinition): Boolean = false
 
-    fun interceptBackgroundLoading(file: VirtualFile, doLoad: () -> Unit): Boolean = false
+    fun interceptBackgroundLoading(file: VirtualFile, isFirstLoad: Boolean, doLoad: () -> Unit): Boolean = false
+
+    fun hideInterceptedNotification(file: VirtualFile) = Unit
 
     /**
      * Implementation should load configuration and call `context.suggestNewConfiguration` or `saveNewConfiguration`.
