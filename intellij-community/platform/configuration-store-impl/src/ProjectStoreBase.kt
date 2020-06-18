@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import com.intellij.util.containers.isNullOrEmpty
+import com.intellij.util.io.Ksuid
 import com.intellij.util.io.exists
 import com.intellij.util.io.move
 import com.intellij.util.io.systemIndependentPath
