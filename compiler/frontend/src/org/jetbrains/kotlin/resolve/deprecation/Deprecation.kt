@@ -108,19 +108,6 @@ internal sealed class DeprecatedByAnnotation(
             }
             return StandardDeprecated(deprecatedAnnotation, target, propagatesToOverrides)
         }
-
-        private fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVersion: ApiVersion): DeprecationLevelValue? {
-            val hiddenSince = annotation.getSinceVersion("hiddenSince")
-            if (hiddenSince != null && apiVersion >= hiddenSince) return HIDDEN
-
-            val errorSince = annotation.getSinceVersion("errorSince")
-            if (errorSince != null && apiVersion >= errorSince) return ERROR
-
-            val warningSince = annotation.getSinceVersion("warningSince")
-            if (warningSince != null && apiVersion >= warningSince) return WARNING
-
-            return null
-        }
     }
 }
 

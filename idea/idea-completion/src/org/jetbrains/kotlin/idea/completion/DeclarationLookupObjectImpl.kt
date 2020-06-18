@@ -9,11 +9,14 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDocCommentOwner
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.deprecation.computeLevelForDeprecatedSinceKotlin
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 
 /**
@@ -56,8 +59,22 @@ abstract class DeclarationLookupObjectImpl(
     override val isDeprecated: Boolean
         get() {
             return if (descriptor != null)
-                KotlinBuiltIns.isDeprecated(descriptor)
+                isDeprecatedAtCallSite(descriptor, psiElement?.languageVersionSettings)
             else
                 (psiElement as? PsiDocCommentOwner)?.isDeprecated == true
         }
+
+}
+
+// This function is kind of a hack to avoid using DeprecationResolver as it's hard to preserve same resolutionFacade for descriptor
+private fun isDeprecatedAtCallSite(descriptor: DeclarationDescriptor, languageVersionSettings: LanguageVersionSettings?): Boolean {
+    val isDeprecatedAtDeclarationSite = KotlinBuiltIns.isDeprecated(descriptor)
+    if (languageVersionSettings == null) return isDeprecatedAtDeclarationSite
+
+    if (!isDeprecatedAtDeclarationSite) return false
+
+    return computeLevelForDeprecatedSinceKotlin(
+        descriptor.original.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecatedSinceKotlin) ?: return true,
+        languageVersionSettings.apiVersion
+    ) != null
 }
