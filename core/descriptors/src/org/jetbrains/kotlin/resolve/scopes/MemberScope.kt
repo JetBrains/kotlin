@@ -46,8 +46,6 @@ interface MemberScope : ResolutionScope {
             p.println("Empty member scope")
         }
 
-        override fun definitelyDoesNotContainName(name: Name): Boolean = true
-
         override fun getFunctionNames() = emptySet<Name>()
         override fun getVariableNames() = emptySet<Name>()
         override fun getClassifierNames() = emptySet<Name>()
