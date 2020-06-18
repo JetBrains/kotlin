@@ -32,11 +32,16 @@ internal class ResettableClockMark {
         }
     }
 
-    private val startMark = currentTimeMillis()
-    private var lastMark = startMark
+    private var startMark: Long = 0
+    private var lastMark: Long = 0
 
     fun elapsedSinceLast(): Period = Period(lastMark, currentTimeMillis()).also { lastMark = it.end }
     fun elapsedSinceStart(): Period = Period(startMark, currentTimeMillis())
+
+    fun reset() {
+        startMark = currentTimeMillis()
+        lastMark = startMark
+    }
 }
 
 // TODO: this is how it should be when Kotlin Time will become non-experimental
