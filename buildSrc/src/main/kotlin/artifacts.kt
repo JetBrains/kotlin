@@ -27,6 +27,7 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import plugins.KotlinBuildPublishingPlugin
 
 
@@ -129,10 +130,16 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     }
 
     val sourcesJar = getOrCreateTask<Jar>("sourcesJar") {
+        fun Project.mainJavaPluginSourceSet() = findJavaPluginConvention()?.sourceSets?.findByName("main")
+        fun Project.mainKotlinSourceSet() =
+            (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
+
+        fun Project.sources() = mainJavaPluginSourceSet()?.allSource ?: mainKotlinSourceSet()?.kotlin
+
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         archiveClassifier.set("sources")
 
-        from(project.mainSourceSet.allSource)
+        from(project.sources())
 
         project.configurations.findByName("embedded")?.let { embedded ->
             from(provider {
@@ -141,10 +148,7 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
                     .map { it.id.componentIdentifier }
                     .filterIsInstance<ProjectComponentIdentifier>()
                     .mapNotNull {
-                        project(it.projectPath)
-                            .findJavaPluginConvention()
-                            ?.mainSourceSet
-                            ?.allSource
+                        project(it.projectPath).sources()
                     }
             })
         }

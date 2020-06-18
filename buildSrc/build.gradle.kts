@@ -96,6 +96,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib", embeddedKotlinVersion))
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
     implementation("com.gradle.publish:plugin-publish-plugin:0.11.0")
 
