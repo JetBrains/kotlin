@@ -66,16 +66,19 @@ internal fun addBrowserSupport(module: Module) {
 
 internal fun browserConfiguration(): String {
     return """
-        |val cssSupport = { task: KotlinWebpack
-        |   task.cssSupport.enabled = true
-        |}
-        |
-        |webpackTask {
-        |   cssSupport(it)
-        |}
-        |
-        |runTask {
-        |   cssSupport(it)
-        |}
-    """.trimMargin()
+        webpackTask {
+            cssSupport.enabled = true
+        }
+        
+        runTask {
+            cssSupport.enabled = true
+        }
+        
+        testTask {
+            useKarma {
+                useChromeHeadless()
+                webpackConfig.cssSupport.enabled = true
+           }
+        }
+    """.trimIndent()
 }

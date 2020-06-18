@@ -184,8 +184,16 @@ abstract class AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
                 kotlin {
                     js {
                         $jsSubTargetName {
-                            ${additionalSubTargetSettings() ?: ""}
-                        }
+                        """.trimIndent() +
+                    (
+                            additionalSubTargetSettings()
+                                ?.lines()
+                                ?.joinToString("\n", "\n", "\n") {
+                                    "            $it"
+                                } ?: ""
+                            ) +
+                    """
+                           }
                         binaries.executable()
                     }
                 }
