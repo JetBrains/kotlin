@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.runReadAction
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.LegacyResolverWrapper
 import org.jetbrains.kotlin.scripting.resolve.refineScriptCompilationConfiguration
@@ -60,9 +61,11 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
 
         val inputs = getInputsStamp(vFile, file)
         val scriptingApiResult = try {
-            refineScriptCompilationConfiguration(
-                KtFileScriptSource(file), scriptDefinition, file.project
-            )
+            runReadAction {
+                refineScriptCompilationConfiguration(
+                    KtFileScriptSource(file), scriptDefinition, file.project
+                )
+            }
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
 
