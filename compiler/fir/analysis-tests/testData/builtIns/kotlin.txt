@@ -358,6 +358,20 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
+@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.4)) public final annotation class DeprecatedSinceKotlin : R|kotlin/Annotation| {
+    public final val errorSince: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public final val hiddenSince: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public final val warningSince: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(warningSince: R|kotlin/String| = STUB, errorSince: R|kotlin/String| = STUB, hiddenSince: R|kotlin/String| = STUB): R|kotlin/DeprecatedSinceKotlin|
+
+}
+
 public final enum class DeprecationLevel : R|kotlin/Enum<kotlin/DeprecationLevel>| {
     private constructor(): R|kotlin/DeprecationLevel|
 

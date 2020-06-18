@@ -205,6 +205,16 @@ public interface Comparable</*0*/ in T> {
         public final fun <get-replaceWith>(): kotlin.ReplaceWith
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.4") public final annotation class DeprecatedSinceKotlin : kotlin.Annotation {
+    /*primary*/ public constructor DeprecatedSinceKotlin(/*0*/ warningSince: kotlin.String = ..., /*1*/ errorSince: kotlin.String = ..., /*2*/ hiddenSince: kotlin.String = ...)
+    public final val errorSince: kotlin.String
+        public final fun <get-errorSince>(): kotlin.String
+    public final val hiddenSince: kotlin.String
+        public final fun <get-hiddenSince>(): kotlin.String
+    public final val warningSince: kotlin.String
+        public final fun <get-warningSince>(): kotlin.String
+}
+
 public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> {
     enum entry WARNING
 
