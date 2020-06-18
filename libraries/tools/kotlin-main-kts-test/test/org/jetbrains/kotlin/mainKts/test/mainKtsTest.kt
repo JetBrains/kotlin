@@ -47,6 +47,18 @@ class MainKtsTest {
         assertSucceeded(res)
     }
 
+    @Test
+    fun testResolveHamcrestViaJunit() {
+        val resOk = evalFile(File("$TEST_DATA_ROOT/resolve-hamcrest-via-junit.main.kts"))
+        assertSucceeded(resOk)
+
+        val resErr = evalFile(File("$TEST_DATA_ROOT/resolve-error-hamcrest-via-junit.main.kts"))
+        Assert.assertTrue(
+            resErr is ResultWithDiagnostics.Failure &&
+                    resErr.reports.any { it.message == "Unresolved reference: hamcrest" }
+        )
+    }
+
 //    @Test
     // this test is disabled: the resolving works fine, but ivy resolver is not processing "pom"-type dependencies correctly (
     //  as far as I can tell)

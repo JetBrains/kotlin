@@ -51,6 +51,7 @@ class IvyResolver : ExternalDependenciesResolver {
                     artifactId[0], artifactId[1], artifactId[2],
                     if (artifactId.size > 3) artifactId[3] else null,
                     if (artifactType.isNotEmpty()) artifactType else null,
+                    options,
                     sourceCodeLocation
                 )
             } catch (e: Exception) {
@@ -69,6 +70,7 @@ class IvyResolver : ExternalDependenciesResolver {
         revision: String,
         conf: String? = null,
         type: String? = null,
+        options: ExternalDependenciesResolver.Options,
         sourceCodeLocation: SourceCode.LocationWithId? = null
     ): ResultWithDiagnostics<List<File>> {
 
@@ -112,10 +114,15 @@ class IvyResolver : ExternalDependenciesResolver {
         depsDescriptor.addDependencyConfiguration("default", "master,compile")
         moduleDescriptor.addDependency(depsDescriptor)
 
+        val isTransitive = options.flag("transitive") != false
+
         val resolveOptions = ResolveOptions().apply {
             confs = arrayOf("default")
             log = LogOptions.LOG_QUIET
             isOutputReport = false
+            if (!isTransitive) {
+                this.isTransitive = false
+            }
         }
 
         //init resolve report
