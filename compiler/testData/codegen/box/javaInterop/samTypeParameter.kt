@@ -1,5 +1,3 @@
-// TODO: new inference doesn't do SAM conversion in this case. KT-37149
-// !LANGUAGE: -NewInference
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
 // FILE: Generic.java
