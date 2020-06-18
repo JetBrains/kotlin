@@ -20,7 +20,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -46,11 +45,13 @@ class DirectoryPathMatcher {
   @NotNull private final GotoFileModel myModel;
   @Nullable private final List<Pair<VirtualFile, String>> myFiles;
   @NotNull final String dirPattern;
+  private final GlobalSearchScope myAllScope;
 
   private DirectoryPathMatcher(@NotNull GotoFileModel model, @Nullable List<Pair<VirtualFile, String>> files, @NotNull String pattern) {
     myModel = model;
     myFiles = files;
     dirPattern = pattern;
+    myAllScope = GlobalSearchScope.allScope(myModel.getProject());
   }
 
   @Nullable
@@ -72,27 +73,23 @@ class DirectoryPathMatcher {
 
     List<Pair<VirtualFile, String>> nextRoots = new ArrayList<>();
     MinusculeMatcher matcher = GotoFileItemProvider.getQualifiedNameMatcher(nextPattern);
-    List<VirtualFile> nonMatchingRoots = new ArrayList<>();
     for (Pair<VirtualFile, String> pair : files) {
       if (containsChar(pair.second, c) && matcher.matches(pair.second)) {
         nextRoots.add(pair);
       } else {
-        nonMatchingRoots.add(pair.first);
+        processProjectFilesUnder(pair.first, sub -> {
+          if (!sub.isDirectory()) return false;
+          if (!containsChar(sub.getNameSequence(), c)) return true; //go deeper
+
+          String fullName = pair.second + '/' + VfsUtilCore.getRelativePath(sub, pair.first, '/');
+          if (matcher.matches(fullName)) {
+            nextRoots.add(Pair.create(sub, fullName));
+            return false;
+          }
+          return true;
+        });
       }
     }
-    processProjectFilesUnder(nonMatchingRoots, sub -> {
-      if (!sub.isDirectory()) return false;
-      if (!containsChar(sub.getNameSequence(), c)) return true; //go deeper
-
-      String fullName = myModel.getFullName(sub);
-      if (fullName == null) return true;
-      fullName = FileUtil.toSystemIndependentName(fullName);
-      if (matcher.matches(fullName)) {
-        nextRoots.add(Pair.create(sub, fullName));
-        return false;
-      }
-      return true;
-    });
 
     return nextRoots.isEmpty() ? null : new DirectoryPathMatcher(myModel, nextRoots, nextPattern);
   }
@@ -104,24 +101,22 @@ class DirectoryPathMatcher {
     Set<String> names = new HashSet<>();
     AtomicInteger counter = new AtomicInteger();
     BooleanSupplier tooMany = () -> counter.get() > 1000;
-    List<VirtualFile> nonMatchingRoots = new ArrayList<>();
     for (Pair<VirtualFile, String> pair : files) {
       if (containsChar(pair.second, nextLetter) && matcher.matches(pair.second)) {
         names.add(pair.first.getName());
       } else {
-        nonMatchingRoots.add(pair.first);
+        processProjectFilesUnder(pair.first, sub -> {
+          counter.incrementAndGet();
+          if (tooMany.getAsBoolean()) return false;
+
+          String name = sub.getName();
+          if (containsChar(name, nextLetter) && matcher.matches(name)) {
+            names.add(name);
+          }
+          return true;
+        });
       }
     }
-    processProjectFilesUnder(nonMatchingRoots, sub -> {
-      counter.incrementAndGet();
-      if (tooMany.getAsBoolean()) return false;
-
-      String name = sub.getName();
-      if (containsChar(name, nextLetter) && matcher.matches(name)) {
-        names.add(name);
-      }
-      return true;
-    });
     return tooMany.getAsBoolean() ? null : names;
   }
 
@@ -139,24 +134,20 @@ class DirectoryPathMatcher {
 
   }
 
-  private void processProjectFilesUnder(List<VirtualFile> roots, Processor<? super VirtualFile> consumer) {
-    Set<VirtualFile> visited = new HashSet<>(roots.size());
-    GlobalSearchScope scope = GlobalSearchScope.allScope(myModel.getProject());
-    for (VirtualFile root : roots) {
-      VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Void>() {
+  private void processProjectFilesUnder(VirtualFile root, Processor<VirtualFile> consumer) {
+    VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Void>() {
 
-        @Override
-        public boolean visitFile(@NotNull VirtualFile file) {
-          return visited.add(file) && scope.contains(file) && consumer.process(file);
-        }
+      @Override
+      public boolean visitFile(@NotNull VirtualFile file) {
+        return myAllScope.contains(file) && consumer.process(file);
+      }
 
-        @Nullable
-        @Override
-        public Iterable<VirtualFile> getChildrenIterable(@NotNull VirtualFile file) {
-          return file instanceof NewVirtualFile ? ((NewVirtualFile)file).getCachedChildren() : null;
-        }
-      });
-    }
+      @Nullable
+      @Override
+      public Iterable<VirtualFile> getChildrenIterable(@NotNull VirtualFile file) {
+        return file instanceof NewVirtualFile ? ((NewVirtualFile)file).getCachedChildren() : null;
+      }
+    });
   }
 
   private static boolean containsChar(CharSequence name, char c) {
