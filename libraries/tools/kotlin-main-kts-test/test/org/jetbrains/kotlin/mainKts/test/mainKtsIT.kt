@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinLauncherScript
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinc
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
@@ -60,6 +62,20 @@ class MainKtsIT {
             cache.deleteRecursively()
         }
     }
+
+    @Test
+    fun testHelloSerialization() {
+        val paths = PathUtil.kotlinPathsForDistDirectory
+        val serializationPlugin = paths.jar(KotlinPaths.Jar.SerializationPlugin)
+        runWithKotlinc(
+            arrayOf(
+                "-Xplugin", serializationPlugin.absolutePath,
+                "-cp", paths.jar(KotlinPaths.Jar.MainKts).absolutePath,
+                "-script", File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts").absolutePath
+            ),
+            listOf("""\{"firstName":"James","lastName":"Bond"\}""", "User\\(firstName=James, lastName=Bond\\)")
+        )
+    }
 }
 
 fun runWithKotlincAndMainKts(
@@ -68,10 +84,11 @@ fun runWithKotlincAndMainKts(
     expectedExitCode: Int = 0,
     cacheDir: File? = null
 ) {
+    val paths = PathUtil.kotlinPathsForDistDirectory
     runWithKotlinc(
         scriptPath, expectedOutPatterns, expectedExitCode,
         classpath = listOf(
-            File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
+            paths.jar(KotlinPaths.Jar.MainKts).also {
                 Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
             }
         ),
