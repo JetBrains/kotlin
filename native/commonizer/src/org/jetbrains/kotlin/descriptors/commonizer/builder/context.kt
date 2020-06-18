@@ -80,7 +80,7 @@ class DeclarationsBuilderCache(private val dimension: Int) {
         typeAliases[fqName][index] = descriptor
     }
 
-    fun computeIfAbsentForwardDeclarationsModule(index: Int, computable: () -> ModuleDescriptorImpl): ModuleDescriptorImpl {
+    fun getOrPutForwardDeclarationsModule(index: Int, computable: () -> ModuleDescriptorImpl): ModuleDescriptorImpl {
         forwardDeclarationsModules[index]?.let { return it }
 
         val module = computable()
@@ -140,7 +140,7 @@ class TargetDeclarationsBuilderComponents(
         return if (fqName.isUnderKotlinNativeSyntheticPackages) {
             // that's a synthetic Kotlin/Native classifier that was exported as forward declaration in one or more modules,
             // but did not match any existing class or typealias
-            val module = cache.computeIfAbsentForwardDeclarationsModule(index) {
+            val module = cache.getOrPutForwardDeclarationsModule(index) {
                 // N.B. forward declarations module is created only on demand
                 createKotlinNativeForwardDeclarationsModule(
                     storageManager = storageManager,
