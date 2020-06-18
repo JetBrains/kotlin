@@ -6,7 +6,6 @@
 
 import kotlin.reflect.*
 import kotlin.reflect.full.*
-import kotlin.test.assert
 
 annotation class Foo(vararg val strings: String)
 
