@@ -177,8 +177,11 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                     val autoReloadEnabled = KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(scriptDefinition)
                     val forceSkipNotification = skipNotification || autoReloadEnabled
 
+                    // sync loaders can do something, let's recheck
+                    val isFirstLoadActual = getCachedConfigurationState(virtualFile)?.applied != null
+
                     val intercepted = !forceSkipNotification && async.any {
-                        it.interceptBackgroundLoading(virtualFile) {
+                        it.interceptBackgroundLoading(virtualFile, isFirstLoadActual) {
                             runAsyncLoaders(file, virtualFile, scriptDefinition, listOf(it), true)
                         }
                     }
@@ -263,7 +266,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
 
             setLoadedConfiguration(file, newResult)
 
-            LoadScriptConfigurationNotificationFactory.hideNotification(file, project)
+            hideInterceptedNotification(file)
 
             val newConfiguration = newResult.configuration
             if (newConfiguration == null) {
@@ -340,7 +343,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         }
 
         // this notification can be shown before something will be in cache
-        LoadScriptConfigurationNotificationFactory.hideNotification(file, project)
+        hideInterceptedNotification(file)
     }
 
     fun updateScriptDefinitionsReferences() {
@@ -348,10 +351,16 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         cache.allApplied().forEach { (file, _) ->
             saveReports(file, listOf())
             file.removeScriptDependenciesNotificationPanel(project)
-            LoadScriptConfigurationNotificationFactory.hideNotification(file, project)
+            hideInterceptedNotification(file)
         }
 
         cache.clear()
+    }
+
+    fun hideInterceptedNotification(file: VirtualFile) {
+        loaders.forEach {
+            it.hideInterceptedNotification(file)
+        }
     }
 
     companion object {

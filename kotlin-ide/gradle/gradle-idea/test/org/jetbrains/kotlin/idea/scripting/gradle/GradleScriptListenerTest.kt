@@ -11,9 +11,9 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.core.script.LoadScriptConfigurationNotificationFactory
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
+import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActionsManager
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
@@ -284,7 +284,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
         assertTrue(
             "reloading configuration should be suggested",
-            LoadScriptConfigurationNotificationFactory.performSuggestedLoading(file.virtualFile, project)
+            GradleStandaloneScriptActionsManager.getInstance(project).performSuggestedLoading(file.virtualFile)
         )
     }
 

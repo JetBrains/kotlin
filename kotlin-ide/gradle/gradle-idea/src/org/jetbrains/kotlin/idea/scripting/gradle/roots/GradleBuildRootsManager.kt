@@ -146,7 +146,10 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             if (oldRoot is Imported && oldRoot.data.models.isEmpty()) return
         }
 
-        if (oldRoot is Legacy) return
+        if (oldRoot is Legacy) {
+            oldRoot.importing.set(updated)
+            return
+        }
 
         oldRoot.importing.set(updatingCaches)
 

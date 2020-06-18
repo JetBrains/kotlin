@@ -45,8 +45,7 @@
                      defaultValue="true"
                      restartRequired="false"/>
 
-        <projectService serviceInterface="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActions"
-                        serviceImplementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActions"/>
+        <projectService serviceImplementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActionsManager"/>
     </extensions>
 
     <actions>
