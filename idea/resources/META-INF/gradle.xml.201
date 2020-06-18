@@ -40,6 +40,11 @@
                      defaultValue="true"
                      restartRequired="false"/>
 
+        <registryKey key="kotlin.gradle.scripts.scriptConfigurationsNeedToBeUpdatedFloatingNotification"
+                     description="Show floating notification in the editor when script configuration need to be updated"
+                     defaultValue="true"
+                     restartRequired="false"/>
+
         <projectService serviceInterface="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActions"
                         serviceImplementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActions"/>
     </extensions>

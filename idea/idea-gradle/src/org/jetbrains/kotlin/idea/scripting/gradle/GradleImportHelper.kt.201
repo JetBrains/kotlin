@@ -16,6 +16,7 @@ import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFileBase
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -29,6 +30,9 @@ import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.plugins.gradle.service.project.GradlePartialResolverPolicy
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
+
+val scriptConfigurationsNeedToBeUpdatedBalloon
+    get() = Registry.`is`("kotlin.gradle.scripts.scriptConfigurationsNeedToBeUpdatedFloatingNotification", true)
 
 fun runPartialGradleImportForAllRoots(project: Project) {
     GradleBuildRootsManager.getInstance(project).getAllRoots().forEach { root ->
@@ -93,9 +97,9 @@ class LoadConfigurationAction : AnAction(
     }
 
     private fun getNotificationVisibility(editor: Editor): Boolean {
-        if (DiffUtil.isDiffEditor(editor)) {
-            return false
-        }
+        if (!scriptConfigurationsNeedToBeUpdatedBalloon) return false
+
+        if (DiffUtil.isDiffEditor(editor)) return false
 
         val project = editor.project ?: return false
         val file = getKotlinScriptFile(editor) ?: return false

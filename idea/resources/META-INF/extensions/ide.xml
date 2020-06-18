@@ -140,11 +140,6 @@
                      defaultValue="false"
                      restartRequired="false"/>
 
-        <registryKey key="kotlin.gradle.scripts.scriptConfigurationsNeedToBeUpdatedBalloon"
-                     description="Show balloon when script configuration need to be updated for 193 along with project need to be imported balloon"
-                     defaultValue="false"
-                     restartRequired="false"/>
-
         <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
 
         <moduleBuilder builderClass="org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBuilder"/>
