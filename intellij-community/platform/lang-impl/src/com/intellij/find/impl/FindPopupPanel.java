@@ -902,9 +902,11 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
         }
         else {
           final int p = Collections.binarySearch((Vector<Vector<UsageInfoAdapter>>)dataVector, v, COMPARATOR);
-          assert p < 0 : "duplicate result found";
-          int row = -(p + 1);
-          insertRow(row, v);
+          if (p < 0) {
+            // only insert when not already present.
+            int row = -(p + 1);
+            insertRow(row, v);
+          }
         }
       }
     };
