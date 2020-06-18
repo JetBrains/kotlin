@@ -34,22 +34,22 @@ public class GotoClassAction extends SearchEverywhereBaseAction implements DumbA
     if (project == null) return;
 
     boolean dumb = DumbService.isDumb(project);
-    if (!dumb){
+    if (!dumb || isContributorDumbAware(e)) {
       showInSearchEverywherePopup(ClassSearchEverywhereContributor.class.getSimpleName(), e, true, true);
-      return;
     }
+    else {
+      invokeGoToFile(project, e);
+    }
+  }
 
-    ClassSearchEverywhereContributor contributor = new ClassSearchEverywhereContributor(e);
+  private static boolean isContributorDumbAware(AnActionEvent e) {
+    ClassSearchEverywhereContributor contributor = null;
     try {
-      if (contributor.isDumbAware()) {
-        showInSearchEverywherePopup(ClassSearchEverywhereContributor.class.getSimpleName(), e, true, true);
-      }
-      else {
-        invokeGoToFile(project, e);
-      }
+      contributor = new ClassSearchEverywhereContributor(e);
+      return contributor.isDumbAware();
     }
     finally {
-      Disposer.dispose(contributor);
+      if (contributor != null) Disposer.dispose(contributor);
     }
   }
 
