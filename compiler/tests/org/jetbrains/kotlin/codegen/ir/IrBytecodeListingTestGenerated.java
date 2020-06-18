@@ -501,6 +501,29 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
                 public void testNoDefaultImplsOnEmptySubInterface() throws Exception {
                     runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/noDefaultImplsOnEmptySubInterface.kt");
                 }
+
+                @TestMetadata("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/specialization")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Specialization extends AbstractIrBytecodeListingTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInSpecialization() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/specialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                    }
+
+                    @TestMetadata("primitiveAndAny.kt")
+                    public void testPrimitiveAndAny() throws Exception {
+                        runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/specialization/primitiveAndAny.kt");
+                    }
+
+                    @TestMetadata("primitiveAndNullable.kt")
+                    public void testPrimitiveAndNullable() throws Exception {
+                        runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/specialization/primitiveAndNullable.kt");
+                    }
+                }
             }
         }
     }

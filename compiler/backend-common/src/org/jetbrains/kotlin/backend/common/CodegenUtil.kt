@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.backend.common.bridges.findInterfaceImplementation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.getExceptionMessage
+import org.jetbrains.kotlin.util.getNonPrivateTraitMembersForDelegation
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
@@ -55,14 +55,8 @@ object CodegenUtil {
     @JvmOverloads
     fun getNonPrivateTraitMethods(descriptor: ClassDescriptor, copy: Boolean = true): Map<FunctionDescriptor, FunctionDescriptor> {
         val result = linkedMapOf<FunctionDescriptor, FunctionDescriptor>()
-        for (declaration in DescriptorUtils.getAllDescriptors(descriptor.defaultType.memberScope)) {
-            if (declaration !is CallableMemberDescriptor) continue
 
-            val traitMember = findInterfaceImplementation(declaration)
-            if (traitMember == null ||
-                    Visibilities.isPrivate(traitMember.visibility) ||
-                    traitMember.visibility == Visibilities.INVISIBLE_FAKE) continue
-
+        for ((declaration, traitMember) in getNonPrivateTraitMembersForDelegation(descriptor)) {
             assert(traitMember.modality !== Modality.ABSTRACT) { "Cannot delegate to abstract trait method: $declaration" }
 
             // inheritedMember can be abstract here. In order for FunctionCodegen to generate the method body, we're creating a copy here

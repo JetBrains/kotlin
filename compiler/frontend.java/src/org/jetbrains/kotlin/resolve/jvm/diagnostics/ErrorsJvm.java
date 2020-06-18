@@ -139,6 +139,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<PsiElement> FUNCTION_DELEGATE_MEMBER_NAME_CLASH = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory2<KtDeclaration, CallableDescriptor, CallableDescriptor> EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE = DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

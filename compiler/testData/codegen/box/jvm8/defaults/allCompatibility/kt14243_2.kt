@@ -9,8 +9,11 @@ interface Z<T> {
     }
 }
 
+@JvmDefaultWithoutCompatibility
 open class ZImpl : Z<String>
 
+//TODO: this is redundant, revise diagnostic
+@JvmDefaultWithoutCompatibility
 open class ZImpl2 : Z<String>, ZImpl()
 
 class ZImpl3 : ZImpl2() {

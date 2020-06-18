@@ -39,6 +39,8 @@ import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedS
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL;
+import static org.jetbrains.kotlin.util.DeclarationUtilKt.findImplementationFromInterface;
+import static org.jetbrains.kotlin.util.DeclarationUtilKt.findInterfaceImplementation;
 
 public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject> {
     @NotNull
@@ -125,7 +127,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
         for (DeclarationDescriptor memberDescriptor : DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().getMemberScope())) {
             if (memberDescriptor instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor member = (CallableMemberDescriptor) memberDescriptor;
-                if (!member.getKind().isReal() && ImplKt.findInterfaceImplementation(member) == null) {
+                if (!member.getKind().isReal() && findInterfaceImplementation(member) == null) {
                     if (member instanceof FunctionDescriptor) {
                         functionCodegen.generateBridges((FunctionDescriptor) member);
                     }
@@ -242,7 +244,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
         }
 
         CallableMemberDescriptor actualImplementation =
-                interfaceFun.getKind().isReal() ? interfaceFun : ImplKt.findImplementationFromInterface(interfaceFun);
+                interfaceFun.getKind().isReal() ? interfaceFun : findImplementationFromInterface(interfaceFun);
         assert actualImplementation != null : "Can't find actual implementation for " + interfaceFun;
         if (JvmAnnotationUtilKt.isCallableMemberCompiledToJvmDefault(actualImplementation, state.getJvmDefaultMode())) {
             return;
