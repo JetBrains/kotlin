@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // TODO: investigate should it be ran for JS or not
 // TARGET_BACKEND: JVM
 
