@@ -11,7 +11,7 @@ CoroutineInfo: 1 coroutine RUNNING
 	CoroutineStackFrame a:!LINE_NUMBER!, TestSuspendA (continuation)
 		(methodVal, this)
 	CoroutineStackFrame invokeSuspend:!LINE_NUMBER!, SuspendFunWithInnerKt$main$1 (continuation)
-		($this$runBlocking, rootCoroutineVal)
+		(rootCoroutineVal)
 	CoroutineStackFrame resumeWith:!LINE_NUMBER!, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
 		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
 	CoroutineStackFrame run:!LINE_NUMBER!, DispatchedTask (kotlinx.coroutines)
