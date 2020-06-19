@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.COMPILE
@@ -130,7 +132,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     ) {
         val project = compilation.target.project
 
-        project.registerTask<ProcessResources>(compilation.processResourcesTaskName) { resourcesTask ->
+        project.locateOrRegisterTask<ProcessResources>(compilation.processResourcesTaskName) { resourcesTask ->
             resourcesTask.description = "Processes $resourceSet."
             DslObject(resourcesTask).conventionMapping.map("destinationDir") { project.file(compilation.output.resourcesDir) }
             resourcesTask.from(resourceSet)

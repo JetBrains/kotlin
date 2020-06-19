@@ -195,7 +195,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
                     interopTask.dependsOn(defTask)
 
-                    interop.defFile.set(defTask.map { it.outputFile })
+                    interop.defFileProperty.set(defTask.map { it.outputFile })
                     interop.packageName = "cocoapods.${pod.moduleName}"
 
 

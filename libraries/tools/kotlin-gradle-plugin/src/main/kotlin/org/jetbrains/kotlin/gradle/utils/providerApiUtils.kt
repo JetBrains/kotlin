@@ -45,7 +45,7 @@ internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularF
 
     return regularFileProperty.apply {
         if (initialize != null) {
-            set(provider { RegularFile(initialize) })
+            set(project.layout.file(project.provider(initialize)))
         }
     }
 }

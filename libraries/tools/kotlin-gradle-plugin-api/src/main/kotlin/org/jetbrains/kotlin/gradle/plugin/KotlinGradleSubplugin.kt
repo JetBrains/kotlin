@@ -68,7 +68,8 @@ open class InternalSubpluginOption(key: String, value: String) : SubpluginOption
 // Deprecated because most calls require the tasks to be instantiated, which is not compatible with Gradle task configuration avoidance.
 @Deprecated(
     message = "This interface will be removed due to performance considerations. " +
-            "Please use the KotlinCompilerPluginSupportPlugin interface instead.",
+            "Please use the KotlinCompilerPluginSupportPlugin interface instead " +
+            "and remove the META-INF/services/org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin entry.",
     replaceWith = ReplaceWith("KotlinCompilerPluginSupportPlugin")
 )
 interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {

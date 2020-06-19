@@ -951,7 +951,7 @@ open class CInteropProcess : DefaultTask() {
         project.provider { destinationDir.get().resolve(outputFileName) }
 
     val defFile: File
-        @InputFile get() = settings.defFile.get()
+        @InputFile get() = settings.defFileProperty.get()
 
     val packageName: String?
         @Optional @Input get() = settings.packageName
