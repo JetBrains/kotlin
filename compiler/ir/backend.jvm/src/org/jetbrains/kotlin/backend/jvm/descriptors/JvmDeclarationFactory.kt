@@ -146,6 +146,7 @@ class JvmDeclarationFactory(
 
     override fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDeclarations.getOrPut(singleton) {
+            val originalVisibility = singleton.visibility
             val isNotMappedCompanion = singleton.isCompanion && !isMappedIntrinsicCompanionObject(singleton.descriptor)
             val useProperVisibilityForCompanion =
                 languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField)
@@ -159,9 +160,10 @@ class JvmDeclarationFactory(
                 isStatic = true
                 visibility = when {
                     !useProperVisibilityForCompanion -> Visibilities.PUBLIC
-                    singleton.visibility == Visibilities.PROTECTED -> JavaVisibilities.PROTECTED_STATIC_VISIBILITY
-                    else -> singleton.visibility
+                    originalVisibility == Visibilities.PROTECTED -> JavaVisibilities.PROTECTED_STATIC_VISIBILITY
+                    else -> originalVisibility
                 }
+
             }.apply {
                 parent = if (isNotMappedCompanion) singleton.parent else singleton
             }

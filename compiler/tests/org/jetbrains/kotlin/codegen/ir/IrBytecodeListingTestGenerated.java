@@ -44,11 +44,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/companionObjectVisibility_before.kt");
     }
 
-    @TestMetadata("companionObjectVisibility_lv13.kt")
-    public void testCompanionObjectVisibility_lv13() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/companionObjectVisibility_lv13.kt");
-    }
-
     @TestMetadata("defaultImpls.kt")
     public void testDefaultImpls() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");

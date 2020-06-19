@@ -392,20 +392,6 @@ fun IrClass.isOptionalAnnotationClass(): Boolean =
     isAnnotationClass &&
             hasAnnotation(ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME)
 
-//@JvmOverloads
-//fun OtherOriginForIr(element: PsiElement?, descriptor: DeclarationDescriptor? = null) =
-//    if (element == null && descriptor == null)
-//        JvmDeclarationOrigin.NO_ORIGIN
-//    else
-//        object : JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, element, descriptor) {
-//            override val element get() =
-//                error("Access to PsiElement")
-//            override val descriptor get() =
-//                error("Access to descriptor")
-//        }
-
-//        JvmDeclarationOrigin(OTHER, element, descriptor)
-
 val IrAnnotationContainer.deprecationFlags: Int
     get() {
         val annotation = annotations.findAnnotation(FQ_NAMES.deprecated) ?: return 0
