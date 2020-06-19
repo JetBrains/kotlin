@@ -8,17 +8,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 
-// TODO: inline?
 data class CirContainingClassDetails(
     val kind: ClassKind,
     override val modality: Modality,
     val isData: Boolean
-) : CirHasModality {
-    companion object {
-        val DOES_NOT_MATTER = CirContainingClassDetails(
-            kind = ClassKind.CLASS,
-            modality = Modality.FINAL,
-            isData = false
-        )
-    }
-}
+) : CirHasModality

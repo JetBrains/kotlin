@@ -24,21 +24,13 @@ object CirPropertyFactory {
             )
         }
 
-        val containingClass: ClassDescriptor? = source.containingDeclaration as? ClassDescriptor
-
         return create(
             annotations = source.annotations.map(CirAnnotationFactory::create),
             name = source.name.intern(),
             typeParameters = source.typeParameters.map(CirTypeParameterFactory::create),
             visibility = source.visibility,
             modality = source.modality,
-            containingClassDetails = containingClass?.let {
-                CirContainingClassDetails(
-                    kind = it.kind,
-                    modality = it.modality,
-                    isData = it.isData
-                )
-            },
+            containingClassDetails = CirContainingClassDetailsFactory.create(source),
             isExternal = source.isExternal,
             extensionReceiver = source.extensionReceiverParameter?.let(CirExtensionReceiverFactory::create),
             returnType = CirTypeFactory.create(source.returnType!!),
