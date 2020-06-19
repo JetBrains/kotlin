@@ -106,6 +106,11 @@ object KotlinPredefinedConfigurations {
 
         // Comments, KDoc and Metadata
         searchTemplate(
+            KSSRBundle.message("predefined.configuration.comments.containing.word"),
+            "// '_before bug '_after".trimIndent(),
+            COMMENT_TYPE
+        ),
+        searchTemplate(
             KSSRBundle.message("predefined.configuration.kdoc.tag"),
             """
                 /**
