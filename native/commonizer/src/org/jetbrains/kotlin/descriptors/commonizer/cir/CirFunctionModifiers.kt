@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-// TODO: inline?
-data class CirFunctionModifiers(
-    var isOperator: Boolean,
-    var isInfix: Boolean,
-    var isInline: Boolean,
-    var isTailrec: Boolean,
-    var isSuspend: Boolean,
-    var isExternal: Boolean
-)
+interface CirFunctionModifiers {
+    val isOperator: Boolean
+    val isInfix: Boolean
+    val isInline: Boolean
+    val isTailrec: Boolean
+    val isSuspend: Boolean
+    val isExternal: Boolean
+}

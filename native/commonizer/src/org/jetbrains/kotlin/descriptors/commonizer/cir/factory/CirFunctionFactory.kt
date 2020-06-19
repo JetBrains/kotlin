@@ -35,15 +35,7 @@ object CirFunctionFactory {
             extensionReceiver = source.extensionReceiverParameter?.let(CirExtensionReceiverFactory::create),
             returnType = CirTypeFactory.create(source.returnType!!),
             kind = source.kind,
-            // TODO: inline?
-            modifiers = CirFunctionModifiers(
-                isOperator = source.isOperator,
-                isInfix = source.isInfix,
-                isInline = source.isInline,
-                isTailrec = source.isTailrec,
-                isSuspend = source.isSuspend,
-                isExternal = source.isExternal
-            )
+            modifiers = CirFunctionModifiersFactory.create(source),
         )
     }
 
