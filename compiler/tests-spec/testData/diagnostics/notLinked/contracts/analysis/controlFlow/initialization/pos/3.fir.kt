@@ -147,7 +147,7 @@ fun case_9() {
         }
         throw Exception()
     }
-    println(x.inc())
+    println(<!UNINITIALIZED_VARIABLE!>x<!>.inc())
 }
 
 // TESTCASE NUMBER: 10
