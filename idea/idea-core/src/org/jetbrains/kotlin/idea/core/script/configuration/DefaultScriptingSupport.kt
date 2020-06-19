@@ -178,7 +178,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                     val forceSkipNotification = skipNotification || autoReloadEnabled
 
                     // sync loaders can do something, let's recheck
-                    val isFirstLoadActual = getCachedConfigurationState(virtualFile)?.applied != null
+                    val isFirstLoadActual = getCachedConfigurationState(virtualFile)?.applied == null
 
                     val intercepted = !forceSkipNotification && async.any {
                         it.interceptBackgroundLoading(virtualFile, isFirstLoadActual) {
