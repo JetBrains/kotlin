@@ -244,5 +244,7 @@ val Module.contentRootUrls: Array<String>
 
 internal fun ProjectRule.createModule(path: Path): Module {
   val project = project
-  return runWriteAction { ModuleManager.getInstance(project).newModule(path.systemIndependentPath, ModuleTypeId.JAVA_MODULE) }
+  return runWriteAction {
+    ModuleManager.getInstance(project).newModule(path.systemIndependentPath, ModuleTypeId.JAVA_MODULE)
+  }
 }
