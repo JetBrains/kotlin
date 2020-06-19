@@ -11,7 +11,7 @@ public class B {
 @kotlin.Metadata
 public final class Base$DefaultImpls {
     inner class Base$DefaultImpls
-    public static @org.jetbrains.annotations.Nullable method test(@org.jetbrains.annotations.NotNull p0: Base): java.lang.Integer
+    public deprecated static @org.jetbrains.annotations.Nullable method test(@org.jetbrains.annotations.NotNull p0: Base): java.lang.Integer
 }
 
 @kotlin.Metadata
@@ -24,7 +24,7 @@ public interface Base {
 @kotlin.Metadata
 public final class Derived$DefaultImpls {
     inner class Derived$DefaultImpls
-    public static @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Derived): java.lang.Integer
+    public deprecated static @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Derived): java.lang.Integer
 }
 
 @kotlin.Metadata
@@ -37,7 +37,7 @@ public interface Derived {
 @kotlin.Metadata
 public final class Mixed$DefaultImpls {
     inner class Mixed$DefaultImpls
-    public static @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Mixed): java.lang.Integer
+    public deprecated static @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Mixed): java.lang.Integer
 }
 
 @kotlin.Metadata

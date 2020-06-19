@@ -193,6 +193,9 @@ public class FunctionCodegen {
         if (origin.getOriginKind() == JvmDeclarationOriginKind.SAM_DELEGATION) {
             flags |= ACC_SYNTHETIC;
         }
+        if (isCompatibilityStubInDefaultImpls(functionDescriptor, methodContext, state.getJvmDefaultMode())) {
+            flags |= ACC_DEPRECATED;
+        }
 
         if (functionDescriptor.isExternal() && owner instanceof MultifileClassFacadeContext) {
             // Native methods are only defined in facades and do not need package part implementations
@@ -712,9 +715,9 @@ public class FunctionCodegen {
             @NotNull JvmDefaultMode jvmDefaultMode
     ) {
         return OwnerKind.DEFAULT_IMPLS == context.getContextKind() &&
+               jvmDefaultMode.isCompatibility() &&
                JvmAnnotationUtilKt.isCompiledToJvmDefault(DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(functionDescriptor),
-                                               jvmDefaultMode) &&
-               jvmDefaultMode.isCompatibility();
+                                                          jvmDefaultMode);
     }
 
     private static void generateLocalVariableTable(

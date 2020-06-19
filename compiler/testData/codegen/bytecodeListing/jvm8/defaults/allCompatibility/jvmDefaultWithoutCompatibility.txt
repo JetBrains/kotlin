@@ -19,7 +19,7 @@ public interface NoDefaultImpl2FromDefaultImpls {
 @kotlin.Metadata
 public final class WithDefaultImpl$DefaultImpls {
     inner class WithDefaultImpl$DefaultImpls
-    public static method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImpl): void
+    public deprecated static method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImpl): void
 }
 
 @kotlin.Metadata
@@ -31,7 +31,7 @@ public interface WithDefaultImpl {
 @kotlin.Metadata
 public final class WithDefaultImplPure$DefaultImpls {
     inner class WithDefaultImplPure$DefaultImpls
-    public static method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImplPure): void
+    public deprecated static method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImplPure): void
 }
 
 @kotlin.Metadata
