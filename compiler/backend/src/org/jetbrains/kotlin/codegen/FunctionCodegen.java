@@ -719,9 +719,8 @@ public class FunctionCodegen {
             @NotNull JvmDefaultMode jvmDefaultMode
     ) {
         return OwnerKind.DEFAULT_IMPLS == context.getContextKind() &&
-               jvmDefaultMode.isCompatibility() &&
-               JvmAnnotationUtilKt.isCompiledToJvmDefault(DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(functionDescriptor),
-                                                          jvmDefaultMode);
+            jvmDefaultMode.isCompatibility() &&
+            JvmAnnotationUtilKt.checkIsImplementationCompiledToJvmDefault(functionDescriptor, jvmDefaultMode);
     }
 
     private static void generateLocalVariableTable(

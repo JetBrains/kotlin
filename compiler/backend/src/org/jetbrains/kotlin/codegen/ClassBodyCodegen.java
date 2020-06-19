@@ -10,7 +10,6 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
-import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -39,7 +38,6 @@ import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedS
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL;
-import static org.jetbrains.kotlin.util.DeclarationUtilKt.findImplementationFromInterface;
 import static org.jetbrains.kotlin.util.DeclarationUtilKt.findInterfaceImplementation;
 
 public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject> {
@@ -239,14 +237,8 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
             boolean isErasedInlineClass
     ) {
         // Skip Java 8 default methods
-        if (CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun)) {
-            return;
-        }
-
-        CallableMemberDescriptor actualImplementation =
-                interfaceFun.getKind().isReal() ? interfaceFun : findImplementationFromInterface(interfaceFun);
-        assert actualImplementation != null : "Can't find actual implementation for " + interfaceFun;
-        if (JvmAnnotationUtilKt.isCallableMemberCompiledToJvmDefault(actualImplementation, state.getJvmDefaultMode())) {
+        if (CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) ||
+            JvmAnnotationUtilKt.checkIsImplementationCompiledToJvmDefault(interfaceFun, state.getJvmDefaultMode())) {
             return;
         }
 

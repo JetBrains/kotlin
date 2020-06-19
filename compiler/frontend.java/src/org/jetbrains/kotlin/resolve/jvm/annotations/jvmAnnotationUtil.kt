@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.resolve.jvm.annotations
 
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
@@ -18,6 +15,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.util.findImplementationFromInterface
 
 val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
 val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
@@ -61,6 +59,13 @@ fun CallableMemberDescriptor.isCompiledToJvmDefault(jvmDefault: JvmDefaultMode):
     if (directMember.annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)) return true
     if (clazz !is DeserializedClassDescriptor) return jvmDefault.forAllMethodsWithBody
     return JvmProtoBufUtil.isNewPlaceForBodyGeneration(clazz.classProto)
+}
+
+fun FunctionDescriptor.checkIsImplementationCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
+    val actualImplementation =
+        (if (kind.isReal) this else findImplementationFromInterface(this))
+            ?: error("Can't find actual implementation for $this")
+    return actualImplementation.isCallableMemberCompiledToJvmDefault(jvmDefaultMode)
 }
 
 fun CallableMemberDescriptor.hasJvmDefaultAnnotation(): Boolean =
