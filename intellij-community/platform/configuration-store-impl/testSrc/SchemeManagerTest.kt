@@ -25,10 +25,10 @@ import org.jdom.Element
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
-import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.function.Function
 
 internal const val FILE_SPEC = "REMOTE"
@@ -54,7 +54,7 @@ internal class SchemeManagerTest {
   private var localBaseDir: Path? = null
   private var remoteBaseDir: Path? = null
 
-  private fun getTestDataPath() = PlatformTestUtil.getCommunityPath().replace(File.separatorChar, '/') + "/platform/platform-tests/testData/options"
+  private fun getTestDataPath(): Path = Paths.get(PlatformTestUtil.getCommunityPath(), "platform/platform-tests/testData/options")
 
   @Test fun loadSchemes() {
     doLoadSaveTest("options1", "1->first;2->second")
@@ -569,28 +569,22 @@ internal class SchemeManagerTest {
 
   @Test
   fun `VFS - vf resolver`() {
-    val dir = tempDirManager.newPath(refreshVfs = true)
-    val busDisposable = Disposer.newDisposable()
-    try {
-      val requestedPaths = linkedSetOf<String>()
-      val schemeManager = SchemeManagerImpl(FILE_SPEC, TestSchemeProcessor(), null, dir, fileChangeSubscriber = null, virtualFileResolver = object: VirtualFileResolver {
-        override fun resolveVirtualFile(path: String, reasonOperation: StateStorageOperation): VirtualFile? {
-          requestedPaths.add(PathUtil.getFileName(path))
-          return super.resolveVirtualFile(path, reasonOperation)
-        }
-      })
+    val dir = tempDirManager.newPath()
+    val requestedPaths = linkedSetOf<String>()
+    val schemeManager = SchemeManagerImpl(FILE_SPEC, TestSchemeProcessor(), null, dir, fileChangeSubscriber = null, virtualFileResolver = object: VirtualFileResolver {
+      override fun resolveVirtualFile(path: String, reasonOperation: StateStorageOperation): VirtualFile? {
+        requestedPaths.add(PathUtil.getFileName(path))
+        return super.resolveVirtualFile(path, reasonOperation)
+      }
+    })
 
-      val a = TestScheme("a", "a")
-      val b = TestScheme("b", "b")
-      schemeManager.setSchemes(listOf(a, b))
-      runInEdtAndWait { schemeManager.save() }
+    val a = TestScheme("a", "a")
+    val b = TestScheme("b", "b")
+    schemeManager.setSchemes(listOf(a, b))
+    runInEdtAndWait { schemeManager.save() }
 
-      schemeManager.reload()
-      assertThat(requestedPaths).containsExactly("VFS - vf resolver")
-    }
-    finally {
-      Disposer.dispose(busDisposable)
-    }
+    schemeManager.reload()
+    assertThat(requestedPaths).containsExactly(dir.fileName.toString())
   }
 
   @Test fun `path must not contains ROOT_CONFIG macro`() {
@@ -630,7 +624,7 @@ internal class SchemeManagerTest {
     val temp = tempDirManager.newPath()
     localBaseDir = temp.resolve("__local")
     remoteBaseDir = temp
-    FileUtil.copyDir(File("${getTestDataPath()}/$testData"), temp.resolve("REMOTE").toFile())
+    FileUtil.copyDir(getTestDataPath().resolve(testData).toFile(), temp.resolve("REMOTE").toFile())
   }
 }
 
