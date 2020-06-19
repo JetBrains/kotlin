@@ -1,6 +1,6 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
-    id("org.jetbrains.kotlin.native.cocoapods").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.multiplatform")
+    id("org.jetbrains.kotlin.native.cocoapods")
 }
 
 group = "com.example"
@@ -21,7 +21,5 @@ kotlin {
     cocoapods {
         summary = "CocoaPods test library"
         homepage = "https://github.com/JetBrains/kotlin"
-        pod("pod_dependency", "1.0")
-        pod("subspec_dependency/Core", "1.0")
     }
 }
