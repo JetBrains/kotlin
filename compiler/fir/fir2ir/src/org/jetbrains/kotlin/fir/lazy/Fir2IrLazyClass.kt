@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -146,14 +145,8 @@ class Fir2IrLazyClass(
                         processedNames += declaration.name
                         scope.processPropertiesByName(declaration.name) {
                             if (it is FirPropertySymbol) {
-                                result += if (!it.isFakeOverride) {
-                                    declarationStorage.createIrProperty(it.fir, irParent = this, origin = origin)
-                                } else {
-                                    val fakeOverrideSymbol =
-                                        FirClassSubstitutionScope.createFakeOverrideProperty(session, it.fir, it)
-                                    classifierStorage.preCacheTypeParameters(it.fir)
-                                    declarationStorage.createIrProperty(fakeOverrideSymbol.fir, irParent = this)
-                                }
+                                // TODO: replace with getIrFieldOrPropertySymbol(it).owner with lazy property generation
+                                result += declarationStorage.createIrProperty(it.fir, irParent = this, origin = origin)
                             }
                         }
                     }
