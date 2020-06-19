@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.core.CoreBundle
@@ -9,21 +9,30 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.components.ComponentManager
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware
+import com.intellij.openapi.externalSystem.ExternalSystemManager
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTrackerSettings.AutoReloadType
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTrackerSettings.AutoReloadType.*
 import com.intellij.openapi.externalSystem.autoimport.MockProjectAware.RefreshCollisionPassType
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType
+import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectAware
 import com.intellij.openapi.externalSystem.test.ExternalSystemTestCase
+import com.intellij.openapi.externalSystem.test.ExternalSystemTestUtil.TEST_EXTERNAL_SYSTEM_ID
+import com.intellij.openapi.externalSystem.test.TestExternalSystemManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.util.BackgroundTaskUtil
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.use
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.replaceService
 import org.jetbrains.concurrency.AsyncPromise
@@ -328,6 +337,42 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
     }
   }
 
+  protected fun testWithDummyExternalSystem(
+    fileRelativePath: String,
+    content: String? = null,
+    autoImportAwareCondition: Ref<Boolean>? = null,
+    state: Pair<AutoImportProjectTracker.State, AutoImportProjectTrackerSettings.State> =
+      AutoImportProjectTracker.State() to AutoImportProjectTrackerSettings.State(),
+    test: DummyExternalSystemTestBench.(VirtualFile) -> Unit
+  ): Pair<AutoImportProjectTracker.State, AutoImportProjectTrackerSettings.State> {
+    val externalSystemManagers = ExternalSystemManager.EP_NAME.extensionList + TestExternalSystemManager(myProject)
+    ExtensionTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, externalSystemManagers, testRootDisposable)
+    return myProject.replaceService(ExternalSystemProjectTrackerSettings::class.java, AutoImportProjectTrackerSettings()) {
+      myProject.replaceService(ExternalSystemProjectTracker::class.java, AutoImportProjectTracker(myProject)) {
+        val projectId = ExternalSystemProjectId(TEST_EXTERNAL_SYSTEM_ID, projectPath)
+        val autoImportAware = object : ExternalSystemAutoImportAware {
+          override fun getAffectedExternalProjectPath(changedFileOrDirPath: String, project: Project): String? {
+            return fileRelativePath
+          }
+
+          override fun isApplicable(resolverPolicy: ProjectResolverPolicy?): Boolean {
+            return autoImportAwareCondition == null || autoImportAwareCondition.get()
+          }
+        }
+        val projectAware = ProjectAwareWrapper(ProjectAware(myProject, projectId, autoImportAware))
+        loadState(state)
+        initialize()
+        val file = findOrCreateVirtualFile(fileRelativePath)
+        content?.let { file.replaceContent(it) }
+        Disposer.newDisposable().use {
+          register(projectAware, parentDisposable = it)
+          DummyExternalSystemTestBench(projectAware).test(file)
+          getState()
+        }
+      }
+    }
+  }
+
   protected open inner class SimpleTestBench(val projectAware: MockProjectAware) {
 
     fun forceRefreshProject() = forceRefreshProject(projectAware.projectId)
@@ -402,6 +447,33 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
         ModificationType.INTERNAL -> settingsFile.appendLine("println 'hello'")
         ModificationType.EXTERNAL -> settingsFile.appendLineInIoFile("println 'hello'")
       }
+    }
+  }
+
+  inner class DummyExternalSystemTestBench(val projectAware: ProjectAwareWrapper) {
+    fun assertState(refresh: Int? = null,
+                    beforeRefresh: Int? = null,
+                    afterRefresh: Int? = null,
+                    subscribe: Int? = null,
+                    unsubscribe: Int? = null,
+                    autoReloadType: AutoReloadType = SELECTIVE,
+                    event: String) {
+      assertProjectAware(projectAware, refresh, beforeRefresh, afterRefresh, subscribe, unsubscribe, event)
+      assertProjectTrackerSettings(autoReloadType, event = event)
+    }
+
+    private fun assertProjectAware(projectAware: ProjectAwareWrapper,
+                                   refresh: Int? = null,
+                                   beforeRefresh: Int? = null,
+                                   afterRefresh: Int? = null,
+                                   subscribe: Int? = null,
+                                   unsubscribe: Int? = null,
+                                   event: String) {
+      if (refresh != null) assertCountEvent(refresh, projectAware.refreshCounter.get(), "project refresh", event)
+      if (beforeRefresh != null) assertCountEvent(beforeRefresh, projectAware.beforeRefreshCounter.get(), "project before refresh", event)
+      if (afterRefresh != null) assertCountEvent(afterRefresh, projectAware.afterRefreshCounter.get(), "project after refresh", event)
+      if (subscribe != null) assertCountEvent(subscribe, projectAware.subscribeCounter.get(), "subscribe", event)
+      if (unsubscribe != null) assertCountEvent(unsubscribe, projectAware.unsubscribeCounter.get(), "unsubscribe", event)
     }
   }
 }

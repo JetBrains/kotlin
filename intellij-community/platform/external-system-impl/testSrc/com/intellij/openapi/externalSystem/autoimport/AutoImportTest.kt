@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTrackerSettings.AutoReloadType.*
@@ -9,7 +9,7 @@ import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.Modification
 import com.intellij.openapi.externalSystem.autoimport.ProjectStatus.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.util.Parallel.Companion.parallel
-import junit.framework.TestCase
+import com.intellij.openapi.util.Ref
 import org.junit.Test
 import java.io.File
 
@@ -49,6 +49,26 @@ class AutoImportTest : AutoImportTestCase() {
 
       refreshProject()
       assertState(refresh = 3, notified = false, event = "empty project refresh")
+    }
+  }
+
+  @Test
+  fun `test modification tracking disabled by ES plugin`() {
+    val autoImportAwareCondition = Ref.create(true)
+    testWithDummyExternalSystem("settings.groovy", autoImportAwareCondition = autoImportAwareCondition) { settingsFile ->
+      assertState(refresh = 1, beforeRefresh = 2, afterRefresh = 2, event = "register project without cache")
+      settingsFile.appendString("println 'hello'")
+      assertState(refresh = 1, beforeRefresh = 2, afterRefresh = 2, event = "modification")
+      refreshProject()
+      assertState(refresh = 2, beforeRefresh = 4, afterRefresh = 4, event = "project refresh")
+      settingsFile.replaceString("hello", "hi")
+      assertState(refresh = 2, beforeRefresh = 4, afterRefresh = 4, event = "modification")
+      autoImportAwareCondition.set(false)
+      refreshProject()
+      assertState(refresh = 3, beforeRefresh = 4, afterRefresh = 4, event = "modification")
+      autoImportAwareCondition.set(true)
+      refreshProject()
+      assertState(refresh = 4, beforeRefresh = 6, afterRefresh = 6, event = "empty project refresh")
     }
   }
 

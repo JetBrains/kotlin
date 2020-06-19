@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle;
 
 import com.intellij.execution.configurations.SimpleJavaParameters;
@@ -8,6 +8,7 @@ import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware;
 import com.intellij.openapi.externalSystem.ExternalSystemConfigurableAware;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
 import com.intellij.openapi.externalSystem.ExternalSystemUiAware;
+import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ExternalProjectInfo;
 import com.intellij.openapi.externalSystem.model.ProjectKeys;
@@ -285,6 +286,11 @@ public final class GradleManager
   @Override
   public List<File> getAffectedExternalProjectFiles(String projectPath, @NotNull Project project) {
     return myAutoImportDelegate.getAffectedExternalProjectFiles(projectPath, project);
+  }
+
+  @Override
+  public boolean isApplicable(@Nullable ProjectResolverPolicy resolverPolicy) {
+    return myAutoImportDelegate.isApplicable(resolverPolicy);
   }
 
   @NotNull

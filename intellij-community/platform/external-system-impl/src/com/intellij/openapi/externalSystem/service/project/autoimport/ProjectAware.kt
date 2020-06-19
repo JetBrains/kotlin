@@ -1,13 +1,16 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.autoimport
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware
 import com.intellij.openapi.externalSystem.autoimport.*
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType.RESOLVE_PROJECT
+import com.intellij.openapi.externalSystem.service.internal.ExternalSystemProcessingManager
+import com.intellij.openapi.externalSystem.service.internal.ExternalSystemResolveProjectTask
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
@@ -51,6 +54,11 @@ class ProjectAware(
     override fun onStart(id: ExternalSystemTaskId, workingDir: String?) {
       if (id.type != RESOLVE_PROJECT) return
       if (!FileUtil.pathsEqual(workingDir, projectPath)) return
+
+      val task = ServiceManager.getService(ExternalSystemProcessingManager::class.java).findTask(id)
+      if (task is ExternalSystemResolveProjectTask) {
+        if (!autoImportAware.isApplicable(task.resolverPolicy)) return
+      }
       externalSystemTaskId.set(id)
       delegate.beforeProjectRefresh()
     }

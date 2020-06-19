@@ -1,9 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
+import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
@@ -149,5 +150,10 @@ public class GradleAutoImportAware implements ExternalSystemAutoImportAware {
     }
 
     return files;
+  }
+
+  @Override
+  public boolean isApplicable(@Nullable ProjectResolverPolicy resolverPolicy) {
+    return resolverPolicy == null || !resolverPolicy.isPartialDataResolveAllowed();
   }
 }

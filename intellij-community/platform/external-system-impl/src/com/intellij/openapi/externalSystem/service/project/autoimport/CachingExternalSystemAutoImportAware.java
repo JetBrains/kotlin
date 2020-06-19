@@ -2,6 +2,7 @@
 package com.intellij.openapi.externalSystem.service.project.autoimport;
 
 import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware;
+import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,5 +45,10 @@ public class CachingExternalSystemAutoImportAware implements ExternalSystemAutoI
   @Override
   public List<File> getAffectedExternalProjectFiles(String projectPath, @NotNull Project project) {
     return myDelegate.getAffectedExternalProjectFiles(projectPath, project);
+  }
+
+  @Override
+  public boolean isApplicable(@Nullable ProjectResolverPolicy resolverPolicy) {
+    return myDelegate.isApplicable(resolverPolicy);
   }
 }

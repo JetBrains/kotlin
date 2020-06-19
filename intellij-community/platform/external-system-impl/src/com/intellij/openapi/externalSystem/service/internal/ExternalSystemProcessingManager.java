@@ -81,6 +81,10 @@ public final class ExternalSystemProcessingManager implements ExternalSystemTask
     return false;
   }
 
+  public @Nullable ExternalSystemTask findTask(@NotNull ExternalSystemTaskId id) {
+    return myTasksDetails.get(id);
+  }
+
   public @Nullable ExternalSystemTask findTask(@NotNull ExternalSystemTaskType type,
                                                @NotNull ProjectSystemId projectSystemId,
                                                final @NotNull String externalProjectPath) {
