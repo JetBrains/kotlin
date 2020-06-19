@@ -63,19 +63,24 @@ fun processScriptModel(
             }
         }
 
-        if (models.containsErrors()) {
+        val errors = models.collectErrors()
+        if (errors.isNotEmpty()) {
             if (sync != null) {
                 synchronized(sync) {
                     sync.failed = true
                 }
             }
-            throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
+            throw IllegalStateException(
+                KotlinIdeaGradleBundle.message("title.kotlin.build.script")
+                        + ":\n"
+                        + errors.joinToString("\n") { it.text + "\n" + it.details }
+            )
         }
     }
 }
 
-private fun Collection<KotlinDslScriptModel>.containsErrors(): Boolean {
-    return any { it.messages.any { it.severity == KotlinDslScriptModel.Severity.ERROR } }
+private fun Collection<KotlinDslScriptModel>.collectErrors(): List<KotlinDslScriptModel.Message> {
+    return this.flatMap { it.messages.filter { it.severity == KotlinDslScriptModel.Severity.ERROR } }
 }
 
 private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<KotlinDslScriptModel> =
