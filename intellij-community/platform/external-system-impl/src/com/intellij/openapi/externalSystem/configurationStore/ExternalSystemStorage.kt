@@ -40,6 +40,10 @@ internal open class ExternalProjectStorage @JvmOverloads constructor(fileSpec: S
       manager.fileStorage.write(fileSpec, dataWriter)
     }
   }
+
+  override fun toString(): String {
+    return "ExternalProjectStorage(fileSpec=$fileSpec)"
+  }
 }
 
 // for libraries only for now - we use null rootElementName because the only component is expected (libraryTable)
