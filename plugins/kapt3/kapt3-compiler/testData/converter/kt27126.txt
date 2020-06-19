@@ -67,8 +67,7 @@ import java.lang.System;
 public abstract class NullableBundleProperty<EE extends java.lang.Object> implements kotlin.properties.ReadWriteProperty<java.lang.Object, EE> {
     private final java.lang.String key = null;
 
-    private final java.lang.String toKey(@org.jetbrains.annotations.NotNull()
-    kotlin.reflect.KProperty<?> $this$toKey) {
+    private final java.lang.String toKey(kotlin.reflect.KProperty<?> $this$toKey) {
         return null;
     }
 

@@ -38,7 +38,8 @@ public abstract interface Intf {
         }
 
         @org.jetbrains.annotations.NotNull()
-        public static java.lang.String bar(Intf $this, int bcd) {
+        public static java.lang.String bar(@org.jetbrains.annotations.NotNull()
+        Intf $this, int bcd) {
             return null;
         }
     }
