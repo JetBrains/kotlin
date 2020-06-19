@@ -16,7 +16,8 @@ import java.nio.file.Path
 internal class NonPersistentModuleStore : ModuleStore {
   override val storageManager: StateStorageManager = NonPersistentStateStorageManager
   override fun setPath(path: Path): Unit = Unit
-  override fun setPath(path: Path, virtualFile: VirtualFile?, isNew: Boolean): Unit = Unit
+  override fun setPath(path: Path, virtualFile: VirtualFile?, isNew: Boolean) {
+  }
   override fun initComponent(component: Any, serviceDescriptor: ServiceDescriptor?, pluginId: PluginId?): Unit = Unit
   override fun initPersistencePlainComponent(component: Any, key: String): Unit = Unit
   override fun reloadStates(componentNames: Set<String>, messageBus: MessageBus): Unit = Unit
