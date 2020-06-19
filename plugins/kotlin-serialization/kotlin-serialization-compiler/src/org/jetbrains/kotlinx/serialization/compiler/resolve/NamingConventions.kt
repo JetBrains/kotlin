@@ -59,7 +59,7 @@ object SerialEntityNames {
     const val SERIAL_LOADER_CLASS = "DeserializationStrategy"
 
     const val SERIAL_DESCRIPTOR_CLASS = "SerialDescriptor"
-    const val SERIAL_DESCRIPTOR_CLASS_IMPL = "SerialClassDescImpl"
+    const val SERIAL_DESCRIPTOR_CLASS_IMPL = "PluginGeneratedSerialDescriptor"
     const val SERIAL_DESCRIPTOR_FOR_ENUM = "EnumDescriptor"
 
     //exceptions
