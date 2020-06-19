@@ -57,8 +57,12 @@ open class DefaultCInteropSettings @Inject constructor(
             target.disambiguationClassifier
         )
 
-    val defFile: Property<File> = project.objects.property(File::class.java)
+    val defFileProperty: Property<File> = project.objects.property(File::class.java)
         .apply { set(project.projectDir.resolve("src/nativeInterop/cinterop/$name.def")) }
+
+    var defFile: File
+        get() = defFileProperty.get()
+        set(value) { defFileProperty.set(value) }
 
     var packageName: String? = null
 
@@ -72,7 +76,7 @@ open class DefaultCInteropSettings @Inject constructor(
     // DSL methods.
 
     override fun defFile(file: Any) {
-        defFile.set(project.file(file))
+        defFileProperty.set(project.file(file))
     }
 
     override fun packageName(value: String) {
