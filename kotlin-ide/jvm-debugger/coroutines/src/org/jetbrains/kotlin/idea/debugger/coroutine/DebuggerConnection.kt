@@ -46,22 +46,18 @@ class DebuggerConnection(
             val kotlinxCoroutinesCore = params.classPath?.pathList?.firstOrNull { it.contains("kotlinx-coroutines-core") }
             val kotlinxCoroutinesDebug = params.classPath?.pathList?.firstOrNull { it.contains("kotlinx-coroutines-debug") }
 
-            val mode = when {
-                kotlinxCoroutinesCore != null -> {
-                    val coreVersion = determineCoreVersionMode(kotlinxCoroutinesCore)
-                    if (coreVersion == CoroutineDebuggerMode.DISABLED && kotlinxCoroutinesDebug != null)
-                        CoroutineDebuggerMode.VERSION_UP_TO_1_3_5
-                    else
-                        CoroutineDebuggerMode.DISABLED
-                }
-                kotlinxCoroutinesDebug != null -> CoroutineDebuggerMode.VERSION_UP_TO_1_3_5
-                else -> CoroutineDebuggerMode.DISABLED
-            }
+            if (kotlinxCoroutinesCore != null) {
+                val coreVersion = determineCoreVersionMode(kotlinxCoroutinesCore)
+                val mode = if (coreVersion == CoroutineDebuggerMode.DISABLED && kotlinxCoroutinesDebug != null)
+                    CoroutineDebuggerMode.VERSION_UP_TO_1_3_5
+                else
+                    coreVersion
 
-            when (mode) {
-                CoroutineDebuggerMode.VERSION_1_3_6_AND_UP -> initializeCoroutineAgent(params, kotlinxCoroutinesCore)
-                CoroutineDebuggerMode.VERSION_UP_TO_1_3_5 -> initializeCoroutineAgent(params, kotlinxCoroutinesDebug)
-                else -> log.debug("CoroutineDebugger disabled.")
+                when (mode) {
+                    CoroutineDebuggerMode.VERSION_1_3_6_AND_UP -> initializeCoroutineAgent(params, kotlinxCoroutinesCore)
+                    CoroutineDebuggerMode.VERSION_UP_TO_1_3_5 -> initializeCoroutineAgent(params, kotlinxCoroutinesDebug)
+                    else -> log.debug("CoroutineDebugger disabled.")
+                }
             }
         }
         connect()
