@@ -132,7 +132,7 @@ class Fir2IrLazyClass(
                     if (declaration.name !in processedNames) {
                         processedNames += declaration.name
                         scope.processFunctionsByName(declaration.name) {
-                            if (it is FirNamedFunctionSymbol) {
+                            if (it is FirNamedFunctionSymbol && it.callableId.classId == fir.symbol.classId) {
                                 if (it.isAbstractMethodOfAny()) {
                                     return@processFunctionsByName
                                 }
@@ -174,6 +174,11 @@ class Fir2IrLazyClass(
         }
         with(fakeOverrideGenerator) {
             result += getFakeOverrides(fir, processedNames)
+        }
+        for (declaration in result) {
+            if (declaration.parent != this) {
+                throw AssertionError()
+            }
         }
         result
     }
