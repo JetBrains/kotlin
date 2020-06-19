@@ -44,8 +44,7 @@ final class FacetDependentToolWindowManager implements ProjectComponent {
           ToolWindow toolWindow = toolWindowManager.getToolWindow(extension.id);
           if (toolWindow != null) {
             // check for other facets
-            List<FacetType> facetTypes = extension.getFacetTypes();
-            for (FacetType facetType : facetTypes) {
+            for (FacetType<?, ?> facetType : extension.getFacetTypes()) {
               if (facetManager.hasFacets(facetType.getId())) {
                 return;
               }
@@ -56,8 +55,18 @@ final class FacetDependentToolWindowManager implements ProjectComponent {
       }
     }, myProject);
 
+    ProjectFacetManager projectFacetManager = ProjectFacetManager.getInstance(myProject);
+    ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(myProject);
     for (FacetDependentToolWindow extension : FacetDependentToolWindow.EXTENSION_POINT_NAME.getExtensionList()) {
-      initToolWindowIfNeeded(extension);
+      for (FacetType<?, ?> type : extension.getFacetTypes()) {
+        if (projectFacetManager.hasFacets(type.getId())) {
+          ToolWindow toolWindow = toolWindowManager.getToolWindow(extension.id);
+          if (toolWindow == null) {
+            ToolWindowManagerEx.getInstanceEx(myProject).initToolWindow(extension);
+          }
+          break;
+        }
+      }
     }
 
     FacetDependentToolWindow.EXTENSION_POINT_NAME.addExtensionPointListener(new ExtensionPointListener<FacetDependentToolWindow>() {
@@ -76,26 +85,30 @@ final class FacetDependentToolWindowManager implements ProjectComponent {
     }, myProject);
   }
 
-  private void initToolWindowIfNeeded(FacetDependentToolWindow extension) {
+  private void initToolWindowIfNeeded(@NotNull FacetDependentToolWindow extension) {
+    ProjectFacetManager projectFacetManager = ProjectFacetManager.getInstance(myProject);
     for (FacetType<?, ?> type : extension.getFacetTypes()) {
-      if (ProjectFacetManager.getInstance(myProject).hasFacets(type.getId())) {
+      if (projectFacetManager.hasFacets(type.getId())) {
         ensureToolWindowExists(extension);
         return;
       }
     }
   }
 
-  private void ensureToolWindowExists(FacetDependentToolWindow extension) {
-    ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(extension.id);
+  private void ensureToolWindowExists(@NotNull FacetDependentToolWindow extension) {
+    ToolWindowManagerEx toolWindowManager = ToolWindowManagerEx.getInstanceEx(myProject);
+    ToolWindow toolWindow = toolWindowManager.getToolWindow(extension.id);
     if (toolWindow == null) {
-      ToolWindowManagerEx.getInstanceEx(myProject).initToolWindow(extension);
+      toolWindowManager.initToolWindow(extension);
     }
   }
 
-  private static List<FacetDependentToolWindow> getDependentExtensions(final Facet facet) {
+  private static @NotNull List<FacetDependentToolWindow> getDependentExtensions(@NotNull Facet<?> facet) {
     return ContainerUtil.filter(FacetDependentToolWindow.EXTENSION_POINT_NAME.getExtensionList(), toolWindowEP -> {
       for (String id : toolWindowEP.getFacetIds()) {
-        if (facet.getType().getStringId().equals(id)) return true;
+        if (facet.getType().getStringId().equals(id)) {
+          return true;
+        }
       }
       return false;
     });
