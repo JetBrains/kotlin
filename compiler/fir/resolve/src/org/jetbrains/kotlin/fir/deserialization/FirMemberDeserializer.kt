@@ -270,7 +270,16 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
-            annotations += c.annotationDeserializer.loadPropertyAnnotations(proto, local.nameResolver)
+            annotations +=
+                c.annotationDeserializer.loadPropertyAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
+            annotations +=
+                c.annotationDeserializer.loadPropertyBackingFieldAnnotations(
+                    c.containerSource, proto, local.nameResolver, local.typeTable
+                )
+            annotations +=
+                c.annotationDeserializer.loadPropertyDelegatedFieldAnnotations(
+                    c.containerSource, proto, local.nameResolver, local.typeTable
+                )
             this.getter = getter
             this.setter = setter
             this.containerSource = c.containerSource
