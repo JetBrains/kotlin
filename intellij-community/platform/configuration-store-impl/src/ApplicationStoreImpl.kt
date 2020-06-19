@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.configurationStore.schemeManager.ROOT_CONFIG
@@ -15,6 +15,7 @@ import com.intellij.util.io.systemIndependentPath
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.jps.model.serialization.JpsGlobalLoader
+import java.nio.file.Path
 
 internal class ApplicationPathMacroManager : PathMacroManager(null)
 
@@ -29,10 +30,10 @@ class ApplicationStoreImpl : ComponentStoreWithExtraComponents() {
   override val loadPolicy: StateLoadPolicy
     get() = if (application.isUnitTestMode) StateLoadPolicy.LOAD_ONLY_DEFAULT else StateLoadPolicy.LOAD
 
-  override fun setPath(path: String) {
+  override fun setPath(path: Path) {
     // app config must be first, because collapseMacros collapse from fist to last, so, at first we must replace APP_CONFIG because it overlaps ROOT_CONFIG value
     storageManager.addMacro(APP_CONFIG, "$path/${PathManager.OPTIONS_DIRECTORY}")
-    storageManager.addMacro(ROOT_CONFIG, path)
+    storageManager.addMacro(ROOT_CONFIG, path.systemIndependentPath)
     storageManager.addMacro(StoragePathMacros.CACHE_FILE, appSystemDir.resolve("workspace").resolve("app.xml").systemIndependentPath)
   }
 

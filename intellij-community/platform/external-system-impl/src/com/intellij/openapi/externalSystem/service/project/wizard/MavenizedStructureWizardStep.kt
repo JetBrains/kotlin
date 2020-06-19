@@ -21,6 +21,7 @@ import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.SortedComboBoxModel
 import com.intellij.ui.layout.*
 import java.io.File
+import java.nio.file.Paths
 import java.util.Comparator.comparing
 import java.util.function.Function
 import javax.swing.JList
@@ -240,14 +241,15 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
       return error(message)
     }
 
+    val locationPath = Paths.get(location)
     for (project in ProjectManager.getInstance().openProjects) {
-      if (ProjectUtil.isSameProject(location, project)) {
+      if (ProjectUtil.isSameProject(locationPath, project)) {
         val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.directory.already.taken.error", project.name)
         return error(message)
       }
     }
 
-    val file = File(location)
+    val file = locationPath.toFile()
     if (file.exists()) {
       if (!file.canWrite()) {
         val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.directory.not.writable.error")

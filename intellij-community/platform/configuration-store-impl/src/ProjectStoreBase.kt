@@ -38,6 +38,8 @@ private val DEPRECATED_PROJECT_FILE_STORAGE_ANNOTATION = FileStorageAnnotation(P
 
 // cannot be `internal`, used in Upsource
 abstract class ProjectStoreBase(final override val project: Project) : ComponentStoreWithExtraComponents(), IProjectStore {
+  private var dirOrFile: Path? = null
+
   // the protected setter used in Upsource
   // Zelix KlassMaster - ERROR: Could not find method 'getScheme()'
   var scheme = StorageScheme.DEFAULT
@@ -88,20 +90,22 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
     }
   }
 
-  final override fun getProjectBasePath(): String {
+  final override fun getProjectBasePath(): Path {
+    val path = dirOrFile ?: throw IllegalStateException("setPath was not yet called")
     if (isDirectoryBased) {
-      val path = PathUtil.getParentPath(storageManager.expandMacro(PROJECT_CONFIG_DIR))
-      val parent = Registry.`is`("store.basedir.parent.detection", true) && PathUtil.getFileName(path).startsWith("${Project.DIRECTORY_STORE_FOLDER}.")
-      return if (parent) PathUtil.getParentPath(PathUtil.getParentPath(path)) else path
+      val useParent = Registry.`is`("store.basedir.parent.detection", true) && path.fileName.toString().startsWith("${Project.DIRECTORY_STORE_FOLDER}.")
+      return if (useParent) path.parent.parent else path
     }
     else {
-      return PathUtil.getParentPath(projectFilePath)
+      return path.parent
     }
   }
 
   override fun getProjectWorkspaceId() = ProjectIdManager.getInstance(project).state.id
 
   override fun setPath(file: Path, isRefreshVfsNeeded: Boolean, template: Project?) {
+    dirOrFile = file
+
     val storageManager = storageManager
     val fs = LocalFileSystem.getInstance()
     val isUnitTestMode = ApplicationManager.getApplication().isUnitTestMode
@@ -268,7 +272,9 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
     return if (!ignoreProjectStorageScheme && !isDirectoryBased) null else PathUtil.getParentPath(projectFilePath).nullize()
   }
 
-  override fun getDirectoryStoreFile(): VirtualFile? = directoryStorePath?.let { LocalFileSystem.getInstance().findFileByNioFile(it) }
+  final override fun getDirectoryStorePath(): Path? {
+    return if (isDirectoryBased) dirOrFile!!.resolve(Project.DIRECTORY_STORE_FOLDER) else null
+  }
 
   override fun getDirectoryStorePathOrBase(): String = PathUtil.getParentPath(projectFilePath)
 

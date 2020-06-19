@@ -183,12 +183,13 @@ private class MyComponentStore(testAppConfigPath: Path) : ChildlessComponentStor
   override val storageManager = MyStorageManager(testAppConfigPath)
 
   init {
-    setPath(testAppConfigPath.systemIndependentPath)
+    setPath(testAppConfigPath)
   }
 
-  override fun setPath(path: String) {
-    storageManager.addMacro(APP_CONFIG, path)
+  override fun setPath(path: Path) {
+    val systemIndependentPath = path.systemIndependentPath
+    storageManager.addMacro(APP_CONFIG, systemIndependentPath)
     // yes, in tests APP_CONFIG equals to ROOT_CONFIG (as ICS does)
-    storageManager.addMacro(ROOT_CONFIG, path)
+    storageManager.addMacro(ROOT_CONFIG, systemIndependentPath)
   }
 }

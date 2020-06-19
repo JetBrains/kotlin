@@ -29,6 +29,8 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.*
+import kotlin.collections.HashMap
 import kotlin.properties.Delegates
 
 internal class ApplicationStoreTest {
@@ -52,7 +54,7 @@ internal class ApplicationStoreTest {
   @Before
   fun setUp() {
     testAppConfig = tempDirManager.newPath()
-    componentStore = MyComponentStore(testAppConfig.systemIndependentPath)
+    componentStore = MyComponentStore(testAppConfig)
   }
 
   @Test
@@ -381,7 +383,7 @@ internal class ApplicationStoreTest {
 
     override fun processChildren(path: String, roamingType: RoamingType, filter: (String) -> Boolean, processor: (String, InputStream, Boolean) -> Boolean) = true
 
-    val data: MutableMap<RoamingType, MutableMap<String, String>> = HashMap()
+    val data: MutableMap<RoamingType, MutableMap<String, String>> = EnumMap(RoamingType::class.java)
 
     override fun write(fileSpec: String, content: ByteArray, size: Int, roamingType: RoamingType) {
       getMap(roamingType)[fileSpec] = String(content, 0, size, Charsets.UTF_8)
@@ -401,17 +403,17 @@ internal class ApplicationStoreTest {
     }
   }
 
-  private class MyComponentStore(testAppConfigPath: String) : ComponentStoreWithExtraComponents() {
+  private class MyComponentStore(testAppConfigPath: Path) : ComponentStoreWithExtraComponents() {
     override val storageManager = ApplicationStorageManager(ApplicationManager.getApplication())
 
     init {
       setPath(testAppConfigPath)
     }
 
-    override fun setPath(path: String) {
-      storageManager.addMacro(APP_CONFIG, path)
+    override fun setPath(path: Path) {
+      storageManager.addMacro(APP_CONFIG, path.systemIndependentPath)
       // yes, in tests APP_CONFIG equals to ROOT_CONFIG (as ICS does)
-      storageManager.addMacro(ROOT_CONFIG, path)
+      storageManager.addMacro(ROOT_CONFIG, path.systemIndependentPath)
     }
 
     override suspend fun doSave(result: SaveResult, forceSavingAllSettings: Boolean) {

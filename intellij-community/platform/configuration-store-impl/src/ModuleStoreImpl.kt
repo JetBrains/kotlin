@@ -8,8 +8,9 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.project.isDirectoryBased
 import com.intellij.util.io.exists
+import com.intellij.util.io.systemIndependentPath
 import org.jetbrains.annotations.ApiStatus
-import java.nio.file.Paths
+import java.nio.file.Path
 import kotlin.streams.asSequence
 
 private val MODULE_FILE_STORAGE_ANNOTATION = FileStorageAnnotation(StoragePathMacros.MODULE_FILE, false)
@@ -39,9 +40,9 @@ internal open class ModuleStoreImpl(module: Module) : ModuleStoreBase() {
 private class TestModuleStore(module: Module) : ModuleStoreImpl(module) {
   private var moduleComponentLoadPolicy: StateLoadPolicy? = null
 
-  override fun setPath(path: String, virtualFile: VirtualFile?, isNew: Boolean) {
+  override fun setPath(path: Path, virtualFile: VirtualFile?, isNew: Boolean) {
     super.setPath(path, virtualFile, isNew)
-    if (!isNew && Paths.get(path).exists()) {
+    if (!isNew && path.exists()) {
       moduleComponentLoadPolicy = StateLoadPolicy.LOAD
     }
   }
@@ -60,10 +61,10 @@ abstract class ModuleStoreBase : ChildlessComponentStore(), ModuleStore {
     if (stateSpec.storages.isEmpty()) listOf(MODULE_FILE_STORAGE_ANNOTATION)
     else super.getStorageSpecs(component, stateSpec, operation)
 
-  final override fun setPath(path: String) = setPath(path, null, false)
+  final override fun setPath(path: Path) = setPath(path, null, false)
 
-  override fun setPath(path: String, virtualFile: VirtualFile?, isNew: Boolean) {
-    val isMacroAdded = storageManager.addMacro(StoragePathMacros.MODULE_FILE, path)
+  override fun setPath(path: Path, virtualFile: VirtualFile?, isNew: Boolean) {
+    val isMacroAdded = storageManager.addMacro(StoragePathMacros.MODULE_FILE, path.systemIndependentPath)
     // if file not null - update storage
     storageManager.getOrCreateStorage(StoragePathMacros.MODULE_FILE, storageCustomizer = {
       if (this !is FileBasedStorage) {
@@ -71,7 +72,7 @@ abstract class ModuleStoreBase : ChildlessComponentStore(), ModuleStore {
         return@getOrCreateStorage
       }
 
-      setFile(virtualFile, if (isMacroAdded) null else Paths.get(path))
+      setFile(virtualFile, if (isMacroAdded) null else path)
       // ModifiableModuleModel#newModule should always create a new module from scratch
       // https://youtrack.jetbrains.com/issue/IDEA-147530
 
@@ -81,7 +82,7 @@ abstract class ModuleStoreBase : ChildlessComponentStore(), ModuleStore {
         preloadStorageData(isNew)
       }
       else {
-        storageManager.updatePath(StoragePathMacros.MODULE_FILE, path)
+        storageManager.updatePath(StoragePathMacros.MODULE_FILE, path.systemIndependentPath)
       }
     })
   }

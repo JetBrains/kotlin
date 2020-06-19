@@ -62,7 +62,7 @@ internal class DefaultProjectStoreTest {
   )
 
   @Test
-  fun `new project from default - file-based storage`() = runBlocking {
+  fun `new project from default - file-based storage`() {
     val externalDependenciesManager = ProjectManager.getInstance().defaultProject.service<ExternalDependenciesManager>()
     externalDependenciesManager.allDependencies = requiredPlugins
     try {
@@ -76,7 +76,7 @@ internal class DefaultProjectStoreTest {
   }
 
   @Test
-  fun `new project from default - directory-based storage`() = runBlocking {
+  fun `new project from default - directory-based storage`() {
     val defaultTestComponent = TestComponent()
     defaultTestComponent.loadState(JDOMUtil.load("""
       <component>
@@ -96,7 +96,9 @@ internal class DefaultProjectStoreTest {
       // clear state
       defaultTestComponent.loadState(Element("empty"))
       val defaultStore = ProjectManager.getInstance().defaultProject.stateStore as ComponentStoreImpl
-      defaultStore.save()
+      runBlocking {
+        defaultStore.save()
+      }
       defaultStore.removeComponent(TEST_COMPONENT_NAME)
     }
   }
@@ -111,7 +113,7 @@ internal class DefaultProjectStoreTest {
     assertThat(element.isEmpty()).isTrue()
 
     val directoryTree = tempDir.getDirectoryTree()
-    assertThat(directoryTree.trim()).toMatchSnapshot(testData.resolve("testData1.txt"))
+    assertThat(directoryTree).toMatchSnapshot(testData.resolve("testData1.txt"))
   }
 
   @Test

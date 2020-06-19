@@ -11,7 +11,6 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.project.ex.ProjectNameProvider
-import com.intellij.openapi.project.impl.ProjectImpl
 import com.intellij.openapi.project.impl.ProjectStoreFactory
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.ReadonlyStatusHandler
@@ -20,7 +19,6 @@ import com.intellij.util.PathUtilRt
 import com.intellij.util.SmartList
 import com.intellij.util.io.delete
 import com.intellij.util.io.isDirectory
-import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.io.write
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -29,10 +27,9 @@ import org.jetbrains.annotations.CalledInAny
 import org.jetbrains.jps.util.JpsPathUtil
 import java.nio.file.AccessDeniedException
 import java.nio.file.Path
-import java.nio.file.Paths
 
 internal val IProjectStore.nameFile: Path
-  get() = directoryStorePath.resolve(ProjectImpl.NAME_FILE)
+  get() = directoryStorePath.resolve(ProjectEx.NAME_FILE)
 
 @ApiStatus.Internal
 open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
@@ -46,8 +43,8 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
 
   override val storageManager = ProjectStateStorageManager(TrackingPathMacroSubstitutorImpl(PathMacroManager.getInstance(project)), project)
 
-  override fun setPath(path: String) {
-    setPath(Paths.get(path), true, null)
+  override fun setPath(path: Path) {
+    setPath(path, true, null)
   }
 
   override fun getProjectName(): String {
@@ -84,11 +81,11 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
     val basePath = projectBasePath
 
     fun doSave() {
-      if (currentProjectName == PathUtilRt.getFileName(basePath)) {
+      if (currentProjectName == basePath.fileName.toString()) {
         // name equals to base path name - just remove name
         nameFile.delete()
       }
-      else if (Paths.get(basePath).isDirectory()) {
+      else if (basePath.isDirectory()) {
         nameFile.write(currentProjectName.toByteArray())
       }
     }
@@ -97,7 +94,7 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
       doSave()
     }
     catch (e: AccessDeniedException) {
-      val status = ensureFilesWritable(project, listOf(LocalFileSystem.getInstance().refreshAndFindFileByPath(nameFile.systemIndependentPath)!!))
+      val status = ensureFilesWritable(project, listOf(LocalFileSystem.getInstance().refreshAndFindFileByNioFile(nameFile)!!))
       if (status.hasReadonlyFiles()) {
         throw e
       }
@@ -182,15 +179,21 @@ open class ProjectWithModulesStoreImpl(project: Project) : ProjectStoreImpl(proj
   }
 }
 
-internal class PlatformLangProjectStoreFactory : ProjectStoreFactory {
-  override fun createStore(project: Project): IComponentStore {
-    return if (project.isDefault) DefaultProjectStoreImpl(project) else ProjectWithModulesStoreImpl(project)
+abstract class ProjectStoreFactoryImpl : ProjectStoreFactory {
+  final override fun createDefaultProjectStore(project: Project) = DefaultProjectStoreImpl(project)
+}
+
+internal class PlatformLangProjectStoreFactory : ProjectStoreFactoryImpl() {
+  override fun createStore(project: Project): IProjectStore {
+    LOG.assertTrue(!project.isDefault)
+    return ProjectWithModulesStoreImpl(project)
   }
 }
 
-internal class PlatformProjectStoreFactory : ProjectStoreFactory {
-  override fun createStore(project: Project): IComponentStore {
-    return if (project.isDefault) DefaultProjectStoreImpl(project) else ProjectStoreImpl(project)
+internal class PlatformProjectStoreFactory : ProjectStoreFactoryImpl() {
+  override fun createStore(project: Project): IProjectStore {
+    LOG.assertTrue(!project.isDefault)
+    return ProjectStoreImpl(project)
   }
 }
 

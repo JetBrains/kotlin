@@ -32,7 +32,7 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
   override fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
     LOG.debug("Open project from $projectFile")
     val projectDirectory = getProjectDirectory(projectFile)
-    if (focusOnOpenedSameProject(projectDirectory.path)) {
+    if (focusOnOpenedSameProject(projectDirectory.toNioPath())) {
       return null
     }
     else if (canOpenPlatformProject(projectDirectory)) {
@@ -83,7 +83,7 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
     }
   }
 
-  private fun focusOnOpenedSameProject(projectDirectory: String): Boolean {
+  private fun focusOnOpenedSameProject(projectDirectory: Path): Boolean {
     for (project in ProjectManager.getInstance().openProjects) {
       if (isSameProject(projectDirectory, project)) {
         focusProjectWindow(project, false)

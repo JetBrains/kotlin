@@ -74,7 +74,7 @@ public class ModuleImpl extends ComponentManagerImpl implements ModuleEx {
           public void validityChanged(@NotNull VirtualFilePointer @NotNull [] pointers) {
             VirtualFile virtualFile = myImlFilePointer.getFile();
             if (virtualFile != null) {
-              ((ModuleStore)getStore()).setPath(virtualFile.getPath(), virtualFile, false);
+              ((ModuleStore)getStore()).setPath(virtualFile.toNioPath(), virtualFile, false);
               ModuleManager.getInstance(myProject).incModificationCount();
             }
           }

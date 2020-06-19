@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.module.impl
 
 import com.intellij.openapi.components.StateStorage
@@ -30,6 +16,8 @@ import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent
 import com.intellij.util.PathUtilRt
 import gnu.trove.THashSet
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Why this class is required if we have StorageVirtualFileTracker?
@@ -64,7 +52,7 @@ internal class ModuleFileListener(private val moduleManager: ModuleManagerCompon
       val ancestorPath = "$parentPath/${event.oldValue}"
       val moduleFilePath = module.moduleFilePath
       if (FileUtil.isAncestor(ancestorPath, moduleFilePath, true)) {
-        setModuleFilePath(module, "$newAncestorPath/${FileUtil.getRelativePath(ancestorPath, moduleFilePath, '/')}")
+        setModuleFilePath(module, Paths.get("$newAncestorPath/${FileUtil.getRelativePath(ancestorPath, moduleFilePath, '/')}"))
         someModulePathIsChanged = true
       }
 
@@ -94,7 +82,7 @@ internal class ModuleFileListener(private val moduleManager: ModuleManagerCompon
 
       val moduleFilePath = module.moduleFilePath
       if (FileUtil.isAncestor(ancestorPath, moduleFilePath, true)) {
-        setModuleFilePath(module, "${event.newParent.path}/$dirName/${FileUtil.getRelativePath(ancestorPath, moduleFilePath, '/')}")
+        setModuleFilePath(module, event.newParent.toNioPath().resolve("$dirName/${FileUtil.getRelativePath(ancestorPath, moduleFilePath, '/')}"))
       }
 
       checkRootModification(module, newAncestorPath)
@@ -113,7 +101,7 @@ internal class ModuleFileListener(private val moduleManager: ModuleManagerCompon
     }
   }
 
-  private fun setModuleFilePath(module: Module, newFilePath: String) {
+  private fun setModuleFilePath(module: Module, newFilePath: Path) {
     ClasspathStorage.modulePathChanged(module)
     module.stateStore.setPath(newFilePath)
   }
