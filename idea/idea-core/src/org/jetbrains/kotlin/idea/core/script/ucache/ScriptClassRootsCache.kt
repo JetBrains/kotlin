@@ -114,7 +114,12 @@ class ScriptClassRootsCache(
         when (old) {
             null -> FullUpdate(this)
             this -> NotChanged(this)
-            else -> IncrementalUpdates(this, hasNewRoots(old), getChangedScripts(old))
+            else -> IncrementalUpdates(
+                this,
+                this.hasNewRoots(old),
+                old.hasNewRoots(this),
+                getChangedScripts(old)
+            )
         }
 
     private fun hasNewRoots(old: ScriptClassRootsCache): Boolean {
@@ -154,13 +159,14 @@ class ScriptClassRootsCache(
     class IncrementalUpdates(
         override val cache: ScriptClassRootsCache,
         override val hasNewRoots: Boolean,
+        private val hasOldRoots: Boolean,
         private val updatedScripts: Set<String>
     ) : Updates {
         override val hasUpdatedScripts: Boolean get() = updatedScripts.isNotEmpty()
         override fun isScriptChanged(scriptPath: String) = scriptPath in updatedScripts
 
         override val changed: Boolean
-            get() = hasNewRoots || updatedScripts.isNotEmpty()
+            get() = hasNewRoots || updatedScripts.isNotEmpty() || hasOldRoots
     }
 
     class FullUpdate(override val cache: ScriptClassRootsCache) : Updates {
