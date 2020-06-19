@@ -331,30 +331,30 @@ public final data class TimedValue<T> {
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
-@kotlin.Deprecated(message = "Use AbstractDoubleTimeSource instead.", replaceWith = kotlin.ReplaceWith(expression = "AbstractDoubleTimeSource", imports = {"kotlin.time.AbstractDoubleTimeSource"}))
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use AbstractDoubleTimeSource instead.", replaceWith = kotlin.ReplaceWith(expression = "AbstractDoubleTimeSource", imports = {"kotlin.time.AbstractDoubleTimeSource"}))
 public typealias AbstractDoubleClock = kotlin.time.AbstractDoubleTimeSource
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
-@kotlin.Deprecated(message = "Use AbstractLongTimeSource instead.", replaceWith = kotlin.ReplaceWith(expression = "AbstractLongTimeSource", imports = {"kotlin.time.AbstractLongTimeSource"}))
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use AbstractLongTimeSource instead.", replaceWith = kotlin.ReplaceWith(expression = "AbstractLongTimeSource", imports = {"kotlin.time.AbstractLongTimeSource"}))
 public typealias AbstractLongClock = kotlin.time.AbstractLongTimeSource
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
-@kotlin.Deprecated(message = "Use TimeSource interface instead.", replaceWith = kotlin.ReplaceWith(expression = "TimeSource", imports = {"kotlin.time.TimeSource"}))
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use TimeSource interface instead.", replaceWith = kotlin.ReplaceWith(expression = "TimeSource", imports = {"kotlin.time.TimeSource"}))
 public typealias Clock = kotlin.time.TimeSource
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
-@kotlin.Deprecated(message = "Use TimeMark class instead.", replaceWith = kotlin.ReplaceWith(expression = "TimeMark", imports = {"kotlin.time.TimeMark"}))
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use TimeMark class instead.", replaceWith = kotlin.ReplaceWith(expression = "TimeMark", imports = {"kotlin.time.TimeMark"}))
 public typealias ClockMark = kotlin.time.TimeMark
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
-@kotlin.Deprecated(message = "Use TimeSource.Monotonic instead.", replaceWith = kotlin.ReplaceWith(expression = "TimeSource.Monotonic", imports = {"kotlin.time.TimeSource"}))
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use TimeSource.Monotonic instead.", replaceWith = kotlin.ReplaceWith(expression = "TimeSource.Monotonic", imports = {"kotlin.time.TimeSource"}))
 public typealias MonoClock = kotlin.time.TimeSource.Monotonic
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
-@kotlin.Deprecated(message = "Use TestTimeSource instead.", replaceWith = kotlin.ReplaceWith(expression = "TestTimeSource", imports = {"kotlin.time.TestTimeSource"}))
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use TestTimeSource instead.", replaceWith = kotlin.ReplaceWith(expression = "TestTimeSource", imports = {"kotlin.time.TestTimeSource"}))
 public typealias TestClock = kotlin.time.TestTimeSource

@@ -2942,9 +2942,3 @@ public final annotation class UseExperimental : kotlin.Annotation {
 
     public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>> { get; }
 }
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Do not use Synchronized annotation in pure Kotlin/JS code")
-public typealias Synchronized = kotlin.jvm.Synchronized
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Do not use Volatile annotation in pure Kotlin/JS code")
-public typealias Volatile = kotlin.jvm.Volatile
