@@ -42,9 +42,13 @@ internal sealed class GTDUActionResult {
 }
 
 private fun gotoDeclarationOrUsagesInner(file: PsiFile, offset: Int): GTDUActionData? {
-  val (declaredData, referencedData) = declaredReferencedData(file, offset)
   return fromDirectNavigation(file, offset)?.toGTDUActionData()
-         ?: referencedData?.toGTDActionData(file.project)?.toGTDUActionData() // GTD of referenced symbols
+         ?: fromTargetData(file, offset)
+}
+
+private fun fromTargetData(file: PsiFile, offset: Int): GTDUActionData? {
+  val (declaredData, referencedData) = declaredReferencedData(file, offset)
+  return referencedData?.toGTDActionData(file.project)?.toGTDUActionData() // GTD of referenced symbols
          ?: referencedData?.let(::ShowUsagesGTDUActionData) // SU of referenced symbols if nowhere to navigate
          ?: declaredData?.let(::ShowUsagesGTDUActionData) // SU of declared symbols
 }
