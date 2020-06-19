@@ -20,13 +20,13 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringMessageDialog
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
 import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
@@ -126,8 +126,9 @@ internal fun buildCodeToInline(
     else
         TypeUtils.NO_EXPECTED_TYPE
 
-    fun analyzeBodyCopy(): BindingContext = bodyCopy.analyzeInContext(
-        bodyOrInitializer.getResolutionScope(),
+    val scope by lazy { bodyOrInitializer.getResolutionScope() }
+    fun analyzeExpressionInContext(expression: KtExpression): BindingContext = expression.analyzeInContext(
+        scope = scope,
         contextExpression = bodyOrInitializer,
         expectedType = expectedType
     )
@@ -141,7 +142,7 @@ internal fun buildCodeToInline(
         val returnStatements = bodyCopy.collectDescendantsOfType<KtReturnExpression> {
             val function = it.getStrictParentOfType<KtFunction>()
             if (function != null && function != declaration) return@collectDescendantsOfType false
-            it.getLabelName().let { it == null || it == declaration.name }
+            it.getLabelName().let { label -> label == null || label == declaration.name }
         }
 
         val lastReturn = statements.lastOrNull() as? KtReturnExpression
@@ -166,10 +167,10 @@ internal fun buildCodeToInline(
 
         return builder.prepareCodeToInline(
             lastReturn?.returnedExpression,
-            statements.dropLast(returnStatements.size), ::analyzeBodyCopy, reformat = true
+            statements.dropLast(returnStatements.size), ::analyzeExpressionInContext, reformat = true
         )
     } else {
-        return builder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeBodyCopy, reformat = true)
+        return builder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeExpressionInContext, reformat = true)
     }
 }
 

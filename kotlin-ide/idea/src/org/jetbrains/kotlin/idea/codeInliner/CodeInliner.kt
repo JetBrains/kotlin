@@ -537,9 +537,11 @@ class CodeInliner<TCallElement : KtElement>(
     }
 
     private fun removeExplicitTypeArguments(result: KtElement) {
-        result.collectDescendantsOfType<KtTypeArgumentList>(canGoInside = { !it[USER_CODE_KEY] }) {
-            RemoveExplicitTypeArgumentsIntention.isApplicableTo(it, approximateFlexible = true)
-        }.forEach { it.delete() }
+        for (typeArgumentList in result.collectDescendantsOfType<KtTypeArgumentList>(canGoInside = { !it[USER_CODE_KEY] })) {
+            if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(typeArgumentList, approximateFlexible = true)) {
+                typeArgumentList.delete()
+            }
+        }
     }
 
     private fun simplifySpreadArrayOfArguments(result: KtElement) {

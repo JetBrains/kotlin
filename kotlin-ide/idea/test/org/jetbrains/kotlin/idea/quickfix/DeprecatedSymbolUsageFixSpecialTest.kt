@@ -24,7 +24,7 @@ class DeprecatedSymbolUsageFixSpecialTest : KotlinLightCodeInsightFixtureTestCas
     override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
 
     fun testMemberInCompiledClass() {
-        doTest("matches(input)")
+        doTest("this.matches(input)")
     }
 
     fun testDefaultParameterValuesFromLibrary() {

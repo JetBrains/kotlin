@@ -44,6 +44,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/InStringTemplates.kt");
         }
 
+        @TestMetadata("Kt19459.kt")
+        public void testKt19459() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/Kt19459.kt");
+        }
+
         @TestMetadata("LocalCapturing.kt")
         public void testLocalCapturing() throws Exception {
             runTest("testData/refactoring/inline/function/LocalCapturing.kt");
@@ -72,6 +77,26 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("ReferenceReceiver.kt")
         public void testReferenceReceiver() throws Exception {
             runTest("testData/refactoring/inline/function/ReferenceReceiver.kt");
+        }
+
+        @TestMetadata("ReferenceToCompanionInsideLambda.kt")
+        public void testReferenceToCompanionInsideLambda() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/ReferenceToCompanionInsideLambda.kt");
+        }
+
+        @TestMetadata("ReferenceToCompanionInsideLambda2.kt")
+        public void testReferenceToCompanionInsideLambda2() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/ReferenceToCompanionInsideLambda2.kt");
+        }
+
+        @TestMetadata("ReferenceToReceiverInsideLambda.kt")
+        public void testReferenceToReceiverInsideLambda() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/ReferenceToReceiverInsideLambda.kt");
+        }
+
+        @TestMetadata("ReferenceToReceiverInsideLambdaWithExplicitThis.kt")
+        public void testReferenceToReceiverInsideLambdaWithExplicitThis() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/ReferenceToReceiverInsideLambdaWithExplicitThis.kt");
         }
 
         @TestMetadata("ReturnNotInTheEnd.kt")

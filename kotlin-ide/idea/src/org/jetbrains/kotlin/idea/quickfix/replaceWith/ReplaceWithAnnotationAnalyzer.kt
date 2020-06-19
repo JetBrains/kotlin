@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtUserType
@@ -67,10 +68,17 @@ object ReplaceWithAnnotationAnalyzer {
 
         val expressionTypingServices = resolutionFacade.getFrontendService(module, ExpressionTypingServices::class.java)
 
-        fun analyzeExpression() = expression.analyzeInContext(scope, expressionTypingServices = expressionTypingServices)
+        fun analyzeExpression(ignore: KtExpression) = expression.analyzeInContext(
+            scope,
+            expressionTypingServices = expressionTypingServices
+        )
 
-        return CodeToInlineBuilder(symbolDescriptor, resolutionFacade)
-            .prepareCodeToInline(expression, emptyList(), ::analyzeExpression, reformat)
+        return CodeToInlineBuilder(symbolDescriptor, resolutionFacade).prepareCodeToInline(
+            expression,
+            emptyList(),
+            ::analyzeExpression,
+            reformat
+        )
     }
 
     fun analyzeClassifierReplacement(
