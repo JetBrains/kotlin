@@ -180,10 +180,10 @@ public actual fun FloatArray.asList(): List<Float> {
     return object : AbstractList<Float>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(element: Float): Boolean = this@asList.contains(element)
+        override fun contains(element: Float): Boolean = this@asList.any { it.toBits() == element.toBits() }
         override fun get(index: Int): Float = this@asList[index]
-        override fun indexOf(element: Float): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Float): Int = this@asList.lastIndexOf(element)
+        override fun indexOf(element: Float): Int = this@asList.indexOfFirst { it.toBits() == element.toBits() }
+        override fun lastIndexOf(element: Float): Int = this@asList.indexOfLast { it.toBits() == element.toBits() }
     }
 }
 
@@ -194,10 +194,10 @@ public actual fun DoubleArray.asList(): List<Double> {
     return object : AbstractList<Double>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(element: Double): Boolean = this@asList.contains(element)
+        override fun contains(element: Double): Boolean = this@asList.any { it.toBits() == element.toBits() }
         override fun get(index: Int): Double = this@asList[index]
-        override fun indexOf(element: Double): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Double): Int = this@asList.lastIndexOf(element)
+        override fun indexOf(element: Double): Int = this@asList.indexOfFirst { it.toBits() == element.toBits() }
+        override fun lastIndexOf(element: Double): Int = this@asList.indexOfLast { it.toBits() == element.toBits() }
     }
 }
 
