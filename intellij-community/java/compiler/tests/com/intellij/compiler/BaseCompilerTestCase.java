@@ -325,7 +325,7 @@ public abstract class BaseCompilerTestCase extends JavaModuleTestCase {
     //todo[nik] reuse code from PlatformTestCase
     VirtualFile baseDir = getOrCreateProjectBaseDir();
     Path moduleFile = baseDir.toNioPath().resolve(moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION);
-    myFilesToDelete.add(moduleFile.toFile());
+    myFilesToDelete.add(moduleFile);
     return WriteAction.computeAndWait(() -> {
       Module module = ModuleManager.getInstance(myProject)
         .newModule(FileUtil.toSystemIndependentName(moduleFile.toString()), getModuleType().getId());
