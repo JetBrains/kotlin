@@ -24,10 +24,7 @@ object GenerateInRangeExpressionTestData {
     ) {
         PrintWriter(File(GENERATED_DIR, fileName)).use {
             it.generateTestCaseBody(
-                header, rangeExpressions, elementExpressions,
-                ignoreFrontendIR = fileName !in listOf(
-                    "charRangeLiteral.kt", "charDownTo.kt", "charUntil.kt", "intDownTo.kt", "longDownTo.kt"
-                )
+                header, rangeExpressions, elementExpressions
             )
         }
     }
@@ -35,12 +32,8 @@ object GenerateInRangeExpressionTestData {
     private fun PrintWriter.generateTestCaseBody(
         header: String,
         rangeExpressions: List<String>,
-        elementExpressions: List<String>,
-        ignoreFrontendIR: Boolean
+        elementExpressions: List<String>
     ) {
-        if (ignoreFrontendIR) {
-            println("// IGNORE_BACKEND_FIR: JVM_IR")
-        }
         println("// KJS_WITH_FULL_RUNTIME")
         println("// $PREAMBLE_MESSAGE")
         println("// WITH_RUNTIME")
