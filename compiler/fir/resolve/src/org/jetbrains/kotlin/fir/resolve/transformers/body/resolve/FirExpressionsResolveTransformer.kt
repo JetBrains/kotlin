@@ -291,6 +291,9 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         block.transformStatementsIndexed(transformer) { index ->
             val value = if (index == numberOfStatements - 1) data else ResolutionMode.ContextIndependent
+
+            transformer.onBeforeStatementResolution(block.statements[index])
+
             TransformData.Data(value)
         }
         if (data == ResolutionMode.ContextIndependent) {

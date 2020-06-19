@@ -83,6 +83,8 @@ open class FirBodyResolveTransformer(
         return data.expectedTypeRef.compose()
     }
 
+    open fun onBeforeStatementResolution(statement: FirStatement) {}
+
     // ------------------------------------- Expressions -------------------------------------
 
     override fun transformExpression(expression: FirExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
