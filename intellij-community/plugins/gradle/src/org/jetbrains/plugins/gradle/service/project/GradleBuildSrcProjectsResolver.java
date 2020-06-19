@@ -15,6 +15,7 @@ import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.build.BuildEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.gradle.model.Build;
 import org.jetbrains.plugins.gradle.model.data.BuildParticipant;
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData;
 import org.jetbrains.plugins.gradle.model.data.CompositeBuildData;
@@ -25,6 +26,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.*;
 import static com.intellij.openapi.util.text.StringUtil.isEmpty;
@@ -110,8 +112,10 @@ public final class GradleBuildSrcProjectsResolver {
       jvmOptions.addAll(myMainBuildExecutionSettings.getJvmArguments());
     }
 
-    for (String buildPath : buildClasspathNodesMap.keySet()) {
-      Collection<DataNode<BuildScriptClasspathData>> buildClasspathNodes = buildClasspathNodesMap.get(buildPath);
+    Stream<Build> builds = new ToolingModelsProviderImpl(myResolverContext.getModels()).builds();
+    builds.forEach(build -> {
+      String buildPath = build.getBuildIdentifier().getRootDir().getPath();
+      Collection<DataNode<BuildScriptClasspathData>> buildClasspathNodes = buildClasspathNodesMap.getModifiable(buildPath);
 
       GradleExecutionSettings buildSrcProjectSettings;
       if (gradleHome != null) {
@@ -155,7 +159,7 @@ public final class GradleBuildSrcProjectsResolver {
                             includedModulesPaths,
                             buildSrcResolverCtx,
                             myProjectResolver.getProjectDataFunction(buildSrcResolverCtx, myResolverChain, true));
-    }
+    });
   }
 
   private void handleBuildSrcProject(@NotNull DataNode<ProjectData> resultProjectDataNode,

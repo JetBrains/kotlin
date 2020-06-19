@@ -1,3 +1,4 @@
+# Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 #
 # Copyright 2000-2014 JetBrains s.r.o.
 #
@@ -17,3 +18,4 @@ org.jetbrains.plugins.gradle.tooling.internal.ExtraModelBuilderTest$TestModelBui
 org.jetbrains.plugins.gradle.tooling.internal.ExtraModelBuilderTest$TestModelBuilderService_v_1_8_or_Above
 org.jetbrains.plugins.gradle.tooling.internal.ExtraModelBuilderTest$TestModelBuilderService_between_v_1_8_and_1_9
 org.jetbrains.plugins.gradle.tooling.internal.ExtraModelBuilderTest$TestModelBuilderService_between_v_1_8_and_1_9_NotBase
+org.jetbrains.plugins.gradle.tooling.builder.ProjectPropertiesTestModelBuilder

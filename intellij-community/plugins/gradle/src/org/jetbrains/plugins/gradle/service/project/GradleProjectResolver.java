@@ -477,21 +477,24 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       for (Build build : includedBuilds) {
         if (!build.getProjects().isEmpty()) {
           IdeaProject ideaProject = allModels.getModel(build, IdeaProject.class);
-          assert ideaProject != null;
+          if (ideaProject != null) {
+            gradleIncludedModules.addAll(ideaProject.getModules());
+          }
           String rootProjectName = build.getName();
           BuildParticipant buildParticipant = new BuildParticipant();
-          gradleIncludedModules.addAll(ideaProject.getModules());
           try {
             String projectPath = toCanonicalPath(build.getBuildIdentifier().getRootDir().getCanonicalPath());
             buildParticipant.setRootProjectName(rootProjectName);
             buildParticipant.setRootPath(projectPath);
-            for (IdeaModule module : ideaProject.getModules()) {
-              try {
-                String modulePath = toCanonicalPath(module.getGradleProject().getProjectDirectory().getCanonicalPath());
-                buildParticipant.getProjects().add(modulePath);
-              }
-              catch (IOException e) {
-                LOG.warn("construction of the canonical path for the module fails", e);
+            if (ideaProject != null) {
+              for (IdeaModule module : ideaProject.getModules()) {
+                try {
+                  String modulePath = toCanonicalPath(module.getGradleProject().getProjectDirectory().getCanonicalPath());
+                  buildParticipant.getProjects().add(modulePath);
+                }
+                catch (IOException e) {
+                  LOG.warn("construction of the canonical path for the module fails", e);
+                }
               }
             }
             compositeBuildData.getCompositeParticipants().add(buildParticipant);
