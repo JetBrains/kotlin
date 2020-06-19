@@ -193,7 +193,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         }
 
         @JvmStatic
-        fun updateConfigurationByDirectivesInTestFiles1(
+        fun updateConfigurationByDirectivesInTestFiles(
             testFilesWithConfigurationDirectives: List<TestFile>,
             configuration: CompilerConfiguration
         ) {
