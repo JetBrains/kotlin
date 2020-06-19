@@ -2135,6 +2135,10 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/core/kotlin.core.iml" filepath="$PROJECT_DIR$/kotlin/core/kotlin.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/jvm-debugger/eval4j/kotlin.eval4j.iml" filepath="$PROJECT_DIR$/kotlin/jvm-debugger/eval4j/kotlin.eval4j.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/fir/kotlin.fir.iml" filepath="$PROJECT_DIR$/kotlin/fir/kotlin.fir.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/fir-low-level-api/kotlin.fir.fir-low-level-api.iml" filepath="$PROJECT_DIR$/kotlin/fir-low-level-api/kotlin.fir.fir-low-level-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/frontend-api/kotlin.fir.frontend-api.iml" filepath="$PROJECT_DIR$/kotlin/frontend-api/kotlin.fir.frontend-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/frontend-fir/kotlin.fir.frontend-fir.iml" filepath="$PROJECT_DIR$/kotlin/frontend-fir/kotlin.fir.frontend-fir.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/frontend-independent/kotlin.fir.frontend-independent.iml" filepath="$PROJECT_DIR$/kotlin/frontend-independent/kotlin.fir.frontend-independent.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/formatter/kotlin.formatter.iml" filepath="$PROJECT_DIR$/kotlin/formatter/kotlin.formatter.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/generators/kotlin.generators.iml" filepath="$PROJECT_DIR$/kotlin/generators/kotlin.generators.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/git/kotlin.git.iml" filepath="$PROJECT_DIR$/kotlin/git/kotlin.git.iml" />
@@ -2156,6 +2160,8 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/jvm-debugger/test/kotlin.jvm-debugger.test.iml" filepath="$PROJECT_DIR$/kotlin/jvm-debugger/test/kotlin.jvm-debugger.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/jvm-debugger/util/kotlin.jvm-debugger.util.iml" filepath="$PROJECT_DIR$/kotlin/jvm-debugger/util/kotlin.jvm-debugger.util.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin.kotlin-ide.iml" filepath="$PROJECT_DIR$/kotlin.kotlin-ide.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/line-indent-provider/kotlin.line-indent-provider.iml" filepath="$PROJECT_DIR$/kotlin/line-indent-provider/kotlin.line-indent-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/live-templates/kotlin.live-templates.iml" filepath="$PROJECT_DIR$/kotlin/live-templates/kotlin.live-templates.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/maven/kotlin.maven.iml" filepath="$PROJECT_DIR$/kotlin/maven/kotlin.maven.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/native/kotlin.native.iml" filepath="$PROJECT_DIR$/kotlin/native/kotlin.native.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/performance-tests/kotlin.performance-tests.iml" filepath="$PROJECT_DIR$/kotlin/performance-tests/kotlin.performance-tests.iml" />
