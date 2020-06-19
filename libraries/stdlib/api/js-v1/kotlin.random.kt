@@ -88,15 +88,7 @@ public abstract class Random {
 
     public open fun nextLong(from: kotlin.Long, until: kotlin.Long): kotlin.Long
 
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Use Default companion object instead")
-    public object Companion : kotlin.random.Random {
-        public open override fun nextBits(bitCount: kotlin.Int): kotlin.Int
-    }
-
     public companion object of Random Default : kotlin.random.Random {
-        @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Use Default companion object instead")
-        public final val Companion: kotlin.random.Random.Companion { get; }
-
         public open override fun nextBits(bitCount: kotlin.Int): kotlin.Int
 
         public open override fun nextBoolean(): kotlin.Boolean

@@ -3226,12 +3226,6 @@ public fun <K, V> kotlin.collections.Map<K, V>.getValue(key: K): V
 @kotlin.internal.InlineOnly
 public inline operator fun <V, V1 : V> kotlin.collections.Map<in kotlin.String, V>.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use getValue() with two type parameters instead")
-@kotlin.jvm.JvmName(name = "getVarContravariant")
-@kotlin.internal.LowPriorityInOverloadResolution
-@kotlin.internal.InlineOnly
-public inline fun <V> kotlin.collections.MutableMap<in kotlin.String, in V>.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V
-
 @kotlin.jvm.JvmName(name = "getVar")
 @kotlin.internal.InlineOnly
 public inline operator fun <V, V1 : V> kotlin.collections.MutableMap<in kotlin.String, out V>.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1

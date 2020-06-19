@@ -4200,7 +4200,6 @@ public final class kotlin/random/PlatformRandomKt {
 }
 
 public abstract class kotlin/random/Random {
-	public static final field Companion Lkotlin/random/Random$Companion;
 	public static final field Default Lkotlin/random/Random$Default;
 	public fun <init> ()V
 	public abstract fun nextBits (I)I
@@ -4219,11 +4218,6 @@ public abstract class kotlin/random/Random {
 	public fun nextLong ()J
 	public fun nextLong (J)J
 	public fun nextLong (JJ)J
-}
-
-public final class kotlin/random/Random$Companion : kotlin/random/Random {
-	public static final field INSTANCE Lkotlin/random/Random$Companion;
-	public fun nextBits (I)I
 }
 
 public final class kotlin/random/Random$Default : kotlin/random/Random {
