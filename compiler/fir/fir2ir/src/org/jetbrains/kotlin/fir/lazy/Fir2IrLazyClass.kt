@@ -136,14 +136,7 @@ class Fir2IrLazyClass(
                                 if (it.isAbstractMethodOfAny()) {
                                     return@processFunctionsByName
                                 }
-                                result += if (!it.isFakeOverride) {
-                                    declarationStorage.getIrFunctionSymbol(it).owner
-                                } else {
-                                    val fakeOverrideSymbol =
-                                        FirClassSubstitutionScope.createFakeOverrideFunction(session, it.fir, it)
-                                    classifierStorage.preCacheTypeParameters(it.fir)
-                                    declarationStorage.getIrFunctionSymbol(fakeOverrideSymbol).owner
-                                }
+                                result += declarationStorage.getIrFunctionSymbol(it).owner
                             }
                         }
                     }
