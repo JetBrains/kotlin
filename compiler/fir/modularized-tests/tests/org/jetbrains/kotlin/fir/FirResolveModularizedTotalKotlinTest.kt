@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.fir.analysis.FirCheckersResolveProcessor
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
@@ -38,6 +40,7 @@ private val DUMP_FIR = System.getProperty("fir.bench.dump", "true").toBooleanLen
 internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
 internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pass", "false").toBooleanLenient()!!
 private val APPEND_ERROR_REPORTS = System.getProperty("fir.bench.report.errors.append", "false").toBooleanLenient()!!
+private val RUN_CHECKERS = System.getProperty("fir.bench.run.checkers", "false").toBooleanLenient()!!
 
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
@@ -55,7 +58,14 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
         val session = createSession(environment, scope, librariesScope, moduleData.qualifiedName)
-        val processors = createAllCompilerResolveProcessors(session)
+        val scopeSession = ScopeSession()
+        val processors = createAllCompilerResolveProcessors(session, scopeSession).let {
+            if (RUN_CHECKERS) {
+                it + FirCheckersResolveProcessor(session, scopeSession)
+            } else {
+                it
+            }
+        }
 
         val firProvider = session.firProvider as FirProviderImpl
         val firFiles = if (useLightTree) {
