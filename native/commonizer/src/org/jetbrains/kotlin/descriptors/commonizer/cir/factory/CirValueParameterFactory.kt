@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 
 object CirValueParameterFactory {
-    private val interner = Interner<CirValueParameterImpl>()
+    private val interner = Interner<CirValueParameter>()
 
     fun create(source: ValueParameterDescriptor): CirValueParameter = create(
         annotations = source.annotations.map(CirAnnotationFactory::create),

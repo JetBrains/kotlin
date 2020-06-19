@@ -6,33 +6,54 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionModifiers
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirFunctionModifiersFactory
 
-class FunctionModifiersCommonizer : Commonizer<CirFunctionModifiers, CirFunctionModifiers> {
-    private var modifiers: CirFunctionModifiers? = null
-    private var error = false
+class FunctionModifiersCommonizer : AbstractStandardCommonizer<CirFunctionModifiers, CirFunctionModifiers>() {
+    private class MutableModifiers(
+        var isOperator: Boolean,
+        var isInfix: Boolean,
+        var isInline: Boolean,
+        var isTailrec: Boolean,
+        var isSuspend: Boolean,
+        var isExternal: Boolean
+    ) {
+        constructor(immutable: CirFunctionModifiers) : this(
+            isOperator = immutable.isOperator,
+            isInfix = immutable.isInfix,
+            isInline = immutable.isInline,
+            isTailrec = immutable.isTailrec,
+            isSuspend = immutable.isSuspend,
+            isExternal = immutable.isExternal
+        )
 
-    override val result: CirFunctionModifiers
-        get() = modifiers?.takeIf { !error } ?: throw IllegalCommonizerStateException()
+        fun toImmutableModifiers(): CirFunctionModifiers = CirFunctionModifiersFactory.create(
+            isOperator = isOperator,
+            isInfix = isInfix,
+            isInline = isInline,
+            isTailrec = isTailrec,
+            isSuspend = isSuspend,
+            isExternal = isExternal
+        )
+    }
 
-    override fun commonizeWith(next: CirFunctionModifiers): Boolean {
-        if (error)
+    private lateinit var modifiers: MutableModifiers
+
+    override fun commonizationResult() = modifiers.toImmutableModifiers()
+
+    override fun initialize(first: CirFunctionModifiers) {
+        modifiers = MutableModifiers(first)
+    }
+
+    override fun doCommonizeWith(next: CirFunctionModifiers): Boolean {
+        if (modifiers.isSuspend != next.isSuspend)
             return false
 
-        val modifiers = modifiers
-        if (modifiers == null)
-            this.modifiers = next.copy() // TODO: inline?
-        else {
-            if (modifiers.isSuspend != next.isSuspend)
-                error = true
-            else {
-                modifiers.isOperator = modifiers.isOperator && next.isOperator
-                modifiers.isInfix = modifiers.isInfix && next.isInfix
-                modifiers.isInline = modifiers.isInline && next.isInline
-                modifiers.isTailrec = modifiers.isTailrec && next.isTailrec
-                modifiers.isExternal = modifiers.isExternal && next.isExternal
-            }
-        }
+        modifiers.isOperator = modifiers.isOperator && next.isOperator
+        modifiers.isInfix = modifiers.isInfix && next.isInfix
+        modifiers.isInline = modifiers.isInline && next.isInline
+        modifiers.isTailrec = modifiers.isTailrec && next.isTailrec
+        modifiers.isExternal = modifiers.isExternal && next.isExternal
 
-        return !error
+        return true
     }
 }
