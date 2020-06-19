@@ -1,6 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1281
+// EXPECTED_REACHABLE_NODES: 1462
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: JS
 
 // Reproduction of KT-37563
 // Test stack trace capturing in various kinds of constructors

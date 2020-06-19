@@ -98,7 +98,9 @@ internal fun subSequence(c: CharSequence, startIndex: Int, endIndex: Int): CharS
 @JsName("captureStack")
 internal fun captureStack(baseClass: JsClass<in Throwable>, instance: Throwable) {
     if (js("Error").captureStackTrace) {
-        js("Error").captureStackTrace(instance, instance::class.js);
+        // Using uncropped stack traces due to KT-37563.
+        // Precise stack traces are implemented in JS IR compiler and stdlib
+        js("Error").captureStackTrace(instance);
     } else {
         instance.asDynamic().stack = js("new Error()").stack;
     }
