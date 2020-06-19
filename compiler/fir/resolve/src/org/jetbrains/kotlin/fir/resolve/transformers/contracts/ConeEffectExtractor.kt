@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.*
@@ -65,7 +65,7 @@ class ConeEffectExtractor(
             FirContractsDslNames.CALLS_IN_PLACE -> {
                 val reference = functionCall.arguments[0].accept(this, null) as? ConeValueParameterReference
                     ?: return null
-                val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: InvocationKind.UNKNOWN
+                val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
                 ConeCallsEffectDeclaration(reference, kind)
             }
 
@@ -165,14 +165,14 @@ class ConeEffectExtractor(
         return ConeIsInstancePredicate(arg, type, isNegated)
     }
 
-    private fun FirExpression.parseInvocationKind(): InvocationKind? {
+    private fun FirExpression.parseInvocationKind(): EventOccurrencesRange? {
         if (this !is FirQualifiedAccessExpression) return null
         val resolvedId = toResolvedCallableSymbol()?.callableId ?: return null
         return when (resolvedId) {
-            FirContractsDslNames.EXACTLY_ONCE_KIND -> InvocationKind.EXACTLY_ONCE
-            FirContractsDslNames.AT_LEAST_ONCE_KIND -> InvocationKind.AT_LEAST_ONCE
-            FirContractsDslNames.AT_MOST_ONCE_KIND -> InvocationKind.AT_MOST_ONCE
-            FirContractsDslNames.UNKNOWN_KIND -> InvocationKind.UNKNOWN
+            FirContractsDslNames.EXACTLY_ONCE_KIND -> EventOccurrencesRange.EXACTLY_ONCE
+            FirContractsDslNames.AT_LEAST_ONCE_KIND -> EventOccurrencesRange.AT_LEAST_ONCE
+            FirContractsDslNames.AT_MOST_ONCE_KIND -> EventOccurrencesRange.AT_MOST_ONCE
+            FirContractsDslNames.UNKNOWN_KIND -> EventOccurrencesRange.UNKNOWN
             else -> null
         }
     }

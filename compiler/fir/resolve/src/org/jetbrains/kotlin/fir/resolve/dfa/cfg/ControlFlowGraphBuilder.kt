@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.*
@@ -207,7 +207,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun enterAnonymousFunction(anonymousFunction: FirAnonymousFunction): Pair<PostponedLambdaEnterNode?, FunctionEnterNode> {
-        val invocationKind = anonymousFunction.invocationKind
+        val invocationKind = anonymousFunction.eventOccurrencesRange
 
         var previousNodeIsNew = false
         val symbol = anonymousFunction.symbol
@@ -256,15 +256,15 @@ class ControlFlowGraphBuilder {
         }
     }
 
-    private val InvocationKind?.hasTowardEdge: Boolean
+    private val EventOccurrencesRange?.hasTowardEdge: Boolean
         get() = when (this) {
-            InvocationKind.AT_MOST_ONCE, InvocationKind.UNKNOWN -> true
+            EventOccurrencesRange.AT_MOST_ONCE, EventOccurrencesRange.UNKNOWN -> true
             else -> false
         }
 
-    private val InvocationKind?.hasBackEdge: Boolean
+    private val EventOccurrencesRange?.hasBackEdge: Boolean
         get() = when (this) {
-            InvocationKind.AT_LEAST_ONCE, InvocationKind.UNKNOWN -> true
+            EventOccurrencesRange.AT_LEAST_ONCE, EventOccurrencesRange.UNKNOWN -> true
             else -> false
         }
 
@@ -293,7 +293,7 @@ class ControlFlowGraphBuilder {
             lastNodes.push(postponedExitNode)
         }
 
-        val invocationKind = anonymousFunction.invocationKind
+        val invocationKind = anonymousFunction.eventOccurrencesRange
         if (invocationKind != null) {
             addEdge(exitNode, postponedExitNode, preferredKind = EdgeKind.CfgForward)
         } else {
@@ -301,7 +301,7 @@ class ControlFlowGraphBuilder {
             CFGNode.addJustKindEdge(postponedEnterNode, postponedExitNode, kind, propagateDeadness = true)
         }
 
-        if (invocationKind == InvocationKind.EXACTLY_ONCE && shouldPassFlowFromInplaceLambda.top()) {
+        if (invocationKind == EventOccurrencesRange.EXACTLY_ONCE && shouldPassFlowFromInplaceLambda.top()) {
             exitsFromCompletedPostponedAnonymousFunctions += postponedExitNode
         }
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.contracts.description
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 
 /**
  * Effect with condition attached to it.
@@ -41,7 +41,7 @@ class ConeReturnsEffectDeclaration(val value: ConeConstantReference) : ConeEffec
  * Effect which specifies, that during execution of subroutine, callable [valueParameterReference] will be invoked
  * [kind] amount of times, and will never be invoked after subroutine call is finished.
  */
-class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameterReference, val kind: InvocationKind) : ConeEffectDeclaration() {
+class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameterReference, val kind: EventOccurrencesRange) : ConeEffectDeclaration() {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
 }

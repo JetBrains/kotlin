@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -37,7 +37,7 @@ class FirPropertyInitializationAnalyzer {
             val reference = node.fir.calleeReference as? FirResolvedNamedReference ?: return
             val symbol = reference.resolvedSymbol as? FirPropertySymbol ?: return
             if (symbol !in localProperties) return
-            val kind = data.getValue(node)[symbol] ?: InvocationKind.ZERO
+            val kind = data.getValue(node)[symbol] ?: EventOccurrencesRange.ZERO
             if (!kind.isDefinitelyVisited()) {
                 node.fir.source?.let {
                     reporter.report(FirErrors.UNINITIALIZED_VARIABLE.on(it, symbol))
@@ -47,20 +47,20 @@ class FirPropertyInitializationAnalyzer {
     }
 
     private class PropertyInitializationInfo(
-        map: PersistentMap<FirPropertySymbol, InvocationKind> = persistentMapOf()
-    ) : ControlFlowInfo<PropertyInitializationInfo, FirPropertySymbol, InvocationKind>(map) {
+        map: PersistentMap<FirPropertySymbol, EventOccurrencesRange> = persistentMapOf()
+    ) : ControlFlowInfo<PropertyInitializationInfo, FirPropertySymbol, EventOccurrencesRange>(map) {
         companion object {
             val EMPTY = PropertyInitializationInfo()
         }
 
-        override val constructor: (PersistentMap<FirPropertySymbol, InvocationKind>) -> PropertyInitializationInfo =
+        override val constructor: (PersistentMap<FirPropertySymbol, EventOccurrencesRange>) -> PropertyInitializationInfo =
             ::PropertyInitializationInfo
 
         fun merge(other: PropertyInitializationInfo): PropertyInitializationInfo {
             var result = this
             for (symbol in keys.union(other.keys)) {
-                val kind1 = this[symbol] ?: InvocationKind.ZERO
-                val kind2 = other[symbol] ?: InvocationKind.ZERO
+                val kind1 = this[symbol] ?: EventOccurrencesRange.ZERO
+                val kind2 = other[symbol] ?: EventOccurrencesRange.ZERO
                 result = result.put(symbol, kind1 or kind2)
             }
             return result
@@ -121,8 +121,8 @@ class FirPropertyInitializationAnalyzer {
             dataForNode: PropertyInitializationInfo,
             symbol: FirPropertySymbol
         ): PropertyInitializationInfo {
-            val existingKind = dataForNode[symbol] ?: InvocationKind.ZERO
-            val kind = existingKind and InvocationKind.EXACTLY_ONCE
+            val existingKind = dataForNode[symbol] ?: EventOccurrencesRange.ZERO
+            val kind = existingKind + EventOccurrencesRange.EXACTLY_ONCE
             return dataForNode.put(symbol, kind)
         }
     }

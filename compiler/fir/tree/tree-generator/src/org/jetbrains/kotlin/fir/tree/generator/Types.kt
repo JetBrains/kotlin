@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -25,7 +25,7 @@ val jumpTargetType = type("fir", "FirTarget")
 val constKindType = generatedType("expressions", "FirConstKind")
 val operationType = type("fir.expressions", "FirOperation")
 val classKindType = type(ClassKind::class)
-val invocationKindType = type(InvocationKind::class)
+val eventOccurrencesRangeType = type(EventOccurrencesRange::class)
 val varianceType = type(Variance::class)
 val nameType = type(Name::class)
 val visibilityType = type(Visibility::class)

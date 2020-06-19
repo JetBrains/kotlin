@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -40,7 +40,7 @@ internal class FirAnonymousFunctionImpl(
     override var typeRef: FirTypeRef,
     override val symbol: FirAnonymousFunctionSymbol,
     override var label: FirLabel?,
-    override var invocationKind: InvocationKind?,
+    override var eventOccurrencesRange: EventOccurrencesRange?,
     override val isLambda: Boolean,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirAnonymousFunction() {
@@ -122,7 +122,7 @@ internal class FirAnonymousFunctionImpl(
         typeRef = newTypeRef
     }
 
-    override fun replaceInvocationKind(newInvocationKind: InvocationKind?) {
-        invocationKind = newInvocationKind
+    override fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?) {
+        eventOccurrencesRange = newInvocationKind
     }
 }

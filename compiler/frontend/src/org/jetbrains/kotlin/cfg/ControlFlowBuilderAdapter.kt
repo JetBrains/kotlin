@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.cfg
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -139,12 +139,12 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.exitTryFinally()
     }
 
-    override fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind?) {
-        delegateBuilder.enterSubroutine(subroutine, invocationKind)
+    override fun enterSubroutine(subroutine: KtElement, eventOccurrencesRange: EventOccurrencesRange?) {
+        delegateBuilder.enterSubroutine(subroutine, eventOccurrencesRange)
     }
 
-    override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode =
-        delegateBuilder.exitSubroutine(subroutine, invocationKind)
+    override fun exitSubroutine(subroutine: KtElement, eventOccurrencesRange: EventOccurrencesRange?): Pseudocode =
+        delegateBuilder.exitSubroutine(subroutine, eventOccurrencesRange)
 
     override val currentSubroutine: KtElement
         get() = delegateBuilder.currentSubroutine
@@ -185,8 +185,8 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
         delegateBuilder.declareFunction(subroutine, pseudocode)
     }
 
-    override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationKind: InvocationKind) {
-        delegateBuilder.declareInlinedFunction(subroutine, pseudocode, invocationKind)
+    override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, eventOccurrencesRange: EventOccurrencesRange) {
+        delegateBuilder.declareInlinedFunction(subroutine, pseudocode, eventOccurrencesRange)
     }
 
     override fun declareEntryOrObject(entryOrObject: KtClassOrObject) {

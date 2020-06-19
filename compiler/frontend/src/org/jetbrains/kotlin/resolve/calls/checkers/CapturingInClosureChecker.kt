@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.contracts.description.CallsEffectDeclaration
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -147,7 +147,7 @@ class CapturingInClosureChecker : CallChecker {
         val contractDescription = function.getUserData(ContractProviderKey)?.getContractDescription() ?: return false
         val effect = contractDescription.effects.filterIsInstance<CallsEffectDeclaration>()
             .find { it.variableReference.descriptor == parameter.original } ?: return false
-        return effect.kind == InvocationKind.EXACTLY_ONCE
+        return effect.kind == EventOccurrencesRange.EXACTLY_ONCE
     }
 
     private fun isExactlyOnceContract(bindingContext: BindingContext, argument: KtFunction): Boolean {
