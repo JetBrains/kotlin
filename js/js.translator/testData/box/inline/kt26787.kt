@@ -1,5 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1618
+// EXPECTED_REACHABLE_NODES: 1600
 
 // Simplified example from https://youtrack.jetbrains.com/issue/KT-26787
 
