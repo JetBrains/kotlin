@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleStri
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetAccessIR
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JSConfigurator.Companion.cssSupport
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
@@ -69,32 +70,7 @@ internal fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
     )
 
 
-interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexistenceTargetConfigurator, ModuleConfiguratorWithSettings {
-    companion object : ModuleConfiguratorSettings() {
-        val kind by enumSetting<JsTargetKind>(
-            KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind"),
-            GenerationPhase.PROJECT_GENERATION
-        ) {
-            defaultValue = value(JsTargetKind.APPLICATION)
-        }
-
-        val cssSupport by booleanSetting(
-            KotlinNewProjectWizardBundle.message("module.configurator.js.css"),
-            GenerationPhase.PROJECT_GENERATION
-        ) {
-            defaultValue = value(true)
-        }
-    }
-
-    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
-        super.getConfiguratorSettings() + kind + cssSupport
-
-    fun Reader.isApplication(module: Module): Boolean =
-        settingsValue(module, kind) == JsTargetKind.APPLICATION
-
-    fun Reader.hasCssSupport(module: Module): Boolean =
-        settingsValue(module, cssSupport)
-}
+interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexistenceTargetConfigurator, ModuleConfiguratorWithSettings
 
 enum class JsTargetKind(override val text: String) : DisplayableSettingItem {
     LIBRARY(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.library")),
@@ -104,7 +80,8 @@ enum class JsTargetKind(override val text: String) : DisplayableSettingItem {
 object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWithTests {
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
         super<ModuleConfiguratorWithTests>.getConfiguratorSettings() +
-                super<JsTargetConfigurator>.getConfiguratorSettings()
+                super<JsTargetConfigurator>.getConfiguratorSettings() +
+                cssSupport
 
     @NonNls
     override val id = "jsBrowser"
@@ -122,17 +99,7 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(ModuleSubType.js)
         ) {
-            "browser" {
-                if (isApplication(module)) {
-                    +"binaries.executable()"
-                }
-                if (hasCssSupport(module)) {
-                    if (isApplication(module)) {
-                        applicationCssSupport()
-                    }
-                    testCssSupport()
-                }
-            }
+            browserSubTarget(module, this@createTargetIrs)
         }
     }
 }
@@ -153,11 +120,7 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(ModuleSubType.js)
         ) {
-            "nodejs" {
-                if (isApplication(module)) {
-                    +"binaries.executable()"
-                }
-            }
+            nodejsSubTarget(module, this@createTargetIrs)
         }
     }
 }
