@@ -2,7 +2,7 @@ val foo1 = 1
 val foo2 = 2
 
 fun main() {
-    <warning descr="SSR">// bar1 = foo1</warning>
+    <warning descr="SSR">/* bar1 = foo1 */</warning>
     val bar1 = foo1
     // bar2 = 0
     val bar2 = 0

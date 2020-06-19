@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 fun getCommentText(comment: PsiComment): String {
     return when (comment.tokenType) {
-        KtTokens.EOL_COMMENT -> comment.text.drop(2)
-        KtTokens.BLOCK_COMMENT -> comment.text.drop(2).dropLast(2)
+        KtTokens.EOL_COMMENT -> comment.text.drop(2).trim()
+        KtTokens.BLOCK_COMMENT -> comment.text.drop(2).dropLast(2).trim()
         else -> ""
     }
 }

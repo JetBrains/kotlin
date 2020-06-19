@@ -45,7 +45,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     private fun processPatternStringWithFragments(element: PsiElement, text: String = element.text) {
         if (mySubstitutionPattern.matcher(text).find()) {
-            myCompilingVisitor.processPatternStringWithFragments(element.text, COMMENT, mySubstitutionPattern)?.let {
+            myCompilingVisitor.processPatternStringWithFragments(text, COMMENT, mySubstitutionPattern)?.let {
                 element.putUserData(CompiledPattern.HANDLER_KEY, it)
             }
         }
@@ -153,10 +153,8 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitComment(comment: PsiComment) {
         super.visitComment(comment)
-        processPatternStringWithFragments(
-            comment, getCommentText(comment)
-                .trim()
-        )
+        processPatternStringWithFragments(comment, getCommentText(comment).trim())
+        getHandler(comment).setFilter { it is PsiComment }
 
         if (comment.parent is KtDeclaration || PsiTreeUtil.skipWhitespacesForward(comment) is KtDeclaration) {
             val handler = CommentedDeclarationHandler()

@@ -5,9 +5,9 @@ val foo2 = 1 <warning descr="SSR">//</warning>
 val foo3 = 1
 val foo4 = 1 <warning descr="SSR">/**/</warning>
 val foo5 <warning descr="SSR">/**/</warning> = 1
-/**
+<warning descr="SSR">/**
  *
- */
+ */</warning>
 val foo6 = 1
 val foo7 = 1
 
@@ -19,9 +19,9 @@ fun main() {
     val bar3 = 1
     val bar4 = 1 <warning descr="SSR">/**/</warning>
     val bar5 <warning descr="SSR">/**/</warning> = 1
-    /**
+    <warning descr="SSR">/**
      *
-     */
+     */</warning>
     val bar6 = 1
     val bar7 = 1
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
@@ -230,7 +231,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtExpression>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(expression, other)
         val handler = getHandler(expression)
-        if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+        if (myMatchingVisitor.result && handler is SubstitutionHandler) {
             handler.handle(other, myMatchingVisitor.matchContext)
         }
     }
@@ -242,7 +243,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             if (other is KtSimpleNameExpression) other.getReferencedNameElement() else other
         )
         val handler = getHandler(expression.getReferencedNameElement())
-        if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+        if (myMatchingVisitor.result && handler is SubstitutionHandler) {
             handler.handle(
                 if (other is KtSimpleNameExpression) other.getReferencedNameElement() else other,
                 myMatchingVisitor.matchContext
@@ -451,7 +452,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && parameter.variance == other.variance
         parameter.nameIdentifier?.let { nameIdentifier ->
             val handler = getHandler(nameIdentifier)
-            if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+            if (myMatchingVisitor.result && handler is SubstitutionHandler) {
                 handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
             }
         }
@@ -469,7 +470,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
         parameter.nameIdentifier?.let { nameIdentifier ->
             val handler = getHandler(nameIdentifier)
-            if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+            if (myMatchingVisitor.result && handler is SubstitutionHandler) {
                 handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
             }
         }
@@ -547,7 +548,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(klass.body, other.body)
                 && myMatchingVisitor.match(klass.docComment, other.docComment)
         val handler = getHandler(klass.nameIdentifier!!)
-        if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+        if (myMatchingVisitor.result && handler is SubstitutionHandler) {
             handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
         }
     }
@@ -566,7 +567,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(declaration.body, other.body)
         declaration.nameIdentifier?.let { declNameIdentifier ->
             val handler = getHandler(declNameIdentifier)
-            if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+            if (myMatchingVisitor.result && handler is SubstitutionHandler) {
                 handler.handle(otherIdentifier, myMatchingVisitor.matchContext)
             }
         }
@@ -597,7 +598,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         } else myMatchingVisitor.match(funExpr, othExpr)
         function.nameIdentifier?.let { nameIdentifier ->
             val handler = getHandler(nameIdentifier)
-            if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+            if (myMatchingVisitor.result && handler is SubstitutionHandler) {
                 handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
             }
         }
@@ -687,7 +688,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = matchTextOrVariable(typeAlias.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(typeAlias.getTypeReference(), other.getTypeReference())
         val handler = getHandler(typeAlias.nameIdentifier!!)
-        if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+        if (myMatchingVisitor.result && handler is SubstitutionHandler) {
             handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
         }
     }
@@ -718,7 +719,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
         ))
         val handler = getHandler(property.nameIdentifier!!)
-        if(myMatchingVisitor.result && handler is SubstitutionHandler) {
+        if (myMatchingVisitor.result && handler is SubstitutionHandler) {
             handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
         }
     }
@@ -793,14 +794,28 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<PsiComment>() ?: return
         when (val handler = comment.getUserData(CompiledPattern.HANDLER_KEY)) {
             is LiteralWithSubstitutionHandler -> {
-                myMatchingVisitor.result = handler.match(comment, other, myMatchingVisitor.matchContext)
+                if (other is KDocImpl) {
+                    myMatchingVisitor.result = handler.match(comment, other, myMatchingVisitor.matchContext)
+                } else {
+                    val offset = 2 + other.text.substring(2).indexOfFirst { it > ' ' }
+                    myMatchingVisitor.result = handler.match(other, getCommentText(other), offset, myMatchingVisitor.matchContext)
+                }
             }
-            else -> {
-                myMatchingVisitor.result = myMatchingVisitor.matchText(
-                    StructuralSearchUtil.normalize(getCommentText(comment)),
-                    StructuralSearchUtil.normalize(getCommentText(other))
+            is SubstitutionHandler -> {
+                handler.findRegExpPredicate()?.let {
+                    it.setNodeTextGenerator { comment -> getCommentText(comment as PsiComment) }
+                }
+                myMatchingVisitor.result = handler.handle(
+                    other,
+                    2,
+                    other.textLength - if (other.tokenType == KtTokens.EOL_COMMENT) 0 else 2,
+                    myMatchingVisitor.matchContext
                 )
             }
+            else -> myMatchingVisitor.result = myMatchingVisitor.matchText(
+                StructuralSearchUtil.normalize(getCommentText(comment)),
+                StructuralSearchUtil.normalize(getCommentText(other))
+            )
         }
     }
 
