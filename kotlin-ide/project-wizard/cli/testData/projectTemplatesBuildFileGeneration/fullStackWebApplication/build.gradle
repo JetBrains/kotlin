@@ -30,6 +30,18 @@ kotlin {
     js {
         browser {
             binaries.executable()
+            webpackTask {
+                cssSupport.enabled = true
+            }
+            runTask {
+                cssSupport.enabled = true
+            }
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                    cssSupport.enabled = true
+                }
+            }
         }
     }
     sourceSets {
