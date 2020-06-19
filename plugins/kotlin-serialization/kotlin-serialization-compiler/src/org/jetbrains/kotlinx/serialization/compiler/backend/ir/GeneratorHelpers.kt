@@ -724,7 +724,7 @@ interface IrBuilderExtension {
 
     private fun IrConstructor.isSerializationCtor(): Boolean {
         val serialMarker =
-            compilerContext.referenceClass(SerializationPackages.packageFqName.child(SerialEntityNames.SERIAL_CTOR_MARKER_NAME))
+            compilerContext.referenceClass(SerializationPackages.internalPackageFqName.child(SerialEntityNames.SERIAL_CTOR_MARKER_NAME))
 
         return valueParameters.lastOrNull()?.run {
             name == SerialEntityNames.dummyParamName && type.classifierOrNull == serialMarker
