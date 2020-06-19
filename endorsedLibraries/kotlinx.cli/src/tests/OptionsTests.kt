@@ -39,6 +39,38 @@ class OptionsTests {
     }
 
     @Test
+    fun testGNUPrefix() {
+        val argParser = ArgParser("testParser", prefixStyle = ArgParser.OptionPrefixStyle.GNU)
+        val output by argParser.option(ArgType.String, "output", "o", "Output file")
+        val input by argParser.option(ArgType.String, "input", "i", "Input file")
+        val verbose by argParser.option(ArgType.Boolean, "verbose", "v", "Verbose print")
+        val shortForm by argParser.option(ArgType.Boolean, "short", "s", "Short output form")
+        val text by argParser.option(ArgType.Boolean, "text", "t", "Use text format")
+        argParser.parse(arrayOf("-oout.txt", "--input=input.txt", "-vst"))
+        assertEquals("out.txt", output)
+        assertEquals("input.txt", input)
+        assertEquals(verbose, true)
+        assertEquals(shortForm, true)
+        assertEquals(text, true)
+    }
+
+    @Test
+    fun testGNUArguments() {
+        val argParser = ArgParser("testParser", prefixStyle = ArgParser.OptionPrefixStyle.GNU)
+        val output by argParser.argument(ArgType.String, "output", "Output file")
+        val input by argParser.argument(ArgType.String, "input", "Input file")
+        val verbose by argParser.option(ArgType.Boolean, "verbose", "v", "Verbose print")
+        val shortForm by argParser.option(ArgType.Boolean, "short", "s", "Short output form").default(false)
+        val text by argParser.option(ArgType.Boolean, "text", "t", "Use text format").default(false)
+        argParser.parse(arrayOf("--verbose", "--", "out.txt", "--input.txt"))
+        assertEquals("out.txt", output)
+        assertEquals("--input.txt", input)
+        assertEquals(verbose, true)
+        assertEquals(shortForm, false)
+        assertEquals(text, false)
+    }
+
+    @Test
     fun testMultipleOptions() {
         val argParser = ArgParser("testParser")
         val useShortForm by argParser.option(ArgType.Boolean, "short", "s", "Show short version of report").default(false)

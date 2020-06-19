@@ -132,7 +132,7 @@ open class ArgParser(
     /**
      * Map of subcommands.
      */
-    @UseExperimental(ExperimentalCli::class)
+    @OptIn(ExperimentalCli::class)
     protected val subcommands = mutableMapOf<String, Subcommand>()
 
     /**
@@ -143,7 +143,7 @@ open class ArgParser(
     /**
      * Used prefix form for full option form.
      */
-    private val optionFullFormPrefix = if (prefixStyle == OptionPrefixStyle.LINUX) "--" else "-"
+    private val optionFullFormPrefix = if (prefixStyle == OptionPrefixStyle.JVM) "-" else "--"
 
     /**
      * Used prefix form for short option form.
@@ -154,6 +154,11 @@ open class ArgParser(
      * Name with all commands that should be executed.
      */
     protected val fullCommandName = mutableListOf(programName)
+
+    /**
+     * Flag to recognize if CLI entities can be treated as options.
+     */
+    protected var treatAsOption = true
 
     /**
      * The way an option/argument has got its value.
@@ -179,6 +184,11 @@ open class ArgParser(
         LINUX,
         /* JVM style: both full and short names are prefixed with one hyphen "-". */
         JVM,
+        /* GNU style: the full name of an option is prefixed with two hyphens "--" and "=" between options and value
+         and the short name — with one "-".
+         Detailed information https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
+         */
+        GNU
     }
 
     @Deprecated("OPTION_PREFIX_STYLE is deprecated. Please, use OptionPrefixStyle.",
@@ -216,6 +226,13 @@ open class ArgParser(
         description: String? = null,
         deprecatedWarning: String? = null
     ): SingleNullableOption<T> {
+        if (prefixStyle == OptionPrefixStyle.GNU && shortName != null)
+            require(shortName.length == 1) {
+                """
+                GNU standart for options allow to use short form whuch consists of one character. 
+                For more information, please, see https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
+                """.trimIndent()
+            }
         val option = SingleNullableOption(OptionDescriptor(optionFullFormPrefix, optionShortFromPrefix, type,
                 fullName, shortName, description, deprecatedWarning = deprecatedWarning), CLIEntityWrapper())
         option.owner.entity = option
@@ -335,6 +352,18 @@ open class ArgParser(
     }
 
     /**
+     * Treat value as argument value.
+     *
+     * @param arg string with argument value.
+     * @param argumentsQueue queue with active argument descriptors.
+     */
+    private fun treatAsArgument(arg: String, argumentsQueue: ArgumentsQueue) {
+        if (!saveAsArg(arg, argumentsQueue)) {
+            printError("Too many arguments! Couldn't process argument $arg!")
+        }
+    }
+
+    /**
      * Save value as option value.
      */
     private fun <T : Any, U: Any> saveAsOption(parsingValue: ParsingValue<T, U>, value: String) {
@@ -342,24 +371,123 @@ open class ArgParser(
     }
 
     /**
-     * Try to recognize command line element as full form of option.
+     * Try to recognize and save command line element as full form of option.
      *
      * @param candidate string with candidate in options.
+     * @param argIterator iterator over command line arguments.
      */
-    private fun recognizeOptionFullForm(candidate: String) =
-        if (candidate.startsWith(optionFullFormPrefix))
-            options[candidate.substring(optionFullFormPrefix.length)]
-        else null
+    private fun recognizeAndSaveOptionFullForm(candidate: String, argIterator: Iterator<String>): Boolean {
+        if (prefixStyle == OptionPrefixStyle.GNU && candidate == optionFullFormPrefix) {
+            // All other arguments after `--` are treated as non-option arguments.
+            treatAsOption = false
+            return false
+        }
+        if (!candidate.startsWith(optionFullFormPrefix))
+            return false
+
+        val optionString = candidate.substring(optionFullFormPrefix.length)
+        val argValue = if (prefixStyle == OptionPrefixStyle.GNU) null else options[optionString]
+        if (argValue != null) {
+            saveStandardOptionForm(argValue, argIterator)
+            return true
+        } else {
+            // Check GNU style of options.
+            if (prefixStyle == OptionPrefixStyle.GNU) {
+                // Option without a parameter.
+                if (options[optionString]?.descriptor?.type?.hasParameter == false) {
+                    saveOptionWithoutParameter(options[optionString]!!)
+                    return true
+                }
+                // Option with parameters.
+                val optionParts = optionString.split('=', limit = 2)
+                if (optionParts.size != 2)
+                    return false
+                if (options[optionParts[0]] != null) {
+                    saveAsOption(options[optionParts[0]]!!, optionParts[1])
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
     /**
-     * Try to recognize command line element as short form of option.
+     * Save option without parameter.
+     *
+     * @param argValue argument value with all information about option.
+     */
+    private fun saveOptionWithoutParameter(argValue: ParsingValue<*, *>) {
+        // Boolean flags.
+        if (argValue.descriptor.fullName == "help") {
+            println(makeUsage())
+            exitProcess(0)
+        }
+        saveAsOption(argValue, "true")
+    }
+
+    /**
+     * Save option described with standard separated form `--name value`.
+     *
+     * @param argValue argument value with all information about option.
+     * @param argIterator iterator over command line arguments.
+     */
+    private fun saveStandardOptionForm(argValue: ParsingValue<*, *>, argIterator: Iterator<String>) {
+        if (argValue.descriptor.type.hasParameter) {
+            if (argIterator.hasNext()) {
+                saveAsOption(argValue, argIterator.next())
+            } else {
+                // An error, option with value without value.
+                printError("No value for ${argValue.descriptor.textDescription}")
+            }
+        } else {
+            saveOptionWithoutParameter(argValue)
+        }
+    }
+
+    /**
+     * Try to recognize and save command line element as short form of option.
      *
      * @param candidate string with candidate in options.
+     * @param argIterator iterator over command line arguments.
      */
-    private fun recognizeOptionShortForm(candidate: String) =
-            if (candidate.startsWith(optionShortFromPrefix))
-                shortNames[candidate.substring(optionShortFromPrefix.length)]
-            else null
+    private fun recognizeAndSaveOptionShortForm(candidate: String, argIterator: Iterator<String>): Boolean {
+        if (!candidate.startsWith(optionShortFromPrefix) ||
+            optionFullFormPrefix != optionShortFromPrefix && candidate.startsWith(optionFullFormPrefix)) return false
+        // Try to find exact match.
+        val option = candidate.substring(optionShortFromPrefix.length)
+        val argValue = shortNames[option]
+        if (argValue != null) {
+            saveStandardOptionForm(argValue, argIterator)
+        } else {
+            if (prefixStyle != OptionPrefixStyle.GNU || option.isEmpty())
+                return false
+
+            // Try to find collapsed form.
+            val firstOption = shortNames["${option[0]}"] ?: return false
+            // Form with value after short form without separator.
+            if (firstOption.descriptor.type.hasParameter) {
+                saveAsOption(firstOption, option.substring(1))
+            } else {
+                // Form with several short forms as one string.
+                val otherBooleanOptions = option.substring(1)
+                saveOptionWithoutParameter(firstOption)
+                for (option in otherBooleanOptions) {
+                    shortNames["$option"]?.let {
+                        if (it.descriptor.type.hasParameter) {
+                            printError(
+                                "Option $optionShortFromPrefix$option can't be used in option combination $candidate, " +
+                                        "because parameter value of type ${it.descriptor.type.description} should be " +
+                                        "provided for current option."
+                            )
+                        }
+                    }?: printError("Unknown option $optionShortFromPrefix$option in option combination $candidate.")
+
+                    saveOptionWithoutParameter(shortNames["$option"]!!)
+                }
+            }
+        }
+        return true
+    }
 
     /**
      * Parses the provided array of command line arguments.
@@ -442,16 +570,16 @@ open class ArgParser(
 
         val argumentsQueue = ArgumentsQueue(arguments.map { it.value.descriptor as ArgDescriptor<*, *> })
 
-        var index = 0
+        val argIterator = args.listIterator()
         try {
-            while (index < args.size) {
-                val arg = args[index]
+            while (argIterator.hasNext()) {
+                val arg = argIterator.next()
                 // Check for subcommands.
-                @UseExperimental(ExperimentalCli::class)
+                @OptIn(ExperimentalCli::class)
                 subcommands.forEach { (name, subcommand) ->
                     if (arg == name) {
                         // Use parser for this subcommand.
-                        subcommand.parse(args.slice(index + 1..args.size - 1))
+                        subcommand.parse(args.slice(argIterator.nextIndex() until args.size))
                         subcommand.execute()
                         parsingState = ArgParserResult(name)
 
@@ -459,40 +587,26 @@ open class ArgParser(
                     }
                 }
                 // Parse arguments from command line.
-                if (arg.startsWith('-')) {
+                if (treatAsOption && arg.startsWith('-')) {
                     // Candidate in being option.
                     // Option is found.
-                    val argValue = recognizeOptionShortForm(arg) ?: recognizeOptionFullForm(arg)
-                    argValue?.descriptor?.let {
-                        if (argValue.descriptor.type.hasParameter) {
-                            if (index < args.size - 1) {
-                                saveAsOption(argValue, args[index + 1])
-                                index++
-                            } else {
-                                // An error, option with value without value.
-                                printError("No value for ${argValue.descriptor.textDescription}")
-                            }
+                    if (!(recognizeAndSaveOptionShortForm(arg, argIterator) ||
+                                recognizeAndSaveOptionFullForm(arg, argIterator))) {
+                        // State is changed so next options are arguments.
+                        if (!treatAsOption) {
+                            // Argument is found.
+                            treatAsArgument(argIterator.next(), argumentsQueue)
                         } else {
-                            // Boolean flags.
-                            if (argValue.descriptor.fullName == "help") {
-                                println(makeUsage())
-                                exitProcess(0)
+                            // Try save as argument.
+                            if (!saveAsArg(arg, argumentsQueue)) {
+                                printError("Unknown option $arg")
                             }
-                            saveAsOption(argValue, "true")
-                        }
-                    } ?: run {
-                        // Try save as argument.
-                        if (!saveAsArg(arg, argumentsQueue)) {
-                            printError("Unknown option $arg")
                         }
                     }
                 } else {
                     // Argument is found.
-                    if (!saveAsArg(arg, argumentsQueue)) {
-                        printError("Too many arguments! Couldn't process argument $arg!")
-                    }
+                    treatAsArgument(arg, argumentsQueue)
                 }
-                index++
             }
             // Postprocess results of parsing.
             options.values.union(arguments.values).forEach { value ->
