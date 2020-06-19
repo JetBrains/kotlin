@@ -4478,7 +4478,6 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
         binaryName = "CoverageControlFlow"
         numberOfCoveredFunctions = 1
         numberOfCoveredLines = 102
-        enabled = !twoStageEnabled
 
         konanArtifacts {
             program(binaryName, targets: [ target ]) {
@@ -4524,7 +4523,6 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
         binaryName = "CoverageSmoke1"
         numberOfCoveredFunctions = 9
         numberOfCoveredLines = 33
-        enabled = !twoStageEnabled
 
         konanArtifacts {
             program(binaryName, targets: [ target ]) {
