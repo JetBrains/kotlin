@@ -84,7 +84,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 if (%default and 0b0010 !== 0) {
                   y = 0
                 }
-                Wrap(restartableFunction(%composer, <>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                Wrap(composableLambda(%composer, <>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
                   if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                     if (x > 0) {
                       %composer.startReplaceableGroup(<>)
@@ -153,7 +153,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 if (%default and 0b0010 !== 0) {
                   y = 0
                 }
-                Wrap(restartableFunction(%composer, <>, false) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                Wrap(composableLambda(%composer, <>, false) { %composer: Composer<*>?, %key: Int, %changed: Int ->
                   %composer.startReplaceableGroup(%key)
                   A(x, 0, %composer, <>, 0b0110 and %dirty, 0b0010)
                   %composer.endReplaceableGroup()
@@ -543,7 +543,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                     modifier = Companion
                   }
                   if (%default and 0b0010 !== 0) {
-                    children = restartableFunctionInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                    children = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
                       if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                         Unit
                       } else {
@@ -582,7 +582,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             }
         """,
         """
-            val foo: Function5<Int, Foo, Composer<*>, Int, Int, Unit> = restartableFunctionInstance(<>, true) { x: Int, y: Foo, %composer: Composer<*>?, %key: Int, %changed: Int ->
+            val foo: Function5<Int, Foo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { x: Int, y: Foo, %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -614,7 +614,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             }
         """,
         """
-            val foo: Function5<Int, Foo, Composer<*>, Int, Int, Unit> = restartableFunctionInstance(<>, true) { x: Int, y: Foo, %composer: Composer<*>?, %key: Int, %changed: Int ->
+            val foo: Function5<Int, Foo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { x: Int, y: Foo, %composer: Composer<*>?, %key: Int, %changed: Int ->
               A(x, %composer, <>, 0b0110 and %changed)
               B(y, %composer, <>, 0b0110 and %changed shr 0b0010)
             }
@@ -655,7 +655,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
               %composer.startRestartGroup(%key)
               if (%changed !== 0 || !%composer.skipping) {
-                SomeThing(restartableFunction(%composer, <>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                SomeThing(composableLambda(%composer, <>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
                   if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                     val id = object
                   } else {
@@ -936,7 +936,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 if (%default and 0b0010 !== 0) {
                   y = 0
                 }
-                Wrap(10, restartableFunction(%composer, <>, true) { it: Int, %composer: Composer<*>?, %key: Int, %changed: Int ->
+                Wrap(10, composableLambda(%composer, <>, true) { it: Int, %composer: Composer<*>?, %key: Int, %changed: Int ->
                   val %dirty = %changed
                   if (%changed and 0b0110 === 0) {
                     %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010
@@ -994,7 +994,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             }
         """,
         """
-            val test: Function4<Int, Composer<*>, Int, Int, Unit> = restartableFunctionInstance(<>, true) { x: Int, %composer: Composer<*>?, %key: Int, %changed: Int ->
+            val test: Function4<Int, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { x: Int, %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -1323,7 +1323,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               %composer.startRestartGroup(%key)
               if (%changed !== 0 || !%composer.skipping) {
                 val x = 123
-                D(restartableFunction(%composer, <>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                D(composableLambda(%composer, <>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
                   if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                     Unit
                   } else {
@@ -1679,7 +1679,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             }
         """,
         """
-            val unstableUnused: Function4<Foo, Composer<*>, Int, Int, Unit> = restartableFunctionInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+            val unstableUnused: Function4<Foo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
               %dirty = %dirty or 0b0110
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
@@ -1688,11 +1688,11 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
             }
-            val unstableUsed: Function4<Foo, Composer<*>, Int, Int, Unit> = restartableFunctionInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+            val unstableUsed: Function4<Foo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
               print(x)
             }
-            val stableUnused: Function4<StableFoo, Composer<*>, Int, Int, Unit> = restartableFunctionInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+            val stableUnused: Function4<StableFoo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
               %dirty = %dirty or 0b0110
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
@@ -1701,7 +1701,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
             }
-            val stableUsed: Function4<StableFoo, Composer<*>, Int, Int, Unit> = restartableFunctionInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+            val stableUsed: Function4<StableFoo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010
@@ -1742,13 +1742,13 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
               if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
-                Provide(restartableFunction(%composer, <>, true) { y: Int, %composer: Composer<*>?, %key: Int, %changed: Int ->
+                Provide(composableLambda(%composer, <>, true) { y: Int, %composer: Composer<*>?, %key: Int, %changed: Int ->
                   val %dirty = %changed
                   if (%changed and 0b0110 === 0) {
                     %dirty = %dirty or if (%composer.changed(y)) 0b0100 else 0b0010
                   }
                   if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
-                    Provide(restartableFunction(%composer, <>, true) { z: Int, %composer: Composer<*>?, %key: Int, %changed: Int ->
+                    Provide(composableLambda(%composer, <>, true) { z: Int, %composer: Composer<*>?, %key: Int, %changed: Int ->
                       val %dirty = %changed
                       if (%changed and 0b0110 === 0) {
                         %dirty = %dirty or if (%composer.changed(z)) 0b0100 else 0b0010

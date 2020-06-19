@@ -83,18 +83,18 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             ) {
                 "${it.groupValues[1]}<>"
             }
-            // restartableFunctionInstance(<>, true)
+            // composableLambdaInstance(<>, true)
             .replace(
                 Regex(
-                    "(restartableFunctionInstance\\()([-\\d]+)"
+                    "(composableLambdaInstance\\()([-\\d]+)"
                 )
             ) {
                 "${it.groupValues[1]}<>"
             }
-            // restartableFunction(%composer, <>, true)
+            // composableLambda(%composer, <>, true)
             .replace(
                 Regex(
-                    "(restartableFunction\\(%composer,\\s)([-\\d]+)"
+                    "(composableLambda\\(%composer,\\s)([-\\d]+)"
                 )
             ) {
                 "${it.groupValues[1]}<>"

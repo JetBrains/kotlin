@@ -132,10 +132,10 @@ private class FunctionContext(
     }
 }
 
-const val RESTARTABLE_FUNCTION = "restartableFunction"
-const val RESTARTABLE_FUNCTION_N = "restartableFunctionN"
-const val RESTARTABLE_FUNCTION_INSTANCE = "restartableFunctionInstance"
-const val RESTARTABLE_FUNCTION_N_INSTANCE = "restartableFunctionNInstance"
+const val COMPOSABLE_LAMBDA = "composableLambda"
+const val COMPOSABLE_LAMBDA_N = "composableLambdaN"
+const val COMPOSABLE_LAMBDA_INSTANCE = "composableLambdaInstance"
+const val COMPOSABLE_LAMBDA_N_INSTANCE = "composableLambdaNInstance"
 
 class ComposerLambdaMemoization(
     context: IrPluginContext,
@@ -339,15 +339,15 @@ class ComposerLambdaMemoization(
     ): IrExpression {
         val function = expression.function
         val argumentCount = function.descriptor.valueParameters.size
-        val useRestartableFunctionN = argumentCount > MAX_RESTART_ARGUMENT_COUNT
+        val useComposableLambdaN = argumentCount > MAX_RESTART_ARGUMENT_COUNT
         val restartFunctionFactory =
             if (declarationContext.composable)
-                if (useRestartableFunctionN)
-                    RESTARTABLE_FUNCTION_N
-                else RESTARTABLE_FUNCTION
-            else if (useRestartableFunctionN)
-                RESTARTABLE_FUNCTION_N_INSTANCE
-                else RESTARTABLE_FUNCTION_INSTANCE
+                if (useComposableLambdaN)
+                    COMPOSABLE_LAMBDA_N
+                else COMPOSABLE_LAMBDA
+            else if (useComposableLambdaN)
+                COMPOSABLE_LAMBDA_N_INSTANCE
+                else COMPOSABLE_LAMBDA_INSTANCE
         val restartFactorySymbol =
             getTopLevelFunction(composeInternalFqName(restartFunctionFactory))
         val irBuilder = DeclarationIrBuilder(context,
@@ -378,8 +378,8 @@ class ComposerLambdaMemoization(
             // tracked parameter
             putValueArgument(index++, irBuilder.irBoolean(expression.isTracked()))
 
-            // RestartableFunctionN requires the arity
-            if (useRestartableFunctionN) {
+            // ComposableLambdaN requires the arity
+            if (useComposableLambdaN) {
                 // arity parameter
                 putValueArgument(index++, irBuilder.irInt(argumentCount))
             }
