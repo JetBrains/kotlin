@@ -23,7 +23,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -39,8 +38,7 @@ public class ExternalLibrariesNode extends ProjectViewNode<String> {
   public boolean contains(@NotNull VirtualFile file) {
     Project project = Objects.requireNonNull(getProject());
     ProjectFileIndex index = ProjectFileIndex.getInstance(project);
-    if (!index.isInLibrary(file)) return false;
-    return someChildContainsFile(file, false);
+    return index.isInLibrary(file) && someChildContainsFile(file, false);
   }
 
   @NotNull
@@ -50,8 +48,8 @@ public class ExternalLibrariesNode extends ProjectViewNode<String> {
     List<AbstractTreeNode<?>> children = new ArrayList<>();
     ProjectFileIndex fileIndex = ProjectFileIndex.getInstance(project);
     Module[] modules = ModuleManager.getInstance(project).getModules();
-    Set<Library> processedLibraries = new THashSet<>();
-    Set<Sdk> processedSdk = new THashSet<>();
+    Set<Library> processedLibraries = new HashSet<>();
+    Set<Sdk> processedSdk = new HashSet<>();
 
     for (Module module : modules) {
       final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
