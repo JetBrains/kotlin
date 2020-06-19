@@ -175,9 +175,6 @@ class Fir2IrLazyClass(
         with(fakeOverrideGenerator) {
             result += getFakeOverrides(fir, processedNames)
         }
-        for (irDeclaration in result) {
-            irDeclaration.parent = this
-        }
         result
     }
 
