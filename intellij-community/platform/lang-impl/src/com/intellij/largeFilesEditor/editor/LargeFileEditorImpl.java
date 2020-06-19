@@ -90,9 +90,9 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
 
     editorModel.addCaretListener(new MyCaretListener());
 
-    fileManager.addFileChangeListener((Page lastPage) -> {
+    fileManager.addFileChangeListener((Page lastPage, boolean isLengthIncreased) -> {
       ApplicationManager.getApplication().invokeLater(() -> {
-        editorModel.onFileChanged(lastPage);
+        editorModel.onFileChanged(lastPage, isLengthIncreased);
       });
     });
   }

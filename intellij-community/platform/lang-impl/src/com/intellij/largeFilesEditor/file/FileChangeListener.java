@@ -5,5 +5,5 @@ import com.intellij.largeFilesEditor.editor.Page;
 
 @FunctionalInterface
 public interface FileChangeListener {
-  void onFileChanged(Page lastPage);
+  void onFileChanged(Page lastPage, boolean isLengthIncreased);
 }

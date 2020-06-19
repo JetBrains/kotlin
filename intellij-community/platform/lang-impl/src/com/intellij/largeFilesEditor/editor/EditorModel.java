@@ -297,6 +297,10 @@ public class EditorModel {
 
     normalizePagesInDocumentListBeginning();
 
+    if (pagesAmountInFile == 0) {
+      return;
+    }
+
     if (documentOfPagesModel.getPagesAmount() == 0) {
       long pageNumber = targetVisiblePosition.pageNumber == 0
                         ? 0
@@ -519,9 +523,12 @@ public class EditorModel {
   private void tryReflectTargetSelectionToReal() {
     if (targetSelectionState.isExists &&
         documentOfPagesModel.getPagesAmount() != 0) {
+      int docLength = documentOfPagesModel.getDocument().getTextLength();
 
-      int startOffset = documentOfPagesModel.absoluteSymbolPositionToOffset(targetSelectionState.start);
-      int endOffset = documentOfPagesModel.absoluteSymbolPositionToOffset(targetSelectionState.end);
+      int startOffset = Math.min(documentOfPagesModel.absoluteSymbolPositionToOffset(targetSelectionState.start),
+                                 docLength);
+      int endOffset = Math.min(documentOfPagesModel.absoluteSymbolPositionToOffset(targetSelectionState.end),
+                               docLength);
 
       runCaretAndSelectionListeningTransparentCommand(() -> {
         if (startOffset == endOffset) {
@@ -541,6 +548,10 @@ public class EditorModel {
   }
 
   private int tryGetTargetCaretOffsetInDocumentWithMargin() {
+    if (documentOfPagesModel.getPagesAmount() == 0) {
+      return 0;
+    }
+
     int offset = tryGetTargetCaretOffsetInDocument();
     if (offset == -1) return -1;
 
@@ -574,12 +585,12 @@ public class EditorModel {
       }
     }
     else {
-      return -1;
+      return 0;
     }
   }
 
   private int tryGetTargetCaretOffsetInDocument() {
-    int indexOfPage = tryGetIndexOfNeededPageInList(targetCaretPosition.pageNumber);
+    int indexOfPage = documentOfPagesModel.tryGetIndexOfNeededPageInList(targetCaretPosition.pageNumber);
 
     int targetCaretOffsetInDocument;
 
@@ -595,8 +606,9 @@ public class EditorModel {
       return -1;
     }
 
-    if (targetCaretOffsetInDocument >= 0 && targetCaretOffsetInDocument <= documentOfPagesModel.getDocument().getTextLength()) {
-      return targetCaretOffsetInDocument;
+    int docLength = documentOfPagesModel.getDocument().getTextLength();
+    if (targetCaretOffsetInDocument >= 0) {
+      return Math.min(targetCaretOffsetInDocument, docLength);
     }
     else {
       LOG.warn("[Large File Editor Subsystem] EditorModel.tryGetTargetCaretOffsetInDocument():"
@@ -604,7 +616,7 @@ public class EditorModel {
                + " targetCaretPosition.pageNumber=" + targetCaretPosition.pageNumber
                + " targetCaretPosition.symbolOffsetInPage=" + targetCaretPosition.symbolOffsetInPage
                + " targetCaretOffsetInDocument=" + targetCaretOffsetInDocument
-               + " document.getTextLength()=" + documentOfPagesModel.getDocument().getTextLength());
+               + " document.getTextLength()=" + docLength);
     }
     return -1;
   }
@@ -636,7 +648,7 @@ public class EditorModel {
              : targetVisiblePosition.pageNumber - 1;
     }
 
-    int visibleTargetPageIndex = tryGetIndexOfNeededPageInList(targetVisiblePosition.pageNumber);
+    int visibleTargetPageIndex = documentOfPagesModel.tryGetIndexOfNeededPageInList(targetVisiblePosition.pageNumber);
     if (visibleTargetPageIndex == -1) {
       // some pages before visible one exist and are located in list => just need to get next to last in list
       return tryGetNumberOfNextToDocumentPage(pagesAmountInFile);
@@ -702,10 +714,10 @@ public class EditorModel {
     if (targetVisiblePosition.verticalScrollOffset < 0) {
       if (targetVisiblePosition.pageNumber == 0) {
         targetVisiblePosition.set(0, 0);
-        return true;
+        return false;
       }
 
-      int prevPageIndex = tryGetIndexOfNeededPageInList(targetVisiblePosition.pageNumber - 1);
+      int prevPageIndex = documentOfPagesModel.tryGetIndexOfNeededPageInList(targetVisiblePosition.pageNumber - 1);
       if (prevPageIndex == -1) {
         return false;
       }
@@ -724,7 +736,7 @@ public class EditorModel {
     // here targetVisiblePosition.pageNumber < pagesAmountInFile
     //   && targetVisiblePosition.verticalScrollOffset >= 0
 
-    int visibleTargetPageIndex = tryGetIndexOfNeededPageInList(targetVisiblePosition.pageNumber);
+    int visibleTargetPageIndex = documentOfPagesModel.tryGetIndexOfNeededPageInList(targetVisiblePosition.pageNumber);
     if (visibleTargetPageIndex == -1) {
       return false;
     }
@@ -736,7 +748,7 @@ public class EditorModel {
     int bottomOfExpectedVisibleArea =
       topOfTargetVisiblePage + targetVisiblePosition.verticalScrollOffset + editor.getScrollingModel().getVisibleArea().height;
     if (bottomOfExpectedVisibleArea > editor.getContentComponent().getHeight()) {
-      int indexOfLastLastPage = tryGetIndexOfNeededPageInList(pagesAmountInFile - 1);
+      int indexOfLastLastPage = documentOfPagesModel.tryGetIndexOfNeededPageInList(pagesAmountInFile - 1);
       if (indexOfLastLastPage == -1) {
         return false;
       }
@@ -770,7 +782,7 @@ public class EditorModel {
   }
 
   private void normalizePagesInDocumentListEnding() {
-    int visibleTargetPageIndex = tryGetIndexOfNeededPageInList(targetVisiblePosition.pageNumber);
+    int visibleTargetPageIndex = documentOfPagesModel.tryGetIndexOfNeededPageInList(targetVisiblePosition.pageNumber);
     if (visibleTargetPageIndex == -1) {
       return;
     }
@@ -797,7 +809,7 @@ public class EditorModel {
   }
 
   private void tryScrollToTargetVisiblePosition() {
-    int visibleTargetPageIndex = tryGetIndexOfNeededPageInList(targetVisiblePosition.pageNumber);
+    int visibleTargetPageIndex = documentOfPagesModel.tryGetIndexOfNeededPageInList(targetVisiblePosition.pageNumber);
     if (visibleTargetPageIndex == -1) {
       return;
     }
@@ -837,10 +849,6 @@ public class EditorModel {
     targetCaretPosition.set(pageNumber, symbolOffsetInPage);
     isNeedToShowCaret = true;
     requestUpdate();
-  }
-
-  private int tryGetIndexOfNeededPageInList(long needPageNumber) {
-    return documentOfPagesModel.tryGetIndexOfNeededPageInList(needPageNumber);
   }
 
   private int offsetToY(int offset) {
@@ -986,9 +994,7 @@ public class EditorModel {
   }
 
   private void reflectLocalScrollBarStateToTargetPosition() {
-    if (documentOfPagesModel.getPagesAmount() == 0) {
-      LOG.warn("[Large File Editor Subsystem] EditorModel.reflectLocalScrollBarStateToTargetPosition(): pagesInDocument is empty");
-    }
+    if (documentOfPagesModel.getPagesAmount() == 0) return;
 
     int localScrollBarValue = myLocalInvisibleScrollBar.getValue();
 
@@ -1006,6 +1012,12 @@ public class EditorModel {
       }
 
       indexOfPage++;
+    }
+
+    if (indexOfPage >= 1 && localScrollBarValue == bottomOfPage) {
+      targetVisiblePosition.set(documentOfPagesModel.getPageByIndex(indexOfPage - 1).getPageNumber(),
+                                localScrollBarValue - topOfPage);
+      return;
     }
 
     LOG.warn("[Large File Editor Subsystem] EditorModel.reflectLocalScrollBarStateToTargetPosition():" +
@@ -1037,16 +1049,25 @@ public class EditorModel {
   }
 
   @CalledInAwt
-  public void onFileChanged(Page lastPage) {
+  public void onFileChanged(Page lastPage, boolean isLengthIncreased) {
     isLocalScrollBarStabilized = false;
     pagesCash.clear();
-    runCaretAndSelectionListeningTransparentCommand(() -> {
-      documentOfPagesModel.removeLastPage(dataProvider.getProject());
-    });
+
+    if (isLengthIncreased) {
+      runCaretAndSelectionListeningTransparentCommand(() -> {
+        documentOfPagesModel.removeLastPage(dataProvider.getProject());
+      });
+      isAllowedToFollowTheEndOfFile = true;
+    }
+    else {
+      runCaretAndSelectionListeningTransparentCommand(() -> {
+        documentOfPagesModel.removeAllPages(dataProvider.getProject());
+      });
+    }
+
     if (lastPage != null) {
       pagesCash.add(lastPage);
     }
-    isAllowedToFollowTheEndOfFile = true;
     update();
   }
 
