@@ -67,9 +67,11 @@ import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
+import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
+import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -852,7 +854,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
-    testGroup("frontend-fir/test", "frontend-fir/testData") {
+    testGroup("frontend-fir") {
         testClass<AbstractKtDeclarationAndFirDeclarationEqualityChecker> {
             model("ktDeclarationAndFirDeclarationEqualityChecker")
         }
@@ -862,13 +864,13 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
-    testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/testData") {
+    testGroup("fir-low-level-api", testDataPath = "../idea/testData") {
         testClass<AbstractFirMultiModuleResolveTest> {
-            model("fir/multiModule", recursive = false, extension = null)
+            model("fir/multiModule", isRecursive = false, pattern = DIRECTORY)
         }
 
         testClass<AbstractFirLazyResolveTest> {
-            model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
+            model("fir/lazyResolve", pattern = TEST, filenameStartsLowerCase = true)
         }
     }
 
