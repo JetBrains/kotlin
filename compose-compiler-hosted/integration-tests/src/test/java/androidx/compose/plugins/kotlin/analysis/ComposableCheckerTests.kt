@@ -208,35 +208,6 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         """)
     }
 
-    fun testComposableReporting016() {
-        check("""
-            import androidx.compose.*;
-
-            <!WRONG_ANNOTATION_TARGET!>@Composable<!>
-            class Noise() {}
-        """)
-
-        check("""
-            import androidx.compose.*;
-
-            val adHoc = <!WRONG_ANNOTATION_TARGET!>@Composable<!> object {
-                var x: Int = 0
-                var y: Int = 0
-            }
-        """)
-
-        check("""
-            import androidx.compose.*;
-
-            open class Noise() {}
-
-            val adHoc = <!WRONG_ANNOTATION_TARGET!>@Composable<!> object : Noise() {
-                var x: Int = 0
-                var y: Int = 0
-            }
-        """)
-    }
-
     fun testComposableReporting017() {
         checkFail("""
             import androidx.compose.*;
