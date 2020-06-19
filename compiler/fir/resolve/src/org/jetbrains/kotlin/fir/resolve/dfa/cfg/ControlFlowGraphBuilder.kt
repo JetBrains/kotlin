@@ -166,7 +166,7 @@ class ControlFlowGraphBuilder {
         }
 
         if (previousNode != null) {
-            addEdge(previousNode, enterNode, preferredKind = EdgeKind.Dfg)
+            addEdge(previousNode, enterNode, preferredKind = EdgeKind.DfgForward)
         }
 
         createFunctionExitNode(function).also {
@@ -200,8 +200,8 @@ class ControlFlowGraphBuilder {
         entersToPostponedAnonymousFunctions[symbol] = enterNode
         exitsFromPostponedAnonymousFunctions[symbol] = exitNode
         parentGraphForAnonymousFunctions[symbol] = currentGraph
-        popAndAddEdge(enterNode, preferredKind = EdgeKind.Simple)
-        addEdge(enterNode, exitNode, preferredKind = EdgeKind.Dfg)
+        popAndAddEdge(enterNode, preferredKind = EdgeKind.Forward)
+        addEdge(enterNode, exitNode, preferredKind = EdgeKind.DfgForward)
         lastNodes.push(exitNode)
         return enterNode to exitNode
     }
@@ -295,9 +295,9 @@ class ControlFlowGraphBuilder {
 
         val invocationKind = anonymousFunction.invocationKind
         if (invocationKind != null) {
-            addEdge(exitNode, postponedExitNode, preferredKind = EdgeKind.Cfg)
+            addEdge(exitNode, postponedExitNode, preferredKind = EdgeKind.CfgForward)
         } else {
-            val kind = if (postponedExitNode.isDead) EdgeKind.Dead else EdgeKind.Cfg
+            val kind = if (postponedExitNode.isDead) EdgeKind.DeadForward else EdgeKind.CfgForward
             CFGNode.addJustKindEdge(postponedEnterNode, postponedExitNode, kind, propagateDeadness = true)
         }
 
@@ -345,11 +345,11 @@ class ControlFlowGraphBuilder {
                 is FirAnonymousInitializer -> declaration.controlFlowGraphReference.controlFlowGraph
                 else -> null
             } ?: continue
-            addEdge(node, graph.enterNode, preferredKind = EdgeKind.Cfg)
+            addEdge(node, graph.enterNode, preferredKind = EdgeKind.CfgForward)
             node = graph.exitNode
             classGraph.addSubGraph(graph)
         }
-        addEdge(node, exitNode, preferredKind = EdgeKind.Cfg)
+        addEdge(node, exitNode, preferredKind = EdgeKind.CfgForward)
         return popGraph()
     }
 
@@ -442,7 +442,7 @@ class ControlFlowGraphBuilder {
         exitTargetsForTry.push(exitNode)
 
         enterToLocalClassesMembers[property.symbol]?.let {
-            addEdge(it, enterNode, preferredKind = EdgeKind.Dfg)
+            addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward)
         }
 
         lastNodes.push(enterNode)
@@ -873,10 +873,10 @@ class ControlFlowGraphBuilder {
         node: CFGNode<*>,
         callCompleted: Boolean
     ): Pair<EdgeKind, UnionFunctionCallArgumentsNode?> {
-        if (!shouldPassFlowFromInplaceLambda.top()) return EdgeKind.Simple to null
-        var kind = EdgeKind.Simple
+        if (!shouldPassFlowFromInplaceLambda.top()) return EdgeKind.Forward to null
+        var kind = EdgeKind.Forward
         if (!callCompleted || exitsFromCompletedPostponedAnonymousFunctions.isEmpty()) {
-            return EdgeKind.Simple to null
+            return EdgeKind.Forward to null
         }
         val unionNode by lazy { createUnionFunctionCallArgumentsNode(node.fir) }
         var hasDirectPreviousNode = false
@@ -889,11 +889,11 @@ class ControlFlowGraphBuilder {
             if (node.level >= exitNode.level) continue
             hasPostponedLambdas = true
             if (exitNode == lastPostponedLambdaExitNode) {
-                popAndAddEdge(node, preferredKind = EdgeKind.Cfg)
-                kind = EdgeKind.Dfg
+                popAndAddEdge(node, preferredKind = EdgeKind.CfgForward)
+                kind = EdgeKind.DfgForward
                 hasDirectPreviousNode = true
             }
-            addEdge(exitNode.lastPreviousNode, unionNode, preferredKind = EdgeKind.Dfg)
+            addEdge(exitNode.lastPreviousNode, unionNode, preferredKind = EdgeKind.DfgForward)
             iterator.remove()
         }
         if (hasPostponedLambdas) {
@@ -903,7 +903,7 @@ class ControlFlowGraphBuilder {
                 addNewSimpleNode(unionNode)
             }
         } else {
-            return EdgeKind.Simple to null
+            return EdgeKind.Forward to null
         }
         return Pair(kind, unionNode)
     }
@@ -937,7 +937,7 @@ class ControlFlowGraphBuilder {
             lastNodes.push(it)
         }
         val lastNode = runIf(lastNode is InitBlockExitNode) { lastNodes.pop() } ?: enterToLocalClassesMembers[initBlock.symbol]
-        lastNode?.let { addEdge(it, enterNode, preferredKind = EdgeKind.Dfg) }
+        lastNode?.let { addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward) }
 
         createInitBlockExitNode(initBlock).also {
             initBlockExitNodes.push(it)
@@ -1042,7 +1042,7 @@ class ControlFlowGraphBuilder {
     private fun addNewSimpleNode(
         node: CFGNode<*>,
         isDead: Boolean = false,
-        preferredKind: EdgeKind = EdgeKind.Simple
+        preferredKind: EdgeKind = EdgeKind.Forward
     ): CFGNode<*> {
         val lastNode = lastNodes.pop()
         addEdge(lastNode, node, isDead = isDead, preferredKind = preferredKind)
@@ -1050,7 +1050,7 @@ class ControlFlowGraphBuilder {
         return lastNode
     }
 
-    private fun addNodeThatReturnsNothing(node: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Simple) {
+    private fun addNodeThatReturnsNothing(node: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Forward) {
         val exitNode: CFGNode<*> = exitTargetsForTry.top()
         addNodeWithJump(node, exitNode, preferredKind)
     }
@@ -1058,7 +1058,7 @@ class ControlFlowGraphBuilder {
     private fun addNodeWithJump(
         node: CFGNode<*>,
         targetNode: CFGNode<*>?,
-        preferredKind: EdgeKind = EdgeKind.Simple,
+        preferredKind: EdgeKind = EdgeKind.Forward,
         isBack: Boolean = false
     ) {
         popAndAddEdge(node, preferredKind)
@@ -1074,7 +1074,7 @@ class ControlFlowGraphBuilder {
         lastNodes.push(stub)
     }
 
-    private fun popAndAddEdge(to: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Simple) {
+    private fun popAndAddEdge(to: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Forward) {
         addEdge(lastNodes.pop(), to, preferredKind = preferredKind)
     }
 
@@ -1084,10 +1084,10 @@ class ControlFlowGraphBuilder {
         propagateDeadness: Boolean = true,
         isDead: Boolean = false,
         isBack: Boolean = false,
-        preferredKind: EdgeKind = EdgeKind.Simple
+        preferredKind: EdgeKind = EdgeKind.Forward
     ) {
         val kind = if (isDead || from.isDead || to.isDead) {
-            if (isBack) EdgeKind.DeadBack else EdgeKind.Dead
+            if (isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward
         } else preferredKind
         CFGNode.addEdge(from, to, kind, propagateDeadness)
     }
@@ -1097,7 +1097,7 @@ class ControlFlowGraphBuilder {
         to: CFGNode<*>,
         isDead: Boolean = false
     ) {
-        addEdge(from, to, propagateDeadness = false, isDead = isDead, isBack = true, preferredKind = EdgeKind.Back)
+        addEdge(from, to, propagateDeadness = false, isDead = isDead, isBack = true, preferredKind = EdgeKind.CfgBackward)
     }
 
     // ----------------------------------- Utils -----------------------------------

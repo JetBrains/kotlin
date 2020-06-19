@@ -310,7 +310,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             }
         }
 
-        private val cfgKinds = listOf(EdgeKind.Dead, EdgeKind.Cfg, EdgeKind.DeadBack, EdgeKind.Back)
+        private val cfgKinds = listOf(EdgeKind.DeadForward, EdgeKind.CfgForward, EdgeKind.DeadBackward, EdgeKind.CfgBackward)
 
         private fun checkEdge(from: CFGNode<*>, to: CFGNode<*>) {
             KtUsefulTestCase.assertContainsElements(from.followingNodes, to)

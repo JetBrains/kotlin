@@ -91,12 +91,12 @@ enum class EdgeKind(
     val isBack: Boolean,
     val isDead: Boolean
 ) {
-    Simple(usedInDfa = true, usedInCfa = true, isBack = false, isDead = false),
-    Dead(usedInDfa = false, usedInCfa = true, isBack = false, isDead = true),
-    Cfg(usedInDfa = false, usedInCfa = true, isBack = false, isDead = false),
-    Dfg(usedInDfa = true, usedInCfa = false, isBack = false, isDead = false),
-    Back(usedInDfa = false, usedInCfa = true, isBack = true, isDead = false),
-    DeadBack(usedInDfa = false, usedInCfa = true, isBack = true, isDead = true)
+    Forward(usedInDfa = true, usedInCfa = true, isBack = false, isDead = false),
+    DeadForward(usedInDfa = false, usedInCfa = true, isBack = false, isDead = true),
+    DfgForward(usedInDfa = true, usedInCfa = false, isBack = false, isDead = false),
+    CfgForward(usedInDfa = false, usedInCfa = true, isBack = false, isDead = false),
+    CfgBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = false),
+    DeadBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = true)
 }
 
 @OptIn(ExperimentalStdlibApi::class)

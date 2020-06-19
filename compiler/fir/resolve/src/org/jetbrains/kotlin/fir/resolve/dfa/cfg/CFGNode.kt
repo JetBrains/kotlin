@@ -29,17 +29,17 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         }
 
         private fun addJustKindEdge(from: CFGNode<*>, to: CFGNode<*>, kind: EdgeKind, propagateDeadness: Boolean, edgeExists: Boolean) {
-            if (kind != EdgeKind.Simple) {
-                val fromToKind = from._outgoingEdges[to] ?: runIf(edgeExists) { EdgeKind.Simple }
+            if (kind != EdgeKind.Forward) {
+                val fromToKind = from._outgoingEdges[to] ?: runIf(edgeExists) { EdgeKind.Forward }
                 merge(kind, fromToKind)?.let {
                     from._outgoingEdges[to] = it
                 } ?: from._outgoingEdges.remove(to)
-                val toFromKind = to._incomingEdges[from] ?: runIf(edgeExists) { EdgeKind.Simple }
+                val toFromKind = to._incomingEdges[from] ?: runIf(edgeExists) { EdgeKind.Forward }
                 merge(kind, toFromKind)?.let {
                     to._incomingEdges[from] = it
                 } ?: to._incomingEdges.remove(from)
             }
-            if (propagateDeadness && kind == EdgeKind.Dead) {
+            if (propagateDeadness && kind == EdgeKind.DeadForward) {
                 to.isDead = true
             }
         }
@@ -48,9 +48,9 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
             return when {
                 second == null -> first
                 first == second -> first
-                first == EdgeKind.Dead || second == EdgeKind.Dead -> EdgeKind.Dead
-                first == EdgeKind.DeadBack || second == EdgeKind.DeadBack -> EdgeKind.DeadBack
-                first == EdgeKind.Simple || second == EdgeKind.Simple -> null
+                first == EdgeKind.DeadForward || second == EdgeKind.DeadForward -> EdgeKind.DeadForward
+                first == EdgeKind.DeadBackward || second == EdgeKind.DeadBackward -> EdgeKind.DeadBackward
+                first == EdgeKind.Forward || second == EdgeKind.Forward -> null
                 first.usedInDfa xor second.usedInDfa -> null
                 else -> throw IllegalStateException()
             }
@@ -86,8 +86,8 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     val previousNodes: List<CFGNode<*>> get() = _previousNodes
     val followingNodes: List<CFGNode<*>> get() = _followingNodes
 
-    private val _incomingEdges = mutableMapOf<CFGNode<*>, EdgeKind>().withDefault { EdgeKind.Simple }
-    private val _outgoingEdges = mutableMapOf<CFGNode<*>, EdgeKind>().withDefault { EdgeKind.Simple }
+    private val _incomingEdges = mutableMapOf<CFGNode<*>, EdgeKind>().withDefault { EdgeKind.Forward }
+    private val _outgoingEdges = mutableMapOf<CFGNode<*>, EdgeKind>().withDefault { EdgeKind.Forward }
 
     val incomingEdges: Map<CFGNode<*>, EdgeKind> get() = _incomingEdges
     val outgoingEdges: Map<CFGNode<*>, EdgeKind> get() = _outgoingEdges
@@ -97,7 +97,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
         protected set
 
     internal fun updateDeadStatus() {
-        isDead = incomingEdges.size == previousNodes.size && incomingEdges.values.all { it == EdgeKind.Dead }
+        isDead = incomingEdges.size == previousNodes.size && incomingEdges.values.all { it == EdgeKind.DeadForward }
     }
 
     abstract fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R

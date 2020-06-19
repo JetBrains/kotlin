@@ -26,12 +26,12 @@ class FirControlFlowGraphRenderVisitor(
 
         private val EDGE_STYLE = EnumMap(
             mapOf(
-                EdgeKind.Simple to "",
-                EdgeKind.Dead to "[style=dotted]",
-                EdgeKind.Cfg to "[color=green]",
-                EdgeKind.Dfg to "[color=red]",
-                EdgeKind.Back to "[color=green style=dashed]",
-                EdgeKind.DeadBack to "[color=green style=dotted]"
+                EdgeKind.Forward to "",
+                EdgeKind.DeadForward to "[style=dotted]",
+                EdgeKind.CfgForward to "[color=green]",
+                EdgeKind.DfgForward to "[color=red]",
+                EdgeKind.CfgBackward to "[color=green style=dashed]",
+                EdgeKind.DeadBackward to "[color=green style=dotted]"
             )
         )
     }
