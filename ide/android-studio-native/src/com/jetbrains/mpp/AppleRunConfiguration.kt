@@ -74,9 +74,13 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
 
     private val openGradleProperties = Runnable {
         val propertiesFile = LocalFileSystem.getInstance().findFileByIoFile(File(project.basePath, "gradle.properties"))
-        OpenFileAction.openFile(propertiesFile, project)
-        val dialogWindow = (ComponentUtil.getActiveWindow() as? DialogWrapperDialog) ?: return@Runnable
-        dialogWindow.dialogWrapper.close(DialogWrapper.CANCEL_EXIT_CODE)
+
+        if (propertiesFile != null) {
+            OpenFileAction.openFile(propertiesFile, project)
+        }
+
+        val runConfigurationsSettingsWindow = (ComponentUtil.getActiveWindow() as? DialogWrapperDialog) ?: return@Runnable
+        runConfigurationsSettingsWindow.dialogWrapper.close(DialogWrapper.CANCEL_EXIT_CODE)
     }
 
     private fun reportXcFileError(message: String, quickFix: Runnable? = null) {

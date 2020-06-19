@@ -13,6 +13,7 @@ dependencies {
     compileOnly(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     compileOnly(project(":compiler:util")) { isTransitive = false }
     compileOnly(project(":idea")) { isTransitive = false }
+    compileOnly(project(":idea:idea-frontend-independent"))
     compileOnly(project(":idea:idea-gradle")) { isTransitive = false }
     compileOnly(project(":idea:idea-core")) { isTransitive = false }
     compileOnly(intellijDep()) { includeJars(
@@ -27,25 +28,39 @@ dependencies {
         "platform-ide-util-io",
         "util"
     ) }
-    compileOnly(intellijPluginDep("android")) { includeJars("sdk-tools") }
+    compileOnly(intellijPluginDep("android")) { includeJars(
+        "sdk-tools",
+        "wizard-template"
+    ) }
     compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijPluginDep("java")) { includeJars(
         "java-api",
         "java-impl"
     ) }
 
+    compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
+
+    implementation(project(":libraries:tools:new-project-wizard"))
     api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     api(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
 
     testImplementation(kotlin("stdlib"))
-    testImplementation(project(":idea")) { isTransitive = false }
     testImplementation(commonDep("junit:junit"))
-    testImplementation(intellijDep()) { includeJars(
-        "platform-api",
-        "util"
+    testImplementation(intellijDep())
+    testImplementation(intellijPluginDep("android"))
+    testImplementation(intellijPluginDep("java")) { includeJars(
+        "java-api",
+        "java-impl",
+        "java_resources_en"
     ) }
+    testImplementation(intellijPluginDep("gradle"))
+
+    testImplementation(project(":idea:idea-new-project-wizard"))
+    testImplementation(projectTests(":idea:idea-test-framework"))
+    testImplementation(projectTests(":idea:idea-new-project-wizard"))
+    testImplementation(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
 }
 
 
@@ -57,16 +72,15 @@ the<JavaPluginConvention>().sourceSets["main"].apply {
 val jarTask = (tasks.findByName("jar") as Jar? ?: task<Jar>("jar")).apply {
     val classes = files(Callable {
         val result = files()
+        val wizardLib = project(":libraries:tools:new-project-wizard").tasks.getByName("jar")
         val commonNative = project(":kotlin-ultimate:ide:common-native").tasks.getByName("jar")
         val noncidrNative = project(":kotlin-ultimate:ide:common-noncidr-native").tasks.getByName("jar")
 
-        result.from(zipTree(
-            commonNative.outputs.files.singleFile
-        ))
-
-        result.from(zipTree(
-            noncidrNative.outputs.files.singleFile
-        ))
+        for (jar in listOf(wizardLib, commonNative, noncidrNative)) {
+            result.from(zipTree(
+                jar.outputs.files.singleFile
+            ))
+        }
 
         result.builtBy(noncidrNative)
     })
@@ -79,3 +93,9 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+
+projectTest {
+    workingDir = rootDir.resolve("kotlin-ultimate/ide/android-studio-native/")
+    useAndroidSdk()
+}
+
