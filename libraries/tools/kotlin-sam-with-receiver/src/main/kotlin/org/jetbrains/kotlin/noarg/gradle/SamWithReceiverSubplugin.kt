@@ -24,16 +24,16 @@ import org.jetbrains.kotlin.noarg.gradle.model.builder.SamWithReceiverModelBuild
 import javax.inject.Inject
 
 class SamWithReceiverGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : KotlinCompilerPluginSupportPlugin {
-    override fun apply(project: Project) {
-        project.extensions.create("samWithReceiver", SamWithReceiverExtension::class.java)
+    override fun apply(target: Project) {
+        target.extensions.create("samWithReceiver", SamWithReceiverExtension::class.java)
         registry.register(SamWithReceiverModelBuilder())
     }
 
     companion object {
         const val SAM_WITH_RECEIVER_ARTIFACT_NAME = "kotlin-sam-with-receiver"
 
-        private val ANNOTATION_ARG_NAME = "annotation"
-        private val PRESET_ARG_NAME = "preset"
+        private const val ANNOTATION_ARG_NAME = "annotation"
+        private const val PRESET_ARG_NAME = "preset"
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true

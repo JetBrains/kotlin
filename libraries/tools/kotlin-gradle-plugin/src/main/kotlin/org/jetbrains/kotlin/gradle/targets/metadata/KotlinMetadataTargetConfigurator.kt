@@ -196,9 +196,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         val generateMetadata = project.createGenerateProjectStructureMetadataTask()
 
         allMetadataJar.configure {
-            it.from(
-                project.files(Callable { generateMetadata.get().resultXmlFile }).builtBy(generateMetadata)
-            ) { spec ->
+            it.from(generateMetadata.map { it.resultXmlFile }) { spec ->
                 spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_FILE_NAME }
             }
         }

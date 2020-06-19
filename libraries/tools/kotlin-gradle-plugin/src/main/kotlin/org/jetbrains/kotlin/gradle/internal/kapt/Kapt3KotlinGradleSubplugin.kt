@@ -43,13 +43,13 @@ import javax.inject.Inject
 class Kapt3GradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
     KotlinCompilerPluginSupportPlugin {
 
-    override fun apply(project: Project) {
-        project.extensions.create("kapt", KaptExtension::class.java)
+    override fun apply(target: Project) {
+        target.extensions.create("kapt", KaptExtension::class.java)
 
-        project.configurations.create(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
-            project.getKotlinPluginVersion()?.let { kotlinPluginVersion ->
+        target.configurations.create(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).apply {
+            target.getKotlinPluginVersion()?.let { kotlinPluginVersion ->
                 val kaptDependency = getPluginArtifact().run { "$groupId:$artifactId:$kotlinPluginVersion" }
-                dependencies.add(project.dependencies.create(kaptDependency))
+                dependencies.add(target.dependencies.create(kaptDependency))
             } ?: throw GradleException("Kotlin plugin should be enabled before 'kotlin-kapt'")
         }
 
@@ -482,7 +482,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             }
         }
 
-        if (taskClass == KaptWithKotlincTask::class.java) {
+        if (KaptWithKotlincTask::class.java.isAssignableFrom(taskClass)) {
             val subpluginOptions = buildOptions("apt", dslJavacOptions)
             registerSubpluginOptions(kaptTaskProvider, subpluginOptions)
         }

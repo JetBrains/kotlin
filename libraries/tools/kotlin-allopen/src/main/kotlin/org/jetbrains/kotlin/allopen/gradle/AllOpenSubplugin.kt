@@ -32,12 +32,12 @@ class AllOpenGradleSubplugin @Inject internal constructor(private val registry: 
 
         private const val ALLOPEN_ARTIFACT_NAME = "kotlin-allopen"
 
-        private val ANNOTATION_ARG_NAME = "annotation"
-        private val PRESET_ARG_NAME = "preset"
+        private const val ANNOTATION_ARG_NAME = "annotation"
+        private const val PRESET_ARG_NAME = "preset"
     }
 
-    override fun apply(project: Project) {
-        project.extensions.create("allOpen", AllOpenExtension::class.java)
+    override fun apply(target: Project) {
+        target.extensions.create("allOpen", AllOpenExtension::class.java)
         registry.register(AllOpenModelBuilder())
     }
 

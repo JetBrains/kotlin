@@ -100,16 +100,8 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             })
         }
 
-        // Note! Invocation of withType-all results in preliminary task instantiation.
-        // After fix of this issue the following code should be uncommented:
-//        if (useLazyTaskConfiguration) {
-//            (target.project.tasks.named(compileKotlinTaskName) as TaskProvider<AbstractKotlinCompile<*>>).configure {
-//                it.configureAction()
-//            }
-//        }
-
         target.project.tasks
-            // To configure a task that may have not yet been created at this point, use 'withType-matching-all`:
+            // To configure a task that may have not yet been created at this point, use 'withType-matching-configureEach`:
             .withType(AbstractKotlinCompile::class.java)
             .matching { it.name == compileKotlinTaskName }
             .configureEach { compileKotlinTask ->

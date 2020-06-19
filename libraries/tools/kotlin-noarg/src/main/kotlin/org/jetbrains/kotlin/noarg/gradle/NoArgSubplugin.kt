@@ -38,8 +38,8 @@ class NoArgGradleSubplugin @Inject internal constructor(private val registry: To
         private const val INVOKE_INITIALIZERS_ARG_NAME = "invokeInitializers"
     }
 
-    override fun apply(project: Project) {
-        project.extensions.create("noArg", NoArgExtension::class.java)
+    override fun apply(target: Project) {
+        target.extensions.create("noArg", NoArgExtension::class.java)
         registry.register(NoArgModelBuilder())
     }
 

@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.*
@@ -351,9 +353,8 @@ internal fun sourcesJarTask(
 ): TaskProvider<Jar> {
     val taskName = lowerCamelCaseName(componentName, "sourcesJar")
 
-    project.tasks.withType<Jar>().run {
-        if (taskName in names)
-            return named(taskName)
+    project.locateTask<Jar>(taskName)?.let {
+        return it
     }
 
     val result = project.registerTask<Jar>(taskName) { sourcesJar ->
