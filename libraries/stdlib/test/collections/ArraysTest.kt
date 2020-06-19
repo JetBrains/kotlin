@@ -1786,6 +1786,15 @@ class ArraysTest {
         assertEquals(expected, result2)
     }
 
+    @Test fun flatMapIndexed() {
+        val data = arrayOf(arrayOf(1, 2, 3), arrayOf(4, 5, 6))
+        val result1 = data.flatMapIndexed { index, arr -> arr.asList().subList(0, index + 1) }
+        val result2 = data.flatMapIndexed { index, arr -> arr.asSequence().take(index + 1) }
+        val expected = listOf(1, 4, 5)
+        assertEquals(expected, result1)
+        assertEquals(expected, result2)
+    }
+
     @Test fun flattenArray() {
         val arr1: Array<Array<Int>> = arrayOf(arrayOf(1, 2, 3), arrayOf(4, 5, 6))
         val arr2: Array<out Array<Int>> = arr1

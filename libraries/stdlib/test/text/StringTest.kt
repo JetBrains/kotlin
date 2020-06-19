@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1240,6 +1240,11 @@ class StringTest {
     @Test fun flatMap() = withOneCharSequenceArg("abcd") { data ->
         val result = data.flatMap { ('a'..it) + ' ' }
         assertEquals("a ab abc abcd ".toList(), result)
+    }
+
+    @Test fun flatMapIndexed() = withOneCharSequenceArg("bdfi") { data ->
+        val result = data.flatMapIndexed { index, c -> ('a'..c).drop(index) + ' ' }
+        assertEquals("ab bcd cdef defghi ".toList(), result)
     }
 
     @Test fun fold() = withOneCharSequenceArg { arg1 ->

@@ -60,6 +60,16 @@ class CollectionTest {
         assertEquals(expected, result2)
     }
 
+    @Test fun flatMapIndexed() {
+        val source = listOf(null, "foo", "bar")
+        val result1 = source.flatMapIndexed { index, it -> it.orEmpty().take(index + 1).asSequence() }
+        val result2 = source.flatMapIndexed { index, it -> it.orEmpty().take(index + 1).asIterable() }
+
+        val expected = "fobar".toList()
+        assertEquals(expected, result1)
+        assertEquals(expected, result2)
+    }
+
     /*
     @Test fun mapNotNull() {
         val data = listOf(null, "foo", null, "bar")
