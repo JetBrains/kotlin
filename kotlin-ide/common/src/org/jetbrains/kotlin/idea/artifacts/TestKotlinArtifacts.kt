@@ -73,7 +73,6 @@ private fun findLibrary(
     return result
 }
 
-@TestOnly
 object TestKotlinArtifacts : KotlinArtifacts() {
     private const val artifactName = "KotlinPlugin"
     private const val repoPath = "$PROJECT_DIR/dependencies/repo"
@@ -94,47 +93,47 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     }
 
     override val kotlinStdlib by lazy {
-        findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib")
+        findLibrary(repoPath, "kotlinc_kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib")
     }
 
     override val kotlinStdlibSources by lazy {
-        findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib", LibraryFileKind.SOURCES)
+        findLibrary(repoPath, "kotlinc_kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib", LibraryFileKind.SOURCES)
     }
 
     override val kotlinStdlibJdk7 by lazy {
-        findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
+        findLibrary(repoPath, "kotlinc_kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
     }
 
     override val kotlinStdlibJdk7Sources by lazy {
-        findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk7", LibraryFileKind.SOURCES)
+        findLibrary(repoPath, "kotlinc_kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk7", LibraryFileKind.SOURCES)
     }
 
     override val kotlinStdlibJdk8 by lazy {
-        findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+        findLibrary(repoPath, "kotlinc_kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
     }
 
     override val kotlinStdlibJdk8Sources by lazy {
-        findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk8", LibraryFileKind.SOURCES)
+        findLibrary(repoPath, "kotlinc_kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib-jdk8", LibraryFileKind.SOURCES)
     }
 
     override val kotlinStdlibCommon by lazy {
-        findLibrary(repoPath, "kotlin_stdlib_common.xml", "org.jetbrains.kotlin", "kotlin-stdlib-common")
+        findLibrary(repoPath, "kotlinc_kotlin_stdlib_common.xml", "org.jetbrains.kotlin", "kotlin-stdlib-common")
     }
 
     override val kotlinStdlibCommonSources by lazy {
-        findLibrary(repoPath, "kotlin_stdlib_common.xml", "org.jetbrains.kotlin", "kotlin-stdlib-common", LibraryFileKind.SOURCES)
+        findLibrary(repoPath, "kotlinc_kotlin_stdlib_common.xml", "org.jetbrains.kotlin", "kotlin-stdlib-common", LibraryFileKind.SOURCES)
     }
 
     override val kotlinReflect by lazy {
-        findLibrary(repoPath, "kotlin_reflect.xml", "org.jetbrains.kotlin", "kotlin-reflect")
+        findLibrary(repoPath, "kotlinc_kotlin_reflect.xml", "org.jetbrains.kotlin", "kotlin-reflect")
     }
 
     override val kotlinStdlibJs by lazy {
-        findLibrary(repoPath, "kotlin_stdlib_js.xml", "org.jetbrains.kotlin", "kotlin-stdlib-js")
+        findLibrary(repoPath, "kotlinc_kotlin_test_js.xml", "org.jetbrains.kotlin", "kotlin-stdlib-js")
     }
 
     override val kotlinStdlibJsSources by lazy {
-        findLibrary(repoPath, "kotlin_stdlib_js.xml", "org.jetbrains.kotlin", "kotlin-stdlib-js", LibraryFileKind.SOURCES)
+        findLibrary(repoPath, "kotlinc_kotlin_test_js.xml", "org.jetbrains.kotlin", "kotlin-stdlib-js", LibraryFileKind.SOURCES)
     }
 
     override val kotlinTest by lazy {
@@ -146,7 +145,7 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     }
 
     override val kotlinTestJs by lazy {
-        findLibrary(repoPath, "kotlin_test_js.xml", "org.jetbrains.kotlin", "kotlin-test-js")
+        findLibrary(repoPath, "kotlinc_kotlin_test_js.xml", "org.jetbrains.kotlin", "kotlin-test-js")
     }
 
     override val kotlinMainKts by lazy {
