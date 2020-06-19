@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
+import gnu.trove.THashMap
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 internal interface NativeManifestDataProvider {
@@ -66,4 +67,4 @@ internal class CommonNativeManifestDataProvider(
 }
 
 private fun NativeDistributionLibraries.buildManifestIndex(): MutableMap<String, NativeSensitiveManifestData> =
-    (platformLibs + stdlib).map { it.manifestData }.associateByTo(HashMap()) { it.uniqueName }
+    (platformLibs + stdlib).map { it.manifestData }.associateByTo(THashMap()) { it.uniqueName }

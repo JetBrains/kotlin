@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
+import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.FqName
@@ -17,10 +18,10 @@ class CirClassNode(
     override val fqName: FqName
 ) : CirNodeWithFqName<CirClass, CirClass> {
 
-    val constructors: MutableMap<ConstructorApproximationKey, CirClassConstructorNode> = HashMap()
-    val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = HashMap()
-    val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = HashMap()
-    val classes: MutableMap<Name, CirClassNode> = HashMap()
+    val constructors: MutableMap<ConstructorApproximationKey, CirClassConstructorNode> = THashMap()
+    val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = THashMap()
+    val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = THashMap()
+    val classes: MutableMap<Name, CirClassNode> = THashMap()
 
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
         visitor.visitClassNode(this, data)
