@@ -36,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.Collection;
 
 @WithMutedInDatabaseRunTest
@@ -57,7 +58,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightJav
         return super.getFile();
     }
 
-    protected final Collection<File> myFilesToDelete = new THashSet<>();
+    protected final Collection<Path> myFilesToDelete = new THashSet<>();
     private final TempFiles myTempFiles = new TempFiles(myFilesToDelete);
 
     @Override
@@ -76,7 +77,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightJav
         File temp = FileUtil.createTempFile("copy", "." + ext);
         setContentOnDisk(temp, bom, content, charset);
 
-        myFilesToDelete.add(temp);
+        myFilesToDelete.add(temp.toPath());
         final VirtualFile file = getVirtualFile(temp);
         assert file != null : temp;
         return file;
