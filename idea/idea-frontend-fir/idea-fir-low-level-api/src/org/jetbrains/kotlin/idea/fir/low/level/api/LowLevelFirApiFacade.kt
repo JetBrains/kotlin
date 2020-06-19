@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
@@ -31,21 +34,48 @@ object LowLevelFirApiFacade {
 
     fun getFirOfClosestParent(element: KtElement): FirElement? = element.getFirOfClosestParent(element.firResolveState())?.second
 
-    fun buildFunctionWithResolvedBody(
+    class FirCompletionContext internal constructor(
+        val session: FirSession,
+        private val towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>,
+        private val state: FirModuleResolveState,
+    ) {
+        fun getTowerDataContext(element: KtElement): FirTowerDataContext {
+            var current: PsiElement? = element
+            while (current is KtElement) {
+                val mappedFir = state.getCachedMapping(current)
+
+                if (mappedFir is FirStatement) {
+                    towerDataContextForStatement[mappedFir]?.let { return it }
+                }
+                current = current.parent
+            }
+
+            error("No context for $element")
+        }
+    }
+
+    fun buildCompletionContextForFunction(
         firFile: FirFile,
         element: KtNamedFunction,
         phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
-    ): FirFunction<*> {
+    ): FirCompletionContext {
         val state = element.firResolveState()
         val firIdeProvider = firFile.session.firIdeProvider
         val builtFunction = firIdeProvider.buildFunctionWithBody(element)
+        val towerDataContextForStatement = mutableMapOf<FirStatement, FirTowerDataContext>()
 
-        return builtFunction.apply {
-            runResolve(firFile, firIdeProvider, phase, state)
+        val function = builtFunction.apply {
+            runResolve(firFile, firIdeProvider, phase, state, towerDataContextForStatement)
 
             // TODO this PSI caching should be somewhere else
             state.recordElementsFrom(this)
         }
+
+        return FirCompletionContext(
+            function.session,
+            towerDataContextForStatement,
+            state
+        )
     }
 
     fun getDiagnosticsFor(element: KtElement, resolveState: FirModuleResolveState): Collection<Diagnostic> {

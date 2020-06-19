@@ -12,18 +12,19 @@ import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.providers.getSymbolByTypeRef
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.idea.fir.getFirOfClosestParent
-import org.jetbrains.kotlin.idea.fir.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class KotlinFirCompletionContributor : CompletionContributor() {
@@ -46,15 +47,24 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
 
         val parentFunction = nameExpression.getNonStrictParentOfType<KtNamedFunction>() ?: return
 
-        val firFunction = LowLevelFirApiFacade.buildFunctionWithResolvedBody(originalFileFir, parentFunction)
+        val completionContext = LowLevelFirApiFacade.buildCompletionContextForFunction(originalFileFir, parentFunction)
 
         val element = nameExpression.getFirOfClosestParent() as? FirQualifiedAccessExpression ?: return
 
-        for (scope in getScopes(element, firFunction.session)) {
+        for (scope in getScopes(element, completionContext.session)) {
             for (name in scope.availableNames()) {
                 result.addElement(LookupElementBuilder.create(name.asString()))
             }
         }
+
+        val towerDataContext = completionContext.getTowerDataContext(nameExpression)
+
+        for (localScope in towerDataContext.localScopes) {
+            for (name in localScope.getCallableNames()) {
+                result.addElement(LookupElementBuilder.create(name.asString()))
+            }
+        }
+
 
 //        val receiver = element.explicitReceiver
 //        if (receiver != null) {
