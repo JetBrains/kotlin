@@ -2,6 +2,8 @@ package org.jetbrains.kotlin.idea.artifacts
 
 import org.jdom.input.SAXBuilder
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifactNames.KOTLIN_MAIN_KTS_NAME
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifactNames.KOTLIN_STDLIB_JS_NAME
 import java.io.File
 
 @get:TestOnly
@@ -37,7 +39,8 @@ private enum class LibraryFileKind {
 private fun findLibrary(
     repoLocation: String,
     library: String,
-    group: String, artifact: String,
+    group: String,
+    artifact: String,
     kind: LibraryFileKind = LibraryFileKind.CLASSES
 ): File {
     val librariesDir = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "../.idea/libraries")
@@ -92,9 +95,9 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     override val kotlinStdlib by lazy { findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib") }
     override val kotlinStdlibSources by lazy { findLibrary(repoPath, "kotlin_stdlib_jdk8.xml", "org.jetbrains.kotlin", "kotlin-stdlib", LibraryFileKind.SOURCES) }
     override val kotlinReflect by lazy { findLibrary(repoPath, "kotlin_reflect.xml", "org.jetbrains.kotlin", "kotlin-reflect") }
-    override val kotlinStdlibJs by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS) }
-    override val kotlinStdlibJsSources by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_STDLIB_JS_SOURCES) }
+    override val kotlinStdlibJs by lazy { findLibrary(MAVEN_REPOSITORY, "kotlin_stdlib_js.xml", "org.jetbrains.kotlin", KOTLIN_STDLIB_JS_NAME) }
+    override val kotlinStdlibJsSources by lazy { findLibrary(MAVEN_REPOSITORY, "kotlin_stdlib_js.xml", "org.jetbrains.kotlin", KOTLIN_STDLIB_JS_NAME, LibraryFileKind.SOURCES) }
     override val kotlinTest by lazy { findLibrary(MAVEN_REPOSITORY, "kotlin_test.xml", "org.jetbrains.kotlin", "kotlin-test") }
-    override val kotlinMainKts by lazy { findLibrary(repoPath, "kotlinc_kotlin_main_kts.xml", "org.jetbrains.kotlin", "kotlin-main-kts") }
+    override val kotlinMainKts by lazy { findLibrary(MAVEN_REPOSITORY, "kotlin_main_kts.xml", "org.jetbrains.kotlin", KOTLIN_MAIN_KTS_NAME) }
     override val kotlinScriptRuntime by lazy { findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_script_runtime.xml", "org.jetbrains.kotlin", "kotlin-script-runtime") }
 }
