@@ -439,7 +439,7 @@ abstract class ComponentStoreImpl : IComponentStore {
             state = deserializeState(Element("state"), stateClass, null)!!
           }
           else {
-            if (isReportStatisticAllowed(stateSpec)) {
+            if (isReportStatisticAllowed(stateSpec) && !storageSpec.deprecated) {
               FeatureUsageSettingsEvents.logDefaultConfigurationState(name, stateClass, project)
             }
             continue

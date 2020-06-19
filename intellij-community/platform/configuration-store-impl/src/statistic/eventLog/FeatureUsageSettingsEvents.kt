@@ -12,6 +12,7 @@ import com.intellij.openapi.components.ReportValue
 import com.intellij.openapi.components.SkipReportingStatistics
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.JDOMExternalizable
 import com.intellij.util.concurrency.NonUrgentExecutor
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.xmlb.Accessor
@@ -20,7 +21,7 @@ import org.jdom.Element
 import java.util.concurrent.atomic.AtomicInteger
 
 private val LOG = Logger.getInstance("com.intellij.configurationStore.statistic.eventLog.FeatureUsageSettingsEventPrinter")
-private val GROUP = EventLogGroup("settings", 8)
+private val GROUP = EventLogGroup("settings", 9)
 private const val CHANGES_GROUP = "settings.changes"
 private const val ID_FIELD = "id"
 
@@ -140,7 +141,7 @@ internal data class ConfigurationState(val optionsValues: List<FeatureUsageData>
 
 internal data class ConfigurationStateExtractor(val recordDefault: Boolean) {
   internal fun extract(project: Project?, componentName: String, state: Any?): ConfigurationState? {
-    if (state == null || state is Element) {
+    if (state == null || state is Element || state is JDOMExternalizable) {
       return null
     }
 
