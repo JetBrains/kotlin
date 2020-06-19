@@ -112,8 +112,8 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     34 -> {35};
     35 -> {36};
     36 -> {37};
-    37 -> {24} [color=green];
     37 -> {29} [color=red];
+    37 -> {24} [color=green];
 
     subgraph cluster_11 {
         color=red
@@ -191,8 +191,8 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     59 -> {60};
     60 -> {61};
     61 -> {62};
-    62 -> {44} [color=green];
     62 -> {54} [color=red];
+    62 -> {44} [color=green];
 
     subgraph cluster_20 {
         color=red
@@ -235,7 +235,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     74 -> {75};
     75 -> {76};
     76 -> {77};
-    77 -> {66} [color=green];
     77 -> {69} [color=red];
+    77 -> {66} [color=green];
 
 }

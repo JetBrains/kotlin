@@ -150,8 +150,8 @@ digraph flowFromInplaceLambda_kt {
     47 -> {48};
     48 -> {49};
     49 -> {50};
-    50 -> {39} [color=green];
     50 -> {38} [color=red];
+    50 -> {39} [color=green];
 
     subgraph cluster_14 {
         color=red
@@ -242,8 +242,8 @@ digraph flowFromInplaceLambda_kt {
     78 -> {79};
     79 -> {80};
     80 -> {81};
-    81 -> {54} [color=green];
     81 -> {56} [color=red];
+    81 -> {54} [color=green];
     82 -> {83};
     83 -> {84};
     84 -> {85};
@@ -252,8 +252,8 @@ digraph flowFromInplaceLambda_kt {
     87 -> {88};
     88 -> {89};
     89 -> {90};
-    90 -> {61} [color=green];
     90 -> {63} [color=red];
+    90 -> {61} [color=green];
 
     subgraph cluster_20 {
         color=red
@@ -342,8 +342,8 @@ digraph flowFromInplaceLambda_kt {
     116 -> {117};
     117 -> {118};
     118 -> {119};
-    119 -> {94} [color=green];
     119 -> {100} [color=red];
+    119 -> {94} [color=green];
     120 -> {121};
     121 -> {122};
     122 -> {123};
@@ -354,8 +354,8 @@ digraph flowFromInplaceLambda_kt {
     127 -> {128};
     128 -> {129};
     129 -> {130};
-    130 -> {98} [color=green];
     130 -> {100} [color=red];
+    130 -> {98} [color=green];
 
     subgraph cluster_26 {
         color=red
@@ -512,14 +512,14 @@ digraph flowFromInplaceLambda_kt {
     185 -> {186};
     186 -> {187};
     187 -> {188};
-    188 -> {172} [color=green];
     188 -> {177} [color=red];
+    188 -> {172} [color=green];
     189 -> {190};
     190 -> {191};
     191 -> {192};
     192 -> {193};
-    193 -> {175} [color=green];
     193 -> {177} [color=red];
+    193 -> {175} [color=green];
 
     subgraph cluster_38 {
         color=red

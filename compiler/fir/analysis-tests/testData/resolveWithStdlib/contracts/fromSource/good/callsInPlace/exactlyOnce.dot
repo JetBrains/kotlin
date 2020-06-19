@@ -80,8 +80,8 @@ digraph exactlyOnce_kt {
     23 -> {24};
     24 -> {25};
     25 -> {26};
-    26 -> {15} [color=green];
     26 -> {14} [color=red];
+    26 -> {15} [color=green];
 
     subgraph cluster_8 {
         color=red
@@ -128,7 +128,7 @@ digraph exactlyOnce_kt {
     40 -> {41};
     41 -> {42};
     42 -> {43};
-    43 -> {32} [color=green];
     43 -> {31} [color=red];
+    43 -> {32} [color=green];
 
 }

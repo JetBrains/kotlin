@@ -301,7 +301,7 @@ digraph smartcastToNothing_kt {
     102 -> {103};
     103 -> {104};
     104 -> {105};
-    105 -> {95} [color=green];
     105 -> {94} [color=red];
+    105 -> {95} [color=green];
 
 }

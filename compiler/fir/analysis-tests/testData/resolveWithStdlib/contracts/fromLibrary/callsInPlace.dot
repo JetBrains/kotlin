@@ -48,8 +48,8 @@ digraph callsInPlace_kt {
     13 -> {14};
     14 -> {15};
     15 -> {16};
-    16 -> {5} [color=green];
     16 -> {4} [color=red];
+    16 -> {5} [color=green];
 
     subgraph cluster_4 {
         color=red
@@ -178,8 +178,8 @@ digraph callsInPlace_kt {
     57 -> {58};
     58 -> {59};
     59 -> {60};
-    60 -> {48} [color=green];
     60 -> {47} [color=red];
+    60 -> {48} [color=green];
 
     subgraph cluster_16 {
         color=red
@@ -228,8 +228,8 @@ digraph callsInPlace_kt {
     75 -> {76};
     76 -> {77};
     77 -> {78};
-    78 -> {66} [color=green];
     78 -> {65} [color=red];
+    78 -> {66} [color=green];
 
     subgraph cluster_20 {
         color=red

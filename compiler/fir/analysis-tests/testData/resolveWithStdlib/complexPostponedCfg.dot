@@ -112,8 +112,8 @@ digraph complexPostponedCfg_kt {
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {11} [color=green];
     27 -> {10} [color=red];
+    27 -> {11} [color=green];
     28 -> {29};
     29 -> {30};
     30 -> {31};
@@ -127,8 +127,8 @@ digraph complexPostponedCfg_kt {
     37 -> {38} [color=green];
     38 -> {39};
     39 -> {40};
-    40 -> {24} [color=green];
     40 -> {10} [color=red];
+    40 -> {24} [color=green];
     41 -> {42};
     42 -> {43};
     43 -> {44};
@@ -137,7 +137,7 @@ digraph complexPostponedCfg_kt {
     46 -> {47};
     47 -> {48};
     48 -> {49};
-    49 -> {37} [color=green];
     49 -> {36} [color=red];
+    49 -> {37} [color=green];
 
 }

@@ -117,8 +117,8 @@ digraph returnValuesFromLambda_kt {
     35 -> {36};
     36 -> {37};
     37 -> {38};
-    38 -> {16} [color=green];
     38 -> {15} [color=red];
+    38 -> {16} [color=green];
 
     subgraph cluster_12 {
         color=red
@@ -164,8 +164,8 @@ digraph returnValuesFromLambda_kt {
     51 -> {52} [style=dotted];
     52 -> {53} [style=dotted];
     53 -> {54} [style=dotted];
-    54 -> {43} [color=green];
     54 -> {42} [color=red];
+    54 -> {43} [color=green];
 
     subgraph cluster_16 {
         color=red

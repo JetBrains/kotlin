@@ -82,8 +82,8 @@ digraph initBlockAndInPlaceLambda_kt {
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {15} [color=green];
     27 -> {14} [color=red];
+    27 -> {15} [color=green];
 
     subgraph cluster_8 {
         color=red

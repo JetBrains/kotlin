@@ -101,8 +101,8 @@ digraph inPlaceLambdas_kt {
     29 -> {30};
     30 -> {31};
     31 -> {32};
-    32 -> {20} [color=green];
     32 -> {19} [color=red];
+    32 -> {20} [color=green];
 
     subgraph cluster_11 {
         color=red
@@ -147,8 +147,8 @@ digraph inPlaceLambdas_kt {
     45 -> {46};
     46 -> {47};
     47 -> {48};
-    48 -> {37} [color=green];
     48 -> {36} [color=red];
+    48 -> {37} [color=green];
 
     subgraph cluster_15 {
         color=red
@@ -228,7 +228,7 @@ digraph inPlaceLambdas_kt {
     74 -> {75};
     75 -> {76};
     76 -> {77};
-    77 -> {61} [color=green];
     77 -> {60} [color=red];
+    77 -> {61} [color=green];
 
 }

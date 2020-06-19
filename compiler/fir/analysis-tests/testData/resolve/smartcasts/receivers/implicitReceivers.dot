@@ -314,8 +314,8 @@ digraph implicitReceivers_kt {
     93 -> {94};
     94 -> {95};
     95 -> {96};
-    96 -> {85} [color=green];
     96 -> {84} [color=red];
+    96 -> {85} [color=green];
     97 -> {98};
     98 -> {99};
     99 -> {100};
@@ -337,8 +337,8 @@ digraph implicitReceivers_kt {
     114 -> {115};
     115 -> {116};
     116 -> {117};
-    117 -> {102} [color=green];
     117 -> {101} [color=red];
+    117 -> {102} [color=green];
 
     subgraph cluster_32 {
         color=red

@@ -79,7 +79,7 @@ digraph defaultArguments_kt {
     23 -> {24};
     24 -> {25};
     25 -> {26};
-    26 -> {19} [color=green];
     26 -> {18} [color=red];
+    26 -> {19} [color=green];
 
 }
