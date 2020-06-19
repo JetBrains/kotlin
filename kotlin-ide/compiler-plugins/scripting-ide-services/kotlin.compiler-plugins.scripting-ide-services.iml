@@ -21,6 +21,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="kotlinc.kotlin-stdlib-jdk8" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-scripting-compiler" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-scripting-common" level="project" />

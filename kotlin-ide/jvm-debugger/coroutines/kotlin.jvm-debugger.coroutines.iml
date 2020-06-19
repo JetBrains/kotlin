@@ -22,7 +22,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="kotlinc.kotlin-stdlib-jdk8" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="library" name="org.apache.maven:maven-resolver-provider" level="project" />
     <orderEntry type="module" module-name="kotlin.common" />
