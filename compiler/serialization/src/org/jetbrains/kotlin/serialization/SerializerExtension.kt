@@ -18,7 +18,9 @@ abstract class SerializerExtension {
 
     abstract val metadataVersion: BinaryVersion
 
-    val annotationSerializer by lazy { AnnotationSerializer(stringTable) }
+    val annotationSerializer by lazy { createAnnotationSerializer() }
+
+    protected open fun createAnnotationSerializer(): AnnotationSerializer = AnnotationSerializer(stringTable)
 
     open fun shouldUseTypeTable(): Boolean = false
     open fun shouldUseNormalizedVisibility(): Boolean = false
