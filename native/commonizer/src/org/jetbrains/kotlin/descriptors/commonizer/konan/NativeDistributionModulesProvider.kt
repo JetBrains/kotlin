@@ -63,6 +63,6 @@ internal class NativeDistributionModulesProvider(
             module.setDependencies(listOf(module) + dependencies + forwardDeclarations)
         }
 
-        return platformModulesMap.values
+        return platformModulesMap.values.toList()
     }
 }

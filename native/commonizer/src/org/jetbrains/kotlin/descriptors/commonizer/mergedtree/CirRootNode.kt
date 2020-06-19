@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
+import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.FqName
@@ -16,11 +17,11 @@ class CirRootNode(
     override val commonDeclaration: NullableLazyValue<CirRoot>
 ) : CirNode<CirRoot, CirRoot> {
     class CirClassifiersCacheImpl : CirClassifiersCache {
-        override val classes = HashMap<FqName, CirClassNode>()
-        override val typeAliases = HashMap<FqName, CirTypeAliasNode>()
+        override val classes = THashMap<FqName, CirClassNode>()
+        override val typeAliases = THashMap<FqName, CirTypeAliasNode>()
     }
 
-    val modules: MutableMap<Name, CirModuleNode> = HashMap()
+    val modules: MutableMap<Name, CirModuleNode> = THashMap()
     val cache = CirClassifiersCacheImpl()
 
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =

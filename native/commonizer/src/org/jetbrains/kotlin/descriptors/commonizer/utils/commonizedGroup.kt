@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
+import gnu.trove.THashMap
+
 /** Fixed-size ordered collection with no extra space that represents a commonized group of same-rank elements */
 class CommonizedGroup<T : Any>(
     override val size: Int,
@@ -32,7 +34,7 @@ class CommonizedGroup<T : Any>(
 }
 
 internal class CommonizedGroupMap<K, V : Any>(val size: Int) : Iterable<Map.Entry<K, CommonizedGroup<V>>> {
-    private val wrapped: MutableMap<K, CommonizedGroup<V>> = HashMap()
+    private val wrapped: MutableMap<K, CommonizedGroup<V>> = THashMap()
 
     operator fun get(key: K): CommonizedGroup<V> = wrapped.getOrPut(key) { CommonizedGroup(size) }
 

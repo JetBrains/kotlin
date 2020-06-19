@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
+import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -13,9 +14,9 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.Printer
 
 class CommonizedMemberScope : MemberScope {
-    private val functions = HashMap<Name, MutableList<SimpleFunctionDescriptor>>()
-    private val variables = HashMap<Name, MutableList<PropertyDescriptor>>()
-    private val classifiers = HashMap<Name, ClassifierDescriptorWithTypeParameters>()
+    private val functions = THashMap<Name, MutableList<SimpleFunctionDescriptor>>()
+    private val variables = THashMap<Name, MutableList<PropertyDescriptor>>()
+    private val classifiers = THashMap<Name, ClassifierDescriptorWithTypeParameters>()
 
     private fun addMember(member: DeclarationDescriptor) {
         when (member) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
+import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirAnnotationImpl
@@ -26,8 +27,8 @@ object CirAnnotationFactory {
         if (allValueArguments.isEmpty())
             return create(fqName = fqName, constantValueArguments = emptyMap(), annotationValueArguments = emptyMap())
 
-        val constantValueArguments: MutableMap<Name, ConstantValue<*>> = HashMap()
-        val annotationValueArguments: MutableMap<Name, CirAnnotation> = HashMap()
+        val constantValueArguments: MutableMap<Name, ConstantValue<*>> = THashMap()
+        val annotationValueArguments: MutableMap<Name, CirAnnotation> = THashMap()
 
         allValueArguments.forEach { (name, constantValue) ->
             checkConstantSupportedInCommonization(

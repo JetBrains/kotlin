@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
+import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirModule
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.FqName
@@ -14,7 +15,7 @@ class CirModuleNode(
     override val targetDeclarations: CommonizedGroup<CirModule>,
     override val commonDeclaration: NullableLazyValue<CirModule>
 ) : CirNode<CirModule, CirModule> {
-    val packages: MutableMap<FqName, CirPackageNode> = HashMap()
+    val packages: MutableMap<FqName, CirPackageNode> = THashMap()
 
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T) =
         visitor.visitModuleNode(this, data)
