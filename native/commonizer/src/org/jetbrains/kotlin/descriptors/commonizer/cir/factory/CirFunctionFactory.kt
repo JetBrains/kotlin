@@ -12,32 +12,22 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 
 object CirFunctionFactory {
-    fun create(source: SimpleFunctionDescriptor): CirFunction {
-        val containingClass: ClassDescriptor? = source.containingDeclaration as? ClassDescriptor
-
-        return create(
-            annotations = source.annotations.map(CirAnnotationFactory::create),
-            name = source.name.intern(),
-            typeParameters = source.typeParameters.map(CirTypeParameterFactory::create),
-            visibility = source.visibility,
-            modality = source.modality,
-            containingClassDetails = containingClass?.let {
-                CirContainingClassDetails(
-                    kind = it.kind,
-                    modality = it.modality,
-                    isData = it.isData
-                )
-            },
-            valueParameters = source.valueParameters.map(CirValueParameterFactory::create),
-            hasStableParameterNames = source.hasStableParameterNames(),
-            hasSynthesizedParameterNames = source.hasSynthesizedParameterNames(),
-            isExternal = source.isExternal,
-            extensionReceiver = source.extensionReceiverParameter?.let(CirExtensionReceiverFactory::create),
-            returnType = CirTypeFactory.create(source.returnType!!),
-            kind = source.kind,
-            modifiers = CirFunctionModifiersFactory.create(source),
-        )
-    }
+    fun create(source: SimpleFunctionDescriptor): CirFunction = create(
+        annotations = source.annotations.map(CirAnnotationFactory::create),
+        name = source.name.intern(),
+        typeParameters = source.typeParameters.map(CirTypeParameterFactory::create),
+        visibility = source.visibility,
+        modality = source.modality,
+        containingClassDetails = CirContainingClassDetailsFactory.create(source),
+        valueParameters = source.valueParameters.map(CirValueParameterFactory::create),
+        hasStableParameterNames = source.hasStableParameterNames(),
+        hasSynthesizedParameterNames = source.hasSynthesizedParameterNames(),
+        isExternal = source.isExternal,
+        extensionReceiver = source.extensionReceiverParameter?.let(CirExtensionReceiverFactory::create),
+        returnType = CirTypeFactory.create(source.returnType!!),
+        kind = source.kind,
+        modifiers = CirFunctionModifiersFactory.create(source),
+    )
 
     @Suppress("NOTHING_TO_INLINE")
     inline fun create(

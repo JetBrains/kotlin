@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirContainingClassDetails
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasVisibility
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirContainingClassDetailsFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.unsupported
 import org.junit.Test
 
@@ -50,8 +50,12 @@ abstract class LoweringVisibilityCommonizerTest(
         override val typeParameters get() = unsupported()
         override val visibility = this@toMock
         override val modality get() = if (areMembersVirtual) Modality.OPEN else Modality.FINAL
-        override val containingClassDetails =
-            if (areMembersVirtual) CirContainingClassDetails(kind = ClassKind.CLASS, modality = Modality.OPEN, isData = false) else null
+        override val containingClassDetails = if (areMembersVirtual)
+            CirContainingClassDetailsFactory.create(
+                kind = ClassKind.CLASS,
+                modality = Modality.OPEN,
+                isData = false
+            ) else null
         override val isExternal get() = unsupported()
         override val extensionReceiver get() = unsupported()
         override val returnType get() = unsupported()
