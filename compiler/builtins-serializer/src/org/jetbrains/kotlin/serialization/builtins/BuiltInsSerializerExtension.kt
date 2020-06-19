@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.builtins
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.types.KotlinType
@@ -31,20 +32,29 @@ class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSeriali
         "CharRange" to "kotlin/ranges/CharRange"
     )
 
+    override fun createAnnotationSerializer(): AnnotationSerializer = object : AnnotationSerializer(stringTable) {
+        override fun ignoreAnnotation(type: KotlinType): Boolean =
+            type.presentableName == "JvmStatic" || type.presentableName == "JvmField" || super.ignoreAnnotation(type)
+    }
+
     override val metadataVersion: BinaryVersion
         get() = BuiltInsBinaryVersion.INSTANCE
 
     override fun shouldUseTypeTable(): Boolean = true
 
     override fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {
-        val unwrapped = type.unwrap()
-        if (unwrapped !is UnresolvedType) {
-            throw UnsupportedOperationException("Error types which are not UnresolvedType instances are not supported here: $unwrapped")
-        }
-
-        val className = shortNameToClassId[unwrapped.presentableName]
-                ?: throw UnsupportedOperationException("Unsupported unresolved type: $unwrapped")
+        val className = shortNameToClassId[type.presentableName]
+            ?: throw UnsupportedOperationException("Unsupported unresolved type: ${type.unwrap()}")
 
         builder.className = stringTable.getQualifiedClassNameIndex(className, false)
     }
+
+    private val KotlinType.presentableName: String
+        get() {
+            val unwrapped = unwrap()
+            if (unwrapped !is UnresolvedType) {
+                throw UnsupportedOperationException("Error types which are not UnresolvedType instances are not supported here: $unwrapped")
+            }
+            return unwrapped.presentableName
+        }
 }
