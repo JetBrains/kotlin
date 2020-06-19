@@ -272,7 +272,8 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
 
   override fun getDirectoryStorePathOrBase(): String = PathUtil.getParentPath(projectFilePath)
 
-  override suspend fun doSave(result: SaveResult, forceSavingAllSettings: Boolean) { }  // dummy implementation for Upsource
+  // dummy implementation for Upsource
+  override suspend fun doSave(result: SaveResult, forceSavingAllSettings: Boolean) { }
 }
 
 private fun composeFileBasedProjectWorkSpacePath(filePath: String) = "${FileUtil.getNameWithoutExtension(filePath)}${WorkspaceFileType.DOT_DEFAULT_EXTENSION}"
