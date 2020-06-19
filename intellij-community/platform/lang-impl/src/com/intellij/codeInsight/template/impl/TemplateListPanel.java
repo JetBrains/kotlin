@@ -25,6 +25,7 @@ import com.intellij.ui.*;
 import com.intellij.ui.speedSearch.SpeedSearchSupply;
 import com.intellij.util.Alarm;
 import com.intellij.util.NullableFunction;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.intellij.util.ui.update.UiNotifyConnector;
@@ -775,8 +776,18 @@ public class TemplateListPanel extends JPanel implements Disposable {
   }
 
   @Nullable
-  TemplateGroup getSingleSelectedGroup() {
+  private TemplateGroup getSingleSelectedGroup() {
     return getGroup(getSingleSelectedIndex());
+  }
+
+  @Nullable
+  TemplateGroup getSingleContextGroup() {
+    int index = getSingleSelectedIndex();
+    DefaultMutableTreeNode node = getNode(index);
+    if (node != null && node.getUserObject() instanceof TemplateImpl) {
+      node = (DefaultMutableTreeNode)node.getParent();
+    }
+    return node == null ? null : ObjectUtils.tryCast(node.getUserObject(), TemplateGroup.class);
   }
 
   private static Set<String> getAllGroups(Map<TemplateImpl, DefaultMutableTreeNode> templates) {

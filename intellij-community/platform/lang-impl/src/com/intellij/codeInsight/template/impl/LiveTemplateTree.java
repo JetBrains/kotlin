@@ -101,7 +101,7 @@ class LiveTemplateTree extends CheckboxTree implements DataProvider, CopyProvide
 
   @Override
   public boolean isPastePossible(@NotNull DataContext dataContext) {
-    if (myConfigurable.getSingleSelectedGroup() == null) return false;
+    if (myConfigurable.getSingleContextGroup() == null) return false;
 
     String s = CopyPasteManager.getInstance().getContents(DataFlavor.stringFlavor);
     return s != null && s.trim().startsWith("<template ");
@@ -114,7 +114,7 @@ class LiveTemplateTree extends CheckboxTree implements DataProvider, CopyProvide
 
   @Override
   public void performPaste(@NotNull DataContext dataContext) {
-    TemplateGroup group = myConfigurable.getSingleSelectedGroup();
+    TemplateGroup group = myConfigurable.getSingleContextGroup();
     assert group != null;
 
     String buffer = CopyPasteManager.getInstance().getContents(DataFlavor.stringFlavor);
