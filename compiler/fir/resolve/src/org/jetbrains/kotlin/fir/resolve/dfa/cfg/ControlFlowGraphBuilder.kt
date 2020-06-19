@@ -207,7 +207,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun enterAnonymousFunction(anonymousFunction: FirAnonymousFunction): Pair<PostponedLambdaEnterNode?, FunctionEnterNode> {
-        val invocationKind = anonymousFunction.eventOccurrencesRange
+        val invocationKind = anonymousFunction.invocationKind
 
         var previousNodeIsNew = false
         val symbol = anonymousFunction.symbol
@@ -293,7 +293,7 @@ class ControlFlowGraphBuilder {
             lastNodes.push(postponedExitNode)
         }
 
-        val invocationKind = anonymousFunction.eventOccurrencesRange
+        val invocationKind = anonymousFunction.invocationKind
         if (invocationKind != null) {
             addEdge(exitNode, postponedExitNode, preferredKind = EdgeKind.CfgForward)
         } else {

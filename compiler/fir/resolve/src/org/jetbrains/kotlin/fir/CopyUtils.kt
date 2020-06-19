@@ -69,7 +69,7 @@ fun FirAnonymousFunction.copy(
     typeRef: FirTypeRef = this.typeRef,
     label: FirLabel? = this.label,
     controlFlowGraphReference: FirControlFlowGraphReference = this.controlFlowGraphReference,
-    eventOccurrencesRange: EventOccurrencesRange? = this.eventOccurrencesRange
+    invocationKind: EventOccurrencesRange? = this.invocationKind
 ): FirAnonymousFunction {
     return buildAnonymousFunction {
         this.source = source
@@ -85,7 +85,7 @@ fun FirAnonymousFunction.copy(
         this.typeRef = typeRef
         this.label = label
         this.controlFlowGraphReference = controlFlowGraphReference
-        this.eventOccurrencesRange = eventOccurrencesRange
+        this.invocationKind = invocationKind
     }
 }
 

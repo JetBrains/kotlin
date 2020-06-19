@@ -266,7 +266,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(function, "F", anonymousFunction)
             +symbol("FirAnonymousFunctionSymbol")
             +field(label, nullable = true)
-            +field(eventOccurrencesRangeType, nullable = true, withReplace = true).apply {
+            +field("invocationKind", eventOccurrencesRangeType, nullable = true, withReplace = true).apply {
                 isMutable = true
             }
             +booleanField("isLambda")

@@ -40,7 +40,7 @@ internal class FirAnonymousFunctionImpl(
     override var typeRef: FirTypeRef,
     override val symbol: FirAnonymousFunctionSymbol,
     override var label: FirLabel?,
-    override var eventOccurrencesRange: EventOccurrencesRange?,
+    override var invocationKind: EventOccurrencesRange?,
     override val isLambda: Boolean,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirAnonymousFunction() {
@@ -123,6 +123,6 @@ internal class FirAnonymousFunctionImpl(
     }
 
     override fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?) {
-        eventOccurrencesRange = newInvocationKind
+        invocationKind = newInvocationKind
     }
 }
