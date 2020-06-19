@@ -5,7 +5,6 @@ import com.intellij.codeInsight.navigation.CtrlMouseInfo
 import com.intellij.model.Symbol
 import com.intellij.model.psi.impl.TargetData
 import com.intellij.model.psi.impl.declaredReferencedData
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 
 internal fun gotoDeclarationOrUsages(file: PsiFile, offset: Int): GTDUActionData? {
@@ -44,9 +43,10 @@ internal sealed class GTDUActionResult {
 
 private fun gotoDeclarationOrUsagesInner(file: PsiFile, offset: Int): GTDUActionData? {
   val (declaredData, referencedData) = declaredReferencedData(file, offset)
-  return declaredData?.let(::ShowUsagesGTDUActionData)                    // SU of declared symbols
-         ?: fromDirectNavigation(file, offset)?.toGTDUActionData()
-         ?: referencedData?.toGTDUActionData(file.project)
+  return fromDirectNavigation(file, offset)?.toGTDUActionData()
+         ?: referencedData?.toGTDActionData(file.project)?.toGTDUActionData() // GTD of referenced symbols
+         ?: referencedData?.let(::ShowUsagesGTDUActionData) // SU of referenced symbols if nowhere to navigate
+         ?: declaredData?.let(::ShowUsagesGTDUActionData) // SU of declared symbols
 }
 
 internal fun GTDActionData.toGTDUActionData(): GTDUActionData? {
@@ -55,11 +55,6 @@ internal fun GTDActionData.toGTDUActionData(): GTDUActionData? {
     override fun ctrlMouseInfo(): CtrlMouseInfo = this@toGTDUActionData.ctrlMouseInfo()
     override fun result(): GTDUActionResult = GTDUActionResult.GTD(gtdActionResult)
   }
-}
-
-private fun TargetData.toGTDUActionData(project: Project): GTDUActionData {
-  return toGTDActionData(project).toGTDUActionData()                      // GTD of referenced symbols
-         ?: ShowUsagesGTDUActionData(this)                      // SU of referenced symbols if nowhere to navigate
 }
 
 private class ShowUsagesGTDUActionData(private val targetData: TargetData) : GTDUActionData {
