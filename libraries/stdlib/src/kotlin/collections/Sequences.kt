@@ -318,6 +318,15 @@ constructor(
     }
 }
 
+internal fun <T, C, R> flatMapIndexed(source: Sequence<T>, transform: (Int, T) -> C, iterator: (C) -> Iterator<R>): Sequence<R> =
+    sequence {
+        var index = 0
+        for (element in source) {
+            val result = transform(checkIndexOverflow(index++), element)
+            yieldAll(iterator(result))
+        }
+    }
+
 /**
  * A sequence that supports drop(n) and take(n) operations
  */

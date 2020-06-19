@@ -153,6 +153,28 @@ public fun <T, R> kotlin.sequences.Sequence<T>.flatMap(transform: (T) -> kotlin.
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName(name = "flatMapIndexedIterable")
+public fun <T, R> kotlin.sequences.Sequence<T>.flatMapIndexed(transform: (index: kotlin.Int, T) -> kotlin.collections.Iterable<R>): kotlin.sequences.Sequence<R>
+
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName(name = "flatMapIndexedSequence")
+public fun <T, R> kotlin.sequences.Sequence<T>.flatMapIndexed(transform: (index: kotlin.Int, T) -> kotlin.sequences.Sequence<R>): kotlin.sequences.Sequence<R>
+
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName(name = "flatMapIndexedIterableTo")
+@kotlin.internal.InlineOnly
+public inline fun <T, R, C : kotlin.collections.MutableCollection<in R>> kotlin.sequences.Sequence<T>.flatMapIndexedTo(destination: C, transform: (index: kotlin.Int, T) -> kotlin.collections.Iterable<R>): C
+
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName(name = "flatMapIndexedSequenceTo")
+@kotlin.internal.InlineOnly
+public inline fun <T, R, C : kotlin.collections.MutableCollection<in R>> kotlin.sequences.Sequence<T>.flatMapIndexedTo(destination: C, transform: (index: kotlin.Int, T) -> kotlin.sequences.Sequence<R>): C
+
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "flatMapIterableTo")
 public inline fun <T, R, C : kotlin.collections.MutableCollection<in R>> kotlin.sequences.Sequence<T>.flatMapTo(destination: C, transform: (T) -> kotlin.collections.Iterable<R>): C
 

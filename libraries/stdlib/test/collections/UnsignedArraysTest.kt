@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -979,6 +979,14 @@ class UnsignedArraysTest {
         assertEquals(listOf<UShort>(1, 2, 3), ushortArrayOf(1, 2, 3).flatMap { listOf(it) })
         assertEquals(listOf<UInt>(1, 1, 2, 2, 3, 3), uintArrayOf(1, 2, 3).flatMap { listOf(it, it) })
         assertEquals(listOf(), ulongArrayOf(1, 2, 3).flatMap { listOf<ULong>() })
+    }
+
+    @Test
+    fun flatMapIndexed() {
+        assertEquals(listOf(), ubyteArrayOf().flatMapIndexed { index, _ -> listOf(index) })
+        assertEquals(listOf<UShort>(2, 3, 3), ushortArrayOf(1, 2, 3).flatMapIndexed { index, e -> List(index) { e } })
+        assertEquals(listOf<UInt>(2, 2, 3, 3, 3, 3), uintArrayOf(1, 2, 3).flatMapIndexed { index, e -> List(index * 2) { e } })
+        assertEquals(listOf(), ulongArrayOf(1, 2, 3).flatMapIndexed { _, _ -> listOf<ULong>() })
     }
 
     @Test

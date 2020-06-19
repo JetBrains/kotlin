@@ -592,6 +592,14 @@ public class SequenceTest {
         assertEquals(expected, result2.toList())
     }
 
+    @Test fun flatMapIndexed() {
+        val result1 = sequenceOf(1, 2).flatMapIndexed { index, v -> (0..v + index).asSequence() }
+        val result2 = sequenceOf(1, 2).flatMapIndexed { index, v -> 0..v + index }
+        val expected = listOf(0, 1, 0, 1, 2, 3)
+        assertEquals(expected, result1.toList())
+        assertEquals(expected, result2.toList())
+    }
+
     @Test fun flatten() {
         val expected = listOf(0, 1, 0, 1, 2)
 

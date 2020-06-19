@@ -263,6 +263,18 @@ public inline fun kotlin.CharSequence.firstOrNull(predicate: (kotlin.Char) -> ko
 
 public inline fun <R> kotlin.CharSequence.flatMap(transform: (kotlin.Char) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>
 
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName(name = "flatMapIndexedIterable")
+@kotlin.internal.InlineOnly
+public inline fun <R> kotlin.CharSequence.flatMapIndexed(transform: (index: kotlin.Int, kotlin.Char) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>
+
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName(name = "flatMapIndexedIterableTo")
+@kotlin.internal.InlineOnly
+public inline fun <R, C : kotlin.collections.MutableCollection<in R>> kotlin.CharSequence.flatMapIndexedTo(destination: C, transform: (index: kotlin.Int, kotlin.Char) -> kotlin.collections.Iterable<R>): C
+
 public inline fun <R, C : kotlin.collections.MutableCollection<in R>> kotlin.CharSequence.flatMapTo(destination: C, transform: (kotlin.Char) -> kotlin.collections.Iterable<R>): C
 
 public inline fun <R> kotlin.CharSequence.fold(initial: R, operation: (acc: R, kotlin.Char) -> R): R
