@@ -744,6 +744,11 @@ public class IrIncrementalJvmCompilerRunnerTestGenerated extends AbstractIrIncre
             runTest("jps-plugin/testData/incremental/classHierarchyAffected/inferredTypeChanged/");
         }
 
+        @TestMetadata("interfaceAnyMethods")
+        public void testInterfaceAnyMethods() throws Exception {
+            runTest("jps-plugin/testData/incremental/classHierarchyAffected/interfaceAnyMethods/");
+        }
+
         @TestMetadata("lambdaParameterAffected")
         public void testLambdaParameterAffected() throws Exception {
             runTest("jps-plugin/testData/incremental/classHierarchyAffected/lambdaParameterAffected/");
