@@ -9,9 +9,6 @@ public external val undefined: kotlin.Nothing? { get; }
 
 public val <T : kotlin.Any> kotlin.reflect.KClass<T>.js: kotlin.js.JsClass<T> { get; }
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use class literal and extension property `js` instead.", replaceWith = kotlin.ReplaceWith(expression = "this::class.js", imports = {}))
-public val <T : kotlin.Any> T.jsClass: kotlin.js.JsClass<T> { get; }
-
 public val <T : kotlin.Any> kotlin.js.JsClass<T>.kotlin: kotlin.reflect.KClass<T> { get; }
 
 public inline fun dateLocaleOptions(init: kotlin.js.Date.LocaleOptions.() -> kotlin.Unit): kotlin.js.Date.LocaleOptions
@@ -19,9 +16,6 @@ public inline fun dateLocaleOptions(init: kotlin.js.Date.LocaleOptions.() -> kot
 public external fun eval(expr: kotlin.String): dynamic
 
 public external fun js(code: kotlin.String): dynamic
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use class literal and extension property `js` instead.", replaceWith = kotlin.ReplaceWith(expression = "T::class.js", imports = {}))
-public external fun <T : kotlin.Any> jsClass(): kotlin.js.JsClass<T>
 
 /*∆*/ public fun jsTypeOf(value_hack: kotlin.Any?): kotlin.String
 
@@ -281,7 +275,7 @@ public external interface Json {
     public abstract operator fun set(propertyName: kotlin.String, value: kotlin.Any?): kotlin.Unit
 }
 
-@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use top-level functions from kotlin.math package instead.")
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use top-level functions from kotlin.math package instead.")
 public external object Math {
     @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.PI instead.", replaceWith = kotlin.ReplaceWith(expression = "PI", imports = {"kotlin.math.PI"}))
     public final val PI: kotlin.Double { get; }
@@ -337,7 +331,7 @@ public external object Math {
     @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.pow instead.", replaceWith = kotlin.ReplaceWith(expression = "base.pow(exp)", imports = {"kotlin.math.pow"}))
     public final fun pow(base: kotlin.Double, exp: kotlin.Double): kotlin.Double
 
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use Random.nextDouble instead", replaceWith = kotlin.ReplaceWith(expression = "kotlin.random.Random.nextDouble()", imports = {"kotlin.random.Random"}))
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use Random.nextDouble instead", replaceWith = kotlin.ReplaceWith(expression = "kotlin.random.Random.nextDouble()", imports = {"kotlin.random.Random"}))
     public final fun random(): kotlin.Double
 
     @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use kotlin.math.round instead.", replaceWith = kotlin.ReplaceWith(expression = "round(value)", imports = {"kotlin.math.round"}))
@@ -401,14 +395,6 @@ public external interface RegExpMatch {
     public abstract val input: kotlin.String { get; }
 
     public abstract val length: kotlin.Int { get; }
-}
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER})
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use `external` modifier instead")
-public final annotation class native : kotlin.Annotation {
-    public constructor native(name: kotlin.String = ...)
-
-    public final val name: kotlin.String { get; }
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION})
