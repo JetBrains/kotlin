@@ -272,6 +272,6 @@ class DeprecationResolver(
     }
 
     companion object {
-        private val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
+        val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
     }
 }

@@ -193,6 +193,10 @@ public class FunctionCodegen {
         if (origin.getOriginKind() == JvmDeclarationOriginKind.SAM_DELEGATION) {
             flags |= ACC_SYNTHETIC;
         }
+        boolean isCompatibilityStubInDefaultImpls = isCompatibilityStubInDefaultImpls(functionDescriptor, methodContext, state.getJvmDefaultMode());
+        if (isCompatibilityStubInDefaultImpls) {
+            flags |= ACC_DEPRECATED;
+        }
 
         if (functionDescriptor.isExternal() && owner instanceof MultifileClassFacadeContext) {
             // Native methods are only defined in facades and do not need package part implementations
@@ -214,7 +218,9 @@ public class FunctionCodegen {
 
         recordMethodForFunctionIfAppropriate(functionDescriptor, asmMethod);
 
-        generateMethodAnnotationsIfRequired(functionDescriptor, asmMethod, jvmSignature, mv);
+        generateMethodAnnotationsIfRequired(functionDescriptor, asmMethod, jvmSignature, mv, isCompatibilityStubInDefaultImpls
+                                                                                             ? Collections.singletonList(Deprecated.class)
+                                                                                             : Collections.emptyList());
 
         GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, jvmSignature, state, (flags & ACC_SYNTHETIC) != 0);
 
@@ -276,7 +282,8 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull Method asmMethod,
             @NotNull JvmMethodGenericSignature jvmSignature,
-            @NotNull MethodVisitor mv
+            @NotNull MethodVisitor mv,
+            @NotNull List<Class<?>> additionalNoArgAnnotations
     ) {
         FunctionDescriptor annotationsOwner;
         if (shouldHideConstructorDueToInlineClassTypeValueParameters(functionDescriptor)) {
@@ -292,7 +299,7 @@ public class FunctionCodegen {
         }
 
         AnnotationCodegen.forMethod(mv, memberCodegen, state)
-                .genAnnotations(annotationsOwner, asmMethod.getReturnType(), functionDescriptor.getReturnType());
+                .genAnnotations(annotationsOwner, asmMethod.getReturnType(), functionDescriptor.getReturnType(), null, additionalNoArgAnnotations);
 
         generateParameterAnnotations(annotationsOwner, mv, jvmSignature, memberCodegen, state);
     }
@@ -536,7 +543,7 @@ public class FunctionCodegen {
                 //noinspection ConstantConditions
                 int parameterIndex = i - syntheticParameterCount;
                 AnnotationCodegen.forParameter(parameterIndex, mv, memberCodegen, state)
-                        .genAnnotations(annotated, parameterSignature.getAsmType(), annotated.getReturnType(), functionDescriptor);
+                        .genAnnotations(annotated, parameterSignature.getAsmType(), annotated.getReturnType(), functionDescriptor, Collections.emptyList());
             }
         }
     }
@@ -712,9 +719,9 @@ public class FunctionCodegen {
             @NotNull JvmDefaultMode jvmDefaultMode
     ) {
         return OwnerKind.DEFAULT_IMPLS == context.getContextKind() &&
+               jvmDefaultMode.isCompatibility() &&
                JvmAnnotationUtilKt.isCompiledToJvmDefault(DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(functionDescriptor),
-                                               jvmDefaultMode) &&
-               jvmDefaultMode.isCompatibility();
+                                                          jvmDefaultMode);
     }
 
     private static void generateLocalVariableTable(

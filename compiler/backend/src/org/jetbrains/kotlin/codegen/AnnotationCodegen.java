@@ -106,14 +106,15 @@ public abstract class AnnotationCodegen {
             @Nullable Type returnType,
             @Nullable KotlinType typeForTypeAnnotations
     ) {
-        genAnnotations(annotated, returnType, typeForTypeAnnotations, null);
+        genAnnotations(annotated, returnType, typeForTypeAnnotations, null, Collections.emptyList());
     }
 
     public void genAnnotations(
             @Nullable Annotated annotated,
             @Nullable Type returnType,
             @Nullable KotlinType typeForTypeAnnotations,
-            @Nullable DeclarationDescriptorWithVisibility parameterContainer
+            @Nullable DeclarationDescriptorWithVisibility parameterContainer,
+            @NotNull List<Class<?>> additionalAnnotations
     ) {
         if (annotated == null) return;
 
@@ -146,6 +147,11 @@ public abstract class AnnotationCodegen {
             if (descriptor != null) {
                 annotationDescriptorsAlreadyPresent.add(descriptor);
             }
+        }
+
+        for (Class<?> annotation : additionalAnnotations) {
+            String descriptor = generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotation);
+            annotationDescriptorsAlreadyPresent.add(descriptor);
         }
 
         generateAdditionalAnnotations(annotated, returnType, annotationDescriptorsAlreadyPresent, parameterContainer);
@@ -326,11 +332,13 @@ public abstract class AnnotationCodegen {
         visitor.visitEnd();
     }
 
-    private void generateAnnotationIfNotPresent(Set<String> annotationDescriptorsAlreadyPresent, Class<?> annotationClass) {
+    @NotNull
+    private String generateAnnotationIfNotPresent(Set<String> annotationDescriptorsAlreadyPresent, Class<?> annotationClass) {
         String descriptor = Type.getType(annotationClass).getDescriptor();
         if (!annotationDescriptorsAlreadyPresent.contains(descriptor)) {
             visitAnnotation(descriptor, false).visitEnd();
         }
+        return descriptor;
     }
 
     private static boolean isBareTypeParameterWithNullableUpperBound(@NotNull KotlinType type) {

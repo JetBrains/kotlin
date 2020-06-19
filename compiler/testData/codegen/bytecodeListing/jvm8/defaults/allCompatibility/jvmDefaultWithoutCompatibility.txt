@@ -7,6 +7,7 @@ public final class KotlinClass {
 @kotlin.jvm.JvmDefaultWithoutCompatibility
 @kotlin.Metadata
 public interface NoDefaultImpl {
+    public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
     public method test(): void
 }
 
@@ -19,24 +20,29 @@ public interface NoDefaultImpl2FromDefaultImpls {
 @kotlin.Metadata
 public final class WithDefaultImpl$DefaultImpls {
     inner class WithDefaultImpl$DefaultImpls
-    public static method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImpl): void
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: WithDefaultImpl): java.lang.String
+    public deprecated static @java.lang.Deprecated method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImpl): void
 }
 
 @kotlin.Metadata
 public interface WithDefaultImpl {
     inner class WithDefaultImpl$DefaultImpls
+    public synthetic static method access$getProp$jd(p0: WithDefaultImpl): java.lang.String
     public synthetic static method access$test$jd(p0: WithDefaultImpl): void
 }
 
 @kotlin.Metadata
 public final class WithDefaultImplPure$DefaultImpls {
     inner class WithDefaultImplPure$DefaultImpls
-    public static method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImplPure): void
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: WithDefaultImplPure): java.lang.String
+    public deprecated static @java.lang.Deprecated method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImplPure): void
 }
 
 @kotlin.Metadata
 public interface WithDefaultImplPure {
     inner class WithDefaultImplPure$DefaultImpls
+    public synthetic static method access$getProp$jd(p0: WithDefaultImplPure): java.lang.String
     public synthetic static method access$test$jd(p0: WithDefaultImplPure): void
+    public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
     public method test(): void
 }

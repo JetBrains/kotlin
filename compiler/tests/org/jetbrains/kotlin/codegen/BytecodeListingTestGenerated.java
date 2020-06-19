@@ -517,6 +517,16 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
+                @TestMetadata("deprecation.kt")
+                public void testDeprecation() throws Exception {
+                    runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/deprecation.kt");
+                }
+
+                @TestMetadata("deprecationWithDefault.kt")
+                public void testDeprecationWithDefault() throws Exception {
+                    runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/deprecationWithDefault.kt");
+                }
+
                 @TestMetadata("jvmDefaultWithoutCompatibility.kt")
                 public void testJvmDefaultWithoutCompatibility() throws Exception {
                     runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/allCompatibility/jvmDefaultWithoutCompatibility.kt");
