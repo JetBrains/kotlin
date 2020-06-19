@@ -6445,6 +6445,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/usageInDerivedClassGeneric.kt");
         }
 
+        @TestMetadata("withInnerFunction.kt")
+        public void testWithInnerFunction() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedSymbolUsage/withInnerFunction.kt");
+        }
+
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/argumentSideEffects")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
