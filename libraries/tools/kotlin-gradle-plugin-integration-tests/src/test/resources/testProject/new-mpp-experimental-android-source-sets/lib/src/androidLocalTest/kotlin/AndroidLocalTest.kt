@@ -1,0 +1,1 @@
+class AndroidLocalTest : AbstractTest()

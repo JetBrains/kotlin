@@ -204,6 +204,15 @@ open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
                 }
             }
         }
+
+
+        build("connectedAndroidTest") {
+            // Test for KT-35016: MPP should recognize android instrumented tests correctly
+            build("connectedAndroidTest") {
+                assertFailed()
+                assertContains("No connected devices!")
+            }
+        }
     }
 
     @Test
@@ -411,6 +420,586 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
     }
 
     @Test
+    fun testExperimentalMppAndroidSourceSets() {
+        Project(
+            "new-mpp-experimental-android-source-sets",
+            minLogLevel = LogLevel.INFO,
+            gradleVersionRequirement = GradleVersionRequired.AtLeast("5.0")
+        ).build("sourceSets") {
+            assertSuccessful()
+            assertContains(
+                """
+                    androidTest
+                    -----------
+                    Compile configuration: androidTestCompile
+                    build.gradle name: android.sourceSets.androidTest
+                    Java sources: [lib/src/androidTest/java, lib/src/androidDeviceTest/kotlin]
+                    Manifest file: lib/src/androidDeviceTest/AndroidManifest.xml
+                    Android resources: [lib/src/androidTest/res, lib/src/androidDeviceTest/res]
+                    Assets: [lib/src/androidTest/assets, lib/src/androidDeviceTest/assets]
+                    AIDL sources: [lib/src/androidTest/aidl, lib/src/androidDeviceTest/aidl]
+                    RenderScript sources: [lib/src/androidTest/rs, lib/src/androidDeviceTest/rs]
+                    JNI sources: [lib/src/androidTest/jni, lib/src/androidDeviceTest/jni]
+                    JNI libraries: [lib/src/androidTest/jniLibs, lib/src/androidDeviceTest/jniLibs]
+                    Java-style resources: [lib/src/androidTest/resources, lib/src/androidDeviceTest/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    androidTestDebug
+                    ----------------
+                    Compile configuration: androidTestDebugCompile
+                    build.gradle name: android.sourceSets.androidTestDebug
+                    Java sources: [lib/src/androidTestDebug/java, lib/src/androidDeviceTestDebug/kotlin]
+                    Manifest file: lib/src/androidDeviceTestDebug/AndroidManifest.xml
+                    Android resources: [lib/src/androidTestDebug/res, lib/src/androidDeviceTestDebug/res]
+                    Assets: [lib/src/androidTestDebug/assets, lib/src/androidDeviceTestDebug/assets]
+                    AIDL sources: [lib/src/androidTestDebug/aidl, lib/src/androidDeviceTestDebug/aidl]
+                    RenderScript sources: [lib/src/androidTestDebug/rs, lib/src/androidDeviceTestDebug/rs]
+                    JNI sources: [lib/src/androidTestDebug/jni, lib/src/androidDeviceTestDebug/jni]
+                    JNI libraries: [lib/src/androidTestDebug/jniLibs, lib/src/androidDeviceTestDebug/jniLibs]
+                    Java-style resources: [lib/src/androidTestDebug/resources, lib/src/androidDeviceTestDebug/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    androidTestFree
+                    ---------------
+                    Compile configuration: androidTestFreeCompile
+                    build.gradle name: android.sourceSets.androidTestFree
+                    Java sources: [lib/src/androidTestFree/java, lib/src/androidDeviceTestFree/kotlin]
+                    Manifest file: lib/src/androidDeviceTestFree/AndroidManifest.xml
+                    Android resources: [lib/src/androidTestFree/res, lib/src/androidDeviceTestFree/res]
+                    Assets: [lib/src/androidTestFree/assets, lib/src/androidDeviceTestFree/assets]
+                    AIDL sources: [lib/src/androidTestFree/aidl, lib/src/androidDeviceTestFree/aidl]
+                    RenderScript sources: [lib/src/androidTestFree/rs, lib/src/androidDeviceTestFree/rs]
+                    JNI sources: [lib/src/androidTestFree/jni, lib/src/androidDeviceTestFree/jni]
+                    JNI libraries: [lib/src/androidTestFree/jniLibs, lib/src/androidDeviceTestFree/jniLibs]
+                    Java-style resources: [lib/src/androidTestFree/resources, lib/src/androidDeviceTestFree/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    androidTestFreeDebug
+                    --------------------
+                    Compile configuration: androidTestFreeDebugCompile
+                    build.gradle name: android.sourceSets.androidTestFreeDebug
+                    Java sources: [lib/src/androidTestFreeDebug/java, lib/src/androidDeviceTestFreeDebug/kotlin]
+                    Manifest file: lib/src/androidDeviceTestFreeDebug/AndroidManifest.xml
+                    Android resources: [lib/src/androidTestFreeDebug/res, lib/src/androidDeviceTestFreeDebug/res]
+                    Assets: [lib/src/androidTestFreeDebug/assets, lib/src/androidDeviceTestFreeDebug/assets]
+                    AIDL sources: [lib/src/androidTestFreeDebug/aidl, lib/src/androidDeviceTestFreeDebug/aidl]
+                    RenderScript sources: [lib/src/androidTestFreeDebug/rs, lib/src/androidDeviceTestFreeDebug/rs]
+                    JNI sources: [lib/src/androidTestFreeDebug/jni, lib/src/androidDeviceTestFreeDebug/jni]
+                    JNI libraries: [lib/src/androidTestFreeDebug/jniLibs, lib/src/androidDeviceTestFreeDebug/jniLibs]
+                    Java-style resources: [lib/src/androidTestFreeDebug/resources, lib/src/androidDeviceTestFreeDebug/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    androidTestPaid
+                    ---------------
+                    Compile configuration: androidTestPaidCompile
+                    build.gradle name: android.sourceSets.androidTestPaid
+                    Java sources: [lib/src/androidTestPaid/java, lib/src/androidDeviceTestPaid/kotlin]
+                    Manifest file: lib/src/androidDeviceTestPaid/AndroidManifest.xml
+                    Android resources: [lib/src/androidTestPaid/res, lib/src/androidDeviceTestPaid/res]
+                    Assets: [lib/src/androidTestPaid/assets, lib/src/androidDeviceTestPaid/assets]
+                    AIDL sources: [lib/src/androidTestPaid/aidl, lib/src/androidDeviceTestPaid/aidl]
+                    RenderScript sources: [lib/src/androidTestPaid/rs, lib/src/androidDeviceTestPaid/rs]
+                    JNI sources: [lib/src/androidTestPaid/jni, lib/src/androidDeviceTestPaid/jni]
+                    JNI libraries: [lib/src/androidTestPaid/jniLibs, lib/src/androidDeviceTestPaid/jniLibs]
+                    Java-style resources: [lib/src/androidTestPaid/resources, lib/src/androidDeviceTestPaid/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    androidTestPaidDebug
+                    --------------------
+                    Compile configuration: androidTestPaidDebugCompile
+                    build.gradle name: android.sourceSets.androidTestPaidDebug
+                    Java sources: [lib/src/androidTestPaidDebug/java, lib/src/androidDeviceTestPaidDebug/kotlin]
+                    Manifest file: lib/src/androidDeviceTestPaidDebug/AndroidManifest.xml
+                    Android resources: [lib/src/androidTestPaidDebug/res, lib/src/androidDeviceTestPaidDebug/res]
+                    Assets: [lib/src/androidTestPaidDebug/assets, lib/src/androidDeviceTestPaidDebug/assets]
+                    AIDL sources: [lib/src/androidTestPaidDebug/aidl, lib/src/androidDeviceTestPaidDebug/aidl]
+                    RenderScript sources: [lib/src/androidTestPaidDebug/rs, lib/src/androidDeviceTestPaidDebug/rs]
+                    JNI sources: [lib/src/androidTestPaidDebug/jni, lib/src/androidDeviceTestPaidDebug/jni]
+                    JNI libraries: [lib/src/androidTestPaidDebug/jniLibs, lib/src/androidDeviceTestPaidDebug/jniLibs]
+                    Java-style resources: [lib/src/androidTestPaidDebug/resources, lib/src/androidDeviceTestPaidDebug/resources]
+                """.trimIndent()
+            )
+
+            assertContains(
+                """
+                    debug
+                    -----
+                    Compile configuration: debugCompile
+                    build.gradle name: android.sourceSets.debug
+                    Java sources: [lib/src/debug/java, lib/src/androidDebug/kotlin]
+                    Manifest file: lib/src/androidDebug/AndroidManifest.xml
+                    Android resources: [lib/src/debug/res, lib/src/androidDebug/res]
+                    Assets: [lib/src/debug/assets, lib/src/androidDebug/assets]
+                    AIDL sources: [lib/src/debug/aidl, lib/src/androidDebug/aidl]
+                    RenderScript sources: [lib/src/debug/rs, lib/src/androidDebug/rs]
+                    JNI sources: [lib/src/debug/jni, lib/src/androidDebug/jni]
+                    JNI libraries: [lib/src/debug/jniLibs, lib/src/androidDebug/jniLibs]
+                    Java-style resources: [lib/src/debug/resources, lib/src/androidDebug/resources]
+                """.trimIndent()
+            )
+
+            assertContains(
+                """
+                    free
+                    ----
+                    Compile configuration: freeCompile
+                    build.gradle name: android.sourceSets.free
+                    Java sources: [lib/src/free/java, lib/src/androidFree/kotlin]
+                    Manifest file: lib/src/androidFree/AndroidManifest.xml
+                    Android resources: [lib/src/free/res, lib/src/androidFree/res]
+                    Assets: [lib/src/free/assets, lib/src/androidFree/assets]
+                    AIDL sources: [lib/src/free/aidl, lib/src/androidFree/aidl]
+                    RenderScript sources: [lib/src/free/rs, lib/src/androidFree/rs]
+                    JNI sources: [lib/src/free/jni, lib/src/androidFree/jni]
+                    JNI libraries: [lib/src/free/jniLibs, lib/src/androidFree/jniLibs]
+                    Java-style resources: [lib/src/free/resources, lib/src/androidFree/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    freeDebug
+                    ---------
+                    Compile configuration: freeDebugCompile
+                    build.gradle name: android.sourceSets.freeDebug
+                    Java sources: [lib/src/freeDebug/java, lib/src/androidFreeDebug/kotlin]
+                    Manifest file: lib/src/androidFreeDebug/AndroidManifest.xml
+                    Android resources: [lib/src/freeDebug/res, lib/src/androidFreeDebug/res]
+                    Assets: [lib/src/freeDebug/assets, lib/src/androidFreeDebug/assets]
+                    AIDL sources: [lib/src/freeDebug/aidl, lib/src/androidFreeDebug/aidl]
+                    RenderScript sources: [lib/src/freeDebug/rs, lib/src/androidFreeDebug/rs]
+                    JNI sources: [lib/src/freeDebug/jni, lib/src/androidFreeDebug/jni]
+                    JNI libraries: [lib/src/freeDebug/jniLibs, lib/src/androidFreeDebug/jniLibs]
+                    Java-style resources: [lib/src/freeDebug/resources, lib/src/androidFreeDebug/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    freeRelease
+                    -----------
+                    Compile configuration: freeReleaseCompile
+                    build.gradle name: android.sourceSets.freeRelease
+                    Java sources: [lib/src/freeRelease/java, lib/src/androidFreeRelease/kotlin]
+                    Manifest file: lib/src/androidFreeRelease/AndroidManifest.xml
+                    Android resources: [lib/src/freeRelease/res, lib/src/androidFreeRelease/res]
+                    Assets: [lib/src/freeRelease/assets, lib/src/androidFreeRelease/assets]
+                    AIDL sources: [lib/src/freeRelease/aidl, lib/src/androidFreeRelease/aidl]
+                    RenderScript sources: [lib/src/freeRelease/rs, lib/src/androidFreeRelease/rs]
+                    JNI sources: [lib/src/freeRelease/jni, lib/src/androidFreeRelease/jni]
+                    JNI libraries: [lib/src/freeRelease/jniLibs, lib/src/androidFreeRelease/jniLibs]
+                    Java-style resources: [lib/src/freeRelease/resources, lib/src/androidFreeRelease/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    freeStaging
+                    -----------
+                    Compile configuration: freeStagingCompile
+                    build.gradle name: android.sourceSets.freeStaging
+                    Java sources: [lib/src/freeStaging/java, lib/src/androidFreeStaging/kotlin]
+                    Manifest file: lib/src/androidFreeStaging/AndroidManifest.xml
+                    Android resources: [lib/src/freeStaging/res, lib/src/androidFreeStaging/res]
+                    Assets: [lib/src/freeStaging/assets, lib/src/androidFreeStaging/assets]
+                    AIDL sources: [lib/src/freeStaging/aidl, lib/src/androidFreeStaging/aidl]
+                    RenderScript sources: [lib/src/freeStaging/rs, lib/src/androidFreeStaging/rs]
+                    JNI sources: [lib/src/freeStaging/jni, lib/src/androidFreeStaging/jni]
+                    JNI libraries: [lib/src/freeStaging/jniLibs, lib/src/androidFreeStaging/jniLibs]
+                    Java-style resources: [lib/src/freeStaging/resources, lib/src/androidFreeStaging/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    main
+                    ----
+                    Compile configuration: compile
+                    build.gradle name: android.sourceSets.main
+                    Java sources: [lib/src/main/java, lib/src/androidMain/kotlin]
+                    Manifest file: lib/src/androidMain/AndroidManifest.xml
+                    Android resources: [lib/src/main/res, lib/src/androidMain/res]
+                    Assets: [lib/src/main/assets, lib/src/androidMain/assets]
+                    AIDL sources: [lib/src/main/aidl, lib/src/androidMain/aidl]
+                    RenderScript sources: [lib/src/main/rs, lib/src/androidMain/rs]
+                    JNI sources: [lib/src/main/jni, lib/src/androidMain/jni]
+                    JNI libraries: [lib/src/main/jniLibs, lib/src/androidMain/jniLibs]
+                    Java-style resources: [lib/src/main/resources, lib/src/androidMain/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    paid
+                    ----
+                    Compile configuration: paidCompile
+                    build.gradle name: android.sourceSets.paid
+                    Java sources: [lib/src/paid/java, lib/src/androidPaid/kotlin]
+                    Manifest file: lib/src/androidPaid/AndroidManifest.xml
+                    Android resources: [lib/src/paid/res, lib/src/androidPaid/res]
+                    Assets: [lib/src/paid/assets, lib/src/androidPaid/assets]
+                    AIDL sources: [lib/src/paid/aidl, lib/src/androidPaid/aidl]
+                    RenderScript sources: [lib/src/paid/rs, lib/src/androidPaid/rs]
+                    JNI sources: [lib/src/paid/jni, lib/src/androidPaid/jni]
+                    JNI libraries: [lib/src/paid/jniLibs, lib/src/androidPaid/jniLibs]
+                    Java-style resources: [lib/src/paid/resources, lib/src/androidPaid/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    paidDebug
+                    ---------
+                    Compile configuration: paidDebugCompile
+                    build.gradle name: android.sourceSets.paidDebug
+                    Java sources: [lib/src/paidDebug/java, lib/src/androidPaidDebug/kotlin]
+                    Manifest file: lib/src/androidPaidDebug/AndroidManifest.xml
+                    Android resources: [lib/src/paidDebug/res, lib/src/androidPaidDebug/res]
+                    Assets: [lib/src/paidDebug/assets, lib/src/androidPaidDebug/assets]
+                    AIDL sources: [lib/src/paidDebug/aidl, lib/src/androidPaidDebug/aidl]
+                    RenderScript sources: [lib/src/paidDebug/rs, lib/src/androidPaidDebug/rs]
+                    JNI sources: [lib/src/paidDebug/jni, lib/src/androidPaidDebug/jni]
+                    JNI libraries: [lib/src/paidDebug/jniLibs, lib/src/androidPaidDebug/jniLibs]
+                    Java-style resources: [lib/src/paidDebug/resources, lib/src/androidPaidDebug/resources]
+                """.trimIndent()
+            )
+
+            assertContains(
+                """
+                    paidRelease
+                    -----------
+                    Compile configuration: paidReleaseCompile
+                    build.gradle name: android.sourceSets.paidRelease
+                    Java sources: [lib/src/paidRelease/java, lib/src/androidPaidRelease/kotlin]
+                    Manifest file: lib/src/androidPaidRelease/AndroidManifest.xml
+                    Android resources: [lib/src/paidRelease/res, lib/src/androidPaidRelease/res]
+                    Assets: [lib/src/paidRelease/assets, lib/src/androidPaidRelease/assets]
+                    AIDL sources: [lib/src/paidRelease/aidl, lib/src/androidPaidRelease/aidl]
+                    RenderScript sources: [lib/src/paidRelease/rs, lib/src/androidPaidRelease/rs]
+                    JNI sources: [lib/src/paidRelease/jni, lib/src/androidPaidRelease/jni]
+                    JNI libraries: [lib/src/paidRelease/jniLibs, lib/src/androidPaidRelease/jniLibs]
+                    Java-style resources: [lib/src/paidRelease/resources, lib/src/androidPaidRelease/resources]
+
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    paidStaging
+                    -----------
+                    Compile configuration: paidStagingCompile
+                    build.gradle name: android.sourceSets.paidStaging
+                    Java sources: [lib/src/paidStaging/java, lib/src/androidPaidStaging/kotlin]
+                    Manifest file: lib/src/androidPaidStaging/AndroidManifest.xml
+                    Android resources: [lib/src/paidStaging/res, lib/src/androidPaidStaging/res]
+                    Assets: [lib/src/paidStaging/assets, lib/src/androidPaidStaging/assets]
+                    AIDL sources: [lib/src/paidStaging/aidl, lib/src/androidPaidStaging/aidl]
+                    RenderScript sources: [lib/src/paidStaging/rs, lib/src/androidPaidStaging/rs]
+                    JNI sources: [lib/src/paidStaging/jni, lib/src/androidPaidStaging/jni]
+                    JNI libraries: [lib/src/paidStaging/jniLibs, lib/src/androidPaidStaging/jniLibs]
+                    Java-style resources: [lib/src/paidStaging/resources, lib/src/androidPaidStaging/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    release
+                    -------
+                    Compile configuration: releaseCompile
+                    build.gradle name: android.sourceSets.release
+                    Java sources: [lib/src/release/java, lib/src/androidRelease/kotlin]
+                    Manifest file: lib/src/androidRelease/AndroidManifest.xml
+                    Android resources: [lib/src/release/res, lib/src/androidRelease/res]
+                    Assets: [lib/src/release/assets, lib/src/androidRelease/assets]
+                    AIDL sources: [lib/src/release/aidl, lib/src/androidRelease/aidl]
+                    RenderScript sources: [lib/src/release/rs, lib/src/androidRelease/rs]
+                    JNI sources: [lib/src/release/jni, lib/src/androidRelease/jni]
+                    JNI libraries: [lib/src/release/jniLibs, lib/src/androidRelease/jniLibs]
+                    Java-style resources: [lib/src/release/resources, lib/src/androidRelease/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    staging
+                    -------
+                    Compile configuration: stagingCompile
+                    build.gradle name: android.sourceSets.staging
+                    Java sources: [lib/src/staging/java, lib/src/androidStaging/kotlin]
+                    Manifest file: lib/src/androidStaging/AndroidManifest.xml
+                    Android resources: [lib/src/staging/res, lib/src/androidStaging/res]
+                    Assets: [lib/src/staging/assets, lib/src/androidStaging/assets]
+                    AIDL sources: [lib/src/staging/aidl, lib/src/androidStaging/aidl]
+                    RenderScript sources: [lib/src/staging/rs, lib/src/androidStaging/rs]
+                    JNI sources: [lib/src/staging/jni, lib/src/androidStaging/jni]
+                    JNI libraries: [lib/src/staging/jniLibs, lib/src/androidStaging/jniLibs]
+                    Java-style resources: [lib/src/staging/resources, lib/src/androidStaging/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    test
+                    ----
+                    Compile configuration: testCompile
+                    build.gradle name: android.sourceSets.test
+                    Java sources: [lib/src/test/java, lib/src/androidLocalTest/kotlin]
+                    Java-style resources: [lib/src/test/resources, lib/src/androidLocalTest/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    testDebug
+                    ---------
+                    Compile configuration: testDebugCompile
+                    build.gradle name: android.sourceSets.testDebug
+                    Java sources: [lib/src/testDebug/java, lib/src/androidLocalTestDebug/kotlin]
+                    Java-style resources: [lib/src/testDebug/resources, lib/src/androidLocalTestDebug/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    testFree
+                    --------
+                    Compile configuration: testFreeCompile
+                    build.gradle name: android.sourceSets.testFree
+                    Java sources: [lib/src/testFree/java, lib/src/androidLocalTestFree/kotlin]
+                    Java-style resources: [lib/src/testFree/resources, lib/src/androidLocalTestFree/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    testFreeDebug
+                    -------------
+                    Compile configuration: testFreeDebugCompile
+                    build.gradle name: android.sourceSets.testFreeDebug
+                    Java sources: [lib/src/testFreeDebug/java, lib/src/androidLocalTestFreeDebug/kotlin]
+                    Java-style resources: [lib/src/testFreeDebug/resources, lib/src/androidLocalTestFreeDebug/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    testFreeRelease
+                    ---------------
+                    Compile configuration: testFreeReleaseCompile
+                    build.gradle name: android.sourceSets.testFreeRelease
+                    Java sources: [lib/src/testFreeRelease/java, lib/src/androidLocalTestFreeRelease/kotlin]
+                    Java-style resources: [lib/src/testFreeRelease/resources, lib/src/androidLocalTestFreeRelease/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    testFreeStaging
+                    ---------------
+                    Compile configuration: testFreeStagingCompile
+                    build.gradle name: android.sourceSets.testFreeStaging
+                    Java sources: [lib/src/testFreeStaging/java, lib/src/androidLocalTestFreeStaging/kotlin]
+                    Java-style resources: [lib/src/testFreeStaging/resources, lib/src/androidLocalTestFreeStaging/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    testPaid
+                    --------
+                    Compile configuration: testPaidCompile
+                    build.gradle name: android.sourceSets.testPaid
+                    Java sources: [lib/src/testPaid/java, lib/src/androidLocalTestPaid/kotlin]
+                    Java-style resources: [lib/src/testPaid/resources, lib/src/androidLocalTestPaid/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    testPaidDebug
+                    -------------
+                    Compile configuration: testPaidDebugCompile
+                    build.gradle name: android.sourceSets.testPaidDebug
+                    Java sources: [lib/src/testPaidDebug/java, lib/src/androidLocalTestPaidDebug/kotlin]
+                    Java-style resources: [lib/src/testPaidDebug/resources, lib/src/androidLocalTestPaidDebug/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    testPaidRelease
+                    ---------------
+                    Compile configuration: testPaidReleaseCompile
+                    build.gradle name: android.sourceSets.testPaidRelease
+                    Java sources: [lib/src/testPaidRelease/java, lib/src/androidLocalTestPaidRelease/kotlin]
+                    Java-style resources: [lib/src/testPaidRelease/resources, lib/src/androidLocalTestPaidRelease/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    testPaidStaging
+                    ---------------
+                    Compile configuration: testPaidStagingCompile
+                    build.gradle name: android.sourceSets.testPaidStaging
+                    Java sources: [lib/src/testPaidStaging/java, lib/src/androidLocalTestPaidStaging/kotlin]
+                    Java-style resources: [lib/src/testPaidStaging/resources, lib/src/androidLocalTestPaidStaging/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    testRelease
+                    -----------
+                    Compile configuration: testReleaseCompile
+                    build.gradle name: android.sourceSets.testRelease
+                    Java sources: [lib/src/testRelease/java, lib/src/androidLocalTestRelease/kotlin]
+                    Java-style resources: [lib/src/testRelease/resources, lib/src/androidLocalTestRelease/resources]
+                """.trimIndent()
+            )
+            assertContains(
+                """
+                    testStaging
+                    -----------
+                    Compile configuration: testStagingCompile
+                    build.gradle name: android.sourceSets.testStaging
+                    Java sources: [lib/src/testStaging/java, lib/src/androidLocalTestStaging/kotlin]
+                    Java-style resources: [lib/src/testStaging/resources, lib/src/androidLocalTestStaging/resources]
+                """.trimIndent()
+            )
+        }
+
+        Project(
+            "new-mpp-experimental-android-source-sets",
+            gradleVersionRequirement = GradleVersionRequired.AtLeast("5.0")
+        ).run {
+            build("test") {
+                assertSuccessful()
+                assertContains("CommonTest PASSED")
+                assertContains("AndroidLocalTest PASSED")
+                assertContains("AndroidLocalTestStaging PASSED")
+                assertContains("AndroidLocalTestDebug PASSED")
+                assertContains("AndroidLocalTestRelease PASSED")
+                assertContains("AndroidLocalTestFreeDebug PASSED")
+                assertContains("AndroidLocalTestFreeRelease PASSED")
+                assertContains("AndroidLocalTestFreeStaging PASSED")
+                assertContains("AndroidLocalTestPaidDebug PASSED")
+                assertContains("AndroidLocalTestPaidRelease PASSED")
+                assertContains("AndroidLocalTestPaidStaging PASSED")
+            }
+
+            build("clean", "testFreeDebugUnitTest") {
+                assertSuccessful()
+
+                // Tests that are expected to be executed
+                assertContains("CommonTest PASSED")
+                assertContains("AndroidLocalTest PASSED")
+                assertContains("AndroidLocalTestDebug PASSED")
+                assertContains("AndroidLocalTestFreeDebug PASSED")
+
+                // Tests that are not expected to be executed
+                assertNotContains("AndroidLocalTestStaging PASSED")
+                assertNotContains("AndroidLocalTestRelease PASSED")
+                assertNotContains("AndroidLocalTestFreeRelease PASSED")
+                assertNotContains("AndroidLocalTestFreeStaging PASSED")
+                assertNotContains("AndroidLocalTestPaidDebug PASSED")
+                assertNotContains("AndroidLocalTestPaidRelease PASSED")
+                assertNotContains("AndroidLocalTestPaidStaging PASSED")
+            }
+
+            build("clean", "testFreeReleaseUnitTest") {
+                assertSuccessful()
+
+                assertContains("CommonTest PASSED")
+                assertContains("AndroidLocalTest PASSED")
+                assertContains("AndroidLocalTestRelease PASSED")
+                assertContains("AndroidLocalTestFreeRelease PASSED")
+
+                assertNotContains("AndroidLocalTestStaging PASSED")
+                assertNotContains("AndroidLocalTestDebug PASSED")
+                assertNotContains("AndroidLocalTestFreeDebug PASSED")
+                assertNotContains("AndroidLocalTestFreeStaging PASSED")
+                assertNotContains("AndroidLocalTestPaidDebug PASSED")
+                assertNotContains("AndroidLocalTestPaidRelease PASSED")
+                assertNotContains("AndroidLocalTestPaidStaging PASSED")
+            }
+
+            build("clean", "testFreeStagingUnitTest") {
+                assertSuccessful()
+
+                assertContains("CommonTest PASSED")
+                assertContains("AndroidLocalTest PASSED")
+                assertContains("AndroidLocalTestStaging PASSED")
+                assertContains("AndroidLocalTestFreeStaging PASSED")
+
+                assertNotContains("AndroidLocalTestDebug PASSED")
+                assertNotContains("AndroidLocalTestRelease PASSED")
+                assertNotContains("AndroidLocalTestFreeDebug PASSED")
+                assertNotContains("AndroidLocalTestFreeRelease PASSED")
+                assertNotContains("AndroidLocalTestPaidDebug PASSED")
+                assertNotContains("AndroidLocalTestPaidRelease PASSED")
+                assertNotContains("AndroidLocalTestPaidStaging PASSED")
+            }
+
+            build("clean", "testPaidDebugUnitTest") {
+                assertSuccessful()
+
+                assertContains("CommonTest PASSED")
+                assertContains("AndroidLocalTest PASSED")
+                assertContains("AndroidLocalTestDebug PASSED")
+                assertContains("AndroidLocalTestPaidDebug PASSED")
+
+                assertNotContains("AndroidLocalTestStaging PASSED")
+                assertNotContains("AndroidLocalTestRelease PASSED")
+                assertNotContains("AndroidLocalTestFreeDebug PASSED")
+                assertNotContains("AndroidLocalTestFreeRelease PASSED")
+                assertNotContains("AndroidLocalTestFreeStaging PASSED")
+                assertNotContains("AndroidLocalTestPaidRelease PASSED")
+                assertNotContains("AndroidLocalTestPaidStaging PASSED")
+            }
+
+            build("clean", "testPaidReleaseUnitTest") {
+                assertSuccessful()
+
+                assertContains("CommonTest PASSED")
+                assertContains("AndroidLocalTest PASSED")
+                assertContains("AndroidLocalTestRelease PASSED")
+                assertContains("AndroidLocalTestPaidRelease PASSED")
+
+                assertNotContains("AndroidLocalTestStaging PASSED")
+                assertNotContains("AndroidLocalTestDebug PASSED")
+                assertNotContains("AndroidLocalTestFreeDebug PASSED")
+                assertNotContains("AndroidLocalTestFreeRelease PASSED")
+                assertNotContains("AndroidLocalTestFreeStaging PASSED")
+                assertNotContains("AndroidLocalTestPaidDebug PASSED")
+                assertNotContains("AndroidLocalTestPaidStaging PASSED")
+            }
+
+            build("clean", "testPaidStagingUnitTest") {
+                assertSuccessful()
+                assertContains("CommonTest PASSED")
+                assertContains("AndroidLocalTest PASSED")
+                assertContains("AndroidLocalTestStaging PASSED")
+                assertContains("AndroidLocalTestPaidStaging PASSED")
+
+                assertNotContains("AndroidLocalTestDebug PASSED")
+                assertNotContains("AndroidLocalTestRelease PASSED")
+                assertNotContains("AndroidLocalTestFreeDebug PASSED")
+                assertNotContains("AndroidLocalTestFreeRelease PASSED")
+                assertNotContains("AndroidLocalTestFreeStaging PASSED")
+                assertNotContains("AndroidLocalTestPaidDebug PASSED")
+                assertNotContains("AndroidLocalTestPaidRelease PASSED")
+            }
+
+            build("connectedAndroidTest") {
+                // Test for KT-35016: MPP should recognize android instrumented tests correctly
+                build("connectedAndroidTest") {
+                    assertFailed()
+                    assertContains("No connected devices!")
+                }
+            }
+        }
+    }
+}
+
+class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_0_0
+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.Until("4.10.2")
+
+    @Test
     fun testOmittedStdlibVersion() = Project("AndroidProject").run {
         setupWorkingDir()
 
@@ -587,7 +1176,12 @@ fun getSomething() = 10
         }
 
         val libAndroidClassesOnlyUtilKt = project.projectDir.getFileByName("LibAndroidClassesOnlyUtil.kt")
-        libAndroidClassesOnlyUtilKt.modify { it.replace("fun libAndroidClassesOnlyUtil(): String", "fun libAndroidClassesOnlyUtil(): CharSequence") }
+        libAndroidClassesOnlyUtilKt.modify {
+            it.replace(
+                "fun libAndroidClassesOnlyUtil(): String",
+                "fun libAndroidClassesOnlyUtil(): CharSequence"
+            )
+        }
         project.build("assembleDebug", options = options) {
             assertSuccessful()
             val affectedSources = project.projectDir.getFilesByNames("LibAndroidClassesOnlyUtil.kt", "useLibAndroidClassesOnlyUtil.kt")

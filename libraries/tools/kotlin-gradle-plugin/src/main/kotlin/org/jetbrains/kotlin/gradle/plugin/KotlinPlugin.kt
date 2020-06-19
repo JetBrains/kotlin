@@ -818,20 +818,22 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
     fun configureTarget(kotlinAndroidTarget: KotlinAndroidTarget) {
         val project = kotlinAndroidTarget.project
-        val ext = project.extensions.getByName("android") as BaseExtension
 
-        ext.sourceSets.all { sourceSet ->
-            logger.kotlinDebug("Creating KotlinBaseSourceSet for source set $sourceSet")
-            val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(
-                lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, sourceSet.name)
-            ).apply {
-                kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
-                kotlin.srcDirs(sourceSet.java.srcDirs)
-            }
-            sourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
+        val androidExtension = project.extensions.getByName("android") as BaseExtension
+        val initialAndroidSourceSets = androidExtension.sourceSets.toSet()
+        createKotlinSourceSets(kotlinAndroidTarget, initialAndroidSourceSets)
 
-            ifKaptEnabled(project) {
-                Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, sourceSet.name)
+        // Some Android source sets are created after evaluation
+        project.afterEvaluate {
+            val addedAndroidSourceSets = androidExtension.sourceSets - initialAndroidSourceSets
+            createKotlinSourceSets(kotlinAndroidTarget, addedAndroidSourceSets)
+        }
+
+        project.whenEvaluated {
+            androidExtension.sourceSets.forEach { androidSourceSet ->
+                ifKaptEnabled(project) {
+                    Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, androidSourceSet.name)
+                }
             }
         }
 
@@ -847,7 +849,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         }
 
         kotlinOptions.noJdk = true
-        ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
+        androidExtension.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
         val androidPluginIds = listOf(
             "android", "com.android.application", "android-library", "com.android.library",
@@ -885,7 +887,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         project.whenEvaluated {
             forEachVariant { variant ->
                 val compilation = kotlinAndroidTarget.compilations.getByName(getVariantName(variant))
-                postprocessVariant(variant, compilation, project, ext, plugin)
+                postprocessVariant(variant, compilation, project, androidExtension, plugin)
 
                 val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinConfigurationTools.kotlinPluginVersion)
                 applySubplugins(project, compilation, variant, subpluginEnvironment)
@@ -894,6 +896,16 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
             addKotlinDependenciesToAndroidSourceSets(project, kotlinAndroidTarget)
         }
+    }
+
+    private fun createKotlinSourceSets(
+        kotlinAndroidTarget: KotlinAndroidTarget,
+        androidSourceSets: Set<AndroidSourceSet>
+    ): Map<AndroidSourceSet, KotlinSourceSet> {
+        return AndroidKotlinSourceSetBuilder(kotlinAndroidTarget).createKotlinSourceSets(
+            kotlinSourceSets = kotlinAndroidTarget.project.kotlinExtension.sourceSets,
+            androidSourceSets = androidSourceSets
+        )
     }
 
     /**
