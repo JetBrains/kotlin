@@ -40,8 +40,6 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
   private final Project myProject;
   private final @NotNull ProjectFileIndex myProjectFileIndex;
 
-  private boolean isRemoved;
-
   private FileBasedIndexProjectHandler(@NotNull Project project) {
     myProject = project;
     myProjectFileIndex = ProjectFileIndex.getInstance(myProject);
@@ -76,23 +74,31 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
         DumbService.getInstance(project).queueTask(new UnindexedFilesUpdater(project, IndexInfrastructure.isIndexesInitializationSuspended()));
       }
 
-      FileBasedIndexProjectHandler handler = project.getService(FileBasedIndexProjectHandler.class);
-      fileBasedIndex.registerIndexableSet(handler, project);
+      for (Class<? extends IndexableFileSet> indexableSetClass : getProjectIndexableSetClasses()) {
+        IndexableFileSet set = project.getService(indexableSetClass);
+        fileBasedIndex.registerIndexableSet(set, project);
+      }
+
       // done mostly for tests. In real life this is no-op, because the set was removed on project closing
       Disposer.register(project, () -> removeProjectIndexableSet(project));
     }
 
     private static void removeProjectIndexableSet(@NotNull Project project) {
-      FileBasedIndexProjectHandler handler = project.getServiceIfCreated(FileBasedIndexProjectHandler.class);
-      if (handler != null && !handler.isRemoved) {
-        handler.isRemoved = true;
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        ReadAction.run(() -> {
+          for (Class<? extends IndexableFileSet> indexableSetClass : getProjectIndexableSetClasses()) {
+            IndexableFileSet set = project.getServiceIfCreated(indexableSetClass);
+            if (set != null) {
+              FileBasedIndex.getInstance().removeIndexableSet(set);
+            }
+          }
+        });
+      }, IndexingBundle.message("removing.indexable.set.project.handler"), false, project);
+    }
 
-        ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-          ReadAction.run(() -> {
-            FileBasedIndex.getInstance().removeIndexableSet(handler);
-          });
-        }, IndexingBundle.message("removing.indexable.set.project.handler"), false, project);
-      }
+    @SuppressWarnings("unchecked")
+    private static Class<? extends IndexableFileSet> @NotNull [] getProjectIndexableSetClasses() {
+      return new Class[]{FileBasedIndexProjectHandler.class, ProjectAdditionalIndexableFileSet.class};
     }
   }
 
@@ -198,5 +204,14 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
                System.currentTimeMillis() < start + 100;
       }
     });
+  }
+
+  // TODO automated project indexable file set management
+  @ApiStatus.Internal
+  @Service
+  public static final class ProjectAdditionalIndexableFileSet extends AdditionalIndexableFileSet {
+    public ProjectAdditionalIndexableFileSet(@NotNull Project project) {
+      super(project, true);
+    }
   }
 }
