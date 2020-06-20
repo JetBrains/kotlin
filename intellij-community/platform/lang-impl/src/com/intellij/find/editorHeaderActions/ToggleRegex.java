@@ -19,15 +19,26 @@ import com.intellij.find.FindBundle;
 import com.intellij.find.FindModel;
 import com.intellij.find.FindSettings;
 import com.intellij.find.SearchSession;
+import com.intellij.find.impl.RegExHelpPopup;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.ex.TooltipLinkProvider;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ToggleRegex extends EditorHeaderToggleAction implements Embeddable {
+import javax.swing.*;
+
+public class ToggleRegex extends EditorHeaderToggleAction implements Embeddable, TooltipLinkProvider {
   public ToggleRegex() {
     super(FindBundle.message("find.regex"),
           AllIcons.Actions.Regex,
           AllIcons.Actions.RegexHovered,
           AllIcons.Actions.RegexSelected);
+  }
+
+  @Override
+  public Pair<@NotNull String, @NotNull Runnable> getTooltipLink(@Nullable JComponent owner) {
+    return Pair.create(FindBundle.message("find.regex.help.link"), RegExHelpPopup.createRegExLinkRunnable(owner));
   }
 
   @Override

@@ -18,6 +18,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.MnemonicHelper;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
+import com.intellij.openapi.actionSystem.ex.TooltipLinkProvider;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.application.ApplicationManager;
@@ -608,19 +609,24 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     myReplaceTextArea = new SearchTextArea(myReplaceComponent, false);
      mySearchTextArea.setMultilineEnabled(Registry.is("ide.find.as.popup.allow.multiline"));
     myReplaceTextArea.setMultilineEnabled(Registry.is("ide.find.as.popup.allow.multiline"));
-    myCaseSensitiveAction = createAction("find.popup.case.sensitive", "CaseSensitive",
-                                         AllIcons.Actions.MatchCase, AllIcons.Actions.MatchCaseHovered, AllIcons.Actions.MatchCaseSelected,
-                                         myCaseSensitiveState, () -> !myHelper.getModel().isReplaceState() || !myPreserveCaseState.get());
-    myWholeWordsAction = createAction("find.whole.words", "WholeWords",
-                                      AllIcons.Actions.Words, AllIcons.Actions.WordsHovered, AllIcons.Actions.WordsSelected,
-                                      myWholeWordsState, () -> !myRegexState.get());
-    myRegexAction = createAction("find.regex", "Regex",
-                                 AllIcons.Actions.Regex, AllIcons.Actions.RegexHovered, AllIcons.Actions.RegexSelected,
-                                 myRegexState, () -> !myHelper.getModel().isReplaceState() || !myPreserveCaseState.get());
+    myCaseSensitiveAction =
+      new MySwitchStateToggleAction("find.popup.case.sensitive", "CaseSensitive",
+                                    AllIcons.Actions.MatchCase, AllIcons.Actions.MatchCaseHovered, AllIcons.Actions.MatchCaseSelected,
+                                    myCaseSensitiveState, () -> !myHelper.getModel().isReplaceState() || !myPreserveCaseState.get());
+    myWholeWordsAction =
+      new MySwitchStateToggleAction("find.whole.words", "WholeWords",
+                                    AllIcons.Actions.Words, AllIcons.Actions.WordsHovered, AllIcons.Actions.WordsSelected,
+                                    myWholeWordsState, () -> !myRegexState.get());
+    myRegexAction =
+      new MySwitchStateToggleAction("find.regex", "Regex",
+                                    AllIcons.Actions.Regex, AllIcons.Actions.RegexHovered, AllIcons.Actions.RegexSelected,
+                                    myRegexState, () -> !myHelper.getModel().isReplaceState() || !myPreserveCaseState.get(),
+                                    Pair.create(FindBundle.message("find.regex.help.link"),
+                                                RegExHelpPopup.createRegExLinkRunnable(mySearchTextArea)));
     List<Component> searchExtraButtons =
       mySearchTextArea.setExtraActions(myCaseSensitiveAction, myWholeWordsAction, myRegexAction);
     AnAction preserveCaseAction =
-      createAction("find.options.replace.preserve.case", "PreserveCase",
+      new MySwitchStateToggleAction("find.options.replace.preserve.case", "PreserveCase",
                      AllIcons.Actions.PreserveCase, AllIcons.Actions.PreserveCaseHover, AllIcons.Actions.PreserveCaseSelected,
                      myPreserveCaseState, () -> !myRegexState.get() && !myCaseSensitiveState.get());
     List<Component> replaceExtraButtons = myReplaceTextArea.setExtraActions(
@@ -997,46 +1003,6 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       )
     );
     return checkBox;
-  }
-
-  private AnAction createAction(String message, String optionName, Icon icon, Icon hoveredIcon, Icon selectedIcon, AtomicBoolean state, Producer<Boolean> enableStateProvider) {
-    return new DumbAwareToggleAction(FindBundle.message(message), null, icon) {
-      {
-        getTemplatePresentation().setHoveredIcon(hoveredIcon);
-        getTemplatePresentation().setSelectedIcon(selectedIcon);
-        ShortcutSet shortcut = ActionUtil.getMnemonicAsShortcut(this);
-        if (shortcut != null) {
-          setShortcutSet(shortcut);
-          registerCustomShortcutSet(shortcut, FindPopupPanel.this);
-        }
-      }
-
-      @Override
-      public boolean isSelected(@NotNull AnActionEvent e) {
-        return state.get();
-      }
-
-      @Override
-      public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setEnabled(enableStateProvider.produce());
-        Toggleable.setSelected(e.getPresentation(), state.get());
-      }
-
-      @Override
-      public void setSelected(@NotNull AnActionEvent e, boolean selected) {
-        FUCounterUsageLogger.getInstance().logEvent(
-          "find", "check.box.toggled", new FeatureUsageData().
-            addData("type", FIND_TYPE).
-            addData("option_name", optionName).
-            addData("option_value", selected)
-        );
-        state.set(selected);
-        if (state == myRegexState) {
-          mySuggestRegexHintForEmptyResults = false;
-        }
-        scheduleResultsUpdate();
-      }
-    };
   }
 
   @Override
@@ -1744,6 +1710,72 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     return UIUtil.uiTraverser(component)
       .bfsTraversal()
       .filter(c -> c instanceof JComboBox || c instanceof AbstractButton || c instanceof JTextComponent);
+  }
+
+  private class MySwitchStateToggleAction extends DumbAwareToggleAction implements TooltipLinkProvider {
+    private final String myOptionName;
+    private final AtomicBoolean myState;
+    private final Producer<Boolean> myEnableStateProvider;
+    private final Pair<@NotNull String, @NotNull Runnable> myTooltipLink;
+
+    private MySwitchStateToggleAction(String message,
+                                      String optionName,
+                                      Icon icon, Icon hoveredIcon, Icon selectedIcon,
+                                      AtomicBoolean state,
+                                      Producer<Boolean> enableStateProvider) {
+      this(message, optionName, icon, hoveredIcon, selectedIcon, state, enableStateProvider, null);
+    }
+
+    private MySwitchStateToggleAction(String message,
+                                      String optionName,
+                                      Icon icon, Icon hoveredIcon, Icon selectedIcon,
+                                      AtomicBoolean state,
+                                      Producer<Boolean> enableStateProvider,
+                                      @Nullable Pair<@NotNull String, @NotNull Runnable> tooltipLink) {
+      super(FindBundle.message(message), null, icon);
+      myOptionName = optionName;
+      myState = state;
+      myEnableStateProvider = enableStateProvider;
+      myTooltipLink = tooltipLink;
+      getTemplatePresentation().setHoveredIcon(hoveredIcon);
+      getTemplatePresentation().setSelectedIcon(selectedIcon);
+      ShortcutSet shortcut = ActionUtil.getMnemonicAsShortcut(this);
+      if (shortcut != null) {
+        setShortcutSet(shortcut);
+        registerCustomShortcutSet(shortcut, FindPopupPanel.this);
+      }
+    }
+
+    @Override
+    public @Nullable Pair<@NotNull String, @NotNull Runnable> getTooltipLink(@Nullable JComponent owner) {
+      return myTooltipLink;
+    }
+
+    @Override
+    public boolean isSelected(@NotNull AnActionEvent e) {
+      return myState.get();
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+      e.getPresentation().setEnabled(myEnableStateProvider.produce());
+      Toggleable.setSelected(e.getPresentation(), myState.get());
+    }
+
+    @Override
+    public void setSelected(@NotNull AnActionEvent e, boolean selected) {
+      FUCounterUsageLogger.getInstance().logEvent(
+        "find", "check.box.toggled", new FeatureUsageData().
+          addData("type", FIND_TYPE).
+          addData("option_name", myOptionName).
+          addData("option_value", selected)
+      );
+      myState.set(selected);
+      if (myState == myRegexState) {
+        mySuggestRegexHintForEmptyResults = false;
+      }
+      scheduleResultsUpdate();
+    }
   }
 
   private static class MyOpenResultsInNewTabAction extends ToggleAction {
