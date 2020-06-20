@@ -93,7 +93,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
   final override fun getProjectBasePath(): Path {
     val path = dirOrFile ?: throw IllegalStateException("setPath was not yet called")
     if (isDirectoryBased) {
-      val useParent = Registry.`is`("store.basedir.parent.detection", true) && path.fileName.toString().startsWith("${Project.DIRECTORY_STORE_FOLDER}.")
+      val useParent = Registry.`is`("store.basedir.parent.detection", true) && (path.fileName?.toString()?.startsWith("${Project.DIRECTORY_STORE_FOLDER}.") ?: false)
       return if (useParent) path.parent.parent else path
     }
     else {
