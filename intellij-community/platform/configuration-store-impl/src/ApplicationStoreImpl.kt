@@ -31,9 +31,10 @@ class ApplicationStoreImpl : ComponentStoreWithExtraComponents() {
     get() = if (application.isUnitTestMode) StateLoadPolicy.LOAD_ONLY_DEFAULT else StateLoadPolicy.LOAD
 
   override fun setPath(path: Path) {
+    val systemIndependentPath = path.systemIndependentPath
     // app config must be first, because collapseMacros collapse from fist to last, so, at first we must replace APP_CONFIG because it overlaps ROOT_CONFIG value
-    storageManager.addMacro(APP_CONFIG, "$path/${PathManager.OPTIONS_DIRECTORY}")
-    storageManager.addMacro(ROOT_CONFIG, path.systemIndependentPath)
+    storageManager.addMacro(APP_CONFIG, "$systemIndependentPath/${PathManager.OPTIONS_DIRECTORY}")
+    storageManager.addMacro(ROOT_CONFIG, systemIndependentPath)
     storageManager.addMacro(StoragePathMacros.CACHE_FILE, appSystemDir.resolve("workspace").resolve("app.xml").systemIndependentPath)
   }
 
