@@ -55,4 +55,6 @@ interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTarget
     override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirFunction<F>
 
     fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction<F>
+
+    fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirFunction<F>
 }
