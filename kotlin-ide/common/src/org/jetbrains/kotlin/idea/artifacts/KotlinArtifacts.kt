@@ -26,6 +26,8 @@ abstract class KotlinArtifacts {
     abstract val kotlinTest: File
     abstract val kotlinMainKts: File
     abstract val kotlinScriptRuntime: File
+    abstract val kotlinScriptingCommon: File
+    abstract val kotlinScriptingJvm: File
 
     protected fun findFile(parent: File, path: String): File {
         val result = File(parent, path)

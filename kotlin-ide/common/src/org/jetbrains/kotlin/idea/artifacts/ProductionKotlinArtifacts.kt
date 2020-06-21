@@ -30,4 +30,6 @@ object ProductionKotlinArtifacts : KotlinArtifacts() {
     override val kotlinTest = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_TEST)
     override val kotlinMainKts = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_MAIN_KTS)
     override val kotlinScriptRuntime = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPT_RUNTIME)
+    override val kotlinScriptingCommon = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMMON)
+    override val kotlinScriptingJvm = findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_JVM)
 }

@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.containers.SLRUMap
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
@@ -373,8 +374,8 @@ class BundledKotlinScriptDependenciesResolver(private val project: Project) : De
 
         val javaHome = getScriptSDK(project, virtualFile)
 
-        var classpath = with(PathUtil.kotlinPathsForIdeaPlugin) {
-            listOf(reflectPath, stdlibPath, scriptRuntimePath)
+        var classpath = with(KotlinArtifacts.getInstance()) {
+            listOf(kotlinReflect, kotlinStdlib, kotlinScriptRuntime)
         }
         if (ScratchFileService.getInstance().getRootType(virtualFile) is IdeConsoleRootType) {
             classpath = scriptCompilationClasspathFromContextOrStdlib(wholeClasspath = true) + classpath

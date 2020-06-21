@@ -41,5 +41,6 @@
     <orderEntry type="module" module-name="intellij.platform.vcs.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.psi" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.common" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="kotlin-reflect" level="project" />
   </component>
 </module>

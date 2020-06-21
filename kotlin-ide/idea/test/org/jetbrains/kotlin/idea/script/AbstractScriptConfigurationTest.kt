@@ -20,6 +20,7 @@ import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ui.UIUtil
 import org.jdom.Element
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.updateScriptDependenciesSynchronously
@@ -36,10 +37,6 @@ import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.projectLibrary
-import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_JVM_JAR
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.script.dependencies.Environment
@@ -106,7 +103,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             module.addDependency(
                 projectLibrary(
                     "script-runtime",
-                    classesRoot = VfsUtil.findFileByIoFile(PathUtil.kotlinPathsForDistDirectory.scriptRuntimePath, true)
+                    classesRoot = VfsUtil.findFileByIoFile(KotlinArtifacts.getInstance().kotlinScriptRuntime, true)
                 )
             )
 
@@ -258,11 +255,11 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     private fun scriptClasspath(): Array<String> {
-        return with(PathUtil.kotlinPathsForDistDirectory) {
+        return with(KotlinArtifacts.getInstance()) {
             arrayOf(
-                File(libPath, KOTLIN_JAVA_SCRIPT_RUNTIME_JAR).path,
-                File(libPath, KOTLIN_SCRIPTING_COMMON_JAR).path,
-                File(libPath, KOTLIN_SCRIPTING_JVM_JAR).path
+                kotlinScriptRuntime.path,
+                kotlinScriptingCommon.path,
+                kotlinScriptingJvm.path
             )
         }
     }

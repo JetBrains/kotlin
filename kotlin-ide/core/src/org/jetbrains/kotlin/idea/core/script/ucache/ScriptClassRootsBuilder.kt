@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.core.script.ucache
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.core.script.LOG
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
@@ -36,8 +37,20 @@ class ScriptClassRootsBuilder(
     ) {
         sdks.addSdk(configuration.javaHome)
 
-        configuration.dependenciesClassPath.forEach { classes.add(it.absolutePath) }
-        configuration.dependenciesSources.forEach { sources.add(it.absolutePath) }
+        configuration.dependenciesClassPath.forEach {
+            val absolutePath = it.absolutePath
+            if (!it.exists()) {
+                LOG.warn("configuration dependency classpath $absolutePath does not exist")
+            }
+            classes.add(absolutePath)
+        }
+        configuration.dependenciesSources.forEach {
+            val absolutePath = it.absolutePath
+            if (!it.exists()) {
+                LOG.warn("configuration dependency sources $absolutePath does not exist")
+            }
+            sources.add(absolutePath)
+        }
 
         scripts[vFile.path] = ScriptClassRootsCache.DirectScriptInfo(configuration)
 
