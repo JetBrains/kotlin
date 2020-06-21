@@ -95,7 +95,13 @@ class FirCallCompletionResultsWriterTransformer(
         data: ExpectedArgumentType?,
     ): CompositeTransformResult<FirStatement> {
         val calleeReference = qualifiedAccessExpression.calleeReference as? FirNamedReferenceWithCandidate
-            ?: return qualifiedAccessExpression.compose()
+            ?: return run {
+                if (mode == Mode.DelegatedPropertyCompletion) {
+                    val typeUpdater = TypeUpdaterForDelegateArguments()
+                    qualifiedAccessExpression.transformSingle(typeUpdater, null)
+                }
+                qualifiedAccessExpression.compose()
+            }
         val result = prepareQualifiedTransform(qualifiedAccessExpression, calleeReference)
             .transformExplicitReceiver(integerApproximator, null)
         val typeRef = result.typeRef as FirResolvedTypeRef
