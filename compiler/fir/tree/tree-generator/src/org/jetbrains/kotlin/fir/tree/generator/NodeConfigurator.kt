@@ -100,7 +100,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +controlFlowGraphReferenceField
             +symbol("FirFunctionSymbol", "F")
             +fieldList(valueParameter, withReplace = true).withTransform()
-            +body(nullable = true)
+            +body(nullable = true).withTransform()
         }
 
         errorFunction.configure {

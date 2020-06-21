@@ -72,7 +72,7 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
         transformReceiverTypeRef(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
-        body = body?.transformSingle(transformer, data)
+        transformBody(transformer, data)
         transformStatus(transformer, data)
         transformContractDescription(transformer, data)
         transformAnnotations(transformer, data)
@@ -97,6 +97,11 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         valueParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+        body = body?.transformSingle(transformer, data)
         return this
     }
 

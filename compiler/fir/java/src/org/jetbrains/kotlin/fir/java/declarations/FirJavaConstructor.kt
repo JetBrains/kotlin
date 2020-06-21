@@ -113,6 +113,10 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirConstructor {
+        return this
+    }
+
     override var containerSource: DeserializedContainerSource? = null
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
