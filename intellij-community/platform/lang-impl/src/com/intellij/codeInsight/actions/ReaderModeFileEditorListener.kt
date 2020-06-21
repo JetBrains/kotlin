@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 
 class ReaderModeFileEditorListener : FileEditorManagerListener {
   override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+    if (!instance(source.project).enabled) return
     applyReaderMode(source.project, source.getSelectedEditor(file))
   }
 
