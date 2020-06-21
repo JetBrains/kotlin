@@ -19,7 +19,7 @@ package androidx.compose.plugins.kotlin.compiler.lower
 import androidx.compose.plugins.kotlin.ComposeUtils
 import androidx.compose.plugins.kotlin.ComposeUtils.composeInternalFqName
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
-import androidx.compose.plugins.kotlin.hasUntrackedAnnotation
+import androidx.compose.plugins.kotlin.composableTrackedContract
 import androidx.compose.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -506,7 +506,8 @@ class ComposerLambdaMemoization(
     }
 
     private fun IrExpression?.isNullOrStable() = this == null || type.toKotlinType().isStable()
-    private fun IrFunctionExpression.isTracked() = !function.descriptor.hasUntrackedAnnotation()
+    private fun IrFunctionExpression.isTracked() =
+        function.descriptor.composableTrackedContract() != false
 }
 
 // This must match the highest value of FunctionXX which is current Function22
