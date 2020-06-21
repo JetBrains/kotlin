@@ -20,7 +20,7 @@ import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.composableReadonlyContract
 import androidx.compose.plugins.kotlin.composableRestartableContract
-import androidx.compose.plugins.kotlin.hasUntrackedAnnotation
+import androidx.compose.plugins.kotlin.composableTrackedContract
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -597,9 +597,9 @@ class ComposableFunctionBodyTransformer(
         if (!scope.isComposable) return super.visitFunction(declaration)
         val restartable = declaration.shouldBeRestartable()
         val isLambda = declaration.isLambda()
-        // if the lambda is untracked, we generate the body like a non-restartable function since
-        // the group/update scope is not going to be handled by the ComposableLambda class
-        val isTracked = !declaration.descriptor.hasUntrackedAnnotation()
+
+        // we use != false because a null value is treated as "tracked"
+        val isTracked = declaration.descriptor.composableTrackedContract() != false
 
         if (declaration.body == null) return declaration
 
