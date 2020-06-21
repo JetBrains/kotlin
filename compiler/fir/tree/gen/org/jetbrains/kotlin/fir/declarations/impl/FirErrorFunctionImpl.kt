@@ -90,6 +90,10 @@ internal class FirErrorFunctionImpl(
         return this
     }
 
+    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        return this
+    }
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
