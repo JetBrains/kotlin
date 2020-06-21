@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.openapi.paths.GlobalPathReferenceProvider
+import com.intellij.openapi.paths.WebReference
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.idea.kdoc.KDocReferenceDescriptorsImpl
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtPackageDirective
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
 class KotlinReferenceContributor : KotlinReferenceProviderContributor {
@@ -54,6 +55,19 @@ class KotlinReferenceContributor : KotlinReferenceProviderContributor {
             registerProvider(factory = ::KDocReferenceDescriptorsImpl)
 
             registerProvider(KotlinDefaultAnnotationMethodImplicitReferenceProvider)
+
+            registerMultiProvider<KtStringTemplateEntry> { stringTemplateEntry ->
+                val texts = stringTemplateEntry.text.split(Regex("\\s"))
+                val results = mutableListOf<PsiReference>()
+                var startIndex = 0
+                texts.forEach { text ->
+                    if (GlobalPathReferenceProvider.isWebReferenceUrl(text)) {
+                        results.add(WebReference(stringTemplateEntry, TextRange(startIndex, startIndex + text.length), text))
+                    }
+                    startIndex += text.length + 1
+                }
+                results.toTypedArray()
+            }
         }
     }
 }
