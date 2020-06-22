@@ -2,9 +2,9 @@ fun <T> doIt(p: () -> T): T = TODO()
 
 fun g(p: String?) {
 
-    p?.let { Unit }
+    p?.let { }
 }
 
 fun h() = Unit
 
-fun x() = doIt { Unit }
+fun x() = doIt { }
