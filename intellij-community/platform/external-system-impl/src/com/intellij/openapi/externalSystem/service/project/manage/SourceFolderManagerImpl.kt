@@ -31,6 +31,7 @@ import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import java.util.concurrent.Future
 
 @State(name = "sourceFolderManager",  storages = [Storage(StoragePathMacros.CACHE_FILE)])
 class SourceFolderManagerImpl(private val project: Project) : SourceFolderManager, Disposable, PersistentStateComponent<SourceFolderManagerState> {
@@ -39,6 +40,9 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
   private val mutex = Any()
   private var sourceFolders = PathPrefixTreeMap<SourceFolderModel>()
   private var sourceFoldersByModule = Object2ObjectOpenHashMap<String, ModuleModel>()
+  @TestOnly
+  @Volatile
+  var bulkOperationState: Future<*>? = null
 
   override fun addSourceFolder(module: Module, url: String, type: JpsModuleSourceRootType<*>) {
     synchronized(mutex) {
@@ -130,7 +134,7 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
           }
         }
 
-        ApplicationManager.getApplication().executeOnPooledThread { updateSourceFolders(sourceFoldersToChange) }
+        bulkOperationState = ApplicationManager.getApplication().executeOnPooledThread { updateSourceFolders(sourceFoldersToChange) }
       }
     })
 

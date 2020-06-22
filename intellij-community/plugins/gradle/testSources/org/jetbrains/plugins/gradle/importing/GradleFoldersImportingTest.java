@@ -15,6 +15,8 @@
  */
 package org.jetbrains.plugins.gradle.importing;
 
+import com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManager;
+import com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManagerImpl;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -37,6 +39,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.doWriteAction;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.getManager;
@@ -491,12 +495,15 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
     assertTestSources("project");
 
     createProjectSubFile("src/test/java/ATest.java");
+    waitForModulesUpdate();
     assertTestSources("project", "src/test/java");
 
     createProjectSubFile("src/main/resources/res.txt");
+    waitForModulesUpdate();
     assertResources("project", "src/main/resources");
 
     createProjectSubFile("src/generated/java/Generated.java");
+    waitForModulesUpdate();
     assertGeneratedSources("project","src/generated/java");
   }
 
@@ -517,7 +524,7 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
 
     createProjectSubFile("src/test/java/ATest.java");
     createProjectSubFile("test-src/java/BTest.java");
-
+    waitForModulesUpdate();
     assertTestSources("project", "test-src/java");
   }
 
@@ -832,4 +839,10 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
     getCurrentExternalProjectSettings().setResolveModulePerSourceSet(b);
   }
 
+  protected void waitForModulesUpdate() throws Exception {
+    SourceFolderManagerImpl instance = (SourceFolderManagerImpl)SourceFolderManager.getInstance(myProject);
+    Future<?> state = instance.getBulkOperationState();
+    assertNotNull(state);
+    state.get(5, TimeUnit.SECONDS);
+  }
 }
