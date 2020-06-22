@@ -2209,6 +2209,10 @@ task ieee754(type: KonanLocalTest) {
     source = "runtime/basic/ieee754.kt"
 }
 
+standaloneTest("hypotenuse") {
+    source = "runtime/basic/hypot.kt"
+}
+
 task array_list1(type: KonanLocalTest) {
     goldValue = "OK\n"
     source = "runtime/collections/array_list1.kt"
