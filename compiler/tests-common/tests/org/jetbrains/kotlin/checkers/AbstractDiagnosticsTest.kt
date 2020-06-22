@@ -281,6 +281,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val testRunner = object : AbstractFirOldFrontendDiagnosticsTest() {
             init {
                 environment = this@AbstractDiagnosticsTest.environment
+                coroutinesPackage = this@AbstractDiagnosticsTest.coroutinesPackage
             }
         }
         if (testDataFile.readText().contains("// FIR_IDENTICAL")) {

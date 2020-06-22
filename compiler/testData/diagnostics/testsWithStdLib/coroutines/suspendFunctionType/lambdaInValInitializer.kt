@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 typealias SuspendFn = suspend () -> Unit
 
 val test1: suspend () -> Unit = {}

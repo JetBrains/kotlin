@@ -593,7 +593,7 @@ fun main(args: Array<String>) {
                 model(
                     "diagnostics/testsWithStdLib",
                     excludedPattern = excludedFirTestdataPattern,
-                    excludeDirs = listOf("coroutines")
+                    skipTestsForExperimentalCoroutines = true
                 )
             }
         }

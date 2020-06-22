@@ -66,7 +66,8 @@ class TestGroup(
             excludeDirs: List<String> = listOf(),
             filenameStartsLowerCase: Boolean? = null,
             skipIgnored: Boolean = false,
-            deep: Int? = null
+            deep: Int? = null,
+            skipTestsForExperimentalCoroutines: Boolean = false
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
@@ -83,7 +84,8 @@ class TestGroup(
                     SimpleTestClassModel(
                         rootFile, recursive, excludeParentDirs,
                         compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        targetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations
+                        targetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations,
+                        skipTestsForExperimentalCoroutines
                     )
                 }
             )

@@ -64,9 +64,13 @@ import java.io.File
 abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     companion object {
         val DUMP_CFG_DIRECTIVE = "DUMP_CFG"
+        val COMMON_COROUTINES_DIRECTIVE ="COMMON_COROUTINES_TEST"
 
         val TestFile.withDumpCfgDirective: Boolean
             get() = DUMP_CFG_DIRECTIVE in directives
+
+        val TestFile.withCommonCoroutinesDirective: Boolean
+            get() = COMMON_COROUTINES_DIRECTIVE in directives
 
         val File.cfgDumpFile: File
             get() = File(absolutePath.replace(".kt", ".dot"))
@@ -110,7 +114,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
 
     protected open fun checkDiagnostics(file: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
         val diagnostics = collectDiagnostics(firFiles)
-        val actualText = StringBuilder()
+        val actualTextBuilder = StringBuilder()
         for (testFile in testFiles) {
             val firFile = firFiles.firstOrNull { it.psi == testFile.ktFile }
             if (firFile != null) {
@@ -118,13 +122,17 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                     collectDebugInfoDiagnostics(firFile, testFile.diagnosedRangesToDiagnosticNames)
                 testFile.getActualText(
                     diagnostics.getValue(firFile) + debugInfoDiagnostics,
-                    actualText,
+                    actualTextBuilder,
                 )
             } else {
-                actualText.append(testFile.expectedText)
+                actualTextBuilder.append(testFile.expectedText)
             }
         }
-        KotlinTestUtils.assertEqualsToFile(file, actualText.toString())
+        var actualText = actualTextBuilder.toString()
+        if (testFiles.any { it.withCommonCoroutinesDirective }) {
+            actualText = actualText.replace(coroutinesPackage, "COROUTINES_PACKAGE")
+        }
+        KotlinTestUtils.assertEqualsToFile(file, actualText)
     }
 
     protected fun collectDebugInfoDiagnostics(
