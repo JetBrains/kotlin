@@ -27,7 +27,7 @@ enum class ReturnLabel {
 }
 
 open class ExecutionResult(val returnLabel: ReturnLabel, private val owner: IrElement? = null) {
-    suspend fun getNextLabel(irElement: IrElement, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult {
+    fun getNextLabel(irElement: IrElement, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         return when (returnLabel) {
             ReturnLabel.RETURN -> when (irElement) {
                 is IrCall, is IrReturnableBlock, is IrFunctionImpl, is IrLazyFunction -> if (owner == irElement) Next else this

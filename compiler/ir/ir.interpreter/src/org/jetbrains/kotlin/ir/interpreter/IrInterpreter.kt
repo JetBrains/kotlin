@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.ir.interpreter
 
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import org.jetbrains.kotlin.ir.interpreter.builtins.*
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterMethodNotFoundException
@@ -31,8 +28,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.lang.invoke.MethodHandle
+import kotlin.concurrent.thread
 
-private const val MAX_STACK_SIZE = 10_000
 private const val MAX_COMMANDS = 500_000
 
 class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSignature, IrBody> = emptyMap()) {
@@ -72,9 +69,10 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
 
     fun interpret(expression: IrExpression): IrExpression {
         stack.clean()
-        return try {
-            runBlocking {
-                return@runBlocking when (val returnLabel = withContext(this.coroutineContext) { expression.interpret().returnLabel }) {
+        lateinit var result: IrExpression
+        thread(start = true) {
+            result = try {
+                when (val returnLabel = expression.interpret().returnLabel) {
                     ReturnLabel.REGULAR -> stack.popReturnValue().toIrExpression(expression)
                     ReturnLabel.EXCEPTION -> {
                         val message = (stack.popReturnValue() as ExceptionState).getFullDescription()
@@ -82,14 +80,15 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
                     }
                     else -> TODO("$returnLabel not supported as result of interpretation")
                 }
+            } catch (e: InterpreterException) {
+                // TODO don't handle, throw to lowering
+                IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + e.message)
             }
-        } catch (e: InterpreterException) {
-            // TODO don't handle, throw to lowering
-            IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + e.message)
-        }
+        }.join()
+        return result
     }
 
-    private suspend fun IrElement.interpret(): ExecutionResult {
+    private fun IrElement.interpret(): ExecutionResult {
         try {
             incrementAndCheckCommands()
             val executionResult = when (this) {
@@ -145,18 +144,14 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     }
 
     // this method is used to get stack trace after exception
-    private suspend fun interpretFunction(irFunction: IrSimpleFunction): ExecutionResult {
-        yield()
-
+    private fun interpretFunction(irFunction: IrSimpleFunction): ExecutionResult {
         if (irFunction.fileOrNull != null) stack.setCurrentFrameName(irFunction)
-
-        if (stack.getStackTrace().size == MAX_STACK_SIZE) throw StackOverflowError("")
 
         if (irFunction.body is IrSyntheticBody) return handleIntrinsicMethods(irFunction)
         return irFunction.body?.interpret() ?: throw InterpreterException("Ir function must be with body")
     }
 
-    private suspend fun MethodHandle?.invokeMethod(irFunction: IrFunction): ExecutionResult {
+    private fun MethodHandle?.invokeMethod(irFunction: IrFunction): ExecutionResult {
         this ?: return handleIntrinsicMethods(irFunction)
         val result = this.invokeWithArguments(irFunction.getArgsForMethodInvocation(stack.getAll()))
         stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
@@ -164,11 +159,11 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun handleIntrinsicMethods(irFunction: IrFunction): ExecutionResult {
+    private fun handleIntrinsicMethods(irFunction: IrFunction): ExecutionResult {
         return IntrinsicEvaluator().evaluate(irFunction, stack) { this.interpret() }
     }
 
-    private suspend fun calculateBuiltIns(irFunction: IrFunction): ExecutionResult {
+    private fun calculateBuiltIns(irFunction: IrFunction): ExecutionResult {
         val methodName = when (val property = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol) {
             null -> irFunction.name.asString()
             else -> property.owner.name.asString()
@@ -227,7 +222,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun calculateRangeTo(type: IrType): ExecutionResult {
+    private fun calculateRangeTo(type: IrType): ExecutionResult {
         val constructor = type.classOrNull!!.owner.constructors.first()
         val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
 
@@ -242,7 +237,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         }
     }
 
-    private suspend fun interpretValueParameters(
+    private fun interpretValueParameters(
         expression: IrFunctionAccessExpression, irFunction: IrFunction, pool: MutableList<Variable>
     ): ExecutionResult {
         // if irFunction is lambda and it has receiver, then first descriptor must be taken from extension receiver
@@ -275,7 +270,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         }
     }
 
-    private suspend fun interpretCall(expression: IrCall): ExecutionResult {
+    private fun interpretCall(expression: IrCall): ExecutionResult {
         val valueArguments = mutableListOf<Variable>()
         // dispatch receiver processing
         val rawDispatchReceiver = expression.dispatchReceiver
@@ -322,7 +317,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         }.check { return it }.implicitCastIfNeeded(expression.type, irFunction.returnType, stack)
     }
 
-    private suspend fun IrFunction.trySubstituteFunctionBody(): ExecutionResult? {
+    private fun IrFunction.trySubstituteFunctionBody(): ExecutionResult? {
         if (!this.symbol.isPublicApi) return null
         val body = bodyMap[this.symbol.signature]
 
@@ -337,12 +332,12 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
     }
 
     // TODO fix in FIR2IR; const val getter must have body with IrGetField node
-    private suspend fun IrFunction.tryCalculateLazyConst(): ExecutionResult? {
+    private fun IrFunction.tryCalculateLazyConst(): ExecutionResult? {
         if (this !is IrSimpleFunction) return null
         return this.correspondingPropertySymbol?.owner?.backingField?.initializer?.interpret()
     }
 
-    private suspend fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall): ExecutionResult {
+    private fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall): ExecutionResult {
         val irClass = call.classSymbol.owner
 
         // properties processing
@@ -364,7 +359,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun interpretConstructor(constructorCall: IrFunctionAccessExpression): ExecutionResult {
+    private fun interpretConstructor(constructorCall: IrFunctionAccessExpression): ExecutionResult {
         val owner = constructorCall.symbol.owner
         val valueArguments = mutableListOf<Variable>()
 
@@ -403,15 +398,15 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         }
     }
 
-    private suspend fun interpretConstructorCall(constructorCall: IrConstructorCall): ExecutionResult {
+    private fun interpretConstructorCall(constructorCall: IrConstructorCall): ExecutionResult {
         return interpretConstructor(constructorCall)
     }
 
-    private suspend fun interpretEnumConstructorCall(enumConstructorCall: IrEnumConstructorCall): ExecutionResult {
+    private fun interpretEnumConstructorCall(enumConstructorCall: IrEnumConstructorCall): ExecutionResult {
         return interpretConstructor(enumConstructorCall)
     }
 
-    private suspend fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall): ExecutionResult {
+    private fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall): ExecutionResult {
         if (delegatingConstructorCall.symbol.owner.parent == irBuiltIns.anyClass.owner) {
             val anyAsStateObject = Common(irBuiltIns.anyClass.owner)
             stack.pushReturnValue(anyAsStateObject)
@@ -421,7 +416,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return interpretConstructor(delegatingConstructorCall)
     }
 
-    private suspend fun interpretConst(expression: IrConst<*>): ExecutionResult {
+    private fun interpretConst(expression: IrConst<*>): ExecutionResult {
         fun getSignedType(unsignedType: IrType): IrType {
             return when {
                 unsignedType.isUByte() -> irBuiltIns.byteType
@@ -445,7 +440,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         }
     }
 
-    private suspend fun interpretStatements(statements: List<IrStatement>): ExecutionResult {
+    private fun interpretStatements(statements: List<IrStatement>): ExecutionResult {
         var executionResult: ExecutionResult = Next
         for (statement in statements) {
             when (statement) {
@@ -457,20 +452,20 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return executionResult
     }
 
-    private suspend fun interpretBlock(block: IrBlock): ExecutionResult {
+    private fun interpretBlock(block: IrBlock): ExecutionResult {
         return stack.newFrame(asSubFrame = true) { interpretStatements(block.statements) }
     }
 
-    private suspend fun interpretBody(body: IrBody): ExecutionResult {
+    private fun interpretBody(body: IrBody): ExecutionResult {
         return stack.newFrame(asSubFrame = true) { interpretStatements(body.statements) }
     }
 
-    private suspend fun interpretReturn(expression: IrReturn): ExecutionResult {
+    private fun interpretReturn(expression: IrReturn): ExecutionResult {
         expression.value.interpret().check { return it }
         return Return.addOwnerInfo(expression.returnTargetSymbol.owner)
     }
 
-    private suspend fun interpretWhile(expression: IrWhileLoop): ExecutionResult {
+    private fun interpretWhile(expression: IrWhileLoop): ExecutionResult {
         while (true) {
             expression.condition.interpret().check { return it }
             if (stack.popReturnValue().asBooleanOrNull() != true) break
@@ -479,7 +474,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun interpretDoWhile(expression: IrDoWhileLoop): ExecutionResult {
+    private fun interpretDoWhile(expression: IrDoWhileLoop): ExecutionResult {
         do {
             // pool from body must be seen to condition expression, so must create temp frame here
             stack.newFrame(asSubFrame = true) {
@@ -493,7 +488,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun interpretWhen(expression: IrWhen): ExecutionResult {
+    private fun interpretWhen(expression: IrWhen): ExecutionResult {
         var executionResult: ExecutionResult = Next
         for (branch in expression.branches) {
             executionResult = branch.interpret().check { return it }
@@ -501,7 +496,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return executionResult
     }
 
-    private suspend fun interpretBranch(expression: IrBranch): ExecutionResult {
+    private fun interpretBranch(expression: IrBranch): ExecutionResult {
         val executionResult = expression.condition.interpret().check { return it }
         if (stack.popReturnValue().asBooleanOrNull() == true) {
             expression.result.interpret().check { return it }
@@ -518,7 +513,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Continue.addOwnerInfo(continueStatement.loop)
     }
 
-    private suspend fun interpretSetField(expression: IrSetField): ExecutionResult {
+    private fun interpretSetField(expression: IrSetField): ExecutionResult {
         expression.value.interpret().check { return it }
 
         // receiver is null only for top level var, but it cannot be used in constexpr; corresponding check is on frontend
@@ -528,7 +523,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun interpretGetField(expression: IrGetField): ExecutionResult {
+    private fun interpretGetField(expression: IrGetField): ExecutionResult {
         val receiver = (expression.receiver as? IrDeclarationReference)?.symbol
         val field = expression.symbol.owner
         // for java static variables
@@ -551,13 +546,13 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun interpretVariable(expression: IrVariable): ExecutionResult {
+    private fun interpretVariable(expression: IrVariable): ExecutionResult {
         expression.initializer?.interpret()?.check { return it } ?: return Next
         stack.addVar(Variable(expression.symbol, stack.popReturnValue()))
         return Next
     }
 
-    private suspend fun interpretSetVariable(expression: IrSetVariable): ExecutionResult {
+    private fun interpretSetVariable(expression: IrSetVariable): ExecutionResult {
         expression.value.interpret().check { return it }
 
         if (stack.contains(expression.symbol)) {
@@ -584,7 +579,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun interpretGetEnumValue(expression: IrGetEnumValue): ExecutionResult {
+    private fun interpretGetEnumValue(expression: IrGetEnumValue): ExecutionResult {
         mapOfEnums[expression.symbol]?.let { return Next.apply { stack.pushReturnValue(it) } }
 
         val enumEntry = expression.symbol.owner
@@ -607,7 +602,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun interpretEnumEntry(enumEntry: IrEnumEntry): ExecutionResult {
+    private fun interpretEnumEntry(enumEntry: IrEnumEntry): ExecutionResult {
         val enumClass = enumEntry.symbol.owner.parentAsClass
         val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
 
@@ -624,7 +619,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return executionResult ?: throw InterpreterException("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
     }
 
-    private suspend fun interpretTypeOperatorCall(expression: IrTypeOperatorCall): ExecutionResult {
+    private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall): ExecutionResult {
         val executionResult = expression.argument.interpret().check { return it }
         val typeClassifier = expression.typeOperand.classifierOrFail
         val isReified = (typeClassifier.owner as? IrTypeParameter)?.isReified == true
@@ -662,7 +657,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return executionResult
     }
 
-    private suspend fun interpretVararg(expression: IrVararg): ExecutionResult {
+    private fun interpretVararg(expression: IrVararg): ExecutionResult {
         val args = expression.elements.flatMap {
             it.interpret().check { executionResult -> return executionResult }
             return@flatMap when (val result = stack.popReturnValue()) {
@@ -701,11 +696,11 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun interpretSpreadElement(spreadElement: IrSpreadElement): ExecutionResult {
+    private fun interpretSpreadElement(spreadElement: IrSpreadElement): ExecutionResult {
         return spreadElement.expression.interpret().check { return it }
     }
 
-    private suspend fun interpretTry(expression: IrTry): ExecutionResult {
+    private fun interpretTry(expression: IrTry): ExecutionResult {
         try {
             expression.tryResult.interpret().check(ReturnLabel.EXCEPTION) { return it } // if not exception -> return
             val exception = stack.peekReturnValue() as ExceptionState
@@ -722,14 +717,14 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun interpretCatch(expression: IrCatch): ExecutionResult {
+    private fun interpretCatch(expression: IrCatch): ExecutionResult {
         val catchParameter = Variable(expression.catchParameter.symbol, stack.popReturnValue())
         return stack.newFrame(asSubFrame = true, initPool = listOf(catchParameter)) {
             expression.result.interpret()
         }
     }
 
-    private suspend fun interpretThrow(expression: IrThrow): ExecutionResult {
+    private fun interpretThrow(expression: IrThrow): ExecutionResult {
         expression.value.interpret().check { return it }
         when (val exception = stack.popReturnValue()) {
             is Common -> stack.pushReturnValue(ExceptionState(exception, stack.getStackTrace()))
@@ -740,7 +735,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Exception
     }
 
-    private suspend fun interpretStringConcatenation(expression: IrStringConcatenation): ExecutionResult {
+    private fun interpretStringConcatenation(expression: IrStringConcatenation): ExecutionResult {
         val result = StringBuilder()
         expression.arguments.forEach {
             it.interpret().check { executionResult -> return executionResult }
@@ -752,7 +747,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun interpretToString(state: State): ExecutionResult {
+    private fun interpretToString(state: State): ExecutionResult {
         val result = when (state) {
             is Primitive<*> -> state.value.toString()
             is Wrapper -> state.value.toString()
@@ -781,7 +776,7 @@ class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private suspend fun interpretComposite(expression: IrComposite): ExecutionResult {
+    private fun interpretComposite(expression: IrComposite): ExecutionResult {
         return when (expression.origin) {
             IrStatementOrigin.DESTRUCTURING_DECLARATION -> interpretStatements(expression.statements)
             null -> interpretStatements(expression.statements) // is null for body of do while loop

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.interpreter.intrinsics
 
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.stack.Stack
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.ir.util.*
 
 internal sealed class IntrinsicBase {
     abstract fun equalTo(irFunction: IrFunction): Boolean
-    abstract suspend fun evaluate(irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult): ExecutionResult
+    abstract fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult
 }
 
 internal object EmptyArray : IntrinsicBase() {
@@ -28,9 +27,7 @@ internal object EmptyArray : IntrinsicBase() {
         return fqName in setOf("kotlin.emptyArray", "kotlin.ArrayIntrinsicsKt.emptyArray")
     }
 
-    override suspend fun evaluate(
-        irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
-    ): ExecutionResult {
+    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val typeArguments = irFunction.typeParameters.map { stack.getVariable(it.symbol) }
         stack.pushReturnValue(emptyArray<Any?>().toState(irFunction.returnType).apply { addTypeArguments(typeArguments) })
         return Next
@@ -43,9 +40,7 @@ internal object ArrayOf : IntrinsicBase() {
         return fqName == "kotlin.arrayOf"
     }
 
-    override suspend fun evaluate(
-        irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
-    ): ExecutionResult {
+    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val array = irFunction.getArgsForMethodInvocation(stack.getAll()).toTypedArray()
         val typeArguments = irFunction.typeParameters.map { stack.getVariable(it.symbol) }
         stack.pushReturnValue(array.toState(irFunction.returnType).apply { addTypeArguments(typeArguments) })
@@ -59,9 +54,7 @@ internal object ArrayOfNulls : IntrinsicBase() {
         return fqName == "kotlin.arrayOfNulls"
     }
 
-    override suspend fun evaluate(
-        irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
-    ): ExecutionResult {
+    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val size = stack.getVariable(irFunction.valueParameters.first().symbol).state.asInt()
         val array = arrayOfNulls<Any?>(size)
         val typeArguments = irFunction.typeParameters.map { stack.getVariable(it.symbol) }
@@ -76,9 +69,7 @@ internal object EnumValues : IntrinsicBase() {
         return (fqName == "kotlin.enumValues" || fqName.endsWith(".values")) && irFunction.valueParameters.isEmpty()
     }
 
-    override suspend fun evaluate(
-        irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
-    ): ExecutionResult {
+    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val enumClass = when (irFunction.fqNameWhenAvailable.toString()) {
             "kotlin.enumValues" -> stack.getVariable(irFunction.typeParameters.first().symbol).state.irClass
             else -> irFunction.parent as IrClass
@@ -97,9 +88,7 @@ internal object EnumValueOf : IntrinsicBase() {
         return (fqName == "kotlin.enumValueOf" || fqName.endsWith(".valueOf")) && irFunction.valueParameters.size == 1
     }
 
-    override suspend fun evaluate(
-        irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
-    ): ExecutionResult {
+    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val enumClass = when (irFunction.fqNameWhenAvailable.toString()) {
             "kotlin.enumValueOf" -> stack.getVariable(irFunction.typeParameters.first().symbol).state.irClass
             else -> irFunction.parent as IrClass
@@ -119,9 +108,7 @@ internal object RegexReplace : IntrinsicBase() {
         return fqName == "kotlin.text.Regex.replace" && irFunction.valueParameters.size == 2
     }
 
-    override suspend fun evaluate(
-        irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
-    ): ExecutionResult {
+    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val states = stack.getAll().map { it.state }
         val regex = states.filterIsInstance<Wrapper>().single().value as Regex
         val input = states.filterIsInstance<Primitive<*>>().single().asString()
@@ -129,7 +116,7 @@ internal object RegexReplace : IntrinsicBase() {
         val matchResultParameter = transform.valueParameters.single()
         val result = regex.replace(input) {
             val itAsState = Variable(matchResultParameter.symbol, Wrapper(it, matchResultParameter.type.classOrNull!!.owner))
-            runBlocking { stack.newFrame(initPool = listOf(itAsState)) { transform.interpret() } }//.check { return it }
+            stack.newFrame(initPool = listOf(itAsState)) { transform.interpret() }//.check { return it }
             stack.popReturnValue().asString()
         }
         stack.pushReturnValue(result.toState(irFunction.returnType))
@@ -143,9 +130,7 @@ internal object EnumHashCode : IntrinsicBase() {
         return fqName == "kotlin.Enum.hashCode"
     }
 
-    override suspend fun evaluate(
-        irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
-    ): ExecutionResult {
+    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val hashCode = stack.getAll().single().state.hashCode()
         stack.pushReturnValue(hashCode.toState(irFunction.returnType))
         return Next
@@ -158,9 +143,7 @@ internal object JsPrimitives : IntrinsicBase() {
         return fqName == "kotlin.Long.<init>" || fqName == "kotlin.Char.<init>"
     }
 
-    override suspend fun evaluate(
-        irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
-    ): ExecutionResult {
+    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         when (irFunction.fqNameWhenAvailable.toString()) {
             "kotlin.Long.<init>" -> {
                 val low = stack.getVariable(irFunction.valueParameters[0].symbol).state.asInt()
@@ -182,9 +165,7 @@ internal object ArrayConstructor : IntrinsicBase() {
         return fqName.matches("kotlin\\.(Byte|Char|Short|Int|Long|Float|Double|Boolean|)Array\\.<init>".toRegex())
     }
 
-    override suspend fun evaluate(
-        irFunction: IrFunction, stack: Stack, interpret: suspend IrElement.() -> ExecutionResult
-    ): ExecutionResult {
+    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val sizeDescriptor = irFunction.valueParameters[0].symbol
         val size = stack.getVariable(sizeDescriptor).state.asInt()
         val arrayValue = MutableList<Any>(size) { 0 }

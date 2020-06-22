@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal interface Stack {
-    suspend fun newFrame(
-        asSubFrame: Boolean = false, initPool: List<Variable> = listOf(), block: suspend () -> ExecutionResult
-    ): ExecutionResult
+    fun newFrame(asSubFrame: Boolean = false, initPool: List<Variable> = listOf(), block: () -> ExecutionResult): ExecutionResult
 
     fun setCurrentFrameName(irFunction: IrFunction)
     fun getStackTrace(): List<String>
@@ -43,7 +41,7 @@ internal class StackImpl : Stack {
     private val frameList = mutableListOf(FrameContainer()) // first frame is default, it is easier to work when last() is not null
     private fun getCurrentFrame() = frameList.last()
 
-    override suspend fun newFrame(asSubFrame: Boolean, initPool: List<Variable>, block: suspend () -> ExecutionResult): ExecutionResult {
+    override fun newFrame(asSubFrame: Boolean, initPool: List<Variable>, block: () -> ExecutionResult): ExecutionResult {
         val typeArgumentsPool = initPool.filter { it.symbol is IrTypeParameterSymbol }
         val valueArguments = initPool.filter { it.symbol !is IrTypeParameterSymbol }
         val newFrame = InterpreterFrame(valueArguments.toMutableList(), typeArgumentsPool)
