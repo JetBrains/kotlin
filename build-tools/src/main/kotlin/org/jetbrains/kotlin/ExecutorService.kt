@@ -502,9 +502,9 @@ fun KonanTestExecutable.configureXcodeBuild() {
                         it += "mkdir -p \"\$TARGET_BUILD_DIR/\$FRAMEWORKS_FOLDER_PATH\""
                         // Copy each framework to the Frameworks dir.
                         it += frameworks.map { framework ->
-                            val name = framework.artifact
-                            "cp -r \"$testOutput/$name/${project.testTarget.name}/$name.framework\" " +
-                                    "\"\$TARGET_BUILD_DIR/\$FRAMEWORKS_FOLDER_PATH/$name.framework\""
+                            val artifact = framework.artifact
+                            "cp -r \"$testOutput/${this.name}/${project.testTarget.name}/$artifact.framework\" " +
+                                    "\"\$TARGET_BUILD_DIR/\$FRAMEWORKS_FOLDER_PATH/$artifact.framework\""
                         }
                     }
                 }.joinToString(separator = "\\n") { it.replace("\"", "\\\"") }
