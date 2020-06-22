@@ -39,7 +39,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
-    <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-test-junit" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlin-test-junit" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util" />
   </component>

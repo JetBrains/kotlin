@@ -23,7 +23,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-stdlib-jdk8" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
-    <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-test-junit" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlin-test-junit" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-scripting-compiler" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-scripting-compiler-impl" level="project" />
