@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -792,19 +793,23 @@ class Fir2IrVisitor(
                 classifierStorage.getIrTypeParameterSymbol(argument.symbol, ConversionTypeContext.DEFAULT)
             }
             is FirResolvedQualifier -> {
-                val symbol = argument.symbol as? FirClassSymbol
-                    ?: return getClassCall.convertWithOffsets { startOffset, endOffset ->
-                        IrErrorCallExpressionImpl(
-                            startOffset, endOffset, irType, "Resolved qualifier ${argument.render()} does not have correct symbol"
-                        )
+                when (val symbol = argument.symbol) {
+                    is FirClassSymbol -> {
+                        classifierStorage.getIrClassSymbol(symbol)
                     }
-                classifierStorage.getIrClassSymbol(symbol)
+                    is FirTypeAliasSymbol -> {
+                        symbol.fir.expandedConeType.toIrClassSymbol()
+                    }
+                    else ->
+                        return getClassCall.convertWithOffsets { startOffset, endOffset ->
+                            IrErrorCallExpressionImpl(
+                                startOffset, endOffset, irType, "Resolved qualifier ${argument.render()} does not have correct symbol"
+                            )
+                        }
+                }
             }
             is FirClassReferenceExpression -> {
-                val type = argument.classTypeRef.coneTypeSafe<ConeClassLikeType>()
-                (type?.lookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.let {
-                    classifierStorage.getIrClassSymbol(it)
-                }
+                argument.classTypeRef.coneTypeSafe<ConeClassLikeType>().toIrClassSymbol()
             }
             else -> null
         }
@@ -816,6 +821,11 @@ class Fir2IrVisitor(
             }
         }
     }
+
+    private fun ConeClassLikeType?.toIrClassSymbol(): IrClassSymbol? =
+        (this?.lookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.let {
+            classifierStorage.getIrClassSymbol(it)
+        }
 
     override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: Any?): IrElement {
         return arrayOfCall.convertWithOffsets { startOffset, endOffset ->
