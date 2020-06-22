@@ -27,10 +27,6 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/resources-en" type="java-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../live-templates">
-      <sourceFolder url="file://$MODULE_DIR$/../live-templates/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../live-templates/test" isTestSource="true" />
-    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
@@ -65,6 +61,7 @@
     <orderEntry type="library" scope="TEST" name="kotlinc.sam-with-receiver-compiler-plugin" level="project" />
     <orderEntry type="module" module-name="kotlin.common" />
     <orderEntry type="module" module-name="kotlin.core" />
+    <orderEntry type="module" module-name="kotlin.fir.frontend-independent" />
     <orderEntry type="module" module-name="kotlin.jps-common" />
     <orderEntry type="module" module-name="kotlin.j2k.old" />
     <orderEntry type="module" module-name="kotlin.formatter" />
@@ -74,6 +71,7 @@
     <orderEntry type="module" module-name="kotlin.scripting" />
     <orderEntry type="module" module-name="kotlin.jvm" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.core" />
+    <orderEntry type="module" module-name="kotlin.line-indent-provider" />
     <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.repl" scope="TEST" />
@@ -98,6 +96,7 @@
     <orderEntry type="module" module-name="intellij.jvm.analysis" />
     <orderEntry type="module" module-name="intellij.jvm.analysis.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
     <orderEntry type="module" module-name="intellij.java.ui" />
     <orderEntry type="module" module-name="intellij.java.execution" />
     <orderEntry type="module" module-name="intellij.java.compiler" />
@@ -111,6 +110,5 @@
     <orderEntry type="module" module-name="intellij.statsCollector" />
     <orderEntry type="module" module-name="intellij.copyright" />
     <orderEntry type="module" module-name="intellij.properties.psi" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.java.impl" />
   </component>
 </module>

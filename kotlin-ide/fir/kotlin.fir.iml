@@ -25,10 +25,16 @@
     <orderEntry type="library" name="kotlinc.kotlin-stdlib-jdk8" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="library" scope="TEST" name="gson" level="project" />
+    <orderEntry type="module" module-name="kotlin.common" />
+    <orderEntry type="module" module-name="kotlin.core" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.fir.frontend-independent" />
+    <orderEntry type="module" module-name="kotlin.fir.frontend-api" />
+    <orderEntry type="module" module-name="kotlin.fir.frontend-fir" />
     <orderEntry type="module" module-name="kotlin.idea" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.compiler-plugins.sam-with-receiver" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.analysis.impl" />
+    <orderEntry type="module" module-name="intellij.java.psi" />
   </component>
 </module>
