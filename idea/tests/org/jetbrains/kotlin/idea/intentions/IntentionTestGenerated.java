@@ -4990,6 +4990,26 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertLambdaToReference/defaultArgument.kt");
         }
 
+        @TestMetadata("defaultArgument2.kt")
+        public void testDefaultArgument2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/defaultArgument2.kt");
+        }
+
+        @TestMetadata("defaultArgument3.kt")
+        public void testDefaultArgument3() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/defaultArgument3.kt");
+        }
+
+        @TestMetadata("defaultArgument4.kt")
+        public void testDefaultArgument4() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/defaultArgument4.kt");
+        }
+
+        @TestMetadata("defaultArgument5.kt")
+        public void testDefaultArgument5() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/defaultArgument5.kt");
+        }
+
         @TestMetadata("defaultBeforeLambda.kt")
         public void testDefaultBeforeLambda() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/defaultBeforeLambda.kt");
@@ -5225,6 +5245,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertLambdaToReference/suspendFunctionParameter2.kt");
         }
 
+        @TestMetadata("suspendFunctionParameter3.kt")
+        public void testSuspendFunctionParameter3() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/suspendFunctionParameter3.kt");
+        }
+
         @TestMetadata("syntheticProperty.kt")
         public void testSyntheticProperty() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/syntheticProperty.kt");
@@ -5293,6 +5318,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("unit.kt")
         public void testUnit() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/unit.kt");
+        }
+
+        @TestMetadata("unit2.kt")
+        public void testUnit2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/unit2.kt");
         }
 
         @TestMetadata("unwrap.kt")
