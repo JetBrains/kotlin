@@ -2,15 +2,6 @@
 8 	fun <bold>Any</bold>.extensionFun() { (in extensionFun() on Any)
 12 		<bold>""</bold>.extensionFun() (in foo() on String)
 
-24 <bold>"A"</bold>.foo() (in main())
-8 	fun <bold>Any</bold>.extensionFun() { (in extensionFun() on Any)
-11 		fun <bold>String</bold>.foo() { (in foo() on String)
-24 			<bold>"A"</bold>.foo() (in main())
-
-3 KotlinUtil.extensionFun(<bold>"x"</bold>);
-8 	fun <bold>Any</bold>.extensionFun() { (in extensionFun() on Any)
-3 		KotlinUtil.extensionFun(<bold>"x"</bold>);
-
 14 <bold>1</bold>.extensionFun() (in foo() on String)
 8 	fun <bold>Any</bold>.extensionFun() { (in extensionFun() on Any)
 14 		<bold>1</bold>.extensionFun() (in foo() on String)
@@ -22,3 +13,13 @@ LIB 			(INLINE CALL with) [LAMBDA CALLS RECEIVER] public inline fun <T, R> with(
 LIB 				(INLINE CALL with) return <bold>receiver</bold>.block() (in with(T, T.() -> R))
 LIB 					(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R { (in with(T, T.() -> R))
 18 						with(<bold>123</bold>) { (in foo() on String)
+
+24 <bold>"A"</bold>.foo() (in main())
+8 	fun <bold>Any</bold>.extensionFun() { (in extensionFun() on Any)
+11 		fun <bold>String</bold>.foo() { (in foo() on String)
+24 			<bold>"A"</bold>.foo() (in main())
+
+3 KotlinUtil.extensionFun(<bold>"x"</bold>);
+8 	fun <bold>Any</bold>.extensionFun() { (in extensionFun() on Any)
+3 		KotlinUtil.extensionFun(<bold>"x"</bold>);
+
