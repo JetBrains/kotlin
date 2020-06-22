@@ -8113,6 +8113,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("testData/inspectionsLocal/redundantUnitExpression/notRedundant3.kt");
         }
 
+        @TestMetadata("notRedundant4.kt")
+        public void testNotRedundant4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/notRedundant4.kt");
+        }
+
+        @TestMetadata("notRedundant5.kt")
+        public void testNotRedundant5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/notRedundant5.kt");
+        }
+
+        @TestMetadata("notRedundant6.kt")
+        public void testNotRedundant6() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/notRedundant6.kt");
+        }
+
+        @TestMetadata("notRedundant7.kt")
+        public void testNotRedundant7() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/notRedundant7.kt");
+        }
+
         @TestMetadata("redundant1.kt")
         public void testRedundant1() throws Exception {
             runTest("testData/inspectionsLocal/redundantUnitExpression/redundant1.kt");
@@ -8141,6 +8161,31 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("returnAsNullableUnit.kt")
         public void testReturnAsNullableUnit() throws Exception {
             runTest("testData/inspectionsLocal/redundantUnitExpression/returnAsNullableUnit.kt");
+        }
+
+        @TestMetadata("unitReturnType.kt")
+        public void testUnitReturnType() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/unitReturnType.kt");
+        }
+
+        @TestMetadata("unitReturnType2.kt")
+        public void testUnitReturnType2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/unitReturnType2.kt");
+        }
+
+        @TestMetadata("unitReturnType3.kt")
+        public void testUnitReturnType3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/unitReturnType3.kt");
+        }
+
+        @TestMetadata("unitReturnType4.kt")
+        public void testUnitReturnType4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/unitReturnType4.kt");
+        }
+
+        @TestMetadata("unitReturnType5.kt")
+        public void testUnitReturnType5() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/unitReturnType5.kt");
         }
     }
 
