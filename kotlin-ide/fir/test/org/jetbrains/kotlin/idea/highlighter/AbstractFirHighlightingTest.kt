@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
+import org.jetbrains.kotlin.idea.shouldBeRethrown
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
+import org.jetbrains.kotlin.idea.withPossiblyDisabledDuplicatedFirSourceElementsException
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractFirHighlightingTest : AbstractHighlightingTest() {
@@ -21,9 +23,11 @@ abstract class AbstractFirHighlightingTest : AbstractHighlightingTest() {
 
         try {
             // warnings are not supported yet
-            myFixture.checkHighlighting(/* checkWarnings= */ false, checkInfos, /* checkWeakWarnings= */ false)
+            withPossiblyDisabledDuplicatedFirSourceElementsException(fileText) {
+                myFixture.checkHighlighting(/* checkWarnings= */ false, checkInfos, /* checkWeakWarnings= */ false)
+            }
         } catch (e: Throwable) {
-            if (doComparison) throw e
+            if (doComparison || e.shouldBeRethrown()) throw e
             return
         }
         if (!doComparison) {

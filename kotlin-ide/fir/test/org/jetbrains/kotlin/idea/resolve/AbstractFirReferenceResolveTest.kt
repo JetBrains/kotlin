@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.resolve
 
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
+import org.jetbrains.kotlin.idea.shouldBeRethrown
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -27,6 +28,7 @@ abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() 
             try {
                 performChecks()
             } catch (t: Throwable) {
+                if (t.shouldBeRethrown()) throw t
                 return
             }
             throw AssertionError("Looks like test is passing, please remove IGNORE_FIR")
