@@ -41,3 +41,14 @@ inline fun buildDelegatedTypeRef(init: FirDelegatedTypeRefBuilder.() -> Unit): F
     }
     return FirDelegatedTypeRefBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildDelegatedTypeRefCopy(original: FirDelegatedTypeRef, init: FirDelegatedTypeRefBuilder.() -> Unit): FirDelegatedTypeRef {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirDelegatedTypeRefBuilder()
+    copyBuilder.delegate = original.delegate
+    copyBuilder.typeRef = original.typeRef
+    return copyBuilder.apply(init).build()
+}

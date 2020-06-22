@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.builder
 
 import kotlinx.collections.immutable.persistentListOf
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirFunctionTarget
-import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirLoopTarget
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -28,4 +25,6 @@ class Context<T> {
     val firLoopTargets = mutableListOf<FirLoopTarget>()
     var capturedTypeParameters = persistentListOf<FirTypeParameterSymbol>()
     val arraySetArgument = mutableMapOf<T, FirExpression>()
+
+    var forcedElementSourceKind: FirSourceElementKind? = null
 }

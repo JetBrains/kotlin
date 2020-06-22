@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.withKind
 import org.jetbrains.kotlin.name.ClassId
 
 sealed class FirImplicitBuiltinTypeRef(
@@ -132,3 +134,55 @@ class FirImplicitKMutableProperty2TypeRef(
     source, StandardClassIds.KMutableProperty2,
     arrayOf(dispatchReceiverTypeArgument, extensionReceiverTypeArgument, propertyTypeArgument)
 )
+
+fun FirImplicitBuiltinTypeRef.withFakeSource(kind: FirFakeSourceElementKind): FirImplicitBuiltinTypeRef {
+    val source = source ?: return this
+    if (source.kind == kind) return this
+    val newSource = source.withKind(kind)
+    return when (this) {
+        is FirImplicitUnitTypeRef -> FirImplicitUnitTypeRef(newSource)
+        is FirImplicitAnyTypeRef -> FirImplicitAnyTypeRef(newSource)
+        is FirImplicitNullableAnyTypeRef -> FirImplicitNullableAnyTypeRef(newSource)
+        is FirImplicitEnumTypeRef -> FirImplicitEnumTypeRef(newSource)
+        is FirImplicitAnnotationTypeRef -> FirImplicitAnnotationTypeRef(newSource)
+        is FirImplicitBooleanTypeRef -> FirImplicitBooleanTypeRef(newSource)
+        is FirImplicitIntTypeRef -> FirImplicitIntTypeRef(newSource)
+        is FirImplicitNothingTypeRef -> FirImplicitNothingTypeRef(newSource)
+        is FirImplicitNullableNothingTypeRef -> FirImplicitNullableNothingTypeRef(newSource)
+        is FirImplicitStringTypeRef -> FirImplicitStringTypeRef(newSource)
+        is FirImplicitKPropertyTypeRef -> FirImplicitKPropertyTypeRef(
+            newSource,
+            typeArgument = type.typeArguments[0]
+        )
+        is FirImplicitKProperty0TypeRef -> FirImplicitKProperty0TypeRef(
+            newSource,
+            propertyTypeArgument = type.typeArguments[0]
+        )
+        is FirImplicitKMutableProperty0TypeRef -> FirImplicitKMutableProperty0TypeRef(
+            newSource,
+            propertyTypeArgument = type.typeArguments[0]
+        )
+        is FirImplicitKProperty1TypeRef -> FirImplicitKProperty1TypeRef(
+            newSource,
+            receiverTypeArgument = type.typeArguments[0],
+            propertyTypeArgument = type.typeArguments[1]
+        )
+        is FirImplicitKMutableProperty1TypeRef -> FirImplicitKMutableProperty1TypeRef(
+            newSource,
+            receiverTypeArgument = type.typeArguments[0],
+            propertyTypeArgument = type.typeArguments[1]
+        )
+        is FirImplicitKProperty2TypeRef -> FirImplicitKProperty2TypeRef(
+            newSource,
+            dispatchReceiverTypeArgument = type.typeArguments[0],
+            extensionReceiverTypeArgument = type.typeArguments[1],
+            propertyTypeArgument = type.typeArguments[2]
+        )
+        is FirImplicitKMutableProperty2TypeRef -> FirImplicitKMutableProperty2TypeRef(
+            newSource,
+            dispatchReceiverTypeArgument = type.typeArguments[0],
+            extensionReceiverTypeArgument = type.typeArguments[1],
+            propertyTypeArgument = type.typeArguments[2]
+        )
+    }
+}

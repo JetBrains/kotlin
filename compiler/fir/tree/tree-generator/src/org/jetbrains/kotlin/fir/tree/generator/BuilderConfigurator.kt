@@ -222,6 +222,31 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(resolvedTypeRef) {
             defaultFalse("isSuspend")
             defaultNull("delegatedTypeRef")
+            withCopy()
+        }
+
+        builder(errorTypeRef) {
+            withCopy()
+        }
+
+        builder(delegatedTypeRef) {
+            withCopy()
+        }
+
+        builder(functionTypeRef) {
+            withCopy()
+        }
+
+        builder(resolvedFunctionTypeRef) {
+            withCopy()
+        }
+
+        builder(implicitTypeRef) {
+            withCopy()
+        }
+
+        builder(composedSuperTypeRef) {
+            withCopy()
         }
 
         builder(breakExpression) {

@@ -62,8 +62,9 @@ class RawFirBuilder(
         return reference.accept(Visitor(), Unit) as FirTypeRef
     }
 
-    override fun PsiElement.toFirSourceElement(kind: FirSourceElementKind): FirPsiSourceElement<*> {
-        return this.toFirPsiSourceElement(kind)
+    override fun PsiElement.toFirSourceElement(kind: FirFakeSourceElementKind?): FirPsiSourceElement<*> {
+        val actualKind = kind ?: this@RawFirBuilder.context.forcedElementSourceKind ?: FirRealSourceElementKind
+        return this.toFirPsiSourceElement(actualKind)
     }
 
     override val PsiElement.elementType: IElementType
@@ -749,10 +750,17 @@ class RawFirBuilder(
                                 baseSession,
                                 classOrObject,
                                 this,
-                                firPrimaryConstructor,
                                 zippedParameters,
                                 context.packageFqName,
-                                context.className
+                                context.className,
+                                createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
+                                createParameterTypeRefWithSourceKind = { property, newKind ->
+                                    // just making a shallow copy isn't enough type ref may be a function type ref
+                                    // and contain value parameters inside
+                                    withDefaultSourceElementKind(newKind) {
+                                        (property.returnTypeRef.psi as KtTypeReference).toFirOrImplicitType()
+                                    }
+                                },
                             ).generate()
                         }
 
