@@ -183,6 +183,8 @@ val mergeSources by tasks.creating(Jar::class.java) {
     if (!kotlinBuildProperties.isTeamcityBuild) {
         from(provider { sources.map(::zipTree) })
     }
+    isZip64 = true
+    from(provider { sources.map(::zipTree) })
     destinationDirectory.set(File(repoDir, sources.name))
     archiveBaseName.set("intellij")
     archiveClassifier.set("sources")
