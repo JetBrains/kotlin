@@ -921,6 +921,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/protocol/fleet.protocol.iml" filepath="$PROJECT_DIR$/intellij/fleet/protocol/fleet.protocol.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/rhizomedb/fleet.rhizomedb.iml" filepath="$PROJECT_DIR$/intellij/fleet/rhizomedb/fleet.rhizomedb.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/server/fleet.server.iml" filepath="$PROJECT_DIR$/intellij/fleet/server/fleet.server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/server/build/fleet.server.build.iml" filepath="$PROJECT_DIR$/intellij/fleet/server/build/fleet.server.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/space/fleet.space.iml" filepath="$PROJECT_DIR$/intellij/fleet/space/fleet.space.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/util/fleet.util.iml" filepath="$PROJECT_DIR$/intellij/fleet/util/fleet.util.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-core/intellij.akka.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-core/intellij.akka.iml" />
