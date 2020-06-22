@@ -152,13 +152,13 @@ public class GradleExecutionHelper {
                                      @NotNull GradleExecutionSettings settings,
                                      @NotNull ExternalSystemTaskNotificationListener listener,
                                      @NotNull CancellationToken cancellationToken) {
-    ensureInstalledWrapper(id, projectPath, settings, GradleVersion.current(), listener, cancellationToken);
+    ensureInstalledWrapper(id, projectPath, settings, null, listener, cancellationToken);
   }
 
   public void ensureInstalledWrapper(@NotNull ExternalSystemTaskId id,
                                      @NotNull String projectPath,
                                      @NotNull GradleExecutionSettings settings,
-                                     @NotNull GradleVersion gradleVersion,
+                                     @Nullable GradleVersion gradleVersion,
                                      @NotNull ExternalSystemTaskNotificationListener listener,
                                      @NotNull CancellationToken cancellationToken) {
 
@@ -183,26 +183,28 @@ public class GradleExecutionHelper {
             final File pathToProperties = new File(wrapperFilesLocation, "path.tmp");
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> FileUtil.delete(wrapperFilesLocation), "GradleExecutionHelper cleanup"));
-            final String[] lines = {
-              "",
-              "gradle.projectsEvaluated { gr ->",
-              "  def wrapper = gr.rootProject.tasks[\"wrapper\"]",
-              "  if (wrapper != null) {",
-              "    if (wrapper.jarFile.exists()) {",
-              "      wrapper.jarFile = new File('" + StringUtil.escapeBackSlashes(jarFile.getCanonicalPath()) + "')",
-              "      wrapper.scriptFile = new File('" + StringUtil.escapeBackSlashes(scriptFile.getCanonicalPath()) + "')",
-              "    }",
-              "    wrapper.gradleVersion = '" + gradleVersion.getVersion() + "'",
-              "    wrapper.doLast {",
-              "      new File('" +
-              StringUtil.escapeBackSlashes(pathToProperties.getCanonicalPath()) +
-              "').write wrapper.propertiesFile.getCanonicalPath()",
-              "    }",
-              "  }",
-              "}",
-              "",
-            };
-            final File tempFile = writeToFileGradleInitScript(StringUtil.join(lines, SystemProperties.getLineSeparator()), "wrapper_init");
+
+            StringJoiner lines = new StringJoiner(SystemProperties.getLineSeparator());
+            lines.add("");
+            lines.add("gradle.projectsEvaluated { gr ->");
+            lines.add("  def wrapper = gr.rootProject.tasks[\"wrapper\"]");
+            lines.add("  if (wrapper != null) {");
+            lines.add("    if (wrapper.jarFile.exists()) {");
+            lines.add("      wrapper.jarFile = new File('" + StringUtil.escapeBackSlashes(jarFile.getCanonicalPath()) + "')");
+            lines.add("      wrapper.scriptFile = new File('" + StringUtil.escapeBackSlashes(scriptFile.getCanonicalPath()) + "')");
+            lines.add("    }");
+            if (gradleVersion != null) {
+              lines.add("    wrapper.gradleVersion = '" + gradleVersion.getVersion() + "'");
+            }
+            lines.add("    wrapper.doLast {");
+            lines.add("      new File('" +
+                      StringUtil.escapeBackSlashes(pathToProperties.getCanonicalPath()) +
+                      "').write wrapper.propertiesFile.getCanonicalPath()");
+            lines.add("    }");
+            lines.add("  }");
+            lines.add("}");
+            lines.add("");
+            final File tempFile = writeToFileGradleInitScript(lines.toString(), "wrapper_init");
             settings.withArguments(GradleConstants.INIT_SCRIPT_CMD_OPTION, tempFile.getAbsolutePath());
             BuildLauncher launcher = getBuildLauncher(id, connection, settings, listener);
             launcher.withCancellationToken(cancellationToken);
