@@ -36,12 +36,16 @@ extern "C" id objc_autoreleaseReturnValue(id self);
 
 static void injectToRuntime();
 
+// Note: `KotlinBase`'s `toKotlin` and `_tryRetain` methods will terminate if
+// called with non-frozen object on a wrong worker. `retain` will also terminate
+// in these conditions if backref's refCount is zero.
+
 @implementation KotlinBase {
   BackRefFromAssociatedObject refHolder;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(refHolder.ref());
+  RETURN_OBJ(refHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 +(void)load {
@@ -103,7 +107,7 @@ static void injectToRuntime();
   if (refHolder.permanent()) { // TODO: consider storing `isPermanent` to self field.
     [super retain];
   } else {
-    refHolder.addRef();
+    refHolder.addRef<ErrorPolicy::kTerminate>();
   }
   return self;
 }
@@ -112,7 +116,7 @@ static void injectToRuntime();
   if (refHolder.permanent()) {
     return [super _tryRetain];
   } else {
-    return refHolder.tryAddRef();
+    return refHolder.tryAddRef<ErrorPolicy::kTerminate>();
   }
 }
 

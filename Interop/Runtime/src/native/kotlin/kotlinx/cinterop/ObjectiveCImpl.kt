@@ -62,6 +62,7 @@ private fun ObjCObjectBase.superInitCheck(superInitCallResult: ObjCObject?) {
 
 internal fun <T : Any?> Any?.uncheckedCast(): T = @Suppress("UNCHECKED_CAST") (this as T)
 
+// Note: if this is called for non-frozen object on a wrong worker, the program will terminate.
 @SymbolName("Kotlin_Interop_refFromObjC")
 external fun <T> interpretObjCPointerOrNull(objcPtr: NativePtr): T?
 
@@ -74,6 +75,7 @@ external fun Any?.objcPtr(): NativePtr
 @SymbolName("Kotlin_Interop_createKotlinObjectHolder")
 external fun createKotlinObjectHolder(any: Any?): NativePtr
 
+// Note: if this is called for non-frozen underlying ref on a wrong worker, the program will terminate.
 inline fun <reified T : Any> unwrapKotlinObjectHolder(holder: Any?): T {
     return unwrapKotlinObjectHolderImpl(holder!!.objcPtr()) as T
 }

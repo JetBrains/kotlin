@@ -69,7 +69,7 @@ BackRefFromAssociatedObject* getBackRef(id obj) {
 }
 
 OBJ_GETTER(toKotlinImp, id self, SEL _cmd) {
-  RETURN_OBJ(getBackRef(self)->ref());
+  RETURN_OBJ(getBackRef(self)->ref<ErrorPolicy::kTerminate>());
 }
 
 id allocWithZoneImp(Class self, SEL _cmd, void* zone) {
@@ -89,7 +89,7 @@ id allocWithZoneImp(Class self, SEL _cmd, void* zone) {
 }
 
 id retainImp(id self, SEL _cmd) {
-  getBackRef(self)->addRef();
+  getBackRef(self)->addRef<ErrorPolicy::kTerminate>();
   return self;
 }
 
@@ -99,7 +99,7 @@ BOOL _tryRetainImp(id self, SEL _cmd) {
   // loading a reference to such an object from Obj-C weak reference now fails on "wrong" thread
   // unless the object is frozen.
   try {
-    return getBackRef(self)->tryAddRef();
+    return getBackRef(self)->tryAddRef<ErrorPolicy::kThrow>();
   } catch (ExceptionObjHolder& e) {
     // TODO: check for IncorrectDereferenceException and possible weak property access
     // Cannot use SourceInfo here, because CoreSymbolication framework (CSSymbolOwnerGetSymbolWithAddress)

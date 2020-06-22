@@ -3967,6 +3967,16 @@ standaloneTest("interop_zlib") {
     goldValue = "Hello!\nHello!\n"
 }
 
+standaloneTest("interop_objc_illegal_sharing") {
+    dependsOnPlatformLibs(it)
+    disabled = !isAppleTarget(project)
+    source = "interop/objc/illegal_sharing.kt"
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = {
+      it.startsWith("Before") && !it.contains("After")
+    }
+}
+
 dynamicTest("produce_dynamic") {
     disabled = (project.testTarget != null && project.testTarget != project.hostName)
     source = "produce_dynamic/simple/hello.kt"

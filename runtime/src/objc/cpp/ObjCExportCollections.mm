@@ -81,6 +81,9 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   return index;
 }
 
+// Note: collections can only be iterated on and converted to Kotlin representation
+// when they are either frozen or if they are called on the worker that created them.
+
 @interface NSArray (NSArrayToKotlin)
 @end;
 
@@ -155,7 +158,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 }
 
 - (id)nextObject {
-  KRef iterator = iteratorHolder.ref();
+  KRef iterator = iteratorHolder.ref<ErrorPolicy::kTerminate>();
   if (Kotlin_Iterator_hasNext(iterator)) {
     ObjHolder holder;
     return refToObjCOrNSNull(Kotlin_Iterator_next(iterator, holder.slot()));
@@ -184,17 +187,17 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(listHolder.ref());
+  RETURN_OBJ(listHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 -(id)objectAtIndex:(NSUInteger)index {
   ObjHolder kotlinValueHolder;
-  KRef kotlinValue = Kotlin_List_get(listHolder.ref(), index, kotlinValueHolder.slot());
+  KRef kotlinValue = Kotlin_List_get(listHolder.ref<ErrorPolicy::kTerminate>(), index, kotlinValueHolder.slot());
   return refToObjCOrNSNull(kotlinValue);
 }
 
 -(NSUInteger)count {
-  return Kotlin_Collection_getSize(listHolder.ref());
+  return Kotlin_Collection_getSize(listHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 @end;
@@ -218,42 +221,42 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(listHolder.ref());
+  RETURN_OBJ(listHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 -(id)objectAtIndex:(NSUInteger)index {
   ObjHolder kotlinValueHolder;
-  KRef kotlinValue = Kotlin_List_get(listHolder.ref(), index, kotlinValueHolder.slot());
+  KRef kotlinValue = Kotlin_List_get(listHolder.ref<ErrorPolicy::kTerminate>(), index, kotlinValueHolder.slot());
   return refToObjCOrNSNull(kotlinValue);
 }
 
 -(NSUInteger)count {
-  return Kotlin_Collection_getSize(listHolder.ref());
+  return Kotlin_Collection_getSize(listHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 - (void)insertObject:(id)anObject atIndex:(NSUInteger)index {
   ObjHolder holder;
   KRef kotlinObject = refFromObjCOrNSNull(anObject, holder.slot());
-  Kotlin_MutableList_addObjectAtIndex(listHolder.ref(), objCIndexToKotlinOrThrow(index), kotlinObject);
+  Kotlin_MutableList_addObjectAtIndex(listHolder.ref<ErrorPolicy::kTerminate>(), objCIndexToKotlinOrThrow(index), kotlinObject);
 }
 
 - (void)removeObjectAtIndex:(NSUInteger)index {
-  Kotlin_MutableList_removeObjectAtIndex(listHolder.ref(), objCIndexToKotlinOrThrow(index));
+  Kotlin_MutableList_removeObjectAtIndex(listHolder.ref<ErrorPolicy::kTerminate>(), objCIndexToKotlinOrThrow(index));
 }
 
 - (void)addObject:(id)anObject {
   ObjHolder holder;
-  Kotlin_MutableCollection_addObject(listHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
+  Kotlin_MutableCollection_addObject(listHolder.ref<ErrorPolicy::kTerminate>(), refFromObjCOrNSNull(anObject, holder.slot()));
 }
 
 - (void)removeLastObject {
-  Kotlin_MutableList_removeLastObject(listHolder.ref());
+  Kotlin_MutableList_removeLastObject(listHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject {
   ObjHolder holder;
   KRef kotlinObject = refFromObjCOrNSNull(anObject, holder.slot());
-  Kotlin_MutableList_setObject(listHolder.ref(), objCIndexToKotlinOrThrow(index), kotlinObject);
+  Kotlin_MutableList_setObject(listHolder.ref<ErrorPolicy::kTerminate>(), objCIndexToKotlinOrThrow(index), kotlinObject);
 }
 
 @end;
@@ -291,26 +294,26 @@ static inline id KSet_getElement(KRef set, id object) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(setHolder.ref());
+  RETURN_OBJ(setHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 -(NSUInteger) count {
-  return Kotlin_Collection_getSize(setHolder.ref());
+  return Kotlin_Collection_getSize(setHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 - (id)member:(id)object {
-  return KSet_getElement(setHolder.ref(), object);
+  return KSet_getElement(setHolder.ref<ErrorPolicy::kTerminate>(), object);
 }
 
 // Not mandatory, just an optimization:
 - (BOOL)containsObject:(id)anObject {
   ObjHolder holder;
-  return Kotlin_Set_contains(setHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
+  return Kotlin_Set_contains(setHolder.ref<ErrorPolicy::kTerminate>(), refFromObjCOrNSNull(anObject, holder.slot()));
 }
 
 - (NSEnumerator*)objectEnumerator {
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref(), holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref<ErrorPolicy::kTerminate>(), holder.slot())];
 }
 @end;
 
@@ -375,36 +378,36 @@ static inline id KSet_getElement(KRef set, id object) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(setHolder.ref());
+  RETURN_OBJ(setHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 -(NSUInteger) count {
-  return Kotlin_Collection_getSize(setHolder.ref());
+  return Kotlin_Collection_getSize(setHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 - (id)member:(id)object {
-  return KSet_getElement(setHolder.ref(), object);
+  return KSet_getElement(setHolder.ref<ErrorPolicy::kTerminate>(), object);
 }
 
 // Not mandatory, just an optimization:
 - (BOOL)containsObject:(id)anObject {
   ObjHolder holder;
-  return Kotlin_Set_contains(setHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
+  return Kotlin_Set_contains(setHolder.ref<ErrorPolicy::kTerminate>(), refFromObjCOrNSNull(anObject, holder.slot()));
 }
 
 - (NSEnumerator*)objectEnumerator {
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref(), holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref<ErrorPolicy::kTerminate>(), holder.slot())];
 }
 
 - (void)addObject:(id)object {
   ObjHolder holder;
-  Kotlin_MutableCollection_addObject(setHolder.ref(), refFromObjCOrNSNull(object, holder.slot()));
+  Kotlin_MutableCollection_addObject(setHolder.ref<ErrorPolicy::kTerminate>(), refFromObjCOrNSNull(object, holder.slot()));
 }
 
 - (void)removeObject:(id)object {
   ObjHolder holder;
-  Kotlin_MutableCollection_removeObject(setHolder.ref(), refFromObjCOrNSNull(object, holder.slot()));
+  Kotlin_MutableCollection_removeObject(setHolder.ref<ErrorPolicy::kTerminate>(), refFromObjCOrNSNull(object, holder.slot()));
 }
 @end;
 
@@ -441,23 +444,23 @@ static inline id KMap_get(KRef map, id aKey) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(mapHolder.ref());
+  RETURN_OBJ(mapHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 // According to documentation, initWithObjects:forKeys:count: is required to be overridden when subclassing.
 // But that doesn't make any sense, since this class can't be arbitrary initialized.
 
 -(NSUInteger) count {
-  return Kotlin_Map_getSize(mapHolder.ref());
+  return Kotlin_Map_getSize(mapHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 - (id)objectForKey:(id)aKey {
-  return KMap_get(mapHolder.ref(), aKey);
+  return KMap_get(mapHolder.ref<ErrorPolicy::kTerminate>(), aKey);
 }
 
 - (NSEnumerator *)keyEnumerator {
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref(), holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref<ErrorPolicy::kTerminate>(), holder.slot())];
 }
 
 @end;
@@ -512,20 +515,20 @@ static inline id KMap_get(KRef map, id aKey) {
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(mapHolder.ref());
+  RETURN_OBJ(mapHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 -(NSUInteger) count {
-  return Kotlin_Map_getSize(mapHolder.ref());
+  return Kotlin_Map_getSize(mapHolder.ref<ErrorPolicy::kTerminate>());
 }
 
 - (id)objectForKey:(id)aKey {
-  return KMap_get(mapHolder.ref(), aKey);
+  return KMap_get(mapHolder.ref<ErrorPolicy::kTerminate>(), aKey);
 }
 
 - (NSEnumerator *)keyEnumerator {
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref(), holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref<ErrorPolicy::kTerminate>(), holder.slot())];
 }
 
 - (void)setObject:(id)anObject forKey:(id<NSCopying>)aKey {
@@ -537,14 +540,14 @@ static inline id KMap_get(KRef map, id aKey) {
 
   KRef kotlinValue = refFromObjCOrNSNull(anObject, valueHolder.slot());
 
-  Kotlin_MutableMap_set(mapHolder.ref(), kotlinKey, kotlinValue);
+  Kotlin_MutableMap_set(mapHolder.ref<ErrorPolicy::kTerminate>(), kotlinKey, kotlinValue);
 }
 
 - (void)removeObjectForKey:(id)aKey {
   ObjHolder holder;
   KRef kotlinKey = refFromObjCOrNSNull(aKey, holder.slot());
 
-  Kotlin_MutableMap_remove(mapHolder.ref(), kotlinKey);
+  Kotlin_MutableMap_remove(mapHolder.ref<ErrorPolicy::kTerminate>(), kotlinKey);
 }
 
 @end;
