@@ -10,17 +10,9 @@ import org.jetbrains.kotlin.ir.interpreter.IrCompileTimeChecker
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isArray
-import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 fun evaluateConstants(irModuleFragment: IrModuleFragment) {
@@ -48,11 +40,10 @@ class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransfor
         if (expression is IrConst<*>) return declaration
         val isCompileTimeComputable = expression.accept(IrCompileTimeChecker(declaration, mode = EvaluationMode.ONLY_BUILTINS), null)
         val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
-        if (isConst && !isCompileTimeComputable) {
-            //throw AssertionError("Const property is used only with functions annotated as CompileTimeCalculation: " + declaration.dump())
-        } else if (isCompileTimeComputable) {
+        if (isConst && isCompileTimeComputable) {
             initializer.expression = interpreter.interpret(expression).replaceIfError(expression)
         }
+
         return declaration
     }
 

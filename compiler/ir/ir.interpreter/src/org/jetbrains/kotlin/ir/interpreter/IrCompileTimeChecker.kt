@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
@@ -34,18 +35,20 @@ class IrCompileTimeChecker(
 
     private fun IrDeclaration.isContract() = isMarkedWith(contractsDslAnnotation)
     private fun IrDeclaration.isMarkedAsEvaluateIntrinsic() = isMarkedWith(evaluateIntrinsicAnnotation)
-    private fun IrDeclaration.isMarkedAsCompileTime(): Boolean {
-        if (mode == EvaluationMode.FULL)
+    private fun IrDeclaration.isMarkedAsCompileTime(expression: IrCall? = null): Boolean {
+        if (mode == EvaluationMode.FULL) {
             return isMarkedWith(compileTimeAnnotation) ||
                     (this is IrSimpleFunction && this.isFakeOverride && this.overriddenSymbols.any { it.owner.isMarkedAsCompileTime() }) ||
                     this.parentClassOrNull?.fqNameWhenAvailable?.asString() in compileTimeTypeAliases
+        }
 
         val parent = this.parentClassOrNull
         val parentType = parent?.defaultType
         return when {
             parentType?.isPrimitiveType() == true -> (this as IrFunction).name.asString() !in setOf("inc", "dec", "rangeTo", "hashCode")
             parentType?.isString() == true -> (this as IrDeclarationWithName).name.asString() !in setOf("subSequence", "hashCode")
-            parent?.isCompanion == true -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsigned() } == true
+            parentType?.isAny() == true -> (this as IrFunction).name.asString() == "toString" && expression?.dispatchReceiver !is IrGetObjectValue
+            parent?.isObject == true -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsigned() } == true
             else -> false
         }
     }
@@ -92,7 +95,7 @@ class IrCompileTimeChecker(
         if (expression.symbol.owner.isContract()) return false
 
         val property = (expression.symbol.owner as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
-        if (expression.symbol.owner.isMarkedAsCompileTime() || property.isCompileTime()) {
+        if (expression.symbol.owner.isMarkedAsCompileTime(expression) || property.isCompileTime()) {
             val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
             val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
             if (!visitValueParameters(expression, null)) return false
