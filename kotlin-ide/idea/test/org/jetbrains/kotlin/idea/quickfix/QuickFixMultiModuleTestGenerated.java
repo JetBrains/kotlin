@@ -754,6 +754,44 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/multiModuleQuickFix/fixNativeThrowsErrors")
+    public static class FixNativeThrowsErrors extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("addCancellationException1")
+        public void testAddCancellationException1() throws Exception {
+            runTest("testData/multiModuleQuickFix/fixNativeThrowsErrors/addCancellationException1/");
+        }
+
+        @TestMetadata("addCancellationException2")
+        public void testAddCancellationException2() throws Exception {
+            runTest("testData/multiModuleQuickFix/fixNativeThrowsErrors/addCancellationException2/");
+        }
+
+        @TestMetadata("addCancellationException3")
+        public void testAddCancellationException3() throws Exception {
+            runTest("testData/multiModuleQuickFix/fixNativeThrowsErrors/addCancellationException3/");
+        }
+
+        @TestMetadata("addCancellationException4")
+        public void testAddCancellationException4() throws Exception {
+            runTest("testData/multiModuleQuickFix/fixNativeThrowsErrors/addCancellationException4/");
+        }
+
+        @TestMetadata("removeEmptyThrows")
+        public void testRemoveEmptyThrows() throws Exception {
+            runTest("testData/multiModuleQuickFix/fixNativeThrowsErrors/removeEmptyThrows/");
+        }
+
+        @TestMetadata("removeThrowsOnIncompatibleOverride")
+        public void testRemoveThrowsOnIncompatibleOverride() throws Exception {
+            runTest("testData/multiModuleQuickFix/fixNativeThrowsErrors/removeThrowsOnIncompatibleOverride/");
+        }
+    }
+
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/multiModuleQuickFix/makeOverridenMemberOpen")
     public static class MakeOverridenMemberOpen extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {

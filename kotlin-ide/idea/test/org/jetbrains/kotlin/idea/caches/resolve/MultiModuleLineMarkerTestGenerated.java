@@ -71,6 +71,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
         runTest("testData/multiModuleLineMarker/expectEnumWithEnumEntriesInOneLine/");
     }
 
+    @TestMetadata("expectWithActualInSameModule")
+    public void testExpectWithActualInSameModule() throws Exception {
+        runTest("testData/multiModuleLineMarker/expectWithActualInSameModule/");
+    }
+
     @TestMetadata("expectWithOverload")
     public void testExpectWithOverload() throws Exception {
         runTest("testData/multiModuleLineMarker/expectWithOverload/");
