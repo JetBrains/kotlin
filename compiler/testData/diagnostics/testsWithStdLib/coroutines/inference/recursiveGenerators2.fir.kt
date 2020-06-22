@@ -18,7 +18,7 @@ suspend fun <S> GenericController<List<S>>.yieldGenerate(g: suspend GenericContr
 
 val test1 = generate {
     // TODO: KT-15185
-    <!INAPPLICABLE_CANDIDATE!>yieldGenerate<!> {
-        <!INAPPLICABLE_CANDIDATE!>yield<!>(4)
+    yieldGenerate {
+        yield(4)
     }
 }

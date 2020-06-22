@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -19,50 +17,32 @@ import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class AbstractManyCandidatesInferenceSession(
     protected val components: BodyResolveComponents,
-    initialCall: FirExpression,
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
 ) : FirInferenceSession() {
     private val errorCalls: MutableList<FirResolvable> = mutableListOf()
-    private val partiallyResolvedCalls: MutableList<FirResolvable> = mutableListOf()
+    protected val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
     private val completedCalls: MutableSet<FirResolvable> = mutableSetOf()
-
-    init {
-        val initialCandidate = (initialCall as? FirResolvable)
-            ?.calleeReference
-            ?.safeAs<FirNamedReferenceWithCandidate>()
-            ?.candidate
-        if (initialCandidate != null) {
-            partiallyResolvedCalls += initialCall as FirResolvable
-        }
-    }
 
     private val unitType: ConeKotlinType = components.session.builtinTypes.unitType.coneTypeUnsafe()
 
     override val currentConstraintSystem: ConstraintStorage
         get() = partiallyResolvedCalls.lastOrNull()
-            ?.calleeReference
-            ?.safeAs<FirNamedReferenceWithCandidate>()
-            ?.candidate
+            ?.second
             ?.system
             ?.currentStorage()
             ?: ConstraintStorage.Empty
 
     private lateinit var resultingConstraintSystem: NewConstraintSystem
 
-    override fun shouldRunCompletion(candidate: Candidate): Boolean {
-        return false
-    }
-
-    override fun <T> addCompetedCall(call: T) where T : FirResolvable, T : FirStatement {
+    override fun <T> addCompetedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
         // do nothing
     }
 
     final override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {
-        partiallyResolvedCalls += call
+        partiallyResolvedCalls += call to call.candidate
     }
 
     final override fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement {
@@ -97,7 +77,7 @@ abstract class AbstractManyCandidatesInferenceSession(
         }
 
         @Suppress("UNCHECKED_CAST")
-        val resolvedCalls = partiallyResolvedCalls as List<FirResolvable>
+        val resolvedCalls = partiallyResolvedCalls.map { it.first }
         val commonSystem = components.inferenceComponents.createConstraintSystem().apply {
             addOtherSystem(currentConstraintSystem)
         }

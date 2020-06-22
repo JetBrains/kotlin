@@ -25,7 +25,7 @@ fun Base<String>.stringBase() {}
 
 val test1 = generate {
     starBase()
-    <!INAPPLICABLE_CANDIDATE!>yield<!>("foo")
+    yield("foo")
 }
 
 val test2 = generate {
@@ -33,17 +33,17 @@ val test2 = generate {
 }
 
 val test3 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>("bar")
-    <!INAPPLICABLE_CANDIDATE!>stringBase<!>()
+    yield("bar")
+    stringBase()
 }
 
 val test4 = generateSpecific {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(42)
+    yield(42)
     starBase()
 }
 
 val test5 = generateSpecific {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(42)
+    yield(42)
     stringBase()
 }
 

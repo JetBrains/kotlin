@@ -25,7 +25,7 @@ fun <S> Controller<S>.genericExtension() {}
 fun Controller<String>.safeExtension() {}
 
 val test1 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>("foo")
+    yield("foo")
     baseExtension()
 }
 
@@ -34,7 +34,7 @@ val test2 = generate {
 }
 
 val test3 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(42)
+    yield(42)
     outNullableAnyExtension()
 }
 
@@ -43,20 +43,20 @@ val test4 = generate {
 }
 
 val test5 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(42)
+    yield(42)
     outAnyExtension()
 }
 
 val test6 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>("bar")
-    <!INAPPLICABLE_CANDIDATE!>invNullableAnyExtension<!>()
+    yield("bar")
+    invNullableAnyExtension()
 }
 
 val test7 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>("baz")
-    <!INAPPLICABLE_CANDIDATE!>genericExtension<!><Int>()
+    yield("baz")
+    genericExtension<Int>()
 }
 
 val test8 = generate {
-    <!INAPPLICABLE_CANDIDATE!>safeExtension<!>()
+    safeExtension()
 }

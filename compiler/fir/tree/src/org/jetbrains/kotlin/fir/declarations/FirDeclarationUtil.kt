@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.name.ClassId
 
 fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = false) {
     if (bounds.isEmpty()) {
@@ -114,3 +113,7 @@ fun FirRegularClass.addDeclaration(declaration: FirDeclaration) {
 
 private object IsFromVarargKey: FirDeclarationDataKey()
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
+
+fun FirAnnotatedDeclaration.hasAnnotation(classId: ClassId): Boolean {
+    return annotations.any { it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId == classId }
+}

@@ -45,6 +45,13 @@ fun ConeKotlinType.receiverType(expectedTypeRef: FirTypeRef?, session: FirSessio
     return null
 }
 
+fun ConeKotlinType.receiverType(session: FirSession): ConeKotlinType? {
+    if (isBuiltinFunctionalType(session)) {
+        return ((this as ConeClassLikeType).fullyExpandedType(session).typeArguments.first() as ConeKotlinTypeProjection).type
+    }
+    return null
+}
+
 fun ConeKotlinType.returnType(session: FirSession): ConeKotlinType? {
     require(this is ConeClassLikeType)
     val projection = fullyExpandedType(session).typeArguments.last()

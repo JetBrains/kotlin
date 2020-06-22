@@ -16,9 +16,9 @@ fun <S> generate(@BuilderInference g: suspend Controller<S>.() -> Unit): S = TOD
 class A
 
 val test1 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(A)
+    yield(A)
 }
 
 val test2: Int = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(A())
+    yield(A())
 }

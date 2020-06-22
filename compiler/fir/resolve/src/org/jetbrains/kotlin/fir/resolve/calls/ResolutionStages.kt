@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.fir.inferenceContext
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
-import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
+import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
@@ -532,5 +531,37 @@ internal object CheckLowPriorityInOverloadResolution : CheckerStage() {
         if (hasLowPriorityAnnotation) {
             sink.reportApplicability(CandidateApplicability.RESOLVED_LOW_PRIORITY)
         }
+    }
+}
+
+internal object PostponedVariablesInitializerResolutionStage : ResolutionStage() {
+    val BUILDER_INFERENCE_CLASS_ID: ClassId = ClassId.fromString("kotlin/BuilderInference")
+
+    override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        val argumentMapping = candidate.argumentMapping ?: return
+        // TODO: convert type argument mapping to map [FirTypeParameterSymbol, FirTypedProjection?]
+        if (candidate.typeArgumentMapping is TypeArgumentMapping.Mapped) return
+        for (parameter in argumentMapping.values) {
+            if (!parameter.hasBuilderInferenceMarker()) continue
+            val type = parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: continue
+            val receiverType = type.receiverType(callInfo.session) ?: continue
+
+            for (freshVariable in candidate.freshVariables) {
+                candidate.typeArgumentMapping
+                if (candidate.csBuilder.isPostponedTypeVariable(freshVariable)) continue
+                if (freshVariable !is TypeParameterBasedTypeVariable) continue
+                val typeParameterSymbol = freshVariable.typeParameterSymbol
+                val typeHasVariable = receiverType.contains {
+                    (it as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == typeParameterSymbol
+                }
+                if (typeHasVariable) {
+                    candidate.csBuilder.markPostponedVariable(freshVariable)
+                }
+            }
+        }
+    }
+
+    private fun FirValueParameter.hasBuilderInferenceMarker(): Boolean {
+        return this.hasAnnotation(BUILDER_INFERENCE_CLASS_ID)
     }
 }

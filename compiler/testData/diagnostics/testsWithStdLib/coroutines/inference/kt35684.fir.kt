@@ -6,21 +6,21 @@
 import kotlin.experimental.ExperimentalTypeInference
 
 fun test_1() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>sequence {
-        <!INAPPLICABLE_CANDIDATE!>yield<!>(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Any?>")!>materialize()<!>)
-        <!INAPPLICABLE_CANDIDATE!>yield<!>(materialize<Int>())
+    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>")!>sequence {
+        yield(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>")!>materialize()<!>)
+        yield(materialize<Int>())
     }<!>
 }
 
 fun test_2() {
     sequence {
-        <!INAPPLICABLE_CANDIDATE!>yield<!>(materialize())
+        yield(materialize())
     }
 }
 
 fun test_3() {
     sequence {
-        <!INAPPLICABLE_CANDIDATE!>yield<!>(materialize<Int>())
+        yield(materialize<Int>())
         materialize()
     }
 }

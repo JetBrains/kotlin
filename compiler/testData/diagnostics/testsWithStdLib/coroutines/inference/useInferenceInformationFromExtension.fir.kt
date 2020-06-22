@@ -21,13 +21,13 @@ suspend fun <S> GenericController<S>.safeExtensionYield(s: S) {}
 fun <S> generate(@BuilderInference g: suspend GenericController<S>.() -> Unit): List<S> = TODO()
 
 val normal = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(42)
+    yield(42)
 }
 
 val extension = generate {
-    <!INAPPLICABLE_CANDIDATE!>extensionYield<!>("foo")
+    extensionYield("foo")
 }
 
 val safeExtension = generate {
-    <!INAPPLICABLE_CANDIDATE!>safeExtensionYield<!>("foo")
+    safeExtensionYield("foo")
 }

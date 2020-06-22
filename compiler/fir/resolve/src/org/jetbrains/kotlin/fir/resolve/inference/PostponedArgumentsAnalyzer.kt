@@ -130,6 +130,24 @@ class PostponedArgumentsAnalyzer(
             stubsForPostponedVariables
         )
 
+        if (inferenceSession != null) {
+            val storageSnapshot = c.getBuilder().currentStorage()
+
+            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot)
+
+            if (postponedVariables == null) {
+                c.getBuilder().removePostponedVariables()
+            } else {
+                for ((constructor, resultType) in postponedVariables) {
+                    val variableWithConstraints = storageSnapshot.notFixedTypeVariables[constructor] ?: continue
+                    val variable = variableWithConstraints.typeVariable as ConeTypeVariable
+
+                    c.getBuilder().unmarkPostponedVariable(variable)
+                    c.getBuilder().addEqualityConstraint(variable.defaultType, resultType, CoroutinePosition())
+                }
+            }
+        }
+
         returnArguments.forEach { c.addSubsystemFromExpression(it) }
 
         val checkerSink: CheckerSink = CheckerSinkImpl(components)
@@ -157,20 +175,6 @@ class PostponedArgumentsAnalyzer(
 
         lambda.analyzed = true
         lambda.returnStatements = returnArguments
-
-        if (inferenceSession != null) {
-            val storageSnapshot = c.getBuilder().currentStorage()
-
-            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot)
-
-            for ((constructor, resultType) in postponedVariables) {
-                val variableWithConstraints = storageSnapshot.notFixedTypeVariables[constructor] ?: continue
-                val variable = variableWithConstraints.typeVariable as ConeTypeVariable
-
-                c.getBuilder().unmarkPostponedVariable(variable)
-                c.getBuilder().addEqualityConstraint(variable.defaultType, resultType, CoroutinePosition())
-            }
-        }
     }
 }
 

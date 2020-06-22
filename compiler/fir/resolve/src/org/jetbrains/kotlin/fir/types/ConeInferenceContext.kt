@@ -295,19 +295,19 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.original as SimpleTypeMarker
     }
 
-    override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
+    override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): ConeSubstitutor {
         if (map.isEmpty()) return createEmptySubstitutor()
         return object : AbstractConeSubstitutor(),
             TypeSubstitutorMarker {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-                if (type !is ConeLookupTagBasedType) return null
+                if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
                 val new = map[type.typeConstructor()] ?: return null
                 return (new as ConeKotlinType).approximateIntegerLiteralType().updateNullabilityIfNeeded(type)
             }
         }
     }
 
-    override fun createEmptySubstitutor(): TypeSubstitutorMarker {
+    override fun createEmptySubstitutor(): ConeSubstitutor {
         return ConeSubstitutor.Empty
     }
 

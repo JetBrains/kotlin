@@ -371,20 +371,31 @@ class FirCallCompletionResultsWriterTransformer(
         data: ExpectedArgumentType?,
     ): CompositeTransformResult<FirStatement> {
         val expectedType = data?.getExpectedType(anonymousFunction)?.takeIf { it.isBuiltinFunctionalType(session) }
-        val expectedReturnType = expectedType?.returnType(session) as? ConeClassLikeType
 
+        var needUpdateLambdaType = false
+
+        val initialReceiverType = anonymousFunction.receiverTypeRef?.coneTypeSafe<ConeKotlinType>()
+        val resultReceiverType = initialReceiverType?.let { finalSubstitutor.substituteOrNull(it) }
+        if (resultReceiverType != null) {
+            anonymousFunction.replaceReceiverTypeRef(anonymousFunction.receiverTypeRef!!.resolvedTypeFromPrototype(resultReceiverType))
+            needUpdateLambdaType = true
+        }
+
+        val expectedReturnType = expectedType?.returnType(session) as? ConeClassLikeType
         val initialType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         if (initialType != null) {
             val finalType = expectedReturnType ?: finalSubstitutor.substituteOrNull(initialType)
-
             val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(finalType)
-
             anonymousFunction.transformReturnTypeRef(StoreType, resultType)
+            needUpdateLambdaType = true
+        }
 
+        if (needUpdateLambdaType) {
             anonymousFunction.replaceTypeRef(
                 anonymousFunction.constructFunctionalTypeRef(session, isSuspend = expectedType?.isSuspendFunctionType(session) == true)
             )
         }
+
         val result = transformElement(anonymousFunction, null)
         val resultFunction = result.single
         if (resultFunction.returnTypeRef.coneTypeSafe<ConeIntegerLiteralType>() != null) {

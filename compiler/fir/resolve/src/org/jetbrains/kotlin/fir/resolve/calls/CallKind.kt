@@ -14,7 +14,8 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         CreateFreshTypeVariableSubstitutorStage,
         CheckReceivers.Dispatch,
         CheckReceivers.Extension,
-        CheckLowPriorityInOverloadResolution
+        CheckLowPriorityInOverloadResolution,
+        PostponedVariablesInitializerResolutionStage
     ),
     SyntheticSelect(
         MapArguments,
@@ -34,7 +35,8 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckReceivers.Extension,
         CheckArguments,
         EagerResolveOfCallableReferences,
-        CheckLowPriorityInOverloadResolution
+        CheckLowPriorityInOverloadResolution,
+        PostponedVariablesInitializerResolutionStage
     ),
     DelegatingConstructorCall(
         CheckVisibility,

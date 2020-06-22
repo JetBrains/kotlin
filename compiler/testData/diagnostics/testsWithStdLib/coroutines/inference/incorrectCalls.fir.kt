@@ -17,20 +17,20 @@ class GenericController<T> {
 fun <S> generate(@BuilderInference g: suspend GenericController<S>.() -> Unit): List<S> = TODO()
 
 val test1 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(3)
+    yield(3)
 }
 
 val test2 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(3)
-    <!INAPPLICABLE_CANDIDATE!>notYield<!>(3)
+    yield(3)
+    notYield(3)
 }
 
 val test3 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(3)
-    <!INAPPLICABLE_CANDIDATE!>yieldBarReturnType<!>(3)
+    yield(3)
+    yieldBarReturnType(3)
 }
 
 val test4 = generate {
-    <!INAPPLICABLE_CANDIDATE!>yield<!>(3)
+    yield(3)
     barReturnType()
 }
