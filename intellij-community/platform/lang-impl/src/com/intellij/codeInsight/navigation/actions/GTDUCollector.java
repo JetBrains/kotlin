@@ -25,6 +25,7 @@ final class GTDUCollector extends CounterUsagesCollector {
     EventFields.InputEvent,
     EventFields.ActionPlace,
     ActionsEventLogGroup.CONTEXT_MENU,
+    EventFields.CurrentFile,
     CHOICE
   );
 

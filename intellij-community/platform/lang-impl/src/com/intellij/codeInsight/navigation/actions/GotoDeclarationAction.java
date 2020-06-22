@@ -14,7 +14,9 @@ import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.internal.statistic.collectors.fus.actions.persistence.ActionsCollectorImpl;
+import com.intellij.internal.statistic.eventLog.EventFields;
 import com.intellij.internal.statistic.eventLog.EventPair;
+import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -42,6 +44,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.usageView.UsageViewUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -56,28 +59,34 @@ import static com.intellij.codeInsight.navigation.actions.UiKt.notifyNowhereToGo
 public class GotoDeclarationAction extends BaseCodeInsightAction implements CodeInsightActionHandler, DumbAware, CtrlMouseAction {
 
   private static final Logger LOG = Logger.getInstance(GotoDeclarationAction.class);
-  private static List<EventPair<?>> ourCurrentEventData; // accessed from EDT only
+  private static List<EventPair<?>> ourCurrentActionData; // accessed from EDT only
 
   @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
+    PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
+    Language language = file != null ? file.getLanguage() : null;
+    List<EventPair<?>> currentActionData = ContainerUtil.append(
+      ActionsCollectorImpl.actionEventData(e),
+      EventFields.CurrentFile.with(language)
+    );
     try {
-      ourCurrentEventData = ActionsCollectorImpl.actionEventData(e);
+      ourCurrentActionData = currentActionData;
       super.actionPerformed(e);
     }
     finally {
-      ourCurrentEventData = null;
+      ourCurrentActionData = null;
     }
   }
 
   static void recordGTD() {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    GTDUCollector.record(ourCurrentEventData, GTDUCollector.GTDUChoice.GTD);
+    GTDUCollector.record(ourCurrentActionData, GTDUCollector.GTDUChoice.GTD);
   }
 
   static void recordSU() {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    GTDUCollector.record(ourCurrentEventData, GTDUCollector.GTDUChoice.SU);
+    GTDUCollector.record(ourCurrentActionData, GTDUCollector.GTDUChoice.SU);
   }
 
   @NotNull
