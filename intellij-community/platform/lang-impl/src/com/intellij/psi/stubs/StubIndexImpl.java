@@ -5,10 +5,6 @@ import com.intellij.model.ModelBranchImpl;
 import com.intellij.openapi.application.AppUIExecutor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
@@ -19,7 +15,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.psi.PsiElement;
@@ -59,8 +54,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.function.IntPredicate;
 
-@State(name = "FileBasedIndex", storages = @Storage(StoragePathMacros.CACHE_FILE), reportStatistic = false)
-public final class StubIndexImpl extends StubIndexEx implements PersistentStateComponent<StubIndexState> {
+public final class StubIndexImpl extends StubIndexEx {
   private static final AtomicReference<Boolean> ourForcedClean = new AtomicReference<>(null);
   static final Logger LOG = Logger.getInstance(StubIndexImpl.class);
 
@@ -80,8 +74,6 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   private volatile CompletableFuture<AsyncState> myStateFuture;
   private volatile AsyncState myState;
   private volatile boolean myInitialized;
-
-  private StubIndexState myPreviouslyRegistered;
 
   public StubIndexImpl() {
     StubIndexExtension.EP_NAME.addExtensionPointListener(new ExtensionPointListener<StubIndexExtension<?, ?>>() {
@@ -585,36 +577,6 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     index.removeTransientDataForKeys(inputId, keys);
   }
 
-  private void dropUnregisteredIndices(@NotNull AsyncState state) {
-    if (ApplicationManager.getApplication().isDisposed() || !IndexInfrastructure.hasIndices()) {
-      return;
-    }
-
-    Set<String> indicesToDrop = new HashSet<>(myPreviouslyRegistered != null ? myPreviouslyRegistered.registeredIndices : Collections.emptyList());
-    for (ID<?, ?> key : state.myIndices.keySet()) {
-      indicesToDrop.remove(key.getName());
-    }
-
-    if (!indicesToDrop.isEmpty()) {
-      LOG.info("Dropping indices:" + StringUtil.join(indicesToDrop, ","));
-
-      for (String s : indicesToDrop) {
-        FileUtil.delete(IndexInfrastructure.getStubIndexRootDir(s));
-      }
-    }
-  }
-
-  @Override
-  public StubIndexState getState() {
-    if (!myInitialized) return null;
-    return new StubIndexState(getAsyncState().myIndices.keySet());
-  }
-
-  @Override
-  public void loadState(final @NotNull StubIndexState state) {
-    myPreviouslyRegistered = state;
-  }
-
   public <K> void updateIndex(@NotNull StubIndexKey<K, ?> stubIndexKey,
                               int fileId,
                               @NotNull Set<K> oldKeys,
@@ -699,8 +661,6 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
     @Override
     protected AsyncState finish() {
-      dropUnregisteredIndices(state);
-
       indicesRegistrationSink.logChangedAndFullyBuiltIndices(LOG, "Following stub indices will be updated:",
                                                              "Following stub indices will be built:");
 
