@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.*
-import com.intellij.formatting.blocks.prev
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
@@ -1189,6 +1188,15 @@ private fun getWrappingStrategyForItemList(wrapType: Int, itemTypes: TokenSet, w
         else
             null
     }
+}
+
+private fun ASTNode.prev(): ASTNode? {
+    var prev = treePrev
+    while (prev != null && prev.elementType == TokenType.WHITE_SPACE) {
+        prev = prev.treePrev
+    }
+    if (prev != null) return prev
+    return if (treeParent != null) treeParent.prev() else null
 }
 
 private fun List<ASTBlock>.indexOfBlockWithType(tokenSet: TokenSet): Int {

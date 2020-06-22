@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
-internal fun MemberDescriptor.expectedDescriptors() =
+fun MemberDescriptor.expectedDescriptors() =
     (module.implementedDescriptors + module)
         .mapNotNull { it.declarationOf(this) }
 
