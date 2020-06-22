@@ -130,7 +130,7 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
           }
         }
 
-        updateSourceFolders(sourceFoldersToChange)
+        ApplicationManager.getApplication().executeOnPooledThread { updateSourceFolders(sourceFoldersToChange) }
       }
     })
 
