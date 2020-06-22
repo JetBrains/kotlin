@@ -13,9 +13,7 @@ proprietaryRepositories(project)
 addIdeaNativeModuleDeps(project)
 
 dependencies {
-    if (ijProductBranch(cidrVersion) >= 202) {
-        compileOnly("com.jetbrains.intellij.cidr:cidr-core:$cidrVersion") { isTransitive = false }
-    }
+    compileOnly("com.jetbrains.intellij.cidr:cidr-core:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
