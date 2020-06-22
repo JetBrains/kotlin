@@ -75,6 +75,21 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("idea/testData/refactoring/inline/function/MultipleReturns.kt");
         }
 
+        @TestMetadata("NullableUnitReturnType.kt")
+        public void testNullableUnitReturnType() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/NullableUnitReturnType.kt");
+        }
+
+        @TestMetadata("NullableUnitReturnType2.kt")
+        public void testNullableUnitReturnType2() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/NullableUnitReturnType2.kt");
+        }
+
+        @TestMetadata("NullableUnitReturnType3.kt")
+        public void testNullableUnitReturnType3() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/NullableUnitReturnType3.kt");
+        }
+
         @TestMetadata("OuterClassReceiver.kt")
         public void testOuterClassReceiver() throws Exception {
             runTest("idea/testData/refactoring/inline/function/OuterClassReceiver.kt");
@@ -133,6 +148,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("UnitReturnType2.kt")
         public void testUnitReturnType2() throws Exception {
             runTest("idea/testData/refactoring/inline/function/UnitReturnType2.kt");
+        }
+
+        @TestMetadata("UnitReturnType3.kt")
+        public void testUnitReturnType3() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/UnitReturnType3.kt");
+        }
+
+        @TestMetadata("UnitReturnType4.kt")
+        public void testUnitReturnType4() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/UnitReturnType4.kt");
         }
 
         @TestMetadata("idea/testData/refactoring/inline/function/expressionBody")

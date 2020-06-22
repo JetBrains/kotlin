@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.inspections.RedundantUnitExpressionInspection
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -407,26 +408,28 @@ class CodeInliner<TCallElement : KtElement>(
     }
 
     private fun postProcessInsertedCode(range: PsiChildRange, lexicalScope: LexicalScope?): PsiChildRange {
-        val elements = range.filterIsInstance<KtElement>().toList()
-        if (elements.isEmpty()) return PsiChildRange.EMPTY
+        val pointers = range.filterIsInstance<KtElement>().map { it.createSmartPointer() }.toList()
+        if (pointers.isEmpty()) return PsiChildRange.EMPTY
 
         lexicalScope?.let {
-            renameDuplicates(elements.dropLast(1).filterIsInstance<KtNamedDeclaration>(), it)
+            renameDuplicates(pointers.dropLast(1).mapNotNull { pointer -> pointer.element as? KtNamedDeclaration }, it)
         }
 
-        elements.forEach {
-            introduceNamedArguments(it)
+        for (pointer in pointers) {
+            val element = pointer.element ?: continue
+            introduceNamedArguments(element)
 
-            restoreFunctionLiteralArguments(it)
+            restoreFunctionLiteralArguments(element)
 
             //TODO: do this earlier
-            dropArgumentsForDefaultValues(it)
+            dropArgumentsForDefaultValues(element)
 
-            simplifySpreadArrayOfArguments(it)
+            simplifySpreadArrayOfArguments(element)
 
-            removeExplicitTypeArguments(it)
+            removeExplicitTypeArguments(element)
+
+            removeRedundantUnitExpressions(element)
         }
-
 
         val shortenFilter = { element: PsiElement ->
             if (element[USER_CODE_KEY]) {
@@ -440,11 +443,13 @@ class CodeInliner<TCallElement : KtElement>(
             }
         }
 
-        val newElements = elements.map {
-            ShortenReferences { ShortenReferences.Options(removeThis = true) }.process(it, elementFilter = shortenFilter)
+        val newElements = pointers.mapNotNull {
+            it.element?.let { element ->
+                ShortenReferences { ShortenReferences.Options(removeThis = true) }.process(element, elementFilter = shortenFilter)
+            }
         }
 
-        newElements.forEach { element ->
+        for (element in newElements) {
             // clean up user data
             element.forEachDescendantOfType<KtExpression> {
                 it.clear(USER_CODE_KEY)
@@ -460,7 +465,15 @@ class CodeInliner<TCallElement : KtElement>(
             }
         }
 
-        return PsiChildRange(newElements.first(), newElements.last())
+        return if (newElements.isEmpty()) PsiChildRange.EMPTY else PsiChildRange(newElements.first(), newElements.last())
+    }
+
+    private fun removeRedundantUnitExpressions(result: KtElement) {
+        result.forEachDescendantOfType<KtReferenceExpression> {
+            if (RedundantUnitExpressionInspection.isRedundantUnit(it)) {
+                it.delete()
+            }
+        }
     }
 
     private fun introduceNamedArguments(result: KtElement) {
