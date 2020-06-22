@@ -32,11 +32,6 @@ import java.util.Collection;
  * Error messages
  */
 public interface ComposeErrors {
-    DiagnosticFactory0<PsiElement> OPEN_MODEL = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtElement>
-            SUSPEND_FUNCTION_USED_AS_SFC = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement>
-            COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<KtExpression, Collection<KotlinType>, Collection<KotlinType>>
             ILLEGAL_ASSIGN_TO_UNIONTYPE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement>

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 
 class ComposeCommandLineProcessor : CommandLineProcessor {
@@ -66,7 +65,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
         ) {
             StorageComponentContainerContributor.registerExtension(
                 project,
-                ComposableAnnotationChecker()
+                ComposableCallChecker()
             )
             StorageComponentContainerContributor.registerExtension(
                 project,
@@ -86,10 +85,6 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             )
             IrGenerationExtension.registerExtension(project,
                 ComposeIrGenerationExtension()
-            )
-            CandidateInterceptor.registerExtension(
-                project,
-                ComposeCallResolutionInterceptorExtension()
             )
         }
     }

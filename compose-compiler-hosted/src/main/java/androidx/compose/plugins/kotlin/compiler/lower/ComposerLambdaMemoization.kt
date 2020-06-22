@@ -18,6 +18,7 @@ package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.ComposeUtils
 import androidx.compose.plugins.kotlin.ComposeUtils.composeInternalFqName
+import androidx.compose.plugins.kotlin.allowsComposableCalls
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.composableTrackedContract
 import androidx.compose.plugins.kotlin.irTrace
@@ -167,7 +168,7 @@ class ComposerLambdaMemoization(
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val descriptor = declaration.descriptor
-        val composable = descriptor.isComposable()
+        val composable = descriptor.allowsComposableCalls()
         val canRemember = composable &&
                 // Don't use remember in an inline function
                 !descriptor.isInline &&
@@ -315,7 +316,7 @@ class ComposerLambdaMemoization(
     override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
         val declarationContext = declarationContextStack.peek()
             ?: return super.visitFunctionExpression(expression)
-        return if (expression.isComposable())
+        return if (expression.allowsComposableCalls())
             visitComposableFunctionExpression(expression, declarationContext)
         else
             visitNonComposableFunctionExpression(expression, declarationContext)

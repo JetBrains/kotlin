@@ -21,6 +21,7 @@ import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.generateSymbols
 import androidx.compose.plugins.kotlin.hasComposableAnnotation
 import androidx.compose.plugins.kotlin.irTrace
+import androidx.compose.plugins.kotlin.isComposableCallable
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -148,7 +149,7 @@ class ComposerParamTransformer(
 
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter): IrCall {
         val isComposableLambda = isComposableLambdaInvoke()
-        if (!symbol.descriptor.isComposable() && !isComposableLambda)
+        if (!symbol.descriptor.isComposableCallable() && !isComposableLambda)
             return this
         val ownerFn = when {
             isComposableLambda -> {
@@ -282,11 +283,9 @@ class ComposerParamTransformer(
         if (transformedFunctionSet.contains(this)) return this
 
         // if not a composable fn, nothing we need to do
-        if (!descriptor.isComposable()) return this
-
-        // emit children lambdas are marked composable, but technically they are unit lambdas... so
-        // we don't want to transform them
-        if (isEmitInlineChildrenLambda()) return this
+        if (!descriptor.isComposableCallable(context.bindingContext)) {
+            return this
+        }
 
         // if this function is an inlined lambda passed as an argument to an inline function (and
         // is NOT a composable lambda), then we don't want to transform it. Ideally, this
@@ -652,10 +651,6 @@ class ComposerParamTransformer(
                 return !arg.type.hasComposableAnnotation()
             }
         }
-        return false
-    }
-
-    private fun IrFunction.isEmitInlineChildrenLambda(): Boolean {
         return false
     }
 }
