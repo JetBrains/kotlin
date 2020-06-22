@@ -1,9 +1,3 @@
-8 override fun foo() = <bold>2</bold> (in B.foo())
-17 	<bold>val y</bold> = b.foo() (in test(A, B,…))
-17 		val y = <bold>b.foo()</bold> (in test(A, B,…))
-8 			override <bold>fun foo()</bold> = 2 (in B)
-8 				override fun foo() = <bold>2</bold> (in B.foo())
-
 12 override fun foo() = <bold>3</bold> (in C.foo())
 17 	<bold>val y</bold> = b.foo() (in test(A, B,…))
 17 		val y = <bold>b.foo()</bold> (in test(A, B,…))
@@ -14,3 +8,10 @@
 17 	<bold>val y</bold> = b.foo() (in test(A, B,…))
 17 		val y = <bold>b.foo()</bold> (in test(A, B,…))
 3 			return <bold>5</bold>;
+
+8 override fun foo() = <bold>2</bold> (in B.foo())
+17 	<bold>val y</bold> = b.foo() (in test(A, B,…))
+17 		val y = <bold>b.foo()</bold> (in test(A, B,…))
+8 			override <bold>fun foo()</bold> = 2 (in B)
+8 				override fun foo() = <bold>2</bold> (in B.foo())
+

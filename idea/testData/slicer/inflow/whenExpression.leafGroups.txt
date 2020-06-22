@@ -4,12 +4,13 @@
 6 			2 -> <bold>n</bold> (in test(Int, Int))
 3 				fun test(m: Int, <bold>n: Int</bold>) { (in test(Int, Int))
 
+5 1 -> <bold>1</bold> (in test(Int, Int))
+4 	<bold>val x</bold> = when (m) { (in test(Int, Int))
+4 		val x = <bold>when (m) {</bold> (in test(Int, Int))
+5 			1 -> <bold>1</bold> (in test(Int, Int))
+
 7 else -> <bold>0</bold> (in test(Int, Int))
 4 	<bold>val x</bold> = when (m) { (in test(Int, Int))
 4 		val x = <bold>when (m) {</bold> (in test(Int, Int))
 7 			else -> <bold>0</bold> (in test(Int, Int))
 
-5 1 -> <bold>1</bold> (in test(Int, Int))
-4 	<bold>val x</bold> = when (m) { (in test(Int, Int))
-4 		val x = <bold>when (m) {</bold> (in test(Int, Int))
-5 			1 -> <bold>1</bold> (in test(Int, Int))

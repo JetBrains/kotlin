@@ -17,8 +17,8 @@ abstract class AbstractSlicerLeafGroupingTest : AbstractSlicerTest() {
         val leafExpressions = analyzer.calcLeafExpressions(rootNode, treeStructure, possibleElementsByNode)
         val newRootNode = analyzer.createTreeGroupedByValues(leafExpressions, rootNode, possibleElementsByNode)
         val renderedForest = buildString {
-            for (groupRootNode in newRootNode.children) {
-                append(buildTreeRepresentation(groupRootNode))
+            newRootNode.children.map { groupRootNode -> buildTreeRepresentation(groupRootNode) }.sorted().forEach {
+                append(it)
                 append("\n")
             }
         }
