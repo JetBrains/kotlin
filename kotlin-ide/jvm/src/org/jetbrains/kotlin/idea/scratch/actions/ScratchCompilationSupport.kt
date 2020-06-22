@@ -9,30 +9,23 @@ import org.jetbrains.kotlin.idea.scratch.ScratchExecutor
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 
 object ScratchCompilationSupport {
-    private var inProgress = false
+    private data class FileExecutor(val file: ScratchFile, val executor: ScratchExecutor)
+    @Volatile
+    private var fileExecutor: FileExecutor? = null
 
-    private var file: ScratchFile? = null
-    private var executor: ScratchExecutor? = null
-
-    fun isInProgress(file: ScratchFile): Boolean = inProgress && this.file == file
-    fun isAnyInProgress(): Boolean = inProgress
+    fun isInProgress(file: ScratchFile): Boolean = fileExecutor?.file == file
+    fun isAnyInProgress(): Boolean = fileExecutor != null
 
     fun start(file: ScratchFile, executor: ScratchExecutor) {
-        this.inProgress = true
-
-        this.file = file
-        this.executor = executor
+        fileExecutor = FileExecutor(file, executor)
     }
 
     fun stop() {
-        this.inProgress = false
-
-        this.file = null
-        this.executor = null
+        fileExecutor = null
     }
 
     fun forceStop() {
-        this.executor?.stop()
+        fileExecutor?.executor?.stop()
 
         stop()
     }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.scratch.compile
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.module.Module
@@ -16,6 +17,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.NonUrgentExecutor
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
@@ -56,9 +58,15 @@ class KtScratchExecutionSession(
         if (!executor.checkForErrors(psiFile, expressions)) return
 
         val project = file.project
-        ReadAction.nonBlocking {
-                when (val result = KtScratchSourceFileProcessor().process(expressions)) {
-                    is KtScratchSourceFileProcessor.Result.Error -> return@nonBlocking executor.errorOccurs(result.message, isFatal = true)
+        ReadAction.nonBlocking<KtScratchSourceFileProcessor.Result> {
+            KtScratchSourceFileProcessor().process(expressions)
+        }
+            .inSmartMode(project)
+            .expireWith(project)
+            .withDocumentsCommitted(project)
+            .finishOnUiThread(ModalityState.any()) { result ->
+                when (result) {
+                    is KtScratchSourceFileProcessor.Result.Error -> executor.errorOccurs(result.message, isFatal = true)
                     is KtScratchSourceFileProcessor.Result.OK -> {
                         LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
 
@@ -72,7 +80,8 @@ class KtScratchExecutionSession(
 
                                 try {
                                     runCommandLine(project, modifiedScratchSourceFile, expressions, psiFile, result, indicator, callback)
-                                } catch (e: Throwable) {
+                                }
+                                catch (e: Throwable) {
                                     if (e is ControlFlowException) throw e
 
                                     LOG.printDebugMessage(result.code)
@@ -86,11 +95,9 @@ class KtScratchExecutionSession(
                         }.queue()
                     }
                 }
+
             }
-            .inSmartMode(project)
-            .expireWith(project)
-            .withDocumentsCommitted(project)
-            .submit(NonUrgentExecutor.getInstance())
+            .submit(AppExecutorUtil.getAppExecutorService())
     }
 
     private fun runCommandLine(

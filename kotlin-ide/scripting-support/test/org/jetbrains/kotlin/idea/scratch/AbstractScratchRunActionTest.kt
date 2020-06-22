@@ -280,6 +280,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
                 LOG.warn("Waiting timeout $TIME_OUT ms is exceed")
                 break
             }
+            UIUtil.dispatchAllInvocationEvents()
             Thread.sleep(100)
         }
 

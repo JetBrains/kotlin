@@ -257,7 +257,7 @@ fun loadDefinitionsFromTemplates(
     additionalResolverClasspath: List<File> = emptyList()
 ): List<ScriptDefinition> {
     val classpath = templateClasspath + additionalResolverClasspath
-    LOG.info("[kts] loading script definitions $templateClassNames using cp: ${classpath.joinToString(File.pathSeparator)}")
+    LOG.info("[kts] loading script definitions $templateClassNames using classpath: ${classpath.joinToString(File.pathSeparator)}")
     val baseLoader = ScriptDefinitionContributor::class.java.classLoader
     val loader = if (classpath.isEmpty()) baseLoader else URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseLoader)
 
