@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
+import java.nio.file.Files
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -678,8 +679,22 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testInternalTest() {
-        Project("internalTest").build("build") {
+    fun testInternalTest() = with(
+        Project("internalTest")
+    ) {
+        build("build") {
+            assertSuccessful()
+            assertReportExists()
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
+        }
+
+        // Check KT-35341: use symlinked build dir
+        val buildDir = projectDir.resolve("build")
+        buildDir.deleteRecursively()
+        val externalBuildDir = Files.createTempDirectory(workingDir.toPath(), "externalBuild")
+        Files.createSymbolicLink(buildDir.toPath(), externalBuildDir)
+
+        build("build") {
             assertSuccessful()
             assertReportExists()
             assertTasksExecuted(":compileKotlin", ":compileTestKotlin")

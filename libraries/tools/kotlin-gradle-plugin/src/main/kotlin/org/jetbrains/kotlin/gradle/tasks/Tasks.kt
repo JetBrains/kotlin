@@ -256,7 +256,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             associateWithTransitiveClosure
                 .flatMap { it.output.classesDirs }
                 .plus(friendArtifacts)
-                .map { it.canonicalPath }.toTypedArray()
+                .map { it.absolutePath }.toTypedArray()
         }
     }
 
