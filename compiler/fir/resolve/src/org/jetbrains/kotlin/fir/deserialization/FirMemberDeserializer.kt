@@ -40,6 +40,7 @@ class FirDeserializationContext(
     val relativeClassName: FqName?,
     val typeDeserializer: FirTypeDeserializer,
     val annotationDeserializer: AbstractAnnotationDeserializer,
+    val constDeserializer: FirConstDeserializer,
     val containerSource: DeserializedContainerSource?,
     outerTypeParameters: List<FirTypeParameterSymbol>,
     val components: FirDeserializationComponents
@@ -58,7 +59,8 @@ class FirDeserializationContext(
         FirTypeDeserializer(
             session, nameResolver, typeTable, typeParameterProtos, typeDeserializer
         ),
-        annotationDeserializer, containerSource, if (capturesTypeParameters) allTypeParameters else emptyList(), components
+        annotationDeserializer, constDeserializer, containerSource,
+        if (capturesTypeParameters) allTypeParameters else emptyList(), components
     )
 
     val memberDeserializer: FirMemberDeserializer = FirMemberDeserializer(this)
@@ -70,12 +72,14 @@ class FirDeserializationContext(
             nameResolver: NameResolver,
             session: FirSession,
             annotationDeserializer: AbstractAnnotationDeserializer,
+            constDeserializer: FirConstDeserializer,
             containerSource: DeserializedContainerSource?
         ) = createRootContext(
             nameResolver,
             TypeTable(packageProto.typeTable),
             session,
             annotationDeserializer,
+            constDeserializer,
             fqName,
             relativeClassName = null,
             typeParameterProtos = emptyList(),
@@ -88,12 +92,14 @@ class FirDeserializationContext(
             nameResolver: NameResolver,
             session: FirSession,
             annotationDeserializer: AbstractAnnotationDeserializer,
+            constDeserializer: FirConstDeserializer,
             containerSource: DeserializedContainerSource?
         ) = createRootContext(
             nameResolver,
             TypeTable(classProto.typeTable),
             session,
             annotationDeserializer,
+            constDeserializer,
             classId.packageFqName,
             classId.relativeClassName,
             classProto.typeParameterList,
@@ -105,6 +111,7 @@ class FirDeserializationContext(
             typeTable: TypeTable,
             session: FirSession,
             annotationDeserializer: AbstractAnnotationDeserializer,
+            constDeserializer: FirConstDeserializer,
             packageFqName: FqName,
             relativeClassName: FqName?,
             typeParameterProtos: List<ProtoBuf.TypeParameter>,
@@ -124,6 +131,7 @@ class FirDeserializationContext(
                     null
                 ),
                 annotationDeserializer,
+                constDeserializer,
                 containerSource,
                 emptyList(),
                 FirDeserializationComponents()
@@ -272,11 +280,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.getter = getter
             this.setter = setter
             this.containerSource = c.containerSource
-            this.initializer = if (Flags.HAS_CONSTANT.get(flags)) {
-                proto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue)?.let {
-                    c.annotationDeserializer.resolveValue(returnTypeRef, it, c.nameResolver)
-                }
-            } else null
+            this.initializer = c.constDeserializer.loadConstant(proto, symbol.callableId, c.nameResolver)
         }
     }
 

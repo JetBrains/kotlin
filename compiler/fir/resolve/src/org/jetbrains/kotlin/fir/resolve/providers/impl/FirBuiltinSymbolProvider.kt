@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
+import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -78,6 +79,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
             FirDeserializationContext.createForPackage(
                 fqName, packageProto.`package`, nameResolver, session,
                 FirBuiltinAnnotationDeserializer(session),
+                FirConstDeserializer(session),
                 containerSource = null
             ).memberDeserializer
         }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
+import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -112,6 +113,10 @@ class KotlinDeserializedJvmSymbolsProvider(
             val (kotlinJvmBinaryClass, byteContent) =
                 kotlinClassFinder.findKotlinClassOrContent(classId) as? KotlinClassFinder.Result.KotlinClass ?: return@mapNotNull null
 
+            val facadeName = kotlinJvmBinaryClass.classHeader.multifileClassName?.takeIf { it.isNotEmpty() }
+            val facadeFqName = facadeName?.let { JvmClassName.byInternalName(it).fqNameForTopLevelClassMaybeWithDollars }
+            val facadeBinaryClass = facadeFqName?.let { kotlinClassFinder.findKotlinClass(ClassId.topLevel(it)) }
+
             val header = kotlinJvmBinaryClass.classHeader
             val data = header.data ?: header.incompatibleData ?: return@mapNotNull null
             val strings = header.strings ?: return@mapNotNull null
@@ -127,6 +132,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, session,
                     JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, byteContent),
+                    FirConstDeserializer(session, kotlinJvmBinaryClass, facadeBinaryClass),
                     source
                 ),
                 source,

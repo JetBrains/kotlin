@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
@@ -81,6 +82,7 @@ fun deserializeClassToSymbol(
         ) ?: FirDeserializationContext.createForClass(
             classId, classProto, nameResolver, session,
             defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session),
+            FirConstDeserializer(session, (containerSource as? KotlinJvmBinarySourceElement)?.binaryClass),
             containerSource
         )
     buildRegularClass {
