@@ -1,3 +1,4 @@
+// IGNORE_DUPLICATED_FIR_SOURCE_EXCEPTION
 fun test() {
     MyClass().test1
     MyClass().<warning descr="[DEPRECATION] 'setter for test1: Int' is deprecated. Use A instead">test1</warning> = 0

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -18,12 +20,16 @@ import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.LibrarySourceInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtTypeReference
 
 internal interface FirModuleResolveState {
     val sessionProvider: FirProjectSessionProvider
@@ -96,7 +102,36 @@ internal class FirModuleResolveStateImpl(override val sessionProvider: FirProjec
     }
 
     override fun record(psi: KtElement, fir: FirElement) {
-        cache.putIfAbsent(psi, fir)
+        val existingFir = cache[psi]
+        if (existingFir != null && existingFir !== fir) {
+            when {
+                existingFir is FirTypeRef && fir is FirTypeRef && psi is KtTypeReference -> {
+                    // FirTypeRefs are often created during resolve
+                    // a lot of them with have the same source
+                    // we want to take the most "resolved one" here
+                    if (fir is FirResolvedTypeRefImpl && existingFir !is FirResolvedTypeRefImpl) {
+                        cache[psi] = fir
+                    }
+                }
+                existingFir.isErrorElement && !fir.isErrorElement -> {
+                    // TODO better handle error elements
+                    // but for now just take first non-error one if such exist
+                    cache[psi] = fir
+                }
+                existingFir.isErrorElement || fir.isErrorElement -> {
+                    // do nothing and maybe upgrade to a non-error element in the branch above in the future
+                }
+                else -> {
+
+                    if (DuplicatedFirSourceElementsException.IS_ENABLED) {
+                        throw DuplicatedFirSourceElementsException(existingFir, fir, psi)
+                    }
+                }
+            }
+        }
+        if (existingFir == null) {
+            cache[psi] = fir
+        }
     }
 
     override fun record(psi: KtElement, diagnostic: Diagnostic) {
@@ -115,5 +150,52 @@ internal class FirModuleResolveStateImpl(override val sessionProvider: FirProjec
     }
 }
 
+class DuplicatedFirSourceElementsException(
+    private val existingFir: FirElement,
+    private val newFir: FirElement,
+    private val psi: KtElement
+) : IllegalStateException() {
+    override val message: String?
+        get() =
+            """|The PSI element should be used only once as a real PSI source of FirElement,
+               |the elements ${if (existingFir.source === newFir.source) "HAVE" else "DON'T HAVE"} the same instances of source elements 
+               |
+               |existing FIR element is $existingFir with text:
+               |${existingFir.render().trim()}
+               |
+               |new FIR element is $newFir with text:
+               | ${newFir.render().trim()}
+               |
+               |PSI element is $psi with text in context:
+               |${getElementInContext(psi)}""".trimMargin()
+
+    private fun getElementInContext(neededElement: KtElement): String {
+        val context = neededElement.containingDeclarationForPseudocode ?: neededElement.containingKtFile
+        val builder = StringBuilder()
+        context.accept(object : PsiElementVisitor() {
+            override fun visitElement(element: PsiElement) {
+                if (element === neededElement) builder.append("<$ELEMENT_TAG>")
+                if (element is LeafPsiElement) {
+                    builder.append(element.text)
+                } else {
+                    element.acceptChildren(this)
+                }
+                if (element === neededElement) builder.append("</$ELEMENT_TAG>")
+            }
+        })
+        return builder.toString().trimIndent().trim()
+    }
+
+    companion object {
+        private const val ELEMENT_TAG = "ELEMENT"
+
+        // The are some cases which are still generates FIR elements with duplicated source elements
+        // Then such case is met, it's better to be fixed
+        // but exception reporting can be easily disabled by setting this to false
+        var IS_ENABLED = true
+    }
+}
+
 internal fun KtElement.firResolveState(): FirModuleResolveState =
     FirIdeResolveStateService.getInstance(project).getResolveState(getModuleInfo())
+
