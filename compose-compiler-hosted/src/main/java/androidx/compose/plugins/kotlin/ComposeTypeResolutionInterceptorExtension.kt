@@ -16,12 +16,13 @@
 
 package androidx.compose.plugins.kotlin
 
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.INFERRED_COMPOSABLE_DESCRIPTOR
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptorExtension
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -54,18 +55,12 @@ open class ComposeTypeResolutionInterceptorExtension : TypeResolutionInterceptor
     ): KotlinType {
         if (resultType === TypeUtils.NO_EXPECTED_TYPE) return resultType
         if (element !is KtLambdaExpression) return resultType
-        val module = context.scope.ownerDescriptor.module
-        val checker =
-            StorageComponentContainerContributor.getInstances(element.project).single {
-                it is ComposableAnnotationChecker
-            } as ComposableAnnotationChecker
-        if ((context.expectedType.hasComposableAnnotation() || checker.analyze(
-                context.trace,
-                element,
-                resultType
-            ) != ComposableAnnotationChecker.Composability.NOT_COMPOSABLE)
+        if (
+            element.getAnnotationEntries().hasComposableAnnotation(context.trace.bindingContext) ||
+            context.expectedType.hasComposableAnnotation()
         ) {
-            return resultType.makeComposable(module)
+            context.trace.record(ComposeWritableSlices.INFERRED_COMPOSABLE_LITERAL, element, true)
+            return resultType.makeComposable(context.scope.ownerDescriptor.module)
         }
         return resultType
     }

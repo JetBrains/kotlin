@@ -10,19 +10,6 @@ object ComposeDefaultErrorMessages : DefaultErrorMessages.Extension {
 
     init {
         MAP.put(
-            ComposeErrors.OPEN_MODEL,
-            "Model objects cannot be open or abstract"
-        )
-        MAP.put(
-            ComposeErrors.SUSPEND_FUNCTION_USED_AS_SFC,
-            "Suspend functions are not allowed to be used as Components"
-        )
-        MAP.put(
-            ComposeErrors.COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,
-            "Functions which invoke @Composable functions must be marked with the @Composable " +
-                    "annotation"
-        )
-        MAP.put(
             ComposeErrors.ILLEGAL_ASSIGN_TO_UNIONTYPE,
             "Value of type {0} can't be assigned to union type {1}.",
             RENDER_COLLECTION_OF_TYPES,

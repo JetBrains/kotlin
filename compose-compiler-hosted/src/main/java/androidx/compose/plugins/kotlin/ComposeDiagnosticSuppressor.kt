@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtAnnotatedExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
@@ -61,17 +58,11 @@ open class ComposeDiagnosticSuppressor : DiagnosticSuppressor {
             }
         }
         if (diagnostic.factory == Errors.NAMED_ARGUMENTS_NOT_ALLOWED) {
-            val functionCall = diagnostic.psiElement.parent.parent.parent.parent as KtExpression
             if (bindingContext != null) {
                 val call = (diagnostic.psiElement.parent.parent.parent.parent as KtCallExpression)
                     .getCall(bindingContext).getResolvedCall(bindingContext)
-                val temporaryTrace = TemporaryBindingTrace.create(
-                    BindingTraceContext.createTraceableBindingTrace(),
-                    "trace to resolve ktx call",
-                    functionCall
-                )
                 if (call != null) {
-                    return ComposableAnnotationChecker().shouldInvokeAsTag(temporaryTrace, call)
+                    return call.isComposableInvocation()
                 }
             }
         }

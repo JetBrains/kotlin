@@ -16,8 +16,6 @@
 
 package androidx.compose.plugins.kotlin
 
-import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
-import androidx.compose.plugins.kotlin.ComposableAnnotationChecker.Composability
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -59,7 +57,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
             @Composable
             fun Foo() {
-                <marked>
+                <composable>
             }
         """
     )
@@ -68,15 +66,15 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
         """
             import androidx.compose.*
 
-            val foo = @Composable { <marked> }
+            val foo = @Composable { <composable> }
 
             @Composable
             fun Bar() {
-                <marked>
+                <composable>
                 fun bam() { <normal> }
                 val x = { <normal> }
-                val y = @Composable { <marked> }
-                @Composable fun z() { <marked> }
+                val y = @Composable { <composable> }
+                @Composable fun z() { <composable> }
             }
         """
     )
@@ -88,9 +86,9 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
             @Composable
             fun Bar() {
-                <marked>
+                <composable>
                 listOf(1, 2, 3).forEach {
-                    <inferred> // should be inferred, but is normal
+                    <composable>
                 }
             }
         """
@@ -104,11 +102,11 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
             @Composable
             fun Bar() {
-                <marked>
+                <composable>
                 Wrap {
-                    <marked>
+                    <composable>
                     Wrap {
-                        <marked>
+                        <composable>
                     }
                 }
             }
@@ -123,7 +121,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
             @Composable
             fun Bar() {
-                <marked>
+                <composable>
                 Callback {
                     <normal>
                 }
@@ -140,7 +138,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
             fun Bar() {
                 <normal>
                 kickOff {
-                    <marked>
+                    <composable>
                 }
             }
         """
@@ -162,17 +160,13 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
         ).bindingContext
 
         carets.forEachIndexed { index, (offset, marking) ->
-            val composability = composabiliityAtOffset(bindingContext, ktFile, offset)
-                ?: error("composability not found for index: $index, offset: $offset. Expected " +
-                        "$marking.")
+            val composable = composabiliityAtOffset(bindingContext, ktFile, offset)
 
             when (marking) {
-                "<marked>" -> assertEquals("index: $index", Composability.MARKED, composability)
-                "<inferred>" -> assertEquals("index: $index", Composability.INFERRED, composability)
-                "<normal>" -> assertEquals(
+                "<composable>" -> assertTrue("index: $index", composable)
+                "<normal>" -> assertTrue(
                     "index: $index",
-                    Composability.NOT_COMPOSABLE,
-                    composability
+                    !composable
                 )
                 else -> error("Composability of $marking not recognized.")
             }
@@ -195,7 +189,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
         bindingContext: BindingContext,
         jetFile: KtFile,
         index: Int
-    ): Composability? {
+    ): Boolean {
         val element = jetFile.findElementAt(index)!!
         return element.getNearestComposability(bindingContext)
     }
@@ -203,7 +197,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
 fun PsiElement?.getNearestComposability(
     bindingContext: BindingContext
-): Composability? {
+): Boolean {
     var node: PsiElement? = this
     while (node != null) {
         when (node) {
@@ -215,11 +209,14 @@ fun PsiElement?.getNearestComposability(
             is KtFunction,
             is KtPropertyAccessor,
             is KtProperty -> {
-                val el = node as KtElement
-                return bindingContext.get(ComposeWritableSlices.COMPOSABLE_ANALYSIS, el)
+                val descriptor = bindingContext[BindingContext.FUNCTION, node]
+                if (descriptor == null) {
+                    return false
+                }
+                return descriptor.allowsComposableCalls(bindingContext)
             }
         }
         node = node.parent as? KtElement
     }
-    return null
+    return false
 }

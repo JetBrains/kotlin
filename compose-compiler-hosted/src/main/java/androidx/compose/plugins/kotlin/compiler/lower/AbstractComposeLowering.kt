@@ -16,11 +16,12 @@
 
 package androidx.compose.plugins.kotlin.compiler.lower
 
-import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
 import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
+import androidx.compose.plugins.kotlin.allowsComposableCalls
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.irTrace
+import androidx.compose.plugins.kotlin.isComposableCallable
 import androidx.compose.plugins.kotlin.isMarkedStable
 import androidx.compose.plugins.kotlin.isSpecialType
 import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
@@ -308,8 +309,6 @@ abstract class AbstractComposeLowering(
         return false
     }
 
-    private val composableChecker = ComposableAnnotationChecker()
-
     protected val KotlinType.isEnum
         get() =
             (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
@@ -343,17 +342,16 @@ abstract class AbstractComposeLowering(
         } else calculated
     }
 
-    fun FunctionDescriptor.isComposable(): Boolean {
-        val composability = composableChecker.analyze(bindingTrace, this)
-        return when (composability) {
-            ComposableAnnotationChecker.Composability.NOT_COMPOSABLE -> false
-            ComposableAnnotationChecker.Composability.MARKED -> true
-            ComposableAnnotationChecker.Composability.INFERRED -> true
-        }
+    fun FunctionDescriptor.isComposableCallable(): Boolean {
+        return isComposableCallable(context.bindingContext)
     }
 
-    fun IrFunction.isComposable(): Boolean = descriptor.isComposable()
-    fun IrFunctionExpression.isComposable(): Boolean = function.isComposable()
+    fun FunctionDescriptor.allowsComposableCalls(): Boolean {
+        return allowsComposableCalls(context.bindingContext)
+    }
+
+    fun IrFunctionExpression.allowsComposableCalls(): Boolean =
+        function.descriptor.allowsComposableCalls(context.bindingContext)
 
     private fun IrFunction.createParameterDeclarations() {
         fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(

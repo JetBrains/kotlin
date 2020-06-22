@@ -49,9 +49,7 @@ open class TryCatchComposableChecker : CallChecker, StorageComponentContainerCon
     ) {
         val trace = context.trace
         val call = resolvedCall.call.callElement
-        val shouldBeTag =
-            ComposableAnnotationChecker.get(call.project).shouldInvokeAsTag(trace, resolvedCall)
-        if (shouldBeTag) {
+        if (resolvedCall.isComposableInvocation()) {
             var walker: PsiElement? = call
             while (walker != null) {
                 val parent = walker.parent

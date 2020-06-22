@@ -1400,6 +1400,39 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
     )
 
     @Test
+    fun testAnnotationChecker(): Unit = comparisonPropagation(
+        """
+            @Composable fun D(content: @Composable() () -> Unit) {}
+        """,
+        """
+            @Composable fun Example() {
+                D {}
+            }
+        """,
+        """
+            @Composable
+            fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startRestartGroup(%key)
+              if (%changed !== 0 || !%composer.skipping) {
+                D(composableLambda(%composer, <>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    Unit
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                }, %composer, <>, 0b0110)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
+                Example(%composer, %key, %changed or 0b0001)
+              }
+            }
+
+        """
+    )
+
+    @Test
     fun testSingleStableParamWithDefault(): Unit = comparisonPropagation(
         """
             @Composable fun A(x: Int) {}
