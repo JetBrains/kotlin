@@ -7,6 +7,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor
+import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor.OccurenceKind.CODE
 import com.intellij.structuralsearch.impl.matcher.compiler.GlobalCompilingVisitor.OccurenceKind.COMMENT
 import com.intellij.structuralsearch.impl.matcher.compiler.WordOptimizer
 import com.intellij.structuralsearch.impl.matcher.handlers.MatchingHandler
@@ -14,6 +15,7 @@ import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
 import com.jetbrains.kotlin.structuralsearch.getCommentText
 import com.jetbrains.kotlin.structuralsearch.handler.CommentedDeclarationHandler
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
@@ -36,7 +38,51 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
-    inner class KotlinWordOptimizer : KotlinRecursiveElementWalkingVisitor(), WordOptimizer
+    inner class KotlinWordOptimizer : KotlinRecursiveElementWalkingVisitor(), WordOptimizer {
+
+        override fun visitClass(klass: KtClass) {
+            if (!handleWord(klass.name, CODE, myCompilingVisitor.context)) return
+            super.visitClass(klass)
+        }
+
+        override fun visitNamedFunction(function: KtNamedFunction) {
+            if (!handleWord(function.name, CODE, myCompilingVisitor.context)) return
+            super.visitNamedFunction(function)
+        }
+
+        override fun visitParameter(parameter: KtParameter) {
+            if (!handleWord(parameter.name, CODE, myCompilingVisitor.context)) return
+            super.visitParameter(parameter)
+        }
+
+        override fun visitProperty(property: KtProperty) {
+            if (!handleWord(property.name, CODE, myCompilingVisitor.context)) return
+            super.visitProperty(property)
+        }
+
+        override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+            if (!handleWord(expression.name, CODE, myCompilingVisitor.context)) return
+            super.visitSimpleNameExpression(expression)
+        }
+
+        override fun visitUserType(type: KtUserType) {
+            if (!handleWord(type.name, CODE, myCompilingVisitor.context)) return
+            super.visitUserType(type)
+        }
+
+        override fun visitConstantExpression(expression: KtConstantExpression) {
+            val type = expression.elementType
+            if (type == KtNodeTypes.BOOLEAN_CONSTANT || type == KtNodeTypes.NULL)
+                if (!handleWord(expression.name, CODE, myCompilingVisitor.context)) return
+            super.visitConstantExpression(expression)
+        }
+
+        override fun visitReferenceExpression(expression: KtReferenceExpression) {
+            if (!handleWord(expression.name, CODE, myCompilingVisitor.context)) return
+            super.visitReferenceExpression(expression)
+        }
+
+    }
 
     private fun getHandler(element: PsiElement) = myCompilingVisitor.context.pattern.getHandler(element)
 
