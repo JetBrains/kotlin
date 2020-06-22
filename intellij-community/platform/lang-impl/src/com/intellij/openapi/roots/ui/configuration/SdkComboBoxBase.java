@@ -4,10 +4,20 @@ package com.intellij.openapi.roots.ui.configuration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ComponentUtil;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.accessibility.AccessibleContextDelegate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.accessibility.AccessibleContext;
+import javax.accessibility.AccessibleRole;
+import javax.swing.*;
+import javax.swing.text.AttributeSet;
+
+import java.awt.*;
+import java.util.Locale;
 
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 
@@ -112,5 +122,30 @@ public abstract class SdkComboBoxBase<T> extends ComboBox<T> {
   @Deprecated
   public void removeAllItems() {
     LOG.warn("removeAllItems() is deprecated!", new RuntimeException());
+  }
+
+  @Override
+  public AccessibleContext getAccessibleContext() {
+    if (accessibleContext == null) {
+      accessibleContext = new AccessibleSDKComboboxBaseDelegate(super.getAccessibleContext());
+    }
+    return accessibleContext;
+  }
+
+  private class AccessibleSDKComboboxBaseDelegate extends AccessibleContextDelegate {
+
+    AccessibleSDKComboboxBaseDelegate(AccessibleContext context) {
+      super(context);
+    }
+
+    @Override
+    protected Container getDelegateParent() {
+      return null;
+    }
+
+    @Override
+    public int getAccessibleChildrenCount() {
+      return getComponentCount();
+    }
   }
 }
