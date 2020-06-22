@@ -15,7 +15,7 @@ import com.jetbrains.debugger.wip.JSRemoteDebugConfigurationType
 import java.io.File
 
 class GradleNodeJsDebuggerBackend : DebuggerBackendExtension {
-    override fun id(): String = "Gradle NodeJS"
+    override fun id(): String = "Gradle Kotlin/JS NodeJS"
 
     override fun initializationCode(dispatchPort: String, serializedParams: String): List<String> {
         return javaClass
