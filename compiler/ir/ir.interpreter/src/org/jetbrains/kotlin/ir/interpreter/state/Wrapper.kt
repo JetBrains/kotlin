@@ -138,20 +138,8 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex(
 
                 owner.hasAnnotation(evaluateIntrinsicAnnotation) -> Class.forName(owner!!.getEvaluateIntrinsicValue())
                 fqName == null -> Any::class.java // null if this.isTypeParameter()
-                else -> Class.forName(fqName.replaceDotWithDollarForInnerClasses())
+                else -> Class.forName(owner.internalName())
             }
-        }
-
-        private fun String.replaceDotWithDollarForInnerClasses(): String? {
-            // TODO come up with something better
-            val names = this.split(".")
-            val result = StringBuilder()
-            for (i in 0 until (names.size - 1)) {
-                result.append(names[i])
-                if (names[i][0].isUpperCase() && names[i + 1][0].isUpperCase()) result.append("$") else result.append(".")
-            }
-            result.append(names.last())
-            return result.toString()
         }
 
         private fun IrFunction.getOriginalOverriddenSymbols(): MutableList<IrFunctionSymbol> {

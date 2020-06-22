@@ -217,3 +217,16 @@ internal fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbo
 internal fun IrType.isInterface() = classOrNull?.owner?.kind == ClassKind.INTERFACE
 
 internal fun IrType.isThrowable() = this.getClass()?.fqNameWhenAvailable?.asString() == "kotlin.Throwable"
+
+fun IrClass.internalName(): String {
+    val internalName = StringBuilder(this.name.asString())
+    generateSequence(this as? IrDeclarationParent) { (it as? IrDeclaration)?.parent }
+        .drop(1)
+        .forEach {
+            when (it) {
+                is IrClass -> internalName.insert(0, it.name.asString() + "$")
+                is IrPackageFragment -> it.fqName.asString().takeIf { it.isNotEmpty() }?.let { internalName.insert(0, "$it.") }
+            }
+        }
+    return internalName.toString()
+}
