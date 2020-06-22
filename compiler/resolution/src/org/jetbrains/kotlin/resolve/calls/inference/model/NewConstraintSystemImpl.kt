@@ -386,9 +386,13 @@ class NewConstraintSystemImpl(
     // PostponedArgumentsAnalyzer.Context
     override fun hasUpperOrEqualUnitConstraint(type: KotlinTypeMarker): Boolean {
         checkState(State.BUILDING, State.COMPLETION, State.FREEZED)
-
         val constraints = storage.notFixedTypeVariables[type.typeConstructor()]?.constraints ?: return false
-
         return constraints.any { (it.kind == ConstraintKind.UPPER || it.kind == ConstraintKind.EQUALITY) && it.type.isUnit() }
+    }
+
+    override fun hasEqualNothingConstraint(type: KotlinTypeMarker): Boolean {
+        checkState(State.BUILDING, State.COMPLETION, State.FREEZED)
+        val constraints = storage.notFixedTypeVariables[type.typeConstructor()]?.constraints ?: return false
+        return constraints.any { (it.kind == ConstraintKind.EQUALITY) && it.type.isNothing() }
     }
 }
