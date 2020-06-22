@@ -9,6 +9,7 @@ val cidrVersion: String by rootProject.extra
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val proprietaryRepositories: Project.() -> Unit by ultimateTools
 val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
+val ijProductBranch: (String) -> Int by ultimateTools
 
 proprietaryRepositories()
 
@@ -25,7 +26,9 @@ dependencies {
     compileOnly("com.jetbrains.intellij.cidr:cidr-xctest:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion") { isTransitive = false }
-    compileOnly("com.jetbrains.intellij.swift:swift-language:$cidrVersion") { isTransitive = false }
+    if (ijProductBranch(cidrVersion) >= 202) {
+        compileOnly("com.jetbrains.intellij.swift:swift-language:$cidrVersion") { isTransitive = false }
+    }
     api(project(":kotlin-ultimate:ide:common-cidr-mobile")) { isTransitive = false }
     compileOnly("com.jetbrains.intellij.android:android-kotlin-extensions-common:$cidrVersion") { isTransitive = false }
     compile("com.android.tools.ddms:ddmlib:26.0.0") {
