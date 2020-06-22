@@ -65,30 +65,24 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
       VAR name:test3 type:kotlin.Long? [val]
         CONST Int type=kotlin.Int value=42
       VAR name:test4 type:kotlin.Long? [val]
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
+        CONST Int type=kotlin.Int value=-1
       VAR name:test5 type:kotlin.Long? [val]
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
+        CONST Int type=kotlin.Int value=-1
       VAR name:test6 type:kotlin.Short? [val]
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
+        CONST Int type=kotlin.Int value=-1
       VAR name:test7 type:kotlin.Byte? [val]
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
+        CONST Int type=kotlin.Int value=-1
   FUN name:testImplicitArguments visibility:public modality:FINAL <> (x:kotlin.Long) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:kotlin.Long
       EXPRESSION_BODY
-        CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value=1
+        CONST Int type=kotlin.Int value=-1
     BLOCK_BODY
   CLASS CLASS name:TestImplicitArguments modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestImplicitArguments
     CONSTRUCTOR visibility:public <> (x:kotlin.Long) returnType:<root>.TestImplicitArguments [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Long
         EXPRESSION_BODY
-          CALL 'public final fun unaryMinus (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: CONST Int type=kotlin.Int value=1
+          CONST Int type=kotlin.Int value=-1
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestImplicitArguments modality:FINAL visibility:public superTypes:[kotlin.Any]'
