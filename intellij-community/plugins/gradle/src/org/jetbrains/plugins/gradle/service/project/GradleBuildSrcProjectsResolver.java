@@ -195,6 +195,9 @@ public final class GradleBuildSrcProjectsResolver {
       projectPath, buildSrcResolverCtx.getSettings(), mySyncTaskId, myListener, null, projectConnectionDataNodeFunction);
 
     if (buildSrcProjectDataNode == null) return;
+    for (DataNode<LibraryData> libraryDataNode : getChildren(buildSrcProjectDataNode, ProjectKeys.LIBRARY)) {
+      resultProjectDataNode.createChild(ProjectKeys.LIBRARY, libraryDataNode.getData());
+    }
 
     Map<String, DataNode<? extends ModuleData>> buildSrcModules = new HashMap<>();
 
