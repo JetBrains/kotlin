@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.util.TextOccurrencesUtil;
 import com.intellij.usageView.UsageInfo;
 
@@ -20,6 +21,7 @@ final class BunchedDeprecation {
             boolean searchInNonJavaFiles,
             String newQName,
             Collection<? super UsageInfo> results) {
-        TextOccurrencesUtil.findNonCodeUsages(element, stringToSearch, searchInStringsAndComments, searchInNonJavaFiles, newQName, results);
+        TextOccurrencesUtil.findNonCodeUsages(element, GlobalSearchScope.projectScope(element.getProject()),
+                                              stringToSearch, searchInStringsAndComments, searchInNonJavaFiles, newQName, results);
     }
 }

@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.cache.CacheManager
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.ScopeOptimizer
-import com.intellij.psi.search.SearchScope
-import com.intellij.psi.search.UsageSearchContext
+import com.intellij.psi.search.*
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.search.excludeFileTypes
@@ -31,19 +28,22 @@ class KotlinReferenceScopeOptimizer : ScopeOptimizer {
         val file = callable.parent as KtFile
         val packageName = file.packageFqName.takeUnless { it.isRoot } ?: return null
         val project = file.project
-        val cacheManager = CacheManager.SERVICE.getInstance(project)
+        val searchHelper = PsiSearchHelper.getInstance(project)
 
         val kotlinScope = GlobalSearchScope.getScopeRestrictedByFileTypes(useScope, KotlinFileType.INSTANCE)
         val javaScope = GlobalSearchScope.getScopeRestrictedByFileTypes(useScope, JavaFileType.INSTANCE)
         val restScope = useScope.excludeFileTypes(KotlinFileType.INSTANCE, JavaFileType.INSTANCE) as GlobalSearchScope
 
-        //TODO: use all components of package name?
-        val shortPackageName = packageName.shortName().identifier
-        val kotlinFiles = cacheManager.getVirtualFilesWithWord(shortPackageName, UsageSearchContext.IN_CODE, kotlinScope, true)
+        val kotlinFiles = mutableListOf<VirtualFile>()
+        searchHelper.processCandidateFilesForText(kotlinScope, UsageSearchContext.IN_CODE, true, packageName.asString()) {
+            kotlinFiles.add(it)
+        }
 
-        val javaFacadeName = file.javaFileFacadeFqName.shortName().identifier
-        val javaFiles = cacheManager.getVirtualFilesWithWord(javaFacadeName, UsageSearchContext.IN_CODE, javaScope, true)
+        val javaFiles = mutableListOf<VirtualFile>()
+        searchHelper.processCandidateFilesForText(javaScope, UsageSearchContext.IN_CODE, true, file.javaFileFacadeFqName.asString()) {
+            javaFiles.add(it)
+        }
 
-        return GlobalSearchScope.filesScope(project, (kotlinFiles + javaFiles).asList()).uniteWith(restScope)
+        return GlobalSearchScope.filesScope(project, kotlinFiles + javaFiles).uniteWith(restScope)
     }
 }

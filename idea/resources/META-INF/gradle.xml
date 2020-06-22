@@ -25,6 +25,8 @@
         <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinGradleOrderEnumerationHandler$Factory" order="first"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinMPPGradleProjectResolver"/>
         <testTasksProvider implementation="org.jetbrains.kotlin.idea.run.KotlinMPPGradleTestTasksProvider"/>
+
+        <projectModelContributor implementation="org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelContributor"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -38,9 +40,9 @@
                      defaultValue="true"
                      restartRequired="false"/>
 
-        <registryKey key="kotlin.gradle.scripts.scriptConfigurationsNeedToBeUpdatedBalloon"
-                     description="Show balloon when script configuration need to be updated along with project need to be imported balloon"
-                     defaultValue="false"
+        <registryKey key="kotlin.gradle.scripts.scriptConfigurationsNeedToBeUpdatedFloatingNotification"
+                     description="Show floating notification in the editor when script configuration need to be updated"
+                     defaultValue="true"
                      restartRequired="false"/>
 
         <projectService serviceImplementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActionsManager"/>
@@ -49,6 +51,10 @@
     <actions>
         <action id="Kotlin.Gradle.ShowDslLogs" class="org.jetbrains.kotlin.idea.actions.ShowKotlinGradleDslLogs"
                 text="Show Kotlin Gradle DSL Logs" description="Show Kotlin Gradle DSL logs">
+        </action>
+
+        <action id="LoadConfigurationAction" class="org.jetbrains.kotlin.idea.scripting.gradle.LoadConfigurationAction">
+            <add-to-group group-id="ExternalSystem.ProjectRefreshActionGroup" anchor="first"/>
         </action>
     </actions>
 </idea-plugin>

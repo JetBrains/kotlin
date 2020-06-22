@@ -1,5 +1,7 @@
 package a
 
+import a.Y as XX
+
 fun bar(s: String) {
-    val t: a.Y = a.Y()
+    val t: XX = XX()
 }

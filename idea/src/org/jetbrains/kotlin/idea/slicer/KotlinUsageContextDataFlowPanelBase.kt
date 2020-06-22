@@ -55,7 +55,7 @@ sealed class KotlinUsageContextDataFlowPanelBase(
     }
 
     protected fun createPanel(element: PsiElement, dataFlowToThis: Boolean): JPanel {
-        val toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(ToolWindowId.FIND)
+        val toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(ToolWindowId.FIND) ?: error("Can't find ToolWindowId.FIND")
         val params = createParams(element)
 
         val rootNode = SliceRootNode(myProject, DuplicateMap(), KotlinSliceUsage(element, params))
