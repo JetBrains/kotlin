@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.checker.prepareArgumentTypeRegardingCaptureTypes
+import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -70,6 +72,13 @@ val ReceiverValueWithSmartCastInfo.stableType: UnwrappedType
          * Such redundant type with captured argument may further lead to contradiction in constraint system or less exact solution.
          */
         val intersectionType = intersectWrappedTypes(allOriginalTypes)
+
+        // Intersection type of Nothing with any flexible types will be Nothing!.
+        // This is a bit incorrect as cast to Nothing? or Nothing can result only in Nothing? or Nothing,
+        // otherwise it'll be possible to pass null to some non-nullable type
+        if (intersectionType.isNullableNothing() && !intersectionType.isMarkedNullable) {
+            return intersectionType.makeNullable().unwrap()
+        }
 
         return prepareArgumentTypeRegardingCaptureTypes(intersectionType) ?: intersectionType
     }
