@@ -19,9 +19,9 @@ final class GTDUCollector extends CounterUsagesCollector {
   }
 
   private static final EnumEventField<GTDUChoice> CHOICE = EventFields.Enum("choice", GTDUChoice.class);
-  private static final EventLogGroup GROUP = new EventLogGroup("gtdu", FeatureUsageLogger.getConfigVersion());
-  private static final VarargEventId INVOKED = GROUP.registerVarargEvent(
-    "invoked",
+  private static final EventLogGroup GROUP = new EventLogGroup("actions.gtdu", FeatureUsageLogger.getConfigVersion());
+  private static final VarargEventId PERFORMED = GROUP.registerVarargEvent(
+    "performed",
     EventFields.InputEvent,
     EventFields.ActionPlace,
     ActionsEventLogGroup.CONTEXT_MENU,
@@ -29,7 +29,7 @@ final class GTDUCollector extends CounterUsagesCollector {
   );
 
   static void record(@NotNull List<@NotNull EventPair<?>> eventData, @NotNull GTDUChoice choice) {
-    INVOKED.log(ContainerUtil.append(eventData, CHOICE.with(choice)).toArray(new EventPair[0]));
+    PERFORMED.log(ContainerUtil.append(eventData, CHOICE.with(choice)).toArray(new EventPair[0]));
   }
 
   @Override
