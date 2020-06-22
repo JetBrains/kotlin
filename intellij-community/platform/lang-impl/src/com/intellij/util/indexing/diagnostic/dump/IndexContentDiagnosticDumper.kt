@@ -25,7 +25,7 @@ object IndexContentDiagnosticDumper {
     val indexedFilePaths = arrayListOf<IndexedFilePath>()
     val providerNameToOriginalFileIds = hashMapOf<String, MutableSet<Int>>()
     val filesFromUnsupportedFileSystem = arrayListOf<IndexedFilePath>()
-    val fileBasedIndexExtensionIds = FileBasedIndexExtension.EXTENSION_POINT_NAME.extensionList.map { it.name }
+    val fileBasedIndexExtensions = FileBasedIndexExtension.EXTENSION_POINT_NAME.extensionList
     val infrastructureExtensions = FileBasedIndexInfrastructureExtension.EP_NAME.extensions().asSequence()
       .mapNotNull { it.createFileIndexingStatusProcessor(project) }
       .toList()
@@ -38,9 +38,9 @@ object IndexContentDiagnosticDumper {
       providerNameToOriginalFileIds[provider.debugName] = providerFileIds
       provider.iterateFiles(project, { fileOrDir ->
         val fileId = FileBasedIndex.getFileId(fileOrDir)
-        for (indexId in fileBasedIndexExtensionIds) {
-          if (infrastructureExtensions.any { it.hasIndexForFile(fileOrDir, fileId, indexId) }) {
-            providedIndexIdToIndexedFiles.getOrPut(indexId.name) { hashSetOf() } += fileId
+        for (extension in fileBasedIndexExtensions) {
+          if (infrastructureExtensions.any { it.hasIndexForFile(fileOrDir, fileId, extension) }) {
+            providedIndexIdToIndexedFiles.getOrPut(extension.name.name) { hashSetOf() } += fileId
           }
         }
 
@@ -66,11 +66,11 @@ object IndexContentDiagnosticDumper {
     )
   }
 
-  fun doesFileHaveProvidedIndex(file: VirtualFile, indexId: ID<*, *>, project: Project): Boolean {
+  fun doesFileHaveProvidedIndex(file: VirtualFile, extension: FileBasedIndexExtension<*, *>, project: Project): Boolean {
     val fileId = FileBasedIndex.getFileId(file)
     return FileBasedIndexInfrastructureExtension.EP_NAME.extensions().asSequence()
       .mapNotNull { it.createFileIndexingStatusProcessor(project) }
-      .any { it.hasIndexForFile(file, fileId, indexId) }
+      .any { it.hasIndexForFile(file, fileId, extension) }
   }
 
   fun createIndexedFilePath(fileOrDir: VirtualFile, project: Project): IndexedFilePath {

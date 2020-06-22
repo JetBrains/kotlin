@@ -39,7 +39,7 @@ public interface FileBasedIndexInfrastructureExtension {
      * Whether the given file has index provided by this extension.
      */
     @ApiStatus.Experimental
-    boolean hasIndexForFile(@NotNull VirtualFile file, int inputId, @NotNull ID<?, ?> indexId);
+    boolean hasIndexForFile(@NotNull VirtualFile file, int inputId, @NotNull FileBasedIndexExtension<?, ?> extension);
   }
 
   @Nullable
