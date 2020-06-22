@@ -116,6 +116,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         dceTaskProvider = dceTaskProvider,
                         devDceTaskProvider = devDceTaskProvider,
                         mode = type,
+                        configurationActions = commonRunConfigurations,
                         nodeJs = nodeJs
                     )
 
@@ -178,6 +179,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         dceTaskProvider = dceTaskProvider,
                         devDceTaskProvider = devDceTaskProvider,
                         mode = type,
+                        configurationActions = commonWebpackConfigurations,
                         nodeJs = nodeJs
                     )
 
@@ -213,6 +215,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         dceTaskProvider: TaskProvider<KotlinJsDceTask>,
         devDceTaskProvider: TaskProvider<KotlinJsDceTask>,
         mode: KotlinJsBinaryMode,
+        configurationActions: List<KotlinWebpack.() -> Unit>,
         nodeJs: NodeJsRootExtension
     ) {
         dependsOn(
@@ -235,7 +238,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         resolveFromModulesFirst = true
 
-        commonRunConfigurations.forEach { configure ->
+        configurationActions.forEach { configure ->
             configure()
         }
     }
