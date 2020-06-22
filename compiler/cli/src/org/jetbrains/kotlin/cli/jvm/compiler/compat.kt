@@ -12,4 +12,5 @@ fun setupIdeaStandaloneExecution() {
     System.getProperties().setProperty("psi.incremental.reparse.depth.limit", "1000")
     System.getProperties().setProperty("ide.hide.excluded.files", "false")
     System.getProperties().setProperty("ast.loading.filter", "false")
+    System.getProperties().setProperty("idea.ignore.disabled.plugins", "true")
 }
