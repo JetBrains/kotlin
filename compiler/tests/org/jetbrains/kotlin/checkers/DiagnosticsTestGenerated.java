@@ -21499,6 +21499,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastOnSameFieldOfDifferentInstances.kt");
             }
 
+            @TestMetadata("smartcastToNothingAfterCheckingForNull.kt")
+            public void testSmartcastToNothingAfterCheckingForNull() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastToNothingAfterCheckingForNull.kt");
+            }
+
             @TestMetadata("thisWithLabel.kt")
             public void testThisWithLabel() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/thisWithLabel.kt");
