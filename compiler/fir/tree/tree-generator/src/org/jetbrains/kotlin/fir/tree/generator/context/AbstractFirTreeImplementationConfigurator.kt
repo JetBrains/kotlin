@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -120,6 +120,12 @@ abstract class AbstractFirTreeImplementationConfigurator {
             default(field) {
                 this.value = value
             }
+        }
+
+        fun defaultTypeRefWithSource(typeRefClass: String) {
+            default("typeRef", "$typeRefClass(source?.withKind(FirFakeSourceElementKind.ImplicitTypeRef))")
+            implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin.fir", "FirFakeSourceElementKind")
+            implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin.fir", "withKind")
         }
 
         fun defaultTrue(field: String, withGetter: Boolean = false) {

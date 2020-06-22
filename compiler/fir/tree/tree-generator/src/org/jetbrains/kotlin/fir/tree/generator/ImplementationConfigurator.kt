@@ -103,7 +103,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(expression, "FirElseIfTrueCondition") {
-            default("typeRef", "FirImplicitBooleanTypeRef(source)")
+            defaultTypeRefWithSource("FirImplicitBooleanTypeRef")
             useTypes(implicitBooleanTypeRefType)
             publicImplementation()
         }
@@ -259,17 +259,17 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(resolvedReifiedParameterReference)
 
         impl(returnExpression) {
-            default("typeRef", "FirImplicitNothingTypeRef(source)")
+            defaultTypeRefWithSource("FirImplicitNothingTypeRef")
             useTypes(implicitNothingTypeRefType)
         }
 
         impl(stringConcatenationCall) {
-            default("typeRef", "FirImplicitStringTypeRef(source)")
+            defaultTypeRefWithSource("FirImplicitStringTypeRef")
             useTypes(implicitStringTypeRefType)
         }
 
         impl(throwExpression) {
-            default("typeRef", "FirImplicitNothingTypeRef(source)")
+            defaultTypeRefWithSource("FirImplicitNothingTypeRef")
             useTypes(implicitNothingTypeRefType)
         }
 
@@ -279,7 +279,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(expression, "FirUnitExpression") {
-            default("typeRef", "FirImplicitUnitTypeRef(source)")
+            defaultTypeRefWithSource("FirImplicitUnitTypeRef")
             useTypes(implicitUnitTypeRefType)
             publicImplementation()
         }
@@ -427,12 +427,12 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(breakExpression) {
-            default("typeRef", "FirImplicitNothingTypeRef(source)")
+            defaultTypeRefWithSource("FirImplicitNothingTypeRef")
             useTypes(implicitNothingTypeRefType)
         }
 
         impl(continueExpression) {
-            default("typeRef", "FirImplicitNothingTypeRef(source)")
+            defaultTypeRefWithSource("FirImplicitNothingTypeRef")
             useTypes(implicitNothingTypeRefType)
         }
 

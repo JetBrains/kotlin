@@ -35,7 +35,9 @@ fun Builder.collectImports(): List<String> {
 fun Implementation.collectImports(base: List<String> = emptyList(), kind: ImportKind = ImportKind.Implementation): List<String> {
     return element.collectImportsInternal(
         base + listOf(element.fullQualifiedName)
-                + usedTypes.mapNotNull { it.fullQualifiedName } + parents.mapNotNull { it.fullQualifiedName }
+                + usedTypes.mapNotNull { it.fullQualifiedName }
+                + arbitraryImportables.mapNotNull { it.fullQualifiedName }
+                + parents.mapNotNull { it.fullQualifiedName }
                 + listOfNotNull(
             pureAbstractElementType.fullQualifiedName?.takeIf { needPureAbstractElement },
             firImplementationDetailType.fullQualifiedName?.takeIf { isPublic || requiresOptIn },
