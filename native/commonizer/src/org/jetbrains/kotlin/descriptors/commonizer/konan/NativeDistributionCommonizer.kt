@@ -259,7 +259,7 @@ class NativeDistributionCommonizer(
         val librariesSource = target.platformLibrariesSource
         if (librariesSource.isDirectory) librariesSource.copyRecursively(librariesDestination)
 
-        logProgress("Copied of $platformLibrariesCount libraries for [${target.name}]")
+        logProgress("Copied $platformLibrariesCount libraries for [${target.name}]")
     }
 
     private fun serializeTarget(
