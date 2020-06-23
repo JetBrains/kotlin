@@ -34,10 +34,9 @@ dependencies {
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     compileOnly(project(":kotlin-scripting-dependencies"))
-    runtime(project(":kotlin-compiler-embeddable"))
-    runtime(project(":kotlin-scripting-compiler-embeddable"))
-    runtime(project(":kotlin-scripting-jvm-host"))
-    runtime(project(":kotlin-reflect"))
+    runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
+    runtimeOnly(project(":kotlin-stdlib"))
+    runtimeOnly(project(":kotlin-reflect"))
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm-host-unshaded")) { isTransitive = false }
