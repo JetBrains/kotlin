@@ -315,7 +315,7 @@ task detectJarCollision(type: CollisionDetector) {
                                                     "frontend.common", "frontend.java", "cli-common", "ir.tree",
                                                     "ir.psi2ir", "ir.backend.common", "backend.jvm", "backend.js",
                                                     "backend.wasm", "ir.serialization.common", "ir.serialization.js",
-                                                    "ir.serialization.jvm", "jvm", "compiler.version",
+                                                    "ir.serialization.jvm", "ir.interpreter", "jvm", "compiler.version",
                                                     "backend-common", "backend", "plugin-api", "light-classes", "cli",
                                                     "cli-js", "incremental-compilation-impl", "js.ast", "js.serializer",
                                                     "js.parser", "js.frontend", "js.translator", "js.dce", "metadata",
