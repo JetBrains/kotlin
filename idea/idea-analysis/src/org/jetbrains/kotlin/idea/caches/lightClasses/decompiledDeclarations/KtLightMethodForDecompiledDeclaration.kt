@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.propertyNameByAccessor
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.idea.caches.lightClasses.LightMemberOriginForCompiledMethod
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -88,9 +86,12 @@ class KtLightMethodForDecompiledDeclaration(
     override fun getSignature(substitutor: PsiSubstitutor): MethodSignature =
         MethodSignatureBackedByPsiMethod.create(this, substitutor)
 
-    override fun equals(other: Any?): Boolean = other is KtLightMethodForDecompiledDeclaration && funParent == other.funParent && funDelegate == other.funDelegate
+    override fun equals(other: Any?): Boolean = other is KtLightMethodForDecompiledDeclaration &&
+            name == other.name &&
+            funParent == other.funParent &&
+            funDelegate == other.funDelegate
 
-    override fun hashCode(): Int = funDelegate.hashCode()
+    override fun hashCode(): Int = name.hashCode()
 
     override fun copy(): PsiElement = this
 
