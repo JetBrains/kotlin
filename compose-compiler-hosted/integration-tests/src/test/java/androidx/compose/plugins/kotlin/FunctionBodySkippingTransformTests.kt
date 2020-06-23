@@ -260,8 +260,8 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else if (%changed and 0b01100000 === 0) {
                 %dirty = %dirty or if (%composer.changed(arrangement)) 0b01000000 else 0b00100000
               }
-              if (%default and 0b1000 === 0 && %changed and 0b000110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(crossAxisAlignment)) 0b000100000000 else 0b10000000
+              if (%changed and 0b000110000000 === 0) {
+                %dirty = %dirty or if (%default and 0b1000 === 0 && %composer.changed(crossAxisAlignment)) 0b000100000000 else 0b10000000
               }
               if (%default and 0b00010000 !== 0) {
                 %dirty = %dirty or 0b011000000000
@@ -284,6 +284,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   }
                   if (%default and 0b1000 !== 0) {
                     crossAxisAlignment = Companion.Start
+                    %dirty = %dirty and 0b000110000000.inv()
                   }
                   if (%default and 0b00010000 !== 0) {
                     crossAxisSize = SizeMode.Wrap
@@ -291,6 +292,9 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b1000 !== 0) {
+                    %dirty = %dirty and 0b000110000000.inv()
+                  }
                 }
                 println()
               } else {
@@ -317,8 +321,8 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else if (%changed and 0b00011000 === 0) {
                 %dirty = %dirty or if (%composer.changed(verticalArrangement)) 0b00010000 else 0b1000
               }
-              if (%default and 0b0100 === 0 && %changed and 0b01100000 === 0) {
-                %dirty = %dirty or if (%composer.changed(horizontalGravity)) 0b01000000 else 0b00100000
+              if (%changed and 0b01100000 === 0) {
+                %dirty = %dirty or if (%default and 0b0100 === 0 && %composer.changed(horizontalGravity)) 0b01000000 else 0b00100000
               }
               if (%default and 0b1000 !== 0) {
                 %dirty = %dirty or 0b000110000000
@@ -336,10 +340,14 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   }
                   if (%default and 0b0100 !== 0) {
                     horizontalGravity = Companion.Start
+                    %dirty = %dirty and 0b01100000.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0100 !== 0) {
+                    %dirty = %dirty and 0b01100000.inv()
+                  }
                 }
                 val tmp0_orientation = LayoutOrientation.Vertical
                 val tmp1_arrangement = verticalArrangement
@@ -417,18 +425,22 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               %composer.startRestartGroup(%key)
               val %dirty = %changed
               val a = a
-              if (%default and 0b0001 === 0 && %changed and 0b0110 === 0) {
-                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(a)) 0b0100 else 0b0010
               }
               if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     a = newInt()
+                    %dirty = %dirty and 0b0110.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0001 !== 0) {
+                    %dirty = %dirty and 0b0110.inv()
+                  }
                 }
                 print(a)
               } else {
@@ -485,10 +497,14 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   }
                   if (%default and 0b0010 !== 0) {
                     shape = RectangleShape
+                    %dirty = %dirty and 0b00011000.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0010 !== 0) {
+                    %dirty = %dirty and 0b00011000.inv()
+                  }
                 }
                 println()
               } else {
@@ -529,8 +545,8 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(modifier)) 0b0100 else 0b0010
               }
-              if (%default and 0b0010 === 0 && %changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(children)) 0b00010000 else 0b1000
+              if (%changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(children)) 0b00010000 else 0b1000
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
@@ -546,10 +562,14 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                         %composer.skipToGroupEnd()
                       }
                     }
+                    %dirty = %dirty and 0b00011000.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0010 !== 0) {
+                    %dirty = %dirty and 0b00011000.inv()
+                  }
                 }
                 println()
               } else {
@@ -839,8 +859,8 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%default and 0b0010 === 0 && %changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(b)) 0b00010000 else 0b1000
+              if (%changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(b)) 0b00010000 else 0b1000
               }
               if (%default and 0b0100 !== 0) {
                 %dirty = %dirty or 0b01100000
@@ -855,6 +875,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   }
                   if (%default and 0b0010 !== 0) {
                     b = makeInt(%composer, <>, 0)
+                    %dirty = %dirty and 0b00011000.inv()
                   }
                   if (%default and 0b0100 !== 0) {
                     c = 0
@@ -862,6 +883,9 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0010 !== 0) {
+                    %dirty = %dirty and 0b00011000.inv()
+                  }
                 }
               } else {
                 %composer.skipToGroupEnd()
@@ -1098,10 +1122,14 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   }
                   if (%default and 0b0010 !== 0) {
                     b = Foo()
+                    %dirty = %dirty and 0b00011000.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0010 !== 0) {
+                    %dirty = %dirty and 0b00011000.inv()
+                  }
                 }
                 print("Hello World")
               } else {
@@ -1237,18 +1265,22 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
               }
-              if (%default and 0b0010 === 0 && %changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(color.value)) 0b00010000 else 0b1000
+              if (%changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(color.value)) 0b00010000 else 0b1000
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   %composer.startDefaults()
                   if (%default and 0b0010 !== 0) {
                     color = Companion.Unset
+                    %dirty = %dirty and 0b00011000.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0010 !== 0) {
+                    %dirty = %dirty and 0b00011000.inv()
+                  }
                 }
               } else {
                 %composer.skipToGroupEnd()
@@ -1422,18 +1454,22 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               %composer.startRestartGroup(%key)
               val %dirty = %changed
               val x = x
-              if (%default and 0b0001 === 0 && %changed and 0b0110 === 0) {
-                %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(x)) 0b0100 else 0b0010
               }
               if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     x = I(%composer, <>, 0)
+                    %dirty = %dirty and 0b0110.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0001 !== 0) {
+                    %dirty = %dirty and 0b0110.inv()
+                  }
                 }
                 A(x, %composer, <>, 0b0110 and %dirty)
               } else {
@@ -1496,10 +1532,14 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     x = Foo()
+                    %dirty = %dirty and 0b0110.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0001 !== 0) {
+                    %dirty = %dirty and 0b0110.inv()
+                  }
                 }
                 A(x, %composer, <>, 0b0110 and %dirty)
               } else {
@@ -1561,13 +1601,21 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   }
                   if (%default and 0b1000 !== 0) {
                     d = Foo()
+                    %dirty = %dirty and 0b000110000000.inv()
                   }
                   if (%default and 0b00010000 !== 0) {
                     e = emptyList()
+                    %dirty = %dirty and 0b011000000000.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b1000 !== 0) {
+                    %dirty = %dirty and 0b000110000000.inv()
+                  }
+                  if (%default and 0b00010000 !== 0) {
+                    %dirty = %dirty and 0b011000000000.inv()
+                  }
                 }
                 A(a, b, c, d, e, %composer, <>, 0b0110 and %dirty or 0b00011000 and %dirty or 0b01100000 and %dirty or 0b000110000000 and %dirty or 0b011000000000 and %dirty)
               } else {
@@ -2337,8 +2385,8 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               } else if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(wontChange)) 0b0100 else 0b0010
               }
-              if (%default and 0b0010 === 0 && %changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(mightChange)) 0b00010000 else 0b1000
+              if (%changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(mightChange)) 0b00010000 else 0b1000
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
@@ -2348,10 +2396,14 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   }
                   if (%default and 0b0010 !== 0) {
                     mightChange = AmbientColor.current
+                    %dirty = %dirty and 0b00011000.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0010 !== 0) {
+                    %dirty = %dirty and 0b00011000.inv()
+                  }
                 }
                 A(wontChange, %composer, <>, 0b0110 and %dirty)
                 A(mightChange, %composer, <>, 0b0110 and %dirty shr 0b0010)
@@ -2389,6 +2441,75 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
                 Example(content, %composer, %key, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testDefaultsIssue(): Unit = comparisonPropagation(
+        """
+        """,
+        """
+            import androidx.ui.core.Modifier
+            import androidx.ui.unit.Dp
+            import androidx.compose.emptyContent
+
+            @Composable
+            fun Box2(
+                modifier: Modifier = Modifier,
+                paddingStart: Dp = Dp.Unspecified,
+                children: @Composable () -> Unit = emptyContent()
+            ) {
+
+            }
+        """,
+        """
+            @Composable
+            fun Box2(modifier: Modifier?, paddingStart: Dp, children: Function3<Composer<*>, Int, Int, Unit>?, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
+              %composer.startRestartGroup(%key)
+              val %dirty = %changed
+              val modifier = modifier
+              val paddingStart = paddingStart
+              val children = children
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0110
+              } else if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(modifier)) 0b0100 else 0b0010
+              }
+              if (%changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(paddingStart.value)) 0b00010000 else 0b1000
+              }
+              if (%default and 0b0100 !== 0) {
+                %dirty = %dirty or 0b01100000
+              } else if (%changed and 0b01100000 === 0) {
+                %dirty = %dirty or if (%composer.changed(children)) 0b01000000 else 0b00100000
+              }
+              if (%dirty and 0b00101011 xor 0b00101010 !== 0 || !%composer.skipping) {
+                if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
+                  %composer.startDefaults()
+                  if (%default and 0b0001 !== 0) {
+                    modifier = Companion
+                  }
+                  if (%default and 0b0010 !== 0) {
+                    paddingStart = Companion.Unspecified
+                    %dirty = %dirty and 0b00011000.inv()
+                  }
+                  if (%default and 0b0100 !== 0) {
+                    children = emptyContent()
+                  }
+                  %composer.endDefaults()
+                } else {
+                  %composer.skipCurrentGroup()
+                  if (%default and 0b0010 !== 0) {
+                    %dirty = %dirty and 0b00011000.inv()
+                  }
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
+                Box2(modifier, paddingStart, children, %composer, %key, %changed or 0b0001, %default)
               }
             }
         """
