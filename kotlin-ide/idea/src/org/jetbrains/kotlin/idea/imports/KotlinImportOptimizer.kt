@@ -151,12 +151,7 @@ class KotlinImportOptimizer : ImportOptimizer {
 
             val references = element.references.ifEmpty { return }
             val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
-            val isResolved = if (element is KtCallElement)
-                element.getResolvedCall(bindingContext) != null
-            else
-                element.mainReference?.resolveToDescriptors(bindingContext)?.let { descriptors ->
-                    descriptors.isNotEmpty() && descriptors.none { it is ErrorSimpleFunctionDescriptorImpl }
-                } == true
+            val isResolved = hasResolvedDescriptor(element, bindingContext)
 
             for (reference in references) {
                 if (reference !is KtReference) continue
@@ -302,3 +297,11 @@ class KotlinImportOptimizer : ImportOptimizer {
         }
     }
 }
+
+private fun hasResolvedDescriptor(element: KtElement, bindingContext: BindingContext): Boolean =
+    if (element is KtCallElement)
+        element.getResolvedCall(bindingContext) != null
+    else
+        element.mainReference?.resolveToDescriptors(bindingContext)?.let { descriptors ->
+            descriptors.isNotEmpty() && descriptors.none { it is ErrorSimpleFunctionDescriptorImpl }
+        } == true

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -82,8 +83,10 @@ class OptimizedImportsBuilder(
     fun buildOptimizedImports(): List<ImportPath>? {
         val facade = file.getResolutionFacade()
         file.importDirectives
-            .filter { it.isAllUnder && data.unresolvedNames.isNotEmpty() || it.importedName in data.unresolvedNames && !it.canResolve(facade) }
-            .mapNotNullTo(importRules) { it.importPath?.let { path -> ImportRule.Add(path) } }
+            .asSequence()
+            .filter { it.mayReferToSomeUnresolvedName() || it.isExistedUnresolvedName(facade) }
+            .mapNotNull { it.importPath }
+            .mapNotNullTo(importRules) { ImportRule.Add(it) }
 
         while (true) {
             ProgressManager.checkCanceled()
@@ -93,6 +96,11 @@ class OptimizedImportsBuilder(
             testLog?.append("Trying to build import list again with import rules: ${importRules.joinToString()}\n")
         }
     }
+
+    private fun KtImportDirective.mayReferToSomeUnresolvedName() = isAllUnder && data.unresolvedNames.isNotEmpty()
+
+    private fun KtImportDirective.isExistedUnresolvedName(facade: ResolutionFacade) =
+        importedName in data.unresolvedNames && !canResolve(facade)
 
     private fun getExpressionToAnalyze(element: KtElement): KtExpression? {
         val parent = element.parent
