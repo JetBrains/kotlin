@@ -23,13 +23,11 @@ import com.jetbrains.cidr.execution.debugger.backend.LLFrame
 import com.jetbrains.cidr.execution.debugger.backend.LLThread
 import com.jetbrains.cidr.execution.debugger.breakpoints.CidrBreakpointHandler
 
-fun wrapInKotlinHandlers(cidrHandlers: Array<XBreakpointHandler<*>>, project: Project): Array<XBreakpointHandler<*>> {
-    val handlers = mutableListOf<XBreakpointHandler<*>>()
+fun addKotlinHandler(cidrHandlers: Array<XBreakpointHandler<*>>, project: Project): Array<XBreakpointHandler<*>> {
+    val handlers = mutableListOf(*cidrHandlers)
 
-    for (handler in cidrHandlers) {
-        if (handler is CidrBreakpointHandler) { // other handlers are irrelevant in Kotlin context
-            handlers.add(KonanBreakpointHandler(handler, project))
-        }
+    cidrHandlers.firstOrNull { it is CidrBreakpointHandler }?.let {
+        handlers.add(KonanBreakpointHandler(it as CidrBreakpointHandler, project))
     }
 
     return handlers.toTypedArray()
@@ -39,8 +37,7 @@ open class KonanLocalDebugProcess(
     parameters: RunParameters,
     session: XDebugSession,
     consoleBuilder: TextConsoleBuilder,
-    backendFilterProvider: ConsoleFilterProvider,
-    private val useCidrBreakpoints: Boolean = false
+    backendFilterProvider: ConsoleFilterProvider
 ) : CidrLocalDebugProcess(parameters, session, consoleBuilder, backendFilterProvider) {
     private val sourcesIndex = HashMap<String, VirtualFile?>()
 
@@ -55,13 +52,7 @@ open class KonanLocalDebugProcess(
         return KonanExecutionStack(thread, frame, cause, this)
     }
 
-    override fun getBreakpointHandlers(): Array<XBreakpointHandler<*>> {
-        return if (useCidrBreakpoints) {
-            super.getBreakpointHandlers()
-        } else {
-            wrapInKotlinHandlers(super.getBreakpointHandlers(), session.project)
-        }
-    }
+    override fun getBreakpointHandlers() = addKotlinHandler(super.getBreakpointHandlers(), session.project)
 
     fun resolveFile(originalFullName: String): VirtualFile? {
         synchronized(sourcesIndex) {
