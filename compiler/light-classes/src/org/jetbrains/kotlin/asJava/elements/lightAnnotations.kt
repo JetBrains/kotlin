@@ -26,6 +26,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.fastCheckIsNullabilityApplied
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -308,14 +310,15 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
             ?: // it is out of our hands
             return getClsNullabilityAnnotation(member)?.qualifiedName
 
+        if (!fastCheckIsNullabilityApplied(member)) return null
+
         // all data-class generated members are not-null
         if (annotatedElement is KtClass && annotatedElement.isData()) return NotNull::class.java.name
 
-        // objects and companion objects are not null
-        if (annotatedElement is KtObjectDeclaration) return NotNull::class.java.name
-
-        if (annotatedElement is KtParameter) {
-            if (annotatedElement.containingClassOrObject?.isAnnotation() == true) return null
+        // objects and companion objects are not null but ctor that does not annotated
+        if (annotatedElement is KtObjectDeclaration) {
+            if ((parent.parent as? PsiMethod)?.isConstructor == true) return null
+            return NotNull::class.java.name
         }
 
         // don't annotate property setters

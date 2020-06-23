@@ -20,6 +20,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightElementWithNullabilityAnnotation
 import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -30,9 +31,7 @@ import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 /**
  * Can be null in scripts and for elements from non-jvm modules.
@@ -220,4 +219,33 @@ fun KtLightMethod.checkIsMangled(): Boolean {
     val demangledName = KotlinTypeMapper.InternalNameMapper.demangleInternalName(name) ?: return false
     val originalName = propertyNameByAccessor(demangledName, this) ?: demangledName
     return originalName == kotlinOrigin?.name
+}
+
+fun fastCheckIsNullabilityApplied(lightElement: KtLightElement<*, PsiModifierListOwner>): Boolean {
+
+    val annotatedElement = lightElement.kotlinOrigin ?: return true
+
+    // all data-class generated members are not-null
+    if (annotatedElement is KtClass && annotatedElement.isData()) return true
+
+    if (annotatedElement is KtParameter && lightElement !is PsiField) { //KtParameter but not it's backing field
+        val containingClassOrObject = annotatedElement.containingClassOrObject
+        if (containingClassOrObject?.isAnnotation() == true) return false
+        if ((containingClassOrObject as? KtClass)?.isEnum() == true) {
+            if (annotatedElement.parent.parent is KtPrimaryConstructor) return false
+        }
+
+        val parent = annotatedElement.parent.parent
+        if (parent is KtModifierListOwner && parent.isPrivate()) return false
+
+        if (parent is KtPropertyAccessor) {
+            val propertyOfAccessor = parent.parent
+            if (propertyOfAccessor is KtProperty && propertyOfAccessor.isPrivate()) return false
+        }
+    } else {
+        // private properties
+        if ((annotatedElement as? KtModifierListOwner)?.isPrivate() == true) return false
+    }
+
+    return true
 }
