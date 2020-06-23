@@ -277,7 +277,7 @@ abstract class AnnotationCodegen(
 
     companion object {
         private fun isInvisibleFromTheOutside(declaration: IrDeclaration?): Boolean {
-            if (declaration is IrSimpleFunction && declaration.origin.isSynthetic) {
+            if (declaration != null && declaration.origin.isSynthetic) {
                 return true
             }
             if (declaration is IrDeclarationWithVisibility) {

@@ -12,7 +12,7 @@ public interface FlowCollector {
 public final class TcoContinuationKt$collect$2$emit$1 {
     field label: int
     synthetic field result: java.lang.Object
-    synthetic final @org.jetbrains.annotations.NotNull field this$0: TcoContinuationKt$collect$2
+    synthetic final field this$0: TcoContinuationKt$collect$2
     inner class TcoContinuationKt$collect$2
     inner class TcoContinuationKt$collect$2$emit$1
     public method <init>(p0: TcoContinuationKt$collect$2, p1: kotlin.coroutines.Continuation): void
@@ -21,7 +21,7 @@ public final class TcoContinuationKt$collect$2$emit$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$collect$2 {
-    synthetic final @org.jetbrains.annotations.NotNull field $action: kotlin.jvm.functions.Function2
+    synthetic final field $action: kotlin.jvm.functions.Function2
     inner class TcoContinuationKt$collect$2
     inner class TcoContinuationKt$collect$2$emit$1
     public method <init>(p0: kotlin.jvm.functions.Function2): void
@@ -33,7 +33,7 @@ public final class TcoContinuationKt$collect$2 {
 public final class TcoContinuationKt$flow$1$collect$1 {
     field label: int
     synthetic field result: java.lang.Object
-    synthetic final @org.jetbrains.annotations.NotNull field this$0: TcoContinuationKt$flow$1
+    synthetic final field this$0: TcoContinuationKt$flow$1
     inner class TcoContinuationKt$flow$1
     inner class TcoContinuationKt$flow$1$collect$1
     public method <init>(p0: TcoContinuationKt$flow$1, p1: kotlin.coroutines.Continuation): void
@@ -42,7 +42,7 @@ public final class TcoContinuationKt$flow$1$collect$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$flow$1 {
-    synthetic final @org.jetbrains.annotations.NotNull field $block: kotlin.jvm.functions.Function2
+    synthetic final field $block: kotlin.jvm.functions.Function2
     inner class TcoContinuationKt$flow$1
     inner class TcoContinuationKt$flow$1$collect$1
     public method <init>(p0: kotlin.jvm.functions.Function2): void

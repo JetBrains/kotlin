@@ -11,7 +11,7 @@ public final class Sealed$Derived {
 
 @kotlin.Metadata
 public final class Sealed$Inner {
-    synthetic final @org.jetbrains.annotations.NotNull field this$0: Sealed
+    synthetic final field this$0: Sealed
     private final field z2: int
     inner class Sealed$Inner
     public synthetic @Ann method <init>(p0: Sealed, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
@@ -31,7 +31,7 @@ public abstract class Sealed {
 
 @kotlin.Metadata
 public final class Test$Inner {
-    synthetic final @org.jetbrains.annotations.NotNull field this$0: Test
+    synthetic final field this$0: Test
     private final field z2: int
     inner class Test$Inner
     public synthetic @Ann method <init>(p0: Test, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
