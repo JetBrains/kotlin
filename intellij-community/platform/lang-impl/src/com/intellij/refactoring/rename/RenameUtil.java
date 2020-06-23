@@ -260,6 +260,12 @@ public final class RenameUtil {
 
   public static void doRenameGenericNamedElement(@NotNull PsiElement namedElement, String newName, UsageInfo[] usages,
                                                  @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
+    for (UsageInfo usage : usages) {
+      PsiReference reference = usage.getReference();
+      if (reference != null) {
+        RenameUsagesCollector.referenceProcessed.log(namedElement.getProject(), reference.getClass());
+      }
+    }
     RenameUtilBase.doRenameGenericNamedElement(namedElement, newName, usages, listener);
   }
 
