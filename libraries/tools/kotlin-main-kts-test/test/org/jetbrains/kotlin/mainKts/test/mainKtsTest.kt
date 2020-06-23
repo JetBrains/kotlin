@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.junit.Assert
 import org.junit.Test
 import java.io.*
-import java.net.URLClassLoader
 import java.util.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
@@ -38,6 +37,8 @@ fun evalFile(scriptFile: File, cacheDir: File? = null): ResultWithDiagnostics<Ev
 
 
 const val TEST_DATA_ROOT = "libraries/tools/kotlin-main-kts-test/testData"
+val OUT_FROM_IMPORT_TEST = listOf("Hi from common", "Hi from middle", "sharedVar == 5")
+
 
 class MainKtsTest {
 
@@ -96,8 +97,6 @@ class MainKtsTest {
         assertSucceeded(res)
     }
 
-    private val outFromImportTest = listOf("Hi from common", "Hi from middle", "sharedVar == 5")
-
     @Test
     fun testImport() {
 
@@ -106,7 +105,7 @@ class MainKtsTest {
             assertSucceeded(res)
         }.lines()
 
-        Assert.assertEquals(outFromImportTest, out)
+        Assert.assertEquals(OUT_FROM_IMPORT_TEST, out)
     }
 
     @Test
@@ -119,34 +118,6 @@ class MainKtsTest {
         }.lines()
 
         Assert.assertEquals(listOf("Hi from sub", "Hi from super", "Hi from random"), out)
-    }
-
-    @Test
-    fun testCache() {
-        val script = File("$TEST_DATA_ROOT/import-test.main.kts")
-        val cache = createTempDir("main.kts.test")
-
-        try {
-            Assert.assertTrue(cache.exists() && cache.listFiles { f: File -> f.extension == "jar" }?.isEmpty() == true)
-            val out1 = evalSuccessWithOut(script)
-            Assert.assertEquals(outFromImportTest, out1)
-            Assert.assertTrue(cache.listFiles { f: File -> f.extension.equals("jar", ignoreCase = true) }?.isEmpty() == true)
-
-            val out2 = evalSuccessWithOut(script, cache)
-            Assert.assertEquals(outFromImportTest, out2)
-            val casheFile = cache.listFiles { f: File -> f.extension.equals("jar", ignoreCase = true) }?.firstOrNull()
-            Assert.assertTrue(casheFile != null && casheFile.exists())
-
-            val out3 = captureOut {
-                val classLoader = URLClassLoader(arrayOf(casheFile!!.toURI().toURL()), null)
-                val clazz = classLoader.loadClass("Import_test_main")
-                val mainFn = clazz.getDeclaredMethod("main", Array<String>::class.java)
-                mainFn.invoke(null, arrayOf<String>())
-            }.lines()
-            Assert.assertEquals(outFromImportTest, out3)
-        } finally {
-            cache.deleteRecursively()
-        }
     }
 
     private fun assertIsJava6Bytecode(res: ResultWithDiagnostics<EvaluationResult>) {

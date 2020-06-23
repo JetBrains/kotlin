@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.mainKts.test
 
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
+import org.jetbrains.kotlin.scripting.compiler.plugin.runAndCheckResults
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinLauncherScript
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinc
@@ -58,6 +59,32 @@ class MainKtsIT {
             runWithKotlinRunner("$TEST_DATA_ROOT/use-reflect.main.kts", listOf("false"), cacheDir = cache)
             // second run uses the cached script
             runWithKotlinRunner("$TEST_DATA_ROOT/use-reflect.main.kts", listOf("false"), cacheDir = cache)
+        } finally {
+            cache.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun testCache() {
+        val script = File("$TEST_DATA_ROOT/import-test.main.kts").absolutePath
+        val cache = createTempDir("main.kts.test")
+
+        try {
+            Assert.assertTrue(cache.exists() && cache.listFiles { f: File -> f.extension == "jar" }?.isEmpty() == true)
+            runWithKotlinRunner(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
+            val cacheFile = cache.listFiles { f: File -> f.extension.equals("jar", ignoreCase = true) }?.firstOrNull()
+            Assert.assertTrue(cacheFile != null && cacheFile.exists())
+
+            // run generated jar with java
+            val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
+            val args = listOf(javaExecutable.absolutePath, "-jar", cacheFile!!.path)
+            runAndCheckResults(
+                args, OUT_FROM_IMPORT_TEST,
+                additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to cache.absolutePath)
+            )
+
+            // this run should use the cached script
+            runWithKotlinRunner(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
         } finally {
             cache.deleteRecursively()
         }
