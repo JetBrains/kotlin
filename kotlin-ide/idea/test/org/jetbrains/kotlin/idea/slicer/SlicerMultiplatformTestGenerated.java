@@ -20,39 +20,54 @@ import org.junit.runner.RunWith;
 @TestRoot("idea")
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-@TestMetadata("testData/navigationToolbar")
+@TestMetadata("testData/slicer/mpp")
 public class SlicerMultiplatformTestGenerated extends AbstractSlicerMultiplatformTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    @TestMetadata("ClassProperty.kt")
-    public void testClassProperty() throws Exception {
-        runTest("testData/navigationToolbar/ClassProperty.kt");
+    @TestMetadata("actualClassFunctionParameter")
+    public void testActualClassFunctionParameter() throws Exception {
+        runTest("testData/slicer/mpp/actualClassFunctionParameter/");
     }
 
-    @TestMetadata("fileNameDoesntMatchClassName.kt")
-    public void testFileNameDoesntMatchClassName() throws Exception {
-        runTest("testData/navigationToolbar/fileNameDoesntMatchClassName.kt");
+    @TestMetadata("actualFunctionParameter")
+    public void testActualFunctionParameter() throws Exception {
+        runTest("testData/slicer/mpp/actualFunctionParameter/");
     }
 
-    @TestMetadata("MethodInClass.kt")
-    public void testMethodInClass() throws Exception {
-        runTest("testData/navigationToolbar/MethodInClass.kt");
+    @TestMetadata("expectClassFunctionParameter")
+    public void testExpectClassFunctionParameter() throws Exception {
+        runTest("testData/slicer/mpp/expectClassFunctionParameter/");
     }
 
-    @TestMetadata("SeveralClassesInFile.kt")
-    public void testSeveralClassesInFile() throws Exception {
-        runTest("testData/navigationToolbar/SeveralClassesInFile.kt");
+    @TestMetadata("expectExtensionFunctionResultOut")
+    public void testExpectExtensionFunctionResultOut() throws Exception {
+        runTest("testData/slicer/mpp/expectExtensionFunctionResultOut/");
     }
 
-    @TestMetadata("topLevelFunction.kt")
-    public void testTopLevelFunction() throws Exception {
-        runTest("testData/navigationToolbar/topLevelFunction.kt");
+    @TestMetadata("expectFunctionParameter")
+    public void testExpectFunctionParameter() throws Exception {
+        runTest("testData/slicer/mpp/expectFunctionParameter/");
     }
 
-    @TestMetadata("topLevelProperty.kt")
-    public void testTopLevelProperty() throws Exception {
-        runTest("testData/navigationToolbar/topLevelProperty.kt");
+    @TestMetadata("expectFunctionResultIn")
+    public void testExpectFunctionResultIn() throws Exception {
+        runTest("testData/slicer/mpp/expectFunctionResultIn/");
+    }
+
+    @TestMetadata("expectFunctionResultOut")
+    public void testExpectFunctionResultOut() throws Exception {
+        runTest("testData/slicer/mpp/expectFunctionResultOut/");
+    }
+
+    @TestMetadata("expectPropertyResultIn")
+    public void testExpectPropertyResultIn() throws Exception {
+        runTest("testData/slicer/mpp/expectPropertyResultIn/");
+    }
+
+    @TestMetadata("expectPropertyResultOut")
+    public void testExpectPropertyResultOut() throws Exception {
+        runTest("testData/slicer/mpp/expectPropertyResultOut/");
     }
 }

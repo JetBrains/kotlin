@@ -140,6 +140,7 @@ import org.jetbrains.kotlin.nj2k.inference.nullability.AbstractNullabilityInfere
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
 import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
 import org.jetbrains.kotlin.idea.highlighter.AbstractFirHighlightingTest
+import org.jetbrains.kotlin.idea.navigationToolbar.AbstractKotlinNavBarTest
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -849,7 +850,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("slicer/mpp", isRecursive = false, pattern = DIRECTORY)
         }
 
-        testClass<AbstractSlicerMultiplatformTest> {
+        testClass<AbstractKotlinNavBarTest> {
             model("navigationToolbar", isRecursive = false)
         }
     }
