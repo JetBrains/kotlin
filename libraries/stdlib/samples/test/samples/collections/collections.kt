@@ -652,24 +652,24 @@ class Collections {
         }
 
         @Sample
-        fun maxBy() {
+        fun maxByOrNull() {
             val nameToAge = listOf("Alice" to 42, "Bob" to 28, "Carol" to 51)
-            val oldestPerson = nameToAge.maxBy { it.second }
+            val oldestPerson = nameToAge.maxByOrNull { it.second }
             assertPrints(oldestPerson, "(Carol, 51)")
 
             val emptyList = emptyList<Pair<String, Int>>()
-            val emptyMax = emptyList.maxBy { it.second }
+            val emptyMax = emptyList.maxByOrNull { it.second }
             assertPrints(emptyMax, "null")
         }
 
         @Sample
-        fun minBy() {
+        fun minByOrNull() {
             val list = listOf("abcd", "abc", "ab", "abcde")
-            val shortestString = list.minBy { it.length }
+            val shortestString = list.minByOrNull { it.length }
             assertPrints(shortestString, "ab")
 
             val emptyList = emptyList<String>()
-            val emptyMin = emptyList.minBy { it.length }
+            val emptyMin = emptyList.minByOrNull { it.length }
             assertPrints(emptyMin, "null")
         }
 

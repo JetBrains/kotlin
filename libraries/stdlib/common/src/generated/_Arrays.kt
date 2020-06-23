@@ -13495,7 +13495,7 @@ public inline fun <R : Comparable<R>> CharArray.maxBy(selector: (Char) -> R): Ch
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.maxByOrNull(selector: (T) -> R): T? {
@@ -13518,7 +13518,7 @@ public inline fun <T, R : Comparable<R>> Array<out T>.maxByOrNull(selector: (T) 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ByteArray.maxByOrNull(selector: (Byte) -> R): Byte? {
@@ -13541,7 +13541,7 @@ public inline fun <R : Comparable<R>> ByteArray.maxByOrNull(selector: (Byte) -> 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ShortArray.maxByOrNull(selector: (Short) -> R): Short? {
@@ -13564,7 +13564,7 @@ public inline fun <R : Comparable<R>> ShortArray.maxByOrNull(selector: (Short) -
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> IntArray.maxByOrNull(selector: (Int) -> R): Int? {
@@ -13587,7 +13587,7 @@ public inline fun <R : Comparable<R>> IntArray.maxByOrNull(selector: (Int) -> R)
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> LongArray.maxByOrNull(selector: (Long) -> R): Long? {
@@ -13610,7 +13610,7 @@ public inline fun <R : Comparable<R>> LongArray.maxByOrNull(selector: (Long) -> 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> FloatArray.maxByOrNull(selector: (Float) -> R): Float? {
@@ -13633,7 +13633,7 @@ public inline fun <R : Comparable<R>> FloatArray.maxByOrNull(selector: (Float) -
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> DoubleArray.maxByOrNull(selector: (Double) -> R): Double? {
@@ -13656,7 +13656,7 @@ public inline fun <R : Comparable<R>> DoubleArray.maxByOrNull(selector: (Double)
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> BooleanArray.maxByOrNull(selector: (Boolean) -> R): Boolean? {
@@ -13679,7 +13679,7 @@ public inline fun <R : Comparable<R>> BooleanArray.maxByOrNull(selector: (Boolea
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> CharArray.maxByOrNull(selector: (Char) -> R): Char? {
@@ -15630,7 +15630,7 @@ public inline fun <R : Comparable<R>> CharArray.minBy(selector: (Char) -> R): Ch
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.minByOrNull(selector: (T) -> R): T? {
@@ -15653,7 +15653,7 @@ public inline fun <T, R : Comparable<R>> Array<out T>.minByOrNull(selector: (T) 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ByteArray.minByOrNull(selector: (Byte) -> R): Byte? {
@@ -15676,7 +15676,7 @@ public inline fun <R : Comparable<R>> ByteArray.minByOrNull(selector: (Byte) -> 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> ShortArray.minByOrNull(selector: (Short) -> R): Short? {
@@ -15699,7 +15699,7 @@ public inline fun <R : Comparable<R>> ShortArray.minByOrNull(selector: (Short) -
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> IntArray.minByOrNull(selector: (Int) -> R): Int? {
@@ -15722,7 +15722,7 @@ public inline fun <R : Comparable<R>> IntArray.minByOrNull(selector: (Int) -> R)
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> LongArray.minByOrNull(selector: (Long) -> R): Long? {
@@ -15745,7 +15745,7 @@ public inline fun <R : Comparable<R>> LongArray.minByOrNull(selector: (Long) -> 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> FloatArray.minByOrNull(selector: (Float) -> R): Float? {
@@ -15768,7 +15768,7 @@ public inline fun <R : Comparable<R>> FloatArray.minByOrNull(selector: (Float) -
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> DoubleArray.minByOrNull(selector: (Double) -> R): Double? {
@@ -15791,7 +15791,7 @@ public inline fun <R : Comparable<R>> DoubleArray.minByOrNull(selector: (Double)
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> BooleanArray.minByOrNull(selector: (Boolean) -> R): Boolean? {
@@ -15814,7 +15814,7 @@ public inline fun <R : Comparable<R>> BooleanArray.minByOrNull(selector: (Boolea
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> CharArray.minByOrNull(selector: (Char) -> R): Char? {

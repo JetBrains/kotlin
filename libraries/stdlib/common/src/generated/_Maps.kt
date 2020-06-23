@@ -188,7 +188,7 @@ public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.E
 /**
  * Returns the first entry yielding the largest value of the given function or `null` if there are no entries.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
@@ -331,7 +331,7 @@ public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.E
 /**
  * Returns the first entry yielding the smallest value of the given function or `null` if there are no entries.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
