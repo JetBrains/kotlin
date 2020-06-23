@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -499,24 +499,25 @@ fun irCall(
         }
     }
 
-fun IrFunctionAccessExpression.copyTypeAndValueArgumentsFrom(
-    src: IrFunctionAccessExpression,
+fun IrMemberAccessExpression<IrFunctionSymbol>.copyTypeAndValueArgumentsFrom(
+    src: IrMemberAccessExpression<IrFunctionSymbol>,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false
 ) {
     copyTypeArgumentsFrom(src)
-    copyValueArgumentsFrom(src, src.symbol.owner, symbol.owner, receiversAsArguments, argumentsAsReceivers)
+    copyValueArgumentsFrom(src, symbol.owner, receiversAsArguments, argumentsAsReceivers)
 }
 
-fun IrMemberAccessExpression<*>.copyValueArgumentsFrom(
-    src: IrMemberAccessExpression<*>,
-    srcFunction: IrFunction,
+fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
+    src: IrMemberAccessExpression<IrFunctionSymbol>,
     destFunction: IrFunction,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false
 ) {
     var destValueArgumentIndex = 0
     var srcValueArgumentIndex = 0
+
+    val srcFunction = src.symbol.owner
 
     when {
         receiversAsArguments && srcFunction.dispatchReceiverParameter != null -> {

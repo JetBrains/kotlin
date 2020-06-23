@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -281,14 +280,10 @@ fun createDelegatingCallWithPlaceholderTypeArguments(existingCall: IrCall, redir
         copyFromWithPlaceholderTypeArguments(existingCall, irBuiltIns)
     }
 
-fun IrFunctionAccessExpression.copyFromWithPlaceholderTypeArguments(existingCall: IrFunctionAccessExpression, irBuiltIns: IrBuiltIns) {
-    copyValueArgumentsFrom(
-        existingCall,
-        existingCall.symbol.owner,
-        this.symbol.owner,
-        receiversAsArguments = true,
-        argumentsAsReceivers = false,
-    )
+fun IrMemberAccessExpression<IrFunctionSymbol>.copyFromWithPlaceholderTypeArguments(
+    existingCall: IrMemberAccessExpression<IrFunctionSymbol>, irBuiltIns: IrBuiltIns
+) {
+    copyValueArgumentsFrom(existingCall, this.symbol.owner, receiversAsArguments = true, argumentsAsReceivers = false)
     var offset = 0
     existingCall.symbol.owner.parentAsClass.typeParameters.forEach { _ ->
         putTypeArgument(offset++, createPlaceholderAnyNType(irBuiltIns))

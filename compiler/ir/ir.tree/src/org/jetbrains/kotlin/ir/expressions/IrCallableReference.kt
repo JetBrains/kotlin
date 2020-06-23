@@ -23,7 +23,7 @@ interface IrCallableReference<S : IrSymbol> : IrMemberAccessExpression<S> {
     val referencedName: Name
 }
 
-interface IrFunctionReference : IrCallableReference<IrFunctionSymbol>, IrFunctionAccessExpression {
+interface IrFunctionReference : IrCallableReference<IrFunctionSymbol> {
     val reflectionTarget: IrFunctionSymbol?
 }
 

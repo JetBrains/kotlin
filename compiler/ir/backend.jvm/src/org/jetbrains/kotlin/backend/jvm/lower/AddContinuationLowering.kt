@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.codegen.*
+import org.jetbrains.kotlin.backend.jvm.codegen.continuationParameter
+import org.jetbrains.kotlin.backend.jvm.codegen.hasContinuation
+import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfContinuation
+import org.jetbrains.kotlin.backend.jvm.codegen.isReadOfCrossinline
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -692,7 +696,7 @@ private fun IrFunction.continuationType(context: JvmBackendContext): IrType {
         context.ir.symbols.continuationClass.typeWith(returnType)
 }
 
-private fun <T : IrFunctionAccessExpression> T.retargetToSuspendView(
+private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspendView(
     context: JvmBackendContext,
     caller: IrFunction?,
     copyWithTargetSymbol: T.(IrSimpleFunctionSymbol) -> T
