@@ -3,13 +3,13 @@ package com.intellij.ide.actions;
 
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.searcheverywhere.ClassSearchEverywhereContributor;
+import com.intellij.ide.util.gotoByName.GotoClassModel2;
 import com.intellij.navigation.ChooseByNameRegistry;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.playback.commands.ActionCommand;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class GotoClassAction extends SearchEverywhereBaseAction implements DumbA
     if (project == null) return;
 
     boolean dumb = DumbService.isDumb(project);
-    if (!dumb || isContributorDumbAware(e)) {
+    if (!dumb || isModelDumbAware(e)) {
       showInSearchEverywherePopup(ClassSearchEverywhereContributor.class.getSimpleName(), e, true, true);
     }
     else {
@@ -42,15 +42,8 @@ public class GotoClassAction extends SearchEverywhereBaseAction implements DumbA
     }
   }
 
-  private static boolean isContributorDumbAware(AnActionEvent e) {
-    ClassSearchEverywhereContributor contributor = null;
-    try {
-      contributor = new ClassSearchEverywhereContributor(e);
-      return contributor.isDumbAware();
-    }
-    finally {
-      if (contributor != null) Disposer.dispose(contributor);
-    }
+  private static boolean isModelDumbAware(AnActionEvent e) {
+    return new GotoClassModel2(e.getRequiredData(CommonDataKeys.PROJECT)).isDumbAware();
   }
 
   static void invokeGoToFile(@NotNull Project project, @NotNull AnActionEvent e) {
