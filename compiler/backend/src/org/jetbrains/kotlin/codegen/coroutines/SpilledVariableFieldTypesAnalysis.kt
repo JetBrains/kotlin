@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import org.jetbrains.kotlin.codegen.inline.insnOpcodeText
+import org.jetbrains.kotlin.codegen.inline.isFakeLocalVariableForInline
 import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes.*
@@ -49,6 +50,11 @@ private class MergedSpilledVariableFieldTypeValue(
     override fun hashCode(): Int = values.hashCode()
 
     override fun toString(): String = "M$values"
+}
+
+// $i$a and $i$f variables should be ignored in merge operation, since they are not used, but set only
+private class FakeInlinerVariableValue(insn: AbstractInsnNode) : SpilledVariableFieldTypeValue(Type.INT_TYPE, insn) {
+    override fun toString(): String = "@"
 }
 
 private operator fun SpilledVariableFieldTypeValue?.plus(other: SpilledVariableFieldTypeValue?): SpilledVariableFieldTypeValue? = when {
@@ -149,20 +155,23 @@ private class SpilledVariableFieldTypesInterpreter(
         return null
     }
 
-    override fun merge(v: SpilledVariableFieldTypeValue?, w: SpilledVariableFieldTypeValue?): SpilledVariableFieldTypeValue? = when {
-        v?.type?.isIntType() == true && w?.type?.isIntType() == true -> v + w
-        v != null && v.type == null -> w
-        w != null && w.type == null -> v
-        v?.type == w?.type -> v
-        v?.type?.sort == Type.OBJECT && w?.type?.sort == Type.OBJECT -> {
-            when {
-                v.type == AsmTypes.OBJECT_TYPE -> v
-                w.type == AsmTypes.OBJECT_TYPE -> w
-                else -> SpilledVariableFieldTypeValue(AsmTypes.OBJECT_TYPE, v.insn)
+    override fun merge(v: SpilledVariableFieldTypeValue?, w: SpilledVariableFieldTypeValue?): SpilledVariableFieldTypeValue? =
+        when {
+            v is FakeInlinerVariableValue -> w
+            w is FakeInlinerVariableValue -> v
+            v?.type?.isIntType() == true && w?.type?.isIntType() == true -> v + w
+            v != null && v.type == null -> w
+            w != null && w.type == null -> v
+            v?.type == w?.type -> v
+            v?.type?.sort == Type.OBJECT && w?.type?.sort == Type.OBJECT -> {
+                when {
+                    v.type == AsmTypes.OBJECT_TYPE -> v
+                    w.type == AsmTypes.OBJECT_TYPE -> w
+                    else -> SpilledVariableFieldTypeValue(AsmTypes.OBJECT_TYPE, v.insn)
+                }
             }
+            else -> SpilledVariableFieldTypeValue(null, v?.insn ?: w?.insn)
         }
-        else -> SpilledVariableFieldTypeValue(null, v?.insn ?: w?.insn)
-    }
 
     // IRETURN, LRETURN, FRETURN, DRETURN, ARETURN
     override fun returnOperation(insn: AbstractInsnNode, value: SpilledVariableFieldTypeValue?, expected: SpilledVariableFieldTypeValue?) {
@@ -223,27 +232,26 @@ private class SpilledVariableFieldTypesInterpreter(
         insn: AbstractInsnNode,
         v: SpilledVariableFieldTypeValue?,
         w: SpilledVariableFieldTypeValue?
-    ): SpilledVariableFieldTypeValue? =
-        when (insn.opcode) {
-            IALOAD, IADD, ISUB, IMUL, IDIV, IREM, ISHL, ISHR, IUSHR, IAND, IOR, IXOR, LCMP, FCMPL, FCMPG, DCMPL,
-            DCMPG -> SpilledVariableFieldTypeValue(Type.INT_TYPE, insn)
-            LALOAD, LADD, LSUB, LMUL, LDIV, LREM, LSHL, LSHR, LUSHR, LAND, LOR, LXOR -> SpilledVariableFieldTypeValue(Type.LONG_TYPE, insn)
-            FALOAD, FADD, FSUB, FMUL, FDIV, FREM -> SpilledVariableFieldTypeValue(Type.FLOAT_TYPE, insn)
-            DALOAD, DADD, DSUB, DMUL, DDIV, DREM -> SpilledVariableFieldTypeValue(Type.DOUBLE_TYPE, insn)
-            AALOAD -> SpilledVariableFieldTypeValue(AsmTypes.OBJECT_TYPE, insn)
-            BALOAD -> SpilledVariableFieldTypeValue(if (v?.type?.descriptor == "[Z") Type.BOOLEAN_TYPE else Type.BYTE_TYPE, insn)
-            CALOAD -> SpilledVariableFieldTypeValue(Type.CHAR_TYPE, insn)
-            SALOAD -> SpilledVariableFieldTypeValue(Type.SHORT_TYPE, insn)
-            IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> null
-            PUTFIELD -> {
-                val expectedType = Type.getType((insn as FieldInsnNode).desc)
-                if (expectedType.isIntType()) {
-                    w?.type = expectedType
-                }
-                null
+    ): SpilledVariableFieldTypeValue? = when (insn.opcode) {
+        IALOAD, IADD, ISUB, IMUL, IDIV, IREM, ISHL, ISHR, IUSHR, IAND, IOR, IXOR, LCMP, FCMPL, FCMPG, DCMPL,
+        DCMPG -> SpilledVariableFieldTypeValue(Type.INT_TYPE, insn)
+        LALOAD, LADD, LSUB, LMUL, LDIV, LREM, LSHL, LSHR, LUSHR, LAND, LOR, LXOR -> SpilledVariableFieldTypeValue(Type.LONG_TYPE, insn)
+        FALOAD, FADD, FSUB, FMUL, FDIV, FREM -> SpilledVariableFieldTypeValue(Type.FLOAT_TYPE, insn)
+        DALOAD, DADD, DSUB, DMUL, DDIV, DREM -> SpilledVariableFieldTypeValue(Type.DOUBLE_TYPE, insn)
+        AALOAD -> SpilledVariableFieldTypeValue(AsmTypes.OBJECT_TYPE, insn)
+        BALOAD -> SpilledVariableFieldTypeValue(if (v?.type?.descriptor == "[Z") Type.BOOLEAN_TYPE else Type.BYTE_TYPE, insn)
+        CALOAD -> SpilledVariableFieldTypeValue(Type.CHAR_TYPE, insn)
+        SALOAD -> SpilledVariableFieldTypeValue(Type.SHORT_TYPE, insn)
+        IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> null
+        PUTFIELD -> {
+            val expectedType = Type.getType((insn as FieldInsnNode).desc)
+            if (expectedType.isIntType()) {
+                w?.type = expectedType
             }
-            else -> unreachable(insn)
+            null
         }
+        else -> unreachable(insn)
+    }
 
     // ILOAD, LLOAD, FLOAD, DLOAD, ALOAD, ISTORE, LSTORE, FSTORE, DSTORE,
     // ASTORE, DUP, DUP_X1, DUP_X2, DUP2, DUP2_X1, DUP2_X2, SWAP
@@ -256,19 +264,21 @@ private class SpilledVariableFieldTypesInterpreter(
             // In this case, `b` and `i` have the same source, but different types.
             // The example also shows, that the types should be `I`.
             ISTORE -> {
-                findTypeFromLvt((insn as VarInsnNode).`var`, insn)?.let {
-                    if (it == value?.type) return value
+                if (value is FakeInlinerVariableValue && insn.previous.opcode == ICONST_0) return value
+                findLvtRecord((insn as VarInsnNode).`var`, insn)?.let {
+                    if (Type.getType(it.desc) == value?.type) return value
                 }
                 var current: AbstractInsnNode? = insn
                 while (current != null && current !is LabelNode) {
                     current = current.next
                 }
                 while (current is LabelNode) {
-                    findTypeFromLvt((insn as VarInsnNode).`var`, current)?.let {
-                        if (it == value?.type) return value
+                    findLvtRecord(insn.`var`, current)?.let {
+                        if (Type.getType(it.desc) == value?.type) return value
                     }
                     current = current.next
                 }
+                if (value?.type == Type.INT_TYPE) return value
                 SpilledVariableFieldTypeValue(Type.INT_TYPE, insn)
             }
             // Sometimes we cannot get the type from the usage only
@@ -277,43 +287,70 @@ private class SpilledVariableFieldTypesInterpreter(
             //  if (c == '2) ...
             // In this case, update the type using information from LVT
             ILOAD -> {
-                findTypeFromLvt((insn as VarInsnNode).`var`, insn)?.let { value?.type = it }
+                if (value is FakeInlinerVariableValue) return SpilledVariableFieldTypeValue(value.type, value.insn)
+                findLvtRecord((insn as VarInsnNode).`var`, insn)?.let { value?.type = Type.getType(it.desc) }
                 value
             }
             else -> value
         }
     }
 
-    private fun findTypeFromLvt(index: Int, insn: AbstractInsnNode): Type? = methodNode.localVariables.find { local ->
+    private fun findLvtRecord(index: Int, insn: AbstractInsnNode): LocalVariableNode? = methodNode.localVariables.find { local ->
         local.index == index &&
                 methodNode.instructions.indexOf(local.start) <= methodNode.instructions.indexOf(insn) &&
                 methodNode.instructions.indexOf(insn) < methodNode.instructions.indexOf(local.end)
-    }?.let { Type.getType(it.desc) }
+    }
 
     // ACONST_NULL, ICONST_M1, ICONST_0, ICONST_1, ICONST_2, ICONST_3, ICONST_4,
     // ICONST_5, LCONST_0, LCONST_1, FCONST_0, FCONST_1, FCONST_2, DCONST_0,
     // DCONST_1, BIPUSH, SIPUSH, LDC, JSR, GETSTATIC, NEW
-    override fun newOperation(insn: AbstractInsnNode): SpilledVariableFieldTypeValue? = when (insn.opcode) {
-        ACONST_NULL -> SpilledVariableFieldTypeValue(NULL_TYPE, insn)
-        ICONST_M1, ICONST_0, ICONST_1, ICONST_2, ICONST_3, ICONST_4, ICONST_5 -> SpilledVariableFieldTypeValue(Type.INT_TYPE, insn)
-        LCONST_0, LCONST_1 -> SpilledVariableFieldTypeValue(Type.LONG_TYPE, insn)
-        FCONST_0, FCONST_1, FCONST_2 -> SpilledVariableFieldTypeValue(Type.FLOAT_TYPE, insn)
-        DCONST_0, DCONST_1 -> SpilledVariableFieldTypeValue(Type.DOUBLE_TYPE, insn)
-        BIPUSH -> SpilledVariableFieldTypeValue(Type.BYTE_TYPE, insn)
-        SIPUSH -> SpilledVariableFieldTypeValue(Type.SHORT_TYPE, insn)
-        LDC -> when (val cst = (insn as LdcInsnNode).cst) {
-            is Int -> SpilledVariableFieldTypeValue(Type.INT_TYPE, insn)
-            is Long -> SpilledVariableFieldTypeValue(Type.LONG_TYPE, insn)
-            is Float -> SpilledVariableFieldTypeValue(Type.FLOAT_TYPE, insn)
-            is Double -> SpilledVariableFieldTypeValue(Type.DOUBLE_TYPE, insn)
-            is String -> SpilledVariableFieldTypeValue(AsmTypes.JAVA_STRING_TYPE, insn)
-            is Type -> SpilledVariableFieldTypeValue(AsmTypes.JAVA_CLASS_TYPE, insn)
-            else -> SpilledVariableFieldTypeValue(AsmTypes.OBJECT_TYPE, insn)
+    override fun newOperation(insn: AbstractInsnNode): SpilledVariableFieldTypeValue? {
+        return when (insn.opcode) {
+            ICONST_0 -> {
+                if (insn.next?.opcode == ISTORE) {
+                    // Find out, whether this is fake inliner variable
+                    // Unlike old JVM BE, JVM_IR does not generate them in a specific pattern,
+                    // that we can just recognize.
+                    // So, run instructions until LabelNode and check whether this is, in fact, fake inliner variable
+                    if (findLvtRecord((insn.next as VarInsnNode).`var`, insn.next) != null) {
+                        return SpilledVariableFieldTypeValue(Type.INT_TYPE, insn)
+                    }
+                    var current: AbstractInsnNode? = insn.next?.next
+                    while (current != null && current !is LabelNode) {
+                        current = current.next
+                    }
+                    while (current is LabelNode) {
+                        val lvtRecord = findLvtRecord((insn.next as VarInsnNode).`var`, current)
+                        // fake variables do not have LVT entry is they are inside `run` or `apply`
+                        if (lvtRecord == null || isFakeLocalVariableForInline(lvtRecord.name)) {
+                            return FakeInlinerVariableValue(insn)
+                        }
+                        current = current.next
+                    }
+                }
+                SpilledVariableFieldTypeValue(Type.INT_TYPE, insn)
+            }
+            ACONST_NULL -> SpilledVariableFieldTypeValue(NULL_TYPE, insn)
+            ICONST_M1, ICONST_1, ICONST_2, ICONST_3, ICONST_4, ICONST_5 -> SpilledVariableFieldTypeValue(Type.INT_TYPE, insn)
+            LCONST_0, LCONST_1 -> SpilledVariableFieldTypeValue(Type.LONG_TYPE, insn)
+            FCONST_0, FCONST_1, FCONST_2 -> SpilledVariableFieldTypeValue(Type.FLOAT_TYPE, insn)
+            DCONST_0, DCONST_1 -> SpilledVariableFieldTypeValue(Type.DOUBLE_TYPE, insn)
+            BIPUSH -> SpilledVariableFieldTypeValue(Type.BYTE_TYPE, insn)
+            SIPUSH -> SpilledVariableFieldTypeValue(Type.SHORT_TYPE, insn)
+            LDC -> when ((insn as LdcInsnNode).cst) {
+                is Int -> SpilledVariableFieldTypeValue(Type.INT_TYPE, insn)
+                is Long -> SpilledVariableFieldTypeValue(Type.LONG_TYPE, insn)
+                is Float -> SpilledVariableFieldTypeValue(Type.FLOAT_TYPE, insn)
+                is Double -> SpilledVariableFieldTypeValue(Type.DOUBLE_TYPE, insn)
+                is String -> SpilledVariableFieldTypeValue(AsmTypes.JAVA_STRING_TYPE, insn)
+                is Type -> SpilledVariableFieldTypeValue(AsmTypes.JAVA_CLASS_TYPE, insn)
+                else -> SpilledVariableFieldTypeValue(AsmTypes.OBJECT_TYPE, insn)
+            }
+            JSR -> SpilledVariableFieldTypeValue(Type.VOID_TYPE, insn)
+            GETSTATIC -> SpilledVariableFieldTypeValue(Type.getType((insn as FieldInsnNode).desc), insn)
+            NEW -> SpilledVariableFieldTypeValue(Type.getObjectType((insn as TypeInsnNode).desc), insn)
+            else -> unreachable(insn)
         }
-        JSR -> SpilledVariableFieldTypeValue(Type.VOID_TYPE, insn)
-        GETSTATIC -> SpilledVariableFieldTypeValue(Type.getType((insn as FieldInsnNode).desc), insn)
-        NEW -> SpilledVariableFieldTypeValue(Type.getObjectType((insn as TypeInsnNode).desc), insn)
-        else -> unreachable(insn)
     }
 }
 
