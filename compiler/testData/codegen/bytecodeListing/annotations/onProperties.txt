@@ -2,7 +2,7 @@
 public final class A {
     synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private @AnnField field p: int
-    private final @AnnDelegate @org.jetbrains.annotations.NotNull field s$delegate: CustomDelegate
+    private final @AnnDelegate field s$delegate: CustomDelegate
     private final @AnnField field x: int
     private field y: int
     static method <clinit>(): void

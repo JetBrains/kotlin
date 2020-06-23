@@ -196,7 +196,9 @@ public abstract class AnnotationCodegen {
             return;
         }
 
-        if (returnType != null && !AsmUtil.isPrimitive(returnType)) {
+        if (returnType != null && !AsmUtil.isPrimitive(returnType) &&
+            !(descriptor instanceof PropertyDescriptor && ((PropertyDescriptor) descriptor).isDelegated())
+        ) {
             generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
         }
     }
