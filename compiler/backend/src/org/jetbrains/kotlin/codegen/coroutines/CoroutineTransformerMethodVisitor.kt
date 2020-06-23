@@ -594,7 +594,7 @@ class CoroutineTransformerMethodVisitor(
 
     private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableDescriptor>> {
         val instructions = methodNode.instructions
-        val frames = performRefinedTypeAnalysis(methodNode, containingClassInternalName)
+        val frames = performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
         fun AbstractInsnNode.index() = instructions.indexOf(this)
 
         // We postpone these actions because they change instruction indices that we use when obtaining frames
@@ -642,11 +642,11 @@ class CoroutineTransformerMethodVisitor(
                     .map { Pair(it, frame.getLocal(it)) }
                     .filter { (index, value) ->
                         (index == 0 && needDispatchReceiver && isForNamedFunction) ||
-                                (value != StrictBasicValue.UNINITIALIZED_VALUE && livenessFrame.isAlive(index))
+                                (value.type != null && livenessFrame.isAlive(index))
                     }
 
             for ((index, basicValue) in variablesToSpill) {
-                if (basicValue === StrictBasicValue.NULL_VALUE) {
+                if (basicValue.type == NULL_TYPE) {
                     postponedActions.add {
                         with(instructions) {
                             insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
@@ -658,7 +658,7 @@ class CoroutineTransformerMethodVisitor(
                     continue
                 }
 
-                val type = basicValue.type
+                val type = basicValue.type!!
                 val normalizedType = type.normalize()
 
                 val indexBySort = varsCountByType[normalizedType]?.plus(1) ?: 0
