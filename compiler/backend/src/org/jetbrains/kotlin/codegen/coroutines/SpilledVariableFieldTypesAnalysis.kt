@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen.coroutines
 import org.jetbrains.kotlin.codegen.inline.insnOpcodeText
 import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -248,32 +247,48 @@ private class SpilledVariableFieldTypesInterpreter(
 
     // ILOAD, LLOAD, FLOAD, DLOAD, ALOAD, ISTORE, LSTORE, FSTORE, DSTORE,
     // ASTORE, DUP, DUP_X1, DUP_X2, DUP2, DUP2_X1, DUP2_X2, SWAP
-    override fun copyOperation(insn: AbstractInsnNode, value: SpilledVariableFieldTypeValue?): SpilledVariableFieldTypeValue? =
-        when (insn.opcode) {
+    override fun copyOperation(insn: AbstractInsnNode, value: SpilledVariableFieldTypeValue?): SpilledVariableFieldTypeValue? {
+        return when (insn.opcode) {
             // If same ICONST is stored into several slots, thay can have different types
             // For example,
             //  val b: Byte = 1
             //  val i: Int = b.toInt()
             // In this case, `b` and `i` have the same source, but different types.
             // The example also shows, that the types should be `I`.
-            ISTORE -> SpilledVariableFieldTypeValue(Type.INT_TYPE, insn)
+            ISTORE -> {
+                findTypeFromLvt((insn as VarInsnNode).`var`, insn)?.let {
+                    if (it == value?.type) return value
+                }
+                var current: AbstractInsnNode? = insn
+                while (current != null && current !is LabelNode) {
+                    current = current.next
+                }
+                while (current is LabelNode) {
+                    findTypeFromLvt((insn as VarInsnNode).`var`, current)?.let {
+                        if (it == value?.type) return value
+                    }
+                    current = current.next
+                }
+                SpilledVariableFieldTypeValue(Type.INT_TYPE, insn)
+            }
             // Sometimes we cannot get the type from the usage only
             // For example,
             //  val c = '1'
             //  if (c == '2) ...
             // In this case, update the type using information from LVT
             ILOAD -> {
-                methodNode.localVariables.find { local ->
-                    local.index == (insn as VarInsnNode).`var` &&
-                            methodNode.instructions.indexOf(local.start) < methodNode.instructions.indexOf(insn) &&
-                            methodNode.instructions.indexOf(insn) < methodNode.instructions.indexOf(local.end)
-                }?.let { local ->
-                    value?.type = Type.getType(local.desc)
-                }
+                findTypeFromLvt((insn as VarInsnNode).`var`, insn)?.let { value?.type = it }
                 value
             }
             else -> value
         }
+    }
+
+    private fun findTypeFromLvt(index: Int, insn: AbstractInsnNode): Type? = methodNode.localVariables.find { local ->
+        local.index == index &&
+                methodNode.instructions.indexOf(local.start) <= methodNode.instructions.indexOf(insn) &&
+                methodNode.instructions.indexOf(insn) < methodNode.instructions.indexOf(local.end)
+    }?.let { Type.getType(it.desc) }
 
     // ACONST_NULL, ICONST_M1, ICONST_0, ICONST_1, ICONST_2, ICONST_3, ICONST_4,
     // ICONST_5, LCONST_0, LCONST_1, FCONST_0, FCONST_1, FCONST_2, DCONST_0,
