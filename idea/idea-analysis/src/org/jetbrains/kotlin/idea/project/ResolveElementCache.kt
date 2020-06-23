@@ -238,11 +238,14 @@ class ResolveElementCache(
     }
 
     fun resolveToElements(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
-        val elementsByAdditionalResolveElement: Map<KtElement?, List<KtElement>> = elements.groupBy { findElementOfAdditionalResolve(it, bodyResolveMode) }
+        val elementsByAdditionalResolveElement: Map<KtElement?, List<KtElement>> =
+            elements.groupBy { findElementOfAdditionalResolve(it, bodyResolveMode) }
 
         val bindingContexts = ArrayList<BindingContext>()
         val declarationsToResolve = ArrayList<KtDeclaration>()
         var addResolveSessionBindingContext = false
+
+        ensureFileAnnotationsResolved(elements)
         for ((elementOfAdditionalResolve, contextElements) in elementsByAdditionalResolveElement) {
             if (elementOfAdditionalResolve != null) {
                 if (elementOfAdditionalResolve is KtParameter) {
@@ -270,6 +273,14 @@ class ResolveElementCache(
 
         //TODO: it can be slow if too many contexts
         return CompositeBindingContext.create(bindingContexts)
+    }
+
+    private fun ensureFileAnnotationsResolved(elements: Collection<KtElement>) {
+        val filesToBeAnalyzed = elements.map { it.containingKtFile }.toSet()
+        for (file in filesToBeAnalyzed) {
+            val fileLevelAnnotations = resolveSession.getFileAnnotations(file)
+            doResolveAnnotations(fileLevelAnnotations)
+        }
     }
 
     private fun findElementOfAdditionalResolve(element: KtElement, bodyResolveMode: BodyResolveMode): KtElement? {
