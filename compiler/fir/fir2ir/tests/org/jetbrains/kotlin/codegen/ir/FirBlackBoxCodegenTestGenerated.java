@@ -7495,6 +7495,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/i2bResult.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("listThrowablePairInOneSlot.kt")
+            public void testListThrowablePairInOneSlot() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/listThrowablePairInOneSlot.kt");
+            }
+
             @TestMetadata("loadFromBooleanArray.kt")
             public void testLoadFromBooleanArray_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/loadFromBooleanArray.kt", "kotlin.coroutines");
