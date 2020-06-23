@@ -28,12 +28,6 @@ public class GotoClassModel2 extends FilteringGotoByModel<LanguageRef> {
 
   public GotoClassModel2(@NotNull Project project) {
     super(project, new ChooseByNameContributor[0]);
-
-    WeakReferenceDisposable<GotoClassModel2> reference = WeakReferenceDisposable.create(this, m -> {});
-    ChooseByNameContributor.CLASS_EP_NAME.addChangeListener(() -> {
-      GotoClassModel2 mdl = reference.get();
-      if (mdl != null) mdl.mySeparators = null;
-      }, reference);
   }
 
   @Override
