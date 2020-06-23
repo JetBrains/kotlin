@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateHashCodeAn
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateTestSupportMethodActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateToStringActionTest
 import org.jetbrains.kotlin.idea.codeInsight.hints.AbstractKotlinLambdasHintsProvider
+import org.jetbrains.kotlin.idea.codeInsight.hints.AbstractKotlinReferenceTypeHintsProviderTest
 import org.jetbrains.kotlin.idea.codeInsight.hints.AbstractKotlinSuspendingCallHintsProviderTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveLeftRightTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveStatementTest
@@ -810,6 +811,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractPostfixTemplateProviderTest> {
             model("codeInsight/postfix")
+        }
+
+        testClass<AbstractKotlinReferenceTypeHintsProviderTest> {
+            model("codeInsight/hints/types")
         }
 
         testClass<AbstractKotlinSuspendingCallHintsProviderTest> {
