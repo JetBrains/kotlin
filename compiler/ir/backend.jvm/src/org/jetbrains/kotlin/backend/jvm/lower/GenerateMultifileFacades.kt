@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 internal val generateMultifileFacadesPhase = namedIrModulePhase(
@@ -152,7 +153,9 @@ private fun generateMultifileFacades(
             moveFieldsOfConstProperties(partClass, facadeClass)
 
             for (member in partClass.declarations) {
-                if (member is IrSimpleFunction) {
+                if (member is IrSimpleFunction &&
+                    !member.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
+                ) {
                     val newMember = member.createMultifileDelegateIfNeeded(context, facadeClass, shouldGeneratePartHierarchy)
                     if (newMember != null) {
                         functionDelegates[member] = newMember
