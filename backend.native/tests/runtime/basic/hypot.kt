@@ -22,4 +22,7 @@ fun main() {
     println("Double.-Inf: ${Double.NEGATIVE_INFINITY} ${Double.NEGATIVE_INFINITY.toRawBits().toUInt().toString(16)}")
     println(Double.POSITIVE_INFINITY == Double.NEGATIVE_INFINITY)
     assertEquals(Double.POSITIVE_INFINITY, hypot(Double.NEGATIVE_INFINITY, Double.NaN))
+
+    println("hypot NaN, 0: ${hypot(Double.NaN, 0.0).toRawBits().toString(16)}")
+    assertTrue(hypot(Double.NaN, 0.0).isNaN())
 }
