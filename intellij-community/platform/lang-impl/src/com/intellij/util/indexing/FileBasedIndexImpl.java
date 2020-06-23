@@ -1252,7 +1252,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   @NotNull
-  private FileBasedIndexImpl.FileIndexingResult doIndexFileContent(@Nullable Project project, final @NotNull CachedFileContent content) {
+  private FileBasedIndexImpl.FileIndexingResult doIndexFileContent(@Nullable Project project, @NotNull CachedFileContent content) {
     ProgressManager.checkCanceled();
     final VirtualFile file = content.getVirtualFile();
     Ref<Boolean> setIndexedStatus = Ref.create(Boolean.TRUE);
@@ -1262,24 +1262,8 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     getFileTypeManager().freezeFileTypeTemporarilyIn(file, () -> {
       ProgressManager.checkCanceled();
 
-      byte[] bytes;
-      try {
-        bytes = content.getBytes();
-      } catch (IOException e) {
-        bytes = ArrayUtilRt.EMPTY_BYTE_ARRAY;
-      }
-      FileContentImpl fc = new FileContentImpl(file, bytes);
-      ProgressManager.checkCanceled();
-
-      PsiFile psiFile = content.getUserData(IndexingDataKeys.PSI_FILE);
-      initFileContent(fc, project == null ? ProjectUtil.guessProjectForFile(file) : project, psiFile);
-
-      fileTypeRef.set(fc.getFileType());
-
-      if (FileBasedIndex.ourSnapshotMappingsEnabled) {
-        IndexedHashesSupport.getOrInitIndexedHash(fc);
-      }
-      ProgressManager.checkCanceled();
+      FileContentImpl fc = null;
+      PsiFile psiFile = null;
 
       int inputId = Math.abs(getFileId(file));
       Set<ID<?, ?>> currentIndexedStates = new THashSet<>(IndexingStamp.getNontrivialFileIndexedStates(inputId));
@@ -1288,6 +1272,20 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       for (int i = 0, size = affectedIndexCandidates.size(); i < size; ++i) {
         try {
           ProgressManager.checkCanceled();
+
+          if (fc == null) {
+            fc = new LazyFileContentImpl(file, () -> getBytesOrNull(content));
+
+            ProgressManager.checkCanceled();
+
+            psiFile = content.getUserData(IndexingDataKeys.PSI_FILE);
+            initFileContent(fc, project == null ? ProjectUtil.guessProjectForFile(file) : project, psiFile);
+
+            fileTypeRef.set(fc.getFileType());
+
+            ProgressManager.checkCanceled();
+          }
+
           final ID<?, ?> indexId = affectedIndexCandidates.get(i);
           if (getInputFilter(indexId).acceptInput(file) && getIndexingState(fc, indexId).updateRequired()) {
             ProgressManager.checkCanceled();
@@ -1310,9 +1308,10 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
         psiFile.putUserData(PsiFileImpl.BUILDING_STUB, null);
       }
 
+      boolean shouldClearAllIndexedStates = fc == null;
       for (ID<?, ?> indexId : currentIndexedStates) {
         ProgressManager.checkCanceled();
-        if (getIndex(indexId).getIndexingStateForFile(inputId, fc).updateRequired()) {
+        if (shouldClearAllIndexedStates || getIndex(indexId).getIndexingStateForFile(inputId, fc).updateRequired()) {
           ProgressManager.checkCanceled();
           SingleIndexUpdateStats updateStats = updateSingleIndex(indexId, file, inputId, null);
           if (updateStats == null) {
@@ -1322,10 +1321,20 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
           }
         }
       }
+
+      fileTypeRef.set(fc != null ? fc.getFileType() : file.getFileType());
     });
 
     file.putUserData(IndexingDataKeys.REBUILD_REQUESTED, null);
     return new FileIndexingResult(setIndexedStatus.get(), perIndexerTimes, fileTypeRef.get());
+  }
+
+  private static byte @NotNull[] getBytesOrNull(@NotNull CachedFileContent content) {
+    try {
+      return content.getBytes();
+    } catch (IOException e) {
+      return ArrayUtilRt.EMPTY_BYTE_ARRAY;
+    }
   }
 
   public boolean isIndexingCandidate(@NotNull VirtualFile file, @NotNull ID<?, ?> indexId) {
@@ -1343,7 +1352,8 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     return getState().getFileTypesForIndex(fileType);
   }
 
-  private static void cleanFileContent(@NotNull FileContentImpl fc, PsiFile psiFile) {
+  private static void cleanFileContent(FileContentImpl fc, PsiFile psiFile) {
+    if (fc == null) return;
     if (psiFile != null) psiFile.putUserData(PsiFileImpl.BUILDING_STUB, null);
     fc.putUserData(IndexingDataKeys.PSI_FILE, null);
   }
