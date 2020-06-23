@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -583,8 +583,8 @@ public actual fun String.capitalize(): String {
  * [Char.toUpperCase]) or by [String.toUpperCase] using the specified [locale], or the original string,
  * if it's empty or already starts with an upper case letter.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.LowPriorityInOverloadResolution
 public fun String.capitalize(locale: Locale): String {
     if (isNotEmpty()) {
@@ -618,8 +618,8 @@ public actual fun String.decapitalize(): String {
  * Returns a copy of this string having its first letter lowercased using the specified [locale],
  * or the original string, if it's empty or already starts with a lower case letter.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.LowPriorityInOverloadResolution
 public fun String.decapitalize(locale: Locale): String {
     return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).toLowerCase(locale) + substring(1) else this
