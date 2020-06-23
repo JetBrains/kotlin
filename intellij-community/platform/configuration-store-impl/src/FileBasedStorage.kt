@@ -212,18 +212,15 @@ open class FileBasedStorage(file: Path,
       return null
     }
 
-    runAndHandleExceptions {
-      val byteArray = virtualFile.contentsToByteArray()
-      if (byteArray.isEmpty()) {
-        processReadException(null)
-        return null
-      }
-
-      val charBuffer = Charsets.UTF_8.decode(ByteBuffer.wrap(byteArray))
-      lineSeparator = detectLineSeparators(charBuffer, if (isUseXmlProlog) null else LineSeparator.LF)
-      return JDOMUtil.load(charBuffer)
+    val byteArray = virtualFile.contentsToByteArray()
+    if (byteArray.isEmpty()) {
+      processReadException(null)
+      return null
     }
-    return null
+
+    val charBuffer = Charsets.UTF_8.decode(ByteBuffer.wrap(byteArray))
+    lineSeparator = detectLineSeparators(charBuffer, if (isUseXmlProlog) null else LineSeparator.LF)
+    return JDOMUtil.load(charBuffer)
   }
 
   protected open fun handleVirtualFileNotFound() {

@@ -1,9 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
-import com.intellij.openapi.application.impl.inWriteAction
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.MainConfigurationStateSplitter
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.testFramework.ProjectRule
@@ -20,17 +20,11 @@ import org.junit.Test
 private suspend fun StateStorageBase<*>.setStateAndSave(componentName: String, state: String?) {
   val saveSessionProducer = createSaveSessionProducer()!!
   saveSessionProducer.setState(null, componentName, if (state == null) Element("state") else JDOMUtil.load(state))
-  withContext(AppUIExecutor.onUiThread().inWriteAction().coroutineDispatchingContext()) {
-    saveSessionProducer.createSaveSession()!!.save()
+  withContext(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
+    runWriteAction {
+      saveSessionProducer.createSaveSession()!!.save()
+    }
   }
-}
-
-internal class TestStateSplitter : MainConfigurationStateSplitter() {
-  override fun getComponentStateFileName() = "main"
-
-  override fun getSubStateTagName() = "sub"
-
-  override fun getSubStateFileName(element: Element): String = element.getAttributeValue("name")
 }
 
 internal class DirectoryBasedStorageTest {
@@ -76,4 +70,12 @@ internal class DirectoryBasedStorageTest {
   <${if (name == "test") "component" else "sub"} name="$name" />
 </component>"""
   }
+}
+
+private class TestStateSplitter : MainConfigurationStateSplitter() {
+  override fun getComponentStateFileName() = "main"
+
+  override fun getSubStateTagName() = "sub"
+
+  override fun getSubStateFileName(element: Element) = element.getAttributeValue("name")!!
 }

@@ -25,6 +25,8 @@ internal class NonPersistentModuleStore : ModuleStore {
   override fun isReloadPossible(componentNames: Set<String>): Boolean = true
   override suspend fun save(forceSavingAllSettings: Boolean): Unit = Unit
   override fun saveComponent(component: PersistentStateComponent<*>): Unit = Unit
+  override fun removeComponent(name: String) {
+  }
 }
 
 private object NonPersistentStateStorageManager : StateStorageManager {

@@ -4,37 +4,24 @@ package com.intellij.configurationStore
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.externalDependencies.ProjectExternalDependency
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.PathManagerEx
-import com.intellij.openapi.components.*
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.testFramework.*
 import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.testFramework.rules.InMemoryFsRule
-import com.intellij.util.io.delete
+import com.intellij.testFramework.rules.checkDefaultProjectAsTemplate
+import com.intellij.testFramework.rules.createDeleteAppConfigRule
 import com.intellij.util.io.getDirectoryTree
 import com.intellij.util.isEmpty
-import kotlinx.coroutines.runBlocking
-import org.jdom.Element
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 import java.nio.file.Paths
 
-private const val TEST_COMPONENT_NAME = "DefaultProjectStoreTestComponent"
-
-@State(name = TEST_COMPONENT_NAME, storages = [(Storage(value = "testSchemes", stateSplitter = TestStateSplitter::class))])
-private class TestComponent : PersistentStateComponent<Element> {
-  private var element = Element("state")
-
-  override fun getState() = element.clone()
-
-  override fun loadState(state: Element) {
-    element = state.clone()
-  }
-}
-
+@Suppress("UsePropertyAccessSyntax")
 internal class DefaultProjectStoreTest {
   companion object {
     @JvmField
@@ -51,15 +38,7 @@ internal class DefaultProjectStoreTest {
 
   @JvmField
   @Rule
-  val ruleChain = RuleChain(
-    tempDirManager,
-    WrapRule {
-      val path = Paths.get(ApplicationManager.getApplication().stateStore.storageManager.expandMacros(APP_CONFIG))
-      return@WrapRule {
-        path.delete()
-      }
-    }
-  )
+  val ruleChain = RuleChain(tempDirManager, createDeleteAppConfigRule())
 
   @Test
   fun `new project from default - file-based storage`() {
@@ -77,29 +56,12 @@ internal class DefaultProjectStoreTest {
 
   @Test
   fun `new project from default - directory-based storage`() {
-    val defaultTestComponent = TestComponent()
-    defaultTestComponent.loadState(JDOMUtil.load("""
-      <component>
-        <main name="$TEST_COMPONENT_NAME"/><sub name="foo" /><sub name="bar" />
-      </component>""".trimIndent()))
-    val stateStore = ProjectManager.getInstance().defaultProject.stateStore as ComponentStoreImpl
-    stateStore.initComponent(defaultTestComponent, null, null)
-    try {
+    checkDefaultProjectAsTemplate { checkTask ->
       // obviously, project must be directory-based also
-      createProjectAndUseInLoadComponentStateMode(tempDirManager, directoryBased = true) {
-        val component = TestComponent()
-        it.stateStore.initComponent(component, null, null)
-        assertThat(component.state).isEqualTo(defaultTestComponent.state)
+      val project = ProjectManagerEx.getInstanceEx().openProject(tempDirManager.newPath("test"), createTestOpenProjectOptions().copy(isNewProject = true, useDefaultProjectAsTemplate = true))!!
+      project.use {
+        checkTask(project, true)
       }
-    }
-    finally {
-      // clear state
-      defaultTestComponent.loadState(Element("empty"))
-      val defaultStore = ProjectManager.getInstance().defaultProject.stateStore as ComponentStoreImpl
-      runBlocking {
-        defaultStore.save()
-      }
-      defaultStore.removeComponent(TEST_COMPONENT_NAME)
     }
   }
 
