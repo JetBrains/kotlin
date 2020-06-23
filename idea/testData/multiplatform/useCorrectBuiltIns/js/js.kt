@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
-import kotlin.browser.window
-import <!UNRESOLVED_REFERENCE("kotlinx")!>kotlinx<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>cinterop<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>CPointed<!>
+import kotlinx.browser.window
+import kotlinx.<!UNRESOLVED_REFERENCE("cinterop")!>cinterop<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>CPointed<!>
 
 fun jvmSpecific() {
     val x: <!UNRESOLVED_REFERENCE("Cloneable")!>Cloneable<!>? = null
