@@ -219,7 +219,7 @@ open class KtLightClassForDecompiledDeclaration(
                 qualifiedName == other.qualifiedName &&
                 kotlinOrigin?.fqName == other.kotlinOrigin?.fqName
 
-    override fun hashCode(): Int = clsDelegate.hashCode()
+    override fun hashCode(): Int = qualifiedName?.hashCode() ?: kotlinOrigin?.fqName?.hashCode() ?: 0
 
     override fun copy(): PsiElement = this
 
