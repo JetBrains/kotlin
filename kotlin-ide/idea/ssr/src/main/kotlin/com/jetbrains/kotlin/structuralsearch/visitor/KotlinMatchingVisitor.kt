@@ -538,6 +538,9 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitClass(klass: KtClass) {
         val other = getTreeElementDepar<KtClass>() ?: return
+        val facultativeBody = klass.body?.children?.all {
+            getHandler(it) is SubstitutionHandler && (getHandler(it) as SubstitutionHandler).minOccurs == 0
+        } ?: true
         myMatchingVisitor.result = myMatchingVisitor.match(klass.getClassOrInterfaceKeyword(), other.getClassOrInterfaceKeyword())
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
                 && matchTextOrVariable(klass.nameIdentifier, other.nameIdentifier)
@@ -545,7 +548,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(klass.primaryConstructor, other.primaryConstructor)
                 && myMatchingVisitor.matchInAnyOrder(klass.secondaryConstructors, other.secondaryConstructors)
                 && myMatchingVisitor.match(klass.getSuperTypeList(), other.getSuperTypeList())
-                && myMatchingVisitor.match(klass.body, other.body)
+                && (facultativeBody || myMatchingVisitor.match(klass.body, other.body))
                 && myMatchingVisitor.match(klass.docComment, other.docComment)
         val handler = getHandler(klass.nameIdentifier!!)
         if (myMatchingVisitor.result && handler is SubstitutionHandler) {

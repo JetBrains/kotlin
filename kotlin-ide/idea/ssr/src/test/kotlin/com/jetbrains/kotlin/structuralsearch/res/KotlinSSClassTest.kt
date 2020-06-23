@@ -112,4 +112,14 @@ class KotlinSSClassTest : KotlinSSResourceInspectionTest() {
             """
         )
     }
+
+    fun testClassOptionalVars() {
+        doTest(
+            """
+            class '_Class {  
+                var '_Field* = '_Init?
+            }
+            """
+        )
+    }
 }
