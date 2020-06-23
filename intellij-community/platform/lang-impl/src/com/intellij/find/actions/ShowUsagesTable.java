@@ -74,8 +74,9 @@ class ShowUsagesTable extends JBTable implements DataProvider {
     else if (LangDataKeys.POSITION_ADJUSTER_POPUP.is(dataId)) {
       return PopupUtil.getPopupContainerFor(this);
     }
-    else if (UsageView.USAGE_VIEW_KEY.is(dataId))
+    else if (UsageView.USAGE_VIEW_KEY.is(dataId)) {
       return myUsageView;
+    }
     return null;
   }
 
