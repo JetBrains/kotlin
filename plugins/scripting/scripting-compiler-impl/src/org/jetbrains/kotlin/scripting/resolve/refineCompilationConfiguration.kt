@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.runReadAction
 import org.jetbrains.kotlin.scripting.withCorrectExtension
 import java.io.File
 import java.net.URL
@@ -228,8 +229,9 @@ fun refineScriptCompilationConfiguration(
     if (legacyDefinition == null) {
         val compilationConfiguration = definition.compilationConfiguration
         val collectedData =
-            getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, project, definition.contextClassLoader)
-
+            runReadAction {
+                getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, project, definition.contextClassLoader)
+            }
         return compilationConfiguration.refineOnAnnotations(script, collectedData)
             .onSuccess {
                 it.refineBeforeCompiling(script, collectedData)
