@@ -11,6 +11,11 @@ plugins {
 val JDK_18: String by rootProject.extra
 val jarBaseName = property("archivesBaseName") as String
 
+val localPackagesToRelocate =
+    listOf(
+        "kotlinx.coroutines"
+    )
+
 val proguardLibraryJars by configurations.creating {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
@@ -73,7 +78,7 @@ val relocatedJar by task<ShadowJar> {
     from("jar-resources")
 
     if (kotlinBuildProperties.relocation) {
-        packagesToRelocate.forEach {
+        (packagesToRelocate + localPackagesToRelocate).forEach {
             relocate(it, "$kotlinEmbeddableRootPackage.$it")
         }
     }
