@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.terminal.TerminalShellCommandHandler
+import com.intellij.terminal.TerminalExecutorAction
 
 class RunAnythingTerminalBridge : TerminalShellCommandHandler {
   override fun matches(project: Project, workingDirectory: String?, localSession: Boolean, command: String): Boolean {
@@ -18,17 +19,17 @@ class RunAnythingTerminalBridge : TerminalShellCommandHandler {
       .any { provider -> provider.findMatchingValue(createDataContext(project, localSession, workingDirectory), command) != null }
   }
 
-  override fun execute(project: Project, workingDirectory: String?, localSession: Boolean, command: String): Boolean {
+  override fun execute(project: Project, workingDirectory: String?, localSession: Boolean, command: String, executorAction: TerminalExecutorAction): Boolean {
     return RunAnythingProvider.EP_NAME.extensionList
       .filter { checkForCLI(it) }
       .any { provider ->
-        val dataContext = createDataContext(project, localSession, workingDirectory)
+        val dataContext = createDataContext(project, localSession, workingDirectory, executorAction)
         provider.findMatchingValue(dataContext, command)?.let { provider.execute(dataContext, it); return true } ?: false
       }
   }
 
   companion object {
-    private fun createDataContext(project: Project, localSession: Boolean, workingDirectory: String?): DataContext {
+    private fun createDataContext(project: Project, localSession: Boolean, workingDirectory: String?, action: TerminalExecutorAction? = null): DataContext {
       return SimpleDataContext.getSimpleContext(
         mutableMapOf<String, Any?>()
           .also {
@@ -39,6 +40,7 @@ class RunAnythingTerminalBridge : TerminalShellCommandHandler {
               it[CommonDataKeys.VIRTUAL_FILE.name] = virtualFile
               it[RunAnythingProvider.EXECUTING_CONTEXT.name] = RunAnythingContext.RecentDirectoryContext(virtualFile.path)
             }
+            it[RunAnythingAction.EXECUTOR_KEY.name] = action?.executor
           }, null)
     }
 
