@@ -13,16 +13,17 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
@@ -396,20 +397,20 @@ abstract class KotlinIrLinker(
         override fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase) =
             fileLoops.getOrPut(loopIndex, loopBuilder)
 
-        override fun deserializeExpressionBody(index: Int): IrExpression {
+        override fun deserializeExpressionBody(index: Int): IrExpressionBody {
             return if (deserializeBodies) {
                 val bodyData = loadExpressionBodyProto(index)
-                deserializeExpression(bodyData)
+                IrExpressionBodyImpl(deserializeExpression(bodyData))
             } else {
                 val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
-                IrErrorExpressionImpl(-1, -1, errorType, "Expression body is not deserialized yet")
+                IrExpressionBodyImpl(IrErrorExpressionImpl(-1, -1, errorType, "Expression body is not deserialized yet"))
             }
         }
 
-        override fun deserializeStatementBody(index: Int): IrElement {
+        override fun deserializeStatementBody(index: Int): IrBody {
             return if (deserializeBodies) {
                 val bodyData = loadStatementBodyProto(index)
-                deserializeStatement(bodyData)
+                deserializeStatement(bodyData) as IrBody
             } else {
                 val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
                 IrBlockBodyImpl(-1, -1, listOf(IrErrorExpressionImpl(-1, -1, errorType, "Statement body is not deserialized yet")))

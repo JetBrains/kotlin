@@ -110,8 +110,8 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
     abstract fun deserializeIrType(index: Int): IrType
     abstract fun deserializeIdSignature(index: Int): IdSignature
     abstract fun deserializeString(index: Int): String
-    abstract fun deserializeExpressionBody(index: Int): IrExpression
-    abstract fun deserializeStatementBody(index: Int): IrElement
+    abstract fun deserializeExpressionBody(index: Int): IrExpressionBody
+    abstract fun deserializeStatementBody(index: Int): IrBody
     abstract fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase): IrLoopBase
 
     abstract fun referenceIrSymbol(symbol: IrSymbol, signature: IdSignature)
@@ -1003,7 +1003,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
                 flags.isNoInline
             ).apply {
                 if (proto.hasDefaultValue())
-                    defaultValue = IrExpressionBodyImpl(deserializeExpressionBody(proto.defaultValue))
+                    defaultValue = deserializeExpressionBody(proto.defaultValue)
 
                 (descriptor as? WrappedValueParameterDescriptor)?.bind(this)
                 (descriptor as? WrappedReceiverParameterDescriptor)?.bind(this)
@@ -1119,7 +1119,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
                     if (proto.hasExtensionReceiver())
                         extensionReceiverParameter = deserializeIrValueParameter(proto.extensionReceiver, -1)
                     if (proto.hasBody()) {
-                        body = deserializeStatementBody(proto.body) as IrBody
+                        body = deserializeStatementBody(proto.body)
                     }
                 }
             }
@@ -1182,7 +1182,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
                 if (proto.hasCorrespondingClass())
                     correspondingClass = deserializeIrClass(proto.correspondingClass)
                 if (proto.hasInitializer())
-                    initializerExpression = IrExpressionBodyImpl(deserializeExpressionBody(proto.initializer))
+                    initializerExpression = deserializeExpressionBody(proto.initializer)
 
                 (descriptor as? WrappedEnumEntryDescriptor)?.bind(this)
             }
@@ -1191,7 +1191,6 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
     private fun deserializeIrAnonymousInit(proto: ProtoAnonymousInit) =
         withDeserializedIrDeclarationBase(proto.base) { symbol, _, startOffset, endOffset, origin, _ ->
             IrAnonymousInitializerImpl(startOffset, endOffset, origin, symbol as IrAnonymousInitializerSymbol).apply {
-//                body = deserializeBlockBody(proto.body.blockBody, startOffset, endOffset)
                 body = deserializeStatementBody(proto.body) as IrBlockBody
 
                 (descriptor as? WrappedClassDescriptor)?.bind(parentsStack.peek() as IrClass)
@@ -1237,7 +1236,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
                 )
             }.usingParent {
                 if (proto.hasInitializer())
-                    initializer = IrExpressionBodyImpl(deserializeExpressionBody(proto.initializer))
+                    initializer = deserializeExpressionBody(proto.initializer)
 
                 (descriptor as? WrappedFieldDescriptor)?.bind(this)
             }
