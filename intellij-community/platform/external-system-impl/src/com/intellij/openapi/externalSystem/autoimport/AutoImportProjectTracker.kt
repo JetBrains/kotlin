@@ -79,7 +79,7 @@ class AutoImportProjectTracker(private val project: Project) : ExternalSystemPro
     }
 
   override fun scheduleProjectRefresh() {
-    LOG.debug("Schedule project refresh")
+    LOG.debug("Schedule project refresh", Throwable())
     dispatcher.queue(PriorityEatUpdate(0) {
       refreshProject(smart = false)
     })
