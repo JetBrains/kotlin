@@ -4669,6 +4669,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/convertLambdaToReference/generic.kt");
         }
 
+        @TestMetadata("generic2.kt")
+        public void testGeneric2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/generic2.kt");
+        }
+
+        @TestMetadata("generic3.kt")
+        public void testGeneric3() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/generic3.kt");
+        }
+
+        @TestMetadata("generic4.kt")
+        public void testGeneric4() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/generic4.kt");
+        }
+
         @TestMetadata("globalProperty.kt")
         public void testGlobalProperty() throws Exception {
             runTest("testData/intentions/convertLambdaToReference/globalProperty.kt");
