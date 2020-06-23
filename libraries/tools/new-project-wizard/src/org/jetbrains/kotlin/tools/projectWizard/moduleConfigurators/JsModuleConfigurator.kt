@@ -127,7 +127,7 @@ fun GradleIRListBuilder.testCssSupport() {
     "testTask" {
         "useKarma" {
             +"useChromeHeadless()"
-            +"cssSupport.enabled = true"
+            +"webpackConfig.cssSupport.enabled = true"
         }
     }
 }
