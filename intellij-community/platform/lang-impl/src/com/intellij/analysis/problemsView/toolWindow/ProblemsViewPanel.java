@@ -190,6 +190,11 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   public @Nullable Object getData(@NotNull String dataId) {
     if (CommonDataKeys.PROJECT.is(dataId)) return getProject();
     if (PlatformDataKeys.TREE_EXPANDER.is(dataId)) return getTreeExpander();
+    if (PlatformDataKeys.FILE_EDITOR.is(dataId)) {
+      // this code allows to perform Editor's Undo action from the Problems View
+      VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(this);
+      return file == null ? null : getPreview().findFileEditor(file, getProject());
+    }
     OpenFileDescriptor descriptor = getSelectedDescriptor();
     if (descriptor != null) {
       if (CommonDataKeys.NAVIGATABLE.is(dataId)) return descriptor;

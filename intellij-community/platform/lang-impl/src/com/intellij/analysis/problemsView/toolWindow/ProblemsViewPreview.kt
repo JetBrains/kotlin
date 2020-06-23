@@ -7,9 +7,14 @@ import com.intellij.openapi.editor.EditorKind
 import com.intellij.openapi.editor.colors.EditorColorsUtil.getGlobalOrDefaultColorScheme
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.highlighter.EditorHighlighterFactory
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
+import com.intellij.util.ArrayUtil.getFirstElement
 import javax.swing.BorderFactory.createEmptyBorder
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -56,4 +61,8 @@ internal class ProblemsViewPreview(private val panel: ProblemsViewPanel)
       EditorFactory.getInstance().editors(it, psi.project).findFirst().orElse(null)
     }
   }
+
+  fun findFileEditor(file: VirtualFile, project: Project) =
+    preview?.let { TextEditorProvider.getInstance().getTextEditor(it) }
+    ?: getFirstElement(FileEditorManager.getInstance(project).getEditors(file))
 }
