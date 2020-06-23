@@ -367,7 +367,7 @@ class LocalDeclarationsLowering(
                 }
             }
 
-            inline fun <T : IrMemberAccessExpression> T.mapValueParameters(
+            inline fun <T : IrMemberAccessExpression<*>> T.mapValueParameters(
                 newTarget: IrFunction,
                 transform: (IrValueParameter) -> IrExpression?
             ): T =
@@ -377,8 +377,10 @@ class LocalDeclarationsLowering(
                     }
                 }
 
-            private fun <T : IrMemberAccessExpression> T.fillArguments2(oldExpression: IrMemberAccessExpression, newTarget: IrFunction): T {
-
+            private fun <T : IrMemberAccessExpression<*>> T.fillArguments2(
+                oldExpression: IrMemberAccessExpression<*>,
+                newTarget: IrFunction
+            ): T {
                 mapValueParameters(newTarget) { newValueParameterDeclaration ->
                     val oldParameter = newParameterToOld[newValueParameterDeclaration]
 
@@ -542,7 +544,7 @@ class LocalDeclarationsLowering(
                 it.copyTypeArgumentsFrom(oldCall)
             }
 
-        private fun IrMemberAccessExpression.setLocalTypeArguments(callee: IrFunction) {
+        private fun IrMemberAccessExpression<*>.setLocalTypeArguments(callee: IrFunction) {
             val context = localFunctions[callee] ?: return
             for ((outerTypeParameter, innerTypeParameter) in context.capturedTypeParameterToTypeParameter) {
                 putTypeArgument(innerTypeParameter.index, outerTypeParameter.defaultType) // TODO: remap default type!

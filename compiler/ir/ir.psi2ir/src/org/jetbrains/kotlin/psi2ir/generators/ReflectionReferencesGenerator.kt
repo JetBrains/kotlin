@@ -416,7 +416,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         callableDescriptor: CallableDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null
-    ): IrCallableReference {
+    ): IrCallableReference<*> {
         val startOffset = ktElement.startOffsetSkippingComments
         val endOffset = ktElement.endOffset
         return when (callableDescriptor) {

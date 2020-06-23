@@ -318,7 +318,7 @@ class CallAndReferenceGenerator(
     internal fun IrExpression.applyCallArguments(call: FirCall?): IrExpression {
         if (call == null) return this
         return when (this) {
-            is IrMemberAccessExpression -> {
+            is IrMemberAccessExpression<*> -> {
                 val argumentsCount = call.arguments.size
                 if (argumentsCount <= valueArgumentsCount) {
                     apply {
@@ -363,7 +363,7 @@ class CallAndReferenceGenerator(
         }
     }
 
-    private fun IrMemberAccessExpression.applyArgumentsWithReorderingIfNeeded(
+    private fun IrMemberAccessExpression<*>.applyArgumentsWithReorderingIfNeeded(
         call: FirCall,
         argumentMapping: Map<FirExpression, FirValueParameter>,
         valueParameters: List<FirValueParameter>,
@@ -437,7 +437,7 @@ class CallAndReferenceGenerator(
 
     private fun IrExpression.applyTypeArguments(access: FirQualifiedAccess): IrExpression {
         return when (this) {
-            is IrMemberAccessExpression -> {
+            is IrMemberAccessExpression<*> -> {
                 val argumentsCount = access.typeArguments.size
                 if (argumentsCount <= typeArgumentsCount) {
                     apply {
@@ -495,7 +495,7 @@ class CallAndReferenceGenerator(
 
     private fun IrExpression.applyReceivers(qualifiedAccess: FirQualifiedAccess, explicitReceiverExpression: IrExpression?): IrExpression {
         return when (this) {
-            is IrMemberAccessExpression -> {
+            is IrMemberAccessExpression<*> -> {
                 val ownerFunction =
                     symbol.owner as? IrFunction
                         ?: (symbol.owner as? IrProperty)?.getter

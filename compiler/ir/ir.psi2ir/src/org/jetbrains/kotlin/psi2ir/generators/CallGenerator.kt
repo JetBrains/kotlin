@@ -410,7 +410,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
 
 fun IrExpression.hasNoSideEffects() =
     this is IrFunctionExpression ||
-            (this is IrCallableReference && dispatchReceiver == null && extensionReceiver == null) ||
+            (this is IrCallableReference<*> && dispatchReceiver == null && extensionReceiver == null) ||
             this is IrClassReference ||
             this is IrConst<*> ||
             this is IrGetValue

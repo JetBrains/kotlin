@@ -113,14 +113,14 @@ internal class InsertImplicitCasts(
     private val IrDeclarationReference.substitutedDescriptor
         get() = callToSubstitutedDescriptorMap[this] ?: symbol.descriptor as CallableDescriptor
 
-    override fun visitCallableReference(expression: IrCallableReference): IrExpression {
+    override fun visitCallableReference(expression: IrCallableReference<*>): IrExpression {
         val substitutedDescriptor = expression.substitutedDescriptor
         return expression.transformPostfix {
             transformReceiverArguments(substitutedDescriptor)
         }
     }
 
-    private fun IrMemberAccessExpression.transformReceiverArguments(substitutedDescriptor: CallableDescriptor) {
+    private fun IrMemberAccessExpression<*>.transformReceiverArguments(substitutedDescriptor: CallableDescriptor) {
         dispatchReceiver = dispatchReceiver?.cast(getEffectiveDispatchReceiverType(substitutedDescriptor))
         val extensionReceiverType = substitutedDescriptor.extensionReceiverParameter?.type
         val originalExtensionReceiverType = substitutedDescriptor.original.extensionReceiverParameter?.type
@@ -144,7 +144,7 @@ internal class InsertImplicitCasts(
                 descriptor.dispatchReceiverParameter?.type
         }
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
+    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
         val substitutedDescriptor = expression.substitutedDescriptor
         return expression.transformPostfix {
             transformReceiverArguments(substitutedDescriptor)

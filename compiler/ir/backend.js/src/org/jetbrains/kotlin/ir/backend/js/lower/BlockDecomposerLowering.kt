@@ -566,7 +566,7 @@ class BlockDecomposerTransformer(
         // var p4_tmp = p4
         // var p5_tmp = block {}
         // d_tmp.foo(p1_tmp, p2_tmp, p3_tmp, p4_tmp, p5_tmp, p6, p7)
-        override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
+        override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
             expression.transformChildrenVoid(expressionTransformer)
 
             val oldArguments = mutableListOf(expression.dispatchReceiver, expression.extensionReceiver)

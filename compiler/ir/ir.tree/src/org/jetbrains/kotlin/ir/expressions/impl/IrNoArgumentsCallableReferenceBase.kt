@@ -19,17 +19,18 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
-abstract class IrNoArgumentsCallableReferenceBase(
+abstract class IrNoArgumentsCallableReferenceBase<S : IrSymbol>(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
     typeArgumentsCount: Int,
     origin: IrStatementOrigin? = null
 ) :
-    IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, 0, origin),
-    IrCallableReference {
+    IrMemberAccessExpressionBase<S>(startOffset, endOffset, type, typeArgumentsCount, 0, origin),
+    IrCallableReference<S> {
 
     private fun throwNoValueArguments(): Nothing {
         throw UnsupportedOperationException("Property reference $symbol has no value arguments")
@@ -41,4 +42,3 @@ abstract class IrNoArgumentsCallableReferenceBase(
 
     override fun removeValueArgument(index: Int) = throwNoValueArguments()
 }
-

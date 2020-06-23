@@ -331,7 +331,7 @@ abstract class IrFileDeserializer(
         return IrBlockImpl(start, end, type, origin, statements)
     }
 
-    private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression, proto: ProtoMemberAccessCommon) {
+    private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression<*>, proto: ProtoMemberAccessCommon) {
 
         proto.valueArgumentList.mapIndexed { i, arg ->
             if (arg.hasExpression()) {

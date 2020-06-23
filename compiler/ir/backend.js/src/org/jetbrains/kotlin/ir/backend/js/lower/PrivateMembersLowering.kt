@@ -218,9 +218,9 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
             }
 
             private fun transformPrivateToStaticReference(
-                expression: IrCallableReference,
-                builder: () -> IrCallableReference
-            ): IrCallableReference {
+                expression: IrCallableReference<*>,
+                builder: () -> IrCallableReference<*>
+            ): IrCallableReference<*> {
 
                 val newExpression = builder()
 

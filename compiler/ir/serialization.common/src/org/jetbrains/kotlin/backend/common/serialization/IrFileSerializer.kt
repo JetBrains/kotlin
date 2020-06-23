@@ -472,7 +472,7 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeMemberAccessCommon(call: IrMemberAccessExpression): ProtoMemberAccessCommon {
+    private fun serializeMemberAccessCommon(call: IrMemberAccessExpression<*>): ProtoMemberAccessCommon {
         val proto = ProtoMemberAccessCommon.newBuilder()
         if (call.extensionReceiver != null) {
             proto.extensionReceiver = serializeExpression(call.extensionReceiver!!)

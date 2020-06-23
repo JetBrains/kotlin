@@ -163,8 +163,8 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitSetField(expression: IrSetField) = visitFieldAccess(expression)
     final override fun visitSetField(expression: IrSetField, data: Nothing?) = visitSetField(expression)
 
-    open fun visitMemberAccess(expression: IrMemberAccessExpression) = visitExpression(expression)
-    final override fun visitMemberAccess(expression: IrMemberAccessExpression, data: Nothing?) = visitMemberAccess(expression)
+    open fun visitMemberAccess(expression: IrMemberAccessExpression<*>) = visitExpression(expression)
+    final override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: Nothing?) = visitMemberAccess(expression)
 
     open fun visitFunctionAccess(expression: IrFunctionAccessExpression) = visitMemberAccess(expression)
     final override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: Nothing?) = visitFunctionAccess(expression)
@@ -185,8 +185,8 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitGetClass(expression: IrGetClass) = visitExpression(expression)
     final override fun visitGetClass(expression: IrGetClass, data: Nothing?) = visitGetClass(expression)
 
-    open fun visitCallableReference(expression: IrCallableReference) = visitMemberAccess(expression)
-    final override fun visitCallableReference(expression: IrCallableReference, data: Nothing?) = visitCallableReference(expression)
+    open fun visitCallableReference(expression: IrCallableReference<*>) = visitMemberAccess(expression)
+    final override fun visitCallableReference(expression: IrCallableReference<*>, data: Nothing?) = visitCallableReference(expression)
 
     open fun visitFunctionReference(expression: IrFunctionReference) = visitCallableReference(expression)
     final override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): IrElement =

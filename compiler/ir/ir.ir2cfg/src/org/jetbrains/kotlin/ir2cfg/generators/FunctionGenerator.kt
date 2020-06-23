@@ -173,7 +173,7 @@ class FunctionGenerator(val function: IrFunction) {
             return jump
         }
 
-        override fun visitMemberAccess(expression: IrMemberAccessExpression, data: Boolean): IrStatement? {
+        override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: Boolean): IrStatement? {
             expression.dispatchReceiver?.process()
             expression.extensionReceiver?.process()
             val callee = expression.symbol.owner as IrFunction

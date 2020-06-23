@@ -95,7 +95,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 return components.irBuiltIns.anyType
             }
 
-            override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression, descriptor: CallableDescriptor) {
+            override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>, descriptor: CallableDescriptor) {
                 // TODO
             }
         }

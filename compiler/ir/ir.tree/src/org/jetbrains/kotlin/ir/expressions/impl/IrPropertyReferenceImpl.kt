@@ -38,7 +38,7 @@ class IrPropertyReferenceImpl(
     override val setter: IrSimpleFunctionSymbol?,
     origin: IrStatementOrigin? = null
 ) :
-    IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, typeArgumentsCount, origin),
+    IrNoArgumentsCallableReferenceBase<IrPropertySymbol>(startOffset, endOffset, type, typeArgumentsCount, origin),
     IrPropertyReference {
 
     @Deprecated(message = "Don't use descriptor-based API for IrPropertyReference", level = DeprecationLevel.WARNING)

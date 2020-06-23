@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
  * The arguments are to be evaluated in the same order as they appear in the resulting list.
  */
 @ObsoleteDescriptorBasedAPI
-fun IrMemberAccessExpression.getArguments(): List<Pair<ParameterDescriptor, IrExpression>> {
+fun IrMemberAccessExpression<*>.getArguments(): List<Pair<ParameterDescriptor, IrExpression>> {
     val res = mutableListOf<Pair<ParameterDescriptor, IrExpression>>()
     val descriptor = symbol.descriptor as CallableDescriptor
 
@@ -91,7 +91,7 @@ fun IrFunctionAccessExpression.getArgumentsWithSymbols(): List<Pair<IrValueParam
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
  * The arguments are to be evaluated in the same order as they appear in the resulting list.
  */
-fun IrMemberAccessExpression.getArgumentsWithIr(): List<Pair<IrValueParameter, IrExpression>> {
+fun IrMemberAccessExpression<*>.getArgumentsWithIr(): List<Pair<IrValueParameter, IrExpression>> {
     val res = mutableListOf<Pair<IrValueParameter, IrExpression>>()
     val irFunction = when (this) {
         is IrFunctionAccessExpression -> this.symbol.owner
@@ -125,7 +125,7 @@ fun IrMemberAccessExpression.getArgumentsWithIr(): List<Pair<IrValueParameter, I
  * Sets arguments that are specified by given mapping of parameters.
  */
 @ObsoleteDescriptorBasedAPI
-fun IrMemberAccessExpression.addArguments(args: Map<ParameterDescriptor, IrExpression>) {
+fun IrMemberAccessExpression<*>.addArguments(args: Map<ParameterDescriptor, IrExpression>) {
     val descriptor = symbol.descriptor as CallableDescriptor
     descriptor.dispatchReceiverParameter?.let {
         val arg = args[it]
@@ -150,7 +150,7 @@ fun IrMemberAccessExpression.addArguments(args: Map<ParameterDescriptor, IrExpre
 }
 
 @ObsoleteDescriptorBasedAPI
-fun IrMemberAccessExpression.addArguments(args: List<Pair<ParameterDescriptor, IrExpression>>) =
+fun IrMemberAccessExpression<*>.addArguments(args: List<Pair<ParameterDescriptor, IrExpression>>) =
     this.addArguments(args.toMap())
 
 fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
@@ -199,7 +199,7 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns)
 }
 
 @ObsoleteDescriptorBasedAPI
-fun IrMemberAccessExpression.usesDefaultArguments(): Boolean =
+fun IrMemberAccessExpression<*>.usesDefaultArguments(): Boolean =
     (symbol.descriptor as CallableDescriptor).valueParameters.any { this.getValueArgument(it) == null }
 
 val DeclarationDescriptorWithSource.startOffset: Int? get() = (this.source as? PsiSourceElement)?.psi?.startOffset
@@ -508,8 +508,8 @@ fun IrFunctionAccessExpression.copyTypeAndValueArgumentsFrom(
     copyValueArgumentsFrom(src, src.symbol.owner, symbol.owner, receiversAsArguments, argumentsAsReceivers)
 }
 
-fun IrMemberAccessExpression.copyValueArgumentsFrom(
-    src: IrMemberAccessExpression,
+fun IrMemberAccessExpression<*>.copyValueArgumentsFrom(
+    src: IrMemberAccessExpression<*>,
     srcFunction: IrFunction,
     destFunction: IrFunction,
     receiversAsArguments: Boolean = false,
@@ -573,7 +573,7 @@ val IrFunction.allTypeParameters: List<IrTypeParameter>
     else
         typeParameters
 
-fun IrMemberAccessExpression.getTypeSubstitutionMap(irFunction: IrFunction): Map<IrTypeParameterSymbol, IrType> =
+fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): Map<IrTypeParameterSymbol, IrType> =
     irFunction.allTypeParameters.withIndex().associate {
         it.value.symbol to getTypeArgument(it.index)!!
     }

@@ -340,7 +340,7 @@ abstract class DataClassMembersGenerator(
     ): IrSimpleFunctionSymbol =
         getHashCodeFunction(property.type, symbolResolve)
 
-    abstract fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression, descriptor: CallableDescriptor)
+    abstract fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>, descriptor: CallableDescriptor)
 
     // Entry for psi2ir
     fun generateHashCodeMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {

@@ -100,7 +100,7 @@ class StaticLambdaLowering(val backendContext: JvmBackendContext) : FileLowering
                         element.acceptChildrenVoid(this)
                 }
 
-                override fun visitMemberAccess(expression: IrMemberAccessExpression) {
+                override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
                     for (i in 0 until expression.typeArgumentsCount) {
                         if (expression.getTypeArgument(i)?.isReified == true) {
                             containsReified = true

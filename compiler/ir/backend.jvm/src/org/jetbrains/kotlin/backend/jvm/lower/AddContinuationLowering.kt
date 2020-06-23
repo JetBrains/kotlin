@@ -87,10 +87,10 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     }
 
     private fun transformSuspendLambdasIntoContinuations(irFile: IrFile) {
-        val inlineReferences = mutableSetOf<IrCallableReference>()
+        val inlineReferences = mutableSetOf<IrCallableReference<*>>()
         val suspendLambdas = mutableMapOf<IrFunctionReference, SuspendLambdaInfo>()
         irFile.acceptChildrenVoid(object : IrInlineReferenceLocator(context) {
-            override fun visitInlineReference(argument: IrCallableReference) {
+            override fun visitInlineReference(argument: IrCallableReference<*>) {
                 inlineReferences.add(argument)
             }
 

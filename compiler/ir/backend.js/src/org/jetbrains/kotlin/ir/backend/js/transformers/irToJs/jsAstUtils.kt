@@ -201,7 +201,7 @@ fun translateCall(
     }
 }
 
-fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGenerationContext, transformer: IrElementToJsExpressionTransformer): List<JsExpression> {
+fun translateCallArguments(expression: IrMemberAccessExpression<*>, context: JsGenerationContext, transformer: IrElementToJsExpressionTransformer): List<JsExpression> {
     val size = expression.valueArgumentsCount
 
     val arguments = (0 until size).mapTo(ArrayList(size)) { index ->

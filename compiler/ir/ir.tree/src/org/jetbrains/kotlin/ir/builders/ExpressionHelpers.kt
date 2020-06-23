@@ -209,7 +209,7 @@ fun IrBuilderWithScope.irCall(
     callee: IrFunctionSymbol,
     type: IrType,
     typeArguments: List<IrType>
-): IrMemberAccessExpression =
+): IrMemberAccessExpression<*> =
     irCall(callee, type).apply {
         typeArguments.forEachIndexed { index, irType ->
             this.putTypeArgument(index, irType)
@@ -299,7 +299,7 @@ fun IrBuilderWithScope.irCallOp(
     type: IrType,
     dispatchReceiver: IrExpression,
     argument: IrExpression? = null
-): IrMemberAccessExpression =
+): IrMemberAccessExpression<*> =
     irCall(callee, type, valueArgumentsCount = if (argument != null) 1 else 0, typeArgumentsCount = 0).apply {
         this.dispatchReceiver = dispatchReceiver
         if (argument != null)

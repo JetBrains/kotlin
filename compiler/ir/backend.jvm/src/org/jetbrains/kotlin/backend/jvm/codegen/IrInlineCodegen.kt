@@ -273,7 +273,7 @@ class IrDefaultLambda(
 fun isInlineIrExpression(argumentExpression: IrExpression) =
     when (argumentExpression) {
         is IrBlock -> argumentExpression.isInlineIrBlock()
-        is IrCallableReference -> true.also {
+        is IrCallableReference<*> -> true.also {
             assert((0 until argumentExpression.valueArgumentsCount).count { argumentExpression.getValueArgument(it) != null } == 0) {
                 "Expecting 0 value arguments for bounded callable reference: ${argumentExpression.dump()}"
             }

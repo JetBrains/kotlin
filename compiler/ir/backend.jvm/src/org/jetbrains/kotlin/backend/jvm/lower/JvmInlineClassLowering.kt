@@ -256,15 +256,15 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         return listOf(replacement)
     }
 
-    private fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression) =
+    private fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression<*>) =
         listOfNotNull(
             function.dispatchReceiverParameter?.let { it to expression.dispatchReceiver },
             function.extensionReceiverParameter?.let { it to expression.extensionReceiver }
         ) + function.valueParameters.map { it to expression.getValueArgument(it.index) }
 
-    private fun IrMemberAccessExpression.buildReplacement(
+    private fun IrMemberAccessExpression<*>.buildReplacement(
         originalFunction: IrFunction,
-        original: IrMemberAccessExpression,
+        original: IrMemberAccessExpression<*>,
         replacement: IrSimpleFunction
     ) {
         copyTypeArgumentsFrom(original)

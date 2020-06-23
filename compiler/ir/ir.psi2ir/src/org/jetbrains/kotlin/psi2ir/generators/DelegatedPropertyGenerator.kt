@@ -204,7 +204,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         type: KotlinType,
         referencedDescriptor: CallableDescriptor,
         statementGenerator: StatementGenerator
-    ): IrCallableReference =
+    ): IrCallableReference<*> =
         ReflectionReferencesGenerator(statementGenerator).generateCallableReference(
             ktElement, type,
             referencedDescriptor,
@@ -216,7 +216,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         type: KotlinType,
         referencedDescriptor: VariableDescriptorWithAccessors,
         scopeOwner: IrSymbol
-    ): IrCallableReference =
+    ): IrCallableReference<*> =
         createCallableReference(
             ktElement, type, referencedDescriptor,
             createBodyGenerator(scopeOwner).createStatementGenerator()
@@ -388,7 +388,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         ktDelegate: KtPropertyDelegate,
         getterDescriptor: VariableAccessorDescriptor,
         delegateReceiverValue: IntermediateValue,
-        irPropertyReference: IrCallableReference
+        irPropertyReference: IrCallableReference<*>
     ): IrBody =
         with(createBodyGenerator(irGetter.symbol)) {
             val startOffset = ktDelegate.startOffsetSkippingComments
@@ -414,7 +414,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         ktDelegate: KtPropertyDelegate,
         setterDescriptor: VariableAccessorDescriptor,
         delegateReceiverValue: IntermediateValue,
-        irPropertyReference: IrCallableReference
+        irPropertyReference: IrCallableReference<*>
     ): IrBody = with(createBodyGenerator(irSetter.symbol)) {
         val startOffset = ktDelegate.startOffsetSkippingComments
         val endOffset = ktDelegate.endOffset
