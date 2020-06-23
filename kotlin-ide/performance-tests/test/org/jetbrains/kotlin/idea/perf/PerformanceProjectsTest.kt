@@ -158,6 +158,46 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     lookupElements = listOf("importDirectives"),
                     note = "out-of-method import"
                 )
+
+                perfTypeAndAutocomplete(
+                    stat,
+                    fileName = "compiler/backend/src/org/jetbrains/kotlin/codegen/state/KotlinTypeMapper.kt",
+                    marker = "fun mapOwner(descriptor: DeclarationDescriptor): Type {",
+                    insertString = "val b = bind",
+                    typeAfterMarker = true,
+                    lookupElements = listOf("bindingContext"),
+                    note = "in-method completion for KotlinTypeMapper"
+                )
+
+                perfTypeAndAutocomplete(
+                    stat,
+                    fileName = "compiler/backend/src/org/jetbrains/kotlin/codegen/state/KotlinTypeMapper.kt",
+                    marker = "fun mapOwner(descriptor: DeclarationDescriptor): Type {",
+                    insertString = "val b = bind",
+                    typeAfterMarker = false,
+                    lookupElements = listOf("bindingContext"),
+                    note = "out-of-method completion for KotlinTypeMapper"
+                )
+
+                perfTypeAndAutocomplete(
+                    stat,
+                    fileName = "compiler/tests/org/jetbrains/kotlin/util/ArgsToParamsMatchingTest.kt",
+                    marker = "fun testMatchNamed() {",
+                    insertString = "testMatch",
+                    typeAfterMarker = true,
+                    lookupElements = listOf("testMatchNamed"),
+                    note = "in-method completion for ArgsToParamsMatchingTest"
+                )
+
+                perfTypeAndAutocomplete(
+                    stat,
+                    fileName = "compiler/tests/org/jetbrains/kotlin/util/ArgsToParamsMatchingTest.kt",
+                    marker = "class ArgsToParamsMatchingTest {",
+                    insertString = "val me = ",
+                    typeAfterMarker = true,
+                    lookupElements = listOf("ArgsToParamsMatchingTest"),
+                    note = "out-of-method completion for ArgsToParamsMatchingTest"
+                )
             }
         }
     }
