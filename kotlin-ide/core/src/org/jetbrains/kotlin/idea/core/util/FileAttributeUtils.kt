@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.idea.core.util
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.NullableLazyKey
+import com.intellij.openapi.util.io.DataInputOutputUtilRt
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.openapi.vfs.newvfs.FileAttribute
-import com.intellij.util.io.DataInputOutputUtil.readSeq
-import com.intellij.util.io.DataInputOutputUtil.writeSeq
+import com.intellij.openapi.util.io.DataInputOutputUtilRt.readSeq
+import com.intellij.openapi.util.io.DataInputOutputUtilRt.writeSeq
 import com.intellij.util.io.IOUtil.readUTF
 import com.intellij.util.io.IOUtil.writeUTF
 import java.io.*
