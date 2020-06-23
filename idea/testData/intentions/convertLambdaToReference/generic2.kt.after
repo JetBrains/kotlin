@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun <T> foo(i: Int): T? = null
+
+fun test(list: List<Int>) {
+    list.mapNotNull<Int, String>(::foo)
+}
