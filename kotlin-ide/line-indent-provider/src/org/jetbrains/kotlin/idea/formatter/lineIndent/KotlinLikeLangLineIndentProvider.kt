@@ -66,14 +66,15 @@ abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider
             before.isAt(BlockOpeningBrace) && before.beforeIgnoringWhiteSpaceOrComment().isFunctionDeclaration() ->
                 return factory.createIndentCalculator(Indent.getNormalIndent(), before.startOffset)
 
-            after.isAt(Quest) && after.after().isAt(Colon) -> {
-                val indent = if (settings.continuationIndentInElvis)
-                    Indent.getContinuationIndent()
-                else
-                    Indent.getNormalIndent()
-
-                return factory.createIndentCalculator(indent, before.startOffset)
-            }
+//            KT-39716
+//            after.isAt(Quest) && after.after().isAt(Colon) -> {
+//                val indent = if (settings.continuationIndentInElvis)
+//                    Indent.getContinuationIndent()
+//                else
+//                    Indent.getNormalIndent()
+//
+//                return factory.createIndentCalculator(indent, before.startOffset)
+//            }
 
             before.isAt(Colon) && before.before().isAt(Quest) ->
                 return factory.createIndentCalculator(Indent.getNoneIndent(), before.startOffset)

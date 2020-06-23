@@ -3,3 +3,4 @@ fun test(some: Any?, error: Int) {
 }
 
 // SET_FALSE: CONTINUATION_INDENT_IN_ELVIS
+// WITHOUT_CUSTOM_LINE_INDENT_PROVIDER
