@@ -152,24 +152,6 @@ class OrderingTest {
     }
 
     @Test
-    fun maxOf() {
-        assertEquals(Int.MAX_VALUE, maxOf(Int.MAX_VALUE, Int.MIN_VALUE))
-        assertEquals(Int.MAX_VALUE, maxOf(Int.MAX_VALUE, Int.MIN_VALUE, 0))
-        assertEquals(Int.MAX_VALUE, maxOf(Int.MAX_VALUE, Int.MIN_VALUE, 0, -1))
-
-        assertEquals(Long.MAX_VALUE, maxOf(Long.MAX_VALUE, Long.MIN_VALUE))
-        assertEquals(Long.MAX_VALUE, maxOf(Long.MAX_VALUE, Long.MIN_VALUE, 0))
-        assertEquals(Long.MAX_VALUE, maxOf(Long.MAX_VALUE, Long.MIN_VALUE, 0, -1))
-
-        assertEquals(Double.POSITIVE_INFINITY, maxOf(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY))
-        assertEquals(Double.POSITIVE_INFINITY, maxOf(Double.POSITIVE_INFINITY, Double.MAX_VALUE, Double.MIN_VALUE))
-        assertEquals(Double.POSITIVE_INFINITY, maxOf(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.MAX_VALUE, Double.MIN_VALUE))
-        assertEquals(0.0, maxOf(0.0, -0.0))
-        assertEquals(0.0, maxOf(-0.0, 0.0))
-        assertEquals(0.0, maxOf(-0.0, 0.0, 0.0, -0.0))
-    }
-
-    @Test
     fun maxOfWith() {
         assertEquals(v1, maxOf(v1, v2, compareBy { it.name }))
         assertEquals(v1, maxOf(v3, v2, v1, compareBy { it.name }))
@@ -177,24 +159,6 @@ class OrderingTest {
         assertEquals(v2, maxOf(v1, v2, compareBy { it.rating }))
         assertEquals(v3, maxOf(v1, v2, v3, compareBy { it.rating }))
         assertEquals(v4, maxOf(v4, v1, v2, v3, comparator = compareBy { it.rating }))
-    }
-
-    @Test
-    fun minOf() {
-        assertEquals(Int.MIN_VALUE, minOf(Int.MAX_VALUE, Int.MIN_VALUE))
-        assertEquals(Int.MIN_VALUE, minOf(Int.MAX_VALUE, Int.MIN_VALUE, 0))
-        assertEquals(Int.MIN_VALUE, minOf(Int.MAX_VALUE, Int.MIN_VALUE, 0, -1))
-
-        assertEquals(Long.MIN_VALUE, minOf(Long.MAX_VALUE, Long.MIN_VALUE))
-        assertEquals(Long.MIN_VALUE, minOf(Long.MAX_VALUE, Long.MIN_VALUE, 0))
-        assertEquals(Long.MIN_VALUE, minOf(Long.MAX_VALUE, Long.MIN_VALUE, 0, -1))
-
-        assertEquals(Double.NEGATIVE_INFINITY, minOf(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY))
-        assertEquals(Double.MIN_VALUE, minOf(Double.POSITIVE_INFINITY, Double.MAX_VALUE, Double.MIN_VALUE))
-        assertEquals(Double.NEGATIVE_INFINITY, minOf(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.MAX_VALUE, Double.MIN_VALUE))
-        assertEquals(-0.0, minOf(0.0, -0.0))
-        assertEquals(-0.0, minOf(-0.0, 0.0))
-        assertEquals(-0.0, minOf(-0.0, 0.0, 0.0, -0.0))
     }
 
     @Test

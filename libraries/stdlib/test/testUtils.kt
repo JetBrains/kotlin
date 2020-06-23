@@ -23,8 +23,16 @@ inline fun <reified T> assertStaticAndRuntimeTypeIs(value: @kotlin.internal.NoIn
 }
 
 
-fun assertArrayContentEquals(expected: ByteArray, actual: ByteArray, message: String? = null)     = assertTrue(expected contentEquals actual, message)
-fun assertArrayContentEquals(expected: CharArray, actual: CharArray, message: String? = null)     = assertTrue(expected contentEquals actual, message)
+fun <T> assertArrayContentEquals(expected: Array<out T>, actual: Array<out T>, message: String? = null) = assertTrue(expected contentEquals actual, message)
+
+fun assertArrayContentEquals(expected: ByteArray, actual: ByteArray, message: String? = null)       = assertTrue(expected contentEquals actual, message)
+fun assertArrayContentEquals(expected: ShortArray, actual: ShortArray, message: String? = null)     = assertTrue(expected contentEquals actual, message)
+fun assertArrayContentEquals(expected: IntArray, actual: IntArray, message: String? = null)         = assertTrue(expected contentEquals actual, message)
+fun assertArrayContentEquals(expected: LongArray, actual: LongArray, message: String? = null)       = assertTrue(expected contentEquals actual, message)
+fun assertArrayContentEquals(expected: FloatArray, actual: FloatArray, message: String? = null)     = assertTrue(expected contentEquals actual, message)
+fun assertArrayContentEquals(expected: DoubleArray, actual: DoubleArray, message: String? = null)   = assertTrue(expected contentEquals actual, message)
+fun assertArrayContentEquals(expected: BooleanArray, actual: BooleanArray, message: String? = null) = assertTrue(expected contentEquals actual, message)
+fun assertArrayContentEquals(expected: CharArray, actual: CharArray, message: String? = null)       = assertTrue(expected contentEquals actual, message)
 
 fun assertArrayContentEquals(expected: UIntArray, actual: UIntArray, message: String? = null)     = assertTrue(expected contentEquals actual, message)
 fun assertArrayContentEquals(expected: ULongArray, actual: ULongArray, message: String? = null)   = assertTrue(expected contentEquals actual, message)

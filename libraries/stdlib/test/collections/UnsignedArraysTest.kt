@@ -248,22 +248,6 @@ class UnsignedArraysTest {
     }
 
     @Test
-    fun indexOf() {
-        expect(-1) { ubyteArrayOf(1, 2, 3).indexOf(0) }
-        expect(0) { ushortArrayOf(1, 2, 3).indexOf(1) }
-        expect(1) { uintArrayOf(1, 2, 3).indexOf(2) }
-        expect(2) { ulongArrayOf(1, 2, 3).indexOf(3) }
-    }
-
-    @Test
-    fun indexOfFirst() {
-        expect(-1) { ubyteArrayOf(1, 2, 3).indexOfFirst { it == 5.toUByte() } }
-        expect(0) { ushortArrayOf(1, 2, 3).indexOfFirst { it % 2u == 1u } }
-        expect(1) { uintArrayOf(1, 2, 3).indexOfFirst { it % 2u == 0u } }
-        expect(2) { ulongArrayOf(1, 2, 3).indexOfFirst { it == 3.toULong() } }
-    }
-
-    @Test
     fun lastIndexOf() {
         expect(-1) { ubyteArrayOf(1, 2, 3).lastIndexOf(0) }
         expect(0) { ushortArrayOf(1, 2, 3).lastIndexOf(1) }

@@ -152,23 +152,6 @@ class CollectionTest {
         assertEquals(0, charValues.size)
     }
 
-    @Test fun foldIndexed() {
-        expect(42) {
-            val numbers = listOf(1, 2, 3, 4)
-            numbers.foldIndexed(0) { index, a, b -> index * (a + b) }
-        }
-
-        expect(0) {
-            val numbers = arrayListOf<Int>()
-            numbers.foldIndexed(0) { index, a, b -> index * (a + b) }
-        }
-
-        expect("11234") {
-            val numbers = listOf(1, 2, 3, 4)
-            numbers.map { it.toString() }.foldIndexed("") { index, a, b -> if (index == 0) a + b + b else a + b }
-        }
-    }
-
     @Test fun foldIndexedWithDifferentTypes() {
         expect(10) {
             val numbers = listOf("a", "ab", "abc")
@@ -185,13 +168,6 @@ class CollectionTest {
         expect(4) {
             val numbers = listOf(1, 2, 3)
             numbers.foldIndexed(7) { index, a, b -> index + a - b }
-        }
-    }
-
-    @Test fun foldRightIndexed() {
-        expect("12343210") {
-            val numbers = listOf(1, 2, 3, 4)
-            numbers.map { it.toString() }.foldRightIndexed("") { index, a, b -> a + b + index }
         }
     }
 
@@ -851,40 +827,6 @@ class CollectionTest {
         assertIsPositiveZero(listOf(0.0F, -0.0F).shuffled().maxOrNull()!!.toDouble())
     }
 
-    @Test fun minWithOrNull() {
-        expect(null, { listOf<Int>().minWithOrNull(naturalOrder()) })
-        expect(1, { listOf(1).minWithOrNull(naturalOrder()) })
-        expect("a", { listOf("a", "B").minWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
-        expect("a", { listOf("a", "B").asSequence().minWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
-    }
-
-    @Test fun maxWithOrNull() {
-        expect(null, { listOf<Int>().maxWithOrNull(naturalOrder()) })
-        expect(1, { listOf(1).maxWithOrNull(naturalOrder()) })
-        expect("B", { listOf("a", "B").maxWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
-        expect("B", { listOf("a", "B").asSequence().maxWithOrNull(STRING_CASE_INSENSITIVE_ORDER) })
-    }
-
-    @Test fun minByOrNull() {
-        expect(null, { listOf<Int>().minByOrNull { it } })
-        expect(1, { listOf(1).minByOrNull { it } })
-        expect(3, { listOf(2, 3).minByOrNull { -it } })
-        expect('a', { listOf('a', 'b').minByOrNull { "x$it" } })
-        expect("b", { listOf("b", "abc").minByOrNull { it.length } })
-        expect(null, { listOf<Int>().asSequence().minByOrNull { it } })
-        expect(3, { listOf(2, 3).asSequence().minByOrNull { -it } })
-    }
-
-    @Test fun maxByOrNull() {
-        expect(null, { listOf<Int>().maxByOrNull { it } })
-        expect(1, { listOf(1).maxByOrNull { it } })
-        expect(2, { listOf(2, 3).maxByOrNull { -it } })
-        expect('b', { listOf('a', 'b').maxByOrNull { "x$it" } })
-        expect("abc", { listOf("b", "abc").maxByOrNull { it.length } })
-        expect(null, { listOf<Int>().asSequence().maxByOrNull { it } })
-        expect(2, { listOf(2, 3).asSequence().maxByOrNull { -it } })
-    }
-
     @Test fun minByOrNullEvaluateOnce() {
         var c = 0
         expect(1, { listOf(5, 4, 3, 2, 1).minByOrNull { c++; it * it } })
@@ -1037,18 +979,6 @@ class CollectionTest {
                             -0.0, -Double.MIN_VALUE, -1.0, -Double.MAX_VALUE, Double.NEGATIVE_INFINITY), dataDouble.sortedDescending())
     }
 
-    @Test fun sortByInPlace() {
-        val data = arrayListOf("aa" to 20, "ab" to 3, "aa" to 3)
-        data.sortBy { it.second }
-        assertEquals(listOf("ab" to 3, "aa" to 3, "aa" to 20), data)
-
-        data.sortBy { it.first }
-        assertEquals(listOf("aa" to 3, "aa" to 20, "ab" to 3), data)
-
-        data.sortByDescending { (it.first + it.second).length }
-        assertEquals(listOf("aa" to 20, "aa" to 3, "ab" to 3), data)
-    }
-
     @Test fun sortStable() {
         val keyRange = 'A'..'D'
         for (size in listOf(10, 100, 2000)) {
@@ -1062,12 +992,6 @@ class CollectionTest {
             list.sortDescending()
             list.assertStableSorted(descending = true)
         }
-    }
-
-    @Test fun sortedBy() {
-        assertEquals(listOf("two" to 3, "three" to 20), listOf("three" to 20, "two" to 3).sortedBy { it.second })
-        assertEquals(listOf("three" to 20, "two" to 3), listOf("three" to 20, "two" to 3).sortedBy { it.first })
-        assertEquals(listOf("three", "two"), listOf("two", "three").sortedByDescending { it.length })
     }
 
     @Test fun sortedNullableBy() {
@@ -1086,15 +1010,6 @@ class CollectionTest {
             assertEquals(listOf("sort", "abc", ""), it.sortedByDescending { it.nonEmptyLength() })
             assertEquals(listOf("abc", "sort", ""), it.sortedWith(compareBy(nullsLast<Int>()) { it.nonEmptyLength()}))
         }
-    }
-
-    @Test fun sortedWith() {
-        val comparator = compareBy<String> { it.toUpperCase().reversed() }
-        val data = listOf("cat", "dad", "BAD")
-
-        expect(listOf("BAD", "dad", "cat")) { data.sortedWith(comparator) }
-        expect(listOf("cat", "dad", "BAD")) { data.sortedWith(comparator.reversed()) }
-        expect(listOf("BAD", "dad", "cat")) { data.sortedWith(comparator.reversed().reversed()) }
     }
 
     @Test fun sortByStable() {
