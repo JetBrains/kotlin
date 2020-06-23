@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForInlining
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionBase
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -204,8 +203,10 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean) {
         parent = function.parent
         annotations += function.annotations
         copyTypeParameters(function.allTypeParameters)
-        metadata = function.metadata
-        function.safeAs<IrFunctionBase<*>>()?.metadata = null
+        if (function.metadata != null) {
+            metadata = function.metadata
+            function.metadata = null
+        }
 
         if (function is IrSimpleFunction) {
             val propertySymbol = function.correspondingPropertySymbol

@@ -120,7 +120,7 @@ abstract class IrFileDeserializer(
     abstract fun deserializeString(index: Int): String
     abstract fun deserializeExpressionBody(index: Int): IrExpression
     abstract fun deserializeStatementBody(index: Int): IrElement
-    abstract fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase): IrLoopBase
+    abstract fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoop): IrLoop
 
     abstract fun referenceIrSymbol(symbol: IrSymbol, signature: IdSignature)
 
@@ -709,7 +709,7 @@ abstract class IrFileDeserializer(
         return IrWhenImpl(start, end, type, origin, branches)
     }
 
-    private fun deserializeLoop(proto: ProtoLoop, loop: IrLoopBase): IrLoopBase {
+    private fun deserializeLoop(proto: ProtoLoop, loop: IrLoop): IrLoop {
         val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val body = if (proto.hasBody()) deserializeExpression(proto.body) else null
         val condition = deserializeExpression(proto.condition)

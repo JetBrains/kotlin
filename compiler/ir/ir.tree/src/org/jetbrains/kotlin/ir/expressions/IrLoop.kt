@@ -20,10 +20,9 @@ interface IrLoop : IrExpression {
     val origin: IrStatementOrigin?
     var body: IrExpression?
     var condition: IrExpression
-    val label: String?
+    var label: String?
 }
 
 interface IrWhileLoop : IrLoop
 
 interface IrDoWhileLoop : IrLoop
-

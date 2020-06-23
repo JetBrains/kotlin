@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
@@ -230,7 +230,7 @@ abstract class KotlinIrLinker(
         private val moduleDeserializer: IrModuleDeserializer
     ) : IrFileDeserializer(logger, builtIns, symbolTable, !onlyHeaders, deserializeFakeOverrides) {
 
-        private var fileLoops = mutableMapOf<Int, IrLoopBase>()
+        private var fileLoops = mutableMapOf<Int, IrLoop>()
 
         lateinit var file: IrFile
 
@@ -396,7 +396,7 @@ abstract class KotlinIrLinker(
         override fun deserializeString(index: Int): String =
             loadStringProto(index)
 
-        override fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase) =
+        override fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoop) =
             fileLoops.getOrPut(loopIndex, loopBuilder)
 
         override fun deserializeExpressionBody(index: Int): IrExpression {

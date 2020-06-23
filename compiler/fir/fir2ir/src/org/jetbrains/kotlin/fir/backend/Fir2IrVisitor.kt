@@ -673,7 +673,7 @@ class Fir2IrVisitor(
     }
 
     private fun FirJump<FirLoop>.convertJumpWithOffsets(
-        f: (startOffset: Int, endOffset: Int, irLoop: IrLoop) -> IrBreakContinueBase
+        f: (startOffset: Int, endOffset: Int, irLoop: IrLoop, label: String?) -> IrBreakContinue
     ): IrExpression {
         return convertWithOffsets { startOffset, endOffset ->
             val firLoop = target.labeledElement
@@ -681,22 +681,24 @@ class Fir2IrVisitor(
             if (irLoop == null) {
                 IrErrorExpressionImpl(startOffset, endOffset, irBuiltIns.nothingType, "Unbound loop: ${render()}")
             } else {
-                f(startOffset, endOffset, irLoop).apply {
-                    label = irLoop.label.takeIf { target.labelName != null }
-                }
+                f(startOffset, endOffset, irLoop, irLoop.label.takeIf { target.labelName != null })
             }
         }
     }
 
     override fun visitBreakExpression(breakExpression: FirBreakExpression, data: Any?): IrElement {
-        return breakExpression.convertJumpWithOffsets { startOffset, endOffset, irLoop ->
-            IrBreakImpl(startOffset, endOffset, irBuiltIns.nothingType, irLoop)
+        return breakExpression.convertJumpWithOffsets { startOffset, endOffset, irLoop, label ->
+            IrBreakImpl(startOffset, endOffset, irBuiltIns.nothingType, irLoop).apply {
+                this.label = label
+            }
         }
     }
 
     override fun visitContinueExpression(continueExpression: FirContinueExpression, data: Any?): IrElement {
-        return continueExpression.convertJumpWithOffsets { startOffset, endOffset, irLoop ->
-            IrContinueImpl(startOffset, endOffset, irBuiltIns.nothingType, irLoop)
+        return continueExpression.convertJumpWithOffsets { startOffset, endOffset, irLoop, label ->
+            IrContinueImpl(startOffset, endOffset, irBuiltIns.nothingType, irLoop).apply {
+                this.label = label
+            }
         }
     }
 

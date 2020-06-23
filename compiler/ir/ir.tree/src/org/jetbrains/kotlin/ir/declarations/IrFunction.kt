@@ -43,7 +43,7 @@ interface IrFunction :
 
     var body: IrBody?
 
-    override val metadata: MetadataSource?
+    override var metadata: MetadataSource?
 }
 
 @ObsoleteDescriptorBasedAPI

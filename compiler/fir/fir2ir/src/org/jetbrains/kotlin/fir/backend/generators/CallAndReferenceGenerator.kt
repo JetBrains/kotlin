@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
@@ -317,7 +318,7 @@ class CallAndReferenceGenerator(
     internal fun IrExpression.applyCallArguments(call: FirCall?): IrExpression {
         if (call == null) return this
         return when (this) {
-            is IrCallWithIndexedArgumentsBase -> {
+            is IrMemberAccessExpression -> {
                 val argumentsCount = call.arguments.size
                 if (argumentsCount <= valueArgumentsCount) {
                     apply {
@@ -362,11 +363,11 @@ class CallAndReferenceGenerator(
         }
     }
 
-    private fun IrCallWithIndexedArgumentsBase.applyArgumentsWithReorderingIfNeeded(
+    private fun IrMemberAccessExpression.applyArgumentsWithReorderingIfNeeded(
         call: FirCall,
         argumentMapping: Map<FirExpression, FirValueParameter>,
         valueParameters: List<FirValueParameter>,
-    ): IrExpressionBase {
+    ): IrExpression {
         // Assuming compile-time constants only inside annotation, we don't need a block to reorder arguments to preserve semantics.
         // But, we still need to pick correct indices for named arguments.
         if (call !is FirAnnotationCall &&
@@ -436,7 +437,7 @@ class CallAndReferenceGenerator(
 
     private fun IrExpression.applyTypeArguments(access: FirQualifiedAccess): IrExpression {
         return when (this) {
-            is IrMemberAccessExpressionBase -> {
+            is IrMemberAccessExpression -> {
                 val argumentsCount = access.typeArguments.size
                 if (argumentsCount <= typeArgumentsCount) {
                     apply {
@@ -494,8 +495,10 @@ class CallAndReferenceGenerator(
 
     private fun IrExpression.applyReceivers(qualifiedAccess: FirQualifiedAccess, explicitReceiverExpression: IrExpression?): IrExpression {
         return when (this) {
-            is IrCallWithIndexedArgumentsBase -> {
-                val ownerFunction = symbol.owner as? IrFunction
+            is IrMemberAccessExpression -> {
+                val ownerFunction =
+                    symbol.owner as? IrFunction
+                        ?: (symbol.owner as? IrProperty)?.getter
                 if (ownerFunction?.dispatchReceiverParameter != null) {
                     dispatchReceiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
                 }
@@ -504,17 +507,7 @@ class CallAndReferenceGenerator(
                 }
                 this
             }
-            is IrNoArgumentsCallableReferenceBase -> {
-                val ownerPropertyGetter = (symbol.owner as? IrProperty)?.getter
-                if (ownerPropertyGetter?.dispatchReceiverParameter != null) {
-                    dispatchReceiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
-                }
-                if (ownerPropertyGetter?.extensionReceiverParameter != null) {
-                    extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)
-                }
-                this
-            }
-            is IrFieldExpressionBase -> {
+            is IrFieldAccessExpression -> {
                 val ownerField = symbol.owner
                 if (!ownerField.isStatic) {
                     receiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
