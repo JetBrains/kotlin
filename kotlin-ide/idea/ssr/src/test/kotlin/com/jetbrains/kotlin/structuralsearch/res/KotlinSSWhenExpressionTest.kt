@@ -70,4 +70,14 @@ class KotlinSSWhenExpressionTest : KotlinSSResourceInspectionTest() {
             """.trimIndent()
         )
     }
+
+    fun testWhenAnyEntry() {
+        doTest(
+            """
+            when ('_) {
+                '_ -> println("ok")
+             }
+            """.trimIndent()
+        )
+    }
 }

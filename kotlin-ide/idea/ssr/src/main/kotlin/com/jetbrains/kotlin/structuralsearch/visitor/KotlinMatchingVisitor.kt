@@ -652,8 +652,13 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitWhenConditionWithExpression(condition: KtWhenConditionWithExpression) {
-        val other = getTreeElementDepar<KtWhenConditionWithExpression>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.match(condition.expression, other.expression)
+        val handler = getHandler(condition)
+        if (handler is SubstitutionHandler) {
+            myMatchingVisitor.result = handler.handle(myMatchingVisitor.element, myMatchingVisitor.matchContext)
+        } else {
+            val other = getTreeElementDepar<KtWhenConditionWithExpression>() ?: return
+            myMatchingVisitor.result = myMatchingVisitor.match(condition.expression, other.expression)
+        }
     }
 
     override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
