@@ -3,8 +3,8 @@ package com.intellij.refactoring.rename;
 
 import com.intellij.analysis.AnalysisBundle;
 import com.intellij.core.CoreBundle;
-import com.intellij.internal.statistic.eventLog.FeatureUsageData;
-import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
+import com.intellij.internal.statistic.eventLog.EventFields;
+import com.intellij.internal.statistic.eventLog.VarargEventId;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.lang.LangBundle;
 import com.intellij.lang.findUsages.DescriptiveNameUtil;
@@ -97,7 +97,7 @@ public class RenameProcessor extends BaseRefactoringProcessor {
 
     setNewName(newName);
 
-    logScopeStatistics("started");
+    logScopeStatistics(RenameUsagesCollector.started);
   }
 
   public Set<PsiElement> getElements() {
@@ -369,7 +369,7 @@ public class RenameProcessor extends BaseRefactoringProcessor {
 
   @Override
   public void performRefactoring(UsageInfo @NotNull [] usages) {
-    logScopeStatistics("executed");
+    logScopeStatistics(RenameUsagesCollector.executed);
 
     List<Runnable> postRenameCallbacks = new ArrayList<>();
 
@@ -492,50 +492,45 @@ public class RenameProcessor extends BaseRefactoringProcessor {
     myCommandName = commandName;
   }
   
-  private void logScopeStatistics(String eventId) {
+  private void logScopeStatistics(VarargEventId eventId) {
     Class<? extends RenamePsiElementProcessor> renameProcessor = RenamePsiElementProcessor.forElement(myPrimaryElement).getClass();
-    FUCounterUsageLogger.getInstance().logEvent(
+    eventId.log(
       myProject,
-      "rename.refactoring",
-      eventId,
-      new FeatureUsageData()
-        .addData("scope_type", getStatisticsCompatibleScopeName())
-        .addData("search_in_comments", isSearchInComments())
-        .addData("search_in_text_occurrences", isSearchTextOccurrences())
-        .addData("rename_processor", PluginInfoDetectorKt.getPluginInfo(renameProcessor).isSafeToReport()
-                                     ? renameProcessor.getName()
-                                     : "third.party")
-        .addLanguage(myPrimaryElement.getLanguage())
+      RenameUsagesCollector.scopeType.with(getStatisticsCompatibleScopeName()),
+      RenameUsagesCollector.searchInComments.with(isSearchInComments()),
+      RenameUsagesCollector.searchInTextOccurrences.with(isSearchTextOccurrences()),
+      RenameUsagesCollector.renameProcessor.with(renameProcessor),
+      EventFields.Language.with(myPrimaryElement.getLanguage())
     );
   }
 
-  private String getStatisticsCompatibleScopeName() {
+  private RenameScopeType getStatisticsCompatibleScopeName() {
     String displayName = myRefactoringScope.getDisplayName();
     if (displayName.equals(CoreBundle.message("psi.search.scope.project"))) {
-      return "project";
+      return RenameScopeType.Project;
     }
 
     if (displayName.equals(AnalysisBundle.message("psi.search.scope.test.files"))) {
-      return "tests";
+      return RenameScopeType.Tests;
     }
 
     if (displayName.equals(AnalysisBundle.message("psi.search.scope.production.files"))) {
-      return "production";
+      return RenameScopeType.Production;
     }
 
     if (myRefactoringScope instanceof LocalSearchScope) {
-      return "current file";
+      return RenameScopeType.CurrentFile;
     }
 
     Module module = ModuleUtilCore.findModuleForPsiElement(myPrimaryElement);
     if (module != null && myRefactoringScope.equals(module.getModuleScope())) {
-      return "module";
+      return RenameScopeType.Module;
     }
 
     if (!PluginInfoDetectorKt.getPluginInfo(myRefactoringScope.getClass()).isSafeToReport()) {
-      return "third.party";
+      return RenameScopeType.ThirdParty;
     }
 
-    return "unknown";
+    return RenameScopeType.Unknown;
   }
 }
