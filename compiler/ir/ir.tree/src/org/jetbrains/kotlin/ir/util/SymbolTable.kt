@@ -958,7 +958,9 @@ open class SymbolTable(
         ) {
             IrLocalDelegatedPropertyImpl(
                 startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type, descriptor.isVar
-            )
+            ).apply {
+                metadata = MetadataSource.LocalDelegatedProperty(descriptor)
+            }
         }
 
     fun referenceLocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) =

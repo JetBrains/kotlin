@@ -35,4 +35,6 @@ interface IrLocalDelegatedProperty :
     var delegate: IrVariable
     var getter: IrFunction
     var setter: IrFunction?
+
+    override val metadata: MetadataSource.LocalDelegatedProperty?
 }

@@ -78,6 +78,16 @@ class IrLocalDelegatedPropertyImpl(
             }
         }
 
+    override var metadataField: MetadataSource.LocalDelegatedProperty? = null
+
+    override var metadata: MetadataSource.LocalDelegatedProperty?
+        get() = getCarrier().metadataField
+        set(v) {
+            if (metadata !== v) {
+                setCarrier().metadataField = v
+            }
+        }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedProperty(this, data)
 

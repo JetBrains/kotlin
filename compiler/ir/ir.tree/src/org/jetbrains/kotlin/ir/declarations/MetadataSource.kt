@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 
 interface MetadataSource {
@@ -29,4 +26,7 @@ interface MetadataSource {
     open class Function(descriptor: FunctionDescriptor) : DescriptorBased<FunctionDescriptor>(descriptor)
 
     open class Property(descriptor: PropertyDescriptor) : DescriptorBased<PropertyDescriptor>(descriptor)
+
+    open class LocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) :
+        DescriptorBased<VariableDescriptorWithAccessors>(descriptor)
 }
