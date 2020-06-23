@@ -827,6 +827,21 @@ tasks {
         }
     }
 
+    register("kmmTest", AggregateTest::class) {
+        dependsOn(
+            ":idea:idea-gradle:test",
+            ":idea:test",
+            ":compiler:test",
+            ":js:js.tests:test"
+        )
+        if (Ide.IJ193.orHigher())
+            dependsOn(":kotlin-gradle-plugin-integration-tests:test")
+        if (Ide.AS40.orHigher())
+            dependsOn(":kotlin-ultimate:ide:android-studio-native:test")
+
+        testPatternFile = file("tests/mpp/kmm-patterns.csv")
+    }
+
     register("test") {
         doLast {
             throw GradleException("Don't use directly, use aggregate tasks *-check instead")
