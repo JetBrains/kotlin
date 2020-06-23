@@ -1134,7 +1134,7 @@ public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R):
 /**
  * Returns the first character yielding the largest value of the given function or `null` if there are no characters.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> CharSequence.maxByOrNull(selector: (Char) -> R): Char? {
@@ -1368,7 +1368,7 @@ public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R):
 /**
  * Returns the first character yielding the smallest value of the given function or `null` if there are no characters.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <R : Comparable<R>> CharSequence.minByOrNull(selector: (Char) -> R): Char? {

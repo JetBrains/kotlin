@@ -399,7 +399,7 @@ object Aggregates : TemplateGroupBase() {
                 since("1.4")
 
                 doc { "Returns the first ${f.element} yielding the ${if (op == "maxBy") "largest" else "smallest"} value of the given function or `null` if there are no ${f.element.pluralize()}." }
-                sample("samples.collections.Collections.Aggregates.$op")
+                sample("samples.collections.Collections.Aggregates.$op$orNull")
 
                 val (elem, value, cmp) = if (op == "minBy") Triple("minElem", "minValue", ">") else Triple("maxElem", "maxValue", "<")
                 body {
