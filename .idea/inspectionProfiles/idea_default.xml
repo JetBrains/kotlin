@@ -1273,6 +1273,15 @@
         <constraint name="Type" within="" contains="" />
         <constraint name="elements" maxCount="2147483647" within="" contains="" />
       </replaceConfiguration>
+      <replaceConfiguration name="invalid use of ArrayUtil.contains: always returns false" text="com.intellij.util.ArrayUtil.contains($t$, $e$)" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="$e$.contains($t$)">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="t" within="" contains="" />
+        <constraint name="e" nameOfExprType="java\.util\.Collection" exprTypeWithinHierarchy="true" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="can shorten to ContainerUtil.set()" text="new HashSet&lt;&gt;(Arrays.asList($list$))" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="com.intellij.util.containers.ContainerUtil.set($list$)">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="list" maxCount="32000" within="" contains="" />
+      </replaceConfiguration>
       <replaceConfiguration name="DataKey.getData()" text="$Var2$.getData($Var3$.getDataContext())" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="false" replacement="$Var3$.getData($Var2$)">
         <constraint name="__context__" target="true" within="" contains="" />
         <constraint name="Var2" nameOfExprType="DataKey" within="" contains="" />
@@ -1388,6 +1397,14 @@
         <constraint name="ref2" nameOfExprType="com\.jetbrains\.swift\.psi\.types\.SwiftType" exprTypeWithinHierarchy="true" within="" contains="" />
         <constraint name="ref1" nameOfExprType="com\.jetbrains\.swift\.psi\.types\.SwiftType" exprTypeWithinHierarchy="true" within="" contains="" />
       </searchConfiguration>
+      <replaceConfiguration name="Over-dependence on Object2ObjectOpenHashMap from fastutil" order="1" text="new Object2ObjectLinkedOpenHashMap&lt;&gt;($a$)" recursive="false" caseInsensitive="false" type="JAVA" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="true" replacement="com.intellij.util.containers.CollectionFactory.createSmallMemoryFootprintLinkedMap($a$)">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="a" minCount="0" maxCount="2147483647" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="Over-dependence on Object2ObjectOpenHashMap from fastutil" description="Factory method CollectionFactory.createSmallMemoryFootprintMap() should be used to reduce dependence on concrete map implementation from third-party library " problemDescriptor="Should use factory method instead of direct ctr call" text="new Object2ObjectOpenHashMap&lt;&gt;($a$)" recursive="false" caseInsensitive="false" type="JAVA" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="true" replacement="com.intellij.util.containers.CollectionFactory.createSmallMemoryFootprintMap($a$)">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="a" minCount="0" maxCount="2147483647" within="" contains="" />
+      </replaceConfiguration>
     </inspection_tool>
     <inspection_tool class="SafeVarargsDetector" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SeamAnnotationIncorrectSignatureInspection" enabled="false" level="ERROR" enabled_by_default="false" />

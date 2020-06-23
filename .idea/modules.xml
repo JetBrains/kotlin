@@ -896,6 +896,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.impl.iml" filepath="$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.plugin.iml" filepath="$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.zipflinger.iml" filepath="$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.zipflinger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/engine-tests/engine-tests.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/engine-tests/engine-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/fleet.iml" filepath="$PROJECT_DIR$/intellij/fleet/fleet.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/andel.core/fleet.andel.core.iml" filepath="$PROJECT_DIR$/intellij/fleet/andel.core/fleet.andel.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/andel.editor/fleet.andel.editor.iml" filepath="$PROJECT_DIR$/intellij/fleet/andel.editor/fleet.andel.editor.iml" />
@@ -978,6 +979,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/layoutlib/intellij.android.layoutlib.iml" filepath="$PROJECT_DIR$/intellij/community/android/layoutlib/intellij.android.layoutlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/layoutlib-loader/intellij.android.layoutlib-loader.iml" filepath="$PROJECT_DIR$/intellij/community/android/layoutlib-loader/intellij.android.layoutlib-loader.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/layoutlib-loader/intellij.android.layoutlib-loader.tests.iml" filepath="$PROJECT_DIR$/intellij/community/android/layoutlib-loader/intellij.android.layoutlib-loader.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/android/lint/intellij.android.lint.iml" filepath="$PROJECT_DIR$/intellij/community/android/lint/intellij.android.lint.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/android/lint/tests/intellij.android.lint.tests.iml" filepath="$PROJECT_DIR$/intellij/community/android/lint/tests/intellij.android.lint.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/mlkit/intellij.android.mlkit.iml" filepath="$PROJECT_DIR$/intellij/community/android/mlkit/intellij.android.mlkit.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/mlkit/intellij.android.mlkit.tests.iml" filepath="$PROJECT_DIR$/intellij/community/android/mlkit/intellij.android.mlkit.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/native-symbolizer/intellij.android.native-symbolizer.iml" filepath="$PROJECT_DIR$/intellij/community/android/native-symbolizer/intellij.android.native-symbolizer.iml" />
@@ -1576,8 +1579,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/lightEdit/intellij.lightEdit.iml" filepath="$PROJECT_DIR$/intellij/lightEdit/intellij.lightEdit.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/lightEdit/build/intellij.lightEdit.build.iml" filepath="$PROJECT_DIR$/intellij/lightEdit/build/intellij.lightEdit.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/lightEdit/intellij.lightEdit.main.iml" filepath="$PROJECT_DIR$/intellij/lightEdit/intellij.lightEdit.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/android/lint/intellij.lint.iml" filepath="$PROJECT_DIR$/intellij/community/android/lint/intellij.lint.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/android/lint/tests/intellij.lint.tests.iml" filepath="$PROJECT_DIR$/intellij/community/android/lint/tests/intellij.lint.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/liquid/intellij.liquid.iml" filepath="$PROJECT_DIR$/intellij/plugins/liquid/intellij.liquid.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/markdown/intellij.markdown.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/markdown/intellij.markdown.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/marketplace/intellij.marketplace.iml" filepath="$PROJECT_DIR$/intellij/plugins/marketplace/intellij.marketplace.iml" />
@@ -1900,6 +1901,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/reactive/reactive-streams-tests/intellij.reactivestreams.testFramework.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/reactive/reactive-streams-tests/intellij.reactivestreams.testFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/recommenders/recommenders-plugin/intellij.recommenders.iml" filepath="$PROJECT_DIR$/intellij/plugins/recommenders/recommenders-plugin/intellij.recommenders.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/recommenders/recommenders-java/intellij.recommenders.java.iml" filepath="$PROJECT_DIR$/intellij/plugins/recommenders/recommenders-java/intellij.recommenders.java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/recommenders/recommenders-python/intellij.recommenders.python.iml" filepath="$PROJECT_DIR$/intellij/plugins/recommenders/recommenders-python/intellij.recommenders.python.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/RegExpSupport/intellij.regexp.iml" filepath="$PROJECT_DIR$/intellij/community/RegExpSupport/intellij.regexp.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/xml/relaxng/intellij.relaxng.iml" filepath="$PROJECT_DIR$/intellij/community/xml/relaxng/intellij.relaxng.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/remote-run/intellij.remoteRun.iml" filepath="$PROJECT_DIR$/intellij/plugins/remote-run/intellij.remoteRun.iml" />
