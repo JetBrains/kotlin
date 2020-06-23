@@ -29,7 +29,7 @@
     <valueRendererFactory implementation="com.jetbrains.mpp.debugger.MPPValueRendererFactory"/>
   </extensions>
 
-  <extensions defaultExtensionNs="org.jetrains.plugins.gradle">
+  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
     <taskManager implementation="com.jetbrains.mpp.debugger.MPPGradleTaskManagerExtension"/>
   </extensions>
 </idea-plugin>
