@@ -14,15 +14,16 @@ enum class Keyword(val value: String) {
     Variable("var");
 }
 
-typealias MemberBuildAction = MemberBuilder.() -> Unit
-typealias MemberBuildActionP<TParam> = MemberBuilder.(TParam) -> Unit
+typealias Action<TBuilder> = TBuilder.() -> Unit
+typealias ActionP<TBuilder, TParam> = TBuilder.(TParam) -> Unit
 
-private fun def(signature: String, memberKind: Keyword): MemberBuildAction = {
+
+private fun def(signature: String, memberKind: Keyword): Action<MemberBuilder> = {
     this.signature = signature
     this.keyword = memberKind
 }
 
-fun fn(defaultSignature: String): MemberBuildAction = def(defaultSignature, Keyword.Function)
+fun fn(defaultSignature: String): Action<MemberBuilder> = def(defaultSignature, Keyword.Function)
 
 fun fn(defaultSignature: String, setup: FamilyPrimitiveMemberDefinition.() -> Unit): FamilyPrimitiveMemberDefinition =
         FamilyPrimitiveMemberDefinition().apply {
@@ -30,7 +31,7 @@ fun fn(defaultSignature: String, setup: FamilyPrimitiveMemberDefinition.() -> Un
             setup()
         }
 
-fun MemberBuildAction.byTwoPrimitives(setup: PairPrimitiveMemberDefinition.() -> Unit): PairPrimitiveMemberDefinition =
+fun Action<MemberBuilder>.byTwoPrimitives(setup: PairPrimitiveMemberDefinition.() -> Unit): PairPrimitiveMemberDefinition =
         PairPrimitiveMemberDefinition().apply {
             builder(this@byTwoPrimitives)
             setup()
@@ -48,35 +49,45 @@ fun pvar(name: String, setup: FamilyPrimitiveMemberDefinition.() -> Unit): Famil
             setup()
         }
 
-
-interface MemberTemplate {
-    /** Specifies which platforms this member template should be generated for */
-    fun platforms(vararg platforms: Platform)
-
-    fun instantiate(targets: Collection<KotlinTarget> = KotlinTarget.values): Sequence<MemberBuilder>
-
-    /** Registers parameterless member builder function */
-    fun builder(b: MemberBuildAction)
+fun test(defaultSignature: String): Action<TestBuilder> = {
+    this.signature = defaultSignature
 }
 
-infix fun <MT: MemberTemplate> MT.builder(b: MemberBuildAction): MT = apply { builder(b) }
-infix fun <TParam, MT : MemberTemplateDefinition<TParam>> MT.builderWith(b: MemberBuildActionP<TParam>): MT = apply { builderWith(b) }
+fun test(defaultSignature: String, setup: FamilyPrimitiveTestDefinition.() -> Unit): FamilyPrimitiveTestDefinition =
+    FamilyPrimitiveTestDefinition().apply {
+        builder(test(defaultSignature))
+        setup()
+    }
 
-abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
 
-    sealed class BuildAction {
-        class Generic(val action: MemberBuildAction) : BuildAction() {
-            operator fun invoke(builder: MemberBuilder) { action(builder) }
+interface SourceTemplate<TBuilder> {
+    /** Specifies which platforms this source template should be generated for */
+    fun platforms(vararg platforms: Platform)
+
+    fun instantiate(targets: Collection<KotlinTarget> = KotlinTarget.values): Sequence<TBuilder>
+
+    /** Registers parameterless source builder function */
+    fun builder(b: Action<TBuilder>)
+}
+
+infix fun <TBuilder, MT : SourceTemplate<TBuilder>> MT.builder(b: Action<TBuilder>): MT = apply { builder(b) }
+infix fun <TBuilder, TParam, MT : SourceTemplateDefinition<TBuilder, TParam>> MT.builderWith(b: ActionP<TBuilder, TParam>): MT = apply { builderWith(b) }
+
+abstract class SourceTemplateDefinition<TBuilder : TemplateBuilderBase, TParam> : SourceTemplate<TBuilder> {
+
+    sealed class BuildAction<TBuilder> {
+        class Generic<TBuilder>(val action: Action<TBuilder>) : BuildAction<TBuilder>() {
+            operator fun invoke(builder: TBuilder) { action(builder) }
         }
-        class Parametrized(val action: MemberBuildActionP<*>) : BuildAction() {
+        class Parametrized<TBuilder>(val action: ActionP<TBuilder, *>) : BuildAction<TBuilder>() {
             @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "UNCHECKED_CAST")
-            operator fun <TParam> invoke(builder: MemberBuilder, p: @kotlin.internal.NoInfer TParam) {
-                (action as MemberBuildActionP<TParam>).invoke(builder, p)
+            operator fun <TParam> invoke(builder: TBuilder, p: @kotlin.internal.NoInfer TParam) {
+                (action as ActionP<TBuilder, TParam>).invoke(builder, p)
             }
         }
     }
 
-    private val buildActions = mutableListOf<BuildAction>()
+    private val buildActions = mutableListOf<BuildAction<TBuilder>>()
 
     private var allowedPlatforms = setOf(*Platform.values())
     override fun platforms(vararg platforms: Platform) {
@@ -90,9 +101,9 @@ abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
         this.filterPredicate = predicate
     }
 
-    override fun builder(b: MemberBuildAction) { buildActions += BuildAction.Generic(b) }
+    override fun builder(b: Action<TBuilder>) { buildActions += BuildAction.Generic(b) }
     /** Registers member builder function with the parameter(s) of this DSL */
-    fun builderWith(b: MemberBuildActionP<TParam>) { buildActions += BuildAction.Parametrized(b) }
+    fun builderWith(b: ActionP<TBuilder, TParam>) { buildActions += BuildAction.Parametrized(b) }
 
 
 
@@ -105,43 +116,44 @@ abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
             } ?: this
 
 
-    override fun instantiate(targets: Collection<KotlinTarget>): Sequence<MemberBuilder> {
+    override fun instantiate(targets: Collection<KotlinTarget>): Sequence<TBuilder> {
         val resultingTargets = targets.filter { it.platform in allowedPlatforms }
         val resultingPlatforms = resultingTargets.map { it.platform }.distinct()
         val specificTargets by lazy { resultingTargets - KotlinTarget.Common }
 
-        fun platformMemberBuilders(family: Family, p: TParam) =
-                if (Platform.Common in allowedPlatforms) {
-                    val commonMemberBuilder = createMemberBuilder(KotlinTarget.Common, family, p)
-                    mutableListOf<MemberBuilder>().also { builders ->
-                        if (Platform.Common in resultingPlatforms) builders.add(commonMemberBuilder)
-                        if (commonMemberBuilder.hasPlatformSpecializations) {
-                            specificTargets.mapTo(builders) {
-                                createMemberBuilder(it, family, p)
-                            }
+        fun platformBuilders(family: Family, p: TParam) =
+            if (Platform.Common in allowedPlatforms) {
+                val commonBuilder = createAndSetUpBuilder(KotlinTarget.Common, family, p)
+                mutableListOf<TBuilder>().also { builders ->
+                    if (Platform.Common in resultingPlatforms) builders.add(commonBuilder)
+                    if (commonBuilder.hasPlatformSpecializations) {
+                        specificTargets.mapTo(builders) {
+                            createAndSetUpBuilder(it, family, p)
                         }
                     }
-                } else {
-                    resultingTargets.map { createMemberBuilder(it, family, p) }
                 }
+            } else {
+                resultingTargets.map { createAndSetUpBuilder(it, family, p) }
+            }
 
         return parametrize()
-                .applyFilter()
-                .map { (family, p) -> platformMemberBuilders(family, p) }
-                .flatten()
+            .applyFilter()
+            .map { (family, p) -> platformBuilders(family, p) }
+            .flatten()
     }
 
-    private fun createMemberBuilder(target: KotlinTarget, family: Family, p: TParam): MemberBuilder {
-        return MemberBuilder(allowedPlatforms, target, family).also { builder ->
+    private fun createAndSetUpBuilder(target: KotlinTarget, family: Family, p: TParam): TBuilder {
+        return createBuilder(allowedPlatforms, target, family).also { builder ->
             for (action in buildActions) {
                 when (action) {
-                    is BuildAction.Generic -> action(builder)
-                    is BuildAction.Parametrized -> action<TParam>(builder, p)
+                    is BuildAction.Generic<TBuilder> -> action(builder)
+                    is BuildAction.Parametrized<TBuilder> -> action<TParam>(builder, p)
                 }
             }
         }
     }
 
+    abstract fun createBuilder(allowedPlatforms: Set<Platform>, target: KotlinTarget, family: Family): TBuilder
 }
 
 
@@ -154,7 +166,7 @@ private fun defaultPrimitives(f: Family): Set<PrimitiveType> =
     }
 
 @TemplateDsl
-class FamilyPrimitiveMemberDefinition : MemberTemplateDefinition<PrimitiveType?>() {
+abstract class FamilyPrimitiveTemplateDefinitionBase<TBuilder : TemplateBuilderBase> : SourceTemplateDefinition<TBuilder, PrimitiveType?>() {
 
     private val familyPrimitives = mutableMapOf<Family, Set<PrimitiveType?>>()
 
@@ -198,7 +210,21 @@ class FamilyPrimitiveMemberDefinition : MemberTemplateDefinition<PrimitiveType?>
 }
 
 @TemplateDsl
-class PairPrimitiveMemberDefinition : MemberTemplateDefinition<Pair<PrimitiveType, PrimitiveType>>() {
+class FamilyPrimitiveMemberDefinition : FamilyPrimitiveTemplateDefinitionBase<MemberBuilder>() {
+    override fun createBuilder(allowedPlatforms: Set<Platform>, target: KotlinTarget, family: Family): MemberBuilder {
+        return MemberBuilder(allowedPlatforms, target, family)
+    }
+}
+
+@TemplateDsl
+class FamilyPrimitiveTestDefinition : FamilyPrimitiveTemplateDefinitionBase<TestBuilder>() {
+    override fun createBuilder(allowedPlatforms: Set<Platform>, target: KotlinTarget, family: Family): TestBuilder {
+        return TestBuilder(allowedPlatforms, target, family)
+    }
+}
+
+@TemplateDsl
+class PairPrimitiveMemberDefinition : SourceTemplateDefinition<MemberBuilder, Pair<PrimitiveType, PrimitiveType>>() {
 
     private val familyPrimitives = mutableMapOf<Family, Set<Pair<PrimitiveType, PrimitiveType>>>()
 
@@ -210,6 +236,10 @@ class PairPrimitiveMemberDefinition : MemberTemplateDefinition<Pair<PrimitiveTyp
         return familyPrimitives
                 .flatMap { e -> e.value.map { e.key to it } }
                 .asSequence()
+    }
+
+    override fun createBuilder(allowedPlatforms: Set<Platform>, target: KotlinTarget, family: Family): MemberBuilder {
+        return MemberBuilder(allowedPlatforms, target, family)
     }
 
     init {

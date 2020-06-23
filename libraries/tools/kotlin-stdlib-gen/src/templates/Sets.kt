@@ -8,7 +8,7 @@ package templates
 import templates.Family.*
 import templates.SequenceClass.*
 
-object SetOps : TemplateGroupBase() {
+object SetOps : MemberTemplateGroupBase() {
 
     val f_toMutableSet = fn("toMutableSet()") {
         includeDefault()

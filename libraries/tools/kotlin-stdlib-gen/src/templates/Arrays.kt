@@ -10,7 +10,7 @@ import templates.Family.*
 import templates.Ordering.appendStableSortNote
 import templates.Ordering.stableSortNote
 
-object ArrayOps : TemplateGroupBase() {
+object ArrayOps : MemberTemplateGroupBase() {
 
     init {
         defaultBuilder {

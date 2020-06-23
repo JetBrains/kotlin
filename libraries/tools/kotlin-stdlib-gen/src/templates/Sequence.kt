@@ -7,7 +7,7 @@ package templates
 
 import templates.Family.*
 
-object SequenceOps : TemplateGroupBase() {
+object SequenceOps : MemberTemplateGroupBase() {
 
     val f_asIterable = fn("asIterable()") {
         include(Iterables, ArraysOfObjects, ArraysOfPrimitives, Sequences, CharSequences, Maps)

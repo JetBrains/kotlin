@@ -9,7 +9,7 @@ import templates.ArrayOps.rangeDoc
 import templates.Family.*
 import templates.SequenceClass.*
 
-object Ordering : TemplateGroupBase() {
+object Ordering : MemberTemplateGroupBase() {
 
     init {
         defaultBuilder {

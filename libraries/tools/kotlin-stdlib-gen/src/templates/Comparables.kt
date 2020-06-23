@@ -7,7 +7,7 @@ package templates
 
 import templates.Family.*
 
-object ComparableOps : TemplateGroupBase() {
+object ComparableOps : MemberTemplateGroupBase() {
 
     init {
         defaultBuilder {

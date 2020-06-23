@@ -7,7 +7,7 @@ package templates
 
 import templates.Family.*
 
-object Numeric : TemplateGroupBase() {
+object Numeric : MemberTemplateGroupBase() {
 
     init {
         defaultBuilder {

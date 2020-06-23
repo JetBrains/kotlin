@@ -7,7 +7,7 @@ package templates
 
 import templates.Family.*
 
-object Snapshots : TemplateGroupBase() {
+object Snapshots : MemberTemplateGroupBase() {
 
     init {
         defaultBuilder {

@@ -8,7 +8,7 @@ package templates
 import templates.Family.*
 import templates.SequenceClass.*
 
-object Generators : TemplateGroupBase() {
+object Generators : MemberTemplateGroupBase() {
 
     init {
         defaultBuilder {

@@ -8,7 +8,7 @@ package templates
 import templates.Family.*
 import templates.SequenceClass.*
 
-object StringJoinOps : TemplateGroupBase() {
+object StringJoinOps : MemberTemplateGroupBase() {
 
     val f_joinTo = fn("joinTo(buffer: A, separator: CharSequence = \", \", prefix: CharSequence = \"\", postfix: CharSequence = \"\", limit: Int = -1, truncated: CharSequence = \"...\", transform: ((T) -> CharSequence)? = null)") {
         includeDefault()

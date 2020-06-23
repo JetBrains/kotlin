@@ -12,7 +12,7 @@ import templates.DocExtensions.prefixWithArticle
 import templates.Family.*
 import templates.SequenceClass.*
 
-object Aggregates : TemplateGroupBase() {
+object Aggregates : MemberTemplateGroupBase() {
 
     init {
         defaultBuilder {

@@ -8,7 +8,7 @@ package templates
 import templates.Family.*
 import templates.SequenceClass.*
 
-object Guards : TemplateGroupBase() {
+object Guards : MemberTemplateGroupBase() {
     private val THIS = "\$this"
 
     val f_requireNoNulls = fn("requireNoNulls()") {

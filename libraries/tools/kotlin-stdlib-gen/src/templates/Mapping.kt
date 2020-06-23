@@ -8,7 +8,7 @@ package templates
 import templates.Family.*
 import templates.SequenceClass.*
 
-object Mapping : TemplateGroupBase() {
+object Mapping : MemberTemplateGroupBase() {
 
     init {
         val terminalOperationPattern = Regex("^\\w+To")

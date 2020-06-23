@@ -9,38 +9,17 @@ import templates.Family.*
 import java.io.StringReader
 import java.util.StringTokenizer
 
-private fun getDefaultSourceFile(f: Family): SourceFile = when (f) {
-    Iterables, Collections, Lists -> SourceFile.Collections
-    Sequences -> SourceFile.Sequences
-    Sets -> SourceFile.Sets
-    Ranges, RangesOfPrimitives, ProgressionsOfPrimitives -> SourceFile.Ranges
-    ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives -> SourceFile.Arrays
-    ArraysOfUnsigned -> SourceFile.UArrays
-    Maps -> SourceFile.Maps
-    Strings -> SourceFile.Strings
-    CharSequences -> SourceFile.Strings
-    Primitives, Generic, Unsigned -> SourceFile.Misc
-}
-
 @TemplateDsl
 class MemberBuilder(
-        val allowedPlatforms: Set<Platform>,
-        val target: KotlinTarget,
-        var family: Family,
-        var sourceFile: SourceFile = getDefaultSourceFile(family),
-        var primitive: PrimitiveType? = null
-) {
+    allowedPlatforms: Set<Platform>,
+    target: KotlinTarget,
+    family: Family,
+    primitive: PrimitiveType? = null
+) : TemplateBuilderBase(allowedPlatforms, target, family, primitive) {
     lateinit var keyword: Keyword    // fun/val/var
-    lateinit var signature: String   // name and params
-
-    var sortingSignature: String? = null
-        get() = field ?: signature
-        private set
-
-    val f get() = family
 
     private val legacyMode = false
-    var hasPlatformSpecializations: Boolean = legacyMode
+    override var hasPlatformSpecializations: Boolean = legacyMode
         private set
 
     var doc: String? = null; private set
@@ -66,10 +45,6 @@ class MemberBuilder(
     var returns: String? = null; private set
     val throwsExceptions = mutableListOf<ThrowsException>()
     var body: String? = null; private set
-    val annotations: MutableSet<String> = mutableSetOf()
-    val suppressions: MutableList<String> = mutableListOf()
-
-    fun sourceFile(file: SourceFile) { sourceFile = file }
 
     fun deprecate(value: Deprecation) { deprecate = value }
     fun deprecate(value: String) { deprecate = Deprecation(value) }
@@ -97,10 +72,6 @@ class MemberBuilder(
     fun receiver(value: String) { customReceiver = value }
     @Deprecated("Use receiver()", ReplaceWith("receiver(value)"))
     fun customReceiver(value: String) = receiver(value)
-    fun signature(value: String, notForSorting: Boolean = false) {
-        if (notForSorting) sortingSignature = signature
-        signature = value
-    }
     fun returns(type: String) { returns = type }
     @Deprecated("Use specialFor", ReplaceWith("specialFor(*fs) { returns(run(valueBuilder)) }"))
     fun returns(vararg fs: Family, valueBuilder: () -> String) = specialFor(*fs) { returns(run(valueBuilder)) }
@@ -113,14 +84,6 @@ class MemberBuilder(
             check(primaryTypeParameter == null)
             primaryTypeParameter = typeParameterName
         }
-    }
-
-    fun annotation(annotation: String) {
-        annotations += annotation
-    }
-
-    fun suppress(diagnostic: String) {
-        suppressions += diagnostic
     }
 
     fun sequenceClassification(vararg sequenceClass: SequenceClass) {
@@ -163,18 +126,8 @@ class MemberBuilder(
         if (target.backend == backend) action()
     }
 
-    fun specialFor(f: Family, action: () -> Unit) {
-        if (family == f)
-            action()
-    }
-    fun specialFor(vararg families: Family, action: () -> Unit) {
-        require(families.isNotEmpty())
-        if (family in families)
-            action()
-    }
 
-
-    fun build(builder: Appendable) {
+    override fun build(builder: Appendable) {
         val headerOnly: Boolean
         val isImpl: Boolean
         if (!legacyMode) {

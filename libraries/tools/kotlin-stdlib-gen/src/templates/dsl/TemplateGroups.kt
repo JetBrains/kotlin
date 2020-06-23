@@ -8,29 +8,27 @@ package templates
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubtypeOf
+import kotlin.reflect.full.starProjectedType
 
 
-typealias TemplateGroup = () -> Sequence<MemberTemplate>
+typealias TemplateGroup<TBuilder> = () -> Sequence<SourceTemplate<TBuilder>>
 
-fun templateGroupOf(vararg templates: MemberTemplate): TemplateGroup = { templates.asSequence() }
+abstract class TemplateGroupBase<TBuilder> : TemplateGroup<TBuilder> {
 
-abstract class TemplateGroupBase : TemplateGroup {
-
-    override fun invoke(): Sequence<MemberTemplate> = sequence {
+    override fun invoke(): Sequence<SourceTemplate<TBuilder>> = sequence {
         with(this@TemplateGroupBase) {
             this::class.members.filter { it.name.startsWith("f_") }.forEach {
-                require(it.parameters.size == 1) { "Member $it violates naming convention" }
+                require(it.parameters.size == 1) { "Template $it violates naming convention" }
+                @Suppress("UNCHECKED_CAST")
                 when {
-                    it.returnType.isSubtypeOf(typeMemberTemplate) ->
-                        yield(it.call(this) as MemberTemplate)
-                    it.returnType.isSubtypeOf(typeIterableOfMemberTemplates) ->
-                        @Suppress("UNCHECKED_CAST")
-                        yieldAll(it.call(this) as Iterable<MemberTemplate>)
-                    it.returnType.isSubtypeOf(typeSequenceOfMemberTemplates) ->
-                        @Suppress("UNCHECKED_CAST")
-                        yieldAll(it.call(this) as Sequence<MemberTemplate>)
+                    it.returnType.isSubtypeOf(typeSourceTemplate) ->
+                        yield(it.call(this) as SourceTemplate<TBuilder>)
+                    it.returnType.isSubtypeOf(typeIterableOfSourceTemplates) ->
+                        yieldAll(it.call(this) as Iterable<SourceTemplate<TBuilder>>)
+                    it.returnType.isSubtypeOf(typeSequenceOfSourceTemplates) ->
+                        yieldAll(it.call(this) as Sequence<SourceTemplate<TBuilder>>)
                     else ->
-                        error("Member $it violates naming convention")
+                        error("Template $it violates naming convention")
                 }
             }
         }
@@ -38,16 +36,19 @@ abstract class TemplateGroupBase : TemplateGroup {
         if (defaultActions.isEmpty()) this else onEach { t -> defaultActions.forEach(t::builder) }
     }
 
-    private val defaultActions = mutableListOf<MemberBuildAction>()
+    private val defaultActions = mutableListOf<Action<TBuilder>>()
 
-    fun defaultBuilder(builderAction: MemberBuildAction) {
+    fun defaultBuilder(builderAction: Action<TBuilder>) {
         defaultActions += builderAction
     }
 
     companion object {
-        private val typeMemberTemplate = MemberTemplate::class.createType()
-        private val typeIterableOfMemberTemplates = Iterable::class.createType(arguments = listOf(KTypeProjection.invariant(typeMemberTemplate)))
-        private val typeSequenceOfMemberTemplates = Sequence::class.createType(arguments = listOf(KTypeProjection.invariant(typeMemberTemplate)))
+        private val typeSourceTemplate = SourceTemplate::class.starProjectedType
+        private val typeIterableOfSourceTemplates = Iterable::class.createType(arguments = listOf(KTypeProjection.invariant(typeSourceTemplate)))
+        private val typeSequenceOfSourceTemplates = Sequence::class.createType(arguments = listOf(KTypeProjection.invariant(typeSourceTemplate)))
     }
 
 }
+
+typealias MemberTemplateGroupBase = TemplateGroupBase<MemberBuilder>
+typealias TestTemplateGroupBase = TemplateGroupBase<TestBuilder>

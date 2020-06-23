@@ -8,7 +8,7 @@ package templates
 import templates.Family.*
 import templates.PrimitiveType.Companion.maxByCapacity
 
-object RangeOps : TemplateGroupBase() {
+object RangeOps : MemberTemplateGroupBase() {
 
     private val rangePrimitives = PrimitiveType.rangePrimitives
     private fun rangeElementType(fromType: PrimitiveType, toType: PrimitiveType) =
