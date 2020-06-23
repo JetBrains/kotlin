@@ -1221,7 +1221,7 @@ public final class TemplateState implements Disposable {
     int start = mySegments.getSegmentStart(segmentNumber);
     int end = mySegments.getSegmentEnd(segmentNumber);
     RangeHighlighterEx segmentHighlighter = (RangeHighlighterEx)myEditor.getMarkupModel()
-      .addRangeHighlighter(attributesKey, start, end, HighlighterLayer.SELECTION - 1, HighlighterTargetArea.EXACT_RANGE);
+      .addRangeHighlighter(attributesKey, start, end, HighlighterLayer.ELEMENT_UNDER_CARET - 1, HighlighterTargetArea.EXACT_RANGE);
     segmentHighlighter.setGreedyToLeft(true);
     segmentHighlighter.setGreedyToRight(true);
 
