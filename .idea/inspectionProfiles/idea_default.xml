@@ -212,7 +212,6 @@
     </inspection_tool>
     <inspection_tool class="ConditionalExpressionWithIdenticalBranches" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ConfusingOctalEscape" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="ConstPropertyName" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ConstantConditionalExpression" enabled="true" level="Strong Warning" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="false" />
     </inspection_tool>
@@ -243,12 +242,10 @@
       <option name="reportNotAnnotatedInterfaces" value="false" />
     </inspection_tool>
     <inspection_tool class="Convert2MethodRef" enabled="true" level="INFORMATION" enabled_by_default="true" />
-    <inspection_tool class="ConvertNaNEquality" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="CovariantCompareTo" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CovariantEquals" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DeclareParentsInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="DeferredResultUnused" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="DelegationToVarProperty" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="DeprecatedGemInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DjangoBrokenLineCommentInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DjangoCloseTagInspection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -269,7 +266,6 @@
     <inspection_tool class="DuplicateThrows" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="DuplicatedBlockNamesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="EmptyFinallyBlock" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="EmptyRange" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="EmptyStatementBody" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_reportEmptyBlocks" value="true" />
       <option name="commentsAreContent" value="true" />
@@ -309,7 +305,6 @@
     </inspection_tool>
     <inspection_tool class="ForLoopThatDoesntUseLoopVariable" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ForwardCompatibility" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="FunctionWithLambdaExpressionBody" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="FunctionalExpressionCanBeFolded" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="FuseStreamOperations" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="GemInspection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -623,11 +618,7 @@
       </scope>
       <option name="REPORT_INACCESSIBLE" value="false" />
     </inspection_tool>
-    <inspection_tool class="KotlinDoubleNegation" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="KotlinEqualsBetweenInconvertibleTypes" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="KotlinThrowableNotThrown" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="LambdaUnfriendlyMethodOverload" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="LateinitVarOverridesLateinitVar" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="LiftReturnOrAssignment" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="ListIndexOfReplaceableByContains" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ListRemoveInLoop" enabled="true" level="Strong Warning" enabled_by_default="true" />
