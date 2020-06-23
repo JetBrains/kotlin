@@ -10006,6 +10006,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inference/dependantOnVarianceNullable.kt");
         }
 
+        @TestMetadata("equalitySubstitutionInsideNonInvariantType.kt")
+        public void testEqualitySubstitutionInsideNonInvariantType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/equalitySubstitutionInsideNonInvariantType.kt");
+        }
+
         @TestMetadata("expectedTypeAdditionalTest.kt")
         public void testExpectedTypeAdditionalTest() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/expectedTypeAdditionalTest.kt");
