@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.lookup.impl;
 
+import com.intellij.codeInsight.completion.BaseCompletionService;
+import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupEvent;
@@ -8,6 +10,7 @@ import com.intellij.codeInsight.lookup.LookupListener;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
+import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.DumbService;
@@ -126,6 +129,11 @@ final class LookupUsageTracker {
       if (currentItem != null) {
         data.addData("token_length", currentItem.getLookupString().length());
         data.addData("query_length", myLookup.itemPattern(currentItem).length());
+        CompletionContributor contributor = currentItem.getUserData(BaseCompletionService.LOOKUP_ELEMENT_CONTRIBUTOR);
+        if (contributor != null) {
+          PluginInfo info = PluginInfoDetectorKt.getPluginInfo(contributor.getClass());
+          data.addData("contributor", info.isSafeToReport() ? contributor.getClass().getName() : "third.party");
+        }
       }
 
       // Performance
