@@ -11,6 +11,7 @@ import com.intellij.framework.detection.FrameworkDetector;
 import com.intellij.framework.detection.impl.exclude.DetectionExcludesConfigurationImpl;
 import com.intellij.framework.detection.impl.ui.ConfigureDetectedFrameworksDialog;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.lang.LangBundle;
 import com.intellij.notification.Notification;
@@ -147,6 +148,9 @@ public final class FrameworkDetectionManager implements FrameworkDetectionIndexL
   }
 
   private void doRunDetection() {
+    if (LightEdit.owns(myProject)) {
+      return;
+    }
     IntSet detectorsToProcess;
     synchronized (myLock) {
       detectorsToProcess = new IntOpenHashSet(myDetectorsToProcess);
