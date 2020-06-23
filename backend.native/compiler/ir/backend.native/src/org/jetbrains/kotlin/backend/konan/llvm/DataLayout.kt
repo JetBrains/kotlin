@@ -33,9 +33,11 @@ internal fun RuntimeAware.getLLVMType(type: IrType): LLVMTypeRef =
 internal fun RuntimeAware.getLLVMType(type: DataFlowIR.Type) =
         getLlvmType(type.primitiveBinaryType)
 
+internal fun IrType.isVoidAsReturnType() = isUnit() || isNothing()
+
 internal fun RuntimeAware.getLLVMReturnType(type: IrType): LLVMTypeRef {
     return when {
-        type.isUnit() || type.isNothing() -> voidType
+        type.isVoidAsReturnType() -> voidType
         else -> getLLVMType(type)
     }
 }

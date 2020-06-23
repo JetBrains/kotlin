@@ -1459,6 +1459,10 @@ task bridges_special(type: KonanLocalTest) {
     source = "codegen/bridges/special.kt"
 }
 
+task bridges_nativePointed(type: KonanLocalTest) {
+    source = "codegen/bridges/nativePointed.kt"
+}
+
 task returnTypeSignature(type: KonanLocalTest) {
     source = "codegen/bridges/returnTypeSignature.kt"
 }
