@@ -31,7 +31,7 @@ public class RangeTest {
         assertTrue(1.toShort() in range)
         assertTrue(1.toByte() in range)
         assertTrue(1.toLong() in range)
-        run @Suppress("DEPRECATION") {
+        run @Suppress("DEPRECATION_ERROR") {
             assertTrue(1.toFloat() in range)
             assertTrue(1.toDouble() in range)
         }
@@ -70,7 +70,7 @@ public class RangeTest {
         assertTrue(1.toShort() in range)
         assertTrue(1.toInt() in range)
         assertTrue(1.toLong() in range)
-        run @Suppress("DEPRECATION") {
+        run @Suppress("DEPRECATION_ERROR") {
             assertTrue(1.toFloat() in range)
             assertTrue(1.toDouble() in range)
         }
@@ -108,7 +108,7 @@ public class RangeTest {
         assertTrue(1.toByte() in range)
         assertTrue(1.toInt() in range)
         assertTrue(1.toLong() in range)
-        run @Suppress("DEPRECATION") {
+        run @Suppress("DEPRECATION_ERROR") {
             assertTrue(1.toFloat() in range)
             assertTrue(1.toDouble() in range)
         }
@@ -148,7 +148,7 @@ public class RangeTest {
         assertTrue(1.toByte() in range)
         assertTrue(1.toShort() in range)
         assertTrue(1.toInt() in range)
-        run @Suppress("DEPRECATION") {
+        run @Suppress("DEPRECATION_ERROR") {
             assertTrue(1.toFloat() in range)
             assertTrue(1.toDouble() in range)
 
@@ -218,7 +218,7 @@ public class RangeTest {
 
         assertFalse(range.isEmpty())
 
-        run @Suppress("DEPRECATION") {
+        run @Suppress("DEPRECATION_ERROR") {
             assertTrue(1.toByte() in range)
             assertTrue(1.toShort() in range)
             assertTrue(1.toInt() in range)
@@ -266,7 +266,7 @@ public class RangeTest {
 
         assertFalse(range.isEmpty())
 
-        run @Suppress("DEPRECATION") {
+        run @Suppress("DEPRECATION_ERROR") {
             assertTrue(1.toByte() in range)
             assertTrue(1.toShort() in range)
             assertTrue(1.toInt() in range)
