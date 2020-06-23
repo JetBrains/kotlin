@@ -8047,31 +8047,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("testData/quickfix/migration/jsExternal/funPlacementOnExternalObjectJsRuntime.kt");
             }
 
-            @TestMetadata("nativeExtensionFunBlockBodyJsRuntime.kt")
-            public void testNativeExtensionFunBlockBodyJsRuntime() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeExtensionFunBlockBodyJsRuntime.kt");
-            }
-
-            @TestMetadata("nativeExtensionFunJsName.kt")
-            public void testNativeExtensionFunJsName() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeExtensionFunJsName.kt");
-            }
-
-            @TestMetadata("nativeExtensionFunJsRuntime.kt")
-            public void testNativeExtensionFunJsRuntime() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeExtensionFunJsRuntime.kt");
-            }
-
-            @TestMetadata("nativeExtensionFunParamsJsRuntime.kt")
-            public void testNativeExtensionFunParamsJsRuntime() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeExtensionFunParamsJsRuntime.kt");
-            }
-
-            @TestMetadata("nativeExtensionVaslJsRuntime.kt")
-            public void testNativeExtensionVaslJsRuntime() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeExtensionVaslJsRuntime.kt");
-            }
-
             @TestMetadata("nativeGetterExtensionFunJsRuntime.kt")
             public void testNativeGetterExtensionFunJsRuntime() throws Exception {
                 runTest("testData/quickfix/migration/jsExternal/nativeGetterExtensionFunJsRuntime.kt");
@@ -8082,54 +8057,9 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("testData/quickfix/migration/jsExternal/nativeInvokeExtensionFunJsRuntime.kt");
             }
 
-            @TestMetadata("nativeMemberAll01.kt")
-            public void testNativeMemberAll01() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeMemberAll01.kt");
-            }
-
-            @TestMetadata("nativeMemberAll02.kt")
-            public void testNativeMemberAll02() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeMemberAll02.kt");
-            }
-
             @TestMetadata("nativeMemberAll03.kt")
             public void testNativeMemberAll03() throws Exception {
                 runTest("testData/quickfix/migration/jsExternal/nativeMemberAll03.kt");
-            }
-
-            @TestMetadata("nativeMemberGetter.kt")
-            public void testNativeMemberGetter() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeMemberGetter.kt");
-            }
-
-            @TestMetadata("nativeMemberInvoke.kt")
-            public void testNativeMemberInvoke() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeMemberInvoke.kt");
-            }
-
-            @TestMetadata("nativeMemberInvokeGenericClass.kt")
-            public void testNativeMemberInvokeGenericClass() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeMemberInvokeGenericClass.kt");
-            }
-
-            @TestMetadata("nativeMemberInvokeGenericClassAndFun.kt")
-            public void testNativeMemberInvokeGenericClassAndFun() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeMemberInvokeGenericClassAndFun.kt");
-            }
-
-            @TestMetadata("nativeMemberInvokeGenericFun.kt")
-            public void testNativeMemberInvokeGenericFun() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeMemberInvokeGenericFun.kt");
-            }
-
-            @TestMetadata("nativeMemberNative.kt")
-            public void testNativeMemberNative() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeMemberNative.kt");
-            }
-
-            @TestMetadata("nativeMemberSetter.kt")
-            public void testNativeMemberSetter() throws Exception {
-                runTest("testData/quickfix/migration/jsExternal/nativeMemberSetter.kt");
             }
 
             @TestMetadata("nativeSetterExtensionFunJsRuntime.kt")
