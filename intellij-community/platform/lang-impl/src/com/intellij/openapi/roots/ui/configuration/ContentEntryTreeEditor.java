@@ -86,8 +86,10 @@ public class ContentEntryTreeEditor {
     JPanel excludePatternsPanel = new JPanel(new GridBagLayout());
     excludePatternsPanel.setBorder(JBUI.Borders.empty(5));
     GridBag gridBag = new GridBag().setDefaultWeightX(1, 1.0).setDefaultPaddingX(JBUIScale.scale(5));
-    excludePatternsPanel.add(new JLabel(ProjectBundle.message("module.paths.exclude.patterns")), gridBag.nextLine().next());
+    JLabel myExcludePatternsLabel = new JLabel(ProjectBundle.message("module.paths.exclude.patterns"));
+    excludePatternsPanel.add(myExcludePatternsLabel, gridBag.nextLine().next());
     myExcludePatternsField = new JTextField();
+    myExcludePatternsLabel.setLabelFor(myExcludePatternsField);
     myExcludePatternsField.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(@NotNull DocumentEvent e) {
