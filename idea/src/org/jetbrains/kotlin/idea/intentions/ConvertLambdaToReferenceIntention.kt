@@ -83,7 +83,7 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
         if (lambdaParameterIsSuspend && !calleeFunctionIsSuspend || !lambdaParameterIsSuspend && calleeFunctionIsSuspend) return false
 
         // No references with type parameters
-        if (calleeDescriptor.typeParameters.isNotEmpty()) return false
+        if (calleeDescriptor.typeParameters.isNotEmpty() && lambdaExpression.parentValueArgument() == null) return false
         // No references to Java synthetic properties
         if (calleeDescriptor is SyntheticJavaPropertyDescriptor) return false
 
@@ -223,6 +223,12 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
                 }
                 lambdaArgument.delete()
             }
+
+            outerCallExpression.typeArgumentList?.let {
+                if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(it, approximateFlexible = false)) {
+                    it.delete()
+                }
+            }
         }
     }
 
@@ -243,7 +249,9 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
         val calledFunctionInLambda = lambda.singleStatementOrNull()
             ?.getResolvedCall(context)?.resultingDescriptor as? FunctionDescriptor ?: return
         val overloadedFunctions = calledFunctionInLambda.overloadedFunctions()
-        if (overloadedFunctions.count { it.valueParameters.size == calledFunctionInLambda.valueParameters.size } < 2) return
+        if (overloadedFunctions.count { it.valueParameters.size == calledFunctionInLambda.valueParameters.size } < 2
+            && calledFunctionInLambda.typeParameters.isEmpty()
+        ) return
 
         if (InsertExplicitTypeArgumentsIntention.isApplicableTo(this, context)) {
             InsertExplicitTypeArgumentsIntention.applyTo(this)
