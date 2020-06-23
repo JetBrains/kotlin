@@ -267,6 +267,7 @@ interface IrDefaultBitMaskValue {
 interface IrChangedBitMaskVariable : IrChangedBitMaskValue {
     fun asStatements(): List<IrStatement>
     fun irOrSetBitsAtSlot(slot: Int, value: IrExpression): IrExpression
+    fun irSetSlotUncertain(slot: Int): IrExpression
 }
 
 /**
@@ -1141,6 +1142,7 @@ class ComposableFunctionBodyTransformer(
 
         // first we create the necessary local variables for default handling.
         val setDefaults = mutableStatementContainer()
+        val skipDefaults = mutableStatementContainer()
         parameters.forEachIndexed { index, param ->
             val defaultValue = param.defaultValue
             if (defaultParam != null && defaultValue != null) {
@@ -1185,12 +1187,42 @@ class ComposableFunctionBodyTransformer(
                         isVar = false,
                         exactName = true
                     ).also {
-                        setDefaults.statements.add(
-                            irIf(
-                                condition = irGetBit(defaultParam, index),
-                                body = irSet(it, transformedDefault)
+                        if (
+                            !defaultExprIsStatic[index] &&
+                            dirty is IrChangedBitMaskVariable
+                        ) {
+                            // if we are setting the parameter to the default expression and
+                            // running the default expression again, and the expression isn't
+                            // provably static, we can't be certain that the dirty value of
+                            // SAME is going to be valid. We must mark it as UNCERTAIN. In order
+                            // to avoid slot-table misalignment issues, we must mark it as
+                            // UNCERTAIN even when we skip the defaults, so that any child
+                            // function receives UNCERTAIN vs SAME/DIFFERENT deterministically.
+                            setDefaults.statements.add(
+                                irIf(
+                                    condition = irGetBit(defaultParam, index),
+                                    body = irBlock(
+                                        statements = listOf(
+                                            irSet(it, transformedDefault),
+                                            dirty.irSetSlotUncertain(index)
+                                        )
+                                    )
+                                )
                             )
-                        )
+                            skipDefaults.statements.add(
+                                irIf(
+                                    condition = irGetBit(defaultParam, index),
+                                    body = dirty.irSetSlotUncertain(index)
+                                )
+                            )
+                        } else {
+                            setDefaults.statements.add(
+                                irIf(
+                                    condition = irGetBit(defaultParam, index),
+                                    body = irSet(it, transformedDefault)
+                                )
+                            )
+                        }
                     }
                 }
 
@@ -1234,11 +1266,16 @@ class ComposableFunctionBodyTransformer(
                 }
 
                 val defaultValueIsStatic = defaultExprIsStatic[index]
+                val callChanged = irChanged(irGet(scope.remappedParams[param]!!))
+                val isChanged = if (defaultParam != null && !defaultValueIsStatic)
+                    irAndAnd(irIsProvided(defaultParam, index), callChanged)
+                else
+                    callChanged
                 val modifyDirtyFromChangedResult = dirty.irOrSetBitsAtSlot(
                     index,
                     irIfThenElse(
                         context.irBuiltIns.intType,
-                        irChanged(irGet(scope.remappedParams[param]!!)),
+                        isChanged,
                         // if the value has changed, update the bits in the slot to be
                         // "Different"
                         thenPart = irConst(ParamState.Different.bitsForSlot(index)),
@@ -1272,12 +1309,8 @@ class ComposableFunctionBodyTransformer(
                     // with an "Uncertain" state AND the value was provided. This is safe to do
                     // because this will remain true or false for *every* execution of the
                     // function, so we will never get a slot table misalignment as a result.
-                    val condition = if (defaultParam != null) irAndAnd(
-                        irIsProvided(defaultParam, index),
-                        irIsUncertain(changedParam, index)
-                    ) else irIsUncertain(changedParam, index)
                     irIf(
-                        condition = condition,
+                        condition = irIsUncertain(changedParam, index),
                         body = modifyDirtyFromChangedResult
                     )
                 }
@@ -1372,7 +1405,12 @@ class ComposableFunctionBodyTransformer(
                         )
                     ),
                     // composer.skipCurrentGroup()
-                    elsePart = irSkipCurrentGroup()
+                    elsePart = irBlock(
+                        statements = listOf(
+                            irSkipCurrentGroup(),
+                            *skipDefaults.statements.toTypedArray()
+                        )
+                    )
                 )
             )
         }
@@ -3243,6 +3281,17 @@ class ComposableFunctionBodyTransformer(
                 irOr(
                     irGet(temp),
                     value
+                )
+            )
+        }
+
+        override fun irSetSlotUncertain(slot: Int): IrExpression {
+            val temp = temps[paramIndexForSlot(slot)]
+            return irSet(
+                temp,
+                irAnd(
+                    irGet(temp),
+                    irInv(irConst(ParamState.Static.bitsForSlot(slot)))
                 )
             )
         }

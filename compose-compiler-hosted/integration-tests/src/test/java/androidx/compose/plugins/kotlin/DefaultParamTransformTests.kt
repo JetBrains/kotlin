@@ -172,18 +172,22 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
               %composer.startRestartGroup(%key)
               val %dirty = %changed
               val x = x
-              if (%default and 0b0001 === 0 && %changed and 0b0110 === 0) {
-                %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(x)) 0b0100 else 0b0010
               }
               if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {
                     x = makeInt()
+                    %dirty = %dirty and 0b0110.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0001 !== 0) {
+                    %dirty = %dirty and 0b0110.inv()
+                  }
                 }
               } else {
                 %composer.skipToGroupEnd()
@@ -218,8 +222,8 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
               } else if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%default and 0b0010 === 0 && %changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(b)) 0b00010000 else 0b1000
+              if (%changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(b)) 0b00010000 else 0b1000
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
@@ -229,10 +233,14 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
                   }
                   if (%default and 0b0010 !== 0) {
                     b = a + 1
+                    %dirty = %dirty and 0b00011000.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b0010 !== 0) {
+                    %dirty = %dirty and 0b00011000.inv()
+                  }
                 }
                 print(a)
                 print(b)
@@ -1207,6 +1215,7 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
                   }
                   if (%default and 0b001000000000 !== 0) {
                     a09 = Foo()
+                    %dirty = %dirty and 0b000110000000000000000000.inv()
                   }
                   if (%default and 0b010000000000 !== 0) {
                     a10 = 0
@@ -1273,10 +1282,17 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
                   }
                   if (%default1 and 0b0001 !== 0) {
                     a31 = Foo()
+                    %dirty2 = %dirty2 and 0b00011000.inv()
                   }
                   %composer.endDefaults()
                 } else {
                   %composer.skipCurrentGroup()
+                  if (%default and 0b001000000000 !== 0) {
+                    %dirty = %dirty and 0b000110000000000000000000.inv()
+                  }
+                  if (%default1 and 0b0001 !== 0) {
+                    %dirty2 = %dirty2 and 0b00011000.inv()
+                  }
                 }
                 print("Hello world!")
               } else {
