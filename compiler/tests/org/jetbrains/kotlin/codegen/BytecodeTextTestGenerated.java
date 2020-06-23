@@ -4167,11 +4167,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/ranges/inNonMatchingRangeIntrinsified.kt");
         }
 
-        @TestMetadata("inNonMatchingRangeNotIntrinsified.kt")
-        public void testInNonMatchingRangeNotIntrinsified() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ranges/inNonMatchingRangeNotIntrinsified.kt");
-        }
-
         @TestMetadata("inOptimizableRange.kt")
         public void testInOptimizableRange() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/ranges/inOptimizableRange.kt");
