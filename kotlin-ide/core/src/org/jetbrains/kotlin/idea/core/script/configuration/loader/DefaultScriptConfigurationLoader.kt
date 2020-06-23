@@ -61,11 +61,9 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
 
         val inputs = getInputsStamp(vFile, file)
         val scriptingApiResult = try {
-            runReadAction {
-                refineScriptCompilationConfiguration(
-                    KtFileScriptSource(file), scriptDefinition, file.project
-                )
-            }
+            refineScriptCompilationConfiguration(
+                KtFileScriptSource(file), scriptDefinition, file.project
+            )
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
 
