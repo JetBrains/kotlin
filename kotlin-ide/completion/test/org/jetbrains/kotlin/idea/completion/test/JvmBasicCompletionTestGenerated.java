@@ -2171,6 +2171,11 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/localVariablesAndFunctionsFromNestedScope.kt");
             }
 
+            @TestMetadata("smartCast.kt")
+            public void testSmartCast() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/smartCast.kt");
+            }
+
             @TestMetadata("topLevelVariablesAndFunctions.kt")
             public void testTopLevelVariablesAndFunctions() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/topLevelVariablesAndFunctions.kt");
