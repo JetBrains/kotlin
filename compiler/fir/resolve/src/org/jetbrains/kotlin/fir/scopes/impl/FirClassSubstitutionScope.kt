@@ -119,14 +119,7 @@ class FirClassSubstitutionScope(
         }
         if (skipPrivateMembers && member.visibility == Visibilities.PRIVATE) return original
 
-        val (newTypeParameters, newSubstitutor) = createNewTypeParametersAndSubstitutor(member)
-
-        val receiverType = member.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
-        val newReceiverType = receiverType?.substitute(newSubstitutor)
-
-        val returnType = typeCalculator.tryCalculateReturnType(member).type
-        val newReturnType = returnType.substitute(newSubstitutor)
-
+        val (newTypeParameters, newReceiverType, newReturnType, newSubstitutor) = createSubstitutedData(member)
         val newParameterTypes = member.valueParameters.map {
             it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().substitute(newSubstitutor)
         }
@@ -156,12 +149,8 @@ class FirClassSubstitutionScope(
     private fun createFakeOverrideConstructor(original: FirConstructorSymbol): FirConstructorSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val constructor = original.fir
-        val (newTypeParameters, newSubstitutor) = createNewTypeParametersAndSubstitutor(constructor)
 
-
-        val returnType = constructor.returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
-        val newReturnType = returnType.substitute(newSubstitutor)
-
+        val (newTypeParameters, _, newReturnType, newSubstitutor) = createSubstitutedData(constructor)
         val newParameterTypes = constructor.valueParameters.map {
             it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().substitute(newSubstitutor)
         }
@@ -173,6 +162,50 @@ class FirClassSubstitutionScope(
             FirConstructorSymbol(original.callableId, overriddenSymbol = original),
             session, constructor, newReturnType, newParameterTypes, newTypeParameters
         ).symbol
+    }
+
+    private fun createFakeOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
+        if (substitutor == ConeSubstitutor.Empty) return original
+        val member = original.fir
+        if (skipPrivateMembers && member.visibility == Visibilities.PRIVATE) return original
+
+        val (newTypeParameters, newReceiverType, newReturnType) = createSubstitutedData(member)
+        if (newReceiverType == null &&
+            newReturnType == null && newTypeParameters === member.typeParameters
+        ) {
+            return original
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return createFakeOverrideProperty(
+            session,
+            member,
+            original,
+            newReceiverType,
+            newReturnType,
+            newTypeParameters as List<FirTypeParameter>,
+            derivedClassId
+        )
+    }
+
+    private data class SubstitutedData(
+        val typeParameters: List<FirTypeParameterRef>,
+        val receiverType: ConeKotlinType?,
+        val returnType: ConeKotlinType?,
+        val substitutor: ConeSubstitutor
+    )
+
+    private fun createSubstitutedData(member: FirCallableMemberDeclaration<*>): SubstitutedData {
+        val (newTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
+            member as FirTypeParameterRefsOwner
+        )
+
+        val receiverType = member.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
+        val newReceiverType = receiverType?.substitute(substitutor)
+
+        val returnType = typeCalculator.tryCalculateReturnType(member).type
+        val newReturnType = returnType.substitute(substitutor)
+        return SubstitutedData(newTypeParameters, newReceiverType, newReturnType, substitutor)
     }
 
     // Returns a list of type parameters, and a substitutor that should be used for all other types
@@ -224,41 +257,6 @@ class FirClassSubstitutionScope(
         return Pair(
             newTypeParameters.mapIndexed { index, builder -> builder?.build() ?: member.typeParameters[index] },
             ChainedSubstitutor(substitutor, additionalSubstitutor)
-        )
-    }
-
-    private fun createFakeOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
-        if (substitutor == ConeSubstitutor.Empty) return original
-        val member = original.fir
-        if (skipPrivateMembers && member.visibility == Visibilities.PRIVATE) return original
-
-        val (newTypeParameters, newSubstitutor) = createNewTypeParametersAndSubstitutor(member)
-
-        val receiverType = member.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
-        val newReceiverType = receiverType?.substitute(newSubstitutor)
-
-        val returnType = typeCalculator.tryCalculateReturnType(member).type
-        val newReturnType = returnType.substitute(newSubstitutor)
-
-        if (newReceiverType == null &&
-            newReturnType == null && newTypeParameters === member.typeParameters
-        ) {
-            return original
-        }
-
-        /*
-         * Member properties can't capture type parameters, so
-         *   it's safe to cast newTypeParameters to List<FirTypeParameter>
-         */
-        @Suppress("UNCHECKED_CAST")
-        return createFakeOverrideProperty(
-            session,
-            member,
-            original,
-            newReceiverType,
-            newReturnType,
-            newTypeParameters as List<FirTypeParameter>,
-            derivedClassId
         )
     }
 
