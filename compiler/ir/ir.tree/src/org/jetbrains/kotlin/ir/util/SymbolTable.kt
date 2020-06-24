@@ -113,10 +113,10 @@ open class SymbolTable(
             val symbol = if (existing == null) {
                 createSymbol()
             } else {
-                unboundSymbols.remove(existing)
-                existing
+                throw AssertionError("Symbol for $sig already exists")
             }
             val result = createOwner(symbol)
+            // TODO: try to get rid of this
             set(symbol.descriptor, symbol)
             return result
         }
