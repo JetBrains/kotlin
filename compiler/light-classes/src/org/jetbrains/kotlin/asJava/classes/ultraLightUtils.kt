@@ -330,10 +330,13 @@ fun KtAnnotationEntry.looksLikeDeprecated(): Boolean {
     for (argument in arguments) {
         val hiddenByDotQualifiedCandidates = argument.children.filterIsInstance<KtDotQualifiedExpression>().filter {
             val lastChild = it.children.last()
-            lastChild.text == "HIDDEN"
+            if (lastChild is KtNameReferenceExpression)
+                lastChild.getReferencedName() == "HIDDEN"
+            else
+                false
         }
         val hiddenByNameReferenceExpressionCandidates = argument.children.filterIsInstance<KtNameReferenceExpression>().filter {
-            it.text == "HIDDEN"
+            it.getReferencedName() == "HIDDEN"
         }
         if (hiddenByDotQualifiedCandidates.isNotEmpty() || hiddenByNameReferenceExpressionCandidates.isNotEmpty())
             return true
