@@ -249,6 +249,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 parseShortModuleName(arguments, configuration, outputKind)?.let {
                     put(SHORT_MODULE_NAME, it)
                 }
+                put(DISABLE_FAKE_OVERRIDE_VALIDATOR, arguments.disableFakeOverrideValidator)
             }
         }
     }

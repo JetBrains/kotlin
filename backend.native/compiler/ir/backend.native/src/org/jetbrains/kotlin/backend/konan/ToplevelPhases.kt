@@ -254,8 +254,10 @@ internal val psiToIrPhase = konanUnitPhase(
             symbolTable.noUnboundLeft("Unbound symbols left after linker")
 
             module.acceptVoid(ManglerChecker(KonanManglerIr, Ir2DescriptorManglerAdapter(KonanManglerDesc)))
-            val fakeOverrideChecker = FakeOverrideChecker(KonanManglerIr, KonanManglerDesc)
-            linker.modules.values.forEach{ fakeOverrideChecker.check(it) }
+            if (!config.configuration.getBoolean(KonanConfigKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR)) {
+                val fakeOverrideChecker = FakeOverrideChecker(KonanManglerIr, KonanManglerDesc)
+                linker.modules.values.forEach { fakeOverrideChecker.check(it) }
+            }
 
             irModule = module
 

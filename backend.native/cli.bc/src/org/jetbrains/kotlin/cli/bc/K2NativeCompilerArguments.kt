@@ -145,6 +145,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var exportedLibraries: Array<String>? = null
 
+    @Argument(value="-Xdisable-fake-override-validator", description = "Disable IR fake override validator")
+    var disableFakeOverrideValidator: Boolean = false
+
     @Argument(
             value = "-Xframework-import-header",
             valueDescription = "<header>",
