@@ -1,6 +1,0 @@
-FILE: Base.kt
-    public abstract interface Base : R|kotlin/Any| {
-        public abstract val x: R|kotlin/Int|
-            public get(): R|kotlin/Int|
-
-    }

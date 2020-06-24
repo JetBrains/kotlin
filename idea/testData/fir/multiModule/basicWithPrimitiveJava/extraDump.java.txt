@@ -1,8 +1,0 @@
-public open class Some : R|kotlin/Any| {
-    public open fun foo(param: R|kotlin/Int|): R|kotlin/Boolean|
-
-    public open fun bar(arr: R|ft<kotlin/IntArray, kotlin/IntArray?>!|): R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!|
-
-    public constructor(): R|Some|
-
-}

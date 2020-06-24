@@ -1,5 +1,0 @@
-FILE: Test.kt
-    public final fun test(): R|kotlin/Unit| {
-        lval jc: R|JavaClass| = R|/JavaClass.JavaClass|()
-        lval result: R|kotlin/String| = R|<local>/jc|.R|/Derived.some|
-    }

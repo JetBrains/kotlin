@@ -710,6 +710,31 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("BasicWithAnnotatedJava.kt")
+        public void testBasicWithAnnotatedJava() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/BasicWithAnnotatedJava.kt");
+        }
+
+        @TestMetadata("BasicWithAnnotatedOverriddenJava.kt")
+        public void testBasicWithAnnotatedOverriddenJava() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/BasicWithAnnotatedOverriddenJava.kt");
+        }
+
+        @TestMetadata("BasicWithJava.kt")
+        public void testBasicWithJava() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/BasicWithJava.kt");
+        }
+
+        @TestMetadata("BasicWithJavaFakeOverride.kt")
+        public void testBasicWithJavaFakeOverride() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/BasicWithJavaFakeOverride.kt");
+        }
+
+        @TestMetadata("BasicWithPrimitiveJava.kt")
+        public void testBasicWithPrimitiveJava() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/BasicWithPrimitiveJava.kt");
+        }
+
         @TestMetadata("capturedFlexible.kt")
         public void testCapturedFlexible() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/capturedFlexible.kt");
@@ -718,6 +743,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("complexFlexibleInference.kt")
         public void testComplexFlexibleInference() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/complexFlexibleInference.kt");
+        }
+
+        @TestMetadata("FieldAccessFromDerived.kt")
+        public void testFieldAccessFromDerived() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/FieldAccessFromDerived.kt");
         }
 
         @TestMetadata("FieldAndGetter.kt")
@@ -748,6 +778,41 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("FunctionTypeInJava.kt")
         public void testFunctionTypeInJava() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/FunctionTypeInJava.kt");
+        }
+
+        @TestMetadata("IntersectionTypesProblem.kt")
+        public void testIntersectionTypesProblem() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/IntersectionTypesProblem.kt");
+        }
+
+        @TestMetadata("JavaGetPrefixConflict.kt")
+        public void testJavaGetPrefixConflict() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaGetPrefixConflict.kt");
+        }
+
+        @TestMetadata("JavaInheritsKotlinDerived.kt")
+        public void testJavaInheritsKotlinDerived() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaInheritsKotlinDerived.kt");
+        }
+
+        @TestMetadata("JavaInheritsKotlinExtension.kt")
+        public void testJavaInheritsKotlinExtension() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaInheritsKotlinExtension.kt");
+        }
+
+        @TestMetadata("JavaInheritsKotlinProperty.kt")
+        public void testJavaInheritsKotlinProperty() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaInheritsKotlinProperty.kt");
+        }
+
+        @TestMetadata("JavaInheritsRawKotlin.kt")
+        public void testJavaInheritsRawKotlin() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaInheritsRawKotlin.kt");
+        }
+
+        @TestMetadata("JavaSyntheticProperty.kt")
+        public void testJavaSyntheticProperty() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/JavaSyntheticProperty.kt");
         }
 
         @TestMetadata("JavaVisibility2.kt")
@@ -825,6 +890,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/outerInnerClasses.kt");
         }
 
+        @TestMetadata("OverrideWithJava.kt")
+        public void testOverrideWithJava() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/OverrideWithJava.kt");
+        }
+
         @TestMetadata("RawType.kt")
         public void testRawType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/RawType.kt");
@@ -868,6 +938,44 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("typeParameterUse.kt")
         public void testTypeParameterUse() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/typeParameterUse.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MultiModule extends AbstractFirDiagnosticsWithStdlibTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMultiModule() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("Basic.kt")
+        public void testBasic() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule/Basic.kt");
+        }
+
+        @TestMetadata("FakeOverrides.kt")
+        public void testFakeOverrides() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule/FakeOverrides.kt");
+        }
+
+        @TestMetadata("MemberType.kt")
+        public void testMemberType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule/MemberType.kt");
+        }
+
+        @TestMetadata("Members.kt")
+        public void testMembers() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule/Members.kt");
+        }
+
+        @TestMetadata("SuperTypes.kt")
+        public void testSuperTypes() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/multiModule/SuperTypes.kt");
         }
     }
 

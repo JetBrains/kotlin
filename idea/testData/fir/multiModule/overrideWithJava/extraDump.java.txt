@@ -1,8 +1,0 @@
-public open class A : R|kotlin/Any| {
-    public open fun foo(): R|ft<A, A?>!|
-
-    public open fun bar(): R|ft<A, A?>!|
-
-    public constructor(): R|A|
-
-}
