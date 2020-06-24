@@ -718,10 +718,8 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                    class TestF {
                        @Composable
                        fun compose() {
-                         Recompose { recompose ->
-                           doRecompose = recompose
-                           Foo(bar)
-                         }
+                         doRecompose = invalidate
+                         Foo(bar)
                        }
 
                        fun advance() {
