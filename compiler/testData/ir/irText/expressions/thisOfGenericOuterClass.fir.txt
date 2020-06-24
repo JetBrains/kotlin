@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test.<no name provided>
             CONSTRUCTOR visibility:private <> () returnType:<root>.test.<no name provided> [primary]
               BLOCK_BODY
-                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (y: kotlin.Int) declared in <root>.Outer.Inner'
+                DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (y: kotlin.Int) [primary] declared in <root>.Outer.Inner'
                   <1>: kotlin.Int
                   $this: GET_VAR '<this>: <root>.Outer<kotlin.Int> declared in <root>.test' type=<root>.Outer<kotlin.Int> origin=null
                   y: CONST Int type=kotlin.Int value=42

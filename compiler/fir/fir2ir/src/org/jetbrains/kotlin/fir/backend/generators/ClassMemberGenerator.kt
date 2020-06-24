@@ -246,23 +246,25 @@ internal class ClassMemberGenerator(
 
     private fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrExpression {
         val constructedIrType = constructedTypeRef.toIrType()
-        val constructorSymbol = (this.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol
+        val referencedSymbol = (this.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol
             ?: return convertWithOffsets { startOffset, endOffset ->
                 IrErrorCallExpressionImpl(
                     startOffset, endOffset, constructedIrType, "Cannot find delegated constructor call"
                 )
             }
+        val constructorSymbol = referencedSymbol.deepestMatchingOverriddenSymbol() as FirConstructorSymbol
         val firDispatchReceiver = dispatchReceiver
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
             val typeArguments = (constructedTypeRef as? FirResolvedTypeRef)?.type?.typeArguments
-            if (constructorSymbol.fir.isFromEnumClass || constructorSymbol.fir.returnTypeRef.isEnum) {
+            val constructor = constructorSymbol.fir
+            if (constructor.isFromEnumClass || constructor.returnTypeRef.isEnum) {
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset,
                     constructedIrType,
                     irConstructorSymbol,
                     typeArgumentsCount = typeArguments?.size ?: 0,
-                    valueArgumentsCount = constructorSymbol.fir.valueParameters.size
+                    valueArgumentsCount = constructor.valueParameters.size
                 ).apply {
                 }
             } else {
