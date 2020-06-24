@@ -52,7 +52,7 @@ class DebuggerConnection(
                     if (coreVersion == CoroutineDebuggerMode.DISABLED && kotlinxCoroutinesDebug != null)
                         CoroutineDebuggerMode.VERSION_UP_TO_1_3_5
                     else
-                        CoroutineDebuggerMode.DISABLED
+                        coreVersion
                 }
                 kotlinxCoroutinesDebug != null -> CoroutineDebuggerMode.VERSION_UP_TO_1_3_5
                 else -> CoroutineDebuggerMode.DISABLED
