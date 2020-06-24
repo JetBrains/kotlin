@@ -2,6 +2,7 @@
 package com.intellij.internal.statistic.tools;
 
 import com.intellij.codeInspection.InspectionEP;
+import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.ScopeToolState;
 import com.intellij.internal.statistic.beans.MetricEvent;
@@ -16,8 +17,11 @@ import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.lang.Language;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
+import com.intellij.util.ReflectionUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Attribute;
 import org.jdom.Content;
 import org.jdom.DataConversionException;
@@ -32,9 +36,9 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
   private static final Predicate<ScopeToolState> ENABLED = state -> !state.getTool().isEnabledByDefault() && state.isEnabled();
 
   private static final Predicate<ScopeToolState> DISABLED = state -> state.getTool().isEnabledByDefault() && !state.isEnabled();
-  private static final String SETTING_VALUE = "option_value";
-  private static final String SETTING_TYPE = "option_type";
-  private static final String SETTING_INDEX = "option_index";
+  private static final String OPTION_VALUE = "option_value";
+  private static final String OPTION_TYPE = "option_type";
+  private static final String OPTION_NAME = "option_name";
   private static final String INSPECTION_ID = "inspection_id";
 
   @NotNull
@@ -45,7 +49,7 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
 
   @Override
   public int getVersion() {
-    return 4;
+    return 5;
   }
 
   @NotNull
@@ -71,52 +75,63 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
   private static Collection<MetricEvent> getChangedSettingsEvents(InspectionToolWrapper<?, ?> tool,
                                                                   PluginInfo pluginInfo,
                                                                   boolean inspectionEnabled) {
-    if (!isSafeToReport(pluginInfo)) return Collections.emptyList();
+    if (!isSafeToReport(pluginInfo)) {
+      return Collections.emptyList();
+    }
+
+    InspectionProfileEntry entry = tool.getTool();
+    Map<String, Attribute> options = getOptions(entry);
+    if (options.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    Set<String> fields = ContainerUtil.map2Set(ReflectionUtil.collectFields(entry.getClass()), f -> f.getName());
+    Map<String, Attribute> defaultOptions = getOptions(ReflectionUtil.newInstance(entry.getClass()));
+
     Collection<MetricEvent> result = new ArrayList<>();
     String inspectionId = tool.getID();
-    List<Content> options = getOptions(tool);
-    for (int i = 0; i < options.size(); i++) {
-      Content option = options.get(i);
-      if (option instanceof Element) {
-        Attribute settingValue = ((Element)option).getAttribute("value");
-        if (settingValue == null) continue;
-        FeatureUsageData data = new FeatureUsageData();
-        // setting the index instead of name is here because name can contain sensitive data
-        data.addData(SETTING_INDEX, i);
-        data.addData(INSPECTION_ID, inspectionId);
-        data.addData("inspection_enabled", inspectionEnabled);
-        data.addPluginInfo(pluginInfo);
-        if (addSettingValue(settingValue, data)) {
-          result.add(MetricEventFactoryKt.newMetric("setting.non.default.state", data));
+    for (Map.Entry<String, Attribute> option : options.entrySet()) {
+      String name = option.getKey();
+      Attribute value = option.getValue();
+      if (fields.contains(name) && value != null) {
+        Attribute defaultValue = defaultOptions.get(name);
+        if (defaultValue == null || !StringUtil.equals(value.getValue(), defaultValue.getValue())) {
+          FeatureUsageData data = new FeatureUsageData();
+          data.addData(OPTION_NAME, name);
+          data.addData(INSPECTION_ID, inspectionId);
+          data.addData("inspection_enabled", inspectionEnabled);
+          data.addPluginInfo(pluginInfo);
+          if (addSettingValue(value, data)) {
+            result.add(MetricEventFactoryKt.newMetric("setting.non.default.state", data));
+          }
         }
       }
     }
     return result;
   }
 
-  private static boolean addSettingValue(Attribute settingValueAttribute, FeatureUsageData data) {
+  private static boolean addSettingValue(Attribute value, FeatureUsageData data) {
     try {
-      boolean booleanValue = settingValueAttribute.getBooleanValue();
-      data.addData(SETTING_VALUE, booleanValue);
-      data.addData(SETTING_TYPE, "boolean");
+      boolean booleanValue = value.getBooleanValue();
+      data.addData(OPTION_VALUE, booleanValue);
+      data.addData(OPTION_TYPE, "boolean");
       return true;
     }
     catch (DataConversionException e) {
-      return addIntValue(settingValueAttribute, data);
+      return addIntValue(value, data);
     }
   }
 
   private static boolean addIntValue(Attribute value, FeatureUsageData data) {
     try {
       int intValue = value.getIntValue();
-      data.addData(SETTING_VALUE, intValue);
-      data.addData(SETTING_TYPE, "integer");
+      data.addData(OPTION_VALUE, intValue);
+      data.addData(OPTION_TYPE, "integer");
       return true;
     }
     catch (DataConversionException e) {
       return false;
     }
-
   }
 
   @NotNull
@@ -144,15 +159,28 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
     return pluginDescriptor != null ? PluginInfoDetectorKt.getPluginInfoByDescriptor(pluginDescriptor) : null;
   }
 
-  @NotNull
-  private static List<Content> getOptions(InspectionToolWrapper<?, ?> tool) {
-    Element options = new Element("options");
+  private static Map<String, Attribute> getOptions(InspectionProfileEntry entry) {
+    Element element = new Element("options");
     try {
-      ScopeToolState.tryWriteSettings(tool.getTool(), options);
-      return options.getContent();
+      ScopeToolState.tryWriteSettings(entry, element);
+      List<Content> options = element.getContent();
+      if (options.isEmpty()) {
+        return Collections.emptyMap();
+      }
+
+      return ContainerUtil.map2MapNotNull(options, option -> {
+        if (option instanceof Element) {
+          Attribute nameAttr = ((Element)option).getAttribute("name");
+          Attribute valueAttr = ((Element)option).getAttribute("value");
+          if (nameAttr != null && valueAttr != null) {
+            return Pair.create(nameAttr.getValue(), valueAttr);
+          }
+        }
+        return null;
+      });
     }
     catch (Exception e) {
-      return Collections.emptyList();
+      return Collections.emptyMap();
     }
   }
 
