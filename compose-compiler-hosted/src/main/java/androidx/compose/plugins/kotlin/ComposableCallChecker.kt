@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -28,10 +29,12 @@ import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -59,6 +62,9 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.inline.InlineUtil.canBeInlineArgument
+import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInline
+import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlineParameter
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinedArgument
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -83,6 +89,13 @@ object ComposeErrorMessages : DefaultErrorMessages.Extension {
             "Functions which invoke @Composable functions must be marked with the @Composable " +
                     "annotation"
         )
+
+        MAP.put(
+            ComposeErrors.CAPTURED_COMPOSABLE_INVOCATION,
+            "Composable calls are not allowed inside the {0} parameter of {1}",
+            Renderers.NAME,
+            Renderers.COMPACT
+        )
     }
 }
 
@@ -96,6 +109,12 @@ object ComposeErrors {
     @JvmField
     val COMPOSABLE_EXPECTED =
         DiagnosticFactory0.create<PsiElement>(Severity.ERROR)
+
+    @JvmField
+    val CAPTURED_COMPOSABLE_INVOCATION =
+        DiagnosticFactory2.create<PsiElement, DeclarationDescriptor, DeclarationDescriptor>(
+            Severity.ERROR
+        )
 }
 
 open class ComposableCallChecker : CallChecker, AdditionalTypeChecker,
@@ -131,8 +150,28 @@ open class ComposableCallChecker : CallChecker, AdditionalTypeChecker,
                     }
                     val composable = descriptor.isComposableCallable(bindingContext)
                     if (composable) return
+                    val arg = getArgumentDescriptor(node.functionLiteral, bindingContext)
+                    if (arg?.type?.composablePreventCaptureContract() == true) {
+                        context.trace.record(
+                            ComposeWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
+                            descriptor,
+                            false
+                        )
+                        context.trace.reportFromPlugin(
+                            ComposeErrors.CAPTURED_COMPOSABLE_INVOCATION.on(
+                                reportOn,
+                                arg,
+                                arg.containingDeclaration
+                            ),
+                            ComposeErrorMessages
+                        )
+                        return
+                    }
                     // TODO(lmr): in future, we should check for CALLS_IN_PLACE contract
-                    val inlined = isInlinedArgument(node.functionLiteral, bindingContext, false)
+                    val inlined = arg != null &&
+                            canBeInlineArgument(node.functionLiteral) &&
+                            isInline(arg.containingDeclaration) &&
+                            isInlineParameter(arg)
                     if (!inlined) {
                         illegalCall(context, reportOn)
                         return

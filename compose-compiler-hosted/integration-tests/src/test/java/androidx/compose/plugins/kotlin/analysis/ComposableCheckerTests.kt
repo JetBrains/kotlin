@@ -152,6 +152,19 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         }
     """)
 
+    fun testPreventedCaptureOnInlineLambda() = check("""
+        import androidx.compose.*
+
+        @Composable inline fun A(
+            lambda: @ComposableContract(preventCapture=true) () -> Unit
+        ) { if (Math.random() > 0.5) lambda() }
+        @Composable fun B() {}
+
+        @Composable fun C() {
+            A { <!CAPTURED_COMPOSABLE_INVOCATION!>B<!>() }
+        }
+    """)
+
     fun testComposableReporting001() {
         checkFail("""
             import androidx.compose.*;
