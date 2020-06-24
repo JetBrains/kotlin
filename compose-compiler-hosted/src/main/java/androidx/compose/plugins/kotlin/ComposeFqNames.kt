@@ -91,6 +91,11 @@ fun Annotated.composableTrackedContract(): Boolean? {
     return contract.argumentValue("tracked")?.value as? Boolean
 }
 
+fun Annotated.composablePreventCaptureContract(): Boolean? {
+    val contract = annotations.findAnnotation(ComposeFqNames.ComposableContract) ?: return null
+    return contract.argumentValue("preventCapture")?.value as? Boolean
+}
+
 internal val KotlinType.isSpecialType: Boolean get() =
     this === NO_EXPECTED_TYPE || this === UNIT_EXPECTED_TYPE
 
