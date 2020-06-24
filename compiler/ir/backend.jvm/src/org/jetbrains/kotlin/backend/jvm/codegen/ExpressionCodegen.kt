@@ -401,6 +401,7 @@ class ExpressionCodegen(
 
                 // IR constructors have no receiver and return the new instance, but on JVM they are void-returning
                 // instance methods named <init>.
+                markLineNumber(expression)
                 mv.anew(asmType)
                 mv.dup()
             }

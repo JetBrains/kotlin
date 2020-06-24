@@ -23,6 +23,8 @@ fun box() {
 
 // LINENUMBERS
 // test.kt:14 box
+// test.kt:5 <clinit>
+// test.kt:6 <clinit>
 // test.kt:5 getProp0
 // LINENUMBERS JVM
 // test.kt:5 getProp0

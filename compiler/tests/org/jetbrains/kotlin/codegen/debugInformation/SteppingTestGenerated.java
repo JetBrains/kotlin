@@ -98,6 +98,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("constructorCall.kt")
+    public void testConstructorCall() throws Exception {
+        runTest("compiler/testData/debug/stepping/constructorCall.kt");
+    }
+
+    @Test
     @TestMetadata("defaultParameter.kt")
     public void testDefaultParameter() throws Exception {
         runTest("compiler/testData/debug/stepping/defaultParameter.kt");
