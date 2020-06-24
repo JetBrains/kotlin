@@ -10,9 +10,11 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.testFramework.HeavyPlatformTestCase
+import com.intellij.testFramework.PlatformTestUtil
 import org.assertj.core.api.BDDAssertions.then
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import java.io.File
+import java.util.concurrent.Future
 
 class SourceFolderManagerTest: HeavyPlatformTestCase() {
 
@@ -25,7 +27,7 @@ class SourceFolderManagerTest: HeavyPlatformTestCase() {
       modifiableModel.commit()
     }
 
-    val manager = SourceFolderManager.getInstance(project)
+    val manager: SourceFolderManagerImpl = SourceFolderManager.getInstance(project) as SourceFolderManagerImpl
 
     val folderUrl = ModuleRootManager.getInstance(module).contentRootUrls[0] + "/newFolder";
     val folderFile = File(VfsUtilCore.urlToPath(folderUrl))
@@ -36,6 +38,12 @@ class SourceFolderManagerTest: HeavyPlatformTestCase() {
     FileUtil.writeToFile(file, "SomeContent");
 
     LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file)
+    val bulkOperationState: Future<*>? = manager.bulkOperationState
+    if (bulkOperationState == null) {
+      fail("Source Folder manager operation expected")
+    } else {
+      PlatformTestUtil.waitForFuture(bulkOperationState, 1000)
+    }
 
     then(rootManager.contentEntries[0].sourceFolders)
       .hasSize(1)
@@ -48,7 +56,7 @@ class SourceFolderManagerTest: HeavyPlatformTestCase() {
     val dir = createTempDir("contentEntry")
     createModuleWithContentRoot(dir)
 
-    val manager = SourceFolderManager.getInstance(project)
+    val manager:SourceFolderManagerImpl = SourceFolderManager.getInstance(project) as SourceFolderManagerImpl
     val folderFile = File(dir, "newFolder")
     val folderUrl = VfsUtilCore.pathToUrl(folderFile.absolutePath)
 
@@ -58,6 +66,12 @@ class SourceFolderManagerTest: HeavyPlatformTestCase() {
     FileUtil.writeToFile(file, "SomeContent");
 
     LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file)
+    val bulkOperationState: Future<*>? = manager.bulkOperationState
+    if (bulkOperationState == null) {
+      fail("Source Folder manager operation expected")
+    } else {
+      PlatformTestUtil.waitForFuture(bulkOperationState, 1000)
+    }
 
     then(rootManager
            .contentEntries
