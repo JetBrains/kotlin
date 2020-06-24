@@ -81,6 +81,7 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
             }
             declaration is FirCallableMemberDeclaration<*> -> {
                 val callableId = declaration.symbol.callableId
+                if (callableId.classId?.isLocal == true) return null
                 IdSignature.PublicSignature(
                     callableId.packageName.asString(), callableId.relativeCallableName.asString(), builder.hashId, builder.mask
                 )
