@@ -194,7 +194,7 @@ class IrOverridingUtil(
         toFilter: Collection<IrOverridableMember>
     ): Collection<IrOverridableMember> {
         return toFilter.filter { member: IrOverridableMember ->
-            !Visibilities.isPrivate(member.visibility) && isVisibleIgnoringReceiver(member.original, current)
+            !Visibilities.isPrivate(member.visibility)
         }
     }
 
