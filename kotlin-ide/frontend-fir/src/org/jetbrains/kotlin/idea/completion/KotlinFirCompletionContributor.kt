@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.idea.fir.getFirOfClosestParent
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 
 class KotlinFirCompletionContributor : CompletionContributor() {
     init {
@@ -53,65 +53,71 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         val element = nameExpression.getFirOfClosestParent() as? FirQualifiedAccessExpression ?: return
         val towerDataContext = completionContext.getTowerDataContext(nameExpression)
 
-        val receiver = element.explicitReceiver
-        val explicitReceiverType = receiver?.typeRef?.coneTypeUnsafe<ConeKotlinType>()
-
-        val scopes: Sequence<FirScope> = sequence {
+        val symbols: Sequence<FirCallableSymbol<*>> = sequence {
+            val explicitReceiver = element.explicitReceiver
+            val explicitReceiverType = explicitReceiver?.typeRef?.coneTypeUnsafe<ConeKotlinType>()
             val explicitReceiverScope = explicitReceiverType?.scope(completionContext.session, ScopeSession())
-            if (explicitReceiverScope != null) {
-                yield(explicitReceiverScope)
-            }
 
-            yieldAll(towerDataContext.localScopes)
+            val implicitReceivers = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver }
+            val implicitReceiversTypes = implicitReceivers.map { it.type }
 
-            val implicitReceiversScopes = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver?.implicitScope }
-            yieldAll(implicitReceiversScopes)
-
+            val localScopes = towerDataContext.localScopes
             val nonLocalScopes = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope }
-            yieldAll(nonLocalScopes)
-        }
+            val implicitReceiversScopes = implicitReceivers.mapNotNull { it.implicitScope }
 
-        for (scope in scopes) {
-            for (symbol in scope.collectCallableSymbols()) {
-                val symbolName = symbol.callableId.callableName
-                if (symbolName.isConstructor) continue
+            val allNonExplicitScopes = localScopes.asSequence() + nonLocalScopes + implicitReceiversScopes
 
-                val expectedReceiverType = symbol.fir.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
+            val typeContext = completionContext.session.typeContext
 
-                if (expectedReceiverType != null) {
-                    val receiverTypes = if (explicitReceiverType != null) {
-                        listOf(explicitReceiverType)
-                    } else {
-                        towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver?.type }
-                    }
+            if (explicitReceiverScope != null) {
+                yieldAll(explicitReceiverScope.collectCallableSymbols())
 
-                    val expectedReceiverTypeIsPresent = receiverTypes.any {
-                        AbstractTypeChecker.isSubtypeOf(completionContext.session.typeContext, it, expectedReceiverType)
-                    }
+                val allApplicableExtensions = allNonExplicitScopes
+                    .flatMap { it.collectCallableSymbols() }
+                    .filter { it.isExtension && it.isExtensionThatCanBeCalledOnTypes(listOf(explicitReceiverType), typeContext) }
 
-                    if (expectedReceiverTypeIsPresent) {
-                        result.addElement(LookupElementBuilder.create(symbolName.toString()))
-                    }
-                } else if (explicitReceiverType == null || symbol.callableId.classId == explicitReceiverType.classId) {
-                    result.addElement(LookupElementBuilder.create(symbolName.toString()))
-                }
+                yieldAll(allApplicableExtensions)
+            } else {
+                val allAvailableSymbols = allNonExplicitScopes
+                    .flatMap { it.collectCallableSymbols() }
+                    .filter { !it.isExtension || it.isExtensionThatCanBeCalledOnTypes(implicitReceiversTypes, typeContext) }
+
+                yieldAll(allAvailableSymbols)
             }
         }
+
+        for (symbol in symbols) {
+            val symbolName = symbol.callableId.callableName
+            if (symbolName.isConstructor) continue
+
+            result.addElement(LookupElementBuilder.create(symbolName.toString()))
+        }
     }
 
-    private fun FirScope.collectCallableSymbols(): MutableList<FirCallableSymbol<*>> {
-        val allCallableSymbols = mutableListOf<FirCallableSymbol<*>>()
-        fun symbolsCollector(symbol: FirCallableSymbol<*>) {
-            allCallableSymbols.add(symbol)
-        }
+}
 
-        for (name in getCallableNames()) {
-            processFunctionsByName(name, ::symbolsCollector)
-            processPropertiesByName(name, ::symbolsCollector)
-        }
+private val FirCallableSymbol<*>.isExtension get() = fir.receiverTypeRef != null
 
-        return allCallableSymbols
+private val Name.isConstructor get() = this == Name.special("<init>")
+
+private fun FirScope.collectCallableSymbols(): MutableList<FirCallableSymbol<*>> {
+    val allCallableSymbols = mutableListOf<FirCallableSymbol<*>>()
+    fun symbolsCollector(symbol: FirCallableSymbol<*>) {
+        allCallableSymbols.add(symbol)
     }
 
-    private val Name.isConstructor get() = this == Name.special("<init>")
+    for (name in getCallableNames()) {
+        processFunctionsByName(name, ::symbolsCollector)
+        processPropertiesByName(name, ::symbolsCollector)
+    }
+
+    return allCallableSymbols
+}
+
+private fun FirCallableSymbol<*>.isExtensionThatCanBeCalledOnTypes(
+    receivers: List<ConeKotlinType>,
+    session: TypeCheckerProviderContext
+): Boolean {
+    val expectedReceiverType = fir.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>() ?: return false
+    return receivers.any { AbstractTypeChecker.isSubtypeOf(session, it, expectedReceiverType) }
 }

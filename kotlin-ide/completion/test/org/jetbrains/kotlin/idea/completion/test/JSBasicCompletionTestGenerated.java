@@ -2141,6 +2141,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/classFieldsAndFunctionsFromInnerClass.kt");
             }
 
+            @TestMetadata("classFieldsAndFunctionsFromInnerClassExplicitReceiver.kt")
+            public void testClassFieldsAndFunctionsFromInnerClassExplicitReceiver() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/classFieldsAndFunctionsFromInnerClassExplicitReceiver.kt");
+            }
+
             @TestMetadata("explicitReceiverCompletion.kt")
             public void testExplicitReceiverCompletion() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/explicitReceiverCompletion.kt");
@@ -2149,6 +2154,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("extensionPropertyAndFunctionExplicitReceiver.kt")
             public void testExtensionPropertyAndFunctionExplicitReceiver() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/extensionPropertyAndFunctionExplicitReceiver.kt");
+            }
+
+            @TestMetadata("extensionPropertyAndFunctionImplicitReceiver.kt")
+            public void testExtensionPropertyAndFunctionImplicitReceiver() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/extensionPropertyAndFunctionImplicitReceiver.kt");
             }
 
             @TestMetadata("genericExtensionPropertyAndFunctionExplicitReceiver.kt")
