@@ -465,7 +465,7 @@ class Fir2IrDeclarationStorage(
                     startOffset, endOffset, origin, symbol,
                     Name.special("<init>"), constructor.visibility,
                     constructor.returnTypeRef.toIrType(),
-                    isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
+                    isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = constructor.isExpect
                 ).apply {
                     metadata = FirMetadataSource.Function(constructor)
                     enterScope(this)

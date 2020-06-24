@@ -4,6 +4,8 @@
 
 expect open class A() {
     fun foo()
+
+    val x: Int
 }
 
 open class B : A()
@@ -15,12 +17,15 @@ actual open class A {
     actual fun foo() {}
 
     fun bar() {}
+
+    actual val x = 42
 }
 
 class C : B() {
     fun test() {
         foo()
         bar()
+        x + x
     }
 }
 
@@ -28,5 +33,6 @@ class D : A() {
     fun test() {
         foo()
         bar()
+        x + x
     }
 }

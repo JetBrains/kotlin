@@ -1,17 +1,13 @@
 FILE fqName:<root> fileName:/expectedEnumClass.kt
   CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public [expect] superTypes:[kotlin.Enum<<root>.MyEnum>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum
-    CONSTRUCTOR visibility:private <> () returnType:<root>.MyEnum [primary]
-      BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
-          <E>: <root>.MyEnum
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public [expect] superTypes:[kotlin.Enum<<root>.MyEnum>]'
+    CONSTRUCTOR visibility:private <> () returnType:<root>.MyEnum [primary,expect]
     ENUM_ENTRY name:FOO
       init: EXPRESSION_BODY
-        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary,expect] declared in <root>.MyEnum'
     ENUM_ENTRY name:BAR
       init: EXPRESSION_BODY
-        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary,expect] declared in <root>.MyEnum'
     FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.MyEnum>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.MyEnum

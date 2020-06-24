@@ -402,7 +402,14 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitConstructor(constructor: FirConstructor) {
         constructor.annotations.renderAnnotations()
-        print(constructor.visibility.asString(constructor.effectiveVisibility) + " constructor")
+        print(constructor.visibility.asString(constructor.effectiveVisibility) + " ")
+        if (constructor.isExpect) {
+            print("expect ")
+        }
+        if (constructor.isActual) {
+            print("actual ")
+        }
+        print("constructor")
         constructor.typeParameters.renderTypeParameters()
         constructor.valueParameters.renderParameters()
         print(": ")

@@ -1,10 +1,10 @@
 FILE: common.kt
     public open expect class A<T> : R|kotlin/Any| {
-        public constructor<T>(): R|A<T>| {
+        public expect constructor<T>(): R|A<T>| {
             super<R|kotlin/Any|>()
         }
 
-        public open fun foo(arg: R|T|): R|kotlin/Unit|
+        public open expect fun foo(arg: R|T|): R|kotlin/Unit|
 
     }
     public open class B : R|A<kotlin/String>| {

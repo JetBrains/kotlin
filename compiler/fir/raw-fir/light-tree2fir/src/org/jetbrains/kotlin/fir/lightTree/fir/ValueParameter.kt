@@ -35,7 +35,7 @@ class ValueParameter(
         return isVal || isVar
     }
 
-    fun toFirProperty(session: FirSession, callableId: CallableId): FirProperty {
+    fun toFirProperty(session: FirSession, callableId: CallableId, isExpect: Boolean): FirProperty {
         val name = this.firValueParameter.name
         var type = this.firValueParameter.returnTypeRef
         if (type is FirImplicitTypeRef) {
@@ -58,7 +58,7 @@ class ValueParameter(
             symbol = FirPropertySymbol(callableId)
             isLocal = false
             status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality()).apply {
-                isExpect = modifiers.hasExpect()
+                this.isExpect = isExpect
                 isActual = modifiers.hasActual()
                 isOverride = modifiers.hasOverride()
                 isConst = false

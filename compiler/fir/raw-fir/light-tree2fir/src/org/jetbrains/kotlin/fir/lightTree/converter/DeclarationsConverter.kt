@@ -458,7 +458,7 @@ class DeclarationsConverter(
                         //parse properties
                         properties += primaryConstructorWrapper.valueParameters
                             .filter { it.hasValOrVar() }
-                            .map { it.toFirProperty(baseSession, callableIdForName(it.firValueParameter.name)) }
+                            .map { it.toFirProperty(baseSession, callableIdForName(it.firValueParameter.name), classWrapper.hasExpect()) }
                         addDeclarations(properties)
                     }
 
@@ -482,8 +482,8 @@ class DeclarationsConverter(
                     }
 
                     if (modifiers.isEnum()) {
-                        generateValuesFunction(baseSession, context.packageFqName, context.className)
-                        generateValueOfFunction(baseSession, context.packageFqName, context.className)
+                        generateValuesFunction(baseSession, context.packageFqName, context.className, modifiers.hasExpect())
+                        generateValueOfFunction(baseSession, context.packageFqName, context.className, modifiers.hasExpect())
                     }
                 }
             }
@@ -584,6 +584,7 @@ class DeclarationsConverter(
             symbol = FirVariableSymbol(CallableId(context.currentClassId, enumEntryName))
             status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
                 isStatic = true
+                isExpect = classWrapper.hasExpect()
             }
             if (classWrapper.hasDefaultConstructor && enumEntry.getChildNodeByType(INITIALIZER_LIST) == null &&
                 modifiers.annotations.isEmpty() && classBodyNode == null
@@ -647,7 +648,7 @@ class DeclarationsConverter(
             when (node.tokenType) {
                 ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
                 CLASS -> container += convertClass(node)
-                FUN -> container += convertFunctionDeclaration(node)
+                FUN -> container += convertFunctionDeclaration(node, classWrapper)
                 PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
                 TYPEALIAS -> container += convertTypeAlias(node)
                 OBJECT_DECLARATION -> container += convertClass(node)
@@ -688,7 +689,7 @@ class DeclarationsConverter(
 
         val explicitVisibility = if (primaryConstructor != null) modifiers.getVisibility() else null
         val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility, Modality.FINAL).apply {
-            isExpect = modifiers.hasExpect()
+            isExpect = modifiers.hasExpect() || classWrapper.hasExpect()
             isActual = modifiers.hasActual()
             isInner = classWrapper.isInner()
             isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.PRIVATE
@@ -753,7 +754,7 @@ class DeclarationsConverter(
 
         val explicitVisibility = modifiers.getVisibility()
         val status = FirDeclarationStatusImpl(explicitVisibility, Modality.FINAL).apply {
-            isExpect = modifiers.hasExpect()
+            isExpect = modifiers.hasExpect() || classWrapper.hasExpect()
             isActual = modifiers.hasActual()
             isInner = classWrapper.isInner()
             isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.PRIVATE
@@ -955,7 +956,7 @@ class DeclarationsConverter(
                     // Note that, depending on `var` or `val`, checking setter's modifiers should be careful: for `val`, setter doesn't
                     // exist (null); for `var`, the retrieval of the specific modifier is supposed to be `true`
                     status = FirDeclarationStatusImpl(propertyVisibility, modifiers.getModality()).apply {
-                        isExpect = modifiers.hasExpect()
+                        isExpect = modifiers.hasExpect() || classWrapper?.hasExpect() == true
                         isActual = modifiers.hasActual()
                         isOverride = modifiers.hasOverride()
                         isConst = modifiers.isConst()
@@ -1150,7 +1151,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunction
      */
-    fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirDeclaration {
+    fun convertFunctionDeclaration(functionDeclaration: LighterASTNode, classWrapper: ClassWrapper? = null): FirDeclaration {
         var modifiers = Modifier()
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
@@ -1208,7 +1209,7 @@ class DeclarationsConverter(
                     if (isLocal) Visibilities.LOCAL else modifiers.getVisibility(),
                     modifiers.getModality()
                 ).apply {
-                    isExpect = modifiers.hasExpect()
+                    isExpect = modifiers.hasExpect() || classWrapper?.hasExpect() == true
                     isActual = modifiers.hasActual()
                     isOverride = modifiers.hasOverride()
                     isOperator = modifiers.hasOperator()

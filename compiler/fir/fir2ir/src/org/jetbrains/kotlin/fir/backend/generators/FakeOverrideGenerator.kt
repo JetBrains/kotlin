@@ -95,7 +95,9 @@ class FakeOverrideGenerator(
                     } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalFunction.allowsToHaveFakeOverrideIn(klass)) {
                         // Trivial fake override case
                         val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideFunction(
-                            session, originalFunction, baseSymbol, derivedClassId = klass.symbol.classId
+                            session, originalFunction, baseSymbol,
+                            derivedClassId = klass.symbol.classId,
+                            isExpect = (klass as? FirRegularClass)?.isExpect == true
                         )
                         val fakeOverrideFunction = fakeOverrideSymbol.fir
 
@@ -137,7 +139,9 @@ class FakeOverrideGenerator(
                     } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalProperty.allowsToHaveFakeOverrideIn(klass)) {
                         // Trivial fake override case
                         val fakeOverrideSymbol = FirClassSubstitutionScope.createFakeOverrideProperty(
-                            session, originalProperty, baseSymbol, derivedClassId = klass.symbol.classId
+                            session, originalProperty, baseSymbol,
+                            derivedClassId = klass.symbol.classId,
+                            isExpect = (klass as? FirRegularClass)?.isExpect == true
                         )
                         val fakeOverrideProperty = fakeOverrideSymbol.fir
 

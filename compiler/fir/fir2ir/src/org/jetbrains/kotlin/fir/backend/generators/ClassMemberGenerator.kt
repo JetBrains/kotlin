@@ -109,7 +109,7 @@ internal class ClassMemberGenerator(
                 }
                 annotationGenerator.generate(irFunction, firFunction)
             }
-            if (firFunction is FirConstructor && irFunction is IrConstructor && !parentAsClass.isAnnotationClass) {
+            if (firFunction is FirConstructor && irFunction is IrConstructor && !parentAsClass.isAnnotationClass && !firFunction.isExpect) {
                 val body = IrBlockBodyImpl(startOffset, endOffset)
                 val delegatedConstructor = firFunction.delegatedConstructor
                 if (delegatedConstructor != null) {
@@ -129,7 +129,7 @@ internal class ClassMemberGenerator(
                 if (body.statements.isNotEmpty()) {
                     irFunction.body = body
                 }
-            } else if (irFunction !is IrConstructor) {
+            } else if (irFunction !is IrConstructor && !irFunction.isExpect) {
                 when {
                     irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> {
                         val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(irFunction.name)

@@ -1,6 +1,6 @@
 FILE: expectActual.kt
     public? final? expect class MyClass : R|kotlin/Any| {
-        public? constructor(): R|MyClass| {
+        public? expect constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }
 

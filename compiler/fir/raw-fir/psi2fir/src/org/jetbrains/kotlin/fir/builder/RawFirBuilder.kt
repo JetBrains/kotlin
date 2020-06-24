@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -348,11 +349,11 @@ class RawFirBuilder(
             }
         }
 
-        private fun KtParameter.toFirProperty(firParameter: FirValueParameter): FirProperty {
+        private fun KtParameter.toFirProperty(firParameter: FirValueParameter, isExpect: Boolean): FirProperty {
             require(hasValOrVar())
-            var type = typeReference.toFirOrErrorType()
+            val type = typeReference.toFirOrErrorType()
             val status = FirDeclarationStatusImpl(visibility, modality).apply {
-                isExpect = hasExpectModifier()
+                this.isExpect = isExpect
                 isActual = hasActualModifier()
                 isOverride = hasModifier(OVERRIDE_KEYWORD)
                 isConst = false
@@ -554,8 +555,8 @@ class RawFirBuilder(
 
             val explicitVisibility = this?.visibility
             val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility(), Modality.FINAL).apply {
-                isExpect = this@toFirConstructor?.hasExpectModifier() ?: false
-                isActual = this@toFirConstructor?.hasActualModifier() ?: false
+                isExpect = this@toFirConstructor?.hasExpectModifier() == true || owner.hasExpectModifier()
+                isActual = this@toFirConstructor?.hasActualModifier() == true
                 isInner = owner.hasModifier(INNER_KEYWORD)
                 isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.PRIVATE
                 isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
@@ -612,6 +613,7 @@ class RawFirBuilder(
                 name = nameAsSafeName
                 status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
                     isStatic = true
+                    isExpect = containingClassOrObject?.hasExpectModifier() == true
                 }
                 symbol = FirVariableSymbol(callableIdForName(nameAsSafeName))
                 // NB: not sure should annotations be on enum entry itself, or on its corresponding object
@@ -718,7 +720,7 @@ class RawFirBuilder(
                                 firPrimaryConstructor.valueParameters
                             ).forEach { (ktParameter, firParameter) ->
                                 if (ktParameter.hasValOrVar()) {
-                                    addDeclaration(ktParameter.toFirProperty(firParameter))
+                                    addDeclaration(ktParameter.toFirProperty(firParameter, classOrObject.hasExpectModifier()))
                                 }
                             }
                         }
@@ -751,8 +753,12 @@ class RawFirBuilder(
                         }
 
                         if (classOrObject.hasModifier(ENUM_KEYWORD)) {
-                            generateValuesFunction(baseSession, context.packageFqName, context.className)
-                            generateValueOfFunction(baseSession, context.packageFqName, context.className)
+                            generateValuesFunction(
+                                baseSession, context.packageFqName, context.className, classOrObject.hasExpectModifier()
+                            )
+                            generateValueOfFunction(
+                                baseSession, context.packageFqName, context.className, classOrObject.hasExpectModifier()
+                            )
                         }
                     }
                 }
@@ -843,7 +849,7 @@ class RawFirBuilder(
                         if (function.isLocal) Visibilities.LOCAL else function.visibility,
                         function.modality,
                     ).apply {
-                        isExpect = function.hasExpectModifier()
+                        isExpect = function.hasExpectModifier() || function.containingClassOrObject?.hasExpectModifier() == true
                         isActual = function.hasActualModifier()
                         isOverride = function.hasModifier(OVERRIDE_KEYWORD)
                         isOperator = function.hasModifier(OPERATOR_KEYWORD)
@@ -994,7 +1000,7 @@ class RawFirBuilder(
                 returnTypeRef = delegatedSelfTypeRef
                 val explicitVisibility = visibility
                 status = FirDeclarationStatusImpl(explicitVisibility, Modality.FINAL).apply {
-                    isExpect = hasExpectModifier()
+                    isExpect = hasExpectModifier() || owner.hasExpectModifier()
                     isActual = hasActualModifier()
                     isInner = owner.hasModifier(INNER_KEYWORD)
                     isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.PRIVATE
@@ -1098,7 +1104,7 @@ class RawFirBuilder(
                         // Note that, depending on `var` or `val`, checking setter's modifiers should be careful: for `val`, setter doesn't
                         // exist (null); for `var`, the retrieval of the specific modifier is supposed to be `true`
                         status = FirDeclarationStatusImpl(visibility, modality).apply {
-                            isExpect = hasExpectModifier()
+                            isExpect = hasExpectModifier() || containingClassOrObject?.hasExpectModifier() == true
                             isActual = hasActualModifier()
                             isOverride = hasModifier(OVERRIDE_KEYWORD)
                             isConst = hasModifier(CONST_KEYWORD)
