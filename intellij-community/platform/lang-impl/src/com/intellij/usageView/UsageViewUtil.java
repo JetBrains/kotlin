@@ -22,6 +22,7 @@ import com.intellij.refactoring.util.NonCodeUsageInfo;
 import com.intellij.usages.Usage;
 import com.intellij.usages.UsageInfo2UsageAdapter;
 import com.intellij.usages.UsageView;
+import com.intellij.usages.impl.UsageViewStatisticsCollector;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -142,6 +143,7 @@ public final class UsageViewUtil {
     VirtualFile file = info.getVirtualFile();
     Project project = info.getProject();
     if (file != null) {
+      UsageViewStatisticsCollector.logUsageNavigate(project, info);
       FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, file, offset), requestFocus);
     }
   }
