@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.ex.MarkupModelEx
 import com.intellij.openapi.editor.ex.RangeHighlighterEx
 import com.intellij.openapi.editor.impl.DocumentMarkupModel.forDocument
 import com.intellij.openapi.editor.impl.event.MarkupModelListener
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import java.lang.ref.WeakReference
 
@@ -21,6 +22,7 @@ internal class HighlightingWatcher(
   private var reference: WeakReference<MarkupModelEx>? = null
 
   init {
+    Disposer.register(root, this)
     update()
   }
 

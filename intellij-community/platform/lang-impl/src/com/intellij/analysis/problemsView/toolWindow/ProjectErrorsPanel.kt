@@ -41,8 +41,7 @@ internal class ProjectErrorsPanel(project: Project, state: ProblemsViewState)
 
   override fun problemsAppeared(file: VirtualFile) {
     LOG.debug("problemsAppeared: ", file)
-    val watcher = synchronized(watchers) { watchers.computeIfAbsent(file) { HighlightingWatcher(root, it) } }
-    Disposer.register(root, watcher)
+    synchronized(watchers) { watchers.computeIfAbsent(file) { HighlightingWatcher(root, it) } }
   }
 
   override fun problemsChanged(file: VirtualFile) {
