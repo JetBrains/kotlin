@@ -60,28 +60,12 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
             super.visitProperty(property)
         }
 
-        override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-            if (!handleWord(expression.name, CODE, myCompilingVisitor.context)) return
-            super.visitSimpleNameExpression(expression)
-        }
-
-        override fun visitUserType(type: KtUserType) {
-            if (!handleWord(type.name, CODE, myCompilingVisitor.context)) return
-            super.visitUserType(type)
-        }
-
         override fun visitConstantExpression(expression: KtConstantExpression) {
             val type = expression.elementType
             if (type == KtNodeTypes.BOOLEAN_CONSTANT || type == KtNodeTypes.NULL)
-                if (!handleWord(expression.name, CODE, myCompilingVisitor.context)) return
+                if (!handleWord(expression.text, CODE, myCompilingVisitor.context)) return
             super.visitConstantExpression(expression)
         }
-
-        override fun visitReferenceExpression(expression: KtReferenceExpression) {
-            if (!handleWord(expression.name, CODE, myCompilingVisitor.context)) return
-            super.visitReferenceExpression(expression)
-        }
-
     }
 
     private fun getHandler(element: PsiElement) = myCompilingVisitor.context.pattern.getHandler(element)
