@@ -896,7 +896,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.impl.iml" filepath="$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.plugin.iml" filepath="$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.wizardTemplate.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.zipflinger.iml" filepath="$PROJECT_DIR$/intellij/community/android/android/prebuilts/sdktools/android.sdktools.zipflinger.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/engine-tests/engine-tests.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/engine-tests/engine-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/fleet.iml" filepath="$PROJECT_DIR$/intellij/fleet/fleet.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/andel.core/fleet.andel.core.iml" filepath="$PROJECT_DIR$/intellij/fleet/andel.core/fleet.andel.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/andel.editor/fleet.andel.editor.iml" filepath="$PROJECT_DIR$/intellij/fleet/andel.editor/fleet.andel.editor.iml" />
@@ -914,6 +913,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/langs/fleet.langs.iml" filepath="$PROJECT_DIR$/intellij/fleet/langs/fleet.langs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/fleet.noria.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/fleet.noria.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/engine/fleet.noria.engine.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/engine/fleet.noria.engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/engine.tests/fleet.noria.engine.tests.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/engine.tests/fleet.noria.engine.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/framework/fleet.noria.framework.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/framework/fleet.noria.framework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/model/fleet.noria.model.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/model/fleet.noria.model.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/compiler-plugin/fleet.noria.plugin.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/compiler-plugin/fleet.noria.plugin.iml" />
