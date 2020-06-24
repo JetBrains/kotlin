@@ -1643,6 +1643,132 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             public void testSimple2() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/simple2.kt");
             }
+
+            @TestMetadata("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FoldToSum extends AbstractLocalInspectionTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInFoldToSum() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+                }
+
+                @TestMetadata("double.kt")
+                public void testDouble() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/double.kt");
+                }
+
+                @TestMetadata("doubleWithConst.kt")
+                public void testDoubleWithConst() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/doubleWithConst.kt");
+                }
+
+                @TestMetadata("float.kt")
+                public void testFloat() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/float.kt");
+                }
+
+                @TestMetadata("floatWithConst.kt")
+                public void testFloatWithConst() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/floatWithConst.kt");
+                }
+
+                @TestMetadata("int.kt")
+                public void testInt() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/int.kt");
+                }
+
+                @TestMetadata("int2.kt")
+                public void testInt2() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/int2.kt");
+                }
+
+                @TestMetadata("intWithConst.kt")
+                public void testIntWithConst() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/intWithConst.kt");
+                }
+
+                @TestMetadata("long.kt")
+                public void testLong() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/long.kt");
+                }
+
+                @TestMetadata("longWithConst.kt")
+                public void testLongWithConst() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/longWithConst.kt");
+                }
+
+                @TestMetadata("notAppliable.kt")
+                public void testNotAppliable() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/notAppliable.kt");
+                }
+
+                @TestMetadata("notAppliable2.kt")
+                public void testNotAppliable2() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/notAppliable2.kt");
+                }
+
+                @TestMetadata("notAppliableWithDifferentInitialType.kt")
+                public void testNotAppliableWithDifferentInitialType() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/notAppliableWithDifferentInitialType.kt");
+                }
+
+                @TestMetadata("notAppliableWithNotZero.kt")
+                public void testNotAppliableWithNotZero() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/foldToSum/notAppliableWithNotZero.kt");
+                }
+            }
+
+            @TestMetadata("idea/testData/inspectionsLocal/collections/simplifiableCall/reduceToSum")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ReduceToSum extends AbstractLocalInspectionTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInReduceToSum() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/collections/simplifiableCall/reduceToSum"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+                }
+
+                @TestMetadata("double.kt")
+                public void testDouble() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/reduceToSum/double.kt");
+                }
+
+                @TestMetadata("float.kt")
+                public void testFloat() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/reduceToSum/float.kt");
+                }
+
+                @TestMetadata("int.kt")
+                public void testInt() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/reduceToSum/int.kt");
+                }
+
+                @TestMetadata("int2.kt")
+                public void testInt2() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/reduceToSum/int2.kt");
+                }
+
+                @TestMetadata("long.kt")
+                public void testLong() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/reduceToSum/long.kt");
+                }
+
+                @TestMetadata("notAppliable.kt")
+                public void testNotAppliable() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/reduceToSum/notAppliable.kt");
+                }
+
+                @TestMetadata("notAppliable2.kt")
+                public void testNotAppliable2() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/reduceToSum/notAppliable2.kt");
+                }
+            }
         }
 
         @TestMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain")

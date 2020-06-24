@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+const val ZERO = 0L
+
+fun test(list: List<Long>) {
+    list.sum()
+}

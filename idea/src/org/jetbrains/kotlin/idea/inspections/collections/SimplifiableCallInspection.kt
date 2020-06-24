@@ -22,10 +22,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.*
 
 class SimplifiableCallInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
@@ -67,8 +69,11 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
 
     companion object {
         private fun KtCallExpression.singleLambdaExpression(): KtLambdaExpression? {
-            val argument = valueArguments.singleOrNull() ?: return null
-            return (argument as? KtLambdaArgument)?.getLambdaExpression() ?: argument.getArgumentExpression() as? KtLambdaExpression
+            return valueArguments.singleOrNull()?.lambdaExpression()
+        }
+
+        private fun KtValueArgument.lambdaExpression(): KtLambdaExpression? {
+            return (this as? KtLambdaArgument)?.getLambdaExpression() ?: this.getArgumentExpression() as? KtLambdaExpression
         }
 
         private fun KtLambdaExpression.singleStatement(): KtExpression? = bodyExpression?.statements?.singleOrNull()
@@ -83,6 +88,26 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
 
         private fun KtExpression.isNull(): Boolean =
             this is KtConstantExpression && this.node.elementType == KtNodeTypes.NULL
+
+        private fun KtCallExpression.canBeConvertedToSum(lambdaExpression: KtLambdaExpression, context: BindingContext? = null): Boolean {
+            val binaryExpression = lambdaExpression.singleStatement()?.let { KtPsiUtil.deparenthesize(it) }
+                    as? KtBinaryExpression ?: return false
+            if (binaryExpression.operationToken != KtTokens.PLUS) return false
+            val left = binaryExpression.left?.let { KtPsiUtil.deparenthesize(it) } ?: return false
+            val right = binaryExpression.right?.let { KtPsiUtil.deparenthesize(it) } ?: return false
+
+            val lambdaParameters = lambdaExpression.valueParameters
+            val firstLambdaParameterName = lambdaParameters.firstOrNull()?.name ?: return false
+            val secondLambdaParameterName = lambdaParameters.getOrNull(1)?.name ?: return false
+            val isFirstPlusSecond = left.isNameReferenceTo(firstLambdaParameterName) && right.isNameReferenceTo(secondLambdaParameterName)
+                    || left.isNameReferenceTo(secondLambdaParameterName) && right.isNameReferenceTo(firstLambdaParameterName)
+            if (!isFirstPlusSecond) return false
+
+            val bindingContext = context ?: analyze(BodyResolveMode.PARTIAL)
+            if (left.getType(bindingContext) != right.getType(bindingContext)) return false
+            val returnType = getResolvedCall(bindingContext)?.resultingDescriptor?.returnType ?: return false
+            return returnType.isInt() || returnType.isLong() || returnType.isFloat() || returnType.isDouble()
+        }
 
         private val conversions = listOf(
             Conversion("kotlin.collections.flatMap", fun(callExpression: KtCallExpression): String? {
@@ -136,6 +161,39 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
             }, callChecker = fun(resolvedCall: ResolvedCall<*>): Boolean {
                 val extensionReceiverType = resolvedCall.extensionReceiver?.type ?: return false
                 return extensionReceiverType.constructor.declarationDescriptor?.defaultType?.isMap(extensionReceiverType.builtIns) == false
+            }),
+
+            Conversion("kotlin.collections.reduce", fun(callExpression: KtCallExpression): String? {
+                val lambdaExpression = callExpression.singleLambdaExpression() ?: return null
+                if (!callExpression.canBeConvertedToSum(lambdaExpression)) return null
+                return "sum()"
+            }),
+
+            Conversion("kotlin.collections.fold", fun(callExpression: KtCallExpression): String? {
+                val valueArguments = callExpression.valueArguments
+                if (valueArguments.size != 2) return null
+
+                val lambdaExpression = valueArguments[1].lambdaExpression() ?: return null
+
+                val firstArgumentExpression = valueArguments.firstOrNull()?.getArgumentExpression()
+                    ?.let { KtPsiUtil.deparenthesize(it) } ?: return null
+                var context: BindingContext? = null
+                val firstArgumentText = firstArgumentExpression.text
+                val firstArgumentIsZero = if (firstArgumentText in listOf("0", "0L", "0.0F", "0.0")) {
+                    true
+                } else {
+                    context = callExpression.analyze(BodyResolveMode.PARTIAL)
+                    val constant = ConstantExpressionEvaluator.getConstant(firstArgumentExpression, context) as? TypedCompileTimeConstant
+                    when (val value = constant?.constantValue?.value) {
+                        is Int, is Long -> (value as Number).toLong() == 0L
+                        is Float, is Double -> (value as Number).toDouble() == 0.0
+                        else -> false
+                    }
+                }
+                if (!firstArgumentIsZero) return null
+
+                if (!callExpression.canBeConvertedToSum(lambdaExpression, context)) return null
+                return "sum()"
             })
         )
     }
