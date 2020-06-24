@@ -40,7 +40,14 @@ class FakeOverrideChecker(
             .filter { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
             .filterNot { it.visibility == Visibilities.PRIVATE || it.visibility == Visibilities.INVISIBLE_FAKE }
 
-        val descriptorSignatures = descriptorFakeOverrides
+        val (internalDescriptorFakeOverrides, restDescriptorFakeOverrides) =
+            descriptorFakeOverrides.partition{ it.visibility == Visibilities.INTERNAL }
+
+        val internalDescriptorSignatures = internalDescriptorFakeOverrides
+            .map { with(descriptorMangler) { it.signatureString }}
+            .sorted()
+
+        val restDescriptorSignatures = restDescriptorFakeOverrides
             .map { with(descriptorMangler) { it.signatureString }}
             .sorted()
 
@@ -52,14 +59,28 @@ class FakeOverrideChecker(
             checkOverriddenSymbols(it)
         }
 
-        val irSignatures = irFakeOverrides
+        val (internalIrFakeOverrides, restIrFakeOverrides) =
+            irFakeOverrides.partition{ it.visibility == Visibilities.INTERNAL }
+
+        val internalIrSignatures = internalIrFakeOverrides
             .map { with(irMangler) { it.signatureString }}
             .sorted()
 
-        assert(descriptorSignatures == irSignatures) {
+        val restIrSignatures = restIrFakeOverrides
+            .map { with(irMangler) { it.signatureString }}
+            .sorted()
+
+        require(restDescriptorSignatures == restIrSignatures) {
             "[IR VALIDATION] Fake override mismatch for ${clazz.fqNameWhenAvailable!!}\n" +
-            "\tDescriptor based: $descriptorSignatures\n" +
-            "\tIR based        : $irSignatures"
+            "\tDescriptor based: $restDescriptorSignatures\n" +
+            "\tIR based        : $restIrSignatures"
+        }
+
+        // There can be internal fake overrides in IR absent in descriptors.
+        require(internalIrSignatures.containsAll(internalDescriptorSignatures)) {
+            "[IR VALIDATION] Internal fake override mismatch for ${clazz.fqNameWhenAvailable!!}\n" +
+            "\tDescriptor based: $internalDescriptorSignatures\n" +
+            "\tIR based        : $internalIrSignatures"
         }
     }
 
