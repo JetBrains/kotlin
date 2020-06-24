@@ -91,10 +91,6 @@ public final class ProblemsView implements DumbAware, ToolWindowFactory {
     return type.isInstance(component) ? (T)component : null;
   }
 
-  @Override
-  public boolean shouldBeAvailable(@NotNull Project project) {
-    return Experiments.getInstance().isFeatureEnabled("problems.view.enabled");
-  }
 
   @Override
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow window) {
