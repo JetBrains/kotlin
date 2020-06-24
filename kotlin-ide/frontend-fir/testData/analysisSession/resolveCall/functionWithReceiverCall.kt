@@ -4,4 +4,4 @@ fun call() {
    "str".<selection>function(1)</selection>
 }
 
-// CALL: SimpleKtFunctionCallInfo: targetFunction = function(<receiver> : String, a: Int): IMPLICIT_TYPE
+// CALL: FunctionCallInfo: targetFunction = function(<receiver>: kotlin.String, a: kotlin.Int): kotlin.Unit

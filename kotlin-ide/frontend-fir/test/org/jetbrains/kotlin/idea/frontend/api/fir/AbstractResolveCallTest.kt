@@ -18,6 +18,8 @@ import com.intellij.psi.PsiParameter
 import com.intellij.testFramework.LightPlatformTestCase
 import org.intellij.plugins.relaxNG.compact.psi.util.PsiFunction
 import org.jetbrains.kotlin.idea.frontend.api.CallInfo
+import org.jetbrains.kotlin.idea.frontend.api.TypeInfo
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -42,29 +44,31 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") KotlinLightCod
         val elements = editor.caretModel.caretsAndSelections.map { selection ->
             getSingleSelectedElement(selection)
         }
-        val callInfos = executeOnPooledThreadInReadAction {
+
+        val actualText = executeOnPooledThreadInReadAction {
             val analysisSession = FirAnalysisSession(file as KtFile)
-            elements.map { element ->
+            val callInfos = elements.map { element ->
                 when (element) {
                     is KtCallExpression -> analysisSession.resolveCall(element)
                     is KtBinaryExpression -> analysisSession.resolveCall(element)
                     else -> error("Selected should be either KtCallExpression or KtBinaryExpression but was $element")
                 }
             }
-        }
-        if (callInfos.isEmpty()) {
-            error("There are should be at least one call selected")
-        }
 
-        val textWithoutLatestComments = run {
-            val rawText = File(path).readText()
-            """(?m)^// CALL:\s.*$""".toRegex().replace(rawText, "").trimEnd()
-        }
-        val actualText = buildString {
-            append(textWithoutLatestComments)
-            append("\n\n")
-            callInfos.joinTo(this, separator = "\n") { info ->
-                "// CALL: ${info?.stringRepresentation()}"
+            if (callInfos.isEmpty()) {
+                error("There are should be at least one call selected")
+            }
+
+            val textWithoutLatestComments = run {
+                val rawText = File(path).readText()
+                """(?m)^// CALL:\s.*$""".toRegex().replace(rawText, "").trimEnd()
+            }
+            buildString {
+                append(textWithoutLatestComments)
+                append("\n\n")
+                callInfos.joinTo(this, separator = "\n") { info ->
+                    "// CALL: ${info?.stringRepresentation()}"
+                }
             }
         }
         KotlinTestUtils.assertEqualsToFile(File(path), actualText)
@@ -111,31 +115,22 @@ private fun File.getExternalFiles(): List<File> {
 }
 
 private fun CallInfo.stringRepresentation(): String {
+    fun TypeInfo.render() = asDenotableTypeStringRepresentation().replace('/', '.')
     fun Any.stringValue(): String? = when (this) {
-        is PsiMethod -> buildString {
-            append(getKotlinFqName()!!)
-            @Suppress("UnstableApiUsage")
-            parameters.joinTo(this, prefix = "(", postfix = ")") { parameter ->
-                "${parameter.name}: ${(parameter as PsiParameter).typeElement!!.text}"
-            }
-            append(": ${returnTypeElement!!.text}")
-        }
-        is KtFunction -> buildString {
-            append(getKotlinFqName()!!)
+        is KtFunctionLikeSymbol -> buildString {
+            append(if (this@stringValue is KtFunctionSymbol) fqName else "<constructor>")
             append("(")
-            receiverTypeReference?.let { receiver ->
-                append("<receiver> : ${receiver.text}")
+            (this@stringValue as? KtFunctionSymbol)?.receiverType?.let { receiver ->
+                append("<receiver>: ${receiver.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
-            valueParameters.joinTo(this,) { parameter ->
-                "${parameter.name}: ${parameter.typeReference!!.text}"
+            valueParameters.joinTo(this) { parameter ->
+                "${parameter.name}: ${parameter.type.render()}"
             }
             append(")")
-            append(": ${typeReference?.text ?: "IMPLICIT_TYPE"}")
+            append(": ${type.render()}")
         }
-        is KtClass -> "Implicit constructor of ${getKotlinFqName()!!}"
-        is PsiClass -> "Implicit constructor of ${getKotlinFqName()!!}"
-        is KtParameter -> name!!
+        is KtParameterSymbol -> "$name: ${type.render()}"
         is Boolean -> toString()
         else -> error("unexpected parameter type ${this::class}")
     }

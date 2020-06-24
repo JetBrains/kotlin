@@ -4,4 +4,4 @@ fun call() {
     val a = <selection>A()</selection>
 }
 
-// CALL: KtImplicitPrimaryConstructorCallInfo: owner = Implicit constructor of A
+// CALL: FunctionCallInfo: targetFunction = <constructor>(): A

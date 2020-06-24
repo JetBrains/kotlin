@@ -3,4 +3,4 @@ fun call() {
     javaClass.<selection>javaMethod()</selection>
 }
 
-// CALL: SimpleJavaFunctionCallInfo: targetFunction = JavaClass.javaMethod(): void
+// CALL: FunctionCallInfo: targetFunction = JavaClass.javaMethod(): kotlin.Unit
