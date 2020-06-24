@@ -1388,11 +1388,15 @@
         <constraint name="ref2" nameOfExprType="com\.jetbrains\.swift\.psi\.types\.SwiftType" exprTypeWithinHierarchy="true" within="" contains="" />
         <constraint name="ref1" nameOfExprType="com\.jetbrains\.swift\.psi\.types\.SwiftType" exprTypeWithinHierarchy="true" within="" contains="" />
       </searchConfiguration>
-      <replaceConfiguration name="Over-dependence on Object2ObjectOpenHashMap from fastutil" order="1" text="new Object2ObjectLinkedOpenHashMap&lt;&gt;($a$)" recursive="false" caseInsensitive="false" type="JAVA" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="true" replacement="com.intellij.util.containers.CollectionFactory.createSmallMemoryFootprintLinkedMap($a$)">
+      <replaceConfiguration name="Over-dependence on fastutil Collections" uuid="8c028576-2d38-32d6-a013-7c3ce0e29f09" order="2" text="new ObjectOpenHashSet&lt;&gt;($a$)" recursive="false" caseInsensitive="false" type="JAVA" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="true" replacement="com.intellij.util.containers.CollectionFactory.createSmallMemoryFootprintSet($a$)">
         <constraint name="__context__" within="" contains="" />
         <constraint name="a" minCount="0" maxCount="2147483647" within="" contains="" />
       </replaceConfiguration>
-      <replaceConfiguration name="Over-dependence on Object2ObjectOpenHashMap from fastutil" description="Factory method CollectionFactory.createSmallMemoryFootprintMap() should be used to reduce dependence on concrete map implementation from third-party library " problemDescriptor="Should use factory method instead of direct ctr call" text="new Object2ObjectOpenHashMap&lt;&gt;($a$)" recursive="false" caseInsensitive="false" type="JAVA" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="true" replacement="com.intellij.util.containers.CollectionFactory.createSmallMemoryFootprintMap($a$)">
+      <replaceConfiguration name="Over-dependence on fastutil Collections" uuid="8c028576-2d38-32d6-a013-7c3ce0e29f09" description="Factory method CollectionFactory.createXXX() should be used to reduce dependence on concrete collection implementation from third-party library " problemDescriptor="Should use factory method instead of direct ctr call" text="new Object2ObjectOpenHashMap&lt;&gt;($a$)" recursive="false" caseInsensitive="false" type="JAVA" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="true" replacement="com.intellij.util.containers.CollectionFactory.createSmallMemoryFootprintMap($a$)">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="a" minCount="0" maxCount="2147483647" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="Over-dependence on fastutil Collections" uuid="8c028576-2d38-32d6-a013-7c3ce0e29f09" order="1" text="new Object2ObjectLinkedOpenHashMap&lt;&gt;($a$)" recursive="false" caseInsensitive="false" type="JAVA" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="true" replacement="com.intellij.util.containers.CollectionFactory.createSmallMemoryFootprintLinkedMap($a$)">
         <constraint name="__context__" within="" contains="" />
         <constraint name="a" minCount="0" maxCount="2147483647" within="" contains="" />
       </replaceConfiguration>
