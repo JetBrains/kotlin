@@ -1,6 +1,0 @@
-public open class Inheritor : R|kotlin/Any|, R|Base| {
-    public open fun getX(): R|kotlin/Int|
-
-    public constructor(): R|Inheritor|
-
-}
