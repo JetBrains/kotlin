@@ -42,9 +42,9 @@ class SubpluginEnvironment(
                 val result = project.plugins.filterIsInstance<KotlinCompilerPluginSupportPlugin>()
 
                 @Suppress("DEPRECATION", "UNCHECKED_CAST")
-                val compatibilitySubplugins = ServiceLoader.load(klass, classloader).map {
-                    LegacyKotlinCompilerPluginSupportPlugin(it as KotlinGradleSubplugin<AbstractCompile>)
-                }
+                val compatibilitySubplugins = ServiceLoader.load(klass, classloader)
+                    .filter { it !is KotlinCompilerPluginSupportPlugin }
+                    .map { LegacyKotlinCompilerPluginSupportPlugin(it as KotlinGradleSubplugin<AbstractCompile>) }
 
                 SubpluginEnvironment(result + compatibilitySubplugins, kotlinPluginVersion)
             } catch (e: NoClassDefFoundError) {
@@ -70,7 +70,7 @@ class SubpluginEnvironment(
                 project.addMavenDependency(PLUGIN_CLASSPATH_CONFIGURATION_NAME, artifact)
             }
 
-            subplugin.getNativeCompilerPluginArtifact()?.let { artifact ->
+            subplugin.getPluginArtifactForNative()?.let { artifact ->
                 project.addMavenDependency(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, artifact)
             }
 
@@ -165,7 +165,7 @@ internal class LegacyKotlinCompilerPluginSupportPlugin(
 
     override fun getCompilerPluginId(): String = oldPlugin.getCompilerPluginId()
     override fun getPluginArtifact(): SubpluginArtifact = oldPlugin.getPluginArtifact()
-    override fun getNativeCompilerPluginArtifact(): SubpluginArtifact? = oldPlugin.getNativeCompilerPluginArtifact()
+    override fun getPluginArtifactForNative(): SubpluginArtifact? = oldPlugin.getNativeCompilerPluginArtifact()
 }
 
 internal fun findJavaTaskForKotlinCompilation(compilation: KotlinCompilation<*>): TaskProvider<out JavaCompile>? =

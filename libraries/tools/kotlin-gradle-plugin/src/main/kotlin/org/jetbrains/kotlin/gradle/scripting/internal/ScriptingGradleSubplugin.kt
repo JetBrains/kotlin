@@ -14,8 +14,10 @@ import org.gradle.api.artifacts.transform.ArtifactTransform
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -207,7 +209,10 @@ fun Configuration.discoverScriptExtensionsFiles() =
     }.artifacts.artifactFiles
 
 
-class ScriptingKotlinGradleSubplugin : KotlinCompilerPluginSupportPlugin {
+class ScriptingKotlinGradleSubplugin :
+    KotlinCompilerPluginSupportPlugin,
+    @Suppress("DEPRECATION") // implementing to fix KT-39809
+    KotlinGradleSubplugin<KotlinCompile> {
     companion object {
         const val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting-compiler-embeddable"
 
@@ -250,4 +255,13 @@ class ScriptingKotlinGradleSubplugin : KotlinCompilerPluginSupportPlugin {
     override fun getCompilerPluginId() = "kotlin.scripting"
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(artifactId = SCRIPTING_ARTIFACT_NAME)
+
+    //region Stub implementation for legacy API, KT-39809
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = false
+
+    override fun apply(
+        project: Project, kotlinCompile: KotlinCompile, javaCompile: AbstractCompile?, variantData: Any?, androidProjectHandler: Any?,
+        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
+    ): List<SubpluginOption> = emptyList()
+    //endregion
 }
