@@ -172,6 +172,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xenable-js-scripting", description = "Enable experimental support of .kts files using K/JS (with -Xir only)")
     var enableJsScripting: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xdisable-fake-override-validator", description = "Disable IR fake override validator")
+    var disableFakeOverrideValidator: Boolean by FreezableVar(false)
+
     override fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
         if (!isIrBackendEnabled()) return
 
