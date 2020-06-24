@@ -116,7 +116,7 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
 
             val parser = OptionsParser.getParserByPsiElementClass(caretElementClass)
 
-            val rootPath = path.substringBeforeLast("/") + "/"
+            val rootPath = path.substringBeforeLast(File.separator) + File.separator
 
             val rootDir = File(rootPath)
             val extraFiles = rootDir.listFiles { _, name ->
