@@ -100,7 +100,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift ctrl C",             "CopyPaths", "DatabaseView.CopyDdlAction"},
     { "shift control D",          "TagDocumentationNavigation", "Diff.ShowSettingsPopup", "Uml.ShowDiff", "Console.TableResult.CompareCells"},
     { "shift control DOWN",       "ResizeToolWindowDown", "MoveStatementDown"},
-    { "shift control ENTER",      "EditorCompleteStatement", "Console.Jpa.GenerateSql", "org.jetbrains.r.actions.RRunAction"},
+    { "shift control ENTER",      "EditorCompleteStatement", "Console.Jpa.GenerateSql", "org.jetbrains.r.actions.RRunAction", "Terminal.SmartCommandExecution.Debug"},
     { "shift control F10",        "Console.Open", "RunClass", "RunTargetAction"},
     { "shift control F8",         "ViewBreakpoints", "EditBreakpoint"},
     { "shift control G",          "ClassTemplateNavigation", "GoToClass"},
@@ -402,7 +402,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift ctrl D",             "Console.TableResult.CompareCells", "EditorDuplicate", "Uml.ShowDiff"},
     { "shift ctrl M",             "EditorSelectWord", "RInsertPipeAction"},
     { "shift ctrl DOWN",          "MoveLineDown", "ResizeToolWindowDown"},
-    { "shift ctrl ENTER",         "Console.Jpa.GenerateSql", "EditorStartNewLineBefore", "org.jetbrains.r.actions.RRunAction"},
+    { "shift ctrl ENTER",         "Console.Jpa.GenerateSql", "EditorStartNewLineBefore", "org.jetbrains.r.actions.RRunAction", "Terminal.SmartCommandExecution.Debug"},
     { "shift ctrl T",             "ReopenClosedTab", "ServiceView.ShowServices"},
     { "shift ctrl UP",            "MoveLineUp", "ResizeToolWindowUp"}
     });
@@ -425,7 +425,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "meta alt G",               "DatabaseView.SqlGenerator", "FindWordAtCaret", "org.jetbrains.plugins.ruby.rails.actions.generators.GeneratorsPopupAction"},
     { "shift ENTER",              "CollapseExpandableComponent", "Console.TableResult.EditValueMaximized", "EditorSplitLine", "ExpandExpandableComponent", "NotebookRunCellSelectBelowAction", "OpenElementInNewWindow", "RConsoleNextLineAction"},
     { "shift meta D",             "Console.TableResult.CompareCells", "EditorDuplicate", "Uml.ShowDiff"},
-    { "shift meta ENTER",         "Console.Jpa.GenerateSql", "EditorStartNewLineBefore",  "org.jetbrains.r.actions.RRunAction"},
+    { "shift meta ENTER",         "Console.Jpa.GenerateSql", "EditorStartNewLineBefore",  "org.jetbrains.r.actions.RRunAction", "Terminal.SmartCommandExecution.Debug"},
     { "shift meta T",             "ReopenClosedTab", "ServiceView.ShowServices"}
     });
   }};
