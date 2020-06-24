@@ -1,12 +1,11 @@
 <component name="libraryTable">
-  <library name="kotlin-main-kts" type="repository">
-    <properties maven-id="org.jetbrains.kotlin:kotlin-main-kts:1.3.72" />
+  <library name="kotlin-main-kts">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-main-kts/1.3.72/kotlin-main-kts-1.3.72.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-main-kts/1.3.72/kotlin-main-kts-1.3.72.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-main-kts/1.3.72/kotlin-main-kts-1.3.72-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/repo/org/jetbrains/kotlin/kotlin-main-kts/1.3.72/kotlin-main-kts-1.3.72-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
