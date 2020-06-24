@@ -123,7 +123,7 @@ class Fir2IrLazyClass(
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
         val scope = fir.buildUseSiteMemberScope(session, scopeSession)!!
         scope.processDeclaredConstructors {
-            result += declarationStorage.createIrConstructor(it.fir, this)
+            result += declarationStorage.getIrConstructorSymbol(it).owner
         }
         for (declaration in fir.declarations) {
             when (declaration) {

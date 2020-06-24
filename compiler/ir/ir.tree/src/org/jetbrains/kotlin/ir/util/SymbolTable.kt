@@ -487,6 +487,9 @@ open class SymbolTable(
     override fun referenceConstructor(descriptor: ClassConstructorDescriptor) =
         constructorSymbolTable.referenced(descriptor) { createConstructorSymbol(descriptor) }
 
+    fun referenceConstructorIfAny(sig: IdSignature): IrConstructorSymbol? =
+        constructorSymbolTable.get(sig)
+
     fun declareConstructorFromLinker(
         descriptor: ClassConstructorDescriptor,
         sig: IdSignature,

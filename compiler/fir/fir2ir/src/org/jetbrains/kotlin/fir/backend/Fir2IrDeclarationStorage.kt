@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
@@ -820,9 +821,33 @@ class Fir2IrDeclarationStorage(
     fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol): IrConstructorSymbol {
         val firConstructor = firConstructorSymbol.fir
         getCachedIrConstructor(firConstructor)?.let { return it.symbol }
-
+        val signature = signatureComposer.composeSignature(firConstructor)
         val irParent = findIrParent(firConstructor) as IrClass
-        val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
+        val parentOrigin = irParent.origin
+        if (signature != null) {
+            symbolTable.referenceConstructorIfAny(signature)?.let { irConstructorSymbol ->
+                val irFunction = irConstructorSymbol.owner
+                constructorCache[firConstructor] = irFunction
+                return irConstructorSymbol
+            }
+            if (parentOrigin == IrDeclarationOrigin.DEFINED) {
+                throw AssertionError()
+            }
+            val symbol = Fir2IrConstructorSymbol(signature)
+            val irConstructor = firConstructor.convertWithOffsets { startOffset, endOffset ->
+                symbolTable.declareConstructor(signature, { symbol }) {
+                    Fir2IrLazyConstructor(
+                        components, startOffset, endOffset, parentOrigin, firConstructor, symbol
+                    ).apply {
+                        parent = irParent
+                    }
+                }
+            }
+            constructorCache[firConstructor] = irConstructor
+            // NB: this is needed to prevent recursions in case of self bounds
+            (irConstructor as Fir2IrLazyConstructor).prepareTypeParameters()
+            return symbol
+        }
         val irDeclaration = createIrConstructor(firConstructor, irParent, origin = parentOrigin).apply {
             setAndModifyParent(irParent)
         }
