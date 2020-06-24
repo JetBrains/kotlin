@@ -40,7 +40,7 @@ public class Descriptor {
     myGroup = groupPath.length == 0 ? new String[]{InspectionProfileEntry.getGeneralGroupName()} : groupPath;
     myShortName = tool.getShortName();
     myScope = state.getScope(project);
-    final HighlightDisplayKey key = HighlightDisplayKey.find(myShortName);
+    final HighlightDisplayKey key = HighlightDisplayKey.findOrRegister(myShortName, myText);
     myLevel = inspectionProfile.getErrorLevel(key, myScope, project);
     myEnabled = inspectionProfile.isToolEnabled(key, myScope, project);
     myToolWrapper = tool;
@@ -77,7 +77,7 @@ public class Descriptor {
 
   @NotNull
   public HighlightDisplayKey getKey() {
-    return HighlightDisplayKey.find(myShortName);
+    return HighlightDisplayKey.findOrRegister(myShortName, myText);
   }
 
   public HighlightDisplayLevel getLevel() {
