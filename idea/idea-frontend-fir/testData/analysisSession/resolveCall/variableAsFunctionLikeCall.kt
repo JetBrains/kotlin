@@ -1,7 +1,7 @@
 operator fun Int.invoke(): String {}
 
-fun call(x: Int) {
+fun call(x: kotlin.int) {
     <selection>x()</selection>
 }
 
-// CALL: SimpleKtFunctionCallInfo: targetFunction = invoke(<receiver> : Int): String
+// CALL: FunctionCallInfo: targetFunction = invoke(<receiver>: kotlin.Int): kotlin.String
