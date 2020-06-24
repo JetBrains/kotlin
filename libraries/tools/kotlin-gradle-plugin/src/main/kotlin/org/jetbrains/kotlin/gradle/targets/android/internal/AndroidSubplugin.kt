@@ -17,7 +17,9 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -65,7 +67,11 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
     }
 }
 
-class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
+class AndroidSubplugin :
+    KotlinCompilerPluginSupportPlugin,
+    @Suppress("DEPRECATION") // implementing to fix KT-39809
+    KotlinGradleSubplugin<AbstractCompile>
+{
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
         if (kotlinCompilation !is KotlinJvmAndroidCompilation)
             return false
@@ -284,4 +290,13 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
         val builder = factory.newDocumentBuilder()
         return builder.parse(this)
     }
+
+    //region Stub implementation for legacy API, KT-39809
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = false
+
+    override fun apply(
+        project: Project, kotlinCompile: AbstractCompile, javaCompile: AbstractCompile?, variantData: Any?, androidProjectHandler: Any?,
+        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
+    ): List<SubpluginOption> = emptyList()
+    //endregion
 }

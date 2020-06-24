@@ -123,7 +123,7 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
 
     fun getCompilerPluginId(): String
     fun getPluginArtifact(): SubpluginArtifact
-    fun getNativeCompilerPluginArtifact(): SubpluginArtifact? = null
+    fun getPluginArtifactForNative(): SubpluginArtifact? = null
 }
 
 open class SubpluginArtifact(val groupId: String, val artifactId: String, val version: String? = null)
