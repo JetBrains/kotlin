@@ -25,7 +25,6 @@ import com.intellij.xdebugger.XDebugSession
 import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.idea.artifacts.DEPENDENCIES_DIRECTORY_PATH
 import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
@@ -83,7 +82,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         KotlinDebuggerCaches.LOG_COMPILATIONS = true
         logPropagator = LogPropagator(::systemLogger).apply { attach() }
 
-        VfsRootAccess.allowRootAccess(testRootDisposable, DEPENDENCIES_DIRECTORY_PATH)
+        VfsRootAccess.allowRootAccess(project, KOTLIN_PLUGIN_ROOT_DIRECTORY.parentFile.absolutePath + File.separator + "dependencies")
     }
 
     override fun tearDown() {
