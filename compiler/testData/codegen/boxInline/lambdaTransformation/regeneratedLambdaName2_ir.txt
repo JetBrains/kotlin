@@ -21,7 +21,7 @@ public final class _2Kt {
 
 @kotlin.Metadata
 public final class test/_1Kt$call$1 {
-    synthetic final @org.jetbrains.annotations.NotNull field $f: kotlin.jvm.functions.Function0
+    synthetic final field $f: kotlin.jvm.functions.Function0
     inner class test/_1Kt$call$1
     public method <init>(p0: kotlin.jvm.functions.Function0): void
     public final method invoke(): java.lang.Object

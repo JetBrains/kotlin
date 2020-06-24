@@ -62,7 +62,7 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$fold$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class CrossinlineKt$box$1 {
-    synthetic final @org.jetbrains.annotations.NotNull field $res: kotlin.jvm.internal.Ref$IntRef
+    synthetic final field $res: kotlin.jvm.internal.Ref$IntRef
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
@@ -80,7 +80,7 @@ final class CrossinlineKt$box$1 {
 public final class CrossinlineKt$consumeEach$2$send$1 {
     field label: int
     synthetic field result: java.lang.Object
-    synthetic final @org.jetbrains.annotations.NotNull field this$0: CrossinlineKt$consumeEach$2
+    synthetic final field this$0: CrossinlineKt$consumeEach$2
     inner class CrossinlineKt$consumeEach$2
     inner class CrossinlineKt$consumeEach$2$send$1
     public method <init>(p0: CrossinlineKt$consumeEach$2, p1: kotlin.coroutines.Continuation): void
@@ -89,7 +89,7 @@ public final class CrossinlineKt$consumeEach$2$send$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$consumeEach$2 {
-    synthetic final @org.jetbrains.annotations.NotNull field $action: kotlin.jvm.functions.Function2
+    synthetic final field $action: kotlin.jvm.functions.Function2
     inner class CrossinlineKt$consumeEach$2
     inner class CrossinlineKt$consumeEach$2$send$1
     public method <init>(p0: kotlin.jvm.functions.Function2): void
@@ -234,7 +234,7 @@ public final class CrossinlineKt$source$1$consume$1 {
     field L$2: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
-    synthetic final @org.jetbrains.annotations.NotNull field this$0: CrossinlineKt$source$1
+    synthetic final field this$0: CrossinlineKt$source$1
     inner class CrossinlineKt$source$1
     inner class CrossinlineKt$source$1$consume$1
     public method <init>(p0: CrossinlineKt$source$1, p1: kotlin.coroutines.Continuation): void
@@ -243,7 +243,7 @@ public final class CrossinlineKt$source$1$consume$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$source$1 {
-    synthetic final @org.jetbrains.annotations.NotNull field $action: kotlin.jvm.functions.Function2
+    synthetic final field $action: kotlin.jvm.functions.Function2
     inner class CrossinlineKt$source$1
     inner class CrossinlineKt$source$1$consume$1
     public method <init>(p0: kotlin.jvm.functions.Function2): void
@@ -277,7 +277,7 @@ public interface Sink {
 
 @kotlin.Metadata
 public final class SourceCrossinline$Factory {
-    synthetic final static @org.jetbrains.annotations.NotNull field $$INSTANCE: SourceCrossinline$Factory
+    synthetic final static field $$INSTANCE: SourceCrossinline$Factory
     inner class SourceCrossinline$Factory
     static method <clinit>(): void
     private method <init>(): void
