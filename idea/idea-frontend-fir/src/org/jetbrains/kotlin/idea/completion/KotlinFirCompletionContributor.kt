@@ -72,35 +72,45 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         }
 
         for (scope in scopes) {
-            for (name in scope.getCallableNames()) {
-                if (name.isConstructor) continue
+            for (symbol in scope.collectCallableSymbols()) {
+                val symbolName = symbol.callableId.callableName
+                if (symbolName.isConstructor) continue
 
-                fun processor(symbol: FirCallableSymbol<*>) {
-                    val expectedReceiverType = symbol.fir.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
+                val expectedReceiverType = symbol.fir.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
 
-                    if (expectedReceiverType != null) {
-                        val receiverTypes = if (explicitReceiverType != null) {
-                            listOf(explicitReceiverType)
-                        } else {
-                            towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver?.type }
-                        }
-
-                        val expectedReceiverTypeIsPresent = receiverTypes.any {
-                            AbstractTypeChecker.isSubtypeOf(completionContext.session.typeContext, it, expectedReceiverType)
-                        }
-
-                        if (expectedReceiverTypeIsPresent) {
-                            result.addElement(LookupElementBuilder.create(name.asString()))
-                        }
-                    } else if (explicitReceiverType == null || symbol.callableId.classId == explicitReceiverType.classId) {
-                        result.addElement(LookupElementBuilder.create(name.asString()))
+                if (expectedReceiverType != null) {
+                    val receiverTypes = if (explicitReceiverType != null) {
+                        listOf(explicitReceiverType)
+                    } else {
+                        towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver?.type }
                     }
-                }
 
-                scope.processFunctionsByName(name, ::processor)
-                scope.processPropertiesByName(name, ::processor)
+                    val expectedReceiverTypeIsPresent = receiverTypes.any {
+                        AbstractTypeChecker.isSubtypeOf(completionContext.session.typeContext, it, expectedReceiverType)
+                    }
+
+                    if (expectedReceiverTypeIsPresent) {
+                        result.addElement(LookupElementBuilder.create(symbolName.toString()))
+                    }
+                } else if (explicitReceiverType == null || symbol.callableId.classId == explicitReceiverType.classId) {
+                    result.addElement(LookupElementBuilder.create(symbolName.toString()))
+                }
             }
         }
+    }
+
+    private fun FirScope.collectCallableSymbols(): MutableList<FirCallableSymbol<*>> {
+        val allCallableSymbols = mutableListOf<FirCallableSymbol<*>>()
+        fun symbolsCollector(symbol: FirCallableSymbol<*>) {
+            allCallableSymbols.add(symbol)
+        }
+
+        for (name in getCallableNames()) {
+            processFunctionsByName(name, ::symbolsCollector)
+            processPropertiesByName(name, ::symbolsCollector)
+        }
+
+        return allCallableSymbols
     }
 
     private val Name.isConstructor get() = this == Name.special("<init>")
