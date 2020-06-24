@@ -1001,6 +1001,7 @@ open class SymbolTable(
                 throw IllegalArgumentException("Unexpected value descriptor: $value")
         }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun wrappedTopLevelCallableDescriptors(): Set<DescriptorWithContainerSource> {
         val result = mutableSetOf<DescriptorWithContainerSource>()
         for (descriptor in simpleFunctionSymbolTable.descriptorToSymbol.keys) {
@@ -1008,8 +1009,20 @@ open class SymbolTable(
                 result.add(descriptor)
             }
         }
+        for (symbol in simpleFunctionSymbolTable.idSigToSymbol.values) {
+            val descriptor = symbol.descriptor
+            if (descriptor is WrappedFunctionDescriptorWithContainerSource && symbol.owner.parent !is IrClass) {
+                result.add(descriptor)
+            }
+        }
         for (descriptor in propertySymbolTable.descriptorToSymbol.keys) {
             if (descriptor is WrappedPropertyDescriptorWithContainerSource && descriptor.owner.parent !is IrClass) {
+                result.add(descriptor)
+            }
+        }
+        for (symbol in propertySymbolTable.idSigToSymbol.values) {
+            val descriptor = symbol.descriptor
+            if (descriptor is WrappedPropertyDescriptorWithContainerSource && symbol.owner.parent !is IrClass) {
                 result.add(descriptor)
             }
         }
