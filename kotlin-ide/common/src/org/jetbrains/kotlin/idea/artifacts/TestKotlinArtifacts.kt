@@ -14,6 +14,10 @@ val KOTLIN_PLUGIN_ROOT_DIRECTORY: File by lazy {
     File(currentDir, "kotlin").takeIf { it.exists() } ?: error("Can't find Kotlin plugin root directory")
 }
 
+val DEPENDENCIES_DIRECTORY_PATH: String by lazy {
+    KOTLIN_PLUGIN_ROOT_DIRECTORY.parentFile.absolutePath + File.separator + "dependencies"
+}
+
 private const val PROJECT_DIR = "\$PROJECT_DIR\$"
 private const val MAVEN_REPOSITORY = "\$MAVEN_REPOSITORY\$"
 

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
@@ -17,7 +16,6 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
@@ -39,6 +37,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CompilerSettings.Companion.DEFAULT_ADDITIONAL_ARGUMENTS
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.artifacts.DEPENDENCIES_DIRECTORY_PATH
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.facet.*
@@ -55,9 +54,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.io.IOException
-import java.nio.file.Paths
 import java.util.*
-import kotlin.reflect.full.findAnnotation
 
 abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFixtureTestCaseBase() {
     private val exceptions = ArrayList<Throwable>()
@@ -89,6 +86,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         UnusedSymbolInspection()
 
         VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, DEPENDENCIES_DIRECTORY_PATH)
 
         editorTrackerProjectOpened(project)
 
