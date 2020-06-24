@@ -290,7 +290,7 @@ abstract class ProblemsViewPanel extends OnePixelSplitter implements Disposable,
   }
 
   private @Nullable OpenFileDescriptor getDescriptor(@NotNull ProblemNode node) {
-    return getDescriptor(node.getFile(), node.getProblem().getOffset());
+    return getDescriptor(node.getFile(), node.getOffset());
   }
 
   private @Nullable OpenFileDescriptor getDescriptor(@NotNull VirtualFile file, int offset) {

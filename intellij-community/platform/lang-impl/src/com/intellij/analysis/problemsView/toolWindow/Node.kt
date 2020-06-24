@@ -4,7 +4,6 @@ package com.intellij.analysis.problemsView.toolWindow
 import com.intellij.ide.projectView.PresentationData
 import com.intellij.ide.util.treeView.PresentableNodeDescriptor
 import com.intellij.openapi.project.Project
-import com.intellij.ui.SimpleTextAttributes.REGULAR_ATTRIBUTES
 import com.intellij.ui.tree.LeafState
 import com.intellij.ui.tree.TreePathUtil.pathToCustomNode
 import java.util.Collections.emptyList
@@ -25,8 +24,6 @@ internal abstract class Node : PresentableNodeDescriptor<Node?>, LeafState.Suppl
 
   override fun update(presentation: PresentationData) {
     if (myProject == null || myProject.isDisposed) return
-    presentation.addText(name, REGULAR_ATTRIBUTES)
-    presentation.setIcon(icon)
     update(myProject, presentation)
   }
 

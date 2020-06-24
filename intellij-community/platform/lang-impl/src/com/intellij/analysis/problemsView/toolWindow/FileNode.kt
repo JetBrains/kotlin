@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil.getLocationRelativeToUserHome
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiUtilCore.findFileSystemItem
 import com.intellij.ui.SimpleTextAttributes.GRAYED_ATTRIBUTES
+import com.intellij.ui.SimpleTextAttributes.REGULAR_ATTRIBUTES
 import com.intellij.ui.tree.LeafState
 
 internal class FileNode(parent: Node, val file: VirtualFile) : Node(parent) {
@@ -18,6 +19,7 @@ internal class FileNode(parent: Node, val file: VirtualFile) : Node(parent) {
   override fun getName() = file.presentableName ?: file.name
 
   override fun update(project: Project, presentation: PresentationData) {
+    presentation.addText(name, REGULAR_ATTRIBUTES)
     presentation.setIcon(findIcon(findFileSystemItem(project, file), 0) ?: when (file.isDirectory) {
       true -> AllIcons.Nodes.Folder
       else -> AllIcons.FileTypes.Any_type

@@ -13,7 +13,7 @@ internal data class NodeComparator(
     if (node1 === node2) return 0
     if (node1 == null) return +1
     if (node2 == null) return -1
-    if (node1 is ProblemNode && node2 is ProblemNode) return compare(node1.problem, node2.problem)
+    if (node1 is ProblemNode && node2 is ProblemNode) return compare(node1, node2)
     if (node1 is ProblemNode) return -1 // problem node before other nodes
     if (node2 is ProblemNode) return +1
     if (sortFoldersFirst && node1 is FileNode && node2 is FileNode) {
@@ -23,7 +23,7 @@ internal data class NodeComparator(
     return naturalCompare(node1.name, node2.name)
   }
 
-  private fun compare(problem1: Problem, problem2: Problem): Int {
+  private fun compare(problem1: ProblemNode, problem2: ProblemNode): Int {
     if (sortBySeverity) {
       val result = problem2.severity.compareTo(problem1.severity)
       if (result != 0) return result

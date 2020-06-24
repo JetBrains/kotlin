@@ -5,6 +5,7 @@ import com.intellij.ide.projectView.PresentationData
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.SimpleTextAttributes.REGULAR_ATTRIBUTES
 import com.intellij.ui.tree.LeafState
 import com.intellij.ui.tree.TreeVisitor.ByTreePath
 import com.intellij.util.ui.tree.TreeUtil.promiseExpand
@@ -20,7 +21,9 @@ internal open class Root(val panel: ProblemsViewPanel, private val filter: Probl
 
   override fun getName() = panel.displayName
 
-  override fun update(project: Project, presentation: PresentationData) = Unit
+  override fun update(project: Project, presentation: PresentationData) {
+    presentation.addText(name, REGULAR_ATTRIBUTES)
+  }
 
   override fun getChildren(): Collection<Node> = synchronized(allProblems) {
     allProblems.values
