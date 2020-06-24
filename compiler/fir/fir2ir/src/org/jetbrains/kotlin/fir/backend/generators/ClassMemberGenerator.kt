@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -256,30 +257,32 @@ internal class ClassMemberGenerator(
         val firDispatchReceiver = dispatchReceiver
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
-            val typeArguments = (constructedTypeRef as? FirResolvedTypeRef)?.type?.typeArguments
+            val typeArguments = (constructedTypeRef as? FirResolvedTypeRef)?.type?.fullyExpandedType(session)?.typeArguments
             val constructor = constructorSymbol.fir
             if (constructor.isFromEnumClass || constructor.returnTypeRef.isEnum) {
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset,
                     constructedIrType,
                     irConstructorSymbol,
-                    typeArgumentsCount = typeArguments?.size ?: 0,
+                    typeArgumentsCount = constructor.typeParameters.size,
                     valueArgumentsCount = constructor.valueParameters.size
-                ).apply {
-                }
+                )
             } else {
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset,
                     constructedIrType,
                     irConstructorSymbol,
-                    typeArgumentsCount = typeArguments?.size ?: 0,
+                    typeArgumentsCount = constructor.typeParameters.size,
                     valueArgumentsCount = irConstructorSymbol.owner.valueParameters.size
                 )
             }.let {
-                if (typeArguments != null) {
-                    for ((index, typeArgument) in typeArguments.withIndex()) {
-                        val irType = (typeArgument as ConeKotlinTypeProjection).type.toIrType()
-                        it.putTypeArgument(index, irType)
+                if (constructor.typeParameters.isNotEmpty()) {
+                    if (typeArguments?.isNotEmpty() == true) {
+                        for ((index, typeArgument) in typeArguments.withIndex()) {
+                            if (index >= constructor.typeParameters.size) break
+                            val irType = (typeArgument as ConeKotlinTypeProjection).type.toIrType()
+                            it.putTypeArgument(index, irType)
+                        }
                     }
                 }
                 if (firDispatchReceiver !is FirNoReceiverExpression) {

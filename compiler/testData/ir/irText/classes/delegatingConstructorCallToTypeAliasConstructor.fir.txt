@@ -66,6 +66,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.C2 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Cell) [primary] declared in <root>.Cell'
+          <T>: kotlin.String
           value: CONST String type=kotlin.String value="K"
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.Cell]'
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
