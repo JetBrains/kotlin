@@ -18,12 +18,14 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.xdebugger.XDebugSession
 import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.test.preference.*
@@ -79,6 +81,8 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
 
         KotlinDebuggerCaches.LOG_COMPILATIONS = true
         logPropagator = LogPropagator(::systemLogger).apply { attach() }
+
+        VfsRootAccess.allowRootAccess(project, KOTLIN_PLUGIN_ROOT_DIRECTORY.parentFile.absolutePath + File.separator + "dependencies")
     }
 
     override fun tearDown() {
