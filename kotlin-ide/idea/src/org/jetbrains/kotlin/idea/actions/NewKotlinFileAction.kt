@@ -92,9 +92,24 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
                 "Kotlin Interface"
             )
             .addKind(
+                KotlinBundle.message("action.new.file.dialog.data.class.title"),
+                KotlinIcons.CLASS,
+                "Kotlin Data Class"
+            )
+            .addKind(
                 KotlinBundle.message("action.new.file.dialog.enum.title"),
                 KotlinIcons.ENUM,
                 "Kotlin Enum"
+            )
+            .addKind(
+                KotlinBundle.message("action.new.file.dialog.sealed.class.title"),
+                KotlinIcons.CLASS,
+                "Kotlin Sealed Class"
+            )
+            .addKind(
+                KotlinBundle.message("action.new.file.dialog.annotation.title"),
+                KotlinIcons.ANNOTATION,
+                "Kotlin Annotation"
             )
             .addKind(
                 KotlinBundle.message("action.new.file.dialog.object.title"),
