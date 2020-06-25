@@ -166,7 +166,7 @@ internal fun buildCodeToInline(
         }
 
         return builder.prepareCodeToInline(
-            lastReturn?.returnedExpression,
+            lastReturn?.returnedExpression?.copied(),
             statements.dropLast(returnStatements.size), ::analyzeExpressionInContext, reformat = true
         )
     } else {
