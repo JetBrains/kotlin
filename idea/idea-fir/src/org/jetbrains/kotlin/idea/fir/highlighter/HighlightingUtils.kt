@@ -59,6 +59,7 @@ internal fun textAttributesKeyForTypeDeclaration(declaration: PsiElement): TextA
 fun textAttributesForClass(klass: KtClass): TextAttributesKey = when {
     klass.isInterface() -> Colors.TRAIT
     klass.isAnnotation() -> Colors.ANNOTATION
+    klass.isEnum() -> Colors.ENUM
     klass is KtEnumEntry -> Colors.ENUM_ENTRY
     klass.isAbstract() -> Colors.ABSTRACT_CLASS
     else -> Colors.CLASS
