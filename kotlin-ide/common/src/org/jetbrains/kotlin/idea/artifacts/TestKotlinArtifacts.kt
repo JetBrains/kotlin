@@ -128,7 +128,7 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     }
 
     override val kotlinStdlibJs by lazy {
-        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_test_js.xml", "org.jetbrains.kotlin", "kotlin-stdlib-js")
+        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_stdlib_js.xml", "org.jetbrains.kotlin", "kotlin-stdlib-js")
     }
 
     override val kotlinStdlibJsSources by lazy {
