@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.Messages.OkCancelResult
+import org.jetbrains.kotlin.descriptors.Visibility
 import javax.swing.Icon
 
 // FIX ME WHEN BUNCH 193 REMOVED
@@ -23,8 +24,8 @@ fun showOkCancelDialog(
         project,
         message,
         title,
-        Messages.OK_BUTTON,
-        Messages.CANCEL_BUTTON,
+        Messages.getOkButton(),
+        Messages.getCancelButton(),
         icon
     )
 }
