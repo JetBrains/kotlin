@@ -2158,17 +2158,16 @@ fun <T> B(foo: T, bar: String) { }
             @Composable
             fun Reordering() {
                 LinearLayout {
-                    Recompose { recompose ->
-                        Button(
-                          id=50,
-                          text="Recompose!",
-                          onClick={ list.add(list.removeAt(0)); recompose(); }
-                        )
-                        LinearLayout(id=100) {
-                            for(id in list) {
-                                key(id) {
-                                    StatefulButton()
-                                }
+                    val recompose = invalidate
+                    Button(
+                      id=50,
+                      text="Recompose!",
+                      onClick={ list.add(list.removeAt(0)); recompose(); }
+                    )
+                    LinearLayout(id=100) {
+                        for(id in list) {
+                            key(id) {
+                                StatefulButton()
                             }
                         }
                     }
