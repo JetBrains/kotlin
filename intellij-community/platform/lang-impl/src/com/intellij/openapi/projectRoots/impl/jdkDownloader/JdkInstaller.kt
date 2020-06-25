@@ -110,7 +110,7 @@ class JdkInstaller {
    * @see [JdkInstallRequest.javaHome] for the actual java home, it may not match the [JdkInstallRequest.installDir]
    */
   fun installJdk(request: JdkInstallRequest, indicator: ProgressIndicator?, project: Project?) {
-    JDK_INSTALL_LISTENER_EP_NAME.extensions.forEach { it.onJdkDownloadStarted(request, project) }
+    JDK_INSTALL_LISTENER_EP_NAME.forEachExtensionSafe { it.onJdkDownloadStarted(request, project) }
 
     val item = request.item
     indicator?.text = ProjectBundle.message("progress.text.installing.jdk.1", item.fullPresentationText)
@@ -174,8 +174,8 @@ class JdkInstaller {
       throw t
     }
     finally {
-      FileUtil.delete(downloadFile)
-      JDK_INSTALL_LISTENER_EP_NAME.extensions.forEach { it.onJdkDownloadFinished(request, project) }
+      runCatching { FileUtil.delete(downloadFile) }
+      JDK_INSTALL_LISTENER_EP_NAME.forEachExtensionSafe { it.onJdkDownloadFinished(request, project) }
     }
   }
 
