@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,6 +21,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 class CompositeBinaryBuilderMap {
+  private static final Logger LOG = Logger.getInstance(CompositeBinaryBuilderMap.class);
   private static final FileAttribute VERSION_STAMP = new FileAttribute("stubIndex.cumulativeBinaryBuilder", 1, true);
 
   private final TObjectIntHashMap<FileType> myCumulativeVersionMap;
@@ -39,7 +41,11 @@ class CompositeBinaryBuilderMap {
             (BinaryFileStubBuilder.CompositeBinaryFileStubBuilder)builder;
           compositeBuilder.getAllSubBuilders().forEach(b -> cumulativeVersion.append(';').append(compositeBuilder.getSubBuilderVersion(b)));
 
-          myCumulativeVersionMap.put(fileType, cumulativeVersionEnumerator.enumerate(cumulativeVersion.toString()));
+          int enumeratedId = cumulativeVersionEnumerator.enumerate(cumulativeVersion.toString());
+          LOG.debug("composite binary stub builder for " + fileType + " registered:  " +
+                    "id = " + enumeratedId + ", " +
+                    "value" + cumulativeVersion.toString());
+          myCumulativeVersionMap.put(fileType, enumeratedId);
         }
       }
     }
