@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
@@ -24,6 +25,8 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -33,8 +36,8 @@ class FirDelegatedPropertyInferenceSession(
     val property: FirProperty,
     initialCall: FirExpression,
     components: BodyResolveComponents,
-    postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-) : AbstractManyCandidatesInferenceSession(components, postponedArgumentsAnalyzer) {
+    private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
+) : AbstractManyCandidatesInferenceSession(components) {
     init {
         val initialCandidate = (initialCall as? FirResolvable)
             ?.calleeReference
@@ -46,6 +49,8 @@ class FirDelegatedPropertyInferenceSession(
     }
 
     val expectedType: ConeKotlinType? by lazy { property.returnTypeRef.coneTypeSafe() }
+    private val unitType: ConeKotlinType = components.session.builtinTypes.unitType.coneTypeUnsafe()
+    private lateinit var resultingConstraintSystem: NewConstraintSystem
 
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = false
 
@@ -56,7 +61,33 @@ class FirDelegatedPropertyInferenceSession(
 
     override fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement = true
 
-    override fun prepareForCompletion(commonSystem: NewConstraintSystem, partiallyResolvedCalls: List<FirResolvable>) {
+    fun completeCandidates(): List<FirResolvable> {
+        @Suppress("UNCHECKED_CAST")
+        val resolvedCalls = partiallyResolvedCalls.map { it.first }
+        val commonSystem = components.inferenceComponents.createConstraintSystem().apply {
+            addOtherSystem(currentConstraintSystem)
+        }
+        prepareForCompletion(commonSystem, resolvedCalls)
+        components.inferenceComponents.withInferenceSession(DEFAULT) {
+            @Suppress("UNCHECKED_CAST")
+            components.callCompleter.completer.complete(
+                commonSystem.asConstraintSystemCompleterContext(),
+                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
+                resolvedCalls as List<FirStatement>,
+                unitType
+            ) {
+                postponedArgumentsAnalyzer.analyze(
+                    commonSystem.asPostponedArgumentsAnalyzerContext(),
+                    it,
+                    resolvedCalls.first().candidate
+                )
+            }
+        }
+        resultingConstraintSystem = commonSystem
+        return resolvedCalls
+    }
+
+    private fun prepareForCompletion(commonSystem: NewConstraintSystem, partiallyResolvedCalls: List<FirResolvable>) {
         val csBuilder = commonSystem.getBuilder()
         for (call in partiallyResolvedCalls) {
             val candidate = call.candidate
@@ -65,6 +96,11 @@ class FirDelegatedPropertyInferenceSession(
                 OperatorNameConventions.SET_VALUE -> candidate.addConstraintsForSetValueMethod(csBuilder)
             }
         }
+    }
+
+    fun createFinalSubstitutor(): ConeSubstitutor {
+        return resultingConstraintSystem.asReadOnlyStorage()
+            .buildAbstractResultingSubstitutor(components.inferenceComponents.ctx) as ConeSubstitutor
     }
 
     private fun Candidate.addConstraintsForGetValueMethod(commonSystem: ConstraintSystemBuilder) {

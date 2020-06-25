@@ -26,9 +26,8 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class FirBuilderInferenceSession(
     components: BodyResolveComponents,
-    postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     private val stubsForPostponedVariables: Map<ConeTypeVariable, ConeStubType>,
-) : AbstractManyCandidatesInferenceSession(components, postponedArgumentsAnalyzer) {
+) : AbstractManyCandidatesInferenceSession(components) {
     private val commonCalls: MutableList<Pair<FirStatement, Candidate>> = mutableListOf()
 
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {

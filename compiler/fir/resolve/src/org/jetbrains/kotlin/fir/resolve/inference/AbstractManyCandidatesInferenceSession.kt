@@ -10,23 +10,14 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 
 abstract class AbstractManyCandidatesInferenceSession(
-    protected val components: BodyResolveComponents,
-    private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
+    protected val components: BodyResolveComponents
 ) : FirInferenceSession() {
     private val errorCalls: MutableList<FirResolvable> = mutableListOf()
     protected val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
     private val completedCalls: MutableSet<FirResolvable> = mutableSetOf()
-
-    private val unitType: ConeKotlinType = components.session.builtinTypes.unitType.coneTypeUnsafe()
 
     override val currentConstraintSystem: ConstraintStorage
         get() = partiallyResolvedCalls.lastOrNull()
@@ -34,8 +25,6 @@ abstract class AbstractManyCandidatesInferenceSession(
             ?.system
             ?.currentStorage()
             ?: ConstraintStorage.Empty
-
-    private lateinit var resultingConstraintSystem: NewConstraintSystem
 
     override fun <T> addCompetedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
         // do nothing
@@ -53,44 +42,6 @@ abstract class AbstractManyCandidatesInferenceSession(
         return !completedCalls.add(call)
     }
 
-    protected open fun prepareForCompletion(
-        commonSystem: NewConstraintSystem,
-        partiallyResolvedCalls: List<FirResolvable>
-    ) {
-        // do nothing
-    }
-
-    fun completeCandidates(): List<FirResolvable> {
-        @Suppress("UNCHECKED_CAST")
-        val resolvedCalls = partiallyResolvedCalls.map { it.first }
-        val commonSystem = components.inferenceComponents.createConstraintSystem().apply {
-            addOtherSystem(currentConstraintSystem)
-        }
-        prepareForCompletion(commonSystem, resolvedCalls)
-        components.inferenceComponents.withInferenceSession(DEFAULT) {
-            @Suppress("UNCHECKED_CAST")
-            components.callCompleter.completer.complete(
-                commonSystem.asConstraintSystemCompleterContext(),
-                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
-                resolvedCalls as List<FirStatement>,
-                unitType
-            ) {
-                postponedArgumentsAnalyzer.analyze(
-                    commonSystem.asPostponedArgumentsAnalyzerContext(),
-                    it,
-                    resolvedCalls.first().candidate
-                )
-            }
-        }
-        resultingConstraintSystem = commonSystem
-        return resolvedCalls
-    }
-
     protected val FirResolvable.candidate: Candidate
         get() = candidate()!!
-
-    fun createFinalSubstitutor(): ConeSubstitutor {
-        return resultingConstraintSystem.asReadOnlyStorage()
-            .buildAbstractResultingSubstitutor(components.inferenceComponents.ctx) as ConeSubstitutor
-    }
 }

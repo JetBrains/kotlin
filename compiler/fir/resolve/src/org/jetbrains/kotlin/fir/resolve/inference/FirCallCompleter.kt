@@ -124,18 +124,10 @@ class FirCallCompleter(
         return PostponedArgumentsAnalyzer(
             lambdaAnalyzer, inferenceComponents,
             transformer.components.callResolver
-        ).also {
-            lambdaAnalyzer.initAnalyzer(it)
-        }
+        )
     }
 
     private inner class LambdaAnalyzerImpl : LambdaAnalyzer {
-        private lateinit var postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer
-
-        fun initAnalyzer(postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer) {
-            this.postponedArgumentsAnalyzer = postponedArgumentsAnalyzer
-        }
-
         override fun analyzeAndGetLambdaReturnArguments(
             lambdaAtom: ResolvedLambdaAtom,
             receiverType: ConeKotlinType?,
@@ -185,7 +177,7 @@ class FirCallCompleter(
 
             val builderInferenceSession = runIf(stubsForPostponedVariables.isNotEmpty()) {
                 @Suppress("UNCHECKED_CAST")
-                FirBuilderInferenceSession(components, postponedArgumentsAnalyzer, stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>)
+                FirBuilderInferenceSession(components, stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>)
             }
 
             val localContext = towerDataContextForAnonymousFunctions.getValue(lambdaArgument.symbol)
