@@ -258,6 +258,8 @@ abstract class IrFileDeserializer(
         start: Int, end: Int
     ): IrBlockBody {
 
+        if (lazyBodies) error("Shouldn't be called!")
+
         val statements = mutableListOf<IrStatement>()
 
         val statementProtos = proto.statementList

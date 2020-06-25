@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.stageController
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -83,6 +82,9 @@ fun compile(
         // TODO should be done incrementally
         generateTests(context, moduleFragment)
 
+
+        deserializer.allowLazyLoading()
+
         val controller = MutableController(context, pirLowerings)
         stageController = controller
 
@@ -96,7 +98,11 @@ fun compile(
         }
 
         val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
-        return transformer.generateModule(moduleFragment, fullJs = true, dceJs = false)
+        return transformer.generateModule(moduleFragment, fullJs = true, dceJs = false).also {
+            val a = deserializer.lazyBodyLoaded
+            val b = deserializer.lazyBodyCreated
+            println("$a / $b ( ${a * 100 / b}% )")
+        }
     } else {
         val phases = if (es6mode) jsEs6Phases else jsPhases
         phases.invokeToplevel(phaseConfig, context, moduleFragment)

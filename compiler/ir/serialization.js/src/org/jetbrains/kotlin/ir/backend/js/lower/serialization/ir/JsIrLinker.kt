@@ -48,4 +48,8 @@ class JsIrLinker(
         get() = deserializersForModules.values
             .map { it.moduleFragment }
             .filter { it.descriptor !== currentModule }
+
+    fun allowLazyLoading() {
+        canLazyLoad = true
+    }
 }

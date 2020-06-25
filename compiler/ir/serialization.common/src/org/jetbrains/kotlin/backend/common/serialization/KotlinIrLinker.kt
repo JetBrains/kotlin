@@ -230,6 +230,11 @@ abstract class KotlinIrLinker(
         }
     }
 
+    protected var canLazyLoad = false
+
+    var lazyBodyLoaded = 0
+    var lazyBodyCreated = 0
+
     inner class IrDeserializerForFile(
         private var annotations: List<ProtoConstructorCall>?,
         private val actuals: List<ProtoActual>,
@@ -419,7 +424,13 @@ abstract class KotlinIrLinker(
                     val end = coordinates.endOffset
                     val fileDeserializer = this
 
+                    ++lazyBodyCreated
+
                     IrExpressionBodyImpl(start, end) {
+
+                        check(canLazyLoad)
+                        ++lazyBodyLoaded
+
                         withInitialIr {
                             try {
                                 parentsStack.push(parent)
@@ -455,7 +466,13 @@ abstract class KotlinIrLinker(
 
                             val fileDeserializer = this
 
+                            ++lazyBodyCreated
+
                             IrBlockBodyImpl(start, end) {
+
+                                check(canLazyLoad)
+                                ++lazyBodyLoaded
+
                                 withInitialIr {
                                     try {
                                         parentsStack.push(parent)
