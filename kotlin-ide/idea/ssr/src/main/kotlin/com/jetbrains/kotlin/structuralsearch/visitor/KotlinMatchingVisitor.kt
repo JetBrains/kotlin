@@ -136,6 +136,18 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtExpression>() ?: return
         when (other) {
             is KtBinaryExpression -> {
+                val token = expression.operationToken
+                if (token in augmentedAssignmentsMap.keys && other.operationToken == KtTokens.EQ) {
+                    // Matching x ?= y with x = x ? y
+                    val right = other.right?.deparenthesize()
+                    val left = other.left?.deparenthesize()
+                    myMatchingVisitor.result = right is KtBinaryExpression
+                            && augmentedAssignmentsMap[token] == right.operationToken
+                            && myMatchingVisitor.match(expression.left, left)
+                            && myMatchingVisitor.match(expression.left, right.left)
+                            && myMatchingVisitor.match(expression.right, right.right)
+                    return
+                }
                 if (myMatchingVisitor.setResult(expression.match(other))) return
                 when (expression.operationToken) { // translated matching
                     KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ -> { // a.compareTo(b) OP 0
@@ -848,5 +860,15 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     private fun visitKDocLink(link: KDocLink) {
         val other = getTreeElementDepar<KDocLink>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(link, other)
+    }
+
+    companion object {
+        private val augmentedAssignmentsMap = mapOf(
+            KtTokens.PLUSEQ to KtTokens.PLUS,
+            KtTokens.MINUSEQ to KtTokens.MINUS,
+            KtTokens.MULTEQ to KtTokens.MUL,
+            KtTokens.DIVEQ to KtTokens.DIV,
+            KtTokens.PERCEQ to KtTokens.PERC
+        )
     }
 }

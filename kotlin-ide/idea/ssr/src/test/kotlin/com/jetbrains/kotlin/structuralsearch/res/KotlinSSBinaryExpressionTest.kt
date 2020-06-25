@@ -43,15 +43,15 @@ class KotlinSSBinaryExpressionTest : KotlinSSResourceInspectionTest() {
 
     fun testElvis() { doTest("'_ ?: '_") }
 
-    fun testBinaryPlusAssign() { doTest("1 += 2") }
+    fun testBinaryPlusAssign() { doTest("'_ += '_") }
 
-    fun testBinaryMinusAssign() { doTest("1 -= 2") }
+    fun testBinaryMinusAssign() { doTest("'_ -= '_") }
 
-    fun testBinaryTimesAssign() { doTest("1 *= 2") }
+    fun testBinaryTimesAssign() { doTest("'_ *= '_") }
 
-    fun testBinaryDivAssign() { doTest("1 /= 2") }
+    fun testBinaryDivAssign() { doTest("'_ /= '_") }
 
-    fun testBinaryRemAssign() { doTest("1 %= 2") }
+    fun testBinaryRemAssign() { doTest("'_ %= '_") }
 
     fun testBinarySet() { doTest("a[0] = 1 + 2") }
 }
