@@ -234,11 +234,7 @@ abstract class ScriptClassRootsUpdater(
             }
         }
 
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            TransactionGuard.submitTransaction(project, doNotifyRootsChanged)
-        } else {
-            TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
-        }
+        TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
     }
 
     private fun updateHighlighting(project: Project, filter: (VirtualFile) -> Boolean) {

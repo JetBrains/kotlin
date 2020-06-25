@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotifications
+import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
@@ -528,6 +529,8 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
         manager.updater.update {
             reloadOutOfDateConfiguration(file, forceSync = true)
         }
+
+        UIUtil.dispatchAllInvocationEvents()
     }
 
     fun collectConfigurations(builder: ScriptClassRootsBuilder) {

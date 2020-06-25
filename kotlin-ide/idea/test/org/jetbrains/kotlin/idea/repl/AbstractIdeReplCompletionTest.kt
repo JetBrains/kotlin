@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.idea.completion.test.KotlinFixtureCompletionBaseTestCase
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.runAll
@@ -32,6 +33,7 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
         super.setUp()
         vfsDisposable = allowProjectRootAccess(this)
         consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module)!!
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(consoleRunner!!.consoleFile)
     }
 
     override fun tearDown() = runAll(
