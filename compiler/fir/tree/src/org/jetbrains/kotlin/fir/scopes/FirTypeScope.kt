@@ -36,4 +36,11 @@ abstract class FirTypeScope : FirScope() {
 
         return baseScope.processOverriddenFunctions(functionSymbol, processor)
     }
+
+    object Empty : FirTypeScope() {
+        override fun processOverriddenFunctions(
+            functionSymbol: FirFunctionSymbol<*>,
+            processor: (FirFunctionSymbol<*>) -> ProcessorAction
+        ): ProcessorAction = ProcessorAction.NEXT
+    }
 }

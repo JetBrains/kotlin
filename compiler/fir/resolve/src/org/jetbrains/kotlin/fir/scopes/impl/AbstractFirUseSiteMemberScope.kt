@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirValueParameterBuilder
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
@@ -44,6 +44,7 @@ abstract class AbstractFirUseSiteMemberScope(
     ): Collection<FirFunctionSymbol<*>> = mutableListOf<FirFunctionSymbol<*>>().apply {
         val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
         declaredMemberScope.processFunctionsByName(name) {
+            if (it.isStatic) return@processFunctionsByName
             val directOverridden = computeDirectOverridden(it)
             this@AbstractFirUseSiteMemberScope.directOverridden[it] = directOverridden
             val symbol = processInheritedDefaultParameters(it, directOverridden)

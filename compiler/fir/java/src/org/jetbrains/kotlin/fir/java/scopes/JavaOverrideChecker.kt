@@ -69,6 +69,7 @@ class JavaOverrideChecker internal constructor(
     }
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
+        if (overrideCandidate.isStatic != baseDeclaration.isStatic) return false
         // NB: overrideCandidate is from Java and has no receiver
         val receiverTypeRef = baseDeclaration.receiverTypeRef
         val baseParameterTypes = listOfNotNull(receiverTypeRef) + baseDeclaration.valueParameters.map { it.returnTypeRef }

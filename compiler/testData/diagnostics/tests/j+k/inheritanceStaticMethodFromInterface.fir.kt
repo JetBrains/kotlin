@@ -22,7 +22,7 @@ fun main() {
 
     C.a
     C.b
-    C.foo()
+    C.<!UNRESOLVED_REFERENCE!>foo<!>()
     C.bar()
 
     K.<!UNRESOLVED_REFERENCE!>a<!>

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 
@@ -15,6 +16,8 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration<D>> : AbstractFirBas
     open val overriddenSymbol: FirCallableSymbol<D>?
         get() = null
 }
+
+val FirCallableSymbol<*>.isStatic: Boolean get() = (fir as? FirMemberDeclaration)?.status?.isStatic == true
 
 inline fun <reified E : FirCallableSymbol<*>> E.unwrapSubstitutionOverrides(): E {
     var current = this
