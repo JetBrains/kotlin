@@ -155,7 +155,6 @@ org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChange
 org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testAddImportWithBlankLineInsertion, Additional signature,,
 org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testAddImportWithBlankLinesRemoval, Additional signature,,
 org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testCommentTyping, Additional signature,,
-org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testDefinedExtension, KT-34825,,
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testInLibrarySource, KT-34542, FAIL,
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToFunParameter, KT-34542, FAIL,
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToLocalFun, KT-34542, FAIL,

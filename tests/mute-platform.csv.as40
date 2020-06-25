@@ -106,7 +106,6 @@ org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testJava_moveClass_
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testWithNonObjectInheritors, Enum reorder,, FLAKY
 org.jetbrains.kotlin.idea.refactoring.pullUp.PullUpTestGenerated.K2K.testAccidentalOverrides, Unprocessed,, FLAKY
 org.jetbrains.kotlin.idea.refactoring.rename.RenameTestGenerated.testOverloadsWithSameOrigin_OverloadsWithSameOrigin, Bad imports after rename,, FLAKY
-org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testDefinedExtension, KT-34825,,
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testInLibrarySource, KT-34542, FAIL,
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToFunParameter, KT-34542, FAIL,
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToLocalFun, KT-34542, FAIL,
