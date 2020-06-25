@@ -2171,6 +2171,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/implicitReceiverCompletion.kt");
             }
 
+            @TestMetadata("implicitReceiverFromExtensionMethod.kt")
+            public void testImplicitReceiverFromExtensionMethod() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/implicitReceiverFromExtensionMethod.kt");
+            }
+
             @TestMetadata("localVariablesAndFunctions.kt")
             public void testLocalVariablesAndFunctions() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/localVariablesAndFunctions.kt");
