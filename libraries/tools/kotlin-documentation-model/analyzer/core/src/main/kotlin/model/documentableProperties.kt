@@ -25,3 +25,7 @@ data class ImplementedInterfaces(val interfaces: SourceSetDependent<List<TypeCon
 
     override val key: ExtraProperty.Key<Documentable, *> = ImplementedInterfaces
 }
+
+object IsExpectActual: ExtraProperty<WithExpectActual>, ExtraProperty.Key<WithExpectActual, IsExpectActual> {
+    override val key: ExtraProperty.Key<WithExpectActual, IsExpectActual> = this
+}

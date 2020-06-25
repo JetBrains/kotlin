@@ -7,6 +7,10 @@ import greeteer.Greeter
  */
 actual open class Clock {
     actual fun getTime(): String = System.currentTimeMillis().toString()
+
+    /**
+     * Time in minis
+     */
     actual fun getTimesInMillis(): String = System.currentTimeMillis().toString()
 
     /**
