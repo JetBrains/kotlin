@@ -1999,6 +1999,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/callableReference/whitespacesInExpression.kt");
         }
 
+        @TestMetadata("withQuestionMarks.kt")
+        public void testWithQuestionMarks() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/callableReference/withQuestionMarks.kt");
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/callableReference/bound")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
