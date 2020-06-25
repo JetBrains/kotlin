@@ -18,8 +18,8 @@ package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.ComposeFqNames
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -45,11 +45,9 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
@@ -61,22 +59,20 @@ import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.IrProvider
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolRenamer
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.findFirstFunction
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     private val context: IrPluginContext,
@@ -120,7 +116,8 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
-        if (!expression.symbol.isBound) context.irProviders.getDeclaration(expression.symbol)
+        if (!expression.symbol.isBound)
+            (context as IrPluginContextImpl).linker.getDeclaration(expression.symbol)
         val ownerFn = expression.symbol.owner as? IrConstructor
         // If we are calling an external constructor, we want to "remap" the types of its signature
         // as well, since if it they are @Composable it will have its unmodified signature. These
@@ -154,8 +151,8 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     }
 
     override fun visitCall(expression: IrCall): IrCall {
-        if (!expression.symbol.isBound) context.irProviders.getDeclaration(expression.symbol)
         val ownerFn = expression.symbol.owner as? IrSimpleFunction
+        @Suppress("DEPRECATION")
         val containingClass = expression.symbol.descriptor.containingDeclaration as? ClassDescriptor
 
         // Any virtual calls on composable functions we want to make sure we update the call to
@@ -171,8 +168,10 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             expression.dispatchReceiver?.type?.isComposable() == true
         ) {
             val typeArguments = containingClass.defaultType.arguments
+            @Suppress("DEPRECATION")
             val newFnClass = context.symbolTable.referenceClass(context.builtIns
                 .getFunction(typeArguments.size))
+            @Suppress("DEPRECATION")
             val newDescriptor = newFnClass
                 .descriptor
                 .unsubstitutedMemberScope
@@ -187,9 +186,8 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             )
             symbolRemapper.visitSimpleFunction(newFn)
             newFn = super.visitSimpleFunction(newFn).also { fn ->
-                context.irProviders.getDeclaration(newFnClass)
                 fn.parent = newFnClass.owner
-                ownerFn.overriddenSymbols.mapTo(fn.overriddenSymbols) { it }
+                fn.overriddenSymbols = ownerFn.overriddenSymbols.map { it }
                 fn.dispatchReceiverParameter = ownerFn.dispatchReceiverParameter
                 fn.extensionReceiverParameter = ownerFn.extensionReceiverParameter
                 newDescriptor.valueParameters.forEach { p ->
@@ -288,20 +286,10 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             extensionReceiver = original.extensionReceiver?.transform()
         }
 
-    /* copied verbatim from DeepCopyIrTreeWithSymbols */
-    private inline fun <reified T : IrElement> T.transform() =
-        transform(this@DeepCopyIrTreeWithSymbolsPreservingMetadata, null) as T
-
-    /* copied verbatim from DeepCopyIrTreeWithSymbols */
-    private fun IrType.remapType() = typeRemapper.remapType(this)
-
-    /* copied verbatim from DeepCopyIrTreeWithSymbols */
-    private fun mapStatementOrigin(origin: IrStatementOrigin?) = origin
-
     private fun IrElement.copyMetadataFrom(owner: IrMetadataSourceOwner) {
         when (this) {
             is IrPropertyImpl -> metadata = owner.metadata
-            is IrFunctionBase -> metadata = owner.metadata
+            is IrFunctionBase<*> -> metadata = owner.metadata
             is IrClassImpl -> metadata = owner.metadata
         }
     }
@@ -313,6 +301,7 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     private fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
 }
 
+@Suppress("DEPRECATION")
 class ComposerTypeRemapper(
     private val context: IrPluginContext,
     private val symbolRemapper: SymbolRemapper,
@@ -421,20 +410,7 @@ class ComposerTypeRemapper(
         )
 }
 
-fun IrPluginContext.bindIfNeeded(type: IrType) {
-    if (type is IrSimpleType) {
-        if (!type.classifier.isBound) this.irProviders.getDeclaration(type.classifier)
-        type.arguments.forEach { if (it is IrTypeProjection) bindIfNeeded(it.type) }
-    }
-}
-
-fun List<IrProvider>.getDeclaration(symbol: IrSymbol) {
-    if (symbol.isBound) return
-    firstNotNullResult { provider ->
-        provider.getDeclaration(symbol)
-    } ?: error("Could not find declaration for unbound symbol $symbol")
-}
-
 private fun IrConstructorCall.isComposableAnnotation() =
+    @Suppress("DEPRECATION")
     this.symbol.descriptor.returnType.constructor.declarationDescriptor?.fqNameSafe ==
         ComposeFqNames.Composable

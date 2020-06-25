@@ -32,7 +32,7 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
             public final class JvmKt {
               private final static Ljava/lang/String; foo
               public final static getFoo()Ljava/lang/String;
-              public final static <clinit>()V
+              static <clinit>()V
             }
         """
         )

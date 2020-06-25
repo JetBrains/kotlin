@@ -17,23 +17,31 @@
 package androidx.compose.plugins.kotlin
 
 import androidx.compose.plugins.kotlin.compiler.lower.dumpSrc
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.EmptyLoggingContext
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
+import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.IrProvider
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -49,18 +57,18 @@ abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
     override fun postProcessingStep(
         module: IrModuleFragment,
         generatorContext: GeneratorContext,
-        irProviders: List<IrProvider>
+        irLinker: IrDeserializer
     ) {
         extension.generate(
             module,
-            IrPluginContext(
+            IrPluginContextImpl(
                 generatorContext.moduleDescriptor,
                 generatorContext.bindingContext,
                 generatorContext.languageVersionSettings,
                 generatorContext.symbolTable,
                 generatorContext.typeTranslator,
                 generatorContext.irBuiltIns,
-                irProviders = irProviders
+                irLinker
             )
         )
     }
@@ -79,7 +87,7 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
     abstract fun postProcessingStep(
         module: IrModuleFragment,
         generatorContext: GeneratorContext,
-        irProviders: List<IrProvider>
+        irLinker: IrDeserializer
     )
 
     fun verifyComposeIrTransform(
@@ -161,9 +169,13 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         ).also { setupEnvironment(it) }
 
+        val mangler = JvmManglerDesc(null)
+        val signaturer = JvmIdSignatureDescriptor(mangler)
+
         val psi2ir = Psi2IrTranslator(
             environment.configuration.languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors = false)
+            Psi2IrConfiguration(ignoreErrors = false),
+            signaturer
         )
 
         val analysisResult = JvmResolveUtil.analyze(files, environment)
@@ -177,29 +189,62 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             analysisResult.bindingContext,
             extensions = extensions
         )
-
-        val irProviders = generateTypicalIrProviderList(
-            analysisResult.moduleDescriptor,
+        val stubGenerator = DeclarationStubGenerator(
+            generatorContext.moduleDescriptor,
+            generatorContext.symbolTable,
+            generatorContext.irBuiltIns.languageVersionSettings,
+            extensions
+        )
+        val functionFactory = IrFunctionFactory(
+            generatorContext.irBuiltIns,
+            generatorContext.symbolTable
+        )
+        generatorContext.irBuiltIns.functionFactory = functionFactory
+        val irLinker = JvmIrLinker(
+            generatorContext.moduleDescriptor,
+            EmptyLoggingContext,
             generatorContext.irBuiltIns,
             generatorContext.symbolTable,
-            extensions = extensions
+            functionFactory,
+            stubGenerator,
+            mangler
         )
+
+        generatorContext.moduleDescriptor.allDependencyModules.map {
+            val capability = it.getCapability(KlibModuleOrigin.CAPABILITY)
+            val kotlinLibrary = (capability as? DeserializedKlibModuleOrigin)?.library
+            irLinker.deserializeIrModuleHeader(it, kotlinLibrary)
+        }
+
+        val irProviders = listOf(irLinker)
+
+        stubGenerator.setIrProviders(irProviders)
 
         ExternalDependenciesGenerator(
             generatorContext.symbolTable,
-            irProviders
+            irProviders,
+            generatorContext.languageVersionSettings
         ).generateUnboundSymbolsAsDependencies()
 
         psi2ir.addPostprocessingStep { module ->
-            postProcessingStep(module, generatorContext, irProviders)
+            val old = stubGenerator.unboundSymbolGeneration
+            try {
+                stubGenerator.unboundSymbolGeneration = true
+                postProcessingStep(module, generatorContext, irLinker)
+            } finally {
+                stubGenerator.unboundSymbolGeneration = old
+            }
         }
 
-        return psi2ir.generateModuleFragment(
+        val irModuleFragment = psi2ir.generateModuleFragment(
             generatorContext,
             files,
-            irProviders = irProviders,
+            irProviders,
+            IrGenerationExtension.getInstances(myEnvironment!!.project),
             expectDescriptorToSymbol = null
         )
+        irLinker.postProcess()
+        return irModuleFragment
     }
 
     fun facadeClassGenerator(source: DeserializedContainerSource): IrClass? {

@@ -28,6 +28,7 @@ import androidx.compose.plugins.kotlin.isSpecialType
 import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
@@ -112,13 +113,15 @@ import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.endOffset
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.startOffset
@@ -140,8 +143,8 @@ import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
+@Suppress("DEPRECATION")
 abstract class AbstractComposeLowering(
     val context: IrPluginContext,
     val symbolRemapper: DeepCopySymbolRemapper,
@@ -225,7 +228,7 @@ abstract class AbstractComposeLowering(
 
     fun <T : IrSymbol> T.bindIfNecessary(): T {
         if (!isBound) {
-            context.irProviders.firstNotNullResult { it.getDeclaration(this) }
+            (context as IrPluginContextImpl).linker.getDeclaration(this)
         }
         return this
     }
@@ -378,7 +381,11 @@ abstract class AbstractComposeLowering(
             this.startOffset ?: UNDEFINED_OFFSET,
             this.endOffset ?: UNDEFINED_OFFSET,
             IrDeclarationOrigin.DEFINED,
-            IrTypeParameterSymbolImpl(this)
+            IrTypeParameterSymbolImpl(this),
+            this.name,
+            this.index,
+            this.isReified,
+            this.variance
         ).also {
             it.parent = this@createParameterDeclarations
         }
@@ -386,11 +393,9 @@ abstract class AbstractComposeLowering(
         dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.irValueParameter()
         extensionReceiverParameter = descriptor.extensionReceiverParameter?.irValueParameter()
 
-        assert(valueParameters.isEmpty())
-        descriptor.valueParameters.mapTo(valueParameters) { it.irValueParameter() }
+        valueParameters = descriptor.valueParameters.map { it.irValueParameter() }
 
-        assert(typeParameters.isEmpty())
-        descriptor.typeParameters.mapTo(typeParameters) { it.irTypeParameter() }
+        typeParameters = descriptor.typeParameters.map { it.irTypeParameter() }
     }
 
     protected fun IrBuilderWithScope.irLambdaExpression(
@@ -414,7 +419,16 @@ abstract class AbstractComposeLowering(
             startOffset, endOffset,
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
             symbol,
-            returnType
+            name = descriptor.name,
+            visibility = descriptor.visibility,
+            modality = descriptor.modality,
+            returnType = returnType,
+            isInline = descriptor.isInline,
+            isExternal = descriptor.isExternal,
+            isTailrec = descriptor.isTailrec,
+            isSuspend = descriptor.isSuspend,
+            isOperator = descriptor.isOperator,
+            isExpect = descriptor.isExpect
         ).also {
             it.parent = scope.getLocalDeclarationParent()
             it.createParameterDeclarations()
@@ -435,6 +449,7 @@ abstract class AbstractComposeLowering(
                 type = type,
                 symbol = symbol,
                 typeArgumentsCount = descriptor.typeParametersCount,
+                reflectionTarget = null,
                 origin = IrStatementOrigin.LAMBDA
             )
         }
@@ -727,17 +742,44 @@ abstract class AbstractComposeLowering(
         } ?: context.symbols.iterator
         val unitType = context.irBuiltIns.unitType
 
-        val getIteratorSymbol = subject.type.classOrNull!!.getSimpleFunction("iterator")!!
-        val nextSymbol = iteratorSymbol.getSimpleFunction("next")!!
-        val hasNextSymbol = iteratorSymbol.getSimpleFunction("hasNext")!!
+        subject.type.classOrNull!!.functions
+            .single { it.descriptor.name.asString() == "iterator" }
+
+        val getIteratorSymbol = subject.type.classOrNull!!.functions
+            .single { it.descriptor.name.asString() == "iterator" }
+
+        getIteratorSymbol.bindIfNecessary()
+
+        if (getIteratorSymbol is IrConstructorSymbol) {
+            throw AssertionError("Should be IrConstructorCall: ${getIteratorSymbol.descriptor}")
+        }
+        getIteratorSymbol.descriptor.typeParametersCount
+        getIteratorSymbol.descriptor.valueParameters.size
+
+        iteratorSymbol.owner.defaultType.classOrNull!!.functions
+            .single { it.descriptor.name.asString() == "next" }
+        val nextSymbol = iteratorSymbol.owner.defaultType.classOrNull!!.functions
+            .single { it.descriptor.name.asString() == "next" }
+        val hasNextSymbol = iteratorSymbol.owner.defaultType.classOrNull!!.functions
+            .single { it.descriptor.name.asString() == "hasNext" }
+        getIteratorSymbol.bindIfNecessary()
+        getIteratorSymbol.owner
+
+        val call = IrCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            iteratorSymbol.typeWith(elementType),
+            getIteratorSymbol,
+            IrStatementOrigin.FOR_LOOP_ITERATOR
+        )
+
+        call.also {
+            it.dispatchReceiver = subject
+        }
 
         val iteratorVar = irTemporary(
             containingDeclaration = scope,
-            value = irCall(
-                symbol = getIteratorSymbol,
-                origin = IrStatementOrigin.FOR_LOOP_ITERATOR,
-                dispatchReceiver = subject
-            ),
+            value = call,
             isVar = false,
             name = "tmp0_iterator",
             irType = iteratorSymbol.defaultType,
@@ -906,6 +948,7 @@ abstract class AbstractComposeLowering(
                     type,
                     function.symbol,
                     function.typeParameters.size,
+                    null,
                     IrStatementOrigin.LAMBDA
                 )
             )
@@ -922,6 +965,7 @@ fun IrFunction.composerParam(): IrValueParameter? {
 }
 
 fun IrValueParameter.isComposerParam(): Boolean =
+    @Suppress("DEPRECATION")
     (descriptor as? ValueParameterDescriptor)?.isComposerParam() ?: false
 
 fun ValueParameterDescriptor.isComposerParam(): Boolean =

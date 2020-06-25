@@ -2069,8 +2069,7 @@ fun <T> B(foo: T, bar: String) { }
             }
 
             @Composable
-            // TODO: Investigate making this private; looks like perhaps a compiler bug as of rebase
-            fun Item(id: Int, onMove: (Int) -> Unit) {
+            private fun Item(id: Int, onMove: (Int) -> Unit) {
                 val count = state { 0 }
                 LinearLayout(orientation=LinearLayout.HORIZONTAL) {
                     TextView(id=(id+$tvId), text="id: ${'$'}id amt: ${'$'}{count.value}")
@@ -2153,16 +2152,15 @@ fun <T> B(foo: T, bar: String) { }
     fun testKeyTag(): Unit = ensureSetup {
         compose(
             """
-            val list = mutableListOf(0,1,2,3)
+            val list = mutableStateListOf(0,1,2,3)
 
             @Composable
             fun Reordering() {
                 LinearLayout {
-                    val recompose = invalidate
                     Button(
                       id=50,
                       text="Recompose!",
-                      onClick={ list.add(list.removeAt(0)); recompose(); }
+                      onClick={ list.add(list.removeAt(0)); }
                     )
                     LinearLayout(id=100) {
                         for(id in list) {
@@ -2175,8 +2173,7 @@ fun <T> B(foo: T, bar: String) { }
             }
 
             @Composable
-            // TODO: Investigate making this private; looks like perhaps a compiler bug as of rebase
-            fun StatefulButton() {
+            private fun StatefulButton() {
                 val count = state { 0 }
                 Button(text="Clicked ${'$'}{count.value} times!", onClick={ count.value++ })
             }
@@ -2409,7 +2406,10 @@ fun <T> B(foo: T, bar: String) { }
               }
             }
 
-            fun forceNewLambda(): () -> Unit = { }
+            fun forceNewLambda(): () -> Unit {
+                val capturedParameter = Math.random()
+                return { capturedParameter }
+            }
 
             @Composable
             fun Main(unchanged: () -> Unit) {

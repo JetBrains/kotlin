@@ -18,11 +18,11 @@ package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.ComposeUtils
 import androidx.compose.plugins.kotlin.ComposeUtils.composeInternalFqName
-import androidx.compose.plugins.kotlin.allowsComposableCalls
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.composableTrackedContract
 import androidx.compose.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
@@ -48,13 +48,14 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.getDeclaration
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -66,6 +67,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 private class CaptureCollector {
     val captures = mutableSetOf<IrValueDeclaration>()
@@ -138,6 +140,7 @@ const val COMPOSABLE_LAMBDA_N = "composableLambdaN"
 const val COMPOSABLE_LAMBDA_INSTANCE = "composableLambdaInstance"
 const val COMPOSABLE_LAMBDA_N_INSTANCE = "composableLambdaNInstance"
 
+@Suppress("PRE_RELEASE_CLASS")
 class ComposerLambdaMemoization(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
@@ -163,7 +166,16 @@ class ComposerLambdaMemoization(
         val currentComposerSymbol = getTopLevelPropertyGetter(
             ComposeUtils.composeFqName("currentComposer")
         )
-        return irCall(currentComposerSymbol)
+
+        currentComposerSymbol.bindIfNecessary()
+
+        return IrCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            composerTypeDescriptor.defaultType.replaceArgumentsWithStarProjections().toIrType(),
+            currentComposerSymbol,
+            IrStatementOrigin.FOR_LOOP_ITERATOR
+        )
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
@@ -245,7 +257,8 @@ class ComposerLambdaMemoization(
                             endOffset,
                             expression.type,
                             expression.symbol,
-                            expression.typeArgumentsCount).copyAttributes(expression).apply {
+                            expression.typeArgumentsCount,
+                            expression.reflectionTarget).copyAttributes(expression).apply {
                             this.dispatchReceiver = tempDispatchReceiver?.let { irGet(it) }
                             this.extensionReceiver = tempExtensionReceiver?.let { irGet(it) }
                         },
@@ -357,7 +370,7 @@ class ComposerLambdaMemoization(
             endOffset = expression.endOffset
         )
 
-        context.irProviders.getDeclaration(restartFactorySymbol)
+        (context as IrPluginContextImpl).linker.getDeclaration(restartFactorySymbol)
         return irBuilder.irCall(restartFactorySymbol).apply {
             var index = 0
 
@@ -372,6 +385,7 @@ class ComposerLambdaMemoization(
             // key parameter
             putValueArgument(
                 index++, irBuilder.irInt(
+                    @Suppress("DEPRECATION")
                     symbol.descriptor.fqNameSafe.hashCode() xor expression.startOffset
                 )
             )
@@ -496,7 +510,7 @@ class ComposerLambdaMemoization(
             (psi as? KtFunctionLiteral)?.let {
                 if (InlineUtil.isInlinedArgument(
                         it,
-                        context.bindingContext,
+                        @Suppress("DEPRECATION") context.bindingContext,
                         false
                     )
                 )

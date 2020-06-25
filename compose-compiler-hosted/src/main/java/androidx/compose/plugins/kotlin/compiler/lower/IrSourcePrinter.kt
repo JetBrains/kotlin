@@ -128,6 +128,7 @@ fun IrElement.dumpSrc(): String {
         .replace(Regex("}\\n(\\s)*,", RegexOption.MULTILINE), "},")
 }
 
+@Suppress("DEPRECATION")
 private class IrSourcePrinterVisitor(
     out: Appendable
 ) : IrElementVisitorVoid {

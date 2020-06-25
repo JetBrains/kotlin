@@ -42,6 +42,7 @@ class ComposerIntrinsicTransformer(val context: IrPluginContext) :
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
+        @Suppress("DEPRECATION")
         if (expression.symbol.descriptor.fqNameSafe == ComposeFqNames.CurrentComposerIntrinsic) {
             // since this call was transformed by the ComposerParamTransformer, the first argument
             // to this call is the composer itself. We just replace this expression with the

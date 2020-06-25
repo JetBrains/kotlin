@@ -283,15 +283,15 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
                 Bar(x=1, value=B(), f=fb)
                 Bar(x=1, value=B(), f={ it.<!UNRESOLVED_REFERENCE!>a<!>() })
                 Bar(x=1, value=A(), f={ it.<!UNRESOLVED_REFERENCE!>b<!>() })
-                <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>Bar<!>(
+                Bar(
                   x=1, 
                   value=A(), 
-                  f=fb
+                  f=<!TYPE_MISMATCH!>fb<!>
                 )
-                <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>Bar<!>(
+                Bar(
                   x=1,
                   value=B(), 
-                  f=fa
+                  f=<!TYPE_MISMATCH!>fa<!>
                 )
             }
 
@@ -426,7 +426,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
                 MyNamespace.Bar()
                 MyNamespace.Baz()
                 MyNamespace.<!UNRESOLVED_REFERENCE!>Qoo<!>()
-                MyNamespace.<!FUNCTION_EXPECTED!>someString<!>()
+                MyNamespace.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>someString<!>()
                 MyNamespace.NonComponent()
                 MyNamespace.Bar {}
                 MyNamespace.Baz <!TOO_MANY_ARGUMENTS!>{}<!>
@@ -444,7 +444,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
                 MyNamespace.<!UNRESOLVED_REFERENCE!>Qoo<!> {
                 }
 
-                MyNamespace.<!FUNCTION_EXPECTED!>someString<!> {
+                MyNamespace.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>someString<!> {
                 }
 
                 <!UNRESOLVED_REFERENCE!>SomethingThatDoesntExist<!>.Foo {
@@ -495,8 +495,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
                 MultiChildren { x, y ->
                     println(x + y)
                 }
-                <!NONE_APPLICABLE!>MultiChildren<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!>, 
-                <!CANNOT_INFER_PARAMETER_TYPE!>y<!>, <!CANNOT_INFER_PARAMETER_TYPE!>z<!> ->
+                <!NONE_APPLICABLE!>MultiChildren<!> { x, 
+                y, z ->
                     println(x + y + z)
                 }
             }
