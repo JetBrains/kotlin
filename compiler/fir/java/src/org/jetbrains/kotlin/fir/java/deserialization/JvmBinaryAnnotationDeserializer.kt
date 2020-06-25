@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.deserialization.hasReceiver
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class JvmBinaryAnnotationDeserializer(
@@ -31,12 +33,6 @@ class JvmBinaryAnnotationDeserializer(
 ) : AbstractAnnotationDeserializer(session) {
     private val annotationInfo by lazy(LazyThreadSafetyMode.PUBLICATION) {
         session.loadMemberAnnotations(kotlinBinaryClass, byteContent)
-    }
-
-    private enum class CallableKind {
-        PROPERTY_GETTER,
-        PROPERTY_SETTER,
-        OTHERS
     }
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotationCall> {
@@ -84,6 +80,36 @@ class JvmBinaryAnnotationDeserializer(
     ): List<FirAnnotationCall> {
         val signature = getCallableSignature(propertyProto, nameResolver, typeTable, CallableKind.PROPERTY_SETTER) ?: return emptyList()
         return findJvmBinaryClassAndLoadMemberAnnotations(containerSource, signature)
+    }
+
+    override fun loadValueParameterAnnotations(
+        containerSource: DeserializedContainerSource?,
+        callableProto: MessageLite,
+        valueParameterProto: ProtoBuf.ValueParameter,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        kind: CallableKind,
+        parameterIndex: Int,
+    ): List<FirAnnotationCall> {
+        val methodSignature = getCallableSignature(callableProto, nameResolver, typeTable, kind) ?: return emptyList()
+        val index = parameterIndex + computeJvmParameterIndexShift(callableProto)
+        val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
+        return findJvmBinaryClassAndLoadMemberAnnotations(containerSource, paramSignature)
+    }
+
+    /*
+     * TODO: Support container proto and fix index shift for
+     *    constructors of inner classes and enums
+     *
+     * See [AbstractBinaryClassAnnotationAndConstantLoader]
+     */
+    private fun computeJvmParameterIndexShift(message: MessageLite): Int {
+        return when (message) {
+            is ProtoBuf.Function -> if (message.hasReceiver()) 1 else 0
+            is ProtoBuf.Property -> if (message.hasReceiver()) 1 else 0
+            is ProtoBuf.Constructor -> 0
+            else -> throw UnsupportedOperationException("Unsupported message: ${message::class.java}")
+        }
     }
 
     private fun getCallableSignature(

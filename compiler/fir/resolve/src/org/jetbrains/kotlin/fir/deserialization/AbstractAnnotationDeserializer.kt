@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
@@ -39,6 +41,12 @@ abstract class AbstractAnnotationDeserializer(
     private val session: FirSession
 ) {
     protected val protocol = BuiltInSerializerProtocol
+
+    enum class CallableKind {
+        PROPERTY_GETTER,
+        PROPERTY_SETTER,
+        OTHERS
+    }
 
     fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) return emptyList()
@@ -98,7 +106,15 @@ abstract class AbstractAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
-    fun loadValueParameterAnnotations(valueParameterProto: ProtoBuf.ValueParameter, nameResolver: NameResolver): List<FirAnnotationCall> {
+    open fun loadValueParameterAnnotations(
+        containerSource: DeserializedContainerSource?,
+        callableProto: MessageLite,
+        valueParameterProto: ProtoBuf.ValueParameter,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        kind: CallableKind,
+        parameterIndex: Int
+    ): List<FirAnnotationCall> {
         if (!Flags.HAS_ANNOTATIONS.get(valueParameterProto.flags)) return emptyList()
         val annotations = valueParameterProto.getExtension(protocol.parameterAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }

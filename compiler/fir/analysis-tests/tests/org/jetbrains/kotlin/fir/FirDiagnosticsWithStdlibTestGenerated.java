@@ -692,6 +692,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInference.kt");
         }
 
+        @TestMetadata("builderInferenceFromStdlib.kt")
+        public void testBuilderInferenceFromStdlib() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInferenceFromStdlib.kt");
+        }
+
         @TestMetadata("complexConstraintSystem.kt")
         public void testComplexConstraintSystem() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/complexConstraintSystem.kt");
