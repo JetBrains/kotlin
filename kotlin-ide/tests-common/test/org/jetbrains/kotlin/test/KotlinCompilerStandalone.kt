@@ -95,7 +95,7 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
 
         if (ktFiles.isNotEmpty()) {
             val targetForKotlin = KotlinTestUtils.tmpDirForReusableFolder("compile-kt")
-            compileKotlin(ktFiles, targetForKotlin)
+            compileKotlin(ktFiles, javaFiles.isNotEmpty(), targetForKotlin)
             compilerTargets += targetForKotlin
         }
 
@@ -111,7 +111,7 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
         return target
     }
 
-    private fun compileKotlin(files: List<File>, target: File) {
+    private fun compileKotlin(files: List<File>, hasJavaFiles: Boolean, target: File) {
         val args = mutableListOf<String>()
 
         args += files.map { it.absolutePath }
@@ -124,6 +124,9 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
         val kotlincFun = when (platform) {
             is JdkPlatform -> {
                 args += listOf("-no-stdlib", "-d", target.absolutePath)
+                if (hasJavaFiles) {
+                    args += "-Xjava-source-roots=" + sources.joinToString(File.pathSeparator) { it.absolutePath }
+                }
                 KotlinCliCompilerFacade::runJvmCompiler
             }
             is JsPlatform -> {
