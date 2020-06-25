@@ -155,13 +155,12 @@ class FirTowerResolverSession internal constructor(
         info: CallInfo, qualifierReceiver: QualifierReceiver?
     ) {
         if (qualifierReceiver == null) return
-        for ((depth, qualifierScope) in qualifierReceiver.callableScopes().withIndex()) {
-            processLevel(
-                qualifierScope.toScopeTowerLevel(includeInnerConstructors = false),
-                info.noStubReceiver(), TowerGroup.Qualifier(depth),
-                useParentGroupForInvokes = true,
-            )
-        }
+        val callableScope = qualifierReceiver.callableScope() ?: return
+        processLevel(
+            callableScope.toScopeTowerLevel(includeInnerConstructors = false),
+            info.noStubReceiver(), TowerGroup.Qualifier,
+            useParentGroupForInvokes = true,
+        )
     }
 
     private suspend fun processClassifierScope(
