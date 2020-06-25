@@ -29,8 +29,8 @@ import org.gradle.api.Task
         taskGraph.allTasks.each { Task task ->
             forJsBrowserTestTask(task) {
                 if (task.hasProperty('debug')) {
-                    task.debug = true
                     task.doFirst {
+                        it.debug = true
                         ForkedDebuggerHelper.setupDebugger('%id', task.path, '')
                     }
                     task.doLast {
