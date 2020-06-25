@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 /**
  * Serves two goals:
@@ -28,16 +27,17 @@ internal class DeclarationsBuilderVisitor1(
         check(data.isEmpty()) // root node may not have containing declarations
         check(components.targetComponents.size == node.dimension)
 
-        val allTargets = (node.targetDeclarations + node.commonDeclaration()).map { it!!.target }
-
-        val modulesByTargets = HashMap<Target, MutableList<ModuleDescriptorImpl>>()
+        val allTargets: List<Target> = (node.targetDeclarations + node.commonDeclaration()).map { it!!.target }
+        val modulesByTargets: Map<Target, MutableList<ModuleDescriptorImpl>> = allTargets.associateWithTo(HashMap()) { mutableListOf() }
 
         // collect module descriptors:
         for (moduleNode in node.modules.values) {
             val modules = moduleNode.accept(this, noContainingDeclarations()).asListContaining<ModuleDescriptorImpl>()
             modules.forEachIndexed { index, module ->
-                val target = allTargets[index]
-                modulesByTargets.getOrPut(target) { mutableListOf() }.addIfNotNull(module)
+                if (module != null) {
+                    val target = allTargets[index]
+                    modulesByTargets.getValue(target) += module
+                }
             }
         }
 

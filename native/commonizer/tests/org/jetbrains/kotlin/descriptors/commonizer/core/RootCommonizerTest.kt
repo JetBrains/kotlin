@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
 import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
 import org.jetbrains.kotlin.descriptors.commonizer.OutputTarget
 import org.jetbrains.kotlin.descriptors.commonizer.Target
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirRootFactory
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MockBuiltInsProvider
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.junit.Test
@@ -167,7 +167,7 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
         fun KotlinBuiltIns.toMock(target: Target) = CirRootFactory.create(
             target = target,
             builtInsClass = this::class.java.name,
-            builtInsProvider = BuiltInsProvider.wrap(this)
+            builtInsProvider = MockBuiltInsProvider(this)
         )
     }
 }

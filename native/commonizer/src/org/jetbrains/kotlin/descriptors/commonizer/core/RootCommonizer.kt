@@ -20,7 +20,7 @@ class RootCommonizer : AbstractStandardCommonizer<CirRoot, CirRoot>() {
     override fun commonizationResult() = CirRootFactory.create(
         target = OutputTarget(inputTargets),
         builtInsClass = if (konanBuiltInsProvider != null) KonanBuiltIns::class.java.name else DefaultBuiltIns::class.java.name,
-        builtInsProvider = konanBuiltInsProvider ?: BuiltInsProvider.wrap(DefaultBuiltIns.Instance)
+        builtInsProvider = konanBuiltInsProvider ?: BuiltInsProvider.defaultBuiltInsProvider
     )
 
     override fun initialize(first: CirRoot) {

@@ -91,9 +91,9 @@ class NativeDistributionCommonizer(
         val stdlib = loadLibrary(stdlibPath)
 
         val result = targets.associate { target ->
-            val inputTarget = InputTarget(target.name, target)
+            val leafTarget = InputTarget(target.name, target)
 
-            val platformLibs = inputTarget.platformLibrariesSource
+            val platformLibs = leafTarget.platformLibrariesSource
                 .takeIf { it.isDirectory }
                 ?.listFiles()
                 ?.takeIf { it.isNotEmpty() }
@@ -103,7 +103,7 @@ class NativeDistributionCommonizer(
             if (platformLibs.isEmpty())
                 logger.warning("No platform libraries found for target $target. This target will be excluded from commonization.")
 
-            inputTarget to NativeDistributionLibraries(stdlib, platformLibs)
+            leafTarget to NativeDistributionLibraries(stdlib, platformLibs)
         }
 
         logProgress("Read lazy (uninitialized) libraries")
@@ -176,16 +176,16 @@ class NativeDistributionCommonizer(
         copyCommonStandardLibraries()
 
         when (result) {
-            is NothingToCommonize -> {
+            is Result.NothingToCommonize -> {
                 // It may happen that all targets to be commonized (or at least all but one target) miss platform libraries.
                 // In such case commonizer will do nothing and return a special result value 'NothingToCommonize'.
-                // So, let's just copy platform libraries from those target where they are to the new destination.
+                // So, let's just copy platform libraries from the target where they are to the new destination.
                 originalLibrariesByTargets.forEach { (target, libraries) ->
                     copyTargetAsIs(target, libraries.platformLibs.size)
                 }
             }
 
-            is CommonizationPerformed -> {
+            is Result.Commonized -> {
                 val serializer = KlibMetadataMonolithicSerializer(
                     languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
                     metadataVersion = KlibMetadataVersion.INSTANCE,
@@ -193,7 +193,7 @@ class NativeDistributionCommonizer(
                 )
 
                 // 'targetsToCopy' are some targets with empty set of platform libraries
-                val targetsToCopy = originalLibrariesByTargets.keys - result.concreteTargets
+                val targetsToCopy = originalLibrariesByTargets.keys - result.leafTargets
                 if (targetsToCopy.isNotEmpty()) {
                     targetsToCopy.forEach { target ->
                         val libraries = originalLibrariesByTargets.getValue(target)
@@ -201,11 +201,13 @@ class NativeDistributionCommonizer(
                     }
                 }
 
-
-                val concreteTargetNames = result.concreteTargets.map { it.name }
-                val targetsToSerialize = result.concreteTargets + result.commonTarget
+                val leafTargetNames = result.leafTargets.map { it.name }
+                val targetsToSerialize = result.leafTargets + result.sharedTarget
                 targetsToSerialize.forEach { target ->
-                    val newModules = result.modulesByTargets.getValue(target)
+                    val moduleResults: Collection<ModuleResult> = result.modulesByTargets.getValue(target)
+                    val newModules: Collection<ModuleDescriptor> = moduleResults.mapNotNull { (it as? ModuleResult.Commonized)?.module }
+                    val absentModuleLocations: List<File> =
+                        moduleResults.mapNotNull { (it as? ModuleResult.Absent)?.originalLocation }
 
                     val manifestProvider: NativeManifestDataProvider
                     val starredTarget: String?
@@ -220,8 +222,8 @@ class NativeDistributionCommonizer(
                         }
                     }
 
-                    val targetName = concreteTargetNames.joinToString { if (it == starredTarget) "$it(*)" else it }
-                    serializeTarget(target, targetName, newModules, manifestProvider, serializer)
+                    val targetName = leafTargetNames.joinToString { if (it == starredTarget) "$it(*)" else it }
+                    serializeTarget(target, targetName, newModules, absentModuleLocations, manifestProvider, serializer)
                 }
             }
         }
@@ -252,24 +254,26 @@ class NativeDistributionCommonizer(
         }
     }
 
-    private fun copyTargetAsIs(target: InputTarget, platformLibrariesCount: Int) {
-        val librariesDestination = target.librariesDestination
+    private fun copyTargetAsIs(leafTarget: InputTarget, librariesCount: Int) {
+        val librariesDestination = leafTarget.librariesDestination
         librariesDestination.mkdirs() // always create an empty directory even if there is nothing to copy
 
-        val librariesSource = target.platformLibrariesSource
+        val librariesSource = leafTarget.platformLibrariesSource
         if (librariesSource.isDirectory) librariesSource.copyRecursively(librariesDestination)
 
-        logProgress("Copied $platformLibrariesCount libraries for [${target.name}]")
+        logProgress("Copied $librariesCount libraries for [${leafTarget.name}]")
     }
 
     private fun serializeTarget(
         target: Target,
         targetName: String,
         newModules: Collection<ModuleDescriptor>,
+        absentModuleLocations: List<File>,
         manifestProvider: NativeManifestDataProvider,
         serializer: KlibMetadataMonolithicSerializer
     ) {
         val librariesDestination = target.librariesDestination
+        librariesDestination.mkdirs() // always create an empty directory even if there is nothing to copy
 
         for (newModule in newModules) {
             val libraryName = newModule.name
@@ -284,6 +288,11 @@ class NativeDistributionCommonizer(
             val libraryDestination = librariesDestination.resolve(plainName)
 
             writeLibrary(metadata, manifestData, libraryDestination)
+        }
+
+        for (absentModuleLocation in absentModuleLocations) {
+            val libraryName = absentModuleLocation.name
+            absentModuleLocation.copyRecursively(librariesDestination.resolve(libraryName))
         }
 
         logProgress("Written libraries for [$targetName]")
