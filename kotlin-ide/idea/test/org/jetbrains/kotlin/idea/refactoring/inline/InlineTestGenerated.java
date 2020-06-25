@@ -54,6 +54,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("idea/testData/refactoring/inline/function/Kt30131.kt");
         }
 
+        @TestMetadata("Kt39818.kt")
+        public void testKt39818() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/Kt39818.kt");
+        }
+
         @TestMetadata("LocalCapturing.kt")
         public void testLocalCapturing() throws Exception {
             runTest("testData/refactoring/inline/function/LocalCapturing.kt");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -181,6 +181,7 @@ class CodeInliner<TCallElement : KtElement>(
             val usages = codeToInline.collectDescendantsOfType<KtExpression> {
                 it[CodeToInline.PARAMETER_USAGE_KEY] == parameterName
             }
+
             usages.forEach {
                 val usageArgument = it.parent as? KtValueArgument
                 if (argument.isNamed) {
@@ -189,7 +190,8 @@ class CodeInliner<TCallElement : KtElement>(
                 if (argument.isDefaultValue) {
                     usageArgument?.mark(DEFAULT_PARAMETER_VALUE_KEY)
                 }
-                codeToInline.replaceExpression(it, argument.expression)
+
+                codeToInline.replaceExpression(it, argument.expression.copied())
             }
 
             //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
