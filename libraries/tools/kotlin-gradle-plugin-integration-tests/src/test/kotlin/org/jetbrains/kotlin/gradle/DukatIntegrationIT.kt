@@ -69,6 +69,61 @@ class DukatIntegrationIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testIntegratedDukatKotlinDslRootDependencies() {
+        testIntegratedDukat(
+            DslType.KOTLIN,
+            DependenciesLocation.ROOT
+        )
+    }
+
+    @Test
+    fun testIntegratedDukatKotlinDslExtDependencies() {
+        testIntegratedDukat(
+            DslType.KOTLIN,
+            DependenciesLocation.EXTENSION
+        )
+    }
+
+    @Test
+    fun testIntegratedDukatGroovyDslRootDependencies() {
+        testIntegratedDukat(
+            DslType.GROOVY,
+            DependenciesLocation.ROOT
+        )
+    }
+
+    @Test
+    fun testIntegratedDukatGroovyDslExtDependencies() {
+        testIntegratedDukat(
+            DslType.GROOVY,
+            DependenciesLocation.EXTENSION
+        )
+    }
+
+    private fun testIntegratedDukat(
+        dslType: DslType,
+        dependenciesLocation: DependenciesLocation
+    ) {
+        val projectName = "${dslType.value}-${dependenciesLocation.value}"
+        val project = Project(
+            projectName = projectName,
+            directoryPrefix = "dukat-integration"
+        )
+        project.setupWorkingDir()
+        project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        val externalSrcs = "build/externals/$projectName/src"
+        project.build("build") {
+            assertSuccessful()
+
+            assertTrue {
+                fileInWorkingDir(externalSrcs).listFiles()?.size == 1
+            }
+            assertFileExists("$externalSrcs/index.module_decamelize.kt")
+        }
+    }
+
     private enum class DslType(
         val value: String
     ) {
