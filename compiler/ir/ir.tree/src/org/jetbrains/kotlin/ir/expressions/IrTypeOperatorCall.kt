@@ -39,6 +39,7 @@ enum class IrTypeOperator {
     /** Instance-of check: `a is Type` */
     INSTANCEOF,
     /** Instance-of check: `a !is Type` */
+    @Deprecated("Considering to drop it", ReplaceWith("INSTANCEOF<T>(x).not()"))
     NOT_INSTANCEOF, // TODO drop and replace with `INSTANCEOF<T>(x).not()`?
     /**
      * SAM conversion: value of functional type F is used where Single Abstract Method interface value is expected.
