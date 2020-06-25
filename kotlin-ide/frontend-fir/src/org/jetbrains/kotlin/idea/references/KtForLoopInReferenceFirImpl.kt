@@ -5,21 +5,22 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
-import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.getResolvedSymbolOfNameReference
+import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtForExpression
 
 open class KtForLoopInReferenceFirImpl(expression: KtForExpression) : KtForLoopInReference(expression), FirKtReference {
-    override fun getResolvedToPsi(
-        analysisSession: FirAnalysisSession
-    ): Collection<PsiElement> {
+
+    override fun resolveToSymbols(analysisSession: FrontendAnalysisSession): Collection<KtSymbol> {
+        check(analysisSession is FirAnalysisSession)
         val firLoop = expression.getOrBuildFirSafe<FirWhileLoop>() ?: return emptyList()
         val condition = firLoop.condition as? FirFunctionCall
         val iterator = run {
@@ -28,11 +29,10 @@ open class KtForLoopInReferenceFirImpl(expression: KtForExpression) : KtForLoopI
         }
         val hasNext = condition?.calleeReference?.getResolvedSymbolOfNameReference()
         val next = (firLoop.block.statements.firstOrNull() as? FirProperty?)?.getInitializerFunctionCall()
-        val project = element.project
         return listOfNotNull(
-            iterator?.fir?.findPsi(project),
-            hasNext?.fir?.findPsi(project),
-            next?.fir?.findPsi(project),
+            iterator?.fir?.buildSymbol(analysisSession.firSymbolBuilder),
+            hasNext?.fir?.buildSymbol(analysisSession.firSymbolBuilder),
+            next?.fir?.buildSymbol(analysisSession.firSymbolBuilder),
         )
     }
 

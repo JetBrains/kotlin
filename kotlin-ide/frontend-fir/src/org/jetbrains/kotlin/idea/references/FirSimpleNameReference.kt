@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -14,7 +16,10 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 internal class KtSimpleNameReferenceFirImpl(
     expression: KtSimpleNameExpression
 ) : KtSimpleNameReference(expression), FirKtReference {
-    override fun getResolvedToPsi(analysisSession: FirAnalysisSession) = FirReferenceResolveHelper.resolveSimpleNameReference(this)
+    override fun resolveToSymbols(analysisSession: FrontendAnalysisSession): Collection<KtSymbol> {
+        check(analysisSession is FirAnalysisSession)
+        return FirReferenceResolveHelper.resolveSimpleNameReference(this, analysisSession.firSymbolBuilder)
+    }
 
     override fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean {
         return true // TODO
