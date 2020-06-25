@@ -12,30 +12,21 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
-import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
-import org.jetbrains.kotlin.fir.java.FirLibrarySession
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.java.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
-import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllTransformerBasedResolveProcessors
-import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
@@ -157,39 +148,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
                 val javaProvider = symbolProvider.providers.filterIsInstance<JavaSymbolProvider>().first()
                 for (javaClass in javaProvider.getJavaTopLevelClasses().sortedBy { it.name }) {
                     if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) continue
-                    val enhancementScope = javaClass.buildUseSiteMemberScope(session, ScopeSession()).let {
-                        when (it) {
-                            is FirCompositeScope -> it.scopes.filterIsInstance<JavaClassEnhancementScope>().first()
-                            is JavaClassEnhancementScope -> it
-                            else -> null
-                        }
-                    }
-                    if (enhancementScope == null) {
-                        javaClass.accept(renderer, null)
-                    } else {
-                        renderer.visitMemberDeclaration(javaClass)
-                        renderer.renderSupertypes(javaClass)
-                        renderer.renderInBraces {
-                            val renderedDeclarations = mutableListOf<FirDeclaration>()
-                            for (declaration in javaClass.declarations) {
-                                if (declaration in renderedDeclarations) continue
-                                if (declaration !is FirJavaMethod) {
-                                    declaration.accept(renderer, null)
-                                    renderer.newLine()
-                                    renderedDeclarations += declaration
-                                } else {
-                                    enhancementScope.processFunctionsByName(declaration.name) { symbol ->
-                                        val enhanced = symbol.fir
-                                        if (enhanced !in renderedDeclarations) {
-                                            enhanced.accept(renderer, null)
-                                            renderer.newLine()
-                                            renderedDeclarations += enhanced
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    renderJavaClass(renderer, javaClass, session)
                     processedJavaClasses += javaClass
                 }
             }

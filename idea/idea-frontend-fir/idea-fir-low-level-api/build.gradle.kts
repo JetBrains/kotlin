@@ -27,6 +27,7 @@ dependencies {
     testCompile(toolsJar())
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":compiler:tests-common"))
+    testCompile(projectTests(":compiler:fir:analysis-tests"))
     testCompile(projectTests(":idea:idea-test-framework"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
