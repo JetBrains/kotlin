@@ -67,7 +67,7 @@ abstract class DeclarationLookupObjectImpl(
 }
 
 // This function is kind of a hack to avoid using DeprecationResolver as it's hard to preserve same resolutionFacade for descriptor
-private fun isDeprecatedAtCallSite(descriptor: DeclarationDescriptor, languageVersionSettings: LanguageVersionSettings?): Boolean {
+fun isDeprecatedAtCallSite(descriptor: DeclarationDescriptor, languageVersionSettings: LanguageVersionSettings?): Boolean {
     val isDeprecatedAtDeclarationSite = KotlinBuiltIns.isDeprecated(descriptor)
     if (languageVersionSettings == null) return isDeprecatedAtDeclarationSite
 
