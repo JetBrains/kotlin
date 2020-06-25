@@ -10,11 +10,13 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
@@ -87,8 +89,8 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         }
 
         for (symbol in symbols) {
+            if (symbol is FirConstructorSymbol) continue
             val symbolName = symbol.callableId.callableName
-            if (symbolName.isConstructor) continue
 
             result.addElement(LookupElementBuilder.create(symbolName.toString()))
         }
@@ -97,8 +99,6 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
 }
 
 private val FirCallableSymbol<*>.isExtension get() = fir.receiverTypeRef != null
-
-private val Name.isConstructor get() = this == Name.special("<init>")
 
 private fun FirScope.collectCallableSymbols(): MutableList<FirCallableSymbol<*>> {
     val allCallableSymbols = mutableListOf<FirCallableSymbol<*>>()
