@@ -90,12 +90,18 @@ public abstract class AnnotationCodegen {
     private final KotlinTypeMapper typeMapper;
     private final ModuleDescriptor module;
     private final GenerationState state;
+    private final boolean skipNullabilityAnnotations;
 
     private AnnotationCodegen(@NotNull InnerClassConsumer innerClassConsumer, @NotNull GenerationState state) {
+        this(innerClassConsumer, state, false);
+    }
+
+    private AnnotationCodegen(@NotNull InnerClassConsumer innerClassConsumer, @NotNull GenerationState state, boolean skipNullabilityAnnotations) {
         this.innerClassConsumer = innerClassConsumer;
         this.typeMapper = state.getTypeMapper();
         this.module = state.getModule();
         this.state = state;
+        this.skipNullabilityAnnotations = skipNullabilityAnnotations;
     }
 
     /**
@@ -196,9 +202,7 @@ public abstract class AnnotationCodegen {
             return;
         }
 
-        if (returnType != null && !AsmUtil.isPrimitive(returnType) &&
-            !(descriptor instanceof PropertyDescriptor && ((PropertyDescriptor) descriptor).isDelegated())
-        ) {
+        if (returnType != null && !AsmUtil.isPrimitive(returnType) && !skipNullabilityAnnotations) {
             generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
         }
     }
@@ -644,7 +648,16 @@ public abstract class AnnotationCodegen {
             @NotNull InnerClassConsumer innerClassConsumer,
             @NotNull GenerationState state
     ) {
-        return new AnnotationCodegen(innerClassConsumer, state) {
+        return forField(fv, innerClassConsumer, state, false);
+    }
+
+    public static AnnotationCodegen forField(
+            @NotNull FieldVisitor fv,
+            @NotNull InnerClassConsumer innerClassConsumer,
+            @NotNull GenerationState state,
+            boolean skipNullabilityAnnotations
+    ) {
+        return new AnnotationCodegen(innerClassConsumer, state, skipNullabilityAnnotations) {
             @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {

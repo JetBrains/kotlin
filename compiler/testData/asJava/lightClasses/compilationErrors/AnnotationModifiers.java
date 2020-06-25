@@ -1,7 +1,6 @@
 public final class A {
     @kotlin.jvm.Transient
     @kotlin.jvm.Volatile
-    @org.jetbrains.annotations.NotNull
     private transient volatile java.lang.String c;
 
     @kotlin.jvm.Synchronized

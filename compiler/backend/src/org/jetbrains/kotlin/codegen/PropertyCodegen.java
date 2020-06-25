@@ -438,7 +438,8 @@ public class PropertyCodegen {
             );
 
             if (annotatedField != null) {
-                AnnotationCodegen.forField(fv, memberCodegen, state)
+                boolean isInvisibleField = (modifiers & ACC_PRIVATE) != 0 || (modifiers & ACC_SYNTHETIC) != 0;
+                AnnotationCodegen.forField(fv, memberCodegen, state, isInvisibleField)
                         .genAnnotations(annotatedField, type, propertyDescriptor.getType());
             }
         }
