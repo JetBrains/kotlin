@@ -180,7 +180,7 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
             defaultParameterValueRenderer = { (it.source.getPsi() as? KtParameter)?.defaultValue?.text ?: "..." }
         }
 
-        private fun StringBuilder.renderKDoc(
+        internal fun StringBuilder.renderKDoc(
             contentTag: KDocTag,
             sections: List<KDocSection> = if (contentTag is KDocSection) listOf(contentTag) else emptyList()
         ) {
