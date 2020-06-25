@@ -10,10 +10,10 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtAnonymousFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.serialization.deserialization.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors as Colors
 
@@ -30,7 +30,7 @@ internal class FunctionCallHighlightingVisitor(
                 analysisSession.resolveCall(expression)
                     ?.takeIf { callInfo ->
                         // ignore arithmetic-like operator calls
-                        (callInfo.targetFunction as? KtNamedFunction)?.hasModifier(KtTokens.OPERATOR_KEYWORD) != true
+                        (callInfo.targetFunction as? KtFunctionSymbol)?.isOperator != true
                     }
                     ?.let { callInfo ->
                         getTextAttributesForCal(callInfo)?.let { attributes ->

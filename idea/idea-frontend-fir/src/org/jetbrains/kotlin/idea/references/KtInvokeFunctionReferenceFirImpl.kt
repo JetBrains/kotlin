@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.VariableAsFunctionLikeCallInfo
 import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
 
@@ -16,7 +17,7 @@ class KtInvokeFunctionReferenceFirImpl(expression: KtCallExpression) : KtInvokeF
         TODO("Not yet implemented")
     }
 
-    override fun getResolvedToPsi(analysisSession: FirAnalysisSession): Collection<PsiElement> {
+    override fun resolveToSymbols(analysisSession: FrontendAnalysisSession): Collection<KtSymbol> {
         val call = analysisSession.resolveCall(expression) ?: return emptyList()
         if (call is VariableAsFunctionLikeCallInfo) {
             return listOf(call.invokeFunction)
