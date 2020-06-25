@@ -28,7 +28,6 @@ org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImpl
 "org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplement[1: Gradle-4.9, KotlinGradlePlugin-latest stable]", Gradle Tests in 201,,
 "org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplement[2: Gradle-5.6.4, KotlinGradlePlugin-minimal]", Gradle Tests in 201,,
 "org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplement[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable]", Gradle Tests in 201,,
-org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testCommonTestTargetPlatform, KT-37125,,
 "org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testAndroidDependencyOnMPP[1: Gradle-4.9, KotlinGradlePlugin-latest stable]", Gradle Tests in 201,,
 "org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testAndroidDependencyOnMPP[1: Gradle-4.9, KotlinGradlePlugin-latest stable]", Gradle Tests in 201,,
 "org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testAndroidDependencyOnMPP[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable]", Gradle Tests in 201,,
