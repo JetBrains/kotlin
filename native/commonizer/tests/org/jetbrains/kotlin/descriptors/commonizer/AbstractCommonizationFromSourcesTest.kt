@@ -19,10 +19,8 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.commonizer.SourceModuleRoot.Companion.COMMON_TARGET_NAME
-import org.jetbrains.kotlin.descriptors.commonizer.utils.assertCommonizationPerformed
-import org.jetbrains.kotlin.descriptors.commonizer.utils.assertIsDirectory
-import org.jetbrains.kotlin.descriptors.commonizer.utils.assertModulesAreEqual
-import org.jetbrains.kotlin.descriptors.commonizer.utils.assertValidModule
+import org.jetbrains.kotlin.descriptors.commonizer.utils.*
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MockBuiltInsProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -42,10 +40,6 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         init {
             System.setProperty("java.awt.headless", "true")
         }
-
-        fun Collection<ModuleDescriptor>.eachModuleAsTarget() = mapIndexed { index, moduleDescriptor ->
-            InputTarget("target_$index") to moduleDescriptor
-        }.toMap().toCommonizationParameters()
     }
 
     private fun getTestDataDir(): File {
@@ -69,26 +63,28 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         val result: Result = runCommonization(analyzedModules.toCommonizationParameters())
         assertCommonizationPerformed(result)
 
-        val commonTarget: OutputTarget = analyzedModules.commonizedCommonModule.target
-        assertEquals(commonTarget, result.commonTarget)
+        val sharedTarget: OutputTarget = analyzedModules.commonizedCommonModule.target
+        assertEquals(sharedTarget, result.sharedTarget)
 
-        val commonModuleAsExpected: ModuleDescriptor = analyzedModules.commonizedCommonModule.module
-        val commonModuleByCommonizer: ModuleDescriptor = result.modulesByTargets.getValue(commonTarget).single()
+        val sharedModuleAsExpected: ModuleDescriptor = analyzedModules.commonizedCommonModule.module
+        val sharedModuleByCommonizer: ModuleDescriptor =
+            (result.modulesByTargets.getValue(sharedTarget).single() as ModuleResult.Commonized).module
 
-        assertValidModule(commonModuleAsExpected)
-        assertValidModule(commonModuleByCommonizer)
-        assertModulesAreEqual(commonModuleAsExpected, commonModuleByCommonizer, "\"$commonTarget\" target")
+        assertValidModule(sharedModuleAsExpected)
+        assertValidModule(sharedModuleByCommonizer)
+        assertModulesAreEqual(sharedModuleAsExpected, sharedModuleByCommonizer, "\"$sharedTarget\" target")
 
-        val concreteTargets: Set<InputTarget> = analyzedModules.commonizedPlatformModules.keys
-        assertEquals(concreteTargets, result.concreteTargets)
+        val leafTargets: Set<InputTarget> = analyzedModules.commonizedPlatformModules.keys
+        assertEquals(leafTargets, result.leafTargets)
 
-        for (target in concreteTargets) {
-            val targetModuleAsExpected: ModuleDescriptor = analyzedModules.commonizedPlatformModules.getValue(target).module
-            val targetModuleByCommonizer: ModuleDescriptor = result.modulesByTargets.getValue(target).single()
+        for (leafTarget in leafTargets) {
+            val leafTargetModuleAsExpected: ModuleDescriptor = analyzedModules.commonizedPlatformModules.getValue(leafTarget).module
+            val leafTargetModuleByCommonizer: ModuleDescriptor =
+                (result.modulesByTargets.getValue(leafTarget).single() as ModuleResult.Commonized).module
 
-            assertValidModule(targetModuleAsExpected)
-            assertValidModule(targetModuleByCommonizer)
-            assertModulesAreEqual(targetModuleAsExpected, targetModuleByCommonizer, "\"$target\" target")
+            assertValidModule(leafTargetModuleAsExpected)
+            assertValidModule(leafTargetModuleByCommonizer)
+            assertModulesAreEqual(leafTargetModuleAsExpected, leafTargetModuleByCommonizer, "\"$leafTarget\" target")
         }
     }
 }
@@ -327,8 +323,8 @@ private fun Map<InputTarget, ModuleDescriptor>.toCommonizationParameters(): Para
             TargetProvider(
                 target = target,
                 builtInsClass = moduleDescriptor.builtIns::class.java,
-                builtInsProvider = BuiltInsProvider.wrap(moduleDescriptor.builtIns),
-                modulesProvider = ModulesProvider.wrap(moduleDescriptor)
+                builtInsProvider = MockBuiltInsProvider(moduleDescriptor.builtIns),
+                modulesProvider = MockModulesProvider(moduleDescriptor)
             )
         )
     }

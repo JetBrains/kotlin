@@ -40,8 +40,8 @@ class AggregatedStatsCollector(
             "Lifted Up, %%",
             "Commonized",
             "Commonized, %%",
-            "Missed in s. targets",
-            "Missed in s. targets, %%",
+            "Missing in s. targets",
+            "Missing in s. targets, %%",
             "Failed: Other",
             "Failed: Other, %%",
             "Total"

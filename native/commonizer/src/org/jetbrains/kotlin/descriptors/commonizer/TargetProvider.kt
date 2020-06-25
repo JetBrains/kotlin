@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import java.io.File
 
 class TargetProvider(
     val target: InputTarget,
@@ -19,20 +21,15 @@ interface BuiltInsProvider {
     fun loadBuiltIns(): KotlinBuiltIns
 
     companion object {
-        fun wrap(builtIns: KotlinBuiltIns) = object : BuiltInsProvider {
-            override fun loadBuiltIns() = builtIns
+        val defaultBuiltInsProvider = object : BuiltInsProvider {
+            override fun loadBuiltIns() = DefaultBuiltIns.Instance
         }
     }
 }
 
 interface ModulesProvider {
+    class ModuleInfo(val name: String, val originalLocation: File)
+
+    fun loadModuleInfos(): Map<String, ModuleInfo>
     fun loadModules(): Collection<ModuleDescriptor>
-
-    companion object {
-        fun wrap(modules: Collection<ModuleDescriptor>) = object : ModulesProvider {
-            override fun loadModules() = modules
-        }
-
-        fun wrap(vararg modules: ModuleDescriptor) = wrap(modules.toList())
-    }
 }

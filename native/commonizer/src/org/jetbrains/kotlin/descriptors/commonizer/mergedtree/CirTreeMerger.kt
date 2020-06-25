@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
+import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.Parameters
 import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
@@ -23,26 +25,44 @@ class CirTreeMerger(
     private val storageManager: StorageManager,
     private val parameters: Parameters
 ) {
+    class CirTreeMergeResult(
+        val root: CirRootNode,
+        val absentModuleInfos: Map<InputTarget, Collection<ModuleInfo>>
+    )
+
     private val size = parameters.targetProviders.size
     private lateinit var cacheRW: CirClassifiersCacheImpl
 
-    fun merge(): CirRootNode {
+    fun merge(): CirTreeMergeResult {
         val rootNode: CirRootNode = buildRootNode(storageManager, size)
         cacheRW = rootNode.cache
 
+        val allModuleInfos: List<Map<String, ModuleInfo>> = parameters.targetProviders.map { it.modulesProvider.loadModuleInfos() }
+        val commonModuleNames = allModuleInfos.map { it.keys }.reduce { a, b -> a intersect b }
+
         parameters.targetProviders.forEachIndexed { targetIndex, targetProvider ->
-            processTarget(rootNode, targetIndex, targetProvider)
+            processTarget(rootNode, targetIndex, targetProvider, commonModuleNames)
             parameters.progressLogger?.invoke("Loaded declarations for [${targetProvider.target.name}]")
             System.gc()
         }
 
-        return rootNode
+        val absentModuleInfos = allModuleInfos.mapIndexed { index, moduleInfos ->
+            val target = parameters.targetProviders[index].target
+            val absentInfos = moduleInfos.filterKeys { name -> name !in commonModuleNames }.values
+            target to absentInfos
+        }.toMap()
+
+        return CirTreeMergeResult(
+            root = rootNode,
+            absentModuleInfos = absentModuleInfos
+        )
     }
 
     private fun processTarget(
         rootNode: CirRootNode,
         targetIndex: Int,
-        targetProvider: TargetProvider
+        targetProvider: TargetProvider,
+        commonModuleNames: Set<String>
     ) {
         rootNode.targetDeclarations[targetIndex] = CirRootFactory.create(
             targetProvider.target,
@@ -54,7 +74,8 @@ class CirTreeMerger(
         val modules: MutableMap<Name, CirModuleNode> = rootNode.modules
 
         moduleDescriptors.forEach { moduleDescriptor ->
-            processModule(modules, targetIndex, moduleDescriptor)
+            if (moduleDescriptor.name.asString().removeSurrounding("<", ">") in commonModuleNames)
+                processModule(modules, targetIndex, moduleDescriptor)
         }
     }
 
