@@ -1,7 +1,12 @@
 package org.jetbrains.kotlin.idea.artifacts
 
+import com.intellij.jarRepository.JarRepositoryManager
+import org.eclipse.aether.repository.RemoteRepository
 import org.jdom.input.SAXBuilder
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.idea.maven.aether.ArtifactKind
+import org.jetbrains.idea.maven.aether.ArtifactRepositoryManager
+import org.jetbrains.idea.maven.aether.ProgressConsumer
 import java.io.File
 
 @get:TestOnly
@@ -30,15 +35,15 @@ private fun substitutePathVariables(path: String): String {
     return path
 }
 
-private enum class LibraryFileKind {
-    CLASSES, SOURCES
+private enum class LibraryFileKind(val classifierSuffix: String, val artifactKind: ArtifactKind) {
+    CLASSES("", ArtifactKind.ARTIFACT), SOURCES("-sources", ArtifactKind.SOURCES);
 }
 
 private fun findLibrary(
     repoLocation: String,
     library: String,
-    group: String,
-    artifact: String,
+    groupId: String,
+    artifactId: String,
     kind: LibraryFileKind = LibraryFileKind.CLASSES
 ): File {
     val librariesDir = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "../.idea/libraries")
@@ -53,7 +58,7 @@ private fun findLibrary(
 
     val document = libraryFile.inputStream().use { stream -> SAXBuilder().build(stream) }
     val urlScheme = "jar://"
-    val pathInRepository = group.replace('.', '/') + '/' + artifact
+    val pathInRepository = groupId.replace('.', '/') + '/' + artifactId
     val pathPrefix = "$urlScheme$repoLocation/$pathInRepository/"
 
     val root = document.rootElement
@@ -68,9 +73,53 @@ private fun findLibrary(
 
     val result = File(substitutePathVariables(path))
     if (!result.exists()) {
+        if (kind == LibraryFileKind.SOURCES) {
+            val version = result.nameWithoutExtension.drop(artifactId.length + 1).dropLast(kind.classifierSuffix.length)
+            return resolveArtifact(groupId, artifactId, version, kind)
+        }
+
         throw IllegalStateException("File $result doesn't exist")
     }
     return result
+}
+
+private val remoteMavenRepositories: List<RemoteRepository> by lazy {
+    val jarRepositoriesFile = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "../.idea/jarRepositories.xml")
+    val document = jarRepositoriesFile.inputStream().use { stream -> SAXBuilder().build(stream) }
+
+    val repositories = mutableListOf<RemoteRepository>()
+
+    for (remoteRepo in document.rootElement.getChild("component")?.getChildren("remote-repository").orEmpty()) {
+        val options = remoteRepo.getChildren("option") ?: continue
+
+        fun getOptionValue(key: String): String? {
+            val option = options.find { it.getAttributeValue("name") == key } ?: return null
+            return option.getAttributeValue("value")?.takeIf { it.isNotEmpty() }
+        }
+
+        val id = getOptionValue("id") ?: continue
+        val url = getOptionValue("url") ?: continue
+        repositories += ArtifactRepositoryManager.createRemoteRepository(id, url)
+    }
+
+    return@lazy repositories
+}
+
+private fun resolveArtifact(groupId: String, artifactId: String, version: String, kind: LibraryFileKind): File {
+    val repositoryManager = ArtifactRepositoryManager(
+        JarRepositoryManager.getLocalRepositoryPath(),
+        remoteMavenRepositories,
+        ProgressConsumer.DEAF,
+        false
+    )
+
+    val artifacts = repositoryManager.resolveDependencyAsArtifact(
+        groupId, artifactId, version,
+        setOf(kind.artifactKind), false, emptyList()
+    )
+
+    assert(artifacts.size == 1) { "Single artifact expected for library \"$groupId:$artifactId:$version\", got $artifacts" }
+    return artifacts.single().file
 }
 
 object TestKotlinArtifacts : KotlinArtifacts() {
