@@ -211,8 +211,6 @@ class DependencyProcessor(dependenciesRoot: File,
     }
 
     companion object {
-        private val lock = ReentrantLock()
-
         val localKonanDir: File by lazy {
             File(System.getenv("KONAN_DATA_DIR") ?: (System.getProperty("user.home") + File.separator + ".konan"))
         }
@@ -265,17 +263,25 @@ class DependencyProcessor(dependenciesRoot: File,
         }
     }
 
-    fun run() = lock.withLock {
-        RandomAccessFile(lockFile, "rw").channel.lock().use {
-            resolvedDependencies.forEach { (dependency, candidate) ->
-                val baseUrl = when (candidate) {
-                    is DependencySource.Local -> null
-                    DependencySource.Remote.Public -> dependenciesUrl
-                    DependencySource.Remote.Internal -> InternalServer.url
-                }
-                // TODO: consider using different caches for different remotes.
-                if (baseUrl != null) {
-                    downloadDependency(dependency, baseUrl)
+    fun run() {
+        // We need a lock that can be shared between different classloaders (KT-39781).
+        // TODO: Rework dependencies downloading to avoid storing the lock in the system properties.
+        val lock = System.getProperties().computeIfAbsent("kotlin.native.dependencies.lock") {
+            // String literals are internalized so we create a new instance to avoid synchronization on a shared object.
+            java.lang.String("lock")
+        }
+        synchronized(lock) {
+            RandomAccessFile(lockFile, "rw").channel.lock().use {
+                resolvedDependencies.forEach { (dependency, candidate) ->
+                    val baseUrl = when (candidate) {
+                        is DependencySource.Local -> null
+                        DependencySource.Remote.Public -> dependenciesUrl
+                        DependencySource.Remote.Internal -> InternalServer.url
+                    }
+                    // TODO: consider using different caches for different remotes.
+                    if (baseUrl != null) {
+                        downloadDependency(dependency, baseUrl)
+                    }
                 }
             }
         }
