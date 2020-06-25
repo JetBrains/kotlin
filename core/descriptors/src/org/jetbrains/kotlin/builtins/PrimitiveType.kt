@@ -34,9 +34,9 @@ enum class PrimitiveType(typeName: String) {
 
     val arrayTypeName: Name = Name.identifier("${typeName}Array")
 
-    val typeFqName: FqName = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.child(this.typeName)
+    val typeFqName: FqName by lazy(LazyThreadSafetyMode.PUBLICATION) { KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.child(this.typeName) }
 
-    val arrayTypeFqName: FqName = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.child(arrayTypeName)
+    val arrayTypeFqName: FqName by lazy(LazyThreadSafetyMode.PUBLICATION) { KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.child(arrayTypeName) }
 
     companion object {
         @JvmField
