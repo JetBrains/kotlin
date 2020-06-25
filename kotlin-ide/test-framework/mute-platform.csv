@@ -4,8 +4,6 @@ org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.test
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryClassUsages, KT-34542, FAIL,
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassUsages, KT-34542, FAIL,
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryObjectUsages, KT-34542, FAIL,
-org.jetbrains.kotlin.gradle.HierarchicalMultiplatformProjectImportingTest.testImportHMPPFlag, KT-37125,,
-org.jetbrains.kotlin.gradle.HierarchicalMultiplatformProjectImportingTest.testImportIntermediateModules, KT-37125,,
 "org.jetbrains.kotlin.gradle.HierarchicalMultiplatformProjectImportingTest.testJvmWithJavaOnHMPP[1: Gradle-4.9, KotlinGradlePlugin-latest stable]", No module dependency found,,
 "org.jetbrains.kotlin.gradle.HierarchicalMultiplatformProjectImportingTest.testJvmWithJavaOnHMPP[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable]", No module dependency found,,
 "org.jetbrains.kotlin.gradle.ImportAndCheckHighlighting.testMultiplatformLibrary[1: Gradle-4.9, KotlinGradlePlugin-latest stable]", KT-35631,,
