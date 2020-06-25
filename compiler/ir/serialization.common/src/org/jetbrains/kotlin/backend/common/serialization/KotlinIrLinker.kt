@@ -439,6 +439,8 @@ abstract class KotlinIrLinker(
                             } finally {
                                 parentsStack.pop()
                             }
+                            deserializeAllReachableTopLevels()
+                            postProcess()
                         }
                     }
 
@@ -486,7 +488,7 @@ abstract class KotlinIrLinker(
                                         parentsStack.pop()
                                     }
                                     deserializeAllReachableTopLevels()
-//                                    moduleDeserializer.postProcess()
+                                    postProcess()
                                 }
                             }
                         }
