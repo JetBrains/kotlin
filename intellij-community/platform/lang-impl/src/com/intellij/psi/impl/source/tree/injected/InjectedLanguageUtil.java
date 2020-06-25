@@ -341,7 +341,7 @@ public final class InjectedLanguageUtil {
       ProgressManager.checkCanceled();
       if ("EL".equals(current.getLanguage().getID())) break;
       result = SoftReference.deref(current.getUserData(INJECTED_PSI));
-      if (result == null || !result.isModCountUpToDate(hostPsiFile) || !result.isValid()) {
+      if (result == null || !result.isModCountUpToDate() || !result.isValid()) {
         result = injectedManager.processInPlaceInjectorsFor(hostPsiFile, current);
         preventResultFromGCWhileInjectedPsiIsReachable(result);
       }

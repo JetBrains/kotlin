@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 class InjectionResult implements Getter<InjectionResult> {
+  private final PsiFile myHostFile;
   @Nullable final List<? extends PsiFile> files;
   @Nullable final List<? extends Pair<ReferenceInjector, Place>> references;
   private final long myModificationCount;
@@ -18,9 +19,10 @@ class InjectionResult implements Getter<InjectionResult> {
   InjectionResult(@NotNull PsiFile hostFile,
                   @Nullable List<? extends PsiFile> files,
                   @Nullable List<? extends Pair<ReferenceInjector, Place>> references) {
+    myHostFile = hostFile;
     this.files = files;
     this.references = references;
-    myModificationCount = calcModCount(hostFile);
+    myModificationCount = calcModCount();
   }
 
   @Override
@@ -47,11 +49,11 @@ class InjectionResult implements Getter<InjectionResult> {
     return true;
   }
 
-  boolean isModCountUpToDate(@NotNull PsiFile hostPsiFile) {
-    return myModificationCount == calcModCount(hostPsiFile);
+  boolean isModCountUpToDate() {
+    return myModificationCount == calcModCount();
   }
 
-  private static long calcModCount(@NotNull PsiFile hostPsiFile) {
-    return (hostPsiFile.getModificationStamp() << 32) + hostPsiFile.getManager().getModificationTracker().getModificationCount();
+  private long calcModCount() {
+    return (myHostFile.getModificationStamp() << 32) + myHostFile.getManager().getModificationTracker().getModificationCount();
   }
 }
