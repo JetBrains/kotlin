@@ -5,8 +5,13 @@
       <w>fcontext</w>
       <w>fdescribe</w>
       <w>interruptibly</w>
+      <w>linuxmain</w>
+      <w>rpath</w>
+      <w>swiftc</w>
       <w>xcontext</w>
+      <w>xcrun</w>
       <w>xdescribe</w>
+      <w>xlinker</w>
     </words>
   </dictionary>
 </component>
