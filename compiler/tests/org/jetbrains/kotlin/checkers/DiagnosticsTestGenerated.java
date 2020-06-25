@@ -16511,6 +16511,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/override/SuspiciousCase1.kt");
             }
 
+            @TestMetadata("SyntheticMembersInAny.kt")
+            public void testSyntheticMembersInAny() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/SyntheticMembersInAny.kt");
+            }
+
             @TestMetadata("ToAbstractMembersFromSuper-kt1996.kt")
             public void testToAbstractMembersFromSuper_kt1996() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/ToAbstractMembersFromSuper-kt1996.kt");
