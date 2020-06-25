@@ -103,7 +103,14 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature as ProtoPublicIdSignature
 
-abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBuiltIns, val symbolTable: SymbolTable, var constructFakeOverrides: Boolean, protected var deserializeBodies: Boolean) {
+abstract class IrFileDeserializer(
+    val logger: LoggingContext,
+    val builtIns: IrBuiltIns,
+    val symbolTable: SymbolTable,
+    var constructFakeOverrides: Boolean,
+    protected var deserializeBodies: Boolean,
+    protected val lazyBodies: Boolean
+) {
 
     abstract fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, IdSignature>
     abstract fun deserializeIrSymbol(code: Long): IrSymbol
@@ -116,7 +123,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
 
     abstract fun referenceIrSymbol(symbol: IrSymbol, signature: IdSignature)
 
-    private val parentsStack = mutableListOf<IrDeclarationParent>()
+    protected val parentsStack = mutableListOf<IrDeclarationParent>()
     private val delegatedSymbolMap = mutableMapOf<IrSymbol, IrSymbol>()
 
     abstract val deserializeInlineFunctions: Boolean

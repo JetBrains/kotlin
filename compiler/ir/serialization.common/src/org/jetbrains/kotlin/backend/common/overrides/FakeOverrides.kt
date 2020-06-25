@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverrideFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverridePropertyImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -172,6 +169,18 @@ class FakeOverrideBuilderImpl(
 
             override fun visitFunction(declaration: IrFunction) {
                 // Don't go for function local classes
+            }
+
+            override fun visitField(declaration: IrField) {
+
+            }
+
+            override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
+
+            }
+
+            override fun visitEnumEntry(declaration: IrEnumEntry) {
+
             }
         })
     }

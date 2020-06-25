@@ -49,6 +49,8 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
 
     open fun addModuleReachableTopLevel(idSig: IdSignature) { error("Unsupported Operation (sig: $idSig") }
 
+    open fun enqueueFile(fileDeserializer: IrFileDeserializer) {}
+
     open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
 
     open fun postProcess(postProcessor: (IrModuleFragment) -> Unit) {
@@ -190,6 +192,10 @@ class IrModuleDeserializerWithBuiltIns(
 
     override fun addModuleReachableTopLevel(idSig: IdSignature) {
         delegate.addModuleReachableTopLevel(idSig)
+    }
+
+    override fun enqueueFile(fileDeserializer: IrFileDeserializer) {
+        delegate.enqueueFile(fileDeserializer)
     }
 
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment

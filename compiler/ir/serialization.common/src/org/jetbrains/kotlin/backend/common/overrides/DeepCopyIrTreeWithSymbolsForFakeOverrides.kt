@@ -4,10 +4,14 @@ import org.jetbrains.kotlin.backend.common.DescriptorsToIrRemapper
 import org.jetbrains.kotlin.backend.common.WrappedDescriptorPatcher
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -91,6 +95,24 @@ class DeepCopyIrTreeWithSymbolsForFakeOverrides(
             if (result !is IrTypeParameterSymbol)
                 return result
             return typeArguments[result]?.classifierOrNull ?: result
+        }
+
+        override fun visitField(declaration: IrField) {
+            remapSymbol(fields, declaration) {
+                IrFieldSymbolImpl(descriptorsRemapper.remapDeclaredField(it.descriptor))
+            }
+            declaration.annotations.forEach { it.acceptVoid(this) }
+        }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+            remapSymbol(functions, declaration) {
+                IrSimpleFunctionSymbolImpl(descriptorsRemapper.remapDeclaredSimpleFunction(it.descriptor))
+            }
+            declaration.annotations.forEach { it.acceptVoid(this) }
+            declaration.dispatchReceiverParameter?.acceptVoid(this)
+            declaration.extensionReceiverParameter?.acceptVoid(this)
+            declaration.valueParameters.forEach { it.acceptVoid(this) }
+            declaration.typeParameters.forEach { it.acceptVoid(this) }
         }
     }
 

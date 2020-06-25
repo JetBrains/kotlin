@@ -163,7 +163,8 @@ abstract class IrBodyBase<B : IrBodyBase<B>>(
     override var containerField: IrDeclaration? = null
 
     var container: IrDeclaration
-        get() = getCarrier().containerField!!
+        get() = getCarrier().containerField ?:
+        error("....")
         set(p) {
             if (getCarrier().containerField !== p) {
                 setCarrier().containerField = p

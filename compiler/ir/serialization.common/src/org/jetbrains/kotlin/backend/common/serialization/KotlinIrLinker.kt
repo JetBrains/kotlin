@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilderImpl
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideControl
+import org.jetbrains.kotlin.backend.common.peek
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -19,8 +22,10 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
@@ -49,6 +54,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as P
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase as ProtoStatementCase
 
 abstract class KotlinIrLinker(
     private val currentModule: ModuleDescriptor?,
@@ -104,6 +110,10 @@ abstract class KotlinIrLinker(
                     filesWithPendingTopLevels.remove(pendingDeserializer)
                 }
             }
+        }
+
+        override fun enqueueFile(fileDeserializer: IrFileDeserializer) {
+            moduleDeserializationState.enqueueFile(fileDeserializer as IrDeserializerForFile)
         }
 
         private val moduleDeserializationState = ModuleDeserializationState()
@@ -228,7 +238,7 @@ abstract class KotlinIrLinker(
         inlineBodies: Boolean,
         constructFakeOverrrides: Boolean,
         private val moduleDeserializer: IrModuleDeserializer,
-    ) : IrFileDeserializer(logger, builtIns, symbolTable, constructFakeOverrrides, !onlyHeaders) {
+    ) : IrFileDeserializer(logger, builtIns, symbolTable, constructFakeOverrrides, !onlyHeaders, true) {
 
         private var fileLoops = mutableMapOf<Int, IrLoopBase>()
 
@@ -399,8 +409,22 @@ abstract class KotlinIrLinker(
 
         override fun deserializeExpressionBody(index: Int): IrExpressionBody {
             return if (deserializeBodies) {
-                val bodyData = loadExpressionBodyProto(index)
-                IrExpressionBodyImpl(deserializeExpression(bodyData))
+                if (lazyBodies) {
+                    val parent = parentsStack.peek() ?: error("Expecing parent")
+                    IrLazyBody.IrLazyExpressionBody(this@KotlinIrLinker) {
+                        val bodyData = loadExpressionBodyProto(index)
+                        try {
+                            parentsStack.push(parent)
+                            moduleDeserializer.enqueueFile(this)
+                            IrExpressionBodyImpl(deserializeExpression(bodyData))
+                        } finally {
+                            parentsStack.pop()
+                        }
+                    }
+                } else {
+                    val bodyData = loadExpressionBodyProto(index)
+                    IrExpressionBodyImpl(deserializeExpression(bodyData))
+                }
             } else {
                 val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
                 IrExpressionBodyImpl(IrErrorExpressionImpl(-1, -1, errorType, "Expression body is not deserialized yet"))
@@ -409,8 +433,34 @@ abstract class KotlinIrLinker(
 
         override fun deserializeStatementBody(index: Int): IrBody {
             return if (deserializeBodies) {
-                val bodyData = loadStatementBodyProto(index)
-                deserializeStatement(bodyData) as IrBody
+                if (lazyBodies) {
+                    val bodyData = loadStatementBodyProto(index)
+                    val parent = parentsStack.peek() ?: error("Expecting parent")
+                    when (bodyData.statementCase) {
+                        ProtoStatementCase.SYNTHETIC_BODY -> IrLazyBody.IrLazySyntheticBody(this@KotlinIrLinker) {
+                            try {
+                                parentsStack.push(parent)
+                                moduleDeserializer.enqueueFile(this)
+                                deserializeStatement(bodyData) as IrSyntheticBody
+                            } finally {
+                                parentsStack.pop()
+                            }
+                        }
+                        ProtoStatementCase.BLOCK_BODY -> IrLazyBody.IrLazyBlockBody(this@KotlinIrLinker) {
+                            try {
+                                parentsStack.push(parent)
+                                moduleDeserializer.enqueueFile(this)
+                                deserializeStatement(bodyData) as IrBlockBody
+                            } finally {
+                                parentsStack.pop()
+                            }
+                        }
+                        else -> error("Unknown body type ${bodyData.statementCase}")
+                    }
+                } else {
+                    val bodyData = loadStatementBodyProto(index)
+                    deserializeStatement(bodyData) as IrBody
+                }
             } else {
                 val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
                 IrBlockBodyImpl(-1, -1, listOf(IrErrorExpressionImpl(-1, -1, errorType, "Statement body is not deserialized yet")))
@@ -494,7 +544,7 @@ abstract class KotlinIrLinker(
         }
     }
 
-    private fun deserializeAllReachableTopLevels() {
+    internal fun deserializeAllReachableTopLevels() {
         while (modulesWithReachableTopLevels.isNotEmpty()) {
             val moduleDeserializer = modulesWithReachableTopLevels.first()
             modulesWithReachableTopLevels.remove(moduleDeserializer)

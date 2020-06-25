@@ -29,16 +29,16 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class DeepCopySymbolRemapper(
-    private val descriptorsRemapper: DescriptorsRemapper = DescriptorsRemapper.Default
+    protected val descriptorsRemapper: DescriptorsRemapper = DescriptorsRemapper.Default
 ) : IrElementVisitorVoid, SymbolRemapper {
 
     private val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
     private val constructors = hashMapOf<IrConstructorSymbol, IrConstructorSymbol>()
     private val enumEntries = hashMapOf<IrEnumEntrySymbol, IrEnumEntrySymbol>()
     private val externalPackageFragments = hashMapOf<IrExternalPackageFragmentSymbol, IrExternalPackageFragmentSymbol>()
-    private val fields = hashMapOf<IrFieldSymbol, IrFieldSymbol>()
+    protected val fields = hashMapOf<IrFieldSymbol, IrFieldSymbol>()
     private val files = hashMapOf<IrFileSymbol, IrFileSymbol>()
-    private val functions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
+    protected val functions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
     private val properties = hashMapOf<IrPropertySymbol, IrPropertySymbol>()
     private val returnableBlocks = hashMapOf<IrReturnableBlockSymbol, IrReturnableBlockSymbol>()
     private val typeParameters = hashMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()

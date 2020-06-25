@@ -58,7 +58,10 @@ class IrFileImpl(
         visitor.visitFile(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        declarations.forEach { it.accept(visitor, data) }
+        var i = 0
+        while (i < declarations.size) {
+            declarations[i++].accept(visitor, data)
+        }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

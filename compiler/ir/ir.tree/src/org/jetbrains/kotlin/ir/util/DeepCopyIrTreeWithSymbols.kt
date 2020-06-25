@@ -50,7 +50,7 @@ interface SymbolRenamer {
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class DeepCopyIrTreeWithSymbols(
-    private val symbolRemapper: SymbolRemapper,
+    protected val symbolRemapper: SymbolRemapper,
     private val typeRemapper: TypeRemapper,
     private val symbolRenamer: SymbolRenamer
 ) : IrElementTransformerVoid() {

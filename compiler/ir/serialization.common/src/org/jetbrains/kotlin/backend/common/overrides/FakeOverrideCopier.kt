@@ -1,11 +1,9 @@
 package org.jetbrains.kotlin.backend.common.overrides
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverrideFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverridePropertyImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.util.*
 
 class FakeOverrideCopier(
@@ -83,4 +81,16 @@ class FakeOverrideCopier(
             this.getter = declaration.getter?.transform()
             this.setter = declaration.setter?.transform()
         }
+
+    override fun visitField(declaration: IrField): IrField {
+        return IrFieldImpl(declaration.startOffset, declaration.endOffset,
+                           declaration.origin,
+                           symbolRemapper.getDeclaredField(declaration.symbol),
+                           declaration.name, declaration.type, declaration.visibility,
+                           declaration.isFinal, declaration.isExternal, declaration.isStatic
+        ).apply {
+            transformAnnotations(declaration)
+            correspondingPropertySymbol = declaration.correspondingPropertySymbol?.let { symbolRemapper.getDeclaredProperty(it) }
+        }
+    }
 }

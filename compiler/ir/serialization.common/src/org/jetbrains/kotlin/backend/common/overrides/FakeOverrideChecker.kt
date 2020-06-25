@@ -75,6 +75,14 @@ class FakeOverrideChecker(
             override fun visitFunction(declaration: IrFunction) {
                 // Don't go for function local classes
             }
+
+            override fun visitField(declaration: IrField) {
+
+            }
+
+            override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
+
+            }
         })
     }
 }
