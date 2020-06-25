@@ -61,7 +61,13 @@ data class ValidationError(val validationMessage: String) : Error() {
         get() = validationMessage.capitalize()
 }
 
-data class ProjectImportingError(@Nls override val message: String) : Error()
+data class ProjectImportingError(val kotlinVersion: String, @Nls val reason: String) : Error() {
+    override val message: String
+        get() = """Project importing error
+            |Kotlin version: $kotlinVersion
+            |Reason: $reason
+        """.trimMargin()
+}
 
 data class InvalidModuleDependencyError(val from: Module, val to: Module, @Nls val reason: String? = null) : Error() {
     override val message: String
