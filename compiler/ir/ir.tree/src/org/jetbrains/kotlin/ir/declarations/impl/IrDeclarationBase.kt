@@ -172,11 +172,7 @@ abstract class IrBodyBase<B : IrBodyBase<B>>(
 
     protected fun <T> checkEnabled(fn: () -> T): T {
         if (!stageController.bodiesEnabled) error("Bodies disabled!")
-        ensureLowered()
-        return fn()
-    }
 
-    override fun ensureLowered() {
         initializer?.let { initFn ->
             initializer = null
             stageController.withStage(createdOn) {
@@ -185,6 +181,11 @@ abstract class IrBodyBase<B : IrBodyBase<B>>(
                 }
             }
         }
+
+        return fn()
+    }
+
+    override fun ensureLowered() {
         if (loweredUpTo + 1 < stageController.currentStage) {
             stageController.lazyLower(this)
         }
