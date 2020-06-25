@@ -107,7 +107,6 @@ org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.RedundantRequ
 org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.RedundantRequireNotNullCall.testUsedAsExpression3, KT-34672, FAIL,
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertFunctionTypeParameterToReceiver.testNonFirstParameterPrimaryConstructor, on ConvertFunctionTypeParameterToReceiver rerun,, FLAKY
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertFunctionTypeParameterToReceiver.testNonFirstParameterSecondaryConstructor, on ConvertFunctionTypeParameterToReceiver rerun,, FLAKY
-org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesAndMembers, Enum reorder,,
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesOnly, Generated entries reordered,,
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testBlankLineBetween, KT-34408,,
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testLongInit, KT-34408,,
