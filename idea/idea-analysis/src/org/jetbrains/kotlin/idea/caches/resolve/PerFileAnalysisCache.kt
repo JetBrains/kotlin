@@ -57,9 +57,11 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
     private val cache = HashMap<PsiElement, AnalysisResult>()
     private var fileResult: AnalysisResult? = null
     private val lock = ReentrantLock()
-    private val guardLock = CancellableSimpleLock(lock) {
-        ProgressIndicatorProvider.checkCanceled()
-    }
+    private val guardLock = CancellableSimpleLock(lock,
+                                                  checkCancelled = {
+                                                      ProgressIndicatorProvider.checkCanceled()
+                                                  },
+                                                  interruptedExceptionHandler = { throw ProcessCanceledException(it) })
 
     private fun check(element: KtElement) {
         checkWithAttachment(element.containingFile == file, {

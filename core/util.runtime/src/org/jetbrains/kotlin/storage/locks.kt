@@ -17,8 +17,12 @@ interface SimpleLock {
     fun unlock()
 
     companion object {
-        fun simpleLock(checkCancelled: Runnable? = null) =
-            checkCancelled?.let { CancellableSimpleLock(it) } ?: DefaultSimpleLock()
+        fun simpleLock(checkCancelled: Runnable? = null, interruptedExceptionHandler: ((InterruptedException) -> Unit)? = null) =
+            if (checkCancelled != null && interruptedExceptionHandler != null) {
+                CancellableSimpleLock(checkCancelled, interruptedExceptionHandler)
+            } else {
+                DefaultSimpleLock()
+            }
     }
 }
 
@@ -47,13 +51,25 @@ open class DefaultSimpleLock(protected val lock: Lock = ReentrantLock()) : Simpl
 
 }
 
-class CancellableSimpleLock(lock: Lock, private val checkCancelled: Runnable) : DefaultSimpleLock(lock) {
-    constructor(checkCancelled: Runnable) : this(checkCancelled = checkCancelled, lock = ReentrantLock())
+class CancellableSimpleLock(
+    lock: Lock,
+    private val checkCancelled: Runnable,
+    private val interruptedExceptionHandler: (InterruptedException) -> Unit
+) : DefaultSimpleLock(lock) {
+    constructor(checkCancelled: Runnable, interruptedExceptionHandler: (InterruptedException) -> Unit) : this(
+        checkCancelled = checkCancelled,
+        lock = ReentrantLock(),
+        interruptedExceptionHandler = interruptedExceptionHandler
+    )
 
     override fun lock() {
-        while (!lock.tryLock(CHECK_CANCELLATION_PERIOD_MS, TimeUnit.MILLISECONDS)) {
-            //ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            checkCancelled.run()
+        try {
+            while (!lock.tryLock(CHECK_CANCELLATION_PERIOD_MS, TimeUnit.MILLISECONDS)) {
+                //ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+                checkCancelled.run()
+            }
+        } catch (e: InterruptedException) {
+            interruptedExceptionHandler(e)
         }
     }
 

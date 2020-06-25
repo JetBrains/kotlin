@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -51,9 +52,11 @@ internal class ProjectResolutionFacade(
         get() = globalContext.storageManager.compute { cachedValue.value }
 
     private val analysisResultsLock = ReentrantLock()
-    private val analysisResultsSimpleLock = CancellableSimpleLock(analysisResultsLock) {
-        ProgressManager.checkCanceled()
-    }
+    private val analysisResultsSimpleLock = CancellableSimpleLock(analysisResultsLock,
+                                                                  checkCancelled = {
+                                                                      ProgressManager.checkCanceled()
+                                                                  },
+                                                                  interruptedExceptionHandler = { throw ProcessCanceledException(it) })
 
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(
         {
