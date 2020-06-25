@@ -12,16 +12,12 @@ internal class JavaTypeParameterStack {
 
     private val typeParameterMap = mutableMapOf<JavaTypeParameter, FirTypeParameterSymbol>()
 
-    fun add(javaTypeParameter: JavaTypeParameter, symbol: FirTypeParameterSymbol) {
+    fun addParameter(javaTypeParameter: JavaTypeParameter, symbol: FirTypeParameterSymbol) {
         typeParameterMap[javaTypeParameter] = symbol
     }
 
     fun addStack(javaTypeParameterStack: JavaTypeParameterStack) {
         typeParameterMap += javaTypeParameterStack.typeParameterMap
-    }
-
-    fun remove(javaTypeParameter: JavaTypeParameter) {
-        typeParameterMap.remove(javaTypeParameter)
     }
 
     operator fun get(javaTypeParameter: JavaTypeParameter): FirTypeParameterSymbol {
