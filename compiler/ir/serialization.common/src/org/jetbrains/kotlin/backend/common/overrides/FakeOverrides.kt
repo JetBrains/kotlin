@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
@@ -132,6 +133,22 @@ class FakeOverrideBuilder(
     }
 
     private fun linkPropertyFakeOverride(declaration: IrFakeOverridePropertyImpl) {
+        // To compute a signature for a property with type parameters,
+        // we must have its accessor's correspondingProperty pointing to the property's symbol.
+        // See IrMangleComputer.mangleTypeParameterReference() for details.
+        // But to create and link that symbol we should already have the signature computed.
+        // To break this loop we use temp symbol in correspondingProperty.
+
+        val tempSymbol = IrPropertySymbolImpl(WrappedPropertyDescriptor()).also {
+            it.bind(declaration)
+        }
+        declaration.getter?.let {
+            it.correspondingPropertySymbol = tempSymbol
+        }
+        declaration.setter?.let {
+            it.correspondingPropertySymbol = tempSymbol
+        }
+
         val signature = signaturer.composePublicIdSignature(declaration)
 
         symbolTable.declarePropertyFromLinker(WrappedPropertyDescriptor(), signature) {
