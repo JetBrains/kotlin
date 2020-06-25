@@ -315,7 +315,7 @@ public final class CompileDriver {
               }
               if (outputToArtifact != null) {
                 Collection<Artifact> artifacts = outputToArtifact.get(root);
-                if (!artifacts.isEmpty()) {
+                if (artifacts != null && !artifacts.isEmpty()) {
                   writtenArtifactOutputPaths.add(FileUtil.toSystemDependentName(DeploymentUtil.appendToPath(root, relativePath)));
                 }
               }
