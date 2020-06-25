@@ -31,19 +31,19 @@ internal class KtSymbolByFirBuilder(private val validityToken: Invalidatable) {
     fun buildSymbol(fir: FirDeclaration): KtSymbol = when (fir) {
         is FirRegularClass -> buildClassSymbol(fir)
         is FirSimpleFunction -> buildFunctionSymbol(fir)
-        is FirProperty -> buildPropertySymbol(fir)
+        is FirProperty -> buildVariableSymbol(fir)
         is FirValueParameterImpl -> buildParameterSymbol(fir)
-        is FirConstructor -> buildFirConstructorSymbol(fir)
-        is FirTypeParameter -> buildFirTypeParameterSymbol(fir)
-        is FirTypeAlias -> buildFirTypeAliasSymbol(fir)
-        is FirEnumEntry -> buildFirEnumEntrySymbol(fir)
-        is FirField -> buildFirFieldSymbol(fir)
-        is FirAnonymousFunction -> buildFirAnonymousFunction(fir)
+        is FirConstructor -> buildConstructorSymbol(fir)
+        is FirTypeParameter -> buildTypeParameterSymbol(fir)
+        is FirTypeAlias -> buildTypeAliasSymbol(fir)
+        is FirEnumEntry -> buildEnumEntrySymbol(fir)
+        is FirField -> buildFieldSymbol(fir)
+        is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
         else ->
             TODO(fir::class.toString())
     }
 
-    fun buildClassSymbol(fir: FirRegularClass) = KtFirClassOrObjectSymbol(fir, validityToken)
+    fun buildClassSymbol(fir: FirRegularClass) = KtFirClassOrObjectSymbol(fir, validityToken, this)
 
     // TODO it can be a constructor parameter, which may be split into parameter & property
     // we should handle them both
@@ -51,14 +51,14 @@ internal class KtSymbolByFirBuilder(private val validityToken: Invalidatable) {
     fun buildFirConstructorParameter(fir: FirValueParameterImpl) = KtFirConstructorValueParameterSymbol(fir, validityToken)
 
     fun buildFunctionSymbol(fir: FirSimpleFunction) = KtFirFunctionSymbol(fir, validityToken, this)
-    fun buildFirConstructorSymbol(fir: FirConstructor) = KtFirConstructorSymbol(fir, validityToken, this)
-    fun buildFirTypeParameterSymbol(fir: FirTypeParameter) = KtFirTypeParameterSymbol(fir, validityToken)
-    fun buildFirTypeAliasSymbol(fir: FirTypeAlias) = KtFirTypeAliasSymbol(fir, validityToken)
-    fun buildFirEnumEntrySymbol(fir: FirEnumEntry) = KtFirEnumEntrySymbol(fir, validityToken)
-    fun buildFirFieldSymbol(fir: FirField) = KtFirFieldSymbol(fir, validityToken)
-    fun buildFirAnonymousFunction(fir: FirAnonymousFunction) = KtFirAnonymousFunctionSymbol(fir, validityToken, this)
+    fun buildConstructorSymbol(fir: FirConstructor) = KtFirConstructorSymbol(fir, validityToken, this)
+    fun buildTypeParameterSymbol(fir: FirTypeParameter) = KtFirTypeParameterSymbol(fir, validityToken)
+    fun buildTypeAliasSymbol(fir: FirTypeAlias) = KtFirTypeAliasSymbol(fir, validityToken)
+    fun buildEnumEntrySymbol(fir: FirEnumEntry) = KtFirEnumEntrySymbol(fir, validityToken)
+    fun buildFieldSymbol(fir: FirField) = KtFirFieldSymbol(fir, validityToken)
+    fun buildAnonymousFunctionSymbol(fir: FirAnonymousFunction) = KtFirAnonymousFunctionSymbol(fir, validityToken, this)
 
-    fun buildPropertySymbol(fir: FirProperty): KtVariableSymbol {
+    fun buildVariableSymbol(fir: FirProperty): KtVariableSymbol {
         return when {
             fir.isLocal -> KtFirLocalVariableSymbol(fir, validityToken)
             else -> KtFirPropertySymbol(fir, validityToken)

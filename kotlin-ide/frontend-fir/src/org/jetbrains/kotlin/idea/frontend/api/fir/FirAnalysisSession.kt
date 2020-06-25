@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
@@ -16,10 +17,18 @@ import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.idea.fir.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.FirKtSymbolProvider
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolProvider
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper.toTargetSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -27,11 +36,17 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 class FirAnalysisSession(
-    project: Project
-) : FrontendAnalysisSession(project) {
-   constructor(element: KtElement) : this(element.project)
+    element: KtElement
+) : FrontendAnalysisSession(element.project) {
+    internal val token get() = validityToken
 
-    internal val symbolBuilder = KtSymbolByFirBuilder(validityToken)
+    internal val firSymbolBuilder = KtSymbolByFirBuilder(validityToken)
+    override val symbolProvider: KtSymbolProvider =
+        FirKtSymbolProvider(
+            this,
+            element.session.firSymbolProvider,
+            firSymbolBuilder
+        )
 
     init {
         assertIsValid()
@@ -112,17 +127,17 @@ class FirAnalysisSession(
 
     private fun resolveCall(firCall: FirFunctionCall, callExpression: KtExpression): CallInfo? {
         val session = callExpression.session
-        val resolvedFunctionSymbol = firCall.calleeReference.toTargetSymbol(session, symbolBuilder)
+        val resolvedFunctionSymbol = firCall.calleeReference.toTargetSymbol(session, firSymbolBuilder)
         val resolvedCalleeSymbol = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
         return when {
             resolvedCalleeSymbol is FirConstructorSymbol -> {
                 val fir = resolvedCalleeSymbol.fir
-                FunctionCallInfo(symbolBuilder.buildFirConstructorSymbol(fir))
+                FunctionCallInfo(firSymbolBuilder.buildConstructorSymbol(fir))
             }
             firCall.dispatchReceiver is FirQualifiedAccessExpression && firCall.isImplicitFunctionCall() -> {
                 val target = with(FirReferenceResolveHelper) {
                     val calleeReference = (firCall.dispatchReceiver as FirQualifiedAccessExpression).calleeReference
-                    calleeReference.toTargetSymbol(session, symbolBuilder)
+                    calleeReference.toTargetSymbol(session, firSymbolBuilder)
                 }
                 when (target) {
                     null -> null
@@ -132,7 +147,7 @@ class FirAnalysisSession(
                         when (functionSymbol?.callableId) {
                             null -> null
                             in kotlinFunctionInvokeCallableIds -> VariableAsFunctionCallInfo(target, functionSymbol.fir.isSuspend)
-                            else -> (resolvedFunctionSymbol as? KtSimpleFunctionSymbol)
+                            else -> (resolvedFunctionSymbol as? KtFunctionSymbol)
                                 ?.let { VariableAsFunctionLikeCallInfo(target, it) }
                         }
                     }
@@ -144,7 +159,7 @@ class FirAnalysisSession(
     }
 
     private fun KtSymbol.asSimpleFunctionCall() =
-        (this as? KtSimpleFunctionSymbol)?.let(::FunctionCallInfo)
+        (this as? KtFunctionSymbol)?.let(::FunctionCallInfo)
 
     private fun forEachSuperClass(firClass: FirClass<*>, action: (FirResolvedTypeRef) -> Unit) {
         firClass.superTypeRefs.forEach { superType ->
