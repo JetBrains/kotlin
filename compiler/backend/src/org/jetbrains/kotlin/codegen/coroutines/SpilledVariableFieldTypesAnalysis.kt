@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
@@ -359,3 +360,10 @@ internal fun performSpilledVariableFieldTypesAnalysis(
     thisName: String
 ): Array<out Frame<SpilledVariableFieldTypeValue>?> =
     MethodAnalyzer(thisName, methodNode, SpilledVariableFieldTypesInterpreter(methodNode)).analyze()
+
+internal val Value.type: Type?
+    get() = when (this) {
+        is BasicValue -> type
+        is SpilledVariableFieldTypeValue -> type
+        else -> error("Unexpected type of $this")
+    }

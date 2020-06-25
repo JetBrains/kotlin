@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
@@ -512,7 +513,8 @@ class CoroutineCodegenForLambda private constructor(
                         containingClassInternalName = v.thisName,
                         isForNamedFunction = false,
                         languageVersionSettings = languageVersionSettings,
-                        disableTailCallOptimizationForFunctionReturningUnit = false
+                        disableTailCallOptimizationForFunctionReturningUnit = false,
+                        useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS)
                     )
                     val maybeWithForInline = if (forInline)
                         SuspendForInlineCopyingMethodVisitor(stateMachineBuilder, access, name, desc, functionCodegen::newMethod)

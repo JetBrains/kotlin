@@ -369,6 +369,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var repeatCompileModules: String? by NullableStringFreezableVar(null)
 
+    @Argument(
+        value = "-Xuse-old-spilled-var-type-analysis",
+        description = "Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines"
+    )
+    var useOldSpilledVarTypeAnalysis: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics

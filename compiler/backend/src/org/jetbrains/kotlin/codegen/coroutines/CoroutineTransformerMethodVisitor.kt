@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
-import org.jetbrains.kotlin.codegen.linkWithLabel
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -65,7 +61,9 @@ class CoroutineTransformerMethodVisitor(
     // May differ from containingClassInternalName in case of DefaultImpls
     private val internalNameForDispatchReceiver: String? = null,
     // JVM_IR backend generates $completion, while old backend does not
-    private val putContinuationParameterToLvt: Boolean = true
+    private val putContinuationParameterToLvt: Boolean = true,
+    // New SourceInterpreter-less analyser can be somewhat unstable, disable it
+    private val useOldSpilledVarTypeAnalysis: Boolean = false
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
@@ -594,7 +592,10 @@ class CoroutineTransformerMethodVisitor(
 
     private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableDescriptor>> {
         val instructions = methodNode.instructions
-        val frames = performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
+        val frames =
+            if (useOldSpilledVarTypeAnalysis) performRefinedTypeAnalysis(methodNode, containingClassInternalName)
+            else performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
+
         fun AbstractInsnNode.index() = instructions.indexOf(this)
 
         // We postpone these actions because they change instruction indices that we use when obtaining frames

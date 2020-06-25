@@ -100,6 +100,8 @@ where advanced options include:
   -Xuse-javac                Use javac for Java source and class files analysis
   -Xuse-old-class-files-reading Use old class files reading implementation. This may slow down the build and cause problems with Groovy interop.
                              Should be used in case of problems with the new implementation
+  -Xuse-old-spilled-var-type-analysis
+                             Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines
   -Xuse-type-table           Use type table in metadata serialization
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type

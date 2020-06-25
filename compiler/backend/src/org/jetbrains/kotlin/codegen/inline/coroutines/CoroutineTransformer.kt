@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -95,7 +96,8 @@ class CoroutineTransformer(
                 shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 containingClassInternalName = classBuilder.thisName,
                 isForNamedFunction = false,
-                disableTailCallOptimizationForFunctionReturningUnit = false
+                disableTailCallOptimizationForFunctionReturningUnit = false,
+                useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS)
             )
 
             if (generateForInline)
@@ -131,7 +133,8 @@ class CoroutineTransformer(
                 needDispatchReceiver = true,
                 internalNameForDispatchReceiver = classBuilder.thisName,
                 disableTailCallOptimizationForFunctionReturningUnit = disableTailCallOptimization,
-                putContinuationParameterToLvt = !state.isIrBackend
+                putContinuationParameterToLvt = !state.isIrBackend,
+                useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS)
             )
 
             if (generateForInline)
