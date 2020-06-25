@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.resolve
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -41,9 +42,9 @@ internal fun String?.orAnonymous(kind: String = ""): String =
 internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out Annotation>, project: Project): Annotation {
     val module = ModuleDescriptorImpl(
         Name.special("<script-annotations-preprocessing>"),
-        LockBasedStorageManager("scriptAnnotationsPreprocessing") {
+        LockBasedStorageManager("scriptAnnotationsPreprocessing", {
             ProgressManager.checkCanceled()
-        },
+        }, { throw ProcessCanceledException(it) }),
         DefaultBuiltIns.Instance
     )
     val evaluator = ConstantExpressionEvaluator(module, LanguageVersionSettingsImpl.DEFAULT, project)
