@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="kotlinc.kotlin-main-kts" type="repository">
-    <properties include-transitive-deps="false" maven-id="org.jetbrains.kotlin:kotlin-main-kts:1.4.20-dev-1197" />
+    <properties include-transitive-deps="false" maven-id="org.jetbrains.kotlin:kotlin-main-kts:1.4.20-dev-1232" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-main-kts/1.4.20-dev-1197/kotlin-main-kts-1.4.20-dev-1197.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-main-kts/1.4.20-dev-1232/kotlin-main-kts-1.4.20-dev-1232.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-main-kts/1.4.20-dev-1197/kotlin-main-kts-1.4.20-dev-1197-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-main-kts/1.4.20-dev-1232/kotlin-main-kts-1.4.20-dev-1232-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
