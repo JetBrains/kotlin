@@ -13,10 +13,22 @@ interface Invalidatable {
     fun isValid(): Boolean
 
     fun invalidationReason(): String
+}
 
-    fun assertIsValid() {
-        assert(isValid()) { "Access to invalid $this, invalidation reason is ${invalidationReason()}" }
-    }
+@Suppress("NOTHING_TO_INLINE")
+inline fun Invalidatable.assertIsValid() {
+    assert(isValid()) { "Access to invalid $this, invalidation reason is ${invalidationReason()}" }
+}
+
+inline fun <R> Invalidatable.withValidityAssertion(action: () -> R): R {
+    assertIsValid()
+    return action()
+}
+
+interface InvalidatableByValidityToken : Invalidatable {
+    val token: Invalidatable
+    override fun isValid(): Boolean = token.isValid()
+    override fun invalidationReason(): String = token.invalidationReason()
 }
 
 class ReadActionConfinementValidityToken(project: Project) : Invalidatable {

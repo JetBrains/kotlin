@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.idea.frontend.api.ClassTypeExpectedException
-import org.jetbrains.kotlin.idea.frontend.api.ErrorTypeClassIdAccessException
-import org.jetbrains.kotlin.idea.frontend.api.Invalidatable
-import org.jetbrains.kotlin.idea.frontend.api.TypeInfo
+import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
