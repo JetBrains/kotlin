@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.WizardGradleRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
 class KtorServerTemplate : Template() {
@@ -44,7 +45,7 @@ class KtorServerTemplate : Template() {
                 +ktorArtifactDependency("ktor-html-builder")
                 +ArtifactBasedLibraryDependencyIR(
                     MavenArtifact(DefaultRepository.JCENTER, "org.jetbrains.kotlinx", "kotlinx-html-jvm"),
-                    Versions.KOTLINX.KOTLINX_HTML,
+                    Versions.KOTLINX.KOTLINX_HTML(KotlinPlugin::version.propertyValue.version),
                     DependencyType.MAIN
                 )
             }
