@@ -20,7 +20,7 @@ import com.jetbrains.cidr.execution.deviceSupport.AMDevice
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorProcessHandler
 import com.jetbrains.cidr.execution.testing.CidrLauncher
-import com.jetbrains.konan.debugger.wrapInKotlinHandlers
+import com.jetbrains.konan.debugger.addKotlinHandler
 import com.jetbrains.mpp.AppleLLDBDriverConfiguration
 import com.jetbrains.mpp.AppleRunConfiguration
 import java.io.File
@@ -69,7 +69,7 @@ class ApplePhysicalDeviceLauncher(
             override fun getBreakpointHandlers(): Array<XBreakpointHandler<*>> = if (withoutBreakpoints)
                 emptyArray()
             else
-                wrapInKotlinHandlers(super.getBreakpointHandlers(), session.project)
+                addKotlinHandler(super.getBreakpointHandlers(), session.project)
         }
 }
 
@@ -95,7 +95,6 @@ class AppleSimulatorLauncher(
             override fun createSimulatorProcessHandler(params: RunParameters, allowConcurrentSessions: Boolean) =
                 SimulatorProcessHandler(params, null, device.id, true, allowConcurrentSessions, true)
 
-            override fun getBreakpointHandlers(): Array<XBreakpointHandler<*>> =
-                wrapInKotlinHandlers(super.getBreakpointHandlers(), session.project)
+            override fun getBreakpointHandlers() = addKotlinHandler(super.getBreakpointHandlers(), session.project)
         }
 }
