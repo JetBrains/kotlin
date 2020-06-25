@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -76,12 +77,8 @@ class FakeOverrideChecker(
                 // Don't go for function local classes
             }
 
-            override fun visitField(declaration: IrField) {
-
-            }
-
-            override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
-
+            override fun visitBody(body: IrBody) {
+                // Don't visit local declarations
             }
         })
     }

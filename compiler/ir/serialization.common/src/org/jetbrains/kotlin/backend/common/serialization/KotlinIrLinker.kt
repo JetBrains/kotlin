@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideControl
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryCoordinates
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
@@ -410,17 +410,27 @@ abstract class KotlinIrLinker(
         override fun deserializeExpressionBody(index: Int): IrExpressionBody {
             return if (deserializeBodies) {
                 if (lazyBodies) {
-                    val parent = parentsStack.peek() ?: error("Expecing parent")
-                    IrLazyBody.IrLazyExpressionBody(this@KotlinIrLinker) {
-                        val bodyData = loadExpressionBodyProto(index)
-                        try {
-                            parentsStack.push(parent)
-                            moduleDeserializer.enqueueFile(this)
-                            IrExpressionBodyImpl(deserializeExpression(bodyData))
-                        } finally {
-                            parentsStack.pop()
+                    val parent = parentsStack.peek() ?: error("Expecting parent")
+
+                    val bodyData = loadExpressionBodyProto(index)
+
+                    val coordinates = BinaryCoordinates.decode(bodyData.coordinates)
+                    val start = coordinates.startOffset
+                    val end = coordinates.endOffset
+                    val fileDeserializer = this
+
+                    IrExpressionBodyImpl(start, end) {
+                        withInitialIr {
+                            try {
+                                parentsStack.push(parent)
+                                moduleDeserializer.enqueueFile(fileDeserializer)
+                                expression = deserializeExpression(bodyData)
+                            } finally {
+                                parentsStack.pop()
+                            }
                         }
                     }
+
                 } else {
                     val bodyData = loadExpressionBodyProto(index)
                     IrExpressionBodyImpl(deserializeExpression(bodyData))
@@ -437,22 +447,30 @@ abstract class KotlinIrLinker(
                     val bodyData = loadStatementBodyProto(index)
                     val parent = parentsStack.peek() ?: error("Expecting parent")
                     when (bodyData.statementCase) {
-                        ProtoStatementCase.SYNTHETIC_BODY -> IrLazyBody.IrLazySyntheticBody(this@KotlinIrLinker) {
-                            try {
-                                parentsStack.push(parent)
-                                moduleDeserializer.enqueueFile(this)
-                                deserializeStatement(bodyData) as IrSyntheticBody
-                            } finally {
-                                parentsStack.pop()
-                            }
-                        }
-                        ProtoStatementCase.BLOCK_BODY -> IrLazyBody.IrLazyBlockBody(this@KotlinIrLinker) {
-                            try {
-                                parentsStack.push(parent)
-                                moduleDeserializer.enqueueFile(this)
-                                deserializeStatement(bodyData) as IrBlockBody
-                            } finally {
-                                parentsStack.pop()
+                        ProtoStatementCase.SYNTHETIC_BODY -> deserializeStatement(bodyData) as IrSyntheticBody
+                        ProtoStatementCase.BLOCK_BODY -> {
+                            val coordinates = BinaryCoordinates.decode(bodyData.coordinates)
+                            val start = coordinates.startOffset
+                            val end = coordinates.endOffset
+
+                            val fileDeserializer = this
+
+                            IrBlockBodyImpl(start, end) {
+                                withInitialIr {
+                                    try {
+                                        parentsStack.push(parent)
+                                        moduleDeserializer.enqueueFile(fileDeserializer)
+
+                                        val statementProtos = bodyData.blockBody.statementList
+                                        statementProtos.forEach {
+                                            statements.add(deserializeStatement(it) as IrStatement)
+                                        }
+                                    } finally {
+                                        parentsStack.pop()
+                                    }
+                                    deserializeAllReachableTopLevels()
+//                                    moduleDeserializer.postProcess()
+                                }
                             }
                         }
                         else -> error("Unknown body type ${bodyData.statementCase}")
