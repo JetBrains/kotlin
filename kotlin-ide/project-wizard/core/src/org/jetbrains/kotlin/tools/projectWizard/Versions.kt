@@ -20,17 +20,17 @@ object Versions {
     }
 
     object KOTLINX {
-        val KOTLINX_HTML = version("0.7.1")
+        val KOTLINX_HTML: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("0.7.1-$kotlinVersion") }
     }
 
     object JS_WRAPPERS {
-        val KOTLIN_REACT: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("16.13.0-pre.93-kotlin-$kotlinVersion") }
+        val KOTLIN_REACT: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("16.13.1-pre.109-kotlin-$kotlinVersion") }
         val KOTLIN_REACT_DOM = KOTLIN_REACT
-        val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.0.0-pre.93-kotlin-$kotlinVersion") }
+        val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.0.0-pre.109-kotlin-$kotlinVersion") }
     }
 
     object NPM {
-        val REACT = version("16.13.0")
+        val REACT = version("16.13.1")
         val REACT_DOM = REACT
         val REACT_IS = REACT
 
