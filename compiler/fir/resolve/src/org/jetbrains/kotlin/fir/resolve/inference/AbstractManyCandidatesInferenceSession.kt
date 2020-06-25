@@ -61,29 +61,27 @@ abstract class AbstractManyCandidatesInferenceSession(
     }
 
     fun completeCandidates(): List<FirResolvable> {
-        fun runCompletion(constraintSystem: NewConstraintSystem, atoms: List<FirStatement>) {
-            components.callCompleter.completer.complete(
-                constraintSystem.asConstraintSystemCompleterContext(),
-                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
-                atoms,
-                unitType
-            ) {
-                postponedArgumentsAnalyzer.analyze(
-                    constraintSystem.asPostponedArgumentsAnalyzerContext(),
-                    it,
-                    (atoms.first() as FirResolvable).candidate
-                )
-            }
-        }
-
         @Suppress("UNCHECKED_CAST")
         val resolvedCalls = partiallyResolvedCalls.map { it.first }
         val commonSystem = components.inferenceComponents.createConstraintSystem().apply {
             addOtherSystem(currentConstraintSystem)
         }
         prepareForCompletion(commonSystem, resolvedCalls)
-        @Suppress("UNCHECKED_CAST")
-        runCompletion(commonSystem, resolvedCalls as List<FirStatement>)
+        components.inferenceComponents.withInferenceSession(DEFAULT) {
+            @Suppress("UNCHECKED_CAST")
+            components.callCompleter.completer.complete(
+                commonSystem.asConstraintSystemCompleterContext(),
+                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
+                resolvedCalls as List<FirStatement>,
+                unitType
+            ) {
+                postponedArgumentsAnalyzer.analyze(
+                    commonSystem.asPostponedArgumentsAnalyzerContext(),
+                    it,
+                    resolvedCalls.first().candidate
+                )
+            }
+        }
         resultingConstraintSystem = commonSystem
         return resolvedCalls
     }
