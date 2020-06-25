@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWiz
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.nio.file.Path
 
@@ -55,7 +56,14 @@ class GradleProjectImportingTestWizardService(private val project: Project) : Pr
                 }).forceWhenUptodate()
         )
 
-        return importingErrorMessage?.let { Failure(ProjectImportingError(it)) } ?: UNIT_SUCCESS
+        return importingErrorMessage?.let { message ->
+            Failure(
+                ProjectImportingError(
+                    reader { KotlinPlugin::version.propertyValue.version.toString() },
+                    message,
+                )
+            )
+        } ?: UNIT_SUCCESS
     }
 
     private fun BuildSystemType.externalSystemId() = when (this) {
