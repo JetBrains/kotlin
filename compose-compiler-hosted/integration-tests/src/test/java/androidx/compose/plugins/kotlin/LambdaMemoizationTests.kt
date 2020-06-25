@@ -61,7 +61,11 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
             fun Example(model: String) {
               class Nested {
                 // Should not memoize the initializer
-                val lambda: () -> Unit = { }
+                val lambda: () -> Unit
+                  get() {
+                    val capturedParameter = Math.random()
+                    return { capturedParameter }
+                  }
               }
               val n = Nested()
               ValidateModel(model)

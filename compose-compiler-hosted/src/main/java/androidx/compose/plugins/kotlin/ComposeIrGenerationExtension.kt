@@ -16,19 +16,19 @@
 
 package androidx.compose.plugins.kotlin
 
+import androidx.compose.plugins.kotlin.compiler.lower.ComposableFunctionBodyTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerIntrinsicTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerLambdaMemoization
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
-import androidx.compose.plugins.kotlin.compiler.lower.ComposableFunctionBodyTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.DurableKeyVisitor
 import androidx.compose.plugins.kotlin.compiler.lower.LiveLiteralTransformer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.getDeclaration
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
 class ComposeIrGenerationExtension(
@@ -39,6 +39,7 @@ class ComposeIrGenerationExtension(
         pluginContext: IrPluginContext
     ) {
         // TODO: refactor transformers to work with just BackendContext
+        @Suppress("DEPRECATION")
         val bindingTrace = DelegatingBindingTrace(pluginContext.bindingContext, "trace in " +
                 "ComposeIrGenerationExtension")
 
@@ -95,11 +96,12 @@ val SymbolTable.allUnbound: List<IrSymbol>
         return r
     }
 
+@Suppress("UNUSED_PARAMETER", "DEPRECATION")
 fun generateSymbols(pluginContext: IrPluginContext) {
     lateinit var unbound: List<IrSymbol>
     val visited = mutableSetOf<IrSymbol>()
     do {
-        unbound = pluginContext.symbolTable.allUnbound
+        unbound = (pluginContext.symbolTable as SymbolTable).allUnbound
 
         for (symbol in unbound) {
             if (visited.contains(symbol)) {
@@ -107,7 +109,7 @@ fun generateSymbols(pluginContext: IrPluginContext) {
             }
             // Symbol could get bound as a side effect of deserializing other symbols.
             if (!symbol.isBound) {
-                pluginContext.irProviders.getDeclaration(symbol)
+                (pluginContext as IrPluginContextImpl).linker.getDeclaration(symbol)
             }
             if (!symbol.isBound) { visited.add(symbol) }
         }

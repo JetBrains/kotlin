@@ -105,6 +105,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -114,6 +115,7 @@ import org.jetbrains.kotlin.ir.types.isUnitOrNullableUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.findFirstFunction
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.isInlined
@@ -125,7 +127,6 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -419,6 +420,7 @@ interface IrChangedBitMaskVariable : IrChangedBitMaskValue {
  *       $composer.endRestartGroup()?.updateScope { next -> A(x, next, $changed or 0b1) }
  *     }
  */
+@Suppress("DEPRECATION")
 class ComposableFunctionBodyTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
@@ -542,7 +544,7 @@ class ComposableFunctionBodyTransformer(
     private fun printScopeStack(): String {
         return buildString {
             for (scope in scopeStack) {
-                appendln(scope.name)
+                appendLine(scope.name)
             }
         }
     }
@@ -675,8 +677,7 @@ class ComposableFunctionBodyTransformer(
             // Lambdas should be ignored. All composable lambdas are wrapped by a restartable
             // function wrapper by ComposerLambdaMemoization which supplies the startRestartGroup/
             // endRestartGroup pair on behalf of the lambda.
-            origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
-            origin != IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE) {
+            origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
 
             return true
         }
@@ -1515,7 +1516,16 @@ class ComposableFunctionBodyTransformer(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
             IrSimpleFunctionSymbolImpl(lambdaDescriptor),
-            context.irBuiltIns.unitType
+            name = lambdaDescriptor.name,
+            visibility = lambdaDescriptor.visibility,
+            modality = lambdaDescriptor.modality,
+            returnType = context.irBuiltIns.unitType,
+            isInline = lambdaDescriptor.isInline,
+            isExternal = lambdaDescriptor.isExternal,
+            isTailrec = lambdaDescriptor.isTailrec,
+            isSuspend = lambdaDescriptor.isSuspend,
+            isOperator = lambdaDescriptor.isOperator,
+            isExpect = lambdaDescriptor.isExpect
         ).also { fn ->
             fn.parent = function
             val localIrBuilder = DeclarationIrBuilder(context, fn.symbol)
@@ -2426,7 +2436,8 @@ class ComposableFunctionBodyTransformer(
         val before = mutableStatementContainer()
         val after = mutableStatementContainer()
 
-        if (blockArg !is IrFunctionExpression) error("Expected function expression")
+        if (blockArg !is IrFunctionExpression)
+            error("Expected function expression but was ${blockArg?.let{it::class}}")
 
         val (block, resultVar) = blockArg.function.body!!.asBodyAndResultVar()
 
@@ -2715,7 +2726,9 @@ class ComposableFunctionBodyTransformer(
         expression.transformChildren()
         val endBlock = mutableStatementContainer()
         encounteredReturn(expression.returnTargetSymbol) { endBlock.statements.add(it) }
-        return if (expression.value.type.isUnitOrNullableUnit()) {
+        return if (expression.value.type
+                .also { if (it is IrSimpleType) it.classifier.bindIfNecessary() }
+                .isUnitOrNullableUnit()) {
             expression.wrap(listOf(endBlock))
         } else {
             val tempVar = irTemporary(expression.value, nameHint = "return")
@@ -2956,8 +2969,9 @@ class ComposableFunctionBodyTransformer(
                             changedParams += param
                         paramName.startsWith("\$anonymous\$parameter") -> Unit
                         paramName.startsWith("\$name\$for\$destructuring") -> Unit
+                        paramName.startsWith("\$noName_") -> Unit
                         else -> {
-                            error("Unexpected parameter name: $paramName")
+                            Unit
                         }
                     }
                 }

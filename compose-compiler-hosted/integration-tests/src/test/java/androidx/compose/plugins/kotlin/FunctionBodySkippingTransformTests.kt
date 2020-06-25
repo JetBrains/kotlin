@@ -350,12 +350,8 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                   }
                 }
                 val tmp0_orientation = LayoutOrientation.Vertical
-                val tmp1_arrangement = verticalArrangement
-                val tmp2_crossAxisAlignment = horizontalGravity
-                val tmp3_crossAxisSize = SizeMode.Wrap
-                val tmp4_modifier = modifier
-                val tmp5_children = children
-                RowColumnImpl(tmp0_orientation, tmp4_modifier, tmp1_arrangement, tmp2_crossAxisAlignment, tmp3_crossAxisSize, tmp5_children, %composer, <>, 0b011000000110 or 0b00011000 and %dirty shl 0b0010 or 0b01100000 and %dirty shl 0b0010 or 0b000110000000 and %dirty shl 0b0010 or 0b0001100000000000 and %dirty shl 0b0100, 0)
+                val tmp1_crossAxisSize = SizeMode.Wrap
+                RowColumnImpl(tmp0_orientation, modifier, verticalArrangement, horizontalGravity, tmp1_crossAxisSize, children, %composer, <>, 0b011000000110 or 0b00011000 and %dirty shl 0b0010 or 0b01100000 and %dirty shl 0b0010 or 0b000110000000 and %dirty shl 0b0010 or 0b0001100000000000 and %dirty shl 0b0100, 0)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -1069,9 +1065,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 %dirty = %dirty or if (%composer.changed(y)) 0b00010000 else 0b1000
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
-                val tmp0_y = y
-                val tmp1_x = x
-                A(tmp1_x, tmp0_y, %composer, <>, 0b0110 and %dirty or 0b00011000 and %dirty, 0)
+                A(x, y, %composer, <>, 0b0110 and %dirty or 0b00011000 and %dirty, 0)
               } else {
                 %composer.skipToGroupEnd()
               }

@@ -251,7 +251,7 @@ open class LiveLiteralTransformer(
             returnType = literalType
         ).also { fn ->
             val thisParam = fn.dispatchReceiverParameter!!
-            fn.annotations.add(irLiveLiteralInfoAnnotation(key, literalValue.startOffset))
+            fn.annotations += irLiveLiteralInfoAnnotation(key, literalValue.startOffset)
             fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
                 // val a = stateField
                 // val b = if (a == null) {
@@ -276,9 +276,17 @@ open class LiveLiteralTransformer(
                     },
                     elsePart = irGet(a)
                 )
-                +irReturn(irCall(stateGetValue).apply {
+                val call = IrCallImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    literalType,
+                    stateGetValue,
+                    IrStatementOrigin.FOR_LOOP_ITERATOR
+                ).apply {
                     dispatchReceiver = b
-                })
+                }
+
+                +irReturn(call)
             }
         }
     }
@@ -370,7 +378,7 @@ open class LiveLiteralTransformer(
                 // store the full file path to the file that this class is associated with in an
                 // annotation on the class. This will be used by tooling to associate the keys
                 // inside of this class with actual PSI in the editor.
-                it.annotations.add(irLiveLiteralFileInfoAnnotation(declaration.fileEntry.name))
+                it.annotations += irLiveLiteralFileInfoAnnotation(declaration.fileEntry.name)
                 it.addConstructor {
                     isPrimary = true
                 }.also { ctor ->

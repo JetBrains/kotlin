@@ -117,6 +117,7 @@ object ComposeErrors {
         )
 }
 
+@Suppress("DEPRECATION_ERROR") // reportFromPlugin is deprecated.
 open class ComposableCallChecker : CallChecker, AdditionalTypeChecker,
     StorageComponentContainerContributor {
     override fun registerModuleComponents(

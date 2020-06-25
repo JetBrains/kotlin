@@ -40,8 +40,10 @@ public interface ComposeErrors {
     @SuppressWarnings("UnusedDeclaration")
     Object INITIALIZER = new Object() {
         {
-            Errors.Initializer.initializeFactoryNames(ComposeErrors.class);
+            Errors.Initializer.initializeFactoryNamesAndDefaultErrorMessages(
+                ComposeErrors.class,
+                ComposeDefaultErrorMessages.INSTANCE
+            );
         }
     };
-
 }

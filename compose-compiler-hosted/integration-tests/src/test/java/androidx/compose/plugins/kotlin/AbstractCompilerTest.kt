@@ -24,8 +24,8 @@ import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
 import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -277,7 +277,7 @@ fun newConfiguration(): CompilerConfiguration {
         override fun report(
             severity: CompilerMessageSeverity,
             message: String,
-            location: CompilerMessageLocation?
+            location: CompilerMessageSourceLocation?
         ) {
             if (severity === CompilerMessageSeverity.ERROR) {
                 val prefix = if (location == null)

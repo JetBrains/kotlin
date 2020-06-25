@@ -141,7 +141,7 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
                     ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
                 )
                 sb.append(os.toString())
-                sb.appendln()
+                sb.appendLine()
             }
 
         assertEquals(output.trimIndent(), printPublicApi(sb.toString(), "test"))
@@ -159,8 +159,8 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
                 commonSources?.absolutePath?.let("-Xcommon-sources="::plus)) +
                     "-Xmulti-platform" + mainArguments
         )
-        appendln("Exit code: $exitCode")
-        appendln("Output:")
-        appendln(output)
+        appendLine("Exit code: $exitCode")
+        appendLine("Output:")
+        appendLine(output)
     }.trimTrailingWhitespacesAndAddNewlineAtEOF().trimEnd('\r', '\n')
 }

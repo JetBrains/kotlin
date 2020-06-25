@@ -74,7 +74,8 @@ class FakeJvmSymbols(val module: ModuleDescriptor, val irBuiltIns: IrBuiltIns) {
         IrExternalPackageFragmentImpl(
             IrExternalPackageFragmentSymbolImpl(
                 EmptyPackageFragmentDescriptor(module, fqName)
-            )
+            ),
+            fqName
         )
 
     val lambdaClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Lambda")) { klass ->
