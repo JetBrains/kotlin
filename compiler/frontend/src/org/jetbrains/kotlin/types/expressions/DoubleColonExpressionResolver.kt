@@ -325,7 +325,7 @@ class DoubleColonExpressionResolver(
     }
 
     private fun resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext):
-            Pair<Boolean, DoubleColonLHS?> {
+            ReservedDoubleColonLHSResolutionResult {
         val resultForReservedExpr = tryResolveLHS(
             doubleColonExpression, c,
             this::shouldTryResolveLHSAsReservedExpression,
@@ -335,7 +335,7 @@ class DoubleColonExpressionResolver(
             val lhs = resultForReservedExpr.lhs
             if (lhs != null) {
                 c.trace.report(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS.on(resultForReservedExpr.expression))
-                return Pair(true, resultForReservedExpr.commit())
+                return ReservedDoubleColonLHSResolutionResult(true, resultForReservedExpr.commit(), resultForReservedExpr.traceAndCache)
             }
         }
 
@@ -349,11 +349,13 @@ class DoubleColonExpressionResolver(
             if (lhs != null) {
                 c.trace.report(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS.on(resultForReservedCallChain.expression))
                 // DO NOT commit trace from resultForReservedCallChain here
-                return Pair(true, null)
+                return ReservedDoubleColonLHSResolutionResult(true, null, resultForReservedExpr?.traceAndCache)
             }
         }
 
-        return Pair(false, null)
+        return ReservedDoubleColonLHSResolutionResult(
+            false, null, resultForReservedExpr?.traceAndCache ?: resultForReservedCallChain?.traceAndCache
+        )
     }
 
     internal fun resolveDoubleColonLHS(doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext): DoubleColonLHS? {
@@ -367,7 +369,9 @@ class DoubleColonExpressionResolver(
             }
         }
 
-        val (isReservedExpressionSyntax, doubleColonLHS) = resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression, c)
+        val (isReservedExpressionSyntax, doubleColonLHS, traceAndCacheFromReservedDoubleColonLHS) =
+            resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression, c)
+
         if (isReservedExpressionSyntax) return doubleColonLHS
 
         val resultForType = tryResolveLHS(doubleColonExpression, c, this::shouldTryResolveLHSAsType) { expression, context ->
@@ -390,13 +394,24 @@ class DoubleColonExpressionResolver(
             }
         }
 
-        // If the LHS could be resolved neither as an expression nor as a type, we should still type-check it to allow all diagnostics
-        // to be reported and references to be resolved. For that, we commit one of the applicable traces here, preferring the expression
         if (resultForExpr != null) return resultForExpr.commit()
         if (resultForType != null) return resultForType.commit()
 
+        /*
+         * If the LHS could be resolved neither as an expression nor as a type,
+         * but it was resolved as expression with reserved syntax like `foo?::bar?::bar`,
+         * then we commit the trace of that resolution result.
+         */
+        traceAndCacheFromReservedDoubleColonLHS?.commit()
+
         return null
     }
+
+    private data class ReservedDoubleColonLHSResolutionResult(
+        val isReservedExpressionSyntax: Boolean,
+        val lhs: DoubleColonLHS?,
+        val traceAndCache: TemporaryTraceAndCache?
+    )
 
     private class LHSResolutionResult<out T : DoubleColonLHS>(
         val lhs: T?,
