@@ -114,6 +114,7 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
         ClassKind.INTERFACE -> TRAIT
         ClassKind.ANNOTATION_CLASS -> ANNOTATION
         ClassKind.OBJECT -> OBJECT
+        ClassKind.ENUM_CLASS -> ENUM
         ClassKind.ENUM_ENTRY -> ENUM_ENTRY
         else -> if (descriptor.modality === Modality.ABSTRACT) ABSTRACT_CLASS else CLASS
     }
