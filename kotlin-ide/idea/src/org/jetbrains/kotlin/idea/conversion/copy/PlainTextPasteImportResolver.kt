@@ -68,9 +68,11 @@ class PlainTextPasteImportResolver(private val dataForConversion: DataForConvers
     }
 
     private fun addImport(importStatement: PsiImportStatementBase, shouldAddToTarget: Boolean = false) {
-        importList.add(importStatement)
-        if (shouldAddToTarget)
-            addedImports.add(importStatement)
+        file.importList?.let {
+            it.add(importStatement)
+            if (shouldAddToTarget)
+                addedImports.add(importStatement)
+        }
     }
 
     fun addImportsFromTargetFile() {
