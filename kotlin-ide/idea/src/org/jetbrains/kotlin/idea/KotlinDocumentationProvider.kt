@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea
 
 import com.google.common.html.HtmlEscapers
-import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.codeInsight.javadoc.JavaDocInfoGeneratorFactory
 import com.intellij.lang.documentation.AbstractDocumentationProvider
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.idea.kdoc.*
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocContent
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocSections
 import org.jetbrains.kotlin.idea.kdoc.KDocTemplate.DescriptionBodyTemplate
-import org.jetbrains.kotlin.idea.references.KtDescriptorsBasedReference
 import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -182,7 +180,10 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
             defaultParameterValueRenderer = { (it.source.getPsi() as? KtParameter)?.defaultValue?.text ?: "..." }
         }
 
-        fun StringBuilder.renderKDoc(contentTag: KDocTag, sections: List<KDocSection>) {
+        private fun StringBuilder.renderKDoc(
+            contentTag: KDocTag,
+            sections: List<KDocSection> = if (contentTag is KDocSection) listOf(contentTag) else emptyList()
+        ) {
             insert(DescriptionBodyTemplate.Kotlin()) {
                 content {
                     appendKDocContent(contentTag)
@@ -215,7 +216,7 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
                     }
                     if (!quickNavigation && kdoc != null) {
                         description {
-                            renderKDoc(kdoc.getDefaultSection(), listOf(kdoc.getDefaultSection()))
+                            renderKDoc(kdoc.getDefaultSection())
                         }
                     }
                 }
@@ -312,10 +313,9 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
                         return mixKotlinToJava(declarationDescriptor, element, originalElement)
                     }
                 }
-            } else {
-                // This element was resolved to non-kotlin element, it will be rendered with own provider
             }
 
+            // This element was resolved to non-kotlin element, it will be rendered with own provider
             return null
         }
 
@@ -384,11 +384,22 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
 
                 if (!quickNavigation) {
                     description {
-                        val comment = declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }
-                        if (comment != null) {
-                            val sectionList = if (comment is KDocSection) listOf(comment) else emptyList()
-                            renderKDoc(comment, sectionList)
-                        } else if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
+                        declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }?.let {
+                            renderKDoc(it)
+                            return@description
+                        }
+                        if (declarationDescriptor is ClassConstructorDescriptor && !declarationDescriptor.isPrimary) {
+                            declarationDescriptor.constructedClass.findKDoc {
+                                DescriptorToSourceUtilsIde.getAnyDeclaration(
+                                    ktElement.project,
+                                    it
+                                )
+                            }?.let {
+                                renderKDoc(it)
+                                return@description
+                            }
+                        }
+                        if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
                             insert(DescriptionBodyTemplate.FromJava()) {
                                 body = extractJavaDescription(declarationDescriptor)
                             }
