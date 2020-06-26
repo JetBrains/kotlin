@@ -204,7 +204,11 @@ open class SymbolTable(
                     descriptorToSymbol[d]
                 }
             } else {
-                descriptorToSymbol[d]
+                if (d.isBound()) {
+                    ((d.owner as? IrSymbolDeclaration<*>)?.symbol ?: descriptorToSymbol[d]) as S?
+                } else {
+                    descriptorToSymbol[d]
+                }
             }
         }
 
