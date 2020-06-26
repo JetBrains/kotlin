@@ -108,9 +108,12 @@ private sealed class DeclarationOrReference {
 private fun declarationsOrReferences(file: PsiFile, offset: Int): List<DeclarationOrReference> {
   val result = SmartList<DeclarationOrReference>()
 
+  var foundNamedElement: PsiElement? = null
+
   val allDeclarations = file.allDeclarationsAround(offset)
   if (allDeclarations.isEmpty()) {
     namedElement(file, offset)?.let { (namedElement, leaf) ->
+      foundNamedElement = namedElement
       val declaration: PsiSymbolDeclaration = PsiElement2Declaration.createFromDeclaredPsiElement(namedElement, leaf)
       result += DeclarationOrReference.Declaration(declaration)
     }
@@ -122,6 +125,9 @@ private fun declarationsOrReferences(file: PsiFile, offset: Int): List<Declarati
   val allReferences = file.allReferencesAround(offset)
   if (allReferences.isEmpty()) {
     fromTargetEvaluator(file, offset)?.let { evaluatorData ->
+      if (foundNamedElement != null && evaluatorData.targetElements.singleOrNull() === foundNamedElement) {
+        return@let // treat self-reference as a declaration
+      }
       result += DeclarationOrReference.Evaluator(offset, evaluatorData)
     }
   }
