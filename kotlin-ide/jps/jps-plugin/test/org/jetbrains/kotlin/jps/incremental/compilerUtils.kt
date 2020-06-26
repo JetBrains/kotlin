@@ -22,8 +22,9 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
+import org.jetbrains.kotlin.jps.artifacts.JpsPluginTestArtifacts
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.*
 
 fun createTestingCompilerEnvironment(
@@ -31,11 +32,9 @@ fun createTestingCompilerEnvironment(
     outputItemsCollector: OutputItemsCollectorImpl,
     services: Services
 ): JpsCompilerEnvironment {
-    val paths = PathUtil.kotlinPathsForDistDirectory
-
     val wrappedMessageCollector = MessageCollectorToOutputItemsCollectorAdapter(messageCollector, outputItemsCollector)
     return JpsCompilerEnvironment(
-        paths,
+        KotlinArtifacts.getInstance(),
         services,
         KotlinBuilder.classesToLoadByParent,
         wrappedMessageCollector,

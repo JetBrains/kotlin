@@ -18,11 +18,12 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 class JpsCompilerEnvironment(
-    val kotlinPaths: KotlinPaths,
+    val kotlinArtifacts: KotlinArtifacts,
     services: Services,
     val classesToLoadByParent: ClassCondition,
     messageCollector: MessageCollector,

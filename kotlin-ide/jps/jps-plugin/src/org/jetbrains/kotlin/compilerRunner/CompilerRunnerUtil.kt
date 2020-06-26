@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import org.jetbrains.kotlin.preloading.Preloader
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -25,9 +24,7 @@ import java.io.File
 import java.io.PrintStream
 import java.lang.ref.SoftReference
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.utils.KotlinPathsFromBaseDirectory
-import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.idea.artifacts.KotlinClassPath
 
 object CompilerRunnerUtil {
     private var ourClassLoaderRef = SoftReference<ClassLoader>(null)
@@ -73,18 +70,6 @@ object CompilerRunnerUtil {
         return classLoader!!
     }
 
-    fun getLibPath(paths: KotlinPaths, messageCollector: MessageCollector): File? {
-        val libs = paths.libPath
-        if (libs.exists() && !libs.isFile) return libs
-
-        messageCollector.report(
-            ERROR,
-            "Broken compiler at '" + libs.absolutePath + "'. Make sure plugin is properly installed", null
-        )
-
-        return null
-    }
-
     fun invokeExecMethod(
         compilerClassName: String,
         arguments: Array<String>,
@@ -115,10 +100,9 @@ object CompilerRunnerUtil {
         environment: JpsCompilerEnvironment,
         fn: (ClassLoader) -> T
     ): T? {
-        val libPath = getLibPath(environment.kotlinPaths, environment.messageCollector) ?: return null
-        val kotlinPaths = KotlinPathsFromBaseDirectory(libPath)
-        val paths = kotlinPaths.classPath(KotlinPaths.ClassPaths.CompilerWithScripting).toMutableList()
-        jdkToolsJar?.let { paths.add(it) }
+        val paths = KotlinClassPath.CompilerWithScripting.computeClassPath(environment.kotlinArtifacts).let { classPath ->
+            jdkToolsJar?.let { classPath + it } ?: classPath
+        }
 
         val classLoader = getOrCreateClassLoader(environment, paths)
         return fn(classLoader)

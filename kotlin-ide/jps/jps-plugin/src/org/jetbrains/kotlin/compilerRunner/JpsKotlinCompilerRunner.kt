@@ -166,7 +166,7 @@ class JpsKotlinCompilerRunner {
         compilerArgs: CommonCompilerArguments,
         environment: JpsCompilerEnvironment
     ) {
-        log.debug("Using kotlin-home = " + environment.kotlinPaths.homePath)
+        log.debug("Using kotlin-home = " + environment.kotlinArtifacts.kotlincDirectory)
 
         withDaemonOrFallback(
             withDaemon = { compileWithDaemon(compilerClassName, compilerArgs, environment) },
@@ -336,9 +336,8 @@ class JpsKotlinCompilerRunner {
     private fun getDaemonConnection(environment: JpsCompilerEnvironment): CompileServiceSession? =
         getOrCreateDaemonConnection {
             environment.progressReporter.progress("connecting to daemon")
-            val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, environment.messageCollector)
-            val compilerPath = File(libPath, "kotlin-compiler.jar")
-            val daemonJarPath = File(libPath, "kotlin-daemon.jar")
+            val compilerPath = environment.kotlinArtifacts.kotlinCompiler
+            val daemonJarPath = environment.kotlinArtifacts.kotlinDaemon
             val toolsJarPath = CompilerRunnerUtil.jdkToolsJar
             val compilerId = CompilerId.makeCompilerId(listOfNotNull(compilerPath, toolsJarPath, daemonJarPath))
             val daemonOptions = configureDaemonOptions()

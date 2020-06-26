@@ -26,6 +26,11 @@ abstract class ProductionLikeKotlinArtifacts : KotlinArtifacts() {
     override val kotlinScriptRuntime by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPT_RUNTIME) }
     override val kotlinScriptingCommon by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMMON) }
     override val kotlinScriptingJvm by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_JVM) }
+    override val kotlinCompiler: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_COMPILER) }
+    override val trove4j: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.TROVE4J) }
+    override val kotlinDaemon: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_DAEMON) }
+    override val kotlinScriptingCompiler: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMPILER) }
+    override val kotlinScriptingCompilerImpl: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMPILER_IMPL) }
 
     override val kotlinStdlibCommon get() = throw error("'stdlib-common' artifact is not available")
     override val kotlinStdlibCommonSources get() = throw error("'stdlib-common' artifact is not available")

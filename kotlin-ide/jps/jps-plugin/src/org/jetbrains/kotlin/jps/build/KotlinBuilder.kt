@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinModuleKind
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -50,9 +51,6 @@ import org.jetbrains.kotlin.jps.targets.KotlinJvmModuleBuildTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.preloading.ClassCondition
-import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*
 import kotlin.collections.HashSet
@@ -583,44 +581,14 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             build()
         }
 
-        val paths = computeKotlinPathsForJpsPlugin()
-        if (paths == null || !paths.homePath.exists()) {
-            messageCollector.report(
-                ERROR, "Cannot find kotlinc home. Make sure the plugin is properly installed, " +
-                        "or specify $JPS_KOTLIN_HOME_PROPERTY system property"
-            )
-            return null
-        }
-
         return JpsCompilerEnvironment(
-            paths,
+            KotlinArtifacts.getInstance(),
             compilerServices,
             classesToLoadByParent,
             messageCollector,
             OutputItemsCollectorImpl(),
             ProgressReporterImpl(context, chunk)
         )
-    }
-
-    // When JPS is run on TeamCity, it can not rely on Kotlin plugin layout,
-    // so the path to Kotlin is specified in a system property
-    private fun computeKotlinPathsForJpsPlugin(): KotlinPaths? {
-        if (System.getProperty("kotlin.jps.tests").equals("true", ignoreCase = true)) {
-            return PathUtil.kotlinPathsForDistDirectory
-        }
-
-        val jpsKotlinHome = System.getProperty(JPS_KOTLIN_HOME_PROPERTY)
-        if (jpsKotlinHome != null) {
-            return KotlinPathsFromHomeDir(File(jpsKotlinHome))
-        }
-
-        val jar = PathUtil.pathUtilJar.takeIf(File::exists)
-        if (jar?.name == "kotlin-jps-plugin.jar") {
-            val pluginHome = jar.parentFile.parentFile.parentFile
-            return KotlinPathsFromHomeDir(File(pluginHome, PathUtil.HOME_FOLDER_NAME))
-        }
-
-        return null
     }
 
     private fun getGeneratedFiles(

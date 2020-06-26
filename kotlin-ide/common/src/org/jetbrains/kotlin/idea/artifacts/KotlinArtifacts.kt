@@ -33,6 +33,11 @@ abstract class KotlinArtifacts {
     abstract val kotlinScriptRuntime: File
     abstract val kotlinScriptingCommon: File
     abstract val kotlinScriptingJvm: File
+    abstract val kotlinCompiler: File
+    abstract val trove4j: File
+    abstract val kotlinDaemon: File
+    abstract val kotlinScriptingCompiler: File
+    abstract val kotlinScriptingCompilerImpl: File
 
     protected fun findFile(parent: File, path: String): File {
         val result = File(parent, path)

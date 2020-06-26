@@ -1,37 +1,48 @@
 package org.jetbrains.kotlin.idea.artifacts
 
 import com.intellij.jarRepository.JarRepositoryManager
-import com.intellij.util.PathUtil
 import org.eclipse.aether.repository.RemoteRepository
 import org.jdom.input.SAXBuilder
 import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.idea.maven.aether.ArtifactRepositoryManager
 import org.jetbrains.idea.maven.aether.ProgressConsumer
+import org.jetbrains.kotlin.idea.artifacts.RepoLocation.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
-
-private const val PROJECT_DIR = "\$PROJECT_DIR\$"
-private const val MAVEN_REPOSITORY = "\$MAVEN_REPOSITORY\$"
 
 private fun substitutePathVariables(path: String): String {
     if (path.startsWith("$PROJECT_DIR/")) {
         val projectDir = File(KotlinTestUtils.getHomeDirectory()).parentFile
-        return projectDir.absolutePath + path.drop(PROJECT_DIR.length)
-    } else if (path.startsWith("$MAVEN_REPOSITORY/")) {
+        return projectDir.absolutePath + path.drop(PROJECT_DIR.toString().length)
+    }
+    else if (path.startsWith("$MAVEN_REPOSITORY/")) {
         val userHomeDir = System.getProperty("user.home", null) ?: error("Unable to get the user home directory")
         val repoDir = File(userHomeDir, ".m2/repository")
-        return repoDir.absolutePath + path.drop(MAVEN_REPOSITORY.length)
+        return repoDir.absolutePath + path.drop(MAVEN_REPOSITORY.toString().length)
     }
 
     return path
 }
 
-private enum class LibraryFileKind(val classifierSuffix: String, val artifactKind: ArtifactKind) {
+enum class RepoLocation {
+    PROJECT_DIR {
+        override fun toString(): String {
+            return "\$PROJECT_DIR\$"
+        }
+    },
+    MAVEN_REPOSITORY {
+        override fun toString(): String {
+            return "\$MAVEN_REPOSITORY\$"
+        }
+    }
+}
+
+enum class LibraryFileKind(val classifierSuffix: String, val artifactKind: ArtifactKind) {
     CLASSES("", ArtifactKind.ARTIFACT), SOURCES("-sources", ArtifactKind.SOURCES);
 }
 
-private fun findLibrary(
-    repoLocation: String,
+fun findLibrary(
+    repoLocation: RepoLocation,
     library: String,
     groupId: String,
     artifactId: String,
@@ -201,5 +212,25 @@ object TestKotlinArtifacts : KotlinArtifacts() {
 
     override val kotlinScriptingJvm by lazy {
         findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_scripting_jvm.xml", "org.jetbrains.kotlin", "kotlin-scripting-jvm")
+    }
+
+    override val kotlinCompiler: File by lazy {
+        findLibrary(MAVEN_REPOSITORY, "org_jetbrains_kotlin_kotlin_compiler.xml", "org.jetbrains.kotlin", "kotlin-compiler")
+    }
+
+    override val trove4j: File by lazy {
+        findLibrary(MAVEN_REPOSITORY, "Trove4j.xml", "org.jetbrains.intellij.deps", "trove4j")
+    }
+
+    override val kotlinDaemon: File by lazy {
+        findLibrary(MAVEN_REPOSITORY, "org_jetbrains_kotlin_kotlin_daemon_1_3_61.xml", "org.jetbrains.kotlin", "kotlin-daemon")
+    }
+
+    override val kotlinScriptingCompiler: File by lazy {
+        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_scripting_compiler.xml", "org.jetbrains.kotlin", "kotlin-scripting-compiler")
+    }
+
+    override val kotlinScriptingCompilerImpl: File by lazy {
+        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_scripting_compiler_impl.xml", "org.jetbrains.kotlin", "kotlin-scripting-compiler-impl")
     }
 }

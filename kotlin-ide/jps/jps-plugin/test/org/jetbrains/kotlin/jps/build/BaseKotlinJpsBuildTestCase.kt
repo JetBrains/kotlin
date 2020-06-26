@@ -16,9 +16,14 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.testFramework.TestApplicationManager
+import com.intellij.testFramework.replaceService
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
+import org.jetbrains.kotlin.jps.artifacts.JpsPluginTestArtifacts
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
 
@@ -28,6 +33,12 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
+        TestApplicationManager.getInstance() // Trigger Application initialization
+        ApplicationManager.getApplication().replaceService(
+            KotlinArtifacts::class.java,
+            JpsPluginTestArtifacts.getInstance(),
+            testRootDisposable
+        )
     }
 
     @Throws(Exception::class)
