@@ -28,7 +28,7 @@ the<JavaPluginConvention>().sourceSets["main"].apply {
     resources.setSrcDirs(listOf("resources"))
 }
 
-if (ijProductBranch(appcodeVersion) < 202)
+if (ijProductBranch(appcodeVersion) < 201)
     disableBuildTasks("Too old AppCode version: $appcodeVersion")
 else
     System.getProperty("os.name")!!.toLowerCase(Locale.US).takeIf { "windows" in it }?.let {
