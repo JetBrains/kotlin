@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.utils.AttributeArrayOwner
+import org.jetbrains.kotlin.fir.utils.Protected
 import org.jetbrains.kotlin.fir.utils.TypeRegistry
 import org.jetbrains.kotlin.fir.utils.isEmpty
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -20,6 +21,7 @@ abstract class ConeAttribute<T : ConeAttribute<T>> {
     abstract val key: KClass<out T>
 }
 
+@OptIn(Protected::class)
 class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : AttributeArrayOwner<ConeAttribute<*>, ConeAttribute<*>>() {
     companion object : TypeRegistry<ConeAttribute<*>, ConeAttribute<*>>() {
         inline fun <reified T : ConeAttribute<T>> attributeAccessor(): ReadOnlyProperty<ConeAttributes, T?> {

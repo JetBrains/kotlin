@@ -10,8 +10,14 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
+@RequiresOptIn
+annotation class Protected
+
+@OptIn(Protected::class)
 abstract class AbstractArrayMapOwner<K : Any, V : Any> {
-    protected abstract val arrayMap: ArrayMap<V>
+    // TODO: make [arrayMap] protected and remove annotation after KT-19306 fix
+    @get:Protected
+    abstract val arrayMap: ArrayMap<V>
     protected abstract val typeRegistry: TypeRegistry<K, V>
 
     abstract class AbstractArrayMapAccessor<K : Any, V : Any, T : V>(
