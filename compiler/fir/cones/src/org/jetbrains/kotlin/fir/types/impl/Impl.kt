@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeNullability
@@ -14,8 +13,7 @@ import org.jetbrains.kotlin.fir.types.ConeNullability
 class ConeClassLikeTypeImpl(
     override val lookupTag: ConeClassLikeLookupTag,
     override val typeArguments: Array<out ConeTypeProjection>,
-    isNullable: Boolean,
-    override val attributes: ConeAttributes = ConeAttributes.Empty
+    isNullable: Boolean
 ) : ConeClassLikeType() {
     override val nullability: ConeNullability = ConeNullability.create(isNullable)
 
