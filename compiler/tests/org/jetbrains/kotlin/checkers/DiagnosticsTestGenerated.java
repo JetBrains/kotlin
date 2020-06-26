@@ -2750,6 +2750,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/multipleOutersAndMultipleCallableReferences.kt");
                 }
 
+                @TestMetadata("nestedReferenceCallAgainstExpectedType.kt")
+                public void testNestedReferenceCallAgainstExpectedType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/nestedReferenceCallAgainstExpectedType.kt");
+                }
+
                 @TestMetadata("noAmbiguityBetweenTopLevelAndMemberProperty.kt")
                 public void testNoAmbiguityBetweenTopLevelAndMemberProperty() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/noAmbiguityBetweenTopLevelAndMemberProperty.kt");
@@ -2758,6 +2763,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 @TestMetadata("noFakeDescriptorForObject.kt")
                 public void testNoFakeDescriptorForObject() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/noFakeDescriptorForObject.kt");
+                }
+
+                @TestMetadata("overloadAmbiguityForSimpleLastExpressionOfBlock.kt")
+                public void testOverloadAmbiguityForSimpleLastExpressionOfBlock() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/overloadAmbiguityForSimpleLastExpressionOfBlock.kt");
                 }
 
                 @TestMetadata("overloads.kt")
