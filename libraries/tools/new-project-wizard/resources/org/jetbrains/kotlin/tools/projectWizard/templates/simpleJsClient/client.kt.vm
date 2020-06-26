@@ -1,8 +1,8 @@
 import kotlinx.html.div
 import kotlinx.html.dom.append
 import org.w3c.dom.Node
-import kotlin.browser.document
-import kotlin.browser.window
+import kotlinx.browser.document
+import kotlinx.browser.window
 
 fun main() {
     window.onload = { document.body?.sayHello() }
