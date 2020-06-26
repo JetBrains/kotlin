@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import groovy.json.StringEscapeUtils
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -124,9 +125,10 @@ internal fun runToolInSeparateProcess(
 }
 
 private fun writeArgumentsToFile(directory: File, argsArray: Array<String>): File {
-    val compilerOptions = File.createTempFile(LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_", ".compiler.options", directory)
+    val compilerOptions =
+        File.createTempFile(LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_", ".compiler.options", directory)
     compilerOptions.deleteOnExit()
-    compilerOptions.writeText(argsArray.joinToString(" "))
+    compilerOptions.writeText(argsArray.joinToString(" ") { "\"${StringEscapeUtils.escapeJava(it)}\"" })
     return compilerOptions
 }
 

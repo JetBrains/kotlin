@@ -101,6 +101,18 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testKotlinCompileInFolderWithSpaces() {
+        val project = Project(projectName = "Project Path With Spaces")
+
+        project.build("build") {
+            assertSuccessful()
+            assertReportExists()
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
+            assertNotContains("Forcing System.gc")
+        }
+    }
+
+    @Test
     fun testLogLevelForceGC() {
         val debugProject = Project("simpleProject", minLogLevel = LogLevel.LIFECYCLE)
         debugProject.build("build", "-Dkotlin.gradle.test.report.memory.usage=true") {
