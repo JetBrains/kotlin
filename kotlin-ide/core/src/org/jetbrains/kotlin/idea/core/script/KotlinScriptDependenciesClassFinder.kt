@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.NonClasspathClassFinder
 import com.intellij.psi.PsiClass
+import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex
 import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 
 
@@ -23,33 +24,46 @@ class KotlinScriptDependenciesClassFinder(
         .getAllScriptsDependenciesClassFiles().filter { it.isValid }.toList()
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
-        tailrec fun findClassInner(parentQualifier: String, inners: List<String> = emptyList()): PsiClass? {
-            if (parentQualifier.isEmpty()) return null
-            ProgressManager.checkCanceled()
-            val parentClass = super.findClass(parentQualifier, scope)
-            if (parentClass != null) {
-                if (inners.isNotEmpty()) {
-                    val innerClass = inners.fold(parentClass) { c: PsiClass?, name: String ->
-                        c?.findInnerClassByName(name, false)
-                    }
-                    if (innerClass != null) return innerClass
-                } else return parentClass
-            }
-            return findClassInner(
-                parentQualifier.substringBeforeLast('.', ""),
-                listOf(parentQualifier.substringAfterLast('.')) + inners
-            )
+        val scriptDependencies =
+            ScriptConfigurationManager.getInstance(project).getAllScriptsDependenciesClassFiles()
+        val firstJarInDependencies = scriptDependencies.firstOrNull() ?: return null
+
+        if (!scope.contains(firstJarInDependencies)) return null
+
+        val classByFileName = super.findClass(qualifiedName, scope)
+        if (classByFileName != null) {
+            return classByFileName.isInScope(scope)
         }
 
-        return findClassInner(qualifiedName)?.let { aClass ->
-            if (scope is EverythingGlobalScope) return aClass
-
-            val file = aClass.containingFile?.virtualFile ?: return null
-            val index = ProjectFileIndex.SERVICE.getInstance(myProject)
-            if (index.isInContent(file) || index.isInLibraryClasses(file) || index.isInLibrarySource(file)) {
-                return null
-            }
-            return aClass
+        // Following code is needed because NonClasspathClassFinder cannot find inner classes
+        // JavaFullClassNameIndex cannot be used directly, because it filter only classes in source roots
+        val classes = StubIndex.getElements(
+            JavaFullClassNameIndex.getInstance().key,
+            qualifiedName.hashCode(),
+            project,
+            scope,
+            PsiClass::class.java
+        ).filter {
+            it.qualifiedName == qualifiedName
         }
+
+        val found = when (classes.size) {
+            0 -> null
+            1 -> classes.single()
+            else -> classes.first()  // todo: check when this happens
+        }
+
+        return found?.isInScope(scope)
+    }
+
+    private fun PsiClass.isInScope(scope: GlobalSearchScope): PsiClass? {
+        if (scope is EverythingGlobalScope) return this
+
+        val file = this.containingFile?.virtualFile ?: return null
+        val index = ProjectFileIndex.SERVICE.getInstance(myProject)
+        if (index.isInContent(file) || index.isInLibrary(file)) {
+            return null
+        }
+        return this
     }
 }
