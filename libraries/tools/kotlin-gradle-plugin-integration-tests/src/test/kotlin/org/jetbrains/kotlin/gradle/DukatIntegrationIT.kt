@@ -114,7 +114,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
         val externalSrcs = "build/externals/$projectName/src"
-        project.build("build") {
+        project.build("generateExternalsIntegrated") {
             assertSuccessful()
 
             assertTrue {
