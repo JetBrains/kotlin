@@ -2,7 +2,7 @@
 public final class Test {
     private final field x: int
     private synthetic method <init>(p0: int): void
-    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Test
+    public synthetic final static method box-impl(p0: int): Test
     public synthetic static method constructor-impl$default(p0: int, p1: int, p2: int, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): int
     public synthetic static method constructor-impl$default(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): int
     public static method constructor-impl(p0: int): int

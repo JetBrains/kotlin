@@ -7,7 +7,7 @@ public interface IValue {
 public final class TestInternal {
     private final field value: int
     private synthetic method <init>(p0: int): void
-    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): TestInternal
+    public synthetic final static method box-impl(p0: int): TestInternal
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
@@ -23,7 +23,7 @@ public final class TestInternal {
 public final class TestOverriding {
     private final field value: int
     private synthetic method <init>(p0: int): void
-    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): TestOverriding
+    public synthetic final static method box-impl(p0: int): TestOverriding
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
@@ -40,7 +40,7 @@ public final class TestOverriding {
 public final class TestPrivate {
     private final field value: int
     private synthetic method <init>(p0: int): void
-    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): TestPrivate
+    public synthetic final static method box-impl(p0: int): TestPrivate
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
@@ -56,7 +56,7 @@ public final class TestPrivate {
 public final class TestPublic {
     private final field value: int
     private synthetic method <init>(p0: int): void
-    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): TestPublic
+    public synthetic final static method box-impl(p0: int): TestPublic
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean

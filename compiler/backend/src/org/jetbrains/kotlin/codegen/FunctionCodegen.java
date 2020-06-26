@@ -205,12 +205,13 @@ public class FunctionCodegen {
 
         MethodVisitor mv =
                 strategy.wrapMethodVisitor(
-                        newMethod(origin,
-                                  flags,
-                                  asmMethod.getName(),
-                                  asmMethod.getDescriptor(),
-                                  strategy.skipGenericSignature() ? null : jvmSignature.getGenericsSignature(),
-                                  getThrownExceptions(functionDescriptor, typeMapper)
+                        newMethod(
+                                origin,
+                                flags,
+                                asmMethod.getName(),
+                                asmMethod.getDescriptor(),
+                                strategy.skipGenericSignature() ? null : jvmSignature.getGenericsSignature(),
+                                getThrownExceptions(functionDescriptor, typeMapper)
                         ),
                         flags, asmMethod.getName(),
                         asmMethod.getDescriptor()
@@ -218,10 +219,12 @@ public class FunctionCodegen {
 
         recordMethodForFunctionIfAppropriate(functionDescriptor, asmMethod);
 
-        generateMethodAnnotationsIfRequired(functionDescriptor, asmMethod, jvmSignature, mv, isCompatibilityStubInDefaultImpls
-                                                                                             ? Collections.singletonList(Deprecated.class)
-                                                                                             : Collections.emptyList());
-
+        boolean skipNullabilityAnnotations = (flags & ACC_PRIVATE) != 0 || (flags & ACC_SYNTHETIC) != 0;
+        generateMethodAnnotationsIfRequired(
+                functionDescriptor, asmMethod, jvmSignature, mv,
+                isCompatibilityStubInDefaultImpls ? Collections.singletonList(Deprecated.class) : Collections.emptyList(),
+                skipNullabilityAnnotations
+        );
         GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, jvmSignature, state, (flags & ACC_SYNTHETIC) != 0);
 
         if (contextKind != OwnerKind.ERASED_INLINE_CLASS) {
@@ -283,7 +286,8 @@ public class FunctionCodegen {
             @NotNull Method asmMethod,
             @NotNull JvmMethodGenericSignature jvmSignature,
             @NotNull MethodVisitor mv,
-            @NotNull List<Class<?>> additionalNoArgAnnotations
+            @NotNull List<Class<?>> additionalNoArgAnnotations,
+            boolean skipNullabilityAnnotations
     ) {
         FunctionDescriptor annotationsOwner;
         if (shouldHideConstructorDueToInlineClassTypeValueParameters(functionDescriptor)) {
@@ -298,10 +302,14 @@ public class FunctionCodegen {
             annotationsOwner = functionDescriptor;
         }
 
-        AnnotationCodegen.forMethod(mv, memberCodegen, state)
+        AnnotationCodegen.forMethod(mv, memberCodegen, state, skipNullabilityAnnotations)
                 .genAnnotations(annotationsOwner, asmMethod.getReturnType(), functionDescriptor.getReturnType(), null, additionalNoArgAnnotations);
 
-        generateParameterAnnotations(annotationsOwner, mv, jvmSignature, memberCodegen, state);
+        generateParameterAnnotations(
+                annotationsOwner, mv, jvmSignature,
+                annotationsOwner.getValueParameters(),
+                memberCodegen, state, skipNullabilityAnnotations
+        );
     }
 
     @NotNull
@@ -499,21 +507,10 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodVisitor mv,
             @NotNull JvmMethodSignature jvmSignature,
-            @NotNull MemberCodegen<?> memberCodegen,
-            @NotNull GenerationState state
-    ) {
-        generateParameterAnnotations(
-                functionDescriptor, mv, jvmSignature, functionDescriptor.getValueParameters(), memberCodegen, state
-        );
-    }
-
-    public static void generateParameterAnnotations(
-            @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull MethodVisitor mv,
-            @NotNull JvmMethodSignature jvmSignature,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull MemberCodegen<?> memberCodegen,
-            @NotNull GenerationState state
+            @NotNull GenerationState state,
+            boolean skipNullabilityAnnotations
     ) {
         if (isAccessor(functionDescriptor)) return;
 
@@ -542,7 +539,7 @@ public class FunctionCodegen {
             if (annotated != null) {
                 //noinspection ConstantConditions
                 int parameterIndex = i - syntheticParameterCount;
-                AnnotationCodegen.forParameter(parameterIndex, mv, memberCodegen, state)
+                AnnotationCodegen.forParameter(parameterIndex, mv, memberCodegen, state, skipNullabilityAnnotations)
                         .genAnnotations(annotated, parameterSignature.getAsmType(), annotated.getReturnType(), functionDescriptor, Collections.emptyList());
             }
         }

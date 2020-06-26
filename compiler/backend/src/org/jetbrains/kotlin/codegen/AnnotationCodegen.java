@@ -628,7 +628,16 @@ public abstract class AnnotationCodegen {
             @NotNull InnerClassConsumer innerClassConsumer,
             @NotNull GenerationState state
     ) {
-        return new AnnotationCodegen(innerClassConsumer, state) {
+        return forMethod(mv, innerClassConsumer, state, false);
+    }
+
+    public static AnnotationCodegen forMethod(
+            @NotNull MethodVisitor mv,
+            @NotNull InnerClassConsumer innerClassConsumer,
+            @NotNull GenerationState state,
+            boolean skipNullabilityAnnotations
+    ) {
+        return new AnnotationCodegen(innerClassConsumer, state, skipNullabilityAnnotations) {
             @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
@@ -676,9 +685,10 @@ public abstract class AnnotationCodegen {
             int parameter,
             @NotNull MethodVisitor mv,
             @NotNull InnerClassConsumer innerClassConsumer,
-            @NotNull GenerationState state
+            @NotNull GenerationState state,
+            boolean skipNullabilityAnnotations
     ) {
-        return new AnnotationCodegen(innerClassConsumer, state) {
+        return new AnnotationCodegen(innerClassConsumer, state, skipNullabilityAnnotations) {
             @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {

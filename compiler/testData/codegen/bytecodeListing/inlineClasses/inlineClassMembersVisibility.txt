@@ -2,7 +2,7 @@
 public final class Z {
     private final field x: int
     private synthetic method <init>(p0: int): void
-    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z
+    public synthetic final static method box-impl(p0: int): Z
     public static method constructor-impl(p0: int): int
     public static method constructor-impl(p0: int, p1: int): int
     public static method constructor-impl(p0: long): int

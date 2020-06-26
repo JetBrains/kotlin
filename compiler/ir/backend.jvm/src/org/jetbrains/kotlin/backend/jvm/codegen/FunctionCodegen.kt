@@ -72,7 +72,8 @@ class FunctionCodegen(
         if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
             irFunction.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
         ) {
-            object : AnnotationCodegen(classCodegen, context) {
+            val skipNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE != 0 || flags and Opcodes.ACC_SYNTHETIC != 0
+            object : AnnotationCodegen(classCodegen, context, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotation(descr, visible)
                 }
@@ -86,7 +87,7 @@ class FunctionCodegen(
             // Not generating parameter annotations for default stubs fixes KT-7892, though
             // this certainly looks like a workaround for a javac bug.
             if (irFunction !is IrConstructor || !irFunction.parentAsClass.shouldNotGenerateConstructorParameterAnnotations()) {
-                generateParameterAnnotations(irFunction, methodVisitor, signature, classCodegen, context)
+                generateParameterAnnotations(irFunction, methodVisitor, signature, classCodegen, context, skipNullabilityAnnotations)
             }
         }
 
@@ -218,49 +219,51 @@ class FunctionCodegen(
         }
         return frameMap
     }
-}
 
-// Borrowed from org.jetbrains.kotlin.codegen.FunctionCodegen.java
-private fun generateParameterAnnotations(
-    irFunction: IrFunction,
-    mv: MethodVisitor,
-    jvmSignature: JvmMethodSignature,
-    innerClassConsumer: InnerClassConsumer,
-    context: JvmBackendContext
-) {
-    val iterator = irFunction.valueParameters.iterator()
-    val kotlinParameterTypes = jvmSignature.valueParameters
-    val syntheticParameterCount = kotlinParameterTypes.count { it.kind.isSkippedInGenericSignature }
+    // Borrowed from org.jetbrains.kotlin.codegen.FunctionCodegen.java
+    private fun generateParameterAnnotations(
+        irFunction: IrFunction,
+        mv: MethodVisitor,
+        jvmSignature: JvmMethodSignature,
+        innerClassConsumer: InnerClassConsumer,
+        context: JvmBackendContext,
+        skipNullabilityAnnotations: Boolean = false
+    ) {
+        val iterator = irFunction.valueParameters.iterator()
+        val kotlinParameterTypes = jvmSignature.valueParameters
+        val syntheticParameterCount = kotlinParameterTypes.count { it.kind.isSkippedInGenericSignature }
 
-    visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
+        visitAnnotableParameterCount(mv, kotlinParameterTypes.size - syntheticParameterCount)
 
-    kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
-        val kind = parameterSignature.kind
-        val annotated = when (kind) {
-            JvmMethodParameterKind.RECEIVER -> irFunction.extensionReceiverParameter
-            else -> iterator.next()
-        }
+        kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
+            val kind = parameterSignature.kind
+            val annotated = when (kind) {
+                JvmMethodParameterKind.RECEIVER -> irFunction.extensionReceiverParameter
+                else -> iterator.next()
+            }
 
-        if (annotated != null && !kind.isSkippedInGenericSignature && !annotated.isSyntheticMarkerParameter()) {
-            object : AnnotationCodegen(innerClassConsumer, context) {
-                override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
-                    return mv.visitParameterAnnotation(
-                        i - syntheticParameterCount,
-                        descr,
-                        visible
-                    )
-                }
+            if (annotated != null && !kind.isSkippedInGenericSignature && !annotated.isSyntheticMarkerParameter()) {
+                object : AnnotationCodegen(innerClassConsumer, context, skipNullabilityAnnotations) {
+                    override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
+                        return mv.visitParameterAnnotation(
+                            i - syntheticParameterCount,
+                            descr,
+                            visible
+                        )
+                    }
 
-                override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
-                    return mv.visitTypeAnnotation(
-                        TypeReference.newFormalParameterReference(i - syntheticParameterCount).value,
-                        path, descr, visible
-                    )
-                }
-            }.genAnnotations(annotated, parameterSignature.asmType, annotated.type)
+                    override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
+                        return mv.visitTypeAnnotation(
+                            TypeReference.newFormalParameterReference(i - syntheticParameterCount).value,
+                            path, descr, visible
+                        )
+                    }
+                }.genAnnotations(annotated, parameterSignature.asmType, annotated.type)
+            }
         }
     }
 }
+
 
 private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
     origin == IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER ||

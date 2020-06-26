@@ -49,7 +49,8 @@ import java.lang.annotation.RetentionPolicy
 
 abstract class AnnotationCodegen(
     private val innerClassConsumer: InnerClassConsumer,
-    private val context: JvmBackendContext
+    private val context: JvmBackendContext,
+    private val skipNullabilityAnnotations: Boolean = false
 ) {
     private val typeMapper = context.typeMapper
     private val methodSignatureMapper = context.methodSignatureMapper
@@ -114,10 +115,8 @@ abstract class AnnotationCodegen(
         returnType: Type?,
         annotationDescriptorsAlreadyPresent: MutableSet<String>
     ) {
-        if (annotated is IrDeclaration) {
-            if (returnType != null && !AsmUtil.isPrimitive(returnType)) {
-                generateNullabilityAnnotationForCallable(annotated, annotationDescriptorsAlreadyPresent)
-            }
+        if (!skipNullabilityAnnotations && annotated is IrDeclaration && returnType != null && !AsmUtil.isPrimitive(returnType)) {
+            generateNullabilityAnnotationForCallable(annotated, annotationDescriptorsAlreadyPresent)
         }
     }
 

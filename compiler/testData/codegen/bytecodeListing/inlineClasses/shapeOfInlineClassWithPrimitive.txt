@@ -2,7 +2,7 @@
 public final class Foo {
     private final field l: long
     private synthetic method <init>(p0: long): void
-    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: long): Foo
+    public synthetic final static method box-impl(p0: long): Foo
     public static method constructor-impl(p0: long): long
     public final static method empty-impl(p0: long): void
     public method equals(p0: java.lang.Object): boolean
