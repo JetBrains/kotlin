@@ -52,8 +52,6 @@ org.jetbrains.kotlin.idea.codeInsight.InspectionTestGenerated.Inspections.testAn
 org.jetbrains.kotlin.idea.codeInsight.OutOfBlockModificationTestGenerated.testInSecondaryConstructorParameter, IDEA-234737 element.parent must not be null,,
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testAndroidGradleJsDetection, NPE during import,,
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testKotlinAndroidPluginDetection, NPE during import,,
-org.jetbrains.kotlin.idea.codeInsight.gradle.GradleTestRunConfigurationAndHighlightingTest.preferredConfigurations[0: with Gradle-4.9], IDEA-234737 element.parent must not be null,,
-org.jetbrains.kotlin.idea.codeInsight.gradle.GradleTestRunConfigurationAndHighlightingTest.preferredConfigurations[1: with Gradle-5.6.4], IDEA-234737 element.parent must not be null,,
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testTwoClasses,,, FLAKY
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testValAndClass,,, FLAKY
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testValOrder,,, FLAKY
