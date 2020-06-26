@@ -34,7 +34,23 @@ class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransfor
         return super.visitCall(expression)
     }
 
+    override fun visitValueParameter(declaration: IrValueParameter): IrStatement {
+        declaration.convertToConstInAnnotationsIfPossible()
+        return super.visitValueParameter(declaration)
+    }
+
+    override fun visitConstructor(declaration: IrConstructor): IrStatement {
+        declaration.convertToConstInAnnotationsIfPossible()
+        return super.visitConstructor(declaration)
+    }
+
+    override fun visitEnumEntry(declaration: IrEnumEntry): IrStatement {
+        declaration.convertToConstInAnnotationsIfPossible()
+        return super.visitEnumEntry(declaration)
+    }
+
     override fun visitField(declaration: IrField): IrStatement {
+        declaration.convertToConstInAnnotationsIfPossible()
         val initializer = declaration.initializer
         val expression = initializer?.expression ?: return declaration
         if (expression is IrConst<*>) return declaration
@@ -47,8 +63,23 @@ class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransfor
         return declaration
     }
 
+    override fun visitFunction(declaration: IrFunction): IrStatement {
+        declaration.convertToConstInAnnotationsIfPossible()
+        return super.visitFunction(declaration)
+    }
+
+    override fun visitProperty(declaration: IrProperty): IrStatement {
+        declaration.convertToConstInAnnotationsIfPossible()
+        return super.visitProperty(declaration)
+    }
+
     override fun visitClass(declaration: IrClass): IrStatement {
-        declaration.annotations.forEach {
+        declaration.convertToConstInAnnotationsIfPossible()
+        return super.visitClass(declaration)
+    }
+
+    private fun IrMutableAnnotationContainer.convertToConstInAnnotationsIfPossible() {
+        annotations.forEach {
             for (i in 0 until it.valueArgumentsCount) {
                 val arg = it.getValueArgument(i) ?: continue
                 if (arg.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
@@ -57,7 +88,6 @@ class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransfor
                 }
             }
         }
-        return super.visitClass(declaration)
     }
 
     private fun IrExpression.convertToConstIfPossible(type: IrType): IrExpression {

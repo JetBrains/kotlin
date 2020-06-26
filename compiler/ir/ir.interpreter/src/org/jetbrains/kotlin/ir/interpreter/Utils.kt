@@ -71,7 +71,7 @@ fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffse
         constType.isShort() -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
         constType.isInt() -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
         constType.isLong() -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
-        constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
+        constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this.toString())
         constType.isFloat() -> IrConstImpl.float(startOffset, endOffset, constType, (this as Number).toFloat())
         constType.isDouble() -> IrConstImpl.double(startOffset, endOffset, constType, (this as Number).toDouble())
         constType.isUByte() -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
