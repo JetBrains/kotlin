@@ -369,6 +369,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> FUN_INTERFACE_CONSTRUCTOR_REFERENCE = DiagnosticFactory0.create(ERROR);
 
     // Secondary constructors
 
