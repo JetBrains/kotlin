@@ -79,15 +79,11 @@ val jarTask = (tasks.findByName("jar") as Jar? ?: task<Jar>("jar")).apply {
         val noncidrNative = project(":kotlin-ultimate:ide:common-noncidr-native").tasks.getByName("jar")
         val cidrMobile = project(":kotlin-ultimate:ide:common-cidr-mobile").tasks.getByName("jar")
 
-        for (jar in listOf(wizardLib, commonNative, noncidrNative)) {
+        for (jar in listOf(wizardLib, commonNative, noncidrNative, cidrMobile)) {
             result.from(zipTree(
                 jar.outputs.files.singleFile
             ))
         }
-
-        result.from(zipTree(
-            cidrMobile.outputs.files.singleFile
-        ))
 
         result.builtBy(noncidrNative)
     })
