@@ -121,6 +121,10 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
         }
         args += options
 
+        if (files.none { it.extension.toLowerCase() == "kts" }) {
+            args += "-Xdisable-default-scripting-plugin"
+        }
+
         val kotlincFun = when (platform) {
             is JdkPlatform -> {
                 args += listOf("-no-stdlib", "-d", target.absolutePath)
