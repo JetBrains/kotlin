@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
+import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByPsiBuildingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -876,6 +877,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractResolveCallTest> {
             model("analysisSession/resolveCall")
+        }
+
+        testClass<AbstractSymbolsByPsiBuildingTest> {
+            model("symbolsByPsi")
         }
     }
 
