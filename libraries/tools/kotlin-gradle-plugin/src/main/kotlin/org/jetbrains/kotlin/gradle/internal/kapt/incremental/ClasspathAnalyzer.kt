@@ -108,6 +108,7 @@ class ClasspathEntryData : Serializable {
 
     @Transient
     var classAbiHash = mutableMapOf<String, ByteArray>()
+
     @Transient
     var classDependencies = mutableMapOf<String, ClassDependencies>()
 
@@ -118,7 +119,9 @@ class ClasspathEntryData : Serializable {
 
         val names = LinkedHashMap<String, Int>()
         sortedClassDependencies.forEach {
-            names[it.key] = names.size
+            if (it.key !in names) {
+                names[it.key] = names.size
+            }
             it.value.abiTypes.forEach { type ->
                 if (type !in names) names[type] = names.size
             }
