@@ -1,30 +1,21 @@
 package org.jetbrains.kotlin.idea.artifacts
 
 import com.intellij.jarRepository.JarRepositoryManager
+import com.intellij.util.PathUtil
 import org.eclipse.aether.repository.RemoteRepository
 import org.jdom.input.SAXBuilder
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.idea.maven.aether.ArtifactRepositoryManager
 import org.jetbrains.idea.maven.aether.ProgressConsumer
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
-
-@get:TestOnly
-val KOTLIN_PLUGIN_ROOT_DIRECTORY: File by lazy {
-    var currentDir = File(".").absoluteFile
-    while (!File(currentDir, "kotlin.kotlin-ide.iml").exists()) {
-        currentDir = currentDir.parentFile ?: error("Can't find repository root")
-    }
-
-    File(currentDir, "kotlin").takeIf { it.exists() } ?: error("Can't find Kotlin plugin root directory")
-}
 
 private const val PROJECT_DIR = "\$PROJECT_DIR\$"
 private const val MAVEN_REPOSITORY = "\$MAVEN_REPOSITORY\$"
 
 private fun substitutePathVariables(path: String): String {
     if (path.startsWith("$PROJECT_DIR/")) {
-        val projectDir = KOTLIN_PLUGIN_ROOT_DIRECTORY.parentFile
+        val projectDir = File(KotlinTestUtils.getHomeDirectory()).parentFile
         return projectDir.absolutePath + path.drop(PROJECT_DIR.length)
     } else if (path.startsWith("$MAVEN_REPOSITORY/")) {
         val userHomeDir = System.getProperty("user.home", null) ?: error("Unable to get the user home directory")
@@ -46,7 +37,7 @@ private fun findLibrary(
     artifactId: String,
     kind: LibraryFileKind = LibraryFileKind.CLASSES
 ): File {
-    val librariesDir = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "../.idea/libraries")
+    val librariesDir = File(KotlinTestUtils.getHomeDirectory(), "../.idea/libraries")
     if (!librariesDir.exists()) {
         throw IllegalStateException("Can't find $librariesDir")
     }
@@ -84,7 +75,7 @@ private fun findLibrary(
 }
 
 private val remoteMavenRepositories: List<RemoteRepository> by lazy {
-    val jarRepositoriesFile = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "../.idea/jarRepositories.xml")
+    val jarRepositoriesFile = File(KotlinTestUtils.getHomeDirectory(), "../.idea/jarRepositories.xml")
     val document = jarRepositoriesFile.inputStream().use { stream -> SAXBuilder().build(stream) }
 
     val repositories = mutableListOf<RemoteRepository>()
@@ -126,7 +117,7 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     private const val artifactName = "KotlinPlugin"
 
     private val artifactDirectory: File by lazy {
-        val result = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "../out/artifacts/$artifactName")
+        val result = File(KotlinTestUtils.getHomeDirectory(), "../out/artifacts/$artifactName")
         if (!result.exists()) {
             throw IllegalStateException("Artifact '$artifactName' doesn't exist")
         }

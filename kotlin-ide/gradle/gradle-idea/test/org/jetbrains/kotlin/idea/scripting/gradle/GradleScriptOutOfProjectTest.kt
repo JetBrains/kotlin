@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
 import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptConfigurationLoaderForOutOfProjectScripts
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
@@ -19,7 +19,7 @@ import java.io.File
 class GradleScriptOutOfProjectTest : AbstractScriptConfigurationLoadingTest() {
 
     override fun setUpTestProject() {
-        val rootDir = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "idea/testData/script/definition/loading/gradle/")
+        val rootDir = File(KotlinTestUtils.getHomeDirectory(), "idea/testData/script/definition/loading/gradle/")
 
         val buildGradleKts = rootDir.walkTopDown().find { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME }
             ?: error("Couldn't find main script")

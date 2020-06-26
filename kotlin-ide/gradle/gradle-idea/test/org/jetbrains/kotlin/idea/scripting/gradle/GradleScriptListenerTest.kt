@@ -10,12 +10,12 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -39,7 +39,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
     )
 
     override fun setUpTestProject() {
-        val rootDir = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "idea/testData/script/definition/loading/gradle/")
+        val rootDir = File(KotlinTestUtils.getHomeDirectory(), "idea/testData/script/definition/loading/gradle/")
 
         val settings: KtFile = addFileToProject(File(rootDir, GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME))
         val prop: PsiFile = addFileToProject(File(rootDir, "gradle.properties"))

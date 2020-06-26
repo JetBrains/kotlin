@@ -30,5 +30,6 @@
     <orderEntry type="module" module-name="intellij.java.psi" />
     <orderEntry type="module" module-name="intellij.java.ui" />
     <orderEntry type="module" module-name="intellij.java.aetherDependencyResolver" />
+    <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
   </component>
 </module>

@@ -11,8 +11,6 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
-import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils

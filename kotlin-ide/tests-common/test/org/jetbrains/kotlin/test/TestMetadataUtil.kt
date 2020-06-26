@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.test
 
-import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import java.io.File
 
 object TestMetadataUtil {
@@ -13,7 +12,7 @@ object TestMetadataUtil {
 
     @JvmStatic
     fun getTestDataPath(testClass: Class<*>): String {
-        val path = (getTestData(testClass) ?: KOTLIN_PLUGIN_ROOT_DIRECTORY).absolutePath
+        val path = getTestData(testClass)?.absolutePath ?: KotlinTestUtils.getHomeDirectory()
         return if (path.endsWith(File.separator)) path else path + File.separator
     }
 
