@@ -46,21 +46,20 @@ dependencies {
     api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     api(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
 
+    testImplementation(project(":idea:idea-new-project-wizard"))
     testImplementation(kotlin("stdlib"))
     testImplementation(commonDep("junit:junit"))
     testImplementation(intellijDep())
     testImplementation(intellijPluginDep("android"))
-    testImplementation(intellijPluginDep("java")) { includeJars(
-        "java-api",
-        "java-impl",
-        "java_resources_en"
-    ) }
+    testImplementation(intellijPluginDep("java"))
     testImplementation(intellijPluginDep("gradle"))
 
-    testImplementation(project(":idea:idea-new-project-wizard"))
+    testImplementation(projectTests(":idea"))
     testImplementation(projectTests(":idea:idea-test-framework"))
     testImplementation(projectTests(":idea:idea-new-project-wizard"))
     testImplementation(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
+
+    testRuntimeOnly(toolsJar())
 }
 
 
