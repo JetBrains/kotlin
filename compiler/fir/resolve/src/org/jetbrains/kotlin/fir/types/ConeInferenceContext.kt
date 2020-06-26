@@ -251,13 +251,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun KotlinTypeMarker.hasExactAnnotation(): Boolean {
-        require(this is ConeKotlinType)
-        return attributes.exact != null
+        return false // TODO
     }
 
     override fun KotlinTypeMarker.hasNoInferAnnotation(): Boolean {
-        require(this is ConeKotlinType)
-        return attributes.noInfer != null
+        return false // TODO
     }
 
     override fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker {
