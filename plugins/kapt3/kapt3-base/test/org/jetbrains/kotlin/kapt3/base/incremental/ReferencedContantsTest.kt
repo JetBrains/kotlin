@@ -48,7 +48,7 @@ class ReferencedConstantsTest {
                 generatedSources,
                 listOf(compiledClasses)
             ) { elements, trees -> MentionedTypesTaskListener(cache.javaCache, elements, trees) }
-            cache.updateCache(listOf(processor))
+            cache.updateCache(listOf(processor), false)
         }
     }
 
