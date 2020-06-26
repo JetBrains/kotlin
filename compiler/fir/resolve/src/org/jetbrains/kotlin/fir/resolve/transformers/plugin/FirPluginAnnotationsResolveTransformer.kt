@@ -87,7 +87,6 @@ private class FirAnnotationResolveTransformer(
 ) : FirAbstractAnnotationResolveTransformer<Multimap<AnnotationFqn, FirRegularClass>, PersistentList<FirAnnotatedDeclaration>>(session, scopeSession) {
     var metaAnnotations: Set<AnnotationFqn> = emptySet()
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(
-        towerScope,
         session,
         errorTypeAsResolved = false
     )
@@ -109,7 +108,7 @@ private class FirAnnotationResolveTransformer(
         annotationCall: FirAnnotationCall,
         data: Multimap<AnnotationFqn, FirRegularClass>
     ): CompositeTransformResult<FirStatement> {
-        return annotationCall.transformAnnotationTypeRef(typeResolverTransformer, null).compose()
+        return annotationCall.transformAnnotationTypeRef(typeResolverTransformer, scope).compose()
     }
 
     override fun transformRegularClass(

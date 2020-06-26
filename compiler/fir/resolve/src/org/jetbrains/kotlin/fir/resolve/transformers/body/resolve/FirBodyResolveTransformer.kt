@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
+import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
+import org.jetbrains.kotlin.fir.scopes.impl.createCurrentScopeList
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -72,7 +74,7 @@ open class FirBodyResolveTransformer(
         if (typeRef is FirResolvedTypeRef) {
             return typeRef.compose()
         }
-        return typeResolverTransformer.transformTypeRef(typeRef, null)
+        return typeResolverTransformer.transformTypeRef(typeRef, FirCompositeScope(components.createCurrentScopeList()))
     }
 
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ResolutionMode): CompositeTransformResult<FirTypeRef> {

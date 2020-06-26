@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirTypeResolveScopeForBodyResolve
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -282,7 +281,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             qualifiedResolver
         )
         val typeResolverTransformer = FirSpecificTypeResolverTransformer(
-            FirTypeResolveScopeForBodyResolve(this), session
+            session
         )
         override val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
         override val dataFlowAnalyzer: FirDataFlowAnalyzer<*> =

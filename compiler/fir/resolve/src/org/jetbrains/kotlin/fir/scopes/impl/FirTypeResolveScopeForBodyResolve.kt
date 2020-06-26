@@ -6,15 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.scopes.FirIterableScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-
-class FirTypeResolveScopeForBodyResolve(
-    private val components: BodyResolveComponents
-) : FirIterableScope() {
-    override val scopes: Iterable<FirScope>
-        get() = components.createCurrentScopeList()
-}
 
 fun BodyResolveComponents.createCurrentScopeList(): List<FirScope> =
     towerDataElements.asReversed().mapNotNull { it.scope }

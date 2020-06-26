@@ -244,7 +244,7 @@ private class FirSupertypeResolverVisitor(
 
     private fun resolveSpecificClassLikeSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration<*>,
-        resolveSuperTypeRefs: (FirTransformer<Nothing?>) -> List<FirTypeRef>
+        resolveSuperTypeRefs: (FirTransformer<FirScope>, FirScope) -> List<FirTypeRef>
     ): List<FirTypeRef> {
         when (val status = supertypeComputationSession.getSupertypesComputationStatus(classLikeDeclaration)) {
             is SupertypeComputationStatus.Computed -> return status.supertypeRefs
@@ -256,8 +256,8 @@ private class FirSupertypeResolverVisitor(
         supertypeComputationSession.startComputingSupertypes(classLikeDeclaration)
         val scope = prepareScope(classLikeDeclaration)
 
-        val transformer = FirSpecificTypeResolverTransformer(scope, session)
-        val resolvedTypesRefs = resolveSuperTypeRefs(transformer)
+        val transformer = FirSpecificTypeResolverTransformer(session)
+        val resolvedTypesRefs = resolveSuperTypeRefs(transformer, scope)
 
         supertypeComputationSession.storeSupertypes(classLikeDeclaration, resolvedTypesRefs)
         return resolvedTypesRefs
@@ -277,9 +277,9 @@ private class FirSupertypeResolverVisitor(
         classLikeDeclaration: FirClassLikeDeclaration<*>,
         supertypeRefs: List<FirTypeRef>
     ): List<FirTypeRef> {
-        return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer ->
+        return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scope ->
             supertypeRefs.mapTo(mutableListOf()) {
-                val superTypeRef = transformer.transformTypeRef(it, null).single
+                val superTypeRef = transformer.transformTypeRef(it, scope).single
 
                 if (superTypeRef.coneTypeSafe<ConeTypeParameterType>() != null)
                     createErrorTypeRef(
@@ -310,9 +310,9 @@ private class FirSupertypeResolverVisitor(
             return
         }
 
-        resolveSpecificClassLikeSupertypes(typeAlias) { transformer ->
+        resolveSpecificClassLikeSupertypes(typeAlias) { transformer, scope ->
             val resolvedTypeRef =
-                transformer.transformTypeRef(typeAlias.expandedTypeRef, null).single as? FirResolvedTypeRef
+                transformer.transformTypeRef(typeAlias.expandedTypeRef, scope).single as? FirResolvedTypeRef
                     ?: return@resolveSpecificClassLikeSupertypes listOf(
                         createErrorTypeRef(
                             typeAlias.expandedTypeRef,
