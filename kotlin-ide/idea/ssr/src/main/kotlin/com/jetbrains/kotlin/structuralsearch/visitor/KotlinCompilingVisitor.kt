@@ -223,6 +223,13 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    override fun visitParameterList(list: KtParameterList) {
+        super.visitParameterList(list)
+        if (list.children.all { it.allowsAbsenceOfMatch }) {
+            setHandler(list, absenceOfMatchHandler(list))
+        }
+    }
+
     override fun visitValueArgumentList(list: KtValueArgumentList) {
         super.visitValueArgumentList(list)
         if (list.children.all { it.allowsAbsenceOfMatch }) {
@@ -234,6 +241,13 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         super.visitClassBody(classBody)
         if (classBody.children.all { it.allowsAbsenceOfMatch }) {
             setHandler(classBody, absenceOfMatchHandler(classBody))
+        }
+    }
+
+    override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
+        super.visitPrimaryConstructor(constructor)
+        if (constructor.children.all {it.allowsAbsenceOfMatch}) {
+            setHandler(constructor, absenceOfMatchHandler(constructor))
         }
     }
 

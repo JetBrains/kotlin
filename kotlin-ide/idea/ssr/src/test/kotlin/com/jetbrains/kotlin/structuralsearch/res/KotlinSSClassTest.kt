@@ -122,4 +122,6 @@ class KotlinSSClassTest : KotlinSSResourceInspectionTest() {
             """
         )
     }
+
+    fun testClassOptionalParam() { doTest("class '_Class ('_Param* : '_Type)") }
 }
