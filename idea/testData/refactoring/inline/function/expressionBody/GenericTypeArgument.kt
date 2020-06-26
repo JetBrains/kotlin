@@ -2,8 +2,7 @@ interface SomeFace
 interface GeneOut<out T> {}
 object Empty : GeneOut<Nothing>
 fun <T> downUnder(): GeneOut<T> = Empty
-fun downParameter(p: GeneOut<SomeFace>) = p
-
+fun downReturn<caret>(): GeneOut<SomeFace> = downUnder()
 fun callDown() {
-    val v2 = <caret>downParameter(downUnder())
+    val v1 = downReturn()
 }

@@ -237,6 +237,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("idea/testData/refactoring/inline/function/expressionBody/FunctionalType.kt");
             }
 
+            @TestMetadata("GenericTypeArgument.kt")
+            public void testGenericTypeArgument() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/expressionBody/GenericTypeArgument.kt");
+            }
+
             @TestMetadata("Lambda.kt")
             public void testLambda() throws Exception {
                 runTest("idea/testData/refactoring/inline/function/expressionBody/Lambda.kt");
@@ -446,6 +451,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("DefaultParameter.kt")
             public void testDefaultParameter() throws Exception {
                 runTest("idea/testData/refactoring/inline/function/returnAtEnd/DefaultParameter.kt");
+            }
+
+            @TestMetadata("GenericTypeArgument.kt")
+            public void testGenericTypeArgument() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/returnAtEnd/GenericTypeArgument.kt");
+            }
+
+            @TestMetadata("GenericTypeArgument2.kt")
+            public void testGenericTypeArgument2() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/returnAtEnd/GenericTypeArgument2.kt");
             }
 
             @TestMetadata("InnerFunction.kt")

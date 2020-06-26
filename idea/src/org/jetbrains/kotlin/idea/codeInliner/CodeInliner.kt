@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.inspections.RedundantUnitExpressionInspection
+import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class CodeInliner<TCallElement : KtElement>(
     private val nameExpression: KtSimpleNameExpression,
@@ -175,7 +177,13 @@ class CodeInliner<TCallElement : KtElement>(
         for (parameter in descriptor.valueParameters.asReversed()) {
             val argument = argumentForParameter(parameter, descriptor) ?: continue
 
-            argument.expression.put(PARAMETER_VALUE_KEY, parameter)
+            val expression = argument.expression.apply {
+                if (this is KtCallElement) {
+                    insertExplicitTypeArgument()
+                }
+
+                put(PARAMETER_VALUE_KEY, parameter)
+            }
 
             val parameterName = parameter.name
             val usages = codeToInline.collectDescendantsOfType<KtExpression> {
@@ -191,17 +199,28 @@ class CodeInliner<TCallElement : KtElement>(
                     usageArgument?.mark(DEFAULT_PARAMETER_VALUE_KEY)
                 }
 
-                codeToInline.replaceExpression(it, argument.expression.copied())
+                codeToInline.replaceExpression(it, expression.copied())
             }
 
-            //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
-
-            if (argument.expression.shouldKeepValue(usageCount = usages.size)) {
-                introduceValuesForParameters.add(IntroduceValueForParameter(parameter, argument.expression, argument.expressionType))
+            if (expression.shouldKeepValue(usageCount = usages.size)) {
+                introduceValuesForParameters.add(IntroduceValueForParameter(parameter, expression, argument.expressionType))
             }
         }
 
         return introduceValuesForParameters
+    }
+
+    private fun KtCallElement.insertExplicitTypeArgument() {
+        if (InsertExplicitTypeArgumentsIntention.isApplicableTo(this, bindingContext)) {
+            InsertExplicitTypeArgumentsIntention.createTypeArguments(this, bindingContext)?.let { typeArgumentList ->
+                clear(USER_CODE_KEY)
+                for (child in children) {
+                    child.safeAs<KtElement>()?.mark(USER_CODE_KEY)
+                }
+
+                addAfter(typeArgumentList, calleeExpression)
+            }
+        }
     }
 
     private data class IntroduceValueForParameter(
