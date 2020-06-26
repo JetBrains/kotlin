@@ -11,8 +11,8 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.fir.highlighter.visitors.FirAfterResolveHighlightingVisitor
-import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.highlighter.AbstractKotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.Diagnostic2Annotation
 import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages
@@ -29,7 +29,7 @@ class KotlinFirPsiChecker : AbstractKotlinPsiChecker() {
         if (ApplicationManager.getApplication().isDispatchThread) {
             throw ProcessCanceledException()
         }
-        val analysisSession = FirAnalysisSession(element)
+        val analysisSession = KtFirAnalysisSession(element)
 
         highlightDiagnostics(element, analysisSession, holder)
 
@@ -38,7 +38,7 @@ class KotlinFirPsiChecker : AbstractKotlinPsiChecker() {
             .forEach(element::accept)
     }
 
-    private fun highlightDiagnostics(element: KtElement, analysisSession: FrontendAnalysisSession, holder: AnnotationHolder) {
+    private fun highlightDiagnostics(element: KtElement, analysisSession: KtAnalysisSession, holder: AnnotationHolder) {
         val diagnostics = analysisSession.getDiagnosticsForElement(element)
         if (diagnostics.isEmpty()) return
 

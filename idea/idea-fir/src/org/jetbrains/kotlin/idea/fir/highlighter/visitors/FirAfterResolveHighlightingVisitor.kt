@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.idea.fir.highlighter.visitors
 
 import com.intellij.lang.annotation.AnnotationHolder
-import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.highlighter.HighlightingVisitor
 
 abstract class FirAfterResolveHighlightingVisitor(
-    protected val analysisSession: FrontendAnalysisSession,
+    protected val analysisSession: KtAnalysisSession,
     protected val holder: AnnotationHolder
 ) : HighlightingVisitor(holder) {
 
     companion object {
         fun createListOfVisitors(
-            analysisSession: FrontendAnalysisSession,
+            analysisSession: KtAnalysisSession,
             holder: AnnotationHolder
         ): List<FirAfterResolveHighlightingVisitor> = listOf(
             TypeHighlightingVisitor(analysisSession, holder),

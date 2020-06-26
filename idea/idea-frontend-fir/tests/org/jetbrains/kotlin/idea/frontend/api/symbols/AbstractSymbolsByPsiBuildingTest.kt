@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -24,7 +23,7 @@ abstract class AbstractSymbolsByPsiBuildingTest : KotlinLightCodeInsightFixtureT
         val ktFile = myFixture.configureByText(file.name, FileUtil.loadFile(file)) as KtFile
 
         val renderedSymbols = executeOnPooledThreadInReadAction {
-            val analysisSession = FirAnalysisSession(ktFile)
+            val analysisSession = KtFirAnalysisSession(ktFile)
             val declarationSymbols = ktFile.collectDescendantsOfType<KtDeclaration>().map { declaration ->
                 analysisSession.symbolProvider.getSymbol(declaration)
             }

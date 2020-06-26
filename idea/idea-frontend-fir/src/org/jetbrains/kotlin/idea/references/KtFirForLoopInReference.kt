@@ -11,16 +11,15 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.getResolvedSymbolOfNameReference
-import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtForExpression
 
-open class KtForLoopInReferenceFirImpl(expression: KtForExpression) : KtForLoopInReference(expression), FirKtReference {
-
-    override fun resolveToSymbols(analysisSession: FrontendAnalysisSession): Collection<KtSymbol> {
-        check(analysisSession is FirAnalysisSession)
+open class KtFirForLoopInReference(expression: KtForExpression) : KtForLoopInReference(expression), KtFirReference {
+    override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
+        check(analysisSession is KtFirAnalysisSession)
         val firLoop = expression.getOrBuildFirSafe<FirWhileLoop>() ?: return emptyList()
         val condition = firLoop.condition as? FirFunctionCall
         val iterator = run {

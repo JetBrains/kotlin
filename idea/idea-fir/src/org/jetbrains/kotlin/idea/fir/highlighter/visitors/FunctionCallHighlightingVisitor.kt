@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.serialization.deserialization.KOTLIN_SUSPEND_BUILT_I
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors as Colors
 
 internal class FunctionCallHighlightingVisitor(
-    analysisSession: FrontendAnalysisSession,
+    analysisSession: KtAnalysisSession,
     holder: AnnotationHolder
 ) : FirAfterResolveHighlightingVisitor(analysisSession, holder) {
     override fun visitBinaryExpression(expression: KtBinaryExpression) {

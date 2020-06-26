@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 
-internal class FirKtSymbolProvider(
+internal class KtFirSymbolProvider(
     override val token: Invalidatable,
     firSymbolProvider: FirSymbolProvider,
     private val firSymbolBuilder: KtSymbolByFirBuilder
