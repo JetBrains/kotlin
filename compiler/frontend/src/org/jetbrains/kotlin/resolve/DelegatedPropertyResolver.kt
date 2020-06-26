@@ -571,7 +571,7 @@ class DelegatedPropertyResolver(
                 variableDescriptor, delegateExpression, delegateTypeWithoutNonFixedVariables, contextForProvideDelegate
             )
 
-            if (conventionMethodFound(provideDelegateResults)) {
+            if (provideDelegateResults.isSuccess) {
                 val provideDelegateDescriptor = provideDelegateResults.resultingDescriptor
                 if (provideDelegateDescriptor.isOperator) {
                     delegateType = inverseSubstitution(provideDelegateDescriptor.returnType, substitutionMap) ?: return null
