@@ -54,22 +54,20 @@ class FirAnalysisSession(
         assertIsValid()
     }
 
-    override fun getSmartCastedToTypes(expression: KtExpression): Collection<KtType>? {
-        assertIsValid()
+    override fun getSmartCastedToTypes(expression: KtExpression): Collection<KtType>? = withValidityAssertion {
         // TODO filter out not used smartcasts
-        return expression.getOrBuildFirSafe<FirExpressionWithSmartcast>()?.typesFromSmartCast?.map { it.asTypeInfo() }
+        expression.getOrBuildFirSafe<FirExpressionWithSmartcast>()?.typesFromSmartCast?.map { it.asTypeInfo() }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast> {
-        assertIsValid()
+    override fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast> = withValidityAssertion {
         // TODO filter out not used smartcasts
         val qualifiedExpression = expression.getOrBuildFirSafe<FirQualifiedAccessExpression>() ?: return emptyList()
         if (qualifiedExpression.dispatchReceiver !is FirExpressionWithSmartcast
             && qualifiedExpression.extensionReceiver !is FirExpressionWithSmartcast
         ) return emptyList()
         val session = expression.session
-        return buildList {
+        buildList {
             (qualifiedExpression.dispatchReceiver as? FirExpressionWithSmartcast)?.let { smartCasted ->
                 ImplicitReceiverSmartCast(
                     smartCasted.typesFromSmartCast.map { it.asTypeInfo() },
@@ -86,15 +84,13 @@ class FirAnalysisSession(
     }
 
 
-    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType {
-        assertIsValid()
+    override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {
         val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration<*>>()
-        return firDeclaration.returnTypeRef.coneType.asTypeInfo()
+        firDeclaration.returnTypeRef.coneType.asTypeInfo()
     }
 
-    override fun getKtExpressionType(expression: KtExpression): KtType {
-        assertIsValid()
-        return expression.getOrBuildFirOfType<FirExpression>().typeRef.coneType.asTypeInfo()
+    override fun getKtExpressionType(expression: KtExpression): KtType = withValidityAssertion {
+        expression.getOrBuildFirOfType<FirExpression>().typeRef.coneType.asTypeInfo()
     }
 
     override fun isSubclassOf(klass: KtClassOrObject, superClassId: ClassId): Boolean {
@@ -106,19 +102,16 @@ class FirAnalysisSession(
         return result
     }
 
-    override fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic> {
-        assertIsValid()
-        return LowLevelFirApiFacade.getDiagnosticsFor(element)
+    override fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic> = withValidityAssertion {
+        LowLevelFirApiFacade.getDiagnosticsFor(element)
     }
 
-    override fun resolveCall(call: KtBinaryExpression): CallInfo? {
-        assertIsValid()
+    override fun resolveCall(call: KtBinaryExpression): CallInfo? = withValidityAssertion {
         val firCall = call.getOrBuildFirSafe<FirFunctionCall>() ?: return null
-        return resolveCall(firCall, call)
+        resolveCall(firCall, call)
     }
 
-    override fun resolveCall(call: KtCallExpression): CallInfo? {
-        assertIsValid()
+    override fun resolveCall(call: KtCallExpression): CallInfo? = withValidityAssertion {
         val firCall = when (val fir = call.getOrBuildFir()) {
             is FirFunctionCall -> fir
             is FirSafeCallExpression -> fir.regularQualifiedAccess as? FirFunctionCall
