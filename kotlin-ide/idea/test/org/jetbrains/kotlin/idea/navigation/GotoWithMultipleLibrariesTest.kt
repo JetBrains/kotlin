@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.navigation
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2
 import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.vfs.LocalFileSystem
-import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.junit.internal.runners.JUnit38ClassRunner
@@ -23,7 +22,7 @@ import java.io.File
 @RunWith(JUnit38ClassRunner::class)
 class GotoWithMultipleLibrariesTest : AbstractMultiModuleTest() {
     override fun getTestDataPath(): String {
-        val testDir = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "idea/testData/multiModuleReferenceResolve/sameJarInDifferentLibraries")
+        val testDir = File(KotlinTestUtils.getHomeDirectory(), "idea/testData/multiModuleReferenceResolve/sameJarInDifferentLibraries")
         return KotlinTestUtils.toSlashEndingDirPath(testDir.absolutePath)
     }
 
