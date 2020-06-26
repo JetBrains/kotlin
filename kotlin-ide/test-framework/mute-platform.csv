@@ -159,7 +159,7 @@ org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.te
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Variables.RemoveValVarFromParameter.testSecondaryConstructorParameter, IDEA-234737 element.parent must not be null,,
 org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureTest.testSecondaryConstructorBySuperRef, IDEA-234737 element.parent must not be null,,
 org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureTest.testSecondaryConstructorByThisRef, IDEA-234737 element.parent must not be null,,
-org.jetbrains.kotlin.idea.refactoring.inline.InlineTestGenerated.Function.ExpressionBody.testMultipleInExpression, Unstable order of usages,,
+org.jetbrains.kotlin.idea.refactoring.inline.InlineTestGenerated.Function.ExpressionBody.testMultipleInExpression, Unstable order of usages,, FLAKY
 org.jetbrains.kotlin.idea.refactoring.introduce.ExtractionTestGenerated.IntroduceJavaParameter.testJavaMethodOverridingKotlinFunctionWithUsages, Unprocessed,,
 org.jetbrains.kotlin.idea.refactoring.introduce.ExtractionTestGenerated.IntroduceParameter.testSecondaryConstructorWithDefaultValue, IDEA-234737 element.parent must not be null,,
 org.jetbrains.kotlin.idea.refactoring.introduce.ExtractionTestGenerated.IntroduceParameter.testSubstituteDelegationCallsNoTempVar, IDEA-234737 element.parent must not be null,,
