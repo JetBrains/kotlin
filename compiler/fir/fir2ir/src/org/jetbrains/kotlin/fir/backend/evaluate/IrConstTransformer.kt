@@ -55,19 +55,37 @@ class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransfor
     }
 
     private fun transformAnnotations(annotationContainer: IrAnnotationContainer) {
-        annotationContainer.annotations.forEach {
-            for (i in 0 until it.valueArgumentsCount) {
-                val arg = it.getValueArgument(i) ?: continue
-                if (arg.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
-                    val const = interpreter.interpret(arg).replaceIfError(arg)
-                    it.putValueArgument(i, const.convertToConstIfPossible(it.symbol.owner.valueParameters[i].type))
+        annotationContainer.annotations.forEach { annotation ->
+            // TODO this check can be removed after fix with annotation call arguments mapping
+            if ((0 until annotation.valueArgumentsCount).any { annotation.getValueArgument(it) == null }) return@forEach
+
+            for (i in 0 until annotation.valueArgumentsCount) {
+                val arg = annotation.getValueArgument(i) ?: continue
+                when (arg) {
+                    is IrVararg -> arg.transformVarArg()
+                    else -> annotation.putValueArgument(i, arg.transformSingleArg(annotation.symbol.owner.valueParameters[i].type))
                 }
             }
         }
     }
 
+    private fun IrVararg.transformVarArg() {
+        for (i in this.elements.indices) {
+            val irVarargElement = this.elements[i] as? IrExpression ?: continue
+            this.putElement(i, irVarargElement.transformSingleArg(this.varargElementType))
+        }
+    }
+
+    private fun IrExpression.transformSingleArg(expectedType: IrType): IrExpression {
+        if (this.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
+            val const = interpreter.interpret(this).replaceIfError(this)
+            return const.convertToConstIfPossible(expectedType)
+        }
+        return this
+    }
+
     private fun IrExpression.convertToConstIfPossible(type: IrType): IrExpression {
-        if (this !is IrConst<*>) return this
+        if (this !is IrConst<*> || type is IrErrorType) return this
         if (type.isArray()) return this.convertToConstIfPossible((type as IrSimpleType).arguments.single().typeOrNull!!)
         return this.value.toIrConst(type, this.startOffset, this.endOffset)
     }
