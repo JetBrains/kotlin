@@ -3,21 +3,9 @@ package org.jetbrains.kotlin.idea.artifacts
 import com.intellij.util.PathUtil
 import java.io.File
 
-private val kotlinPluginDirectory: File = run {
-    val pluginJar = File(PathUtil.getJarPathForClass(ProductionKotlinArtifacts::class.java))
-    if (!pluginJar.exists()) {
-        throw IllegalStateException("Plugin JAR not found for class ${ProductionKotlinArtifacts::class.java}")
-    }
+abstract class ProductionLikeKotlinArtifacts : KotlinArtifacts() {
+    protected abstract val kotlinPluginDirectory: File
 
-    val libFile = pluginJar.parentFile.takeIf { it.name == "lib" }
-    if (libFile == null || !libFile.exists()) {
-        throw IllegalStateException("'lib' plugin directory not found")
-    }
-
-    libFile.parentFile
-}
-
-object ProductionKotlinArtifacts : KotlinArtifacts() {
     override val kotlincDirectory by lazy { findFile(kotlinPluginDirectory, "kotlinc") }
     override val kotlincLibDirectory by lazy { findFile(kotlincDirectory, "lib") }
 
@@ -41,4 +29,20 @@ object ProductionKotlinArtifacts : KotlinArtifacts() {
 
     override val kotlinStdlibCommon get() = throw error("'stdlib-common' artifact is not available")
     override val kotlinStdlibCommonSources get() = throw error("'stdlib-common' artifact is not available")
+}
+
+object ProductionKotlinArtifacts : ProductionLikeKotlinArtifacts() {
+    override val kotlinPluginDirectory: File = run {
+        val pluginJar = File(PathUtil.getJarPathForClass(ProductionKotlinArtifacts::class.java))
+        if (!pluginJar.exists()) {
+            throw IllegalStateException("Plugin JAR not found for class ${ProductionKotlinArtifacts::class.java}")
+        }
+
+        val libFile = pluginJar.parentFile.takeIf { it.name == "lib" }
+        if (libFile == null || !libFile.exists()) {
+            throw IllegalStateException("'lib' plugin directory not found")
+        }
+
+        libFile.parentFile
+    }
 }

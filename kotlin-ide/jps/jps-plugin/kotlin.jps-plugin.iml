@@ -34,7 +34,7 @@
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-build-common-tests" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.incremental-compilation-impl-tests" level="project" />
     <orderEntry type="module" module-name="kotlin.jps-common" />
-    <orderEntry type="module" module-name="kotlin.common" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.common" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.jps.model.tests" scope="TEST" />

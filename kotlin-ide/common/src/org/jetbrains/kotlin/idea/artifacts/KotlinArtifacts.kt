@@ -1,16 +1,13 @@
 package org.jetbrains.kotlin.idea.artifacts
 
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.ServiceManager
 import java.io.File
 import java.io.FileNotFoundException
 
 abstract class KotlinArtifacts {
     companion object {
         fun getInstance(): KotlinArtifacts {
-            return when {
-                ApplicationManager.getApplication().isUnitTestMode -> TestKotlinArtifacts
-                else -> ProductionKotlinArtifacts
-            }
+            return ServiceManager.getService(KotlinArtifacts::class.java)
         }
     }
 

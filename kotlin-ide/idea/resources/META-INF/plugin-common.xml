@@ -169,6 +169,10 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.caches.FileAttributeService"
                         serviceImplementation="org.jetbrains.kotlin.idea.caches.FileAttributeServiceImpl"/>
 
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts"
+                        serviceImplementation="org.jetbrains.kotlin.idea.artifacts.ProductionKotlinArtifacts"
+                        testServiceImplementation="org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts"/>
+
     <applicationService serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
