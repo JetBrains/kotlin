@@ -109,6 +109,76 @@ class DukatIntegrationIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testIntegratedDukatWithChangeKotlinDslRootDependencies() {
+        testIntegratedDukatWithChange(
+            DslType.KOTLIN,
+            DependenciesLocation.ROOT
+        )
+    }
+
+    @Test
+    fun testIntegratedDukatWithChangeKotlinDslExtDependencies() {
+        testIntegratedDukatWithChange(
+            DslType.KOTLIN,
+            DependenciesLocation.EXTENSION
+        )
+    }
+
+    @Test
+    fun testIntegratedDukatWithChangeGroovyDslRootDependencies() {
+        testIntegratedDukatWithChange(
+            DslType.GROOVY,
+            DependenciesLocation.ROOT
+        )
+    }
+
+    @Test
+    fun testIntegratedDukatWithChangeGroovyDslExtDependencies() {
+        testIntegratedDukatWithChange(
+            DslType.GROOVY,
+            DependenciesLocation.EXTENSION
+        )
+    }
+
+    private fun testIntegratedDukatWithChange(
+        dslType: DslType,
+        dependenciesLocation: DependenciesLocation
+    ) {
+        val projectName = "${dslType.value}-${dependenciesLocation.value}"
+        val project = Project(
+            projectName = projectName,
+            directoryPrefix = "dukat-integration"
+        )
+        project.setupWorkingDir()
+        project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        val externalSrcs = "build/externals/$projectName/src"
+        project.build("generateExternalsIntegrated") {
+            assertSuccessful()
+
+            assertSingleFileExists(externalSrcs, "index.module_decamelize.kt")
+        }
+
+        project.gradleBuildScript().modify { buildScript ->
+            buildScript
+                .replace(
+                    """implementation(npm("left-pad", "1.3.0"))""",
+                    """implementation(npm("left-pad", "1.3.0", true))"""
+                )
+                .replace(
+                    """implementation(npm("decamelize", "4.0.0", true))""",
+                    """implementation(npm("decamelize", "4.0.0"))"""
+                )
+        }
+
+        project.build("generateExternalsIntegrated") {
+            assertSuccessful()
+
+            assertSingleFileExists(externalSrcs, "index.module_left-pad.kt")
+        }
+    }
+
     private enum class DslType(
         val value: String
     ) {
