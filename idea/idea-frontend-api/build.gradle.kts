@@ -4,6 +4,8 @@ plugins {
 }
 
 dependencies {
+    compileOnly(project(":kotlin-reflect-api"))
+
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":core:type-system"))

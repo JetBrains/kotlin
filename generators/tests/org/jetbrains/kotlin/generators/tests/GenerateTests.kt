@@ -88,6 +88,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolve
 import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
+import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByPsiBuildingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -935,14 +936,18 @@ fun main(args: Array<String>) {
         }
 
         testGroup("idea/idea-frontend-fir/tests", "idea/idea-frontend-fir/testData") {
-        testClass<AbstractKtDeclarationAndFirDeclarationEqualityChecker> {
-            model("ktDeclarationAndFirDeclarationEqualityChecker")
-        }
+            testClass<AbstractKtDeclarationAndFirDeclarationEqualityChecker> {
+                model("ktDeclarationAndFirDeclarationEqualityChecker")
+            }
 
-        testClass<AbstractResolveCallTest> {
-            model("analysisSession/resolveCall")
+            testClass<AbstractResolveCallTest> {
+                model("analysisSession/resolveCall")
+            }
+
+            testClass<AbstractSymbolsByPsiBuildingTest> {
+                model("symbolsByPsi")
+            }
         }
-    }
 
     testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/testData") {
         testClass<AbstractFirMultiModuleResolveTest> {
