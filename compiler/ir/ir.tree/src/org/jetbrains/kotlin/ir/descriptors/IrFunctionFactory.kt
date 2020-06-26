@@ -93,7 +93,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
     override fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
         return functionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
-                val descriptor = symbol.descriptor as FunctionClassDescriptor
+                val descriptor = symbol.descriptor
                 val descriptorFactory = FunctionDescriptorFactory.RealDescriptorFactory(descriptor, symbolTable)
                 createFunctionClass(symbol, false, false, arity, irBuiltIns.functionClass, kotlinPackageFragment, descriptorFactory)
             }
@@ -159,7 +159,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         abstract fun classReceiverParameterDescriptor(): ReceiverParameterDescriptor
         abstract fun FunctionDescriptor.memberReceiverParameterDescriptor(): ReceiverParameterDescriptor
 
-        class RealDescriptorFactory(private val classDescriptor: FunctionClassDescriptor, symbolTable: SymbolTable) :
+        class RealDescriptorFactory(private val classDescriptor: ClassDescriptor, symbolTable: SymbolTable) :
             FunctionDescriptorFactory(symbolTable) {
             override fun memberDescriptor(name: String, factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction): IrSimpleFunctionSymbol {
                 val descriptor = classDescriptor.unsubstitutedMemberScope.run {
@@ -439,6 +439,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         descriptorFactory: FunctionDescriptorFactory
     ): IrClass {
         val name = functionClassName(isK, isSuspend, n)
+        if (symbol.isBound) return symbol.owner
         val klass = IrClassImpl(
             offset, offset, classOrigin, symbol, Name.identifier(name), ClassKind.INTERFACE, Visibilities.PUBLIC, Modality.ABSTRACT
         )

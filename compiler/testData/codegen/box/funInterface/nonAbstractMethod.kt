@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND_FIR: JVM_IR
 
 interface I {
     fun inherited(s: String): String = privateInherited(s)
