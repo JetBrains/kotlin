@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
-import org.jetbrains.kotlin.idea.frontend.api.Invalidatable
+import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import java.lang.ref.WeakReference
 import kotlin.reflect.KProperty
 
-class ReadOnlyWeakRef<V : Any>(value: V, val invalidatable: Invalidatable) {
+class ReadOnlyWeakRef<V : Any>(value: V, val validityOwner: ValidityOwner) {
     val weakRef = WeakReference(value)
 
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun getValue(thisRef: Any, property: KProperty<*>): V =
-        weakRef.get() ?: if (invalidatable.isValid()) {
+        weakRef.get() ?: if (validityOwner.isValid()) {
             error("Cone type was garbage collected while analysis session is still valid")
         } else {
             error("Accessing the invalid coneType")
@@ -22,4 +22,4 @@ class ReadOnlyWeakRef<V : Any>(value: V, val invalidatable: Invalidatable) {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun <V : Any> Invalidatable.weakRef(value: V) = ReadOnlyWeakRef(value, this)
+internal inline fun <V : Any> ValidityOwner.weakRef(value: V) = ReadOnlyWeakRef(value, this)

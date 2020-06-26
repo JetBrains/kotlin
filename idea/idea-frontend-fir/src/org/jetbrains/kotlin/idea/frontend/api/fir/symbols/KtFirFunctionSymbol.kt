@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.isLocal
 import org.jetbrains.kotlin.fir.declarations.isOperator
 import org.jetbrains.kotlin.fir.declarations.isSuspend
 import org.jetbrains.kotlin.idea.fir.findPsi
-import org.jetbrains.kotlin.idea.frontend.api.Invalidatable
+import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.idea.frontend.api.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirFunctionSymbol(
     fir: FirSimpleFunction,
-    override val token: Invalidatable,
+    override val token: ValidityOwner,
     private val builder: KtSymbolByFirBuilder,
 ) : KtFunctionSymbol(), KtFirSymbol<FirSimpleFunction> {
     override val fir: FirSimpleFunction by weakRef(fir)

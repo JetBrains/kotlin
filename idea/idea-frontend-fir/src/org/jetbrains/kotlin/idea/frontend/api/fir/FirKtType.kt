@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 
-internal interface KtFirType : KtType, InvalidatableByValidityToken {
+internal interface KtFirType : KtType, ValidityOwnerByValidityToken {
     val coneType: ConeKotlinType
     val typeCheckerContext: ConeTypeCheckerContext
 
@@ -49,7 +49,7 @@ internal interface KtFirType : KtType, InvalidatableByValidityToken {
 internal class KtFirClassType(
     coneType: ConeClassLikeTypeImpl,
     typeCheckerContext: ConeTypeCheckerContext,
-    override val token: Invalidatable,
+    override val token: ValidityOwner,
     private val firBuilder: KtSymbolByFirBuilder,
 ) : KtClassType(), KtFirType {
     override val coneType by weakRef(coneType)
@@ -73,7 +73,7 @@ internal class KtFirClassType(
 internal class KtFirErrorType(
     coneType: ConeClassErrorType,
     typeCheckerContext: ConeTypeCheckerContext,
-    override val token: Invalidatable,
+    override val token: ValidityOwner,
 ) : KtErrorType(), KtFirType {
     override val coneType by weakRef(coneType)
     override val typeCheckerContext by weakRef(typeCheckerContext)
@@ -84,7 +84,7 @@ internal class KtFirErrorType(
 internal class KtFirTypeParameterType(
     coneType: ConeTypeParameterType,
     typeCheckerContext: ConeTypeCheckerContext,
-    override val token: Invalidatable,
+    override val token: ValidityOwner,
     private val firBuilder: KtSymbolByFirBuilder,
 ) : KtTypeParameterType(), KtFirType {
     override val coneType by weakRef(coneType)
@@ -104,7 +104,7 @@ internal class KtFirTypeParameterType(
 internal class KtFirFlexibleType(
     coneType: ConeFlexibleType,
     typeCheckerContext: ConeTypeCheckerContext,
-    override val token: Invalidatable,
+    override val token: ValidityOwner,
     private val firBuilder: KtSymbolByFirBuilder,
 ) : KtFlexibleType(), KtFirType {
     override val coneType by weakRef(coneType)
@@ -117,7 +117,7 @@ internal class KtFirFlexibleType(
 internal class KtFirIntersectionType(
     coneType: ConeIntersectionType,
     typeCheckerContext: ConeTypeCheckerContext,
-    override val token: Invalidatable,
+    override val token: ValidityOwner,
     private val firBuilder: KtSymbolByFirBuilder,
 ) : KtIntersectionType(), KtFirType {
     override val coneType by weakRef(coneType)

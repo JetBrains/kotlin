@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.idea.fir.findPsi
-import org.jetbrains.kotlin.idea.frontend.api.Invalidatable
+import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.idea.frontend.api.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 
 internal class KtFirAnonymousFunctionSymbol(
     fir: FirAnonymousFunction,
-    override val token: Invalidatable,
+    override val token: ValidityOwner,
     private val builder: KtSymbolByFirBuilder
 ) : KtAnonymousFunctionSymbol(), KtFirSymbol<FirAnonymousFunction> {
     override val fir: FirAnonymousFunction by weakRef(fir)

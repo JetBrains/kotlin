@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
-import org.jetbrains.kotlin.idea.frontend.api.Invalidatable
-import org.jetbrains.kotlin.idea.frontend.api.InvalidatableByValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityOwnerByValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -14,14 +14,14 @@ import kotlin.reflect.KProperty
 // all access are considered to be from a single thread
 // which should be checked in invalidatable.assertIsValid()
 class ValidityAwareCachedValue<T>(
-    private val invalidatable: Invalidatable,
+    private val validityOwner: ValidityOwner,
     private val init: () -> T
 ) : ReadOnlyProperty<Any, T> {
     var value: Any? = UNITITIALIZED
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
-        invalidatable.assertIsValid()
+        validityOwner.assertIsValid()
         if (value === UNITITIALIZED) {
             value = init()
         }
@@ -29,6 +29,6 @@ class ValidityAwareCachedValue<T>(
     }
 }
 
-internal fun <T> InvalidatableByValidityToken.cached(init: () -> T) = ValidityAwareCachedValue(token, init)
+internal fun <T> ValidityOwnerByValidityToken.cached(init: () -> T) = ValidityAwareCachedValue(token, init)
 
 internal object UNITITIALIZED

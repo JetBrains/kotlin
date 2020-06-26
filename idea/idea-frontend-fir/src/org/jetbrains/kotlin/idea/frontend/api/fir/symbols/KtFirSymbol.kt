@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.idea.frontend.api.InvalidatableByValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityOwnerByValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 
-internal interface KtFirSymbol<F : FirDeclaration> : KtSymbol, InvalidatableByValidityToken {
+internal interface KtFirSymbol<F : FirDeclaration> : KtSymbol, ValidityOwnerByValidityToken {
     val fir: F
     override val origin: KtSymbolOrigin get() = withValidityAssertion { fir.origin.asKtSymbolOrigin() }
 }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.findPsi
-import org.jetbrains.kotlin.idea.frontend.api.Invalidatable
+import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.ReadOnlyWeakRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeAliasSymbol
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirTypeAliasSymbol(
     fir: FirTypeAlias,
-    override val token: Invalidatable
+    override val token: ValidityOwner
 ) : KtTypeAliasSymbol(), KtFirSymbol<FirTypeAlias> {
     override val fir: FirTypeAlias by ReadOnlyWeakRef(fir, this)
     override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
