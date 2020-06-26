@@ -54,7 +54,7 @@ internal fun addBrowserSupport(module: Module) {
     getNewFileWriter(module, "src/main/kotlin", "main.kt")?.use {
         it.write(
             """
-                import kotlin.browser.document
+                import kotlinx.browser.document
                 
                 fun main() {
                     document.write("Hello, world!")
