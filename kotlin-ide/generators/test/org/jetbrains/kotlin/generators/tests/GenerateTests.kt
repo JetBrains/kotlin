@@ -121,7 +121,6 @@ import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
-import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
@@ -1056,9 +1055,6 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
         testClass<AbstractJavaToKotlinConverterMultiFileTest> {
             model("multiFile", pattern = DIRECTORY, isRecursive = false)
-        }
-        testClass<AbstractJavaToKotlinConverterForWebDemoTest> {
-            model("fileOrElement", pattern = JAVA)
         }
     }
 
