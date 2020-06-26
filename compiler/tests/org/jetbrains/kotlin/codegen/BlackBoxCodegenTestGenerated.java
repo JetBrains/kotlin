@@ -17239,6 +17239,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/jvmField/constructorProperty.kt");
         }
 
+        @TestMetadata("diamond.kt")
+        public void testDiamond() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/diamond.kt");
+        }
+
         @TestMetadata("fileOrder.kt")
         public void testFileOrder() throws Exception {
             runTest("compiler/testData/codegen/box/jvmField/fileOrder.kt");
