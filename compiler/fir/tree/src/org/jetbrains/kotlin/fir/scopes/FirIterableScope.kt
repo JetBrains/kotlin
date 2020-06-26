@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirIterableScope : FirScope() {
-    abstract val scopes: Iterable<FirScope>
+    protected abstract val scopes: Iterable<FirScope>
 
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
