@@ -141,8 +141,8 @@ abstract class AnnotationCodegen(
             is IrValueDeclaration -> declaration.type
             is IrField ->
                 if (declaration.correspondingPropertySymbol?.owner?.isLateinit == true) {
-                    // Lateinit fields are nullable, but should be marked as NotNull to match the JVM backend.
-                    declaration.type.makeNotNull()
+                    // Don't generate nullability annotations on lateinit fields
+                    return
                 } else {
                     declaration.type
                 }
