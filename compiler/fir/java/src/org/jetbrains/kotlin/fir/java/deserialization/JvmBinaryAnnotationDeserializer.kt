@@ -126,15 +126,6 @@ class JvmBinaryAnnotationDeserializer(
             }
             is ProtoBuf.Function -> {
                 val signature = JvmProtoBufUtil.getJvmMethodSignature(proto, nameResolver, typeTable) ?: return null
-                // TODO: Investigate why annotations for accessors affect resolution, resulting in dangling type parameter.
-                //   regressions: Fir2IrTextTest.Declarations.test*LevelProperties
-                // This is necessary because of libraries/stdlib/src/kotlin/collections/MapAccessors.kt:43 as
-                // we now load that overload as low-priority and choose another one, but we don't support @Exact yet
-                // that is necessary to correctly resolve the latter
-                // See KT-39659
-                if (signature.name.startsWith("getVarContravariant")) {
-                    return null
-                }
                 MemberSignature.fromJvmMemberSignature(signature)
             }
             is ProtoBuf.Property -> {
