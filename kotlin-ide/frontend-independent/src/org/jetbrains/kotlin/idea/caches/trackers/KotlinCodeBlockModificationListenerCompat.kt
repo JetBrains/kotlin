@@ -29,6 +29,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
@@ -220,32 +221,27 @@ abstract class KotlinCodeBlockModificationListenerCompat(protected val project: 
 //                            return BlockModificationScopeElement(it, it)
 //                        }
 //                    }
+
                     if (blockDeclaration.typeReference != null) {
-                        val accessors =
-                            blockDeclaration.accessors.map { it.initializer ?: it.bodyExpression }
 
-                        val accessorList = if (blockDeclaration.initializer.isAncestor(element) &&
-                            // call expression changes in property initializer are OCB, see KT-38443
-                            KtPsiUtil.getTopmostParentOfTypes(element, KtCallExpression::class.java) == null
-                        ) {
-                            accessors + blockDeclaration.initializer
-                        } else {
-                            accessors
-                        }
+                        // adding annotations to accessor is the same as change contract of property
+                        if (element !is KtAnnotated || element.annotationEntries.isEmpty()) {
 
-                        for (accessor in accessorList) {
-                            accessor?.takeIf {
-                                it.isAncestor(element) &&
-                                        // adding annotations to accessor is the same as change contract of property
-                                        (element !is KtAnnotated || element.annotationEntries.isEmpty())
-                            }
-                                ?.let { expression ->
-                                    val declaration =
-                                        KtPsiUtil.getTopmostParentOfTypes(blockDeclaration, KtClassOrObject::class.java) as? KtElement ?:
-                                        // ktFile to check top level property declarations
-                                        return null
-                                    return BlockModificationScopeElement(declaration, expression)
+                            val properExpression = blockDeclaration.accessors
+                                .firstOrNull { (it.initializer ?: it.bodyExpression).isAncestor(element) }
+                                ?: blockDeclaration.initializer?.takeIf {
+                                    // name references changes in property initializer are OCB, see KT-38443, KT-38762
+                                    it.isAncestor(element) && !it.anyDescendantOfType<KtNameReferenceExpression>()
                                 }
+
+                            if (properExpression != null) {
+                                val declaration =
+                                    KtPsiUtil.getTopmostParentOfTypes(blockDeclaration, KtClassOrObject::class.java) as? KtElement
+
+                                if (declaration != null) {
+                                    return BlockModificationScopeElement(declaration, properExpression)
+                                }
+                            }
                         }
                     }
                 }
