@@ -65,24 +65,29 @@ internal class ShowQuickFixesAction : AnAction() {
 
 
   private fun isEnabled(event: AnActionEvent, problem: HighlightingProblem): Boolean {
-    val psi = getPsiFile(event) ?: return false
-    getEditor(psi) ?: return false
-    val markers = problem.info?.quickFixActionMarkers ?: return false
-    return markers.stream().anyMatch { it.second.isValid }
+    return getCachedIntentions(event, problem) != null
   }
 
   private fun actionPerformed(event: AnActionEvent, problem: HighlightingProblem) {
-    val psi = getPsiFile(event) ?: return
-    val editor = getEditor(psi) ?: return
-    val markers = problem.info?.quickFixActionMarkers ?: return
+    val intentions = getCachedIntentions(event, problem) ?: return
+    val editor = intentions.editor ?: return
+    editor.caretModel.moveToOffset(intentions.offset)
+    show(event, JBPopupFactory.getInstance().createListPopup(
+      IntentionListStep(null, editor, intentions.file, intentions.file.project, intentions)
+    ))
+  }
+
+  private fun getCachedIntentions(event: AnActionEvent, problem: HighlightingProblem): CachedIntentions? {
+    val psi = getPsiFile(event) ?: return null
+    val editor = getEditor(psi) ?: return null
+    val markers = problem.info?.quickFixActionMarkers ?: return null
 
     val info = ShowIntentionsPass.IntentionsInfo()
     markers.filter { it.second.isValid }.forEach { info.intentionsToShow.add(it.first) }
-    editor.caretModel.moveToOffset(problem.offset)
     info.offset = problem.offset
 
     val intentions = CachedIntentions.createAndUpdateActions(psi.project, psi, editor, info)
-    val step = IntentionListStep(null, editor, psi, psi.project, intentions)
-    show(event, JBPopupFactory.getInstance().createListPopup(step))
+    if (intentions.intentions.isNotEmpty()) return intentions
+    return null // actions can be removed after updating
   }
 }
