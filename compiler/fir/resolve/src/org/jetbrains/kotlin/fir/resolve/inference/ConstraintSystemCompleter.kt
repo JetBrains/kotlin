@@ -27,9 +27,6 @@ import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-val Candidate.csBuilder: NewConstraintSystemImpl get() = system.getBuilder()
-
-
 class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
     val variableFixationFinder = VariableFixationFinder(components.inferenceComponents.trivialConstraintTypeInferenceOracle)
 
@@ -76,10 +73,6 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
         if (completionMode == ConstraintSystemCompletionMode.FULL) {
             // force resolution for all not-analyzed argument's
             getOrderedNotAnalyzedPostponedArguments(topLevelAtoms).forEach(analyze)
-//
-//            if (c.notFixedTypeVariables.isNotEmpty() && c.postponedTypeVariables.isEmpty()) {
-//                runCompletion(c, completionMode, topLevelAtoms, topLevelType, analyze)
-//            }
         }
     }
 
@@ -211,14 +204,6 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
         postponedResolveKtPrimitives: List<PostponedResolvedAtom>
     ) {
         val direction = TypeVariableDirectionCalculator(c, postponedResolveKtPrimitives, topLevelType).getDirection(variableWithConstraints)
-        fixVariable(c, variableWithConstraints, direction)
-    }
-
-    fun fixVariable(
-        c: KotlinConstraintSystemCompleter.Context,
-        variableWithConstraints: VariableWithConstraints,
-        direction: TypeVariableDirectionCalculator.ResolveDirection
-    ) {
         val resultType = components.inferenceComponents.resultTypeResolver.findResultType(c, variableWithConstraints, direction)
         c.fixVariable(variableWithConstraints.typeVariable, resultType, atom = null) // TODO: obtain atom for diagnostics
     }
@@ -325,3 +310,5 @@ private fun FirResolvable.processCandidateIfApplicable(
         }
     }
 }
+
+val Candidate.csBuilder: NewConstraintSystemImpl get() = system.getBuilder()

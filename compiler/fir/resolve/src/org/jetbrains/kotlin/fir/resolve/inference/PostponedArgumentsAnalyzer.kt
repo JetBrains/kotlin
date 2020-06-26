@@ -41,7 +41,6 @@ interface LambdaAnalyzer {
     ): ReturnArgumentsAnalysisResult
 }
 
-
 class PostponedArgumentsAnalyzer(
     private val lambdaAnalyzer: LambdaAnalyzer,
     private val components: InferenceComponents,
@@ -74,24 +73,24 @@ class PostponedArgumentsAnalyzer(
 
         val callableReferenceAccess = atom.reference
         atom.analyzed = true
-        val (candidate, applicability) = atom.resultingCandidate
+        val (resultingCandidate, applicability) = atom.resultingCandidate
             ?: Pair(null, CandidateApplicability.INAPPLICABLE)
 
         val namedReference = when {
-            candidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->
+            resultingCandidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->
                 buildErrorNamedReference {
                     source = callableReferenceAccess.source
                     diagnostic = ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
                 }
-            else -> FirNamedReferenceWithCandidate(callableReferenceAccess.source, callableReferenceAccess.calleeReference.name, candidate)
+            else -> FirNamedReferenceWithCandidate(callableReferenceAccess.source, callableReferenceAccess.calleeReference.name, resultingCandidate)
         }
 
-        val transformedCalleeReference = callableReferenceAccess.transformCalleeReference(
+        callableReferenceAccess.transformCalleeReference(
             StoreNameReference,
             namedReference
         ).apply {
-            if (candidate != null) {
-                replaceTypeRef(buildResolvedTypeRef { type = candidate.resultingTypeForCallableReference!! })
+            if (resultingCandidate != null) {
+                replaceTypeRef(buildResolvedTypeRef { type = resultingCandidate.resultingTypeForCallableReference!! })
             }
         }
     }
@@ -102,7 +101,7 @@ class PostponedArgumentsAnalyzer(
         candidate: Candidate
         //diagnosticHolder: KotlinDiagnosticsHolder
     ) {
-        val unitType = components.session.builtinTypes.unitType.type//Unit(components.session.firSymbolProvider).constructType(emptyArray(), false)
+        val unitType = components.session.builtinTypes.unitType.type
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
 

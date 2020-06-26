@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
@@ -87,7 +86,7 @@ class FirBuilderInferenceSession(
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
         val (commonSystem, effectivelyEmptyConstraintSystem) = buildCommonSystem(initialStorage)
         if (effectivelyEmptyConstraintSystem) {
-            updateCalls(commonSystem, lambda)
+            updateCalls(commonSystem)
             return null
         }
 
@@ -103,7 +102,7 @@ class FirBuilderInferenceSession(
             error("Shouldn't be called in complete constraint system mode")
         }
 
-        updateCalls(commonSystem, lambda)
+        updateCalls(commonSystem)
 
         @Suppress("UNCHECKED_CAST")
         return commonSystem.fixedTypeVariables as Map<ConeTypeVariableTypeConstructor, ConeKotlinType>
@@ -199,7 +198,7 @@ class FirBuilderInferenceSession(
         return introducedConstraint
     }
 
-    private fun updateCalls(commonSystem: NewConstraintSystemImpl, lambda: ResolvedLambdaAtom) {
+    private fun updateCalls(commonSystem: NewConstraintSystemImpl) {
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
         val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor() as ConeSubstitutor
         val nonFixedTypesToResultSubstitutor = ConeComposedSubstitutor(commonSystemSubstitutor, nonFixedToVariablesSubstitutor)

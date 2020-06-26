@@ -115,7 +115,6 @@ class FirDelegatedPropertyInferenceSession(
         addConstraintForThis(commonSystem)
     }
 
-
     private fun Candidate.addConstraintsForSetValueMethod(commonSystem: ConstraintSystemBuilder) {
         if (expectedType != null) {
             val accessor = symbol.fir as? FirSimpleFunction ?: return

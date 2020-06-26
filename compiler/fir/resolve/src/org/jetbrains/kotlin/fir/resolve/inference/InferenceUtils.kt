@@ -13,41 +13,41 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.isExtensionFunctionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
+@OptIn(ExperimentalContracts::class)
 fun ConeKotlinType.isBuiltinFunctionalType(session: FirSession): Boolean {
-    return when (this) {
-        is ConeClassLikeType -> {
-            val classId = fullyExpandedType(session).lookupTag.classId
-            val kind =
-                FunctionClassDescriptor.Kind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString()) ?: return false
-            kind == FunctionClassDescriptor.Kind.Function || kind == FunctionClassDescriptor.Kind.SuspendFunction
-        }
-        else -> false
+    contract {
+        returns(true) implies (this@isBuiltinFunctionalType is ConeClassLikeType)
     }
+    if (this !is ConeClassLikeType) return false
+    val classId = fullyExpandedType(session).lookupTag.classId
+    val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString()) ?: return false
+    return kind == FunctionClassDescriptor.Kind.Function || kind == FunctionClassDescriptor.Kind.SuspendFunction
 }
 
+@OptIn(ExperimentalContracts::class)
 fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
-    return when (val type = this) {
-        is ConeClassLikeType -> {
-            val classId = type.fullyExpandedType(session).lookupTag.classId
-            val kind =
-                FunctionClassDescriptor.Kind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString()) ?: return false
-            kind == FunctionClassDescriptor.Kind.SuspendFunction
-        }
-        else -> false
+    contract {
+        returns(true) implies (this@isSuspendFunctionType is ConeClassLikeType)
     }
+    if (this !is ConeClassLikeType) return false
+    val classId = this.fullyExpandedType(session).lookupTag.classId
+    val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString()) ?: return false
+    return kind == FunctionClassDescriptor.Kind.SuspendFunction
 }
 
 fun ConeKotlinType.receiverType(expectedTypeRef: FirTypeRef?, session: FirSession): ConeKotlinType? {
     if (isBuiltinFunctionalType(session) && expectedTypeRef?.isExtensionFunctionType(session) == true) {
-        return ((this as ConeClassLikeType).fullyExpandedType(session).typeArguments.first() as ConeKotlinTypeProjection).type
+        return (this.fullyExpandedType(session).typeArguments.first() as ConeKotlinTypeProjection).type
     }
     return null
 }
 
 fun ConeKotlinType.receiverType(session: FirSession): ConeKotlinType? {
     if (isBuiltinFunctionalType(session)) {
-        return ((this as ConeClassLikeType).fullyExpandedType(session).typeArguments.first() as ConeKotlinTypeProjection).type
+        return (this.fullyExpandedType(session).typeArguments.first() as ConeKotlinTypeProjection).type
     }
     return null
 }
@@ -65,8 +65,8 @@ fun ConeKotlinType.valueParameterTypesIncludingReceiver(session: FirSession): Li
     }
 }
 
-val FirAnonymousFunction.returnType get() = returnTypeRef.coneTypeSafe<ConeKotlinType>()
-val FirAnonymousFunction.receiverType get() = receiverTypeRef?.coneTypeSafe<ConeKotlinType>()
+val FirAnonymousFunction.returnType: ConeKotlinType? get() = returnTypeRef.coneTypeSafe()
+val FirAnonymousFunction.receiverType: ConeKotlinType? get() = receiverTypeRef?.coneTypeSafe()
 
 fun extractLambdaInfoFromFunctionalType(
     expectedType: ConeKotlinType?,
@@ -79,7 +79,14 @@ fun extractLambdaInfoFromFunctionalType(
     val session = components.session
     if (expectedType == null) return null
     if (expectedType is ConeFlexibleType) {
-        return extractLambdaInfoFromFunctionalType(expectedType.lowerBound, expectedTypeRef, argument, returnTypeVariable, components, candidate)
+        return extractLambdaInfoFromFunctionalType(
+            expectedType.lowerBound,
+            expectedTypeRef,
+            argument,
+            returnTypeVariable,
+            components,
+            candidate
+        )
     }
     if (!expectedType.isBuiltinFunctionalType(session)) return null
 
