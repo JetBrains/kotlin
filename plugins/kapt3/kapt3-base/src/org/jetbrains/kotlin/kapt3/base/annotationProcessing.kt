@@ -13,12 +13,8 @@ import com.sun.tools.javac.processing.JavacFiler
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.kapt3.base.incremental.GeneratedTypesTaskListener
-import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
-import org.jetbrains.kotlin.kapt3.base.incremental.MentionedTypesTaskListener
-import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
-import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
-import org.jetbrains.kotlin.kapt3.base.util.measureTimeMillisWithResult
+import org.jetbrains.kotlin.kapt3.base.incremental.*
+import org.jetbrains.kotlin.kapt3.base.util.*
 import java.io.File
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
@@ -84,23 +80,14 @@ fun KaptContext.doAnnotationProcessing(
             throw KaptBaseError(KaptBaseError.Kind.EXCEPTION, e.cause ?: e)
         }
 
-        cacheManager?.updateCache(processors)
+        cacheManager?.updateCache(processors, sourcesStructureListener?.failure != null)
 
         sourcesStructureListener?.let {
             if (logger.isVerbose) {
                 logger.info("Analyzing sources structure took ${it.time}[ms].")
             }
         }
-        if (cacheManager != null) {
-            val missingIncrementalSupport = processors.filter { it.isMissingIncrementalSupport() }
-            if (missingIncrementalSupport.isNotEmpty()) {
-                val nonIncremental = missingIncrementalSupport.map { "${it.processorName} (${it.incrementalSupportType})" }
-                logger.warn(
-                    "Incremental annotation processing requested, but support is disabled because the following " +
-                            "processors are not incremental: ${nonIncremental.joinToString()}."
-                )
-            }
-        }
+        reportIfRunningNonIncrementally(sourcesStructureListener, cacheManager, logger, processors)
 
         val log = compilerAfterAP.log
 
@@ -135,6 +122,31 @@ private fun showProcessorTimings(wrappedProcessors: List<ProcessorWrapper>, logg
     logger("Annotation processor stats:")
     wrappedProcessors.forEach { processor ->
         logger(processor.renderSpentTime())
+    }
+}
+
+private fun reportIfRunningNonIncrementally(
+    listener: MentionedTypesTaskListener?,
+    cacheManager: JavaClassCacheManager?,
+    logger: KaptLogger,
+    processors: List<IncrementalProcessor>
+) {
+    listener ?: return
+    cacheManager ?: return
+
+    listener.failure?.let { failure ->
+        logger.warn("\n${failure.failureReason}")
+        logger.info("\n${failure.stacktrace}")
+        return
+    }
+
+    val missingIncrementalSupport = processors.filter { it.isMissingIncrementalSupport() }
+    if (missingIncrementalSupport.isNotEmpty()) {
+        val nonIncremental = missingIncrementalSupport.map { "${it.processorName} (${it.incrementalSupportType})" }
+        logger.warn(
+            "Incremental annotation processing requested, but support is disabled because the following " +
+                    "processors are not incremental: ${nonIncremental.joinToString()}."
+        )
     }
 }
 
