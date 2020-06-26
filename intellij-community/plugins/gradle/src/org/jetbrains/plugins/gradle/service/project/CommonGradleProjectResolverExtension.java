@@ -34,6 +34,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.MultiMap;
+import com.intellij.util.execution.ParametersListUtil;
 import gnu.trove.THashSet;
 import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.GradleModuleVersion;
@@ -682,7 +683,8 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
           continue;
         }
         final String taskPath = isFlatProject ? rootProjectPath : moduleConfigPath;
-        TaskData taskData = new TaskData(GradleConstants.SYSTEM_ID, taskName, taskPath, task.getDescription());
+        String escapedTaskName = ParametersListUtil.escape(taskName);
+        TaskData taskData = new TaskData(GradleConstants.SYSTEM_ID, escapedTaskName, taskPath, task.getDescription());
         taskData.setGroup(taskGroup);
         taskData.setType(task.getType());
         taskData.setTest(task.isTest());

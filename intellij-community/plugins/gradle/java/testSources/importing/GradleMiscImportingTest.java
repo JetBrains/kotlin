@@ -1,9 +1,15 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.externalSystem.model.DataNode;
+import com.intellij.openapi.externalSystem.model.ExternalProjectInfo;
+import com.intellij.openapi.externalSystem.model.ProjectKeys;
+import com.intellij.openapi.externalSystem.model.project.ModuleData;
+import com.intellij.openapi.externalSystem.model.task.TaskData;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
+import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -21,10 +27,14 @@ import org.jetbrains.plugins.gradle.model.ExternalProject;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
 import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataCache;
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions;
+import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
+import java.io.IOException;
 import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Vladislav.Soroka
@@ -282,6 +292,17 @@ public class GradleMiscImportingTest extends GradleJavaImportingTestCase {
     assertEquals(getProjectPath(), ExternalSystemApiUtil.getExternalProjectPath(getModule("my_group.app")));
     assertEquals(getProjectPath(), ExternalSystemApiUtil.getExternalProjectPath(getModule("my_group.app.main~1")));
     assertEquals(getProjectPath(), ExternalSystemApiUtil.getExternalProjectPath(getModule("my_group.app.test")));
+  }
+
+  @Test
+  public void testImportingTasksWithSpaces() throws IOException {
+    importProject("project.tasks.create('descriptive task name') {}");
+    ExternalProjectInfo projectData =
+      ProjectDataManager.getInstance().getExternalProjectData(myProject, GradleConstants.SYSTEM_ID, getProjectPath());
+    DataNode<ModuleData> moduleNode = ExternalSystemApiUtil.find(projectData.getExternalProjectStructure(), ProjectKeys.MODULE);
+    Collection<DataNode<TaskData>> tasksNodes = ExternalSystemApiUtil.findAll(moduleNode, ProjectKeys.TASK);
+    List<String> taskNames = ContainerUtil.map(tasksNodes, node -> node.getData().getName());
+    assertThat(taskNames).containsOnlyOnce("\"descriptive task name\"");
   }
 
   private static void assertExternalProjectIds(Map<String, ExternalProject> projectMap, String projectId, String... sourceSetModulesIds) {
