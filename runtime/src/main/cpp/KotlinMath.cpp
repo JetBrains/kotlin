@@ -132,7 +132,12 @@ KDouble Kotlin_math_acosh(KDouble x) {
 
 KDouble Kotlin_math_atanh(KDouble x) { return atanh(x); }
 
-KDouble Kotlin_math_hypot(KDouble x, KDouble y) { return hypot(x, y); }
+KDouble Kotlin_math_hypot(KDouble x, KDouble y) {
+  if (isinf(x) || isinf(y)) return INFINITY;
+  if (isnan(x) || isnan(y)) return NAN;
+  return hypot(x, y);
+}
+
 KDouble Kotlin_math_sqrt(KDouble x) { return sqrt(x); }
 KDouble Kotlin_math_exp(KDouble x) { return exp(x); }
 KDouble Kotlin_math_expm1(KDouble x) { return expm1(x); }
@@ -200,7 +205,12 @@ KFloat Kotlin_math_acoshf(KFloat x) {
 
 KFloat Kotlin_math_atanhf(KFloat x) { return atanhf(x); }
 
-KFloat Kotlin_math_hypotf(KFloat x, KFloat y) { return hypotf(x, y); }
+KFloat Kotlin_math_hypotf(KFloat x, KFloat y) {
+  if (isinf(x) || isinf(y)) return INFINITY;
+  if (isnan(x) || isnan(y)) return NAN;
+  return hypotf(x, y);
+}
+
 KFloat Kotlin_math_sqrtf(KFloat x) { return sqrtf(x); }
 KFloat Kotlin_math_expf(KFloat x) { return expf(x); }
 KFloat Kotlin_math_expm1f(KFloat x) { return expm1f(x); }
