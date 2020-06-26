@@ -121,11 +121,6 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
     JBInsets.addTo(size, myBalloon.getContent().getInsets());
     myBalloon.setMinimumSize(size);
 
-    if (searchText != null && !searchText.isEmpty()) {
-      mySearchEverywhereUI.getSearchField().setText(searchText);
-      mySearchEverywhereUI.getSearchField().selectAll();
-    }
-
     UserDataHolder dataHolder = myProject != null ? project : ApplicationManager.getApplication();
     ConcurrentHashMap<ClientId, JBPopup> map = dataHolder.getUserData(SEARCH_EVERYWHERE_POPUP);
     if (map == null) {
@@ -133,6 +128,11 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
       dataHolder.putUserData(SEARCH_EVERYWHERE_POPUP, map);
     }
     map.put(ClientId.getCurrent(), myBalloon);
+
+    if (searchText != null && !searchText.isEmpty()) {
+      mySearchEverywhereUI.getSearchField().setText(searchText);
+      mySearchEverywhereUI.getSearchField().selectAll();
+    }
 
     Disposer.register(myBalloon, () -> {
       saveSize();
