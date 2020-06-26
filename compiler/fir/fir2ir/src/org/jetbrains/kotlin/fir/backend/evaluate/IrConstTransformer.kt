@@ -36,6 +36,8 @@ class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransfor
     }
 
     override fun visitField(declaration: IrField): IrStatement {
+        transformAnnotations(declaration)
+
         val initializer = declaration.initializer
         val expression = initializer?.expression ?: return declaration
         if (expression is IrConst<*>) return declaration
@@ -47,8 +49,13 @@ class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransfor
         return declaration
     }
 
-    override fun visitClass(declaration: IrClass): IrStatement {
-        declaration.annotations.forEach {
+    override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+        transformAnnotations(declaration)
+        return super.visitDeclaration(declaration)
+    }
+
+    private fun transformAnnotations(annotationContainer: IrAnnotationContainer) {
+        annotationContainer.annotations.forEach {
             for (i in 0 until it.valueArgumentsCount) {
                 val arg = it.getValueArgument(i) ?: continue
                 if (arg.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
@@ -57,7 +64,6 @@ class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransfor
                 }
             }
         }
-        return super.visitClass(declaration)
     }
 
     private fun IrExpression.convertToConstIfPossible(type: IrType): IrExpression {
