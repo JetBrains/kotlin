@@ -1,3 +1,4 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+SuspendConversion
 fun foo(a: suspend () -> Unit) {}
 
 fun action() {}

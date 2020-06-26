@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -66,7 +65,6 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
         lambdaExpression: KtLambdaExpression
     ): Boolean {
         val languageVersionSettings = callableExpression.languageVersionSettings
-        val languageVersion = languageVersionSettings.languageVersion
         val context = callableExpression.analyze()
         val calleeReferenceExpression = when (callableExpression) {
             is KtCallExpression -> callableExpression.calleeExpression as? KtNameReferenceExpression ?: return false
@@ -84,11 +82,10 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
 
         val lambdaParameterIsSuspend = lambdaParameterType?.isSuspendFunctionType == true
         val calleeFunctionIsSuspend = (calleeDescriptor as? FunctionDescriptor)?.isSuspend == true
-        if (languageVersion >= LanguageVersion.KOTLIN_1_4) {
-            if (!lambdaParameterIsSuspend && calleeFunctionIsSuspend) return false
-        } else {
-            if (lambdaParameterIsSuspend && !calleeFunctionIsSuspend || !lambdaParameterIsSuspend && calleeFunctionIsSuspend) return false
-        }
+        if (!lambdaParameterIsSuspend && calleeFunctionIsSuspend) return false
+        if (lambdaParameterIsSuspend && !calleeFunctionIsSuspend &&
+            !languageVersionSettings.supportsFeature(LanguageFeature.SuspendConversion)
+        ) return false
 
         // No references with type parameters
         if (calleeDescriptor.typeParameters.isNotEmpty()) return false
@@ -106,7 +103,9 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
         if (noBoundReferences && descriptorHasReceiver && explicitReceiver == null) return false
 
         val callableArgumentsCount = (callableExpression as? KtCallExpression)?.valueArguments?.size ?: 0
-        if (languageVersion >= LanguageVersion.KOTLIN_1_4) {
+        val enableFunctionReferenceWithDefaultValueAsOtherType =
+            languageVersionSettings.supportsFeature(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
+        if (enableFunctionReferenceWithDefaultValueAsOtherType) {
             if (calleeDescriptor.valueParameters.size != callableArgumentsCount &&
                 (lambdaExpression.parentValueArgument() == null || calleeDescriptor.valueParameters.none { it.declaresDefaultValue() })
             ) return false
@@ -151,7 +150,7 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
             if (lambdaValueParameterDescriptors.size < explicitReceiverShift + callableExpression.valueArguments.size) return false
             val resolvedCall = callableExpression.getResolvedCall(context) ?: return false
             resolvedCall.valueArguments.entries.forEach { (valueParameter, resolvedArgument) ->
-                if (resolvedArgument is DefaultValueArgument && languageVersion >= LanguageVersion.KOTLIN_1_4) return@forEach
+                if (resolvedArgument is DefaultValueArgument && enableFunctionReferenceWithDefaultValueAsOtherType) return@forEach
                 val argument = resolvedArgument.arguments.singleOrNull() ?: return false
                 if (resolvedArgument is VarargValueArgument && argument.getSpreadElement() == null) return false
                 val argumentExpression = argument.getArgumentExpression() as? KtNameReferenceExpression ?: return false

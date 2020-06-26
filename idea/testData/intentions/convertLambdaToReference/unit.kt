@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-// LANGUAGE_VERSION: 1.3
+// COMPILER_ARGUMENTS: -XXLanguage:-FunctionReferenceWithDefaultValueAsOtherType
 
 fun Int.exec(f: (Int) -> Unit) = f(this)
 
