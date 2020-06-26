@@ -45,16 +45,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     var enableArrayOfCallTransformation = false
 
     init {
+        @Suppress("LeakingThis")
         components.callResolver.initTransformer(this)
-    }
-
-    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
-        enableArrayOfCallTransformation = true
-        return try {
-            block()
-        } finally {
-            enableArrayOfCallTransformation = false
-        }
     }
 
     override fun transformExpression(expression: FirExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
@@ -242,7 +234,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         withNewLocalScope {
             transformBlockInCurrentScope(block, data)
         }
-
         return block.compose()
     }
 
@@ -444,7 +435,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         checkNotNullCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
 
-        var callCompleted: Boolean = false
+        var callCompleted = false
         val result = components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall)?.let {
             val completionResult = callCompleter.completeCall(it, data.expectedType)
             callCompleted = completionResult.callCompleted
@@ -499,7 +490,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             // This can happen in erroneous code only
             resolvedAssignment
         }
-        // TODO: maybe replace with FirAbstractAssignment for performance?
         (result as? FirVariableAssignment)?.let { dataFlowAnalyzer.exitVariableAssignment(it) }
         return result.compose()
     }
@@ -584,12 +574,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     ): CompositeTransformResult<FirStatement> {
         constExpression.annotations.forEach { it.accept(this, data) }
         fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
-            val symbol = symbolProvider.getClassLikeSymbolByFqName(classId) ?: return ConeClassErrorType("Missing stdlib class: ${classId}")
+            val symbol = symbolProvider.getClassLikeSymbolByFqName(classId) ?: return ConeClassErrorType("Missing stdlib class: $classId")
             return symbol.toLookupTag().constructClassType(emptyArray(), isNullable)
         }
 
-        val kind = constExpression.kind
-        val type = when (kind) {
+        val type = when (val kind = constExpression.kind) {
             FirConstKind.Null -> session.builtinTypes.nullableNothingType.type
             FirConstKind.Boolean -> session.builtinTypes.booleanType.type
             FirConstKind.Char -> constructLiteralType(StandardClassIds.Char)
@@ -600,6 +589,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             FirConstKind.String -> constructLiteralType(StandardClassIds.String)
             FirConstKind.Float -> constructLiteralType(StandardClassIds.Float)
             FirConstKind.Double -> constructLiteralType(StandardClassIds.Double)
+
             FirConstKind.IntegerLiteral, FirConstKind.UnsignedIntegerLiteral -> {
                 val integerLiteralType =
                     ConeIntegerLiteralTypeImpl(constExpression.value as Long, isUnsigned = kind == FirConstKind.UnsignedIntegerLiteral)
@@ -608,6 +598,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     val approximatedType = integerLiteralType.getApproximatedType(expectedType)
                     val newConstKind = approximatedType.toConstKind()
                     if (newConstKind == null) {
+                        @Suppress("UNCHECKED_CAST")
                         constExpression.replaceKind(FirConstKind.Int as FirConstKind<T>)
                         dataFlowAnalyzer.exitConstExpresion(constExpression as FirConstExpression<*>)
                         constExpression.resultType = buildErrorTypeRef {
@@ -616,6 +607,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                         }
                         return constExpression.compose()
                     }
+                    @Suppress("UNCHECKED_CAST")
                     constExpression.replaceKind(newConstKind as FirConstKind<T>)
                     approximatedType
                 } else {
@@ -654,6 +646,15 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }.compose()
         }
 
+    }
+
+    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
+        enableArrayOfCallTransformation = true
+        return try {
+            block()
+        } finally {
+            enableArrayOfCallTransformation = false
+        }
     }
 
     private fun ConeTypeProjection.toFirTypeProjection(): FirTypeProjection = when (this) {

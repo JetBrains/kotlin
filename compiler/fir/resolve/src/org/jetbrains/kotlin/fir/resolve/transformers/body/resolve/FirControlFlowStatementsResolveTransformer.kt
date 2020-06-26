@@ -146,7 +146,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         dataFlowAnalyzer.exitTryMainBlock(tryExpression)
         tryExpression.transformCatches(this, ResolutionMode.ContextDependent)
 
-        var callCompleted: Boolean = false
+        var callCompleted = false
+
         @Suppress("NAME_SHADOWING")
         var result = syntheticCallGenerator.generateCalleeForTryExpression(tryExpression)?.let {
             val expectedTypeRef = data.expectedType
@@ -199,7 +200,10 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         return result.compose()
     }
 
-    override fun transformThrowExpression(throwExpression: FirThrowExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformThrowExpression(
+        throwExpression: FirThrowExpression,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         return transformer.transformExpression(throwExpression, data).also {
             dataFlowAnalyzer.exitThrowExceptionNode(it.single as FirThrowExpression)
         }

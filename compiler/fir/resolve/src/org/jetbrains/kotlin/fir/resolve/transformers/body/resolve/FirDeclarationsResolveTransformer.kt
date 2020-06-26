@@ -661,7 +661,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     .mapNotNull { (it as? FirExpression)?.resultType?.coneTypeUnsafe() }
                 af.replaceReturnTypeRef(
                     af.returnTypeRef.resolvedTypeFromPrototype(
-                        inferenceComponents.ctx.commonSuperTypeOrNull(returnTypes) ?: session.builtinTypes.unitType.coneTypeUnsafe()
+                        inferenceComponents.ctx.commonSuperTypeOrNull(returnTypes) ?: session.builtinTypes.unitType.type
                     )
                 )
                 af.replaceTypeRef(af.constructFunctionalTypeRef())
@@ -689,6 +689,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                                     it.bind(this@addReturn)
                                 }
                             }
+                            @Suppress("UNCHECKED_CAST")
                             return (returnExpression as E).compose()
                         }
                         return element.compose()
