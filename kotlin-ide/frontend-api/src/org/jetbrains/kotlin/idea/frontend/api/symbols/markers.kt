@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
-import org.jetbrains.kotlin.idea.frontend.api.TypeInfo
+import org.jetbrains.kotlin.idea.frontend.api.KtType
 import org.jetbrains.kotlin.name.Name
 
 interface KtNamedSymbol : KtSymbol {
@@ -21,12 +21,12 @@ enum class KtSymbolKind {
 }
 
 interface KtTypedSymbol : KtSymbol {
-    val type: TypeInfo
+    val type: KtType
 }
 
 interface KtPossibleExtensionSymbol {
     val isExtension: Boolean
-    val receiverType: TypeInfo?
+    val receiverType: KtType?
 }
 
 interface KtSymbolWithTypeParameters {

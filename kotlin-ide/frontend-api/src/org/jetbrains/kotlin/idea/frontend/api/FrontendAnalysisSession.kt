@@ -18,13 +18,13 @@ abstract class FrontendAnalysisSession(project: Project) : Invalidatable {
 
     abstract val symbolProvider: KtSymbolProvider
 
-    abstract fun getSmartCastedToTypes(expression: KtExpression): Collection<TypeInfo>?
+    abstract fun getSmartCastedToTypes(expression: KtExpression): Collection<KtType>?
 
     abstract fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast>
 
-    abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): TypeInfo
+    abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType
 
-    abstract fun getKtExpressionType(expression: KtExpression): TypeInfo
+    abstract fun getKtExpressionType(expression: KtExpression): KtType
 
     abstract fun isSubclassOf(klass: KtClassOrObject, superClassId: ClassId): Boolean
 

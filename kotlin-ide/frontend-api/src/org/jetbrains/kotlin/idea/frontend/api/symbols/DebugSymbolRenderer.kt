@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
-import org.jetbrains.kotlin.idea.frontend.api.TypeInfo
+import org.jetbrains.kotlin.idea.frontend.api.KtType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -36,7 +36,7 @@ object DebugSymbolRenderer {
             value.joinTo(this) { renderValue(it) }
             append("]")
         }
-        is TypeInfo -> value.asDenotableTypeStringRepresentation()
+        is KtType -> value.asStringForDebugging()
         is KtSymbol -> {
             val symbolTag = when (value) {
                 is KtClassLikeSymbol -> renderValue(value.classId)

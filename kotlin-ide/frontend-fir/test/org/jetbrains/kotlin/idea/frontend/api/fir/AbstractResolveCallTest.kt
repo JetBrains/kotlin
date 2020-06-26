@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.frontend.api.CallInfo
-import org.jetbrains.kotlin.idea.frontend.api.TypeInfo
+import org.jetbrains.kotlin.idea.frontend.api.KtType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
@@ -85,7 +85,7 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") KotlinLightCod
 }
 
 private fun CallInfo.stringRepresentation(): String {
-    fun TypeInfo.render() = asDenotableTypeStringRepresentation().replace('/', '.')
+    fun KtType.render() = asStringForDebugging().replace('/', '.')
     fun Any.stringValue(): String? = when (this) {
         is KtFunctionLikeSymbol -> buildString {
             append(if (this@stringValue is KtFunctionSymbol) fqName else "<constructor>")

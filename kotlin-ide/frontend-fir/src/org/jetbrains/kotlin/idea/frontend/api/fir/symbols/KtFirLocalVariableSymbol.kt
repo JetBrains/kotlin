@@ -9,8 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.frontend.api.Invalidatable
-import org.jetbrains.kotlin.idea.frontend.api.TypeInfo
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.asTypeInfo
+import org.jetbrains.kotlin.idea.frontend.api.KtType
+import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtLocalVariableSymbol
@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirLocalVariableSymbol(
     fir: FirProperty,
-    override val token: Invalidatable
+    override val token: ValidityOwner,
+    private val builder: KtSymbolByFirBuilder
 ) : KtLocalVariableSymbol(),
     KtFirSymbol<FirProperty> {
     init {
@@ -32,6 +33,6 @@ internal class KtFirLocalVariableSymbol(
 
     override val isVal: Boolean get() = withValidityAssertion { fir.isVal }
     override val name: Name get() = withValidityAssertion { fir.name }
-    override val type: TypeInfo by cached { fir.returnTypeRef.asTypeInfo(fir.session, token) }
+    override val type: KtType by cached { builder.buildKtType(fir.returnTypeRef) }
     override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
 }

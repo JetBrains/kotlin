@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.frontend.api.Invalidatable
-import org.jetbrains.kotlin.idea.frontend.api.TypeInfo
+import org.jetbrains.kotlin.idea.frontend.api.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.asTypeInfo
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
@@ -31,7 +30,7 @@ internal class KtFirConstructorSymbol(
     override val fir: FirConstructor by weakRef(fir)
     override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
 
-    override val type: TypeInfo by cached { fir.returnTypeRef.asTypeInfo(fir.session, token) }
+    override val type: KtType by cached { builder.buildKtType(fir.returnTypeRef) }
     override val valueParameters: List<KtConstructorParameterSymbol> by cached {
         fir.valueParameters.map { valueParameter ->
             check(valueParameter is FirValueParameterImpl)

@@ -29,7 +29,7 @@ internal class ExpressionsSmartcastHighlightingVisitor(
                     KotlinIdeaAnalysisBundle.message(
                         "0.smart.cast.to.1",
                         receiverName,
-                        type.asDenotableTypeStringRepresentation()
+                        type.asStringForDebugging()
                     )
                 ).textAttributes = org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.SMART_CAST_RECEIVER
             }
@@ -39,7 +39,7 @@ internal class ExpressionsSmartcastHighlightingVisitor(
                 getSmartCastTarget(expression),
                 KotlinIdeaAnalysisBundle.message(
                     "smart.cast.to.0",
-                    type.asDenotableTypeStringRepresentation()
+                    type.asStringForDebugging()
                 )
             ).textAttributes = org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.SMART_CAST_VALUE
         }
