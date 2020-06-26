@@ -123,9 +123,34 @@ class ClasspathAnalyzerTest {
         assertTrue(data.classDependencies.isEmpty())
     }
 
-    private fun emptyClass(internalName: String): ByteArray {
+    @Test
+    fun testJarsWithDependenciesWithinClasses() {
+        val inputJar = tmp.newFile("input.jar").also { jar ->
+            ZipOutputStream(jar.outputStream()).use {
+                it.putNextEntry(ZipEntry("test/A.class"))
+                it.write(emptyClass("test/A", "test/B"))
+                it.closeEntry()
+
+                it.putNextEntry(ZipEntry("test/B.class"))
+                it.write(emptyClass("test/B"))
+                it.closeEntry()
+
+                it.putNextEntry(ZipEntry("test/C.class"))
+                it.write(emptyClass("test/C"))
+                it.closeEntry()
+            }
+        }
+        val transform = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }
+        val outputs = transform.transform(inputJar)
+
+        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.single())
+        assertEquals(setOf("test/A", "test/B", "test/C"), data.classAbiHash.keys)
+        assertEquals(setOf("test/A", "test/B", "test/C"), data.classDependencies.keys)
+    }
+
+    private fun emptyClass(internalName: String, superClass: String = "java/lang/Object"): ByteArray {
         val writer = ClassWriter(Opcodes.API_VERSION)
-        writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, internalName, null, "java/lang/Object", emptyArray())
+        writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, internalName, null, superClass, emptyArray())
         return writer.toByteArray()
     }
 }
