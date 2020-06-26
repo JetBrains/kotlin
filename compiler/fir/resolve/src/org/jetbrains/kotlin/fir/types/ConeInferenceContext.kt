@@ -58,6 +58,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         isExtensionFunction: Boolean
     ): SimpleTypeMarker {
         require(constructor is FirClassifierSymbol<*>)
+        @Suppress("UNCHECKED_CAST")
         return when (constructor) {
             is FirClassLikeSymbol<*> -> ConeClassLikeTypeImpl(
                 constructor.toLookupTag(),

@@ -349,7 +349,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             if (valueParameter.isVararg) {
                 data.append("vararg ")
             }
-            valueParameter.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType(session)?.let { data.append(it.render()) }
+            valueParameter.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType()?.let { data.append(it.render()) }
                 ?: valueParameter.returnTypeRef.accept(this, data)
             valueParameter.defaultValue?.let { data.append(" = ...") }
         }

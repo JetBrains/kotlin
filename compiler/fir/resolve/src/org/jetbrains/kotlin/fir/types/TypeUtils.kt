@@ -92,6 +92,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
         return this
     }
 
+    @Suppress("UNCHECKED_CAST")
     return when (this) {
         is ConeClassErrorType -> this
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, arguments, nullability.isNullable) as T
@@ -121,6 +122,7 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability, typeCon
         return this
     }
 
+    @Suppress("UNCHECKED_CAST")
     return when (this) {
         is ConeClassErrorType -> this
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable)

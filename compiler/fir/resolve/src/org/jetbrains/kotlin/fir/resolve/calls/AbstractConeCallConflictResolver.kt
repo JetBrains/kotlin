@@ -150,7 +150,7 @@ abstract class AbstractConeCallConflictResolver(
 
     private fun FirValueParameter.argumentType(): ConeKotlinType {
         val type = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
-        if (isVararg) return type.arrayElementType(inferenceComponents.session)!!
+        if (isVararg) return type.arrayElementType()!!
         return type
     }
 

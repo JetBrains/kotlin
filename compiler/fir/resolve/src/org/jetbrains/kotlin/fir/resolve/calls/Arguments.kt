@@ -357,7 +357,7 @@ internal fun FirExpression.getExpectedType(
 }
 
 fun ConeKotlinType.varargElementType(session: FirSession): ConeKotlinType {
-    return this.arrayElementType(session) ?: error("Failed to extract! ${this.render()}!")
+    return this.arrayElementType() ?: error("Failed to extract! ${this.render()}!")
 }
 
 fun FirTypeRef.isExtensionFunctionType(session: FirSession): Boolean {

@@ -168,7 +168,7 @@ class FirCallCompletionResultsWriterTransformer(
             // Create a FirVarargArgumentExpression for the vararg arguments
             val varargParameterTypeRef = varargParameter.returnTypeRef
             val resolvedArrayType = varargParameterTypeRef.substitute(this)
-            val resolvedElementType = resolvedArrayType.arrayElementType(session)
+            val resolvedElementType = resolvedArrayType.arrayElementType()
             var firstIndex = argumentList.arguments.size
             val newArgumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
             val varargArgument = buildVarargArgumentsExpression {

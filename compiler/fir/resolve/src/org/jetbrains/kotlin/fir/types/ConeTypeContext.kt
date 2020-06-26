@@ -335,6 +335,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             }
 
             require(newArgument is ConeCapturedType)
+            @Suppress("UNCHECKED_CAST")
             newArgument.constructor.supertypes = upperBounds as List<ConeKotlinType>
         }
 
