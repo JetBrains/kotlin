@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
@@ -32,16 +33,23 @@ import kotlin.concurrent.thread
 
 private const val MAX_COMMANDS = 500_000
 
-class IrInterpreter(irModule: IrModuleFragment, private val bodyMap: Map<IdSignature, IrBody> = emptyMap()) {
-    private val irBuiltIns = irModule.irBuiltins
-    private val irExceptions = irModule.files.flatMap { it.declarations }.filterIsInstance<IrClass>()
-        .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
+class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSignature, IrBody> = emptyMap()) {
+    private val irExceptions = mutableListOf<IrClass>()
 
     private val stack = StackImpl()
     private var commandCount = 0
 
     private val mapOfEnums = mutableMapOf<IrSymbol, Complex>()
     private val mapOfObjects = mutableMapOf<IrSymbol, Complex>()
+
+    constructor(irModule: IrModuleFragment): this(irModule.irBuiltins) {
+        irExceptions.addAll(
+            irModule.files
+                .flatMap { it.declarations }
+                .filterIsInstance<IrClass>()
+                .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
+        )
+    }
 
     private fun Any?.getType(defaultType: IrType): IrType {
         return when (this) {

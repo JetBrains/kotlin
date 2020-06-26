@@ -11,18 +11,19 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 fun evaluateConstants(irModuleFragment: IrModuleFragment) {
-    val irConstTransformer = IrConstTransformer(irModuleFragment)
+    val irConstTransformer = IrConstTransformer(irModuleFragment.irBuiltins)
     irModuleFragment.files.forEach { it.transformChildren(irConstTransformer, null) }
 }
 
 //TODO create abstract class that will be common for this and lowering
-class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransformerVoid() {
-    private val interpreter = IrInterpreter(irModuleFragment)
+class IrConstTransformer(irBuiltIns: IrBuiltIns) : IrElementTransformerVoid() {
+    private val interpreter = IrInterpreter(irBuiltIns)
 
     private fun IrExpression.replaceIfError(original: IrExpression): IrExpression {
         return if (this !is IrErrorExpression) this else original
