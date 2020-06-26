@@ -82,7 +82,7 @@ internal object FirReferenceResolveHelper {
     }
 
     internal fun resolveSimpleNameReference(
-        ref: KtSimpleNameReferenceFirImpl,
+        ref: KtFirSimpleNameReference,
         symbolBuilder: KtSymbolByFirBuilder
     ): Collection<KtSymbol> {
         val expression = ref.expression

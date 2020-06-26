@@ -39,7 +39,7 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") KotlinLightCod
         }
 
         val actualText = executeOnPooledThreadInReadAction {
-            val analysisSession = FirAnalysisSession(file as KtFile)
+            val analysisSession = KtFirAnalysisSession(file as KtFile)
             val callInfos = elements.map { element ->
                 when (element) {
                     is KtCallExpression -> analysisSession.resolveCall(element)

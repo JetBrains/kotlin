@@ -11,14 +11,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.fir.highlighter.isAnnotationClass
 import org.jetbrains.kotlin.idea.fir.highlighter.textAttributesKeyForTypeDeclaration
-import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.highlighter.NameHighlighter
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors as Colors
 
 internal class TypeHighlightingVisitor(
-    analysisSession: FrontendAnalysisSession,
+    analysisSession: KtAnalysisSession,
     holder: AnnotationHolder
 ) : FirAfterResolveHighlightingVisitor(analysisSession, holder) {
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {

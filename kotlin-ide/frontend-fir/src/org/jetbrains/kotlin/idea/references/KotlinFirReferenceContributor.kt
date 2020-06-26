@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.idea.references
 class KotlinFirReferenceContributor : KotlinReferenceProviderContributor {
     override fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar) {
         with(registrar) {
-            registerProvider(factory = ::KtSimpleNameReferenceFirImpl)
-            registerProvider(factory = ::KtForLoopInReferenceFirImpl)
-            registerProvider(factory = ::KtInvokeFunctionReferenceFirImpl)
-            registerProvider(factory = ::KtPropertyDelegationMethodsReferenceFirImpl)
-            registerProvider(factory = ::KtDestructuringDeclarationReferenceFirImpl)
+            registerProvider(factory = ::KtFirSimpleNameReference)
+            registerProvider(factory = ::KtFirForLoopInReference)
+            registerProvider(factory = ::KtFirInvokeFunctionReference)
+            registerProvider(factory = ::KtFirPropertyDelegationMethodsReference)
+            registerProvider(factory = ::KtFirDestructuringDeclarationReference)
         }
     }
 }

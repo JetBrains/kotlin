@@ -5,19 +5,18 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.VariableAsFunctionLikeCallInfo
-import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
 
-class KtInvokeFunctionReferenceFirImpl(expression: KtCallExpression) : KtInvokeFunctionReference(expression), FirKtReference {
+class KtFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KtFirReference {
     override fun doRenameImplicitConventionalCall(newName: String?): KtExpression {
         TODO("Not yet implemented")
     }
 
-    override fun resolveToSymbols(analysisSession: FrontendAnalysisSession): Collection<KtSymbol> {
+    override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
         val call = analysisSession.resolveCall(expression) ?: return emptyList()
         if (call is VariableAsFunctionLikeCallInfo) {
             return listOf(call.invokeFunction)

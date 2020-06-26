@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 
-abstract class FrontendAnalysisSession(project: Project) : Invalidatable {
+abstract class KtAnalysisSession(project: Project) : Invalidatable {
     protected open val validityToken = ReadActionConfinementValidityToken(project)
     override fun isValid(): Boolean = validityToken.isValid()
     override fun invalidationReason(): String = validityToken.invalidationReason()

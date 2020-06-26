@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.*
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.FirKtSymbolProvider
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolProvider
@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-class FirAnalysisSession(
+class KtFirAnalysisSession(
     element: KtElement
-) : FrontendAnalysisSession(element.project) {
+) : KtAnalysisSession(element.project) {
     internal val token get() = validityToken
 
     internal val firSymbolBuilder = KtSymbolByFirBuilder(
@@ -44,7 +44,7 @@ class FirAnalysisSession(
     )
 
     override val symbolProvider: KtSymbolProvider =
-        FirKtSymbolProvider(
+        KtFirSymbolProvider(
             this,
             element.session.firSymbolProvider,
             firSymbolBuilder

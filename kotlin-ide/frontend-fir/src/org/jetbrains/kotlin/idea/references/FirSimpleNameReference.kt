@@ -6,18 +6,18 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.fir.FirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-internal class KtSimpleNameReferenceFirImpl(
+internal class KtFirSimpleNameReference(
     expression: KtSimpleNameExpression
-) : KtSimpleNameReference(expression), FirKtReference {
-    override fun resolveToSymbols(analysisSession: FrontendAnalysisSession): Collection<KtSymbol> {
-        check(analysisSession is FirAnalysisSession)
+) : KtSimpleNameReference(expression), KtFirReference {
+    override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
+        check(analysisSession is KtFirAnalysisSession)
         return FirReferenceResolveHelper.resolveSimpleNameReference(this, analysisSession.firSymbolBuilder)
     }
 

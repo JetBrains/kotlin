@@ -14,7 +14,7 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.fir.highlighter.textAttributesKeyForPropertyDeclaration
-import org.jetbrains.kotlin.idea.frontend.api.FrontendAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.highlighter.NameHighlighter
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors as Colors
 
 internal class VariableReferenceHighlightingVisitor(
-    analysisSession: FrontendAnalysisSession,
+    analysisSession: KtAnalysisSession,
     holder: AnnotationHolder
 ) : FirAfterResolveHighlightingVisitor(analysisSession, holder) {
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
