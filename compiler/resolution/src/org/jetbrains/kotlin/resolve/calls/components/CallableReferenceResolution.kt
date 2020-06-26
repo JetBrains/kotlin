@@ -292,7 +292,7 @@ class CallableReferencesCandidateFactory(
         val expectedArgumentCount = inputOutputTypes.inputTypes.size - unboundReceiverCount
         if (expectedArgumentCount < 0) return null
 
-        val fakeArguments = (0 until expectedArgumentCount).map { FakeKotlinCallArgumentForCallableReference(it) }
+        val fakeArguments = createFakeArgumentsForReference(descriptor, expectedArgumentCount, inputOutputTypes, unboundReceiverCount)
         val argumentMapping =
             callComponents.argumentsToParametersMapper.mapArguments(fakeArguments, externalArgument = null, descriptor = descriptor)
         if (argumentMapping.diagnostics.any { !it.candidateApplicability.isSuccess }) return null
@@ -385,6 +385,36 @@ class CallableReferencesCandidateFactory(
             adaptedArguments,
             suspendConversionStrategy
         )
+    }
+
+    private fun createFakeArgumentsForReference(
+        descriptor: FunctionDescriptor,
+        expectedArgumentCount: Int,
+        inputOutputTypes: InputOutputTypes,
+        unboundReceiverCount: Int
+    ): List<FakeKotlinCallArgumentForCallableReference> {
+        var afterVararg = false
+        var varargComponentType: UnwrappedType? = null
+        var vararg = false
+        return (0 until expectedArgumentCount).map { index ->
+            val inputType = inputOutputTypes.inputTypes.getOrNull(index + unboundReceiverCount)
+            if (vararg && varargComponentType != inputType) {
+                afterVararg = true
+            }
+
+            val valueParameter = descriptor.valueParameters.getOrNull(index)
+            val name =
+                if (afterVararg && valueParameter?.declaresDefaultValue() == true)
+                    valueParameter.name
+                else
+                    null
+
+            if (valueParameter?.isVararg == true) {
+                varargComponentType = inputType
+                vararg = true
+            }
+            FakeKotlinCallArgumentForCallableReference(index, name)
+        }
     }
 
     private fun varargParameterTypeByExpectedParameter(
