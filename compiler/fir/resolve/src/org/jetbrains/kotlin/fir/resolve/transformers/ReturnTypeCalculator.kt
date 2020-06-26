@@ -17,7 +17,6 @@ interface ReturnTypeCalculator {
 }
 
 class ReturnTypeCalculatorForFullBodyResolve : ReturnTypeCalculator {
-
     override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
         val returnTypeRef = declaration.returnTypeRef
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef

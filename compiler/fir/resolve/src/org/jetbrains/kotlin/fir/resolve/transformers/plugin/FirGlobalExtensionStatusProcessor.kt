@@ -106,7 +106,6 @@ class FirTransformerBasedExtensionStatusProcessor(
     }
 }
 
-
 private object ReplaceStatus : FirTransformer<FirDeclarationStatus>() {
     override fun <E : FirElement> transformElement(element: E, data: FirDeclarationStatus): CompositeTransformResult<E> {
         return element.compose()

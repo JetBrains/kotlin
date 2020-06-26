@@ -22,12 +22,10 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
-import org.jetbrains.kotlin.fir.types.ConeNullability
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyResolveComponents) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
@@ -50,9 +48,9 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             ?: return null
 
         // TODO: add some report logic about flexible type (see WHEN_ENUM_CAN_BE_NULL_IN_JAVA diagnostic in old frontend)
-        val type = (typeRef as? FirResolvedTypeRef)?.type?.lowerBoundIfFlexible() ?: return null
+        val type = typeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible() ?: return null
         val lookupTag = (type as? ConeLookupTagBasedType)?.lookupTag ?: return null
-        val nullable = typeRef.type.nullability == ConeNullability.NULLABLE
+        val nullable = type.nullability == ConeNullability.NULLABLE
         val isExhaustive = when {
             ((lookupTag as? ConeClassLikeLookupTag)?.classId == bodyResolveComponents.session.builtinTypes.booleanType.id) -> {
                 checkBooleanExhaustiveness(whenExpression, nullable)
@@ -70,11 +68,9 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             }
         }
 
-        return if (isExhaustive) {
+        return runIf(isExhaustive) {
             whenExpression.replaceIsExhaustive(true)
             whenExpression
-        } else {
-            null
         }
     }
 
@@ -158,8 +154,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
         override fun visitOperatorCall(operatorCall: FirOperatorCall, data: SealedExhaustivenessData) {
             if (operatorCall.operation == FirOperation.EQ) {
-                val argument = operatorCall.arguments[1]
-                when (argument) {
+                when (val argument = operatorCall.arguments[1]) {
                     is FirConstExpression<*> -> {
                         if (argument.value == null) {
                             data.containsNull = true

@@ -57,12 +57,12 @@ class FirCallCompletionResultsWriterTransformer(
         Normal, DelegatedPropertyCompletion
     }
 
-    private fun <T> prepareQualifiedTransform(
-        qualifiedAccess: T, calleeReference: FirNamedReferenceWithCandidate
-    ): T where T : FirQualifiedAccess, T : FirExpression {
+    private fun <T : FirQualifiedAccessExpression> prepareQualifiedTransform(
+        qualifiedAccessExpression: T, calleeReference: FirNamedReferenceWithCandidate
+    ): T {
         val subCandidate = calleeReference.candidate
-        val declaration = subCandidate.symbol.phasedFir
-        val typeArguments = computeTypeArguments(qualifiedAccess, subCandidate)
+        val declaration: FirDeclaration = subCandidate.symbol.phasedFir
+        val typeArguments = computeTypeArguments(qualifiedAccessExpression, subCandidate)
         val typeRef = if (declaration is FirTypedDeclaration) {
             typeCalculator.tryCalculateReturnType(declaration)
         } else {
@@ -72,12 +72,13 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
-        val updatedQualifiedAccess = if (qualifiedAccess is FirFunctionCall) {
-            qualifiedAccess.transformSingle(integerOperatorsTypeUpdater, null)
+        val updatedQualifiedAccess = if (qualifiedAccessExpression is FirFunctionCall) {
+            qualifiedAccessExpression.transformSingle(integerOperatorsTypeUpdater, null)
         } else {
-            qualifiedAccess
+            qualifiedAccessExpression
         }
 
+        @Suppress("UNCHECKED_CAST")
         val result = updatedQualifiedAccess
             .transformCalleeReference(
                 StoreCalleeReference,
@@ -435,9 +436,8 @@ class FirCallCompletionResultsWriterTransformer(
     private inline fun <reified D> transformSyntheticCall(
         syntheticCall: D,
         data: ExpectedArgumentType?,
-    ): CompositeTransformResult<FirStatement>
-            where D : FirResolvable, D : FirExpression {
-        val syntheticCall = syntheticCall.transformChildren(this, data?.getExpectedType(syntheticCall)?.toExpectedType()) as D
+    ): CompositeTransformResult<FirStatement> where D : FirResolvable, D : FirExpression {
+        syntheticCall.transformChildren(this, data?.getExpectedType(syntheticCall)?.toExpectedType())
         val calleeReference = syntheticCall.calleeReference as? FirNamedReferenceWithCandidate ?: return syntheticCall.compose()
 
         val declaration = calleeReference.candidate.symbol.fir as? FirSimpleFunction ?: return syntheticCall.compose()
@@ -472,7 +472,6 @@ class FirCallCompletionResultsWriterTransformer(
             resolvedSymbol = this@toResolvedReference.candidateSymbol
         }
     }
-
 }
 
 sealed class ExpectedArgumentType {
