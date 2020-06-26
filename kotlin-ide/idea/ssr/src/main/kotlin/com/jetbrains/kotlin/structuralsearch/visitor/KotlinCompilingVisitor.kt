@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import java.util.regex.Pattern
 
@@ -191,6 +192,40 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
             handler.filter = CommentedDeclarationFilter
             setHandler(comment, handler)
         }
+    }
+
+    override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry) {
+        super.visitAnnotationEntry(annotationEntry)
+        val calleeExpression = annotationEntry.calleeExpression ?: return
+        val handler = getHandler(calleeExpression)
+        if (handler is SubstitutionHandler) {
+            setHandler(
+                annotationEntry, SubstitutionHandler(
+                    "${handler.name}_",
+                    false,
+                    handler.minOccurs,
+                    handler.maxOccurs,
+                    true
+                )
+            )
+            val newHandler = SubstitutionHandler(handler.name, false, 1, 1, true)
+            handler.predicate?.let { newHandler.predicate = it }
+            setHandler(
+                calleeExpression, newHandler
+            )
+        }
+    }
+
+    override fun visitModifierList(list: KtModifierList) {
+        super.visitModifierList(list)
+        if (list.allChildren.all { it.allowsAbsenceOfMatch() }) {
+            setHandler(list, SubstitutionHandler("${list.hashCode()}_optional", false, 0, 1, true ))
+        }
+    }
+
+    private fun PsiElement.allowsAbsenceOfMatch(): Boolean {
+        val handler = getHandler(this)
+        return handler is SubstitutionHandler && handler.minOccurs == 0
     }
 
     private fun visitKDoc(kDoc: KDoc) {
