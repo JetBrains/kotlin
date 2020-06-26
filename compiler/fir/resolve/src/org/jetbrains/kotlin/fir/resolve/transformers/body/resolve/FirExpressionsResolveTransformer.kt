@@ -420,7 +420,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 resolved.resultType =
                     conversionTypeRef.withReplacedConeType(
                         conversionTypeRef.coneTypeUnsafe<ConeKotlinType>().withNullability(
-                            ConeNullability.NULLABLE, session.inferenceContext,
+                            ConeNullability.NULLABLE, session.typeContext,
                         ),
                     )
             }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.inferenceContext
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
@@ -310,7 +310,7 @@ private fun FirSession.createKFunctionType(
     }
 
     val returnType =
-        if (expectedReturnType != null && inferenceContext.run { expectedReturnType.isUnit() })
+        if (expectedReturnType != null && typeContext.run { expectedReturnType.isUnit() })
             expectedReturnType
         else
             returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $function")

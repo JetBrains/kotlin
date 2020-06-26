@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.FirResolvedReifiedParameterReferenceBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
-import org.jetbrains.kotlin.fir.inferenceContext
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -367,7 +367,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<
             val returnType = returnTypeCalculator.tryCalculateReturnType(symbol.phasedFir)
             if (makeNullable) {
                 returnType.withReplacedConeType(
-                    returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.inferenceContext),
+                    returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.typeContext),
                 )
             } else {
                 returnType
@@ -444,11 +444,11 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
 ) {
     val receiverType = nullableReceiverExpression.typeRef.coneTypeSafe<ConeKotlinType>()
     val typeAfterNullCheck = regularQualifiedAccess.expressionTypeOrUnitForAssignment() ?: return
-    val isReceiverActuallyNullable = receiverType != null && session.inferenceContext.run { receiverType.isNullableType() }
+    val isReceiverActuallyNullable = receiverType != null && session.typeContext.run { receiverType.isNullableType() }
 
     val resultingType =
         if (isReceiverActuallyNullable)
-            typeAfterNullCheck.withNullability(ConeNullability.NULLABLE, session.inferenceContext)
+            typeAfterNullCheck.withNullability(ConeNullability.NULLABLE, session.typeContext)
         else
             typeAfterNullCheck
 

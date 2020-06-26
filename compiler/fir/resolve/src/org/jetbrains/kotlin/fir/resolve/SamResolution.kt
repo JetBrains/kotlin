@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.inferenceContext
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -92,7 +92,7 @@ class FirSamResolverImpl(
         val result =
             substitutor
                 .substituteOrSelf(unsubstitutedFunctionType)
-                .withNullability(ConeNullability.create(type.isMarkedNullable), firSession.inferenceContext)
+                .withNullability(ConeNullability.create(type.isMarkedNullable), firSession.typeContext)
 
         require(result is ConeLookupTagBasedType) {
             "Function type should always be ConeLookupTagBasedType, but ${result::class} was found"

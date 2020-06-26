@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.inferenceContext
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
@@ -223,7 +223,7 @@ fun Candidate.resolvePlainArgumentType(
 
     val argumentTypeForApplicabilityCheck =
         if (useNullableArgumentType)
-            capturedType.withNullability(ConeNullability.NULLABLE, session.inferenceContext)
+            capturedType.withNullability(ConeNullability.NULLABLE, session.typeContext)
         else
             capturedType
 
@@ -276,7 +276,7 @@ private fun checkApplicabilityForArgumentType(
             return
         }
 
-        val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, sink.components.session.inferenceContext)
+        val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, sink.components.session.typeContext)
 
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
             sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER) // TODO

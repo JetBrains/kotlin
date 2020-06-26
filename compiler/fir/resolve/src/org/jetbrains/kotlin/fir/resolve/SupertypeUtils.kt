@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.inferenceContext
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
@@ -70,7 +70,7 @@ fun createSubstitution(
             }
             else /* StarProjection */ -> {
                 ConeTypeIntersector.intersectTypes(
-                    session.inferenceContext,
+                    session.typeContext,
                     typeParameterSymbol.fir.bounds.map { it.coneTypeUnsafe() }
                 )
             }

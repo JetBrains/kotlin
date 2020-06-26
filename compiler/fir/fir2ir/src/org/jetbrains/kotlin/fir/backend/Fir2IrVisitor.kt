@@ -57,7 +57,7 @@ class Fir2IrVisitor(
 
     private val integerApproximator = IntegerLiteralTypeApproximationTransformer(
         session.firSymbolProvider,
-        session.inferenceContext,
+        session.typeContext,
         session
     )
 
@@ -297,7 +297,7 @@ class Fir2IrVisitor(
         return conversionScope.withSafeCallSubject(receiverVariable) {
             val afterNotNullCheck = safeCallExpression.regularQualifiedAccess.accept(this, data) as IrExpression
 
-            val isReceiverNullable = with(components.session.inferenceContext) {
+            val isReceiverNullable = with(components.session.typeContext) {
                 safeCallExpression.receiver.typeRef.coneTypeSafe<ConeKotlinType>()?.isNullableType() == true
             }
 

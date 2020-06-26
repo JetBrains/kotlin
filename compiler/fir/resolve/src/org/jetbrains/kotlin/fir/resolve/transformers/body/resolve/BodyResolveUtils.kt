@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.inferenceContext
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -35,6 +35,6 @@ internal fun inferenceComponents(
     returnTypeCalculator: ReturnTypeCalculator,
     scopeSession: ScopeSession
 ): InferenceComponents {
-    val inferenceContext = session.inferenceContext
+    val inferenceContext = session.typeContext
     return InferenceComponents(inferenceContext, session, returnTypeCalculator, scopeSession)
 }
