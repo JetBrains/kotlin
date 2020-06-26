@@ -107,7 +107,7 @@ class FirLibrarySession private constructor(
                                 kotlinScopeProvider
                             ),
                             FirBuiltinSymbolProvider(this, kotlinScopeProvider),
-                            FirClonableSymbolProvider(this, kotlinScopeProvider),
+                            FirCloneableSymbolProvider(this, kotlinScopeProvider),
                             javaSymbolProvider,
                             FirDependenciesSymbolProviderImpl(this)
                         )

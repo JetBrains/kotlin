@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirClonableSymbolProvider(session: FirSession, scopeProvider: FirScopeProvider) : FirSymbolProvider() {
+class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopeProvider) : FirSymbolProvider() {
     companion object {
-        val CLONABLE: Name = Name.identifier("Cloneable")
-        val CLONABLE_CLASS_ID: ClassId = ClassId(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, CLONABLE)
+        val CLONEABLE: Name = Name.identifier("Cloneable")
+        val CLONEABLE_CLASS_ID: ClassId = ClassId(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, CLONEABLE)
 
         val CLONE: Name = Name.identifier("clone")
     }
@@ -54,15 +54,15 @@ class FirClonableSymbolProvider(session: FirSession, scopeProvider: FirScopeProv
             }
             status = FirDeclarationStatusImpl(Visibilities.PROTECTED, Modality.OPEN)
             name = CLONE
-            symbol = FirNamedFunctionSymbol(CallableId(CLONABLE_CLASS_ID, CLONE))
+            symbol = FirNamedFunctionSymbol(CallableId(CLONEABLE_CLASS_ID, CLONE))
         }
         this.scopeProvider = scopeProvider
-        name = CLONABLE
-        symbol = FirRegularClassSymbol(CLONABLE_CLASS_ID)
+        name = CLONEABLE
+        symbol = FirRegularClassSymbol(CLONEABLE_CLASS_ID)
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
-        return if (classId == CLONABLE_CLASS_ID) klass.symbol else null
+        return if (classId == CLONEABLE_CLASS_ID) klass.symbol else null
     }
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
