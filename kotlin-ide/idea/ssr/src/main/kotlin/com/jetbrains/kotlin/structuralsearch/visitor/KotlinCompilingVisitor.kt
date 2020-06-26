@@ -205,10 +205,10 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
                     false,
                     handler.minOccurs,
                     handler.maxOccurs,
-                    true
+                    false
                 )
             )
-            val newHandler = SubstitutionHandler(handler.name, false, 1, 1, true)
+            val newHandler = SubstitutionHandler(handler.name, false, 1, 1, false)
             handler.predicate?.let { newHandler.predicate = it }
             setHandler(
                 calleeExpression, newHandler
@@ -218,15 +218,26 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitModifierList(list: KtModifierList) {
         super.visitModifierList(list)
-        if (list.allChildren.all { it.allowsAbsenceOfMatch() }) {
-            setHandler(list, SubstitutionHandler("${list.hashCode()}_optional", false, 0, 1, true ))
+        if (list.allChildren.all { it.allowsAbsenceOfMatch }) {
+            setHandler(list, absenceOfMatchHandler(list))
         }
     }
 
-    private fun PsiElement.allowsAbsenceOfMatch(): Boolean {
-        val handler = getHandler(this)
-        return handler is SubstitutionHandler && handler.minOccurs == 0
+    override fun visitClassBody(classBody: KtClassBody) {
+        super.visitClassBody(classBody)
+        if (classBody.children.all { it.allowsAbsenceOfMatch }) {
+            setHandler(classBody, absenceOfMatchHandler(classBody))
+        }
     }
+
+    private fun absenceOfMatchHandler(element: PsiElement): SubstitutionHandler =
+        SubstitutionHandler("${element.hashCode()}_optional", false, 0, 1, false)
+
+    private val PsiElement.allowsAbsenceOfMatch: Boolean
+        get() {
+            val handler = getHandler(this)
+            return handler is SubstitutionHandler && handler.minOccurs == 0
+        }
 
     private fun visitKDoc(kDoc: KDoc) {
         getHandler(kDoc).setFilter { it is KDoc }
