@@ -37,12 +37,11 @@ class FirTypeResolveTransformer(
     private val scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList()
 ) : FirAbstractTreeTransformerWithSuperTypes(
-    phase = FirResolvePhase.TYPES,
-    reversedScopePriority = true
+    phase = FirResolvePhase.TYPES
 ) {
 
     init {
-        towerScope.addScopes(initialScopes.asReversed())
+        scopes.addAll(initialScopes.asReversed())
     }
 
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session)
@@ -50,7 +49,7 @@ class FirTypeResolveTransformer(
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
         return withScopeCleanup {
-            towerScope.addScopes(createImportingScopes(file, session, scopeSession))
+            scopes.addAll(createImportingScopes(file, session, scopeSession))
             super.transformFile(file, data)
         }
     }
