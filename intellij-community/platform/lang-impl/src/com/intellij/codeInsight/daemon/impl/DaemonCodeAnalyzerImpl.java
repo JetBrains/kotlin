@@ -149,6 +149,10 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
     myUpdateRunnableFuture.cancel(true);
   }
 
+  void clearProgressIndicator() {
+    HighlightingSessionImpl.clearProgressIndicator(myUpdateProgress);
+  }
+
   @NotNull
   @TestOnly
   public static List<HighlightInfo> getHighlights(@NotNull Document document,

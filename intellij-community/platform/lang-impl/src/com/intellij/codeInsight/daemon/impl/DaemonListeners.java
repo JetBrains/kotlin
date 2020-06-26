@@ -365,9 +365,15 @@ public final class DaemonListeners implements Disposable {
       @Override
       public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
         ((PsiModificationTrackerImpl)PsiManager.getInstance(myProject).getModificationTracker()).incCounter();
-        stopDaemonAndRestartAllFiles("Plugin will be uninstalled");
+        stopDaemon(false, "Plugin will be uninstalled");
         removeHighlightersOnPluginUnload(pluginDescriptor);
+        myDaemonCodeAnalyzer.clearProgressIndicator();
         IntentionsUI.getInstance(project).invalidate();
+      }
+
+      @Override
+      public void pluginUnloaded(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+        stopDaemonAndRestartAllFiles("Plugin unloaded");
       }
     });
     connection.subscribe(FileHighlightingSettingListener.SETTING_CHANGE, (root, setting) ->
