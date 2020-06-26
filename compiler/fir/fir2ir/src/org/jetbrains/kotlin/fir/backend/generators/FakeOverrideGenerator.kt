@@ -79,11 +79,19 @@ class FakeOverrideGenerator(
                         (functionSymbol.callableId.classId == klass.symbol.classId || fakeOverrideMode == FakeOverrideMode.SUBSTITUTION)
                     ) {
                         // Substitution case
-                        val irFunction = declarationStorage.createIrFunction(
-                            originalFunction, irParent = this,
-                            thisReceiverOwner = declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,
-                            origin = origin
-                        )
+                        // NB: we can get same substituted FIR fake override in a different class, if it derives the same genetic type
+                        // open class Base<T> {
+                        //     fun foo(): T
+                        // }
+                        // class Derived1 : Base<String>() {}
+                        // class Derived2 : Base<String>() {}
+                        // That's why we must check parent during caching...
+                        val irFunction = declarationStorage.getCachedIrFunction(originalFunction)?.takeIf { it.parent == this }
+                            ?: declarationStorage.createIrFunction(
+                                originalFunction, irParent = this,
+                                thisReceiverOwner = declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,
+                                origin = origin
+                            )
                         // In fake overrides, parent logic is a bit specific, because
                         // parent of *original* function (base class) is used for dispatch receiver,
                         // but fake override itself uses parent from its containing (derived) class
@@ -127,11 +135,13 @@ class FakeOverrideGenerator(
                         (propertySymbol.callableId.classId == klass.symbol.classId || fakeOverrideMode == FakeOverrideMode.SUBSTITUTION)
                     ) {
                         // Substitution case
-                        val irProperty = declarationStorage.createIrProperty(
-                            originalProperty, irParent = this,
-                            thisReceiverOwner = declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,
-                            origin = origin
-                        )
+                        // NB: see comment above about substituted function' parent
+                        val irProperty = declarationStorage.getCachedIrProperty(originalProperty)?.takeIf { it.parent == this}
+                            ?: declarationStorage.createIrProperty(
+                                originalProperty, irParent = this,
+                                thisReceiverOwner = declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,
+                                origin = origin
+                            )
                         irProperty.parent = this
                         result += irProperty.withProperty {
                             setOverriddenSymbolsForAccessors(declarationStorage, originalProperty, firOverriddenSymbol = baseSymbol)
