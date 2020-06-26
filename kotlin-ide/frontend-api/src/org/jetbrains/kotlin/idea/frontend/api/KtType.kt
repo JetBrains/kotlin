@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-interface KtType : Invalidatable {
+interface KtType : ValidityOwner {
     fun isEqualTo(other: KtType): Boolean
     fun isSubTypeOf(superType: KtType): Boolean
 

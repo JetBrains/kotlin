@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
-import org.jetbrains.kotlin.idea.frontend.api.Invalidatable
+import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 
-abstract class KtSymbolProvider : Invalidatable {
+abstract class KtSymbolProvider : ValidityOwner {
     open fun getSymbol(psi: KtDeclaration): KtSymbol = when (psi) {
         is KtParameter -> getParameterSymbol(psi)
         is KtNamedFunction -> getFunctionSymbol(psi)

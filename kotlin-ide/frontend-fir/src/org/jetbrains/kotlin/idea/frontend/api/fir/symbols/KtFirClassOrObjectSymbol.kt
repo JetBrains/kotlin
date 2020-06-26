@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.findPsi
-import org.jetbrains.kotlin.idea.frontend.api.Invalidatable
+import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.ReadOnlyWeakRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirClassOrObjectSymbol(
     fir: FirRegularClass,
-    override val token: Invalidatable,
+    override val token: ValidityOwner,
     private val builder: KtSymbolByFirBuilder
 ) : KtClassOrObjectSymbol(), KtFirSymbol<FirRegularClass> {
     override val fir: FirRegularClass by ReadOnlyWeakRef(fir, this)
