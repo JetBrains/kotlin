@@ -1,4 +1,5 @@
 // IS_APPLICABLE: false
+// COMPILER_ARGUMENTS: -XXLanguage:-SuspendConversion
 
 fun coroutine(block: suspend () -> Unit) {}
 
