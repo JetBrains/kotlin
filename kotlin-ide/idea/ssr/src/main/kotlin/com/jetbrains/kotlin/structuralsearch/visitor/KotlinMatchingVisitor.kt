@@ -8,6 +8,7 @@ import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.LiteralWithSubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
+import com.intellij.util.containers.reverse
 import com.jetbrains.kotlin.structuralsearch.binaryExprOpName
 import com.jetbrains.kotlin.structuralsearch.getCommentText
 import org.jetbrains.kotlin.fir.builder.toUnaryName
@@ -148,6 +149,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                             && myMatchingVisitor.match(expression.right, right.right)
                     return
                 }
+                if (token == KtTokens.EQ) {
+                    val right = expression.right?.deparenthesize()
+                    if (right is KtBinaryExpression && right.operationToken == augmentedAssignmentsMap[other.operationToken]) {
+                        // Matching x = x ? y with x ?= y
+                        myMatchingVisitor.result = myMatchingVisitor.match(expression.left, other.left)
+                                && myMatchingVisitor.match(right.left, other.left)
+                                && myMatchingVisitor.match(right.right, other.right)
+                        return
+                    }
+                }
                 if (myMatchingVisitor.setResult(expression.match(other))) return
                 when (expression.operationToken) { // translated matching
                     KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ -> { // a.compareTo(b) OP 0
@@ -184,9 +195,17 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                     }
                     else -> { // a.plus(b) all arithmetic operators
                         val selector = other.selectorExpression
-                        myMatchingVisitor.result = selector is KtCallExpression && other.match(
-                            expression.operationToken.binaryExprOpName(), left, right
-                        )
+                        if (expression.operationToken == KtTokens.EQ && right is KtBinaryExpression) {
+                            // Matching x = x + y with x.plusAssign(y)
+                            val opName = augmentedAssignmentsMap.reverse()[right.operationToken]?.binaryExprOpName()
+                            myMatchingVisitor.result = selector is KtCallExpression
+                                    && myMatchingVisitor.match(left, other.receiverExpression)
+                                    && other.match(opName, right.left, right.right)
+                        } else {
+                            myMatchingVisitor.result = selector is KtCallExpression && other.match(
+                                expression.operationToken.binaryExprOpName(), left, right
+                            )
+                        }
                     }
                 }
             }
