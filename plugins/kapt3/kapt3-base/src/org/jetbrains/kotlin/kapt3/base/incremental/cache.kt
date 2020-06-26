@@ -18,8 +18,8 @@ class JavaClassCacheManager(val file: File) : Closeable {
 
     private var closed = false
 
-    fun updateCache(processors: List<IncrementalProcessor>) {
-        if (!aptCache.updateCache(processors)) {
+    fun updateCache(processors: List<IncrementalProcessor>, failedToAnalyzeSources: Boolean) {
+        if (failedToAnalyzeSources || !aptCache.updateCache(processors)) {
             javaCache.invalidateAll()
         }
     }
