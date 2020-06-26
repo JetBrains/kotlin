@@ -699,10 +699,10 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitUnaryMinus(args: List<LLVMValueRef>): LLVMValueRef {
         val first = args[0]
         val destTy = first.type
-        val const0 = makeConstOfType(destTy, 0)
         return if (destTy.isFloatingPoint()) {
-            fsub(const0, first)
+            fneg(first)
         } else {
+            val const0 = makeConstOfType(destTy, 0)
             sub(const0, first)
         }
     }
