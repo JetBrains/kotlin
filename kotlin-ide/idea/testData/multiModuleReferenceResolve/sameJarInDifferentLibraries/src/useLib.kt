@@ -7,4 +7,4 @@ public fun use() {
 // SEARCH_TEXT: foo
 // REF: (library).foo()
 // BINARY: library/LibKt.class
-// SRC: src/lib.kt
+// SRC: libSrc/lib.kt

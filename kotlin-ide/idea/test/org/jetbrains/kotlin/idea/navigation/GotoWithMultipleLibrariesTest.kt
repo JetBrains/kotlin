@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.idea.navigation
 
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2
 import com.intellij.openapi.module.StdModuleTypes
+import com.intellij.openapi.vfs.LocalFileSystem
+import org.jetbrains.kotlin.idea.artifacts.KOTLIN_PLUGIN_ROOT_DIRECTORY
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
@@ -20,42 +22,38 @@ import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class GotoWithMultipleLibrariesTest : AbstractMultiModuleTest() {
-    override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/multiModuleReferenceResolve/sameJarInDifferentLibraries/"
+    override fun getTestDataPath(): String {
+        val testDir = File(KOTLIN_PLUGIN_ROOT_DIRECTORY, "idea/testData/multiModuleReferenceResolve/sameJarInDifferentLibraries")
+        return KotlinTestUtils.toSlashEndingDirPath(testDir.absolutePath)
+    }
 
     fun testOneHasSourceAndOneDoesNot() {
-        doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(
-            withSource = 1,
-            noSource = 1
-        )
+        doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(withSource = 1, noSource = 1)
     }
 
     fun testOneHasSourceAndManyDoNot() {
-        doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(
-            withSource = 1,
-            noSource = 3
-        )
+        doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(withSource = 1, noSource = 3)
     }
 
     fun testSeveralWithSource() {
-        doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(
-            withSource = 2,
-            noSource = 2
-        )
+        doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(withSource = 2, noSource = 2)
     }
 
     private fun doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(withSource: Int, noSource: Int) {
-        val srcPath = testDataPath + "src"
+        val srcDir = File(testDataPath, "src")
+        val libSrcDir = File(testDataPath, "libSrc")
 
-        val sources = listOf(File(testDataPath, "libSrc"))
-        val sharedJar = KotlinCompilerStandalone(sources).compile()
+        val sharedJar = KotlinCompilerStandalone(listOf(libSrcDir)).compile()
+
         val jarRoot = sharedJar.jarRoot
+        val libSrcRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(libSrcDir)!!
 
         var i = 0
         repeat(noSource) {
-            module("m${++i}", srcPath).addDependency(projectLibrary("libA", jarRoot))
+            module("m${++i}", srcDir).addDependency(projectLibrary("libA", jarRoot))
         }
         repeat(withSource) {
-            module("m${++i}", srcPath).addDependency(projectLibrary("libB", jarRoot, jarRoot.findChild("src")!!))
+            module("m${++i}", srcDir).addDependency(projectLibrary("libB", jarRoot, libSrcRoot))
         }
 
         checkFiles({ project.allKotlinFiles() }) {
@@ -63,5 +61,5 @@ class GotoWithMultipleLibrariesTest : AbstractMultiModuleTest() {
         }
     }
 
-    private fun module(name: String, srcPath: String) = createModuleFromTestData(srcPath, name, StdModuleTypes.JAVA, true)
+    private fun module(name: String, srcDir: File) = createModuleFromTestData(srcDir.absolutePath, name, StdModuleTypes.JAVA, true)
 }
