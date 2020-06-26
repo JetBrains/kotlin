@@ -145,8 +145,7 @@ class Fir2IrLazyClass(
                         processedNames += declaration.name
                         scope.processPropertiesByName(declaration.name) {
                             if (it is FirPropertySymbol) {
-                                // TODO: replace with getIrFieldOrPropertySymbol(it).owner with lazy property generation
-                                result += declarationStorage.createIrProperty(it.fir, irParent = this, origin = origin)
+                                result += declarationStorage.getIrPropertyOrFieldSymbol(it).owner as IrProperty
                             }
                         }
                     }

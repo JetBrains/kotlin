@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
@@ -494,7 +495,7 @@ class Fir2IrDeclarationStorage(
         return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature, containerSource) }, factory)
     }
 
-    private fun createIrPropertyAccessor(
+    internal fun createIrPropertyAccessor(
         propertyAccessor: FirPropertyAccessor?,
         property: FirProperty,
         correspondingProperty: IrProperty,
@@ -560,7 +561,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun IrProperty.createBackingField(
+    internal fun IrProperty.createBackingField(
         property: FirProperty,
         origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
@@ -589,7 +590,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private val FirProperty.fieldVisibility: Visibility
+    internal val FirProperty.fieldVisibility: Visibility
         get() = when {
             isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
@@ -908,14 +909,35 @@ class Fir2IrDeclarationStorage(
                 propertyCache[fir]?.let { return it.symbol }
                 val signature = signatureComposer.composeSignature(fir)
                 val irParent = findIrParent(fir)
+                val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 if (signature != null) {
                     symbolTable.referencePropertyIfAny(signature)?.let { irPropertySymbol ->
                         val irProperty = irPropertySymbol.owner
                         propertyCache[fir] = irProperty
                         return irPropertySymbol
                     }
+                    // TODO: package fragment members (?)
+                    if (irParent is Fir2IrLazyClass) {
+                        if (parentOrigin == IrDeclarationOrigin.DEFINED) {
+                            throw AssertionError()
+                        }
+                        val symbol = Fir2IrPropertySymbol(signature, fir.containerSource)
+                        val irProperty = fir.convertWithOffsets { startOffset, endOffset ->
+                            symbolTable.declareProperty(signature, { symbol }) {
+                                val isFakeOverride =
+                                    firVariableSymbol is FirPropertySymbol && firVariableSymbol.isFakeOverride &&
+                                            firVariableSymbol.callableId != firVariableSymbol.overriddenSymbol?.callableId
+                                Fir2IrLazyProperty(
+                                    components, startOffset, endOffset, parentOrigin, fir, symbol, isFakeOverride
+                                ).apply {
+                                    parent = irParent
+                                }
+                            }
+                        }
+                        propertyCache[fir] = irProperty
+                        return symbol
+                    }
                 }
-                val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 createIrProperty(fir, irParent, origin = parentOrigin).apply {
                     setAndModifyParent(irParent)
                 }.symbol
