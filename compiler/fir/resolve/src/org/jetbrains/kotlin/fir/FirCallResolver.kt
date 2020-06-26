@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
-import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -64,7 +63,7 @@ class FirCallResolver(
         @Suppress("NAME_SHADOWING")
         val functionCall = functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
             .also {
-                dataFlowAnalyzer.enterQualifiedAccessExpression(functionCall)
+                dataFlowAnalyzer.enterQualifiedAccessExpression()
                 functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
             }
 

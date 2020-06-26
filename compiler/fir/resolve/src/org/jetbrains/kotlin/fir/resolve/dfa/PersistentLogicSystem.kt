@@ -248,6 +248,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
 
     private abstract class DiffIterable<T>(private val parentFlow: PersistentFlow, private var currentFlow: PersistentFlow) : Iterable<T> {
+        @Suppress("LeakingThis")
         private var currentIterator = extractIterator(currentFlow)
 
         abstract fun extractIterator(flow: PersistentFlow): Iterator<T>

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.random.Random
 
 @RequiresOptIn
@@ -57,7 +58,7 @@ class ControlFlowGraphBuilder {
     private val shouldPassFlowFromInplaceLambda: Stack<Boolean> = stackOf(true)
 
     private enum class Mode {
-        Function, DefaultArguments, TopLevel, Body, ClassInitializer, PropertyInitializer
+        Function, TopLevel, Body, ClassInitializer, PropertyInitializer
     }
 
     // ----------------------------------- Node caches -----------------------------------
@@ -773,7 +774,7 @@ class ControlFlowGraphBuilder {
         }
     }
 
-    fun enterFinallyBlock(tryExpression: FirTryExpression): FinallyBlockEnterNode {
+    fun enterFinallyBlock(): FinallyBlockEnterNode {
         val enterNode = finallyEnterNodes.pop()
         lastNodes.push(enterNode)
         return enterNode
@@ -787,7 +788,6 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitTryExpression(
-        tryExpression: FirTryExpression,
         callCompleted: Boolean
     ): Pair<TryExpressionExitNode, UnionFunctionCallArgumentsNode?> {
         levelCounter--
@@ -816,7 +816,7 @@ class ControlFlowGraphBuilder {
         return createResolvedQualifierNode(resolvedQualifier).also(this::addNewSimpleNode)
     }
 
-    fun enterCall(call: FirCall) {
+    fun enterCall() {
         levelCounter++
     }
 
@@ -979,7 +979,7 @@ class ControlFlowGraphBuilder {
         return enterNode
     }
 
-    fun exitSafeCall(safeCall: FirSafeCallExpression): ExitSafeCallNode {
+    fun exitSafeCall(): ExitSafeCallNode {
         return exitSafeCallNodes.pop().also {
             addNewSimpleNode(it)
             it.updateDeadStatus()

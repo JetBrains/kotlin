@@ -26,36 +26,6 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-fun DataFlowVariable.isSynthetic(): Boolean {
-    contract {
-        returns(true) implies (this@isSynthetic is SyntheticVariable)
-        returns(false) implies (this@isSynthetic is RealVariable)
-    }
-    return this is SyntheticVariable
-}
-
-@OptIn(ExperimentalContracts::class)
-fun DataFlowVariable.isReal(): Boolean {
-    contract {
-        returns(true) implies (this@isReal is RealVariable)
-        returns(false) implies (this@isReal is SyntheticVariable)
-    }
-    return this is RealVariable
-}
-
-operator fun TypeStatement.plus(other: TypeStatement?): TypeStatement = other?.let { this + other } ?: this
-
-fun MutableTypeStatements.addStatement(variable: RealVariable, statement: TypeStatement) {
-    put(variable, statement.asMutableStatement()) { it.apply { this += statement } }
-}
-
-fun MutableTypeStatements.mergeTypeStatements(other: TypeStatements) {
-    other.forEach { (variable, info) ->
-        addStatement(variable, info)
-    }
-}
-
-@OptIn(ExperimentalContracts::class)
 internal inline fun <K, V> MutableMap<K, V>.put(key: K, value: V, remappingFunction: (existing: V) -> V) {
     contract {
         callsInPlace(remappingFunction, InvocationKind.AT_MOST_ONCE)
@@ -69,7 +39,11 @@ internal inline fun <K, V> MutableMap<K, V>.put(key: K, value: V, remappingFunct
 }
 
 @OptIn(ExperimentalContracts::class)
-internal inline fun <K, V> PersistentMap<K, V>.put(key: K, valueProducer: () -> V, remappingFunction: (existing: V) -> V): PersistentMap<K, V> {
+internal inline fun <K, V> PersistentMap<K, V>.put(
+    key: K,
+    valueProducer: () -> V,
+    remappingFunction: (existing: V) -> V
+): PersistentMap<K, V> {
     contract {
         callsInPlace(remappingFunction, InvocationKind.AT_MOST_ONCE)
         callsInPlace(valueProducer, InvocationKind.AT_MOST_ONCE)
@@ -135,10 +109,3 @@ internal val FirResolvable.symbol: AbstractFirBasedSymbol<*>?
         is FirNamedReferenceWithCandidate -> reference.candidateSymbol
         else -> null
     }
-
-//val ConeKotlinType.isNothingOrNullableNothing: Boolean = when (this) {
-//    is ConeFlexibleType -> lowerBound.isNothingOrNullableNothing
-//    else -> false
-//}
-
-inline fun <R> runIf(condition: Boolean, block: () -> R): R? = if (condition) block() else null

@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 // --------------------------------------- Variables ---------------------------------------
 
@@ -159,6 +161,8 @@ abstract class TypeStatement : Statement<TypeStatement>() {
     }
 }
 
+operator fun TypeStatement.plus(other: TypeStatement?): TypeStatement = other?.let { this + other } ?: this
+
 class MutableTypeStatement(
     override val variable: RealVariable,
     override val exactType: MutableSet<ConeKotlinType> = linkedSetOf(),
@@ -205,6 +209,16 @@ fun Implication.invertCondition(): Implication = Implication(condition.invert(),
 typealias TypeStatements = Map<RealVariable, TypeStatement>
 typealias MutableTypeStatements = MutableMap<RealVariable, MutableTypeStatement>
 
+fun MutableTypeStatements.addStatement(variable: RealVariable, statement: TypeStatement) {
+    put(variable, statement.asMutableStatement()) { it.apply { this += statement } }
+}
+
+fun MutableTypeStatements.mergeTypeStatements(other: TypeStatements) {
+    other.forEach { (variable, info) ->
+        addStatement(variable, info)
+    }
+}
+
 // --------------------------------------- DSL ---------------------------------------
 
 infix fun DataFlowVariable.eq(constant: Boolean?): OperationStatement {
@@ -240,3 +254,23 @@ infix fun RealVariable.typeNotEq(type: ConeKotlinType): TypeStatement =
     } else {
         MutableTypeStatement(this)
     }
+
+// --------------------------------------- Utils ---------------------------------------
+
+@OptIn(ExperimentalContracts::class)
+fun DataFlowVariable.isSynthetic(): Boolean {
+    contract {
+        returns(true) implies (this@isSynthetic is SyntheticVariable)
+        returns(false) implies (this@isSynthetic is RealVariable)
+    }
+    return this is SyntheticVariable
+}
+
+@OptIn(ExperimentalContracts::class)
+fun DataFlowVariable.isReal(): Boolean {
+    contract {
+        returns(true) implies (this@isReal is RealVariable)
+        returns(false) implies (this@isReal is SyntheticVariable)
+    }
+    return this is RealVariable
+}

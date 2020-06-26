@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
@@ -30,6 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class DataFlowAnalyzerContext<FLOW : Flow>(
     val graphBuilder: ControlFlowGraphBuilder,
@@ -599,9 +598,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitCatchClause(catch).mergeIncomingFlow()
     }
 
-    fun enterFinallyBlock(tryExpression: FirTryExpression) {
+    fun enterFinallyBlock() {
         // TODO
-        graphBuilder.enterFinallyBlock(tryExpression).mergeIncomingFlow()
+        graphBuilder.enterFinallyBlock().mergeIncomingFlow()
     }
 
     fun exitFinallyBlock(tryExpression: FirTryExpression) {
@@ -609,9 +608,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitFinallyBlock(tryExpression).mergeIncomingFlow()
     }
 
-    fun exitTryExpression(tryExpression: FirTryExpression, callCompleted: Boolean) {
+    fun exitTryExpression(callCompleted: Boolean) {
         // TODO
-        val (tryExpressionExitNode, unionNode) = graphBuilder.exitTryExpression(tryExpression, callCompleted)
+        val (tryExpressionExitNode, unionNode) = graphBuilder.exitTryExpression(callCompleted)
         tryExpressionExitNode.mergeIncomingFlow()
         unionNode?.let { unionFlowFromArguments(it) }
     }
@@ -619,7 +618,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     // ----------------------------------- Resolvable call -----------------------------------
 
     // Intentionally left empty for potential future needs (call sites are preserved)
-    fun enterQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {}
+    fun enterQualifiedAccessExpression() {}
 
     fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
         graphBuilder.exitQualifiedAccessExpression(qualifiedAccessExpression).mergeIncomingFlow()
@@ -663,7 +662,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     fun exitSafeCall(safeCall: FirSafeCallExpression) {
-        val node = graphBuilder.exitSafeCall(safeCall).mergeIncomingFlow()
+        val node = graphBuilder.exitSafeCall().mergeIncomingFlow()
         val previousFlow = node.previousFlow
 
         val variable = variableStorage.getOrCreateVariable(previousFlow, safeCall)
@@ -682,8 +681,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitResolvedQualifierNode(resolvedQualifier).mergeIncomingFlow()
     }
 
-    fun enterCall(functionCall: FirCall) {
-        graphBuilder.enterCall(functionCall)
+    fun enterCall() {
+        graphBuilder.enterCall()
     }
 
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
@@ -838,7 +837,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         if (isAssignment) {
             if (initializer is FirConstExpression<*> && initializer.kind == FirConstKind.Null) return
-            flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneTypeUnsafe<ConeKotlinType>())
+            flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneTypeUnsafe())
         }
     }
 
@@ -894,6 +893,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         node: AbstractBinaryExitNode<*>,
         isAnd: Boolean
     ) {
+        @Suppress("UnnecessaryVariable")
         val bothEvaluated = isAnd
         val onlyLeftEvaluated = !bothEvaluated
 
@@ -1064,13 +1064,3 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private val CFGNode<*>.previousFlow: FLOW
         get() = firstPreviousNode.flow
 }
-
-@DfaInternals
-fun FirElement.extractReturnType(): ConeKotlinType = when (this) {
-    is FirVariable<*> -> returnTypeRef.coneTypeUnsafe()
-    is FirSimpleFunction -> receiverTypeRef?.coneTypeUnsafe()
-    is FirAnonymousFunction -> receiverTypeRef?.coneTypeUnsafe()
-    is FirRegularClass -> defaultType()
-    is FirAnonymousObject -> typeRef.coneTypeUnsafe()
-    else -> null
-} ?: throw IllegalArgumentException("Unsupported fir: $this")

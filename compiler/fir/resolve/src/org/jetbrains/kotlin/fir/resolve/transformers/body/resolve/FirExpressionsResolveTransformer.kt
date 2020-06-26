@@ -158,7 +158,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
         when (result) {
             is FirQualifiedAccessExpression -> {
-                dataFlowAnalyzer.enterQualifiedAccessExpression(result)
+                dataFlowAnalyzer.enterQualifiedAccessExpression()
                 result = components.transformQualifiedAccessUsingSmartcastInfo(result)
                 dataFlowAnalyzer.exitQualifiedAccessExpression(result)
             }
@@ -206,7 +206,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             storeTypeFromCallee(functionCall)
         }
         if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
-        dataFlowAnalyzer.enterCall(functionCall)
+        dataFlowAnalyzer.enterCall()
         functionCall.annotations.forEach { it.accept(this, data) }
         functionCall.transform<FirFunctionCall, Nothing?>(InvocationKindTransformer, null)
         functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
@@ -700,7 +700,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             })
         }
 
-        dataFlowAnalyzer.enterCall(delegatedConstructorCall)
+        dataFlowAnalyzer.enterCall()
         var callCompleted = true
         var result = delegatedConstructorCall
         try {
