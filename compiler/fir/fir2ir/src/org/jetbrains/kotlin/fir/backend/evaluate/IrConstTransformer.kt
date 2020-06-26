@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 fun evaluateConstants(irModuleFragment: IrModuleFragment) {
-    irModuleFragment.files.forEach { it.transformChildren(IrConstTransformer(irModuleFragment), null) }
+    val irConstTransformer = IrConstTransformer(irModuleFragment)
+    irModuleFragment.files.forEach { it.transformChildren(irConstTransformer, null) }
 }
 
 //TODO create abstract class that will be common for this and lowering
@@ -31,16 +32,15 @@ class IrConstTransformer(irModuleFragment: IrModuleFragment) : IrElementTransfor
         if (expression.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
             return interpreter.interpret(expression).replaceIfError(expression)
         }
-        return super.visitCall(expression)
+        return expression
     }
 
     override fun visitField(declaration: IrField): IrStatement {
         val initializer = declaration.initializer
         val expression = initializer?.expression ?: return declaration
         if (expression is IrConst<*>) return declaration
-        val isCompileTimeComputable = expression.accept(IrCompileTimeChecker(declaration, mode = EvaluationMode.ONLY_BUILTINS), null)
         val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
-        if (isConst && isCompileTimeComputable) {
+        if (isConst && expression.accept(IrCompileTimeChecker(declaration, mode = EvaluationMode.ONLY_BUILTINS), null)) {
             initializer.expression = interpreter.interpret(expression).replaceIfError(expression)
         }
 
