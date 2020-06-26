@@ -119,7 +119,8 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
 
         if (ideBranch >= 193) {
             ijPlatformDependencies += listOf(
-                "platform-ide-util-io"
+                "platform-ide-util-io",
+                "external-system-rt"
             )
         }
 
