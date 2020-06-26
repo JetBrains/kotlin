@@ -12,13 +12,13 @@ internal class ProblemNode(parent: FileNode, val problem: Problem) : Node(parent
 
   val file = parent.file
 
-  var offset: Int = problem.offset
+  var offset: Int = 0
     private set
 
-  var severity: Int = problem.severity
+  var severity: Int = 0
     private set
 
-  var description: String = problem.description
+  var description: String = ""
     private set
 
   override fun getLeafState() = LeafState.ALWAYS
