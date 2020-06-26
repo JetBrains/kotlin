@@ -179,6 +179,69 @@ class DukatIntegrationIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testIntegratedDukatWithFalseDefaultKotlinDslRootDependencies() {
+        testIntegratedDukatWithFalseDefault(
+            DslType.KOTLIN,
+            DependenciesLocation.ROOT
+        )
+    }
+
+    @Test
+    fun testIntegratedDukatWithFalseDefaultKotlinDslExtDependencies() {
+        testIntegratedDukatWithFalseDefault(
+            DslType.KOTLIN,
+            DependenciesLocation.EXTENSION
+        )
+    }
+
+    @Test
+    fun testIntegratedDukatWithFalseDefaultGroovyDslRootDependencies() {
+        testIntegratedDukatWithFalseDefault(
+            DslType.GROOVY,
+            DependenciesLocation.ROOT
+        )
+    }
+
+    @Test
+    fun testIntegratedDukatWithFalseDefaultGroovyDslExtDependencies() {
+        testIntegratedDukatWithFalseDefault(
+            DslType.GROOVY,
+            DependenciesLocation.EXTENSION
+        )
+    }
+
+    private fun testIntegratedDukatWithFalseDefault(
+        dslType: DslType,
+        dependenciesLocation: DependenciesLocation
+    ) {
+        val projectName = projectName(dslType, dependenciesLocation)
+        val project = Project(
+            projectName = projectName,
+            directoryPrefix = "dukat-integration"
+        )
+        project.setupWorkingDir()
+        project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        project.gradleProperties().modify {
+            "kotlin.js.generate.externals=true"
+        }
+
+        project.gradleBuildScript().modify { buildScript ->
+            buildScript
+                .replace(
+                    """implementation(npm("decamelize", "4.0.0", true))""",
+                    """implementation(npm("decamelize", "4.0.0", false))"""
+                )
+        }
+
+        val externalSrcs = "build/externals/$projectName/src"
+        project.build("generateExternalsIntegrated") {
+            assertSuccessful()
+
+            assertSingleFileExists(externalSrcs, "index.module_left-pad.kt")
+        }
+    }
+
     private fun projectName(
         dslType: DslType,
         dependenciesLocation: DependenciesLocation
