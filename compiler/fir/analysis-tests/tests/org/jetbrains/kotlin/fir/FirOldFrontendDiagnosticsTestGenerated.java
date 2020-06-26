@@ -1949,6 +1949,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/callableReference/referenceAdaptationCompatibility.kt");
         }
 
+        @TestMetadata("referenceAdaptationHasDependencyOnApi14.kt")
+        public void testReferenceAdaptationHasDependencyOnApi14() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/callableReference/referenceAdaptationHasDependencyOnApi14.kt");
+        }
+
         @TestMetadata("referenceToCompanionObjectMemberViaClassName.kt")
         public void testReferenceToCompanionObjectMemberViaClassName() throws Exception {
             runTest("compiler/testData/diagnostics/tests/callableReference/referenceToCompanionObjectMemberViaClassName.kt");
