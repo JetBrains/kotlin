@@ -403,8 +403,17 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         ))
     }
 
-    private fun matchValueArgumentList(queryArgs: List<KtValueArgument>?, codeArgs: List<KtValueArgument>?): Boolean {
-        if (queryArgs == null || codeArgs == null) return queryArgs == codeArgs
+    override fun visitValueArgumentList(list: KtValueArgumentList) {
+        val other = getTreeElementDepar<KtValueArgumentList>() ?: return
+        val handler = getHandler(list)
+        if (other.children.isEmpty() && handler is SubstitutionHandler && handler.minOccurs == 0) {
+            myMatchingVisitor.result = true
+            return
+        }
+        myMatchingVisitor.result = matchValueArgumentList(list.arguments, other.arguments)
+    }
+
+    private fun matchValueArgumentList(queryArgs: List<KtValueArgument>, codeArgs: List<KtValueArgument>): Boolean {
         var queryIndex = 0
         var codeIndex = 0
         while (queryIndex < queryArgs.size) {
@@ -462,10 +471,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = when (other) {
             is KtCallExpression -> myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
                     && myMatchingVisitor.match(expression.typeArgumentList, other.typeArgumentList)
-                    && matchValueArgumentList(expression.valueArguments, other.valueArguments)
+                    && myMatchingVisitor.match(expression.valueArgumentList, other.valueArgumentList)
+                    && myMatchingVisitor.matchSequentially(expression.lambdaArguments, other.lambdaArguments)
             is KtDotQualifiedExpression -> myMatchingVisitor.match(expression.calleeExpression, other.receiverExpression)
                     && other.calleeName == "${OperatorNameConventions.INVOKE}"
-                    && matchValueArgumentList(expression.valueArguments, other.callExpression?.valueArguments)
+                    && myMatchingVisitor.match(expression.valueArgumentList, other.callExpression?.valueArgumentList)
             else -> false
         }
     }
@@ -521,7 +531,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtConstructorDelegationCall>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(call.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(call.typeArgumentList, other.typeArgumentList)
-                && matchValueArgumentList(call.valueArgumentList?.arguments, other.valueArgumentList?.arguments)
+                && myMatchingVisitor.match(call.valueArgumentList, other.valueArgumentList)
     }
 
     override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
@@ -554,7 +564,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtSuperTypeCallEntry>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(call.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(call.typeArgumentList, other.typeArgumentList)
-                && matchValueArgumentList(call.valueArgumentList?.arguments, other.valueArgumentList?.arguments)
+                && myMatchingVisitor.match(call.valueArgumentList, other.valueArgumentList)
     }
 
     override fun visitSuperTypeEntry(specifier: KtSuperTypeEntry) {
@@ -741,7 +751,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtAnnotationEntry>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(annotationEntry.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(annotationEntry.typeArgumentList, other.typeArgumentList)
-                && matchValueArgumentList(annotationEntry.valueArgumentList?.arguments, other.valueArgumentList?.arguments)
+                && myMatchingVisitor.match(annotationEntry.valueArgumentList, other.valueArgumentList)
     }
 
     override fun visitProperty(property: KtProperty) {

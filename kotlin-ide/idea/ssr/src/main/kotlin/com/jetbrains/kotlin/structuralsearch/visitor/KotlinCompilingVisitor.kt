@@ -223,6 +223,13 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    override fun visitValueArgumentList(list: KtValueArgumentList) {
+        super.visitValueArgumentList(list)
+        if (list.children.all { it.allowsAbsenceOfMatch }) {
+            setHandler(list, absenceOfMatchHandler(list))
+        }
+    }
+
     override fun visitClassBody(classBody: KtClassBody) {
         super.visitClassBody(classBody)
         if (classBody.children.all { it.allowsAbsenceOfMatch }) {

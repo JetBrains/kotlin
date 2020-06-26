@@ -54,4 +54,6 @@ class KotlinSSCallExpressionTest : KotlinSSResourceInspectionTest() {
     fun testLambdaCallInvoke() { doTest("a()") }
 
     fun testLambdaCallInvokeArgs() { doTest("a(0, 0)") }
+
+    fun testCallAnyParameter() { doTest("'_('_*)") }
 }
