@@ -89,4 +89,3 @@ fun lazyNestedClassifierScope(
     if (existingNames.isEmpty()) return null
     return FirLazyNestedClassifierScope(classId, existingNames, symbolProvider)
 }
-

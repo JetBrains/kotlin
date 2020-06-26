@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope() {
-
     private val classIndex: Map<Name, FirRegularClassSymbol> = run {
         val result = mutableMapOf<Name, FirRegularClassSymbol>()
         for (declaration in klass.declarations) {

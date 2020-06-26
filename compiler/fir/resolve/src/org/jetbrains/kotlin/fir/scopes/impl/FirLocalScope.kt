@@ -19,14 +19,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class FirLocalScope private constructor(
-    properties: PersistentMap<Name, FirVariableSymbol<*>>,
-    functions: PersistentMultimap<Name, FirFunctionSymbol<*>>,
-    classes: PersistentMap<Name, FirRegularClassSymbol>
+    val properties: PersistentMap<Name, FirVariableSymbol<*>>,
+    val functions: PersistentMultimap<Name, FirFunctionSymbol<*>>,
+    val classes: PersistentMap<Name, FirRegularClassSymbol>
 ) : FirScope() {
-    val properties: PersistentMap<Name, FirVariableSymbol<*>> = properties
-    val functions: PersistentMultimap<Name, FirFunctionSymbol<*>> = functions
-    val classes: PersistentMap<Name, FirRegularClassSymbol> = classes
-
     constructor() : this(persistentMapOf(), PersistentMultimap(), persistentMapOf())
 
     fun storeClass(klass: FirRegularClass): FirLocalScope {

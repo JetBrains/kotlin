@@ -61,4 +61,3 @@ private fun doCreateImportingScopes(
 }
 
 private val PACKAGE_MEMBER = scopeSessionKey<FqName, FirPackageMemberScope>()
-

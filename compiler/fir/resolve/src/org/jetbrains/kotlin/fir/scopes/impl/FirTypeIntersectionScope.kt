@@ -32,16 +32,13 @@ class FirTypeIntersectionScope private constructor(
     overrideChecker: FirOverrideChecker,
     private val scopes: List<FirTypeScope>,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
-
-    private val absentFunctions = mutableSetOf<Name>()
-
-    private val absentProperties = mutableSetOf<Name>()
-
-    private val absentClassifiers = mutableSetOf<Name>()
+    private val absentFunctions: MutableSet<Name> = mutableSetOf()
+    private val absentProperties: MutableSet<Name> = mutableSetOf()
+    private val absentClassifiers: MutableSet<Name> = mutableSetOf()
 
     private val typeContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = false, session)
 
-    private val overriddenSymbols = mutableMapOf<FirCallableSymbol<*>, Collection<FirCallableSymbol<*>>>()
+    private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<FirCallableSymbol<*>>> = mutableMapOf()
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         if (!processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)) {
@@ -87,7 +84,6 @@ class FirTypeIntersectionScope private constructor(
                 processor(member)
             }
 
-
             return false
         }
 
@@ -105,10 +101,8 @@ class FirTypeIntersectionScope private constructor(
         return true
     }
 
-    private fun <D : FirCallableSymbol<*>> selectMostSpecificMember(
-        overridables: Collection<D>
-    ): D {
-        require(overridables.isNotEmpty()) { "Should have at least one overridable descriptor" }
+    private fun <D : FirCallableSymbol<*>> selectMostSpecificMember(overridables: Collection<D>): D {
+        require(overridables.isNotEmpty()) { "Should have at least one overridable symbol" }
         if (overridables.size == 1) {
             return overridables.first()
         }
@@ -126,19 +120,15 @@ class FirTypeIntersectionScope private constructor(
             }
         }
 
-        when {
-            candidates.isEmpty() -> {
-                return transitivelyMostSpecific
-            }
-            candidates.size == 1 -> {
-                return candidates.first()
-            }
+        return when {
+            candidates.isEmpty() -> transitivelyMostSpecific
+            candidates.size == 1 -> candidates.first()
             else -> {
                 candidates.firstOrNull {
                     val type = it.fir.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                     type != null && type !is ConeFlexibleType
                 }?.let { return it }
-                return candidates.first()
+                candidates.first()
             }
         }
     }
@@ -272,7 +262,6 @@ class FirTypeIntersectionScope private constructor(
             scopes: List<FirTypeScope>
         ): FirTypeScope {
             scopes.singleOrNull()?.let { return it }
-
             return FirTypeIntersectionScope(session, overrideChecker, scopes)
         }
     }

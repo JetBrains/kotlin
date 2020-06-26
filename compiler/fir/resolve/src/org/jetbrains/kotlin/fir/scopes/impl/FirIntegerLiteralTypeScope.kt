@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-
 class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned: Boolean) : FirTypeScope() {
     sealed class ILTKey {
         object Signed : ILTKey()
@@ -48,6 +47,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
         val SCOPE_SESSION_KEY = scopeSessionKey<ILTKey, FirTypeScope>()
     }
 
+    @Suppress("PrivatePropertyName")
     private val BINARY_OPERATOR_SYMBOLS = BINARY_OPERATOR_NAMES.map { name ->
         name to FirNamedFunctionSymbol(CallableId(name)).apply {
             createFirFunction(name, this).apply {
@@ -68,6 +68,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
         }
     }.toMap()
 
+    @Suppress("PrivatePropertyName")
     private val UNARY_OPERATOR_SYMBOLS = UNARY_OPERATOR_NAMES.map { name ->
         name to FirNamedFunctionSymbol(CallableId(name)).apply { createFirFunction(name, this) }
     }.toMap()
@@ -84,7 +85,6 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
     ).apply {
         resolvePhase = FirResolvePhase.BODY_RESOLVE
     }
-
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         val symbol = BINARY_OPERATOR_SYMBOLS[name]
@@ -165,4 +165,3 @@ class FirILTTypeRefPlaceHolder(
         return this
     }
 }
-

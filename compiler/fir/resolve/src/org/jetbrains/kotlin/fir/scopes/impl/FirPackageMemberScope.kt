@@ -15,19 +15,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirScope() {
-
     private val symbolProvider = session.firSymbolProvider
-
-    private val classifierCache = mutableMapOf<Name, FirClassifierSymbol<*>?>()
-
-    private val callableCache = mutableMapOf<Name, List<FirCallableSymbol<*>>>()
+    private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = mutableMapOf()
+    private val callableCache: MutableMap<Name, List<FirCallableSymbol<*>>> = mutableMapOf()
 
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
         if (name.asString().isEmpty()) return
-
 
         val symbol = classifierCache.getOrPut(name) {
             val unambiguousFqName = ClassId(fqName, name)

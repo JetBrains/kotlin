@@ -26,7 +26,6 @@ class FirClassUseSiteMemberScope(
             processor(it)
         }
 
-
         superTypesScope.processPropertiesByName(name) {
             val overriddenBy = it.getOverridden(seen)
             if (overriddenBy == null) {
@@ -35,5 +34,3 @@ class FirClassUseSiteMemberScope(
         }
     }
 }
-
-

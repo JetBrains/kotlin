@@ -20,7 +20,6 @@ class FirLazyNestedClassifierScope(
     private val existingNames: List<Name>,
     private val symbolProvider: FirSymbolProvider
 ) : FirScope() {
-
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit

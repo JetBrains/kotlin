@@ -56,11 +56,9 @@ class FirClassSubstitutionScope(
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->
-
             val function = fakeOverrideFunctions.getOrPut(original) { createFakeOverrideFunction(original) }
             processor(function)
         }
-
 
         return super.processFunctionsByName(name, processor)
     }
@@ -138,6 +136,11 @@ class FirClassSubstitutionScope(
             return original
         }
 
+        /*
+         * Member functions can't capture type parameters, so
+         *   it's safe to cast newTypeParameters to List<FirTypeParameter>
+         */
+        @Suppress("UNCHECKED_CAST")
         return createFakeOverrideFunction(
             session,
             member,
@@ -243,6 +246,10 @@ class FirClassSubstitutionScope(
             return original
         }
 
+        /*
+         * Member properties can't capture type parameters, so
+         *   it's safe to cast newTypeParameters to List<FirTypeParameter>
+         */
         @Suppress("UNCHECKED_CAST")
         return createFakeOverrideProperty(
             session,
@@ -350,7 +357,6 @@ class FirClassSubstitutionScope(
                     typeParameters += newTypeParameters
                 }
             }
-
         }
 
         fun createFakeOverrideFunction(
@@ -479,13 +485,11 @@ class FirClassSubstitutionScope(
                     typeParameters += newTypeParameters
                 }
             }
-
         }
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         useSiteMemberScope.processDeclaredConstructors process@{ original ->
-
             val constructor = fakeOverrideConstructors.getOrPut(original) { createFakeOverrideConstructor(original) }
             processor(constructor)
         }

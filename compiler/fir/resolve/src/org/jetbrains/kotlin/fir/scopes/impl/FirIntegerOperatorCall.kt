@@ -74,6 +74,6 @@ class FirIntegerOperatorCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder,
 
 }
 
-inline fun buildFunctionCall(init: FirIntegerOperatorCallBuilder.() -> Unit): FirIntegerOperatorCall {
+inline fun buildIntegerOperatorFunctionCall(init: FirIntegerOperatorCallBuilder.() -> Unit): FirIntegerOperatorCall {
     return FirIntegerOperatorCallBuilder().apply(init).build()
 }

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
 class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideChecker() {
-
     private val context: ConeTypeContext = session.typeContext
 
     private fun isEqualTypes(substitutedCandidateType: ConeKotlinType, substitutedBaseType: ConeKotlinType): Boolean {
@@ -114,7 +113,6 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
         return overrideCandidate.valueParameters.zip(baseDeclaration.valueParameters).all { (memberParam, selfParam) ->
             isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
         }
-
     }
 
     override fun isOverriddenProperty(

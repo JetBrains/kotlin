@@ -26,14 +26,6 @@ class KotlinScopeProvider(
         scopeSession: ScopeSession
     ) -> FirScope = { _, declaredMemberScope, _, _ -> declaredMemberScope }
 ) : FirScopeProvider() {
-
-
-    private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
-        if (type.typeArguments.isEmpty()) return ConeSubstitutor.Empty
-        val originalSubstitution = createSubstitution(symbol.fir.typeParameters, type.typeArguments, useSiteSession)
-        return substitutorByMap(originalSubstitution)
-    }
-
     override fun getUseSiteMemberScope(
         klass: FirClass<*>,
         useSiteSession: FirSession,
@@ -67,6 +59,12 @@ class KotlinScopeProvider(
                 decoratedDeclaredMemberScope
             )
         }
+    }
+
+    private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
+        if (type.typeArguments.isEmpty()) return ConeSubstitutor.Empty
+        val originalSubstitution = createSubstitution(symbol.fir.typeParameters, type.typeArguments, useSiteSession)
+        return substitutorByMap(originalSubstitution)
     }
 
     override fun getStaticMemberScopeForCallables(
