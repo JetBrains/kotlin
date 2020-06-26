@@ -58,7 +58,7 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
         return if (target is ApplePhysicalDevice) "iphoneos" else "iphonesimulator"
     }
 
-    val iosBuildDirectory = "ios_build" // TODO: Allow configuration.
+    val iosBuildDirectory = "build/ios" // this directory is removed by Gradle clean command
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         AppleRunConfigurationEditor(project)
