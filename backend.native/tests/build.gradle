@@ -2365,17 +2365,20 @@ standaloneTest("custom_hook") {
     source = "runtime/exceptions/custom_hook.kt"
 }
 
-task runtime_math_exceptions(type: KonanLocalTest) {
+standaloneTest("runtime_math_exceptions") {
     enabled = (project.testTarget != 'wasm32')
     source = "stdlib_external/numbers/MathExceptionTest.kt"
+    flags = ['-tr']
 }
 
-task runtime_math(type: KonanLocalTest) {
+standaloneTest("runtime_math") {
     source = "stdlib_external/numbers/MathTest.kt"
+    flags = ['-tr']
 }
 
-task runtime_math_harmony(type: KonanLocalTest) {
+standaloneTest("runtime_math_harmony") {
     source = "stdlib_external/numbers/HarmonyMathTests.kt"
+    flags = ['-tr']
 }
 
 task catch3(type: KonanLocalTest) {
