@@ -5,20 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
-import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
-import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
-import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
-import org.jetbrains.kotlin.gradle.util.*
-import org.junit.Assume.assumeFalse
+import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
-import java.io.File
-import java.util.zip.ZipFile
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class DukatIntegrationIT : BaseGradleIT() {
     @Test
@@ -117,10 +105,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         project.build("generateExternalsIntegrated") {
             assertSuccessful()
 
-            assertTrue {
-                fileInWorkingDir(externalSrcs).listFiles()?.size == 1
-            }
-            assertFileExists("$externalSrcs/index.module_decamelize.kt")
+            assertSingleFileExists(externalSrcs, "index.module_decamelize.kt")
         }
     }
 
