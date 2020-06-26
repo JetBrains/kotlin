@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -284,6 +285,8 @@ class CallableReferencesCandidateFactory(
         unboundReceiverCount: Int,
         builtins: KotlinBuiltIns
     ): CallableReferenceAdaptation? {
+        if (callComponents.languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_4) return null
+
         val inputOutputTypes = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType) ?: return null
 
         val expectedArgumentCount = inputOutputTypes.inputTypes.size - unboundReceiverCount
