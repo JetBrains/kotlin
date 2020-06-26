@@ -2072,6 +2072,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/exactAnnotation.kt");
             }
 
+            @TestMetadata("exactAnnotationWithUpperBoundConstraint.kt")
+            public void testExactAnnotationWithUpperBoundConstraint() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/exactAnnotationWithUpperBoundConstraint.kt");
+            }
+
             @TestMetadata("explicitTypeArgumentAsValidInputType.kt")
             public void testExplicitTypeArgumentAsValidInputType() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/explicitTypeArgumentAsValidInputType.kt");
