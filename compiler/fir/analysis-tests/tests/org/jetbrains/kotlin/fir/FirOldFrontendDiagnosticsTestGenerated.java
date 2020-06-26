@@ -8014,6 +8014,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/funInterface/noCompatibilityResolveForFunInterfaces.kt");
         }
 
+        @TestMetadata("prohibitFunInterfaceConstructorReferences.kt")
+        public void testProhibitFunInterfaceConstructorReferences() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/prohibitFunInterfaceConstructorReferences.kt");
+        }
+
         @TestMetadata("resolveFunInterfaceWithoutMainMethod.kt")
         public void testResolveFunInterfaceWithoutMainMethod() throws Exception {
             runTest("compiler/testData/diagnostics/tests/funInterface/resolveFunInterfaceWithoutMainMethod.kt");
