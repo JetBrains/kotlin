@@ -10,7 +10,13 @@ plugins {
 jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
-val builtins by configurations.creating
+val builtins by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 
 val runtime by configurations
 val runtimeJar by configurations.creating {

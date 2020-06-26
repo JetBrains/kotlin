@@ -145,6 +145,7 @@ val libraries by configurations.creating {
 
 val jpsPlugin by configurations.creating {
     attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
     }
 }

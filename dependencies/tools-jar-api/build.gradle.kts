@@ -10,6 +10,14 @@ plugins {
     base
 }
 
+val runtimeElements by configurations.creating {
+    isCanBeResolved = false
+    isCanBeConsumed = true
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
+
 val JDK_18: String by rootProject.extra
 val toolsJarFile = toolsJarFile(jdkHome = File(JDK_18)) ?: error("Couldn't find tools.jar in $JDK_18")
 
@@ -75,4 +83,4 @@ val jar = tasks.register<Jar>("jar") {
     }
 }
 
-artifacts.add("default", jar)
+artifacts.add(runtimeElements.name, jar)

@@ -365,6 +365,15 @@ allprojects {
         }
     }
 
+    configurations.maybeCreate("embeddedElements").apply {
+        extendsFrom(configurations["embedded"])
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named("embedded-java-runtime"))
+        }
+    }
+
     jvmTarget = defaultJvmTarget
     javaHome = defaultJavaHome
 

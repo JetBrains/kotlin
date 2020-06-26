@@ -103,20 +103,33 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         apply(mapOf("plugin" to "idea"))
         // Make Idea import embedded configuration as transitive dependency for some configurations
         afterEvaluate {
+            val jpsBuildTestDependencies = configurations.maybeCreate("jpsBuildTestDependencies").apply {
+                isCanBeConsumed = false
+                isCanBeResolved = true
+                attributes {
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named("embedded-java-runtime"))
+                }
+            }
+
             listOf(
                 "testCompile",
                 "testCompileOnly",
                 "testRuntime",
                 "testRuntimeOnly"
             ).forEach { configurationName ->
-                val dependencyProjects = configurations
-                    .findByName(configurationName)
+                val configuration = configurations.findByName(configurationName)
+
+                configuration?.apply {
+                    extendsFrom(jpsBuildTestDependencies)
+                }
+
+                val dependencyProjects = configuration
                     ?.dependencies
                     ?.mapNotNull { (it as? ProjectDependency)?.dependencyProject }
 
                 dependencies {
                     dependencyProjects?.forEach {dependencyProject ->
-                        add(configurationName, project(dependencyProject.path, configuration = "embedded"))
+                        add(jpsBuildTestDependencies.name, project(dependencyProject.path))
                     }
                 }
             }

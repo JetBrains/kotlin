@@ -41,7 +41,11 @@ sourceSets {
 configurations {
     commonSources
     longRunningTestCompile.extendsFrom(testCompile)
-    builtins
+    builtins {
+        attributes {
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
+        }
+    }
     compileOnly.extendsFrom(builtins)
 }
 
