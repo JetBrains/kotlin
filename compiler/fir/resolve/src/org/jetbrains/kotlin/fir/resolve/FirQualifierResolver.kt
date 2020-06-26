@@ -12,7 +12,5 @@ import org.jetbrains.kotlin.name.ClassId
 
 interface FirQualifierResolver : FirSessionComponent {
     fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): FirClassifierSymbol<*>?
-
     fun resolveSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>?
 }
-

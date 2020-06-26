@@ -664,7 +664,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                         inferenceComponents.ctx.commonSuperTypeOrNull(returnTypes) ?: session.builtinTypes.unitType.coneTypeUnsafe()
                     )
                 )
-                af.replaceTypeRef(af.constructFunctionalTypeRef(session))
+                af.replaceTypeRef(af.constructFunctionalTypeRef())
                 af.addReturn().compose()
             }
             is ResolutionMode.WithStatus -> {

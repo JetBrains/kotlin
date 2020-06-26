@@ -47,6 +47,5 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
         return null
     }
 
-    private fun List<FirQualifierPart>.toFqNameUnsafe() = toFqName().toUnsafe()
     private fun List<FirQualifierPart>.toFqName() = fold(FqName.ROOT) { a, b -> a.child(b.name) }
 }

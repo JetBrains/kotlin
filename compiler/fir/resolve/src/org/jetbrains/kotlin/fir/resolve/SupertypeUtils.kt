@@ -48,10 +48,6 @@ val USE_SITE = scopeSessionKey<FirClassSymbol<*>, FirTypeScope>()
 
 data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<FirClassLikeSymbol<*>, FirClassSubstitutionScope>()
 
-fun FirClassSymbol<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
-    return this.fir.buildUseSiteMemberScope(useSiteSession, builder)
-}
-
 fun FirClass<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
     return this.unsubstitutedScope(useSiteSession, builder)
 }

@@ -46,10 +46,9 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
     ): FirClassifierSymbol<*>? {
         return when (typeRef) {
             is FirResolvedTypeRef -> typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag?.let(symbolProvider::getSymbolByLookupTag)
+
             is FirUserTypeRef -> {
-
                 val qualifierResolver = session.qualifierResolver
-
                 var resolvedSymbol: FirClassifierSymbol<*>? = null
                 scope.processClassifiersByName(typeRef.qualifier.first().name) { symbol ->
                     if (resolvedSymbol != null) return@processClassifiersByName
@@ -72,9 +71,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
                 // TODO: Imports
                 resolvedSymbol ?: qualifierResolver.resolveSymbol(typeRef.qualifier)
             }
+
             is FirImplicitBuiltinTypeRef -> {
                 resolveBuiltInQualified(typeRef.id, session)
             }
+
             else -> null
         }
     }
@@ -123,18 +124,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
     ): ConeKotlinType {
         return when (typeRef) {
             is FirResolvedTypeRef -> typeRef.type
-            is FirUserTypeRef -> {
-                resolveUserType(typeRef, resolveToSymbol(typeRef, scope))
-            }
-            is FirFunctionTypeRef -> {
-                createFunctionalType(typeRef)
-            }
-            is FirDelegatedTypeRef -> {
-                resolveType(typeRef.typeRef, scope)
-            }
-            is FirDynamicTypeRef -> {
-                ConeKotlinErrorType("Not supported: ${typeRef::class.simpleName}")
-            }
+            is FirUserTypeRef -> resolveUserType(typeRef, resolveToSymbol(typeRef, scope))
+            is FirFunctionTypeRef -> createFunctionalType(typeRef)
+            is FirDelegatedTypeRef -> resolveType(typeRef.typeRef, scope)
+            is FirDynamicTypeRef -> ConeKotlinErrorType("Not supported: ${typeRef::class.simpleName}")
             else -> error("!")
         }
     }

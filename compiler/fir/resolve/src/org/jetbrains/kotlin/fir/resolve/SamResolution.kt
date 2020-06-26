@@ -196,7 +196,6 @@ class FirSamResolverImpl(
                 isVararg = false
             }
 
-
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }
     }
@@ -224,7 +223,6 @@ private fun FirRegularClass.getSingleAbstractMethodOrNull(
     if (classKind != ClassKind.INTERFACE || hasMoreThenOneAbstractFunctionOrHasAbstractProperty()) return null
 
     val samCandidateNames = computeSamCandidateNames(session)
-
     return findSingleAbstractMethodByNames(session, scopeSession, samCandidateNames)
 }
 
@@ -332,7 +330,6 @@ fun FirSimpleFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
         }
         else -> error("Unexpected method name: $name")
     }
-
 }
 
 private fun FirValueParameter.hasTypeOf(classId: ClassId, allowNullable: Boolean): Boolean {

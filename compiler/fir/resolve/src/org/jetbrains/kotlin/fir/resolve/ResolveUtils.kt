@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) -> VA, postCompute: (VA) -> Unit): V {
     val value = get(key)
@@ -111,9 +110,8 @@ fun ConeClassLikeType.directExpansionType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeType,
 ): ConeClassLikeType? {
-    val typeAlias = lookupTag
-        .toSymbol(useSiteSession)
-        ?.safeAs<FirTypeAliasSymbol>()?.fir ?: return null
+    val typeAliasSymbol = lookupTag.toSymbol(useSiteSession) as? FirTypeAliasSymbol ?: return null
+    val typeAlias = typeAliasSymbol.fir
 
     val resultType = expandedConeType(typeAlias)?.applyNullabilityFrom(this) ?: return null
 
@@ -143,6 +141,8 @@ private fun mapTypeAliasArguments(
             val symbol = (type as? ConeTypeParameterType)?.lookupTag?.toSymbol() ?: return super.substituteArgument(projection)
             val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection)
             val mappedType = (mappedProjection as? ConeKotlinTypeProjection)?.type ?: return mappedProjection
+
+            @Suppress("MoveVariableDeclarationIntoWhen")
             val resultingKind = mappedProjection.kind + projection.kind
             return when (resultingKind) {
                 ProjectionKind.STAR -> ConeStarProjection
@@ -209,7 +209,7 @@ fun FirClassifierSymbol<*>.constructType(
 private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
 
-fun FirFunction<*>.constructFunctionalTypeRef(session: FirSession, isSuspend: Boolean = false): FirResolvedTypeRef {
+fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResolvedTypeRef {
     val receiverTypeRef = when (this) {
         is FirSimpleFunction -> receiverTypeRef
         is FirAnonymousFunction -> receiverTypeRef
@@ -323,7 +323,6 @@ internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultTy
 }
 
 fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirResolvedTypeRef {
-
     return when (val newCallee = access.calleeReference) {
         is FirErrorNamedReference ->
             buildErrorTypeRef {

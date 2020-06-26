@@ -77,7 +77,7 @@ class PersistentImplicitReceiverStack private constructor(
         return originalTypes[index]
     }
 
-    // This method is only used from DFA and it's in some sense breaks persistency contracts of the data structure
+    // This method is only used from DFA and it's in some sense breaks persistence contracts of the data structure
     // But it's ok since DFA handles everything properly yet, but still may be it should be rewritten somehow
     fun replaceReceiverType(index: Int, type: ConeKotlinType) {
         assert(index >= 0 && index < stack.size)

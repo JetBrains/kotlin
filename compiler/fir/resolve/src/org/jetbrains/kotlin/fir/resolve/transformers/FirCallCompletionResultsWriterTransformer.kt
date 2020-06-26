@@ -392,7 +392,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         if (needUpdateLambdaType) {
             anonymousFunction.replaceTypeRef(
-                anonymousFunction.constructFunctionalTypeRef(session, isSuspend = expectedType?.isSuspendFunctionType(session) == true)
+                anonymousFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
             )
         }
 
@@ -402,7 +402,7 @@ class FirCallCompletionResultsWriterTransformer(
             val blockType = resultFunction.body?.typeRef?.coneTypeSafe<ConeKotlinType>()
             resultFunction.replaceReturnTypeRef(resultFunction.returnTypeRef.withReplacedConeType(blockType))
             resultFunction.replaceTypeRef(
-                resultFunction.constructFunctionalTypeRef(session, isSuspend = expectedType?.isSuspendFunctionType(session) == true)
+                resultFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
             )
         }
         return result

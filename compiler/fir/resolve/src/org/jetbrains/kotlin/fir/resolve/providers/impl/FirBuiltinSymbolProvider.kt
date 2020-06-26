@@ -49,84 +49,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
 class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider() {
-    private class BuiltInsPackageFragment(
-        stream: InputStream, val fqName: FqName, val session: FirSession,
-        val kotlinScopeProvider: KotlinScopeProvider,
-    ) {
-        lateinit var version: BuiltInsBinaryVersion
 
-        val packageProto: ProtoBuf.PackageFragment = run {
+    private data class SyntheticFunctionalInterfaceSymbolKey(val kind: FunctionClassDescriptor.Kind, val arity: Int)
 
-            version = BuiltInsBinaryVersion.readFrom(stream)
-
-            if (!version.isCompatible()) {
-                // TODO: report a proper diagnostic
-                throw UnsupportedOperationException(
-                    "Kotlin built-in definition format version is not supported: " +
-                            "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
-                            "Please update Kotlin",
-                )
-            }
-
-            ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
-        }
-
-        private val nameResolver = NameResolverImpl(packageProto.strings, packageProto.qualifiedNames)
-
-        val classDataFinder = ProtoBasedClassDataFinder(packageProto, nameResolver, version) { SourceElement.NO_SOURCE }
-
-        private val memberDeserializer by lazy {
-            FirDeserializationContext.createForPackage(
-                fqName, packageProto.`package`, nameResolver, session,
-                FirBuiltinAnnotationDeserializer(session),
-                FirConstDeserializer(session),
-                containerSource = null
-            ).memberDeserializer
-        }
-
-        val lookup = mutableMapOf<ClassId, FirRegularClassSymbol>()
-
-        fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? =
-            findAndDeserializeClass(classId)
-
-        private fun findAndDeserializeClass(
-            classId: ClassId,
-            parentContext: FirDeserializationContext? = null,
-        ): FirRegularClassSymbol? {
-            val classIdExists = classId in classDataFinder.allClassIds
-            if (!classIdExists) return null
-            return lookup.getOrPut(classId, { FirRegularClassSymbol(classId) }) { symbol ->
-                val classData = classDataFinder.findClassData(classId)!!
-                val classProto = classData.classProto
-
-                deserializeClassToSymbol(
-                    classId, classProto, symbol, nameResolver, session,
-                    null, kotlinScopeProvider, parentContext,
-                    null,
-                    this::findAndDeserializeClass,
-                )
-            }
-        }
-
-        fun getTopLevelCallableSymbols(name: Name): List<FirCallableSymbol<*>> {
-            return packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
-                memberDeserializer.loadFunction(it).symbol
-            }
-        }
-
-        fun getAllCallableNames(): Set<Name> {
-            return packageProto.`package`.functionList.mapTo(mutableSetOf()) { nameResolver.getName(it.name) }
-        }
-
-        fun getAllClassNames(): Set<Name> {
-            return classDataFinder.allClassIds.mapTo(mutableSetOf()) { it.shortClassName }
-        }
-    }
-
-    override fun getPackage(fqName: FqName): FqName? {
-        if (allPackageFragments.containsKey(fqName)) return fqName
-        return null
-    }
+    private val allPackageFragments = loadBuiltIns().groupBy { it.fqName }
+    private val syntheticFunctionalInterfaceSymbols = mutableMapOf<SyntheticFunctionalInterfaceSymbolKey, FirRegularClassSymbol>()
 
     private fun loadBuiltIns(): List<BuiltInsPackageFragment> {
         val classLoader = this::class.java.classLoader
@@ -140,14 +67,16 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
         }
     }
 
-    private val allPackageFragments = loadBuiltIns().groupBy { it.fqName }
+    override fun getPackage(fqName: FqName): FqName? {
+        if (allPackageFragments.containsKey(fqName)) return fqName
+        return null
+    }
 
-    private data class SyntheticFunctionalInterfaceSymbolKey(val kind: FunctionClassDescriptor.Kind, val arity: Int)
-
-    private val syntheticFunctionalInterfaceSymbols = mutableMapOf<SyntheticFunctionalInterfaceSymbolKey, FirRegularClassSymbol>()
-
-
-    private fun FunctionClassDescriptor.Kind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
+    override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
+        return allPackageFragments[classId.packageFqName]?.firstNotNullResult {
+            it.getClassLikeSymbolByFqName(classId)
+        } ?: trySyntheticFunctionalInterface(classId)
+    }
 
     private fun trySyntheticFunctionalInterface(classId: ClassId): FirRegularClassSymbol? {
         return with(classId) {
@@ -306,11 +235,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
         return (invoke as FirSimpleFunction).symbol as? FirNamedFunctionSymbol
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
-        return allPackageFragments[classId.packageFqName]?.firstNotNullResult {
-            it.getClassLikeSymbolByFqName(classId)
-        } ?: trySyntheticFunctionalInterface(classId)
-    }
+    private fun FunctionClassDescriptor.Kind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         return allPackageFragments[packageFqName]?.flatMap {
@@ -346,15 +271,88 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
         }
     }
 
+    override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
+        return getClassDeclarations(classId).filterIsInstance<FirRegularClass>().mapTo(mutableSetOf()) { it.name }
+    }
+
     private fun getClassDeclarations(classId: ClassId): List<FirDeclaration> {
         return findRegularClass(classId)?.declarations ?: emptyList()
     }
 
-
     private fun findRegularClass(classId: ClassId): FirRegularClass? =
         getClassLikeSymbolByFqName(classId)?.fir
 
-    override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
-        return getClassDeclarations(classId).filterIsInstance<FirRegularClass>().mapTo(mutableSetOf()) { it.name }
+    private class BuiltInsPackageFragment(
+        stream: InputStream, val fqName: FqName, val session: FirSession,
+        val kotlinScopeProvider: KotlinScopeProvider,
+    ) {
+        lateinit var version: BuiltInsBinaryVersion
+
+        val packageProto: ProtoBuf.PackageFragment = run {
+
+            version = BuiltInsBinaryVersion.readFrom(stream)
+
+            if (!version.isCompatible()) {
+                // TODO: report a proper diagnostic
+                throw UnsupportedOperationException(
+                    "Kotlin built-in definition format version is not supported: " +
+                            "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
+                            "Please update Kotlin",
+                )
+            }
+
+            ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
+        }
+
+        private val nameResolver = NameResolverImpl(packageProto.strings, packageProto.qualifiedNames)
+
+        val classDataFinder = ProtoBasedClassDataFinder(packageProto, nameResolver, version) { SourceElement.NO_SOURCE }
+
+        private val memberDeserializer by lazy {
+            FirDeserializationContext.createForPackage(
+                fqName, packageProto.`package`, nameResolver, session,
+                FirBuiltinAnnotationDeserializer(session),
+                FirConstDeserializer(session),
+                containerSource = null
+            ).memberDeserializer
+        }
+
+        private val lookup = mutableMapOf<ClassId, FirRegularClassSymbol>()
+
+        fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? =
+            findAndDeserializeClass(classId)
+
+        private fun findAndDeserializeClass(
+            classId: ClassId,
+            parentContext: FirDeserializationContext? = null,
+        ): FirRegularClassSymbol? {
+            val classIdExists = classId in classDataFinder.allClassIds
+            if (!classIdExists) return null
+            return lookup.getOrPut(classId, { FirRegularClassSymbol(classId) }) { symbol ->
+                val classData = classDataFinder.findClassData(classId)!!
+                val classProto = classData.classProto
+
+                deserializeClassToSymbol(
+                    classId, classProto, symbol, nameResolver, session,
+                    null, kotlinScopeProvider, parentContext,
+                    null,
+                    this::findAndDeserializeClass,
+                )
+            }
+        }
+
+        fun getTopLevelCallableSymbols(name: Name): List<FirCallableSymbol<*>> {
+            return packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
+                memberDeserializer.loadFunction(it).symbol
+            }
+        }
+
+        fun getAllCallableNames(): Set<Name> {
+            return packageProto.`package`.functionList.mapTo(mutableSetOf()) { nameResolver.getName(it.name) }
+        }
+
+        fun getAllClassNames(): Set<Name> {
+            return classDataFinder.allClassIds.mapTo(mutableSetOf()) { it.shortClassName }
+        }
     }
 }
