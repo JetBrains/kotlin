@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -170,14 +171,22 @@ class Fir2IrClassifierStorage(
         return irClass
     }
 
+    private fun declareIrTypeAlias(signature: IdSignature?, factory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias {
+        if (signature == null) {
+            val descriptor = WrappedTypeAliasDescriptor()
+            return symbolTable.declareTypeAlias(descriptor, factory).apply { descriptor.bind(this) }
+        }
+        return symbolTable.declareTypeAlias(signature, { Fir2IrTypeAliasSymbol(signature) }, factory)
+    }
+
     fun registerTypeAlias(
         typeAlias: FirTypeAlias,
         parent: IrFile
     ): IrTypeAlias {
-        val signature = signatureComposer.composeSignature(typeAlias)!!
+        val signature = signatureComposer.composeSignature(typeAlias)
         preCacheTypeParameters(typeAlias)
         return typeAlias.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareTypeAlias(signature, { Fir2IrTypeAliasSymbol(signature) }) { symbol ->
+            declareIrTypeAlias(signature) { symbol ->
                 IrTypeAliasImpl(
                     startOffset, endOffset, symbol,
                     typeAlias.name, typeAlias.visibility,
