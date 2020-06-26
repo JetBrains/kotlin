@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.modality
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.TypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
@@ -29,6 +30,7 @@ class ConeOverloadConflictResolver(
     specificityComparator: TypeSpecificityComparator,
     inferenceComponents: InferenceComponents
 ) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents) {
+    private val overrideChecker = FirStandardOverrideChecker(inferenceComponents.session)
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
@@ -42,9 +44,76 @@ class ConeOverloadConflictResolver(
             else
                 candidates
 
+        // If one is an override of another, that overridden one is more specific.
+        val noOverrides = filterOverrides(fixedCandidates)
+
+        if (noOverrides.size == 1) return noOverrides
+
         return chooseMaximallySpecificCandidates(
-            fixedCandidates, discriminateGenerics, discriminateAbstracts, discriminateSAMs = true
+            noOverrides, discriminateGenerics, discriminateAbstracts, discriminateSAMs = true
         )
+    }
+
+    private fun filterOverrides(candidates: Set<Candidate>): Set<Candidate> {
+        val result = mutableSetOf<Candidate>()
+        outer@ for (candidate in candidates) {
+            val it = result.iterator()
+            while (it.hasNext()) {
+                val other = it.next()
+                // If anything that's been visited is an override of the current one, this one should be filtered out.
+                if (other.isOverride(candidate)) {
+                    continue@outer
+                }
+                // If the current one is an override of the other one that's been visited, that one should be discarded.
+                if (candidate.isOverride(other)) {
+                    it.remove()
+                }
+            }
+            result.add(candidate)
+        }
+
+        assert(result.isNotEmpty()) {
+            "All candidates filtered out from $candidates"
+        }
+        return result
+    }
+
+    private val FirSimpleFunction.matchesEqualsSignature: Boolean
+        get() = valueParameters.size == 1 &&
+                valueParameters[0].returnTypeRef.isNullableAny &&
+                returnTypeRef.isBoolean
+
+    private val FirSimpleFunction.matchesHashCodeSignature: Boolean
+        get() = valueParameters.isEmpty() &&
+                returnTypeRef.isInt
+
+    private val FirSimpleFunction.matchesToStringSignature: Boolean
+        get() = valueParameters.isEmpty() &&
+                returnTypeRef.isString
+
+    private val FirSimpleFunction.matchesAnySyntheticMemberSignatures: Boolean
+        get() = (this.name == equalsName && matchesEqualsSignature) ||
+                (this.name == hashCodeName && matchesHashCodeSignature) ||
+                (this.name == toStringName && matchesToStringSignature)
+
+    private fun Candidate.isOverride(other: Candidate): Boolean {
+        val thisFunction = (this.symbol.fir as? FirSimpleFunction) ?: return false
+        val otherFunction = (other.symbol.fir as? FirSimpleFunction) ?: return false
+        // Make sure this is indeed an override of the other according to function signatures.
+        if (!overrideChecker.isOverriddenFunction(thisFunction, otherFunction)) {
+            return false
+        }
+        // Overload conflicts may come from unqualified `super`. In that case, receiver type is null, and the above override checking,
+        // which requires equal receiver types, regard those null receiver types are equivalent as well.
+        // Such ambiguity should remain as-is (to reject ambiguous super calls). One exception, though, is synthetic members:
+        // If the other is synthetic while this one is not, we can safely choose this one as the most specific call target.
+        if (thisFunction.receiverTypeRef == null && otherFunction.receiverTypeRef == null) {
+            // TODO: are these good enough / equivalent to what [OverloadingConflictResolver] is doing with [SyntheticMemberDescriptor]?
+            return other.symbol is FirSyntheticFunctionSymbol ||
+                    otherFunction.matchesAnySyntheticMemberSignatures
+        }
+        // Otherwise, i.e., if either function's receiver type is not null, use the override checker's result.
+        return true
     }
 
     private fun chooseCandidatesWithMostSpecificInvokeReceiver(candidates: Set<Candidate>): Set<Candidate> {
@@ -171,6 +240,12 @@ class ConeOverloadConflictResolver(
         }
 
         return true
+    }
+
+    companion object {
+        private val equalsName = Name.identifier("equals")
+        private val hashCodeName = Name.identifier("hashCode")
+        private val toStringName = Name.identifier("toString")
     }
 }
 

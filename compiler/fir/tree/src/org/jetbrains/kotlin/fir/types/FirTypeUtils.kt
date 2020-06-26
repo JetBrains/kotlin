@@ -27,12 +27,16 @@ val FirTypeRef.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any
 val FirTypeRef.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, false)
 val FirTypeRef.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, true)
 val FirTypeRef.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
-val FirTypeRef.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
 val FirTypeRef.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
 val FirTypeRef.isArrayType: Boolean
     get() =
         isBuiltinType(StandardClassIds.Array, false) ||
                 StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
+
+val FirTypeRef.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
+val FirTypeRef.isInt: Boolean get() = isBuiltinType(StandardClassIds.Int, false)
+
+val FirTypeRef.isString: Boolean get() = isBuiltinType(StandardClassIds.String, false)
 
 private fun FirTypeRef.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean {
     val type = when (this) {

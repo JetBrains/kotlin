@@ -111,10 +111,16 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
 
         if (!isEqualReceiverTypes(overrideCandidate.receiverTypeRef, baseDeclaration.receiverTypeRef, substitutor)) return false
 
-        return overrideCandidate.valueParameters.zip(baseDeclaration.valueParameters).all { (memberParam, selfParam) ->
-            isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
+        if (overrideCandidate.valueParameters.zip(baseDeclaration.valueParameters).any { (memberParam, selfParam) ->
+                !isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
+            }) {
+            return false
         }
 
+        // Even though signatures are equivalent, consider multi platform.
+        // That is, when one is `actual` and the other is `expect`, it's actually not overridden.
+        // To be conservative, skip determining the overridden relation for actual/expect candidate.
+        return !overrideCandidate.isActual && !overrideCandidate.isExpect
     }
 
     override fun isOverriddenProperty(
