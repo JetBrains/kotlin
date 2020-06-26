@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -119,20 +119,17 @@ internal fun buildCodeToInline(
     isBlockBody: Boolean,
     editor: Editor?
 ): CodeToInline? {
-    val bodyCopy = bodyOrInitializer.copied()
-
-    val expectedType = if (!isBlockBody && isReturnTypeExplicit)
-        returnType ?: TypeUtils.NO_EXPECTED_TYPE
-    else
-        TypeUtils.NO_EXPECTED_TYPE
-
     val scope by lazy { bodyOrInitializer.getResolutionScope() }
     fun analyzeExpressionInContext(expression: KtExpression): BindingContext = expression.analyzeInContext(
         scope = scope,
         contextExpression = bodyOrInitializer,
-        expectedType = expectedType
+        expectedType = if (isReturnTypeExplicit && (!isBlockBody || expression.parent is KtReturnExpression))
+            returnType ?: TypeUtils.NO_EXPECTED_TYPE
+        else
+            TypeUtils.NO_EXPECTED_TYPE
     )
 
+    val bodyCopy = bodyOrInitializer.copied()
     val descriptor = declaration.unsafeResolveToDescriptor()
     val builder = CodeToInlineBuilder(descriptor as CallableDescriptor, declaration.getResolutionFacade())
     if (isBlockBody) {
@@ -166,7 +163,7 @@ internal fun buildCodeToInline(
         }
 
         return builder.prepareCodeToInline(
-            lastReturn?.returnedExpression?.copied(),
+            lastReturn?.returnedExpression,
             statements.dropLast(returnStatements.size), ::analyzeExpressionInContext, reformat = true
         )
     } else {

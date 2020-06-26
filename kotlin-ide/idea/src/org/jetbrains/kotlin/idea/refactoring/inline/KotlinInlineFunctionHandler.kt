@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,16 +15,17 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class KotlinInlineFunctionHandler : InlineActionHandler() {
     override fun isEnabledForLanguage(language: Language) = language == KotlinLanguage.INSTANCE
@@ -47,10 +48,11 @@ class KotlinInlineFunctionHandler : InlineActionHandler() {
         }
 
         val descriptor = element.unsafeResolveToDescriptor() as SimpleFunctionDescriptor
+        val returnType = descriptor.returnType
         val codeToInline = buildCodeToInline(
             element,
-            descriptor.returnType,
-            element.hasDeclaredReturnType(),
+            returnType,
+            element.hasDeclaredReturnType() || (element.hasBlockBody() && returnType?.isUnit() == true),
             element.bodyExpression!!,
             element.hasBlockBody(),
             editor

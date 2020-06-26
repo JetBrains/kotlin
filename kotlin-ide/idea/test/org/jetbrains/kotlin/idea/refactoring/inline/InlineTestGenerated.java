@@ -427,6 +427,26 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("idea/testData/refactoring/inline/function/returnAtEnd/GenericTypeArgument2.kt");
             }
 
+            @TestMetadata("ImplicitGenericTypeInReturn.kt")
+            public void testImplicitGenericTypeInReturn() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/returnAtEnd/ImplicitGenericTypeInReturn.kt");
+            }
+
+            @TestMetadata("ImplicitGenericTypeInReturnWithInvalidStatementBefore.kt")
+            public void testImplicitGenericTypeInReturnWithInvalidStatementBefore() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/returnAtEnd/ImplicitGenericTypeInReturnWithInvalidStatementBefore.kt");
+            }
+
+            @TestMetadata("ImplicitGenericTypeInReturnWithOtherStatementBefore.kt")
+            public void testImplicitGenericTypeInReturnWithOtherStatementBefore() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/returnAtEnd/ImplicitGenericTypeInReturnWithOtherStatementBefore.kt");
+            }
+
+            @TestMetadata("ImplicitUnitGenericTypeInReturn.kt")
+            public void testImplicitUnitGenericTypeInReturn() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/returnAtEnd/ImplicitUnitGenericTypeInReturn.kt");
+            }
+
             @TestMetadata("InnerFunction.kt")
             public void testInnerFunction() throws Exception {
                 runTest("testData/refactoring/inline/function/returnAtEnd/InnerFunction.kt");
@@ -435,6 +455,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("InnerFunction2.kt")
             public void testInnerFunction2() throws Exception {
                 runTest("testData/refactoring/inline/function/returnAtEnd/InnerFunction2.kt");
+            }
+
+            @TestMetadata("Kt26705.kt")
+            public void testKt26705() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/returnAtEnd/Kt26705.kt");
             }
 
             @TestMetadata("MultipleStatements.kt")
