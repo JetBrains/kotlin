@@ -46,7 +46,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         dependenciesLocation: DependenciesLocation
     ) {
         val project = Project(
-            projectName = "${dslType.value}-${dependenciesLocation.value}",
+            projectName = projectName(dslType, dependenciesLocation),
             directoryPrefix = "dukat-integration"
         )
         project.setupWorkingDir()
@@ -93,7 +93,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         dslType: DslType,
         dependenciesLocation: DependenciesLocation
     ) {
-        val projectName = "${dslType.value}-${dependenciesLocation.value}"
+        val projectName = projectName(dslType, dependenciesLocation)
         val project = Project(
             projectName = projectName,
             directoryPrefix = "dukat-integration"
@@ -145,7 +145,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         dslType: DslType,
         dependenciesLocation: DependenciesLocation
     ) {
-        val projectName = "${dslType.value}-${dependenciesLocation.value}"
+        val projectName = projectName(dslType, dependenciesLocation)
         val project = Project(
             projectName = projectName,
             directoryPrefix = "dukat-integration"
@@ -178,6 +178,12 @@ class DukatIntegrationIT : BaseGradleIT() {
             assertSingleFileExists(externalSrcs, "index.module_left-pad.kt")
         }
     }
+
+    private fun projectName(
+        dslType: DslType,
+        dependenciesLocation: DependenciesLocation
+    ): String =
+        "${dslType.value}-${dependenciesLocation.value}"
 
     private enum class DslType(
         val value: String
