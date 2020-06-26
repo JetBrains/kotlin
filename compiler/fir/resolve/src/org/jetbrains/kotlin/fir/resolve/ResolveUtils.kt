@@ -165,24 +165,19 @@ fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierS
 
 fun ConeTypeParameterLookupTag.toSymbol(): FirTypeParameterSymbol = this.symbol as FirTypeParameterSymbol
 
-fun FirClassifierSymbol<*>.constructType(
-    typeArguments: Array<ConeTypeProjection>,
-    isNullable: Boolean,
-    attributes: ConeAttributes = ConeAttributes.Empty
-): ConeLookupTagBasedType {
+fun FirClassifierSymbol<*>.constructType(typeArguments: Array<ConeTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
     return when (this) {
         is FirTypeParameterSymbol -> {
-            ConeTypeParameterTypeImpl(this.toLookupTag(), isNullable, attributes)
+            ConeTypeParameterTypeImpl(this.toLookupTag(), isNullable)
         }
         is FirClassSymbol -> {
-            ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
+            ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable)
         }
         is FirTypeAliasSymbol -> {
             ConeClassLikeTypeImpl(
                 this.toLookupTag(),
                 typeArguments = typeArguments,
                 isNullable = isNullable,
-                attributes = attributes
             )
         }
         else -> error("!")
@@ -196,9 +191,8 @@ fun FirClassifierSymbol<*>.constructType(
     parts: List<FirQualifierPart>,
     isNullable: Boolean,
     symbolOriginSession: FirSession,
-    attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeKotlinType =
-    constructType(parts.toTypeProjections(), isNullable, attributes)
+    constructType(parts.toTypeProjections(), isNullable)
         .also {
             val lookupTag = it.lookupTag
             if (lookupTag is ConeClassLikeLookupTagImpl && this is FirClassLikeSymbol<*>) {

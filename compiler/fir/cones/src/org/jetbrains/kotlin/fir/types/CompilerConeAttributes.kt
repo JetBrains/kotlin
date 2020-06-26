@@ -5,15 +5,10 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KClass
 
 object CompilerConeAttributes {
     object Exact : ConeAttribute<Exact>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.internal"), Name.identifier("Exact"))
-
         override fun union(other: Exact?): Exact? = null
         override fun intersect(other: Exact?): Exact? = null
         override fun isSubtypeOf(other: Exact?): Boolean = true
@@ -22,8 +17,6 @@ object CompilerConeAttributes {
     }
 
     object NoInfer : ConeAttribute<NoInfer>() {
-        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.internal"), Name.identifier("NoInfer"))
-
         override fun union(other: NoInfer?): NoInfer? = null
         override fun intersect(other: NoInfer?): NoInfer? = null
         override fun isSubtypeOf(other: NoInfer?): Boolean = true
