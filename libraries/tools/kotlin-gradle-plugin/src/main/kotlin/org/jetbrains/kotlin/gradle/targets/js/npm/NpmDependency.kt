@@ -16,6 +16,7 @@ import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInt
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.DEV
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
@@ -156,5 +157,8 @@ internal fun moduleName(directory: File): String {
 
     return directory.name
 }
+
+fun NpmDependency.isPublicDependency(): Boolean =
+    scope != DEV
 
 const val FILE_VERSION_PREFIX = "file:"

@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.google.gson.Gson
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
@@ -16,6 +19,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assume.assumeFalse
 import org.junit.Test
 import java.io.File
+import java.io.FileFilter
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -216,7 +220,10 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
 
 abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(jsIrBackend = irBackend)
+        super.defaultBuildOptions().copy(
+            jsIrBackend = irBackend,
+            jsCompilerType = if (irBackend) KotlinJsCompilerType.IR else KotlinJsCompilerType.LEGACY
+        )
 
     protected fun CompiledProject.checkIrCompilationMessage() {
         if (irBackend) {
@@ -599,6 +606,87 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
             assertFileExists("build/js/node_modules/file-dependency-2")
             assertFileExists("build/js/node_modules/file-dependency-3/index.js")
             assertFileExists("build/js/node_modules/42/package.json")
+        }
+    }
+
+    @Test
+    fun testPackageJsonWithPublicNpmDependencies() = with(Project("npm-dependencies")) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("jsJar") {
+            assertSuccessful()
+
+            val archive = fileInWorkingDir("build")
+                .resolve("libs")
+                .listFiles(FileFilter {
+                    it.extension == if (irBackend) KLIB_TYPE else "jar"
+                })!!
+                .single()
+
+            val zipFile = ZipFile(archive)
+            val packageJsonCandidates = zipFile.entries()
+                .asSequence()
+                .filter { it.name == NpmProject.PACKAGE_JSON }
+                .toList()
+
+            assertTrue("Expected existence of package.json in archive") {
+                packageJsonCandidates.size == 1
+            }
+
+            zipFile.getInputStream(packageJsonCandidates.single()).use {
+                it.reader().use {
+                    val packageJson = Gson().fromJson(it, PackageJson::class.java)
+                    assertTrue("There is no expected dev dependencies in package.json") {
+                        packageJson.devDependencies.isEmpty()
+                    }
+
+                    assertTrue("There is expected dependency \"@yworks/optimizer\": \"1.0.6\" in package.json") {
+                        val dependencies = packageJson.dependencies
+                        dependencies
+                            .containsKey("@yworks/optimizer") &&
+                                dependencies["@yworks/optimizer"] == "1.0.6"
+                    }
+
+                    assertTrue("There is expected peer dependency \"date-arithmetic\": \"4.1.0\" in package.json") {
+                        val peerDependencies = packageJson.peerDependencies
+                        peerDependencies
+                            .containsKey("date-arithmetic") &&
+                                peerDependencies["date-arithmetic"] == "4.1.0"
+                    }
+                }
+            }
+        }
+
+        val newGradleBuildScript = gradleBuildScript()
+            .useLines { lines ->
+                lines
+                    .filterNot {
+                        it.contains("npm", ignoreCase = true)
+                    }
+                    .joinToString("\n")
+            }
+        gradleBuildScript().modify {
+            newGradleBuildScript
+        }
+
+        build("jsJar") {
+            assertSuccessful()
+            val archive = fileInWorkingDir("build")
+                .resolve("libs")
+                .listFiles(FileFilter {
+                    it.extension == if (irBackend) KLIB_TYPE else "jar"
+                })!!
+                .single()
+
+            val packageJsonCandidates = ZipFile(archive).entries()
+                .asSequence()
+                .filter { it.name == NpmProject.PACKAGE_JSON }
+                .toList()
+
+            assertTrue("Expected absence of package.json in ${archive.name}") {
+                packageJsonCandidates.isEmpty()
+            }
         }
     }
 
