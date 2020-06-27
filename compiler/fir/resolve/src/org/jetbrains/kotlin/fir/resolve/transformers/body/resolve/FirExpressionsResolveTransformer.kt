@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
+import org.jetbrains.kotlin.fir.resolve.calls.mapArguments
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
@@ -641,6 +642,14 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             (annotationCall.transformChildren(transformer, data) as FirAnnotationCall).also {
                 // TODO: it's temporary incorrect solution until we design resolve and completion for annotation calls
                 it.argumentList.transformArguments(integerLiteralTypeApproximator, null)
+                if (it.arguments.any { arg -> arg is FirNamedArgumentExpression }) {
+                    annotationCall.getCorrespondingConstructorReferenceOrNull(session)?.let { calleeReference ->
+                        val argumentMapping =
+                            mapArguments(it.arguments, calleeReference.resolvedSymbol.fir as FirFunction<*>)
+                                .toArgumentToParameterMapping()
+                        it.replaceArgumentList(buildResolvedArgumentList(argumentMapping))
+                    }
+                }
                 it.replaceResolveStatus(status)
                 dataFlowAnalyzer.exitAnnotationCall(it)
             }.compose()

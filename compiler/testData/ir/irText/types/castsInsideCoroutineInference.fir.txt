@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
         CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
   FUN name:onCompletion visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.onCompletion>, action:kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit>) returnType:IrErrorType
     annotations:
-      Deprecated(message = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:HIDDEN' type=kotlin.DeprecationLevel, replaceWith = 'binary compatibility with a version w/o FlowCollector receiver', level = <null>)
+      Deprecated(message = 'binary compatibility with a version w/o FlowCollector receiver', replaceWith = <null>, level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:HIDDEN' type=kotlin.DeprecationLevel)
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Flow<T of <root>.onCompletion>
     VALUE_PARAMETER name:action index:0 type:kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit>

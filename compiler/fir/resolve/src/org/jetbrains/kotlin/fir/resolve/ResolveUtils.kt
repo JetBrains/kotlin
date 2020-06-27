@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
@@ -462,3 +463,16 @@ private fun FirQualifiedAccess.expressionTypeOrUnitForAssignment(): ConeKotlinTy
     }
     return StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false)
 }
+
+fun FirAnnotationCall.getCorrespondingConstructorReferenceOrNull(session: FirSession): FirResolvedNamedReference? =
+    annotationTypeRef.coneTypeSafe<ConeKotlinType>()?.classId?.let {
+        (session.firSymbolProvider.getClassLikeSymbolByFqName(it) as? FirRegularClassSymbol)?.fir
+            ?.getPrimaryConstructorIfAny()
+            ?.let { annotationConstructor ->
+                buildResolvedNamedReference {
+                    source = this@getCorrespondingConstructorReferenceOrNull.source
+                    name = it.shortClassName
+                    resolvedSymbol = annotationConstructor.symbol
+                }
+            }
+    }
