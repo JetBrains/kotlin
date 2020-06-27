@@ -20,6 +20,8 @@ import androidx.compose.plugins.kotlin.compiler.lower.ComposerIntrinsicTransform
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerLambdaMemoization
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposableFunctionBodyTransformer
+import androidx.compose.plugins.kotlin.compiler.lower.DurableKeyVisitor
+import androidx.compose.plugins.kotlin.compiler.lower.LiveLiteralTransformer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -29,7 +31,9 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getDeclaration
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
-class ComposeIrGenerationExtension : IrGenerationExtension {
+class ComposeIrGenerationExtension(
+    private val liveLiteralsEnabled: Boolean = false
+) : IrGenerationExtension {
     override fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
@@ -40,6 +44,14 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
 
         // create a symbol remapper to be used across all transforms
         val symbolRemapper = DeepCopySymbolRemapper()
+
+        LiveLiteralTransformer(
+            liveLiteralsEnabled,
+            DurableKeyVisitor(),
+            pluginContext,
+            symbolRemapper,
+            bindingTrace
+        ).lower(moduleFragment)
 
         // Memoize normal lambdas and wrap composable lambdas
         ComposerLambdaMemoization(pluginContext, symbolRemapper, bindingTrace).lower(moduleFragment)

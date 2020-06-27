@@ -18,7 +18,7 @@ package androidx.compose.plugins.kotlin
 
 import org.junit.Test
 
-class DefaultParamTransformTests : AbstractIrTransformTest() {
+class DefaultParamTransformTests : ComposeIrTransformTest() {
     private fun defaultParams(
         unchecked: String,
         checked: String,

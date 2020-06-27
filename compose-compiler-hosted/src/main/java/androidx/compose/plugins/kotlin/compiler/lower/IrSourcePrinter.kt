@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
+import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
@@ -69,6 +71,7 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -164,7 +167,7 @@ private class IrSourcePrinterVisitor(
 
     override fun visitFile(declaration: IrFile) {
 //        println("// FILE: ${declaration.fileEntry.name}")
-        declaration.declarations.printJoin()
+        declaration.declarations.printJoin("\n")
     }
 
     override fun visitValueParameter(declaration: IrValueParameter) {
@@ -594,21 +597,18 @@ private class IrSourcePrinterVisitor(
     override fun visitStringConcatenation(expression: IrStringConcatenation) {
         val arguments = expression.arguments
         print("\"")
-        for (i in arguments.indices step 2) {
-            val stringPart = arguments[i] as IrConst<*>
-            val exprPart = arguments[i + 1]
-            val isSimpleExpr = when (exprPart) {
-                is IrGetValue -> true
-                else -> false
-            }
-            print(stringPart.value)
-            print("$")
-            if (isSimpleExpr) {
-                exprPart.print()
-            } else {
-                print("{")
-                exprPart.print()
-                print("}")
+        for (arg in arguments) {
+            when {
+                arg is IrConst<*> && arg.kind == IrConstKind.String -> print(arg.value)
+                arg is IrGetValue -> {
+                    print("$")
+                    arg.print()
+                }
+                else -> {
+                    print("\${")
+                    arg.print()
+                    print("}")
+                }
             }
         }
         print("\"")
@@ -808,6 +808,43 @@ private class IrSourcePrinterVisitor(
 
     override fun visitGetValue(expression: IrGetValue) {
         print(expression.symbol.owner.name)
+    }
+
+    override fun visitField(declaration: IrField) {
+        if (
+            declaration.visibility != Visibilities.PUBLIC &&
+            declaration.visibility != Visibilities.LOCAL
+        ) {
+            print(declaration.visibility.toString().toLowerCase(Locale.ROOT))
+            print(" ")
+        }
+        if (declaration.isFinal) {
+            print("val ")
+        } else {
+            print("var ")
+        }
+        print(declaration.symbol.owner.name)
+        print(": ")
+        val type = declaration.type
+        print(type.renderSrc())
+        declaration.initializer?.let {
+            print(" = ")
+            it.print()
+        }
+    }
+
+    override fun visitGetField(expression: IrGetField) {
+        expression.receiver?.print()
+        print(".")
+        print(expression.symbol.owner.name)
+    }
+
+    override fun visitSetField(expression: IrSetField) {
+        expression.receiver?.print()
+        print(".")
+        print(expression.symbol.owner.name)
+        print(" = ")
+        expression.value.print()
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue) {
