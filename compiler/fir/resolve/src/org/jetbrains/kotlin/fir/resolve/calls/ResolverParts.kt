@@ -160,16 +160,7 @@ internal object MapArguments : ResolutionStage() {
         val function = symbol.fir
 
         val mapping = mapArguments(callInfo.arguments, function)
-        val argumentToParameterMapping = mutableMapOf<FirExpression, FirValueParameter>()
-        mapping.parameterToCallArgumentMap.forEach { (valueParameter, resolvedArgument) ->
-            when (resolvedArgument) {
-                is ResolvedCallArgument.SimpleArgument -> argumentToParameterMapping[resolvedArgument.callArgument] = valueParameter
-                is ResolvedCallArgument.VarargArgument -> resolvedArgument.arguments.forEach {
-                    argumentToParameterMapping[it] = valueParameter
-                }
-            }
-        }
-        candidate.argumentMapping = argumentToParameterMapping
+        candidate.argumentMapping = mapping.toArgumentToParameterMapping()
 
         var applicability = CandidateApplicability.RESOLVED
         mapping.diagnostics.forEach {

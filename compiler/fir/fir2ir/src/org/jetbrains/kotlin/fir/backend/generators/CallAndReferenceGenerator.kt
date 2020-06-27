@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
@@ -19,6 +16,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
+import org.jetbrains.kotlin.fir.resolve.getCorrespondingConstructorReferenceOrNull
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -327,6 +325,7 @@ class CallAndReferenceGenerator(
                         val calleeReference = when (call) {
                             is FirFunctionCall -> call.calleeReference
                             is FirDelegatedConstructorCall -> call.calleeReference
+                            is FirAnnotationCall -> call.getCorrespondingConstructorReferenceOrNull(session)
                             else -> null
                         } as? FirResolvedNamedReference
                         val function = (calleeReference?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
@@ -334,7 +333,7 @@ class CallAndReferenceGenerator(
                         val argumentMapping = call.argumentMapping
                         if (argumentMapping != null && argumentMapping.isNotEmpty()) {
                             if (valueParameters != null) {
-                                return applyArgumentsWithReorderingIfNeeded(argumentMapping, valueParameters)
+                                return applyArgumentsWithReorderingIfNeeded(call, argumentMapping, valueParameters)
                             }
                         }
                         for ((index, argument) in call.arguments.withIndex()) {
@@ -365,10 +364,15 @@ class CallAndReferenceGenerator(
     }
 
     private fun IrCallWithIndexedArgumentsBase.applyArgumentsWithReorderingIfNeeded(
+        call: FirCall,
         argumentMapping: Map<FirExpression, FirValueParameter>,
         valueParameters: List<FirValueParameter>,
     ): IrExpressionBase {
-        if (needArgumentReordering(argumentMapping.values, valueParameters)) {
+        // Assuming compile-time constants only inside annotation, we don't need a block to reorder arguments to preserve semantics.
+        // But, we still need to pick correct indices for named arguments.
+        if (call !is FirAnnotationCall &&
+            needArgumentReordering(argumentMapping.values, valueParameters)
+        ) {
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
                 for ((argument, parameter) in argumentMapping) {
                     val parameterIndex = valueParameters.indexOf(parameter)

@@ -94,6 +94,9 @@ val FirClassSymbol<*>.superConeTypes
 
 val FirClass<*>.superConeTypes get() = superTypeRefs.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
 
+fun FirClass<*>.getPrimaryConstructorIfAny(): FirConstructor? =
+    declarations.filterIsInstance<FirConstructor>().firstOrNull()?.takeIf { it.isPrimary }
+
 fun FirRegularClass.collectEnumEntries(): Collection<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)
     return declarations.filterIsInstance<FirEnumEntry>()

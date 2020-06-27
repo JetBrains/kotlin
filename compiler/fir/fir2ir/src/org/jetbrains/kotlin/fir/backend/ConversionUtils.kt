@@ -446,9 +446,6 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? {
     }
 }
 
-fun FirClass<*>.getPrimaryConstructorIfAny(): FirConstructor? =
-    declarations.filterIsInstance<FirConstructor>().firstOrNull()?.takeIf { it.isPrimary }
-
 internal fun IrDeclarationParent.declareThisReceiverParameter(
     symbolTable: SymbolTable,
     thisType: IrType,
