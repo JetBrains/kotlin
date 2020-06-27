@@ -31,19 +31,43 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.IrProvider
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 
+abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
+    val extension = ComposeIrGenerationExtension()
+    override fun postProcessingStep(
+        module: IrModuleFragment,
+        generatorContext: GeneratorContext,
+        irProviders: List<IrProvider>
+    ) {
+        extension.generate(
+            module,
+            IrPluginContext(
+                generatorContext.moduleDescriptor,
+                generatorContext.bindingContext,
+                generatorContext.languageVersionSettings,
+                generatorContext.symbolTable,
+                generatorContext.typeTranslator,
+                generatorContext.irBuiltIns,
+                irProviders = irProviders
+            )
+        )
+    }
+}
+
 abstract class AbstractIrTransformTest : AbstractCompilerTest() {
-    private fun sourceFile(name: String, source: String): KtFile {
+    protected fun sourceFile(name: String, source: String): KtFile {
         val result = createFile(name, source, myEnvironment!!.project)
         val ranges = AnalyzingUtils.getSyntaxErrorRanges(result)
         assert(ranges.isEmpty()) { "Syntax errors found in $name: $ranges" }
@@ -51,6 +75,12 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
     }
 
     protected open val additionalPaths = emptyList<File>()
+
+    abstract fun postProcessingStep(
+        module: IrModuleFragment,
+        generatorContext: GeneratorContext,
+        irProviders: List<IrProvider>
+    )
 
     fun verifyComposeIrTransform(
         source: String,
@@ -120,7 +150,7 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
         )
     }
 
-    private fun generateIrModuleWithJvmResolve(files: List<KtFile>): IrModuleFragment {
+    protected fun generateIrModuleWithJvmResolve(files: List<KtFile>): IrModuleFragment {
         val classPath = createClasspath() + additionalPaths
         val configuration = newConfiguration()
         configuration.addJvmClasspathRoots(classPath)
@@ -160,21 +190,8 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             irProviders
         ).generateUnboundSymbolsAsDependencies()
 
-        val extension = ComposeIrGenerationExtension()
-
         psi2ir.addPostprocessingStep { module ->
-            extension.generate(
-                module,
-                IrPluginContext(
-                    generatorContext.moduleDescriptor,
-                    generatorContext.bindingContext,
-                    generatorContext.languageVersionSettings,
-                    generatorContext.symbolTable,
-                    generatorContext.typeTranslator,
-                    generatorContext.irBuiltIns,
-                    irProviders = irProviders
-                )
-            )
+            postProcessingStep(module, generatorContext, irProviders)
         }
 
         return psi2ir.generateModuleFragment(

@@ -18,7 +18,7 @@ package androidx.compose.plugins.kotlin
 
 import org.junit.Test
 
-class ComposerParamTransformTests : AbstractIrTransformTest() {
+class ComposerParamTransformTests : ComposeIrTransformTest() {
     private fun composerParam(
         source: String,
         expectedTransformed: String,
@@ -26,7 +26,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
     ) = verifyComposeIrTransform(
         """
             @file:OptIn(
-              ExperimentalComposeApi::class, 
+              ExperimentalComposeApi::class,
               InternalComposeApi::class,
               ComposeCompilerApi::class
             )
