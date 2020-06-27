@@ -87,6 +87,8 @@ fun IrType.isLongArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.Long
 fun IrType.isFloatArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.FloatArray"))
 fun IrType.isDoubleArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.DoubleArray"))
 
+fun IrType.isPrimitiveTypeArray(): Boolean = KotlinBuiltIns.FQ_NAMES.arrayClassFqNameToPrimitiveType.keys.any { isNotNullClassType(it) }
+
 fun IrType.isNullableBoolean(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._boolean)
 fun IrType.isNullableLong(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._long)
 fun IrType.isNullableChar(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._char)

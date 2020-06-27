@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -38,7 +39,8 @@ internal fun State.toIrExpression(expression: IrExpression): IrExpression {
             when {
                 this.value == null -> this.value.toIrConst(type, start, end)
                 type.isPrimitiveType() || type.isString() -> this.value.toIrConst(type, start, end)
-                else -> expression // TODO support for arrays
+                type.isPrimitiveTypeArray() && expression is IrVararg -> this.value.toIrVararg(expression)
+                else -> expression
             }
         is Complex -> {
             val stateType = this.irClass.defaultType
@@ -59,6 +61,31 @@ internal fun Any?.toState(irType: IrType): State {
         null -> Primitive(this, irType)
         else -> Wrapper(this, irType.classOrNull!!.owner)
     }
+}
+
+fun Any?.toIrVararg(expression: IrVararg): IrVararg {
+    val start = expression.startOffset
+    val end = expression.endOffset
+    val arrayType = expression.type.makeNotNull()
+    val elementType = expression.varargElementType
+    val elements = when {
+        this == null -> return expression
+        arrayType.isBooleanArray() -> (this as BooleanArray).map { it.toIrConst(elementType) }.toList()
+        arrayType.isCharArray() -> (this as CharArray).map { it.toIrConst(elementType) }.toList()
+        arrayType.isByteArray() -> (this as ByteArray).map { it.toIrConst(elementType) }.toList()
+        arrayType.isShortArray() -> (this as ShortArray).map { it.toIrConst(elementType) }.toList()
+        arrayType.isIntArray() -> (this as IntArray).map { it.toIrConst(elementType) }.toList()
+        arrayType.isLongArray() -> (this as LongArray).map { it.toIrConst(elementType) }.toList()
+        arrayType.isFloatArray() -> (this as FloatArray).map { it.toIrConst(elementType) }.toList()
+        arrayType.isDoubleArray() -> (this as DoubleArray).map { it.toIrConst(elementType) }.toList()
+        else -> throw UnsupportedOperationException("Unsupported const element type ${arrayType.render()}")
+    }
+    return IrVarargImpl(
+        start, end,
+        type = arrayType,
+        varargElementType = elementType,
+        elements = elements
+    )
 }
 
 fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*> {
