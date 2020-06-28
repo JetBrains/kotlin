@@ -58,9 +58,9 @@ public class SearchResults implements DocumentListener, CaretListener {
       if (occurrenceAtCaret != null && occurrenceAtCaret != myCursor) {
         moveCursorTo(occurrenceAtCaret, false, false);
         myEditor.getCaretModel().moveToOffset(offset);
+        notifyCursorMoved();
       }
     }
-    notifyCursorMoved();
   }
 
   public enum Direction {UP, DOWN}
