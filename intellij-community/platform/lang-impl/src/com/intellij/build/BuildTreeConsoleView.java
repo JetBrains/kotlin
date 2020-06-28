@@ -48,6 +48,7 @@ import com.intellij.ui.*;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.tree.StructureTreeModel;
+import com.intellij.ui.tree.TreePathUtil;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
@@ -82,6 +83,7 @@ import static com.intellij.openapi.util.text.StringUtil.isEmpty;
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 import static com.intellij.ui.SimpleTextAttributes.GRAYED_ATTRIBUTES;
 import static com.intellij.ui.render.RenderingHelper.SHRINK_LONG_RENDERER;
+import static com.intellij.ui.tree.ui.DefaultTreeUI.AUTO_EXPAND_ALLOWED;
 import static com.intellij.util.ObjectUtils.chooseNotNull;
 import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 import static com.intellij.util.ui.UIUtil.*;
@@ -104,6 +106,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   private final AtomicBoolean myFinishedBuildEventReceived = new AtomicBoolean();
   private final AtomicBoolean myDisposed = new AtomicBoolean();
   private final AtomicBoolean myShownFirstError = new AtomicBoolean();
+  private final AtomicBoolean myExpandedFirstMessage = new AtomicBoolean();
   private final boolean myFocusFirstError;
   private final StructureTreeModel<AbstractTreeStructure> myTreeModel;
   private final Tree myTree;
@@ -287,7 +290,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     ExecutionNode currentNode = nodesMap.get(eventId);
     ExecutionNode buildProgressRootNode = getBuildProgressRootNode();
     Runnable selectErrorNodeTask = null;
-    if (event instanceof StartEvent || event instanceof MessageEvent) {
+    boolean isMessageEvent = event instanceof MessageEvent;
+    if (event instanceof StartEvent || isMessageEvent) {
       if (currentNode == null) {
         if (event instanceof DuplicateMessageAware) {
           if (myFinishedBuildEventReceived.get()) {
@@ -307,9 +311,11 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
           currentNode.setTitle(myBuildDescriptor.getTitle());
         }
         else {
-          currentNode = new ExecutionNode(myProject, parentNode, parentNode == buildProgressRootNode, this::isCorrectThread);
+          currentNode = new ExecutionNode(myProject, parentNode, false, this::isCorrectThread);
 
-          if (event instanceof MessageEvent) {
+          if (isMessageEvent) {
+            currentNode.setAlwaysLeaf(event instanceof FileMessageEvent);
+            //noinspection CastConflictsWithInstanceof
             MessageEvent messageEvent = (MessageEvent)event;
             currentNode.setStartTime(messageEvent.getEventTime());
             addIfNotNull(structureChanged, currentNode.setEndTime(messageEvent.getEventTime()));
@@ -425,8 +431,16 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
       }
     }
     if (selectErrorNodeTask != null) {
+      myExpandedFirstMessage.set(true);
       Runnable finalSelectErrorTask = selectErrorNodeTask;
       myTreeModel.invalidate(getRootElement(), true).onProcessed(p -> finalSelectErrorTask.run());
+    } else {
+      if (isMessageEvent && myExpandedFirstMessage.compareAndSet(false, true)) {
+        ExecutionNode finalCurrentNode = currentNode;
+        myTreeModel.invalidate(getRootElement(), false).onProcessed(p -> {
+          TreeUtil.promiseMakeVisible(myTree, visitor(finalCurrentNode));
+        });
+      }
     }
   }
 
@@ -517,11 +531,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   }
 
   private static @NotNull TreeVisitor visitor(@NotNull ExecutionNode executionNode) {
-    return path -> {
-      Object object = ((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject();
-      if (executionNode == object) return TreeVisitor.Action.INTERRUPT;
-      return TreeVisitor.Action.CONTINUE;
-    };
+    TreePath treePath = TreePathUtil.pathToCustomNode(executionNode, node -> node.getParent());
+    return new TreeVisitor.ByTreePath<>(treePath, o -> (ExecutionNode)TreeUtil.getUserObject(o));
   }
 
   private @Nullable Runnable addChildFailureNode(@NotNull ExecutionNode parentNode,
@@ -753,6 +764,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     Tree tree = new Tree(model);
     tree.setLargeModel(true);
     ComponentUtil.putClientProperty(tree, ANIMATION_IN_RENDERER_ALLOWED, true);
+    ComponentUtil.putClientProperty(tree, AUTO_EXPAND_ALLOWED, false);
     tree.setRootVisible(false);
     EditSourceOnDoubleClickHandler.install(tree);
     EditSourceOnEnterKeyHandler.install(tree, null);
@@ -773,7 +785,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
                                                          Project project) {
     ExecutionNode node = nodesMap.get(nodeId);
     if (node == null) {
-      node = new ExecutionNode(project, parentNode, true, this::isCorrectThread);
+      node = new ExecutionNode(project, parentNode, false, this::isCorrectThread);
       node.setName(nodeName);
       node.setStartTime(messageEvent.getEventTime());
       node.setEndTime(messageEvent.getEventTime());
@@ -1140,6 +1152,11 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     @Override
     public boolean hasSomethingToCommit() {
       return false;
+    }
+
+    @Override
+    public boolean isAlwaysLeaf(@NotNull Object element) {
+      return ((ExecutionNode)element).isAlwaysLeaf();
     }
   }
 

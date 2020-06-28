@@ -63,6 +63,7 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
   private volatile NullableLazyValue<Icon> myPreferredIconValue;
   @Nullable
   private Predicate<ExecutionNode> myFilter;
+  private boolean myAlwaysLeaf;
 
   public ExecutionNode(Project aProject, ExecutionNode parentNode, boolean isAutoExpandNode, @NotNull Supplier<Boolean> isCorrectThread) {
     super(aProject, parentNode);
@@ -298,6 +299,16 @@ public class ExecutionNode extends PresentableNodeDescriptor<ExecutionNode> {
 
   public boolean isAutoExpandNode() {
     return myAutoExpandNode;
+  }
+
+  @ApiStatus.Experimental
+  public boolean isAlwaysLeaf() {
+    return myAlwaysLeaf;
+  }
+
+  @ApiStatus.Experimental
+  public void setAlwaysLeaf(boolean alwaysLeaf) {
+    myAlwaysLeaf = alwaysLeaf;
   }
 
   public void setNavigatable(@Nullable Navigatable navigatable) {

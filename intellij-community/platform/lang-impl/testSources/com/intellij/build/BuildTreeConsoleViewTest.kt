@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build
 
 import com.intellij.build.events.MessageEvent
@@ -15,9 +15,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 import javax.swing.tree.TreePath
 
-class BuildTreeConsoleViewTest: LightPlatformTestCase() {
+class BuildTreeConsoleViewTest : LightPlatformTestCase() {
 
   companion object {
     val LOG: Logger = Logger.getInstance(BuildTreeConsoleViewTest::class.java)
@@ -30,10 +31,10 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
   override fun setUp() {
     super.setUp()
     buildDescriptor = DefaultBuildDescriptor(Object(),
-                                                 "test descriptor",
-                                                 "fake path",
-                                                 1L)
-    treeConsoleView = BuildTreeConsoleView(getProject(), buildDescriptor, null, object : BuildViewSettingsProvider {
+                                             "test descriptor",
+                                             "fake path",
+                                             1L)
+    treeConsoleView = BuildTreeConsoleView(project, buildDescriptor, null, object : BuildViewSettingsProvider {
       override fun isExecutionViewHidden(): Boolean = false
       override fun isSideBySideView(): Boolean = true
     })
@@ -57,7 +58,7 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
   }
 
   @Test
-  fun `test two levels of tree console view are auto-expanded`() {
+  fun `test build level of tree console view are auto-expanded`() {
     val tree = treeConsoleView.tree
     treeConsoleView.addFilter { true }
     val buildId = Object()
@@ -77,13 +78,54 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
 
     PlatformTestUtil.assertTreeEqual(tree, "-\n" +
                                            " -build finished\n" +
-                                           "  -build event\n" +
-                                           "   build nested event")
+                                           "  +build event")
     val visitor = CollectingTreeVisitor()
     TreeUtil.visitVisibleRows(tree, visitor)
     assertThat(visitor.userObjects)
       .extracting("name")
-      .contains("build finished", "build event", "build nested event")
+      .contains("build finished", "build event")
+  }
+
+  @Test
+  fun `test first message node is auto-expanded`() {
+    val tree = treeConsoleView.tree
+    treeConsoleView.addFilter { true }
+    val buildId = Object()
+    listOf(
+      StartBuildEventImpl(buildDescriptor, "build started"),
+
+      StartEventImpl("event_id_1", buildDescriptor.id, 1000, "build event 1"),
+      FileMessageEventImpl("event_id_1", MessageEvent.Kind.WARNING, null, "file message", null, FilePosition(File("a.file"), 0, 0)),
+      FinishEventImpl("event_id_1", buildDescriptor.id, 1500, "build event 1", SuccessResultImpl(true)),
+
+      StartEventImpl("event_id_2", buildDescriptor.id, 1000, "build event 2"),
+      FileMessageEventImpl("event_id_2", MessageEvent.Kind.WARNING, null, "file message 1", null, FilePosition(File("a1.file"), 0, 0)),
+      FileMessageEventImpl("event_id_2", MessageEvent.Kind.WARNING, null, "file message 2", null, FilePosition(File("a2.file"), 0, 0)),
+      FinishEventImpl("event_id_2", buildDescriptor.id, 1500, "build event 2", SuccessResultImpl(true)),
+
+      StartEventImpl("event_id_3", buildDescriptor.id, 1000, "build event 3"),
+      FileMessageEventImpl("event_id_3", MessageEvent.Kind.WARNING, null, "file message 3", null, FilePosition(File("a3.file"), 0, 0)),
+      FileMessageEventImpl("event_id_3", MessageEvent.Kind.ERROR, null, "file message with error  ", null, FilePosition(File("a4.file"), 0, 0)),
+      FinishEventImpl("event_id_3", buildDescriptor.id, 1500, "build event 3", FailureResultImpl()),
+
+      FinishBuildEventImpl(buildDescriptor.id, null, 2000, "build failed", FailureResultImpl())
+    ).forEach {
+      treeConsoleView.onEvent(buildId, it)
+    }
+
+    PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+    PlatformTestUtil.waitWhileBusy(tree)
+
+    PlatformTestUtil.assertTreeEqual(tree, "-\n" +
+                                           " -build failed\n" +
+                                           "  -build event 1\n" +
+                                           "   -a.file\n" +
+                                           "    file message\n" +
+                                           "  +build event 2\n" +
+                                           "  -build event 3\n" +
+                                           "   +a3.file\n" +
+                                           "   -a4.file\n" +
+                                           "    file message with error")
   }
 
   @Test
@@ -116,7 +158,7 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
     TreeUtil.visitVisibleRows(tree, visitor)
 
 
-    assertThat(visitor.userObjects.map { it -> (it as ExecutionNode).name + "--" + it.result!!.javaClass.simpleName })
+    assertThat(visitor.userObjects.map { (it as ExecutionNode).name + "--" + it.result!!.javaClass.simpleName })
       .containsExactly("build finished--FailureResultImpl", "build event--FailureResultImpl", "build nested event--FailureResultImpl", "error message--")
   }
 
@@ -142,13 +184,12 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
 
     PlatformTestUtil.assertTreeEqual(tree, "-\n" +
                                            " -build finished\n" +
-                                           "  -build event\n" +
-                                           "   build nested event")
+                                           "  +build event")
     val visitor = CollectingTreeVisitor()
     TreeUtil.visitVisibleRows(tree, visitor)
 
     assertThat(visitor.userObjects.map { (it as ExecutionNode).name + "--" + it.result!!.javaClass.simpleName })
-      .containsExactly("build finished--SuccessResultImpl", "build event--SuccessResultImpl", "build nested event--SuccessResultImpl")
+      .containsExactly("build finished--SuccessResultImpl", "build event--SuccessResultImpl")
 
   }
 
@@ -162,7 +203,7 @@ class BuildTreeConsoleViewTest: LightPlatformTestCase() {
   }
 }
 
-class CollectingTreeVisitor: TreeVisitor {
+class CollectingTreeVisitor : TreeVisitor {
 
   val userObjects = mutableListOf<Any?>()
 
