@@ -266,8 +266,6 @@ public final class HighlightManagerImpl extends HighlightManager {
                                 boolean hideByTextChange,
                                 boolean hideByAnyKey,
                                 @Nullable Collection<? super RangeHighlighter> highlighters) {
-    if (editor instanceof ImaginaryEditor) return;
-
     int flags = HIDE_BY_ESCAPE;
     if (hideByTextChange) {
       flags |= HIDE_BY_TEXT_CHANGE;
