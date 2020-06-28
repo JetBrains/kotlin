@@ -1438,9 +1438,7 @@ public final class SearchEverywhereUI extends SearchEverywhereUIBase implements 
               tooManyUsagesStatus.pauseProcessingIfTooManyUsages();
               if (foundElements.size() + alreadyFoundCount >= UsageLimitUtil.USAGES_LIMIT &&
                   tooManyUsagesStatus.switchTooManyUsagesStatus()) {
-                int usageCount = foundElements.size() + alreadyFoundCount;
-                UsageViewManagerImpl.showTooManyUsagesWarningLater(
-                  getProject(), tooManyUsagesStatus, progressIndicator, presentation, usageCount, null);
+                UsageViewManagerImpl.showTooManyUsagesWarningLater(getProject(), tooManyUsagesStatus, progressIndicator, presentation, null);
                 return !progressIndicator.isCanceled();
               }
               return true;
