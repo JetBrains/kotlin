@@ -79,7 +79,7 @@ class ReaderModeActionProvider(override val separator: Separator? = Separator.cr
         val presentation = e.presentation
         if (!ReaderModeSettings.instance(project).enabled) {
           presentation.text = null
-          presentation.icon = AllIcons.Gutter.JavadocRead
+          presentation.icon = AllIcons.General.ReaderMode
           presentation.hoveredIcon = null
           presentation.description = LangBundle.message("action.ReaderModeProvider.text.enter")
         }
