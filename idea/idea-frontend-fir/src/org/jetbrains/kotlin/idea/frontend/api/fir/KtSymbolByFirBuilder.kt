@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
+import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
@@ -28,6 +30,10 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.name.FqName
 
 internal class KtSymbolByFirBuilder(
     firProvider: FirSymbolProvider,
@@ -99,7 +105,7 @@ internal class KtSymbolByFirBuilder(
 
 
     fun createPackageSymbolIfOneExists(packageFqName: FqName): KtFirPackageSymbol? {
-        val exists = firProvider.getPackage(packageFqName) != null
+        val exists = PackageIndexUtil.packageExists(packageFqName, GlobalSearchScope.allScope(project), project)
         if (!exists) {
             return null
         }

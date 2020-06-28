@@ -40,6 +40,7 @@ class KtFirAnalysisSession(
     internal val firSymbolBuilder = KtSymbolByFirBuilder(
         element.session.firSymbolProvider,
         ConeTypeCheckerContext(isErrorTypeEqualsToAnything = true, isStubTypeEqualsToAnything = true, element.session),
+        element.project,
         validityToken
     )
 

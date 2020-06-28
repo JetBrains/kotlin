@@ -20,10 +20,15 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
 internal object FirReferenceResolveHelper {
     fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): KtSymbol? {
@@ -81,6 +86,20 @@ internal object FirReferenceResolveHelper {
         }
     }
 
+    private fun getPackageSymbolFor(expression: KtSimpleNameExpression, symbolBuilder: KtSymbolByFirBuilder): KtFirPackageSymbol? {
+        val fqName = when (val qualified = expression.getQualifiedExpressionForSelector()) {
+            null -> FqName(expression.getReferencedName())
+            else -> {
+                qualified
+                    .collectDescendantsOfType<KtSimpleNameExpression>()
+                    .joinToString(separator = ".") { it.getReferencedName() }
+                    .let(::FqName)
+            }
+        }
+
+        return symbolBuilder.createPackageSymbolIfOneExists(fqName)
+    }
+
     internal fun resolveSimpleNameReference(
         ref: KtFirSimpleNameReference,
         symbolBuilder: KtSymbolByFirBuilder
@@ -135,12 +154,11 @@ internal object FirReferenceResolveHelper {
                     if (parent.selectorExpression !== expression) {
                         // Special: package reference in the middle of import directive
                         // import a.<caret>b.c.SomeClass
-                        // TODO: return reference to PsiPackage
-//                        return listOf(expression)
-                        return emptyList()
+                        return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder)?.let { return listOf(it) })
                     }
                     parent = parent.parent
                 }
+
                 val classId = fir.resolvedClassId
                 if (classId != null) {
                     return listOfNotNull(classId.toTargetPsi(session, symbolBuilder))
@@ -162,8 +180,7 @@ internal object FirReferenceResolveHelper {
             is FirFile -> {
                 if (expression.getNonStrictParentOfType<KtPackageDirective>() != null) {
                     // Special: package reference in the middle of package directive
-                    return emptyList()
-//                    return listOf(expression)
+                    return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder))
                 }
                 return listOf(symbolBuilder.buildSymbol(fir))
             }
