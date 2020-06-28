@@ -1773,6 +1773,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       myState.set(selected);
       if (myState == myRegexState) {
         mySuggestRegexHintForEmptyResults = false;
+        if (selected) myWholeWordsState.set(false);
       }
       scheduleResultsUpdate();
     }
