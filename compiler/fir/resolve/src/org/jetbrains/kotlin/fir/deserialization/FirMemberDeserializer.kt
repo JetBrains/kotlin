@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.computeTypeAttributes
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
@@ -168,7 +170,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             }
             symbol = FirTypeAliasSymbol(ClassId(c.packageFqName, name))
             expandedTypeRef = buildResolvedTypeRef {
-                type = local.typeDeserializer.type(proto.underlyingType(c.typeTable))
+                type = local.typeDeserializer.type(proto.underlyingType(c.typeTable), ConeAttributes.Empty)
             }
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
@@ -423,8 +425,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
     private fun ProtoBuf.Type.toTypeRef(context: FirDeserializationContext): FirTypeRef {
         return buildResolvedTypeRef {
-            type = context.typeDeserializer.type(this@toTypeRef)
             annotations += context.annotationDeserializer.loadTypeAnnotations(this@toTypeRef, context.nameResolver)
+            val attributes = annotations.computeTypeAttributes()
+            type = context.typeDeserializer.type(this@toTypeRef, attributes)
         }
     }
 

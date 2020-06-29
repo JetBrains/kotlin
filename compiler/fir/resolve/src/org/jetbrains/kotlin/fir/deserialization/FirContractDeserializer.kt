@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
+import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isBoolean
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -148,7 +149,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
     }
 
     private fun extractType(proto: ProtoBuf.Expression): ConeKotlinType? {
-        return c.typeDeserializer.type(proto.isInstanceType(c.typeTable) ?: return null)
+        return c.typeDeserializer.type(proto.isInstanceType(c.typeTable) ?: return null, ConeAttributes.Empty)
     }
 
     private fun loadConstant(value: ProtoBuf.Expression.ConstantValue): ConeConstantReference? = when (value) {

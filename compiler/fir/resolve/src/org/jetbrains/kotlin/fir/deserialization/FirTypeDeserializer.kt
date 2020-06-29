@@ -77,7 +77,7 @@ class FirTypeDeserializer(
                 val builder = builders[index]
                 builder.apply {
                     proto.upperBoundList.mapTo(bounds) {
-                        buildResolvedTypeRef { type = type(it) }
+                        buildResolvedTypeRef { type = type(it, ConeAttributes.Empty) }
                     }
                     addDefaultBoundIfNecessary()
                 }.build()
@@ -96,15 +96,15 @@ class FirTypeDeserializer(
         }
     }
 
-    fun type(proto: ProtoBuf.Type): ConeKotlinType {
+    fun type(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeKotlinType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
-            val lowerBound = simpleType(proto)
-            val upperBound = simpleType(proto.flexibleUpperBound(typeTable)!!)
+            val lowerBound = simpleType(proto, attributes)
+            val upperBound = simpleType(proto.flexibleUpperBound(typeTable)!!, attributes)
             return ConeFlexibleType(lowerBound!!, upperBound!!)
             //c.components.flexibleTypeDeserializer.create(proto, id, lowerBound, upperBound)
         }
 
-        return simpleType(proto) ?: ConeKotlinErrorType("?!id:0")
+        return simpleType(proto, attributes) ?: ConeKotlinErrorType("?!id:0")
     }
 
     private fun typeParameterSymbol(typeParameterId: Int): ConeTypeParameterLookupTag? =
@@ -123,7 +123,7 @@ class FirTypeDeserializer(
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
-    fun simpleType(proto: ProtoBuf.Type): ConeLookupTagBasedType? {
+    fun simpleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeLookupTagBasedType? {
 
         val constructor = typeSymbol(proto) ?: return null
         if (constructor is ConeTypeParameterLookupTag) return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable)
@@ -135,14 +135,14 @@ class FirTypeDeserializer(
         val arguments = proto.collectAllArguments().map(this::typeArgument).toTypedArray()
 
         val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {
-            createSuspendFunctionType(constructor, arguments, isNullable = proto.nullable)
+            createSuspendFunctionType(constructor, arguments, isNullable = proto.nullable, attributes)
         } else {
-            ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable)
+            ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable, attributes)
         }
 
         val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType
 
-        return simpleType(abbreviatedTypeProto)
+        return simpleType(abbreviatedTypeProto, attributes)
 
     }
 
@@ -150,7 +150,8 @@ class FirTypeDeserializer(
         //annotations: Annotations, TODO?,
         functionTypeConstructor: ConeClassLikeLookupTag,
         arguments: Array<ConeTypeProjection>,
-        isNullable: Boolean
+        isNullable: Boolean,
+        attributes: ConeAttributes
     ): ConeClassLikeType? {
         fun ConeClassLikeType.isContinuation(): Boolean {
             if (this.typeArguments.size != 1) return false
@@ -161,7 +162,7 @@ class FirTypeDeserializer(
         val returnType = arguments.lastOrNull()
         val continuationType = arguments.getOrNull(arguments.lastIndex - 1) as? ConeClassLikeType ?: return null
 
-        if (!continuationType.isContinuation()) return ConeClassLikeTypeImpl(functionTypeConstructor, arguments, isNullable)
+        if (!continuationType.isContinuation()) return ConeClassLikeTypeImpl(functionTypeConstructor, arguments, isNullable, attributes)
 
         val suspendReturnType = continuationType.typeArguments.single() as ConeKotlinTypeProjection
 
@@ -171,7 +172,7 @@ class FirTypeDeserializer(
         return ConeClassLikeTypeImpl(
             ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(valueParameters.size))),
             (valueParameters + suspendReturnType).toTypedArray(),
-            isNullable
+            isNullable, attributes
         )
     }
 
@@ -179,11 +180,12 @@ class FirTypeDeserializer(
         //annotations: Annotations, TODO?
         functionTypeConstructor: ConeClassLikeLookupTag,
         arguments: Array<ConeTypeProjection>,
-        isNullable: Boolean
+        isNullable: Boolean,
+        attributes: ConeAttributes
     ): ConeClassLikeType {
         val result =
             when (functionTypeConstructor.toSymbol(session)!!.firUnsafe<FirTypeParameterRefsOwner>().typeParameters.size - arguments.size) {
-                0 -> createSuspendFunctionTypeForBasicCase(/* annotations, */ functionTypeConstructor, arguments, isNullable)
+                0 -> createSuspendFunctionTypeForBasicCase(/* annotations, */ functionTypeConstructor, arguments, isNullable, attributes)
 //                 This case for types written by eap compiler 1.1
                 1 -> {
                     val arity = arguments.size - 1
@@ -192,7 +194,8 @@ class FirTypeDeserializer(
                         ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(arity))),
                             arguments,
-                            isNullable
+                            isNullable,
+                            attributes
                         )
                     } else {
                         null
@@ -226,7 +229,8 @@ class FirTypeDeserializer(
         val variance = ProtoEnumFlags.variance(typeArgumentProto.projection)
         val type = typeArgumentProto.type(typeTable) ?: return ConeKotlinErrorType("No type recorded")
 
-        val coneType = type(type)
+        // TODO: check that here we don't have any attributes
+        val coneType = type(type, ConeAttributes.Empty)
         return coneType.toTypeProjection(variance)
     }
 

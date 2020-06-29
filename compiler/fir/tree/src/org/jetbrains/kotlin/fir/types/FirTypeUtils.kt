@@ -77,3 +77,16 @@ fun ConeClassLikeType.toConstKind(): FirConstKind<*>? = when (lookupTag.classId)
     StandardClassIds.UByte -> FirConstKind.UnsignedByte
     else -> null
 }
+
+fun List<FirAnnotationCall>.computeTypeAttributes(): ConeAttributes {
+    if (this.isEmpty()) return ConeAttributes.Empty
+    val attributes = mutableListOf<ConeAttribute<*>>()
+    for (annotation in this) {
+        val type = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
+        when (type.lookupTag.classId) {
+            CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
+            CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
+        }
+    }
+    return ConeAttributes.create(attributes)
+}

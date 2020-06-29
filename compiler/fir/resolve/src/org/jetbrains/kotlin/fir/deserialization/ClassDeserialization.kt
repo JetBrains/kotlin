@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -105,7 +106,7 @@ fun deserializeClassToSymbol(
         val classDeserializer = context.memberDeserializer
 
         val superTypesDeserialized = classProto.supertypes(context.typeTable).map { supertypeProto ->
-            typeDeserializer.simpleType(supertypeProto)
+            typeDeserializer.simpleType(supertypeProto, ConeAttributes.Empty)
         }// TODO: + c.components.additionalClassPartsProvider.getSupertypes(this@DeserializedClassDescriptor)
 
         superTypesDeserialized.mapNotNullTo(superTypeRefs) {

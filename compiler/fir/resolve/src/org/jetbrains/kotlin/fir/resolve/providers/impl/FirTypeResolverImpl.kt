@@ -84,22 +84,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
         if (symbol == null) {
             return ConeKotlinErrorType("Symbol not found, for `${typeRef.render()}`")
         }
-        return symbol.constructType(typeRef.qualifier, typeRef.isMarkedNullable, symbolOriginSession = session, typeRef.computeTypeAttributes())
+        return symbol.constructType(typeRef.qualifier, typeRef.isMarkedNullable, symbolOriginSession = session, typeRef.annotations.computeTypeAttributes())
     }
-
-    private fun FirTypeRef.computeTypeAttributes(): ConeAttributes {
-        if (annotations.isEmpty()) return ConeAttributes.Empty
-        val attributes = mutableListOf<ConeAttribute<*>>()
-        for (annotation in annotations) {
-            val type = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
-            when (type.lookupTag.classId) {
-                CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
-                CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
-            }
-        }
-        return ConeAttributes.create(attributes)
-    }
-
 
     private fun createFunctionalType(typeRef: FirFunctionTypeRef): ConeClassLikeType {
         val parameters =
@@ -111,6 +97,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
         } else {
             KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount)
         }
+        val attributes = typeRef.annotations.computeTypeAttributes()
         return ConeClassLikeTypeImpl(
             resolveBuiltInQualified(classId, session).toLookupTag(),
             parameters.toTypedArray(),
