@@ -60,18 +60,11 @@ abstract class AbstractKotlinNativeCompilation(
     override val compileKotlinTaskProvider: TaskProvider<out KotlinNativeCompile>
         get() = super.compileKotlinTaskProvider as TaskProvider<out KotlinNativeCompile>
 
-    // (taking into account dependencies between source sets). Used by both compilation
-    // and linking tasks. Unlike kotlinSourceSets, includes dependency source sets.
-    // TODO: Move into the compilation task when the linking task does klib linking instead of compilation.
-    internal val allSources: MutableSet<SourceDirectorySet> = mutableSetOf()
-
-    // TODO: Move into the compilation task when the linking task does klib linking instead of compilation.
-    internal val commonSources: ConfigurableFileCollection = target.project.files()
-
-    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
-        allSources.add(sourceSet.kotlin)
-        commonSources.from(target.project.files(Callable { if (addAsCommonSources.value) sourceSet.kotlin else emptyList<Any>() }))
-    }
+    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) =
+        compileKotlinTaskProvider.configure { task ->
+            task.source(sourceSet.kotlin)
+            task.commonSources.from(target.project.files(Callable { if (addAsCommonSources.value) sourceSet.kotlin else emptyList<Any>() }))
+        }
 
     // Endorsed library controller.
     var enableEndorsedLibs: Boolean = false
