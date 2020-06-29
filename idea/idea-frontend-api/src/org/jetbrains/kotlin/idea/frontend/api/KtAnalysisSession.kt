@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeProvider
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.ClassId
@@ -18,6 +19,7 @@ abstract class KtAnalysisSession(project: Project) : ValidityOwner {
     override fun invalidationReason(): String = validityToken.invalidationReason()
 
     abstract val symbolProvider: KtSymbolProvider
+    abstract val scopeProvider: KtScopeProvider
 
     abstract fun getSmartCastedToTypes(expression: KtExpression): Collection<KtType>?
 

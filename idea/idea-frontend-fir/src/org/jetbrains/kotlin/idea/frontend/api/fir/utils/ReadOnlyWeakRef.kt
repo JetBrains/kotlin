@@ -23,3 +23,5 @@ class ReadOnlyWeakRef<V : Any>(value: V, val validityOwner: ValidityOwner) {
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun <V : Any> ValidityOwner.weakRef(value: V) = ReadOnlyWeakRef(value, this)
+
+internal inline fun <V : Any> ValidityOwner.weakRef(value: () -> V) = ReadOnlyWeakRef(value(), this)
