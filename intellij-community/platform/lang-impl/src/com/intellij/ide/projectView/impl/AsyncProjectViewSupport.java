@@ -13,6 +13,7 @@ import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vcs.FileStatusListener;
@@ -158,7 +159,7 @@ public class AsyncProjectViewSupport {
     myStructureTreeModel.setComparator(comparator);
   }
 
-  public void select(JTree tree, Object object, VirtualFile file) {
+  public ActionCallback select(JTree tree, Object object, VirtualFile file) {
     if (object instanceof AbstractTreeNode) {
       AbstractTreeNode node = (AbstractTreeNode)object;
       object = node.getValue();
@@ -168,33 +169,36 @@ public class AsyncProjectViewSupport {
     LOG.debug("select object: ", object, " in file: ", file);
     SmartList<TreePath> pathsToSelect = new SmartList<>();
     TreeVisitor visitor = AbstractProjectViewPane.createVisitor(element, file, pathsToSelect);
-    if (visitor != null) {
-      //noinspection CodeBlock2Expr
-      myNodeUpdater.updateImmediately(() -> expand(tree, promise -> {
-        myAsyncTreeModel
-          .accept(visitor)
-          .onProcessed(path -> {
-            if (selectPaths(tree, pathsToSelect, visitor) ||
-                element == null ||
-                file == null ||
-                Registry.is("async.project.view.support.extra.select.disabled")) {
-              promise.setResult(null);
-            }
-            else {
-              // try to search the specified file instead of element,
-              // because Kotlin files cannot represent containing functions
-              pathsToSelect.clear();
-              TreeVisitor fileVisitor = AbstractProjectViewPane.createVisitor(null, file, pathsToSelect);
-              myAsyncTreeModel
-                .accept(fileVisitor)
-                .onProcessed(path2 -> {
-                  selectPaths(tree, pathsToSelect, fileVisitor);
-                  promise.setResult(null);
-                });
-            }
-          });
-      }));
-    }
+    if (visitor == null) return ActionCallback.DONE;
+
+    ActionCallback callback = new ActionCallback();
+    //noinspection CodeBlock2Expr
+    myNodeUpdater.updateImmediately(() -> expand(tree, promise -> {
+      promise.onSuccess(o -> callback.setDone());
+      myAsyncTreeModel
+        .accept(visitor)
+        .onProcessed(path -> {
+          if (selectPaths(tree, pathsToSelect, visitor) ||
+              element == null ||
+              file == null ||
+              Registry.is("async.project.view.support.extra.select.disabled")) {
+            promise.setResult(null);
+          }
+          else {
+            // try to search the specified file instead of element,
+            // because Kotlin files cannot represent containing functions
+            pathsToSelect.clear();
+            TreeVisitor fileVisitor = AbstractProjectViewPane.createVisitor(null, file, pathsToSelect);
+            myAsyncTreeModel
+              .accept(fileVisitor)
+              .onProcessed(path2 -> {
+                selectPaths(tree, pathsToSelect, fileVisitor);
+                promise.setResult(null);
+              });
+          }
+        });
+    }));
+    return callback;
   }
 
   private static boolean selectPaths(@NotNull JTree tree, @NotNull List<TreePath> paths, @NotNull TreeVisitor visitor) {

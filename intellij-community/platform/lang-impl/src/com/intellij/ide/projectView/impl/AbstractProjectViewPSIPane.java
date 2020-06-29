@@ -224,7 +224,7 @@ public abstract class AbstractProjectViewPSIPane extends AbstractProjectViewPane
         }));
       }
       else if (myAsyncSupport != null) {
-        myAsyncSupport.select(myTree, element, file);
+        return myAsyncSupport.select(myTree, element, file);
       }
     }
     return ActionCallback.DONE;
