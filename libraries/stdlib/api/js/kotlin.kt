@@ -1038,6 +1038,19 @@ public final annotation class Deprecated : kotlin.Annotation {
     public final val replaceWith: kotlin.ReplaceWith { get; }
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPEALIAS})
+@kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.4")
+public final annotation class DeprecatedSinceKotlin : kotlin.Annotation {
+    public constructor DeprecatedSinceKotlin(warningSince: kotlin.String = ..., errorSince: kotlin.String = ..., hiddenSince: kotlin.String = ...)
+
+    public final val errorSince: kotlin.String { get; }
+
+    public final val hiddenSince: kotlin.String { get; }
+
+    public final val warningSince: kotlin.String { get; }
+}
+
 public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> {
     enum entry WARNING
 
