@@ -5,6 +5,12 @@
 
 package com.jetbrains.mpp
 
+import com.intellij.build.BuildContentManagerImpl
+import com.intellij.build.BuildViewManager
+import com.intellij.build.DefaultBuildDescriptor
+import com.intellij.build.events.MessageEvent
+import com.intellij.build.events.MessageEventResult
+import com.intellij.build.events.impl.*
 import com.intellij.execution.BeforeRunTask
 import com.intellij.execution.BeforeRunTaskProvider
 import com.intellij.execution.configurations.GeneralCommandLine
@@ -16,12 +22,17 @@ import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.wm.ToolWindowManager
+import com.jetbrains.KMM_LOG
 import com.jetbrains.cidr.execution.CidrBuildConfiguration
 import com.jetbrains.cidr.execution.ExecutionResult
 import com.jetbrains.cidr.execution.build.CidrBuild
 import com.jetbrains.cidr.execution.build.CidrBuild.startProcess
+import com.jetbrains.cidr.execution.build.CidrBuildId
 import com.jetbrains.cidr.execution.build.CidrBuildResult
 import com.jetbrains.cidr.execution.build.CidrBuildTaskType
 import com.jetbrains.kmm.XcProjectFile
@@ -39,28 +50,6 @@ class BuildIOSAppTask : BeforeRunTask<BuildIOSAppTask>(BUILD_IOS_APP_TASK_ID) {
     init {
         isEnabled = true
     }
-}
-
-private class BuildProcessListener(private val context: CidrBuild.BuildContext) : ProcessListener {
-    override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-        val scriptCommand = event.text.removeSuffix("\n")
-        if (scriptCommand.isNotEmpty()) {
-            context.indicator.text = scriptCommand
-        }
-    }
-
-    override fun processTerminated(event: ProcessEvent) {
-    }
-
-    override fun processWillTerminate(event: ProcessEvent, willBeDestroyed: Boolean) {
-    }
-
-    override fun startNotified(event: ProcessEvent) {
-    }
-}
-
-private class BuildConfiguration : CidrBuildConfiguration {
-    override fun getName(): String = "Xcode Build Configuration"
 }
 
 class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
@@ -82,9 +71,10 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
         val xcProjectFile = configuration.workspace.xcProjectFile ?: return false
         val xcodeScheme = configuration.xcodeScheme ?: return false
 
+        KMM_LOG.debug("executeTask: preparing build")
         val buildContext = CidrBuild.BuildContext(
             configuration.project,
-            BuildConfiguration(),
+            CidrBuildConfiguration { "Xcode Build Configuration" },
             CidrBuildTaskType.BUILD,
             name,
             "Preparing build"
@@ -98,7 +88,9 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
             configuration.xcodeSdk(environment.executionTarget)
         )
 
-        buildContext.processHandler.addProcessListener(BuildProcessListener(buildContext))
+        buildContext.processHandler.addProcessListener(
+            BuildProcessListener(configuration.project, name, workDirectory, buildContext.id)
+        )
 
         val future = ApplicationManager.getApplication().executeOnPooledThread<ExecutionResult<CidrBuildResult>> {
             CidrBuild.execute(configuration.project, buildContext) {
@@ -129,6 +121,62 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
         cmd.addParameters("SYMROOT=$buildDirectory")
         cmd.addParameters("-sdk", sdk)
 
+        KMM_LOG.info("createBuildProcess commandLine=" + cmd.commandLineString)
         return OSProcessHandler(cmd)
+    }
+
+    private class BuildProcessListener(
+        project: Project,
+        private val title: String,
+        private val workDirectory: String,
+        private val id: CidrBuildId
+    ) : ProcessListener {
+        private val buildView = ServiceManager.getService(
+            project,
+            BuildViewManager::class.java
+        )
+        private val buildWindow = ToolWindowManager.getInstance(project).getToolWindow(BuildContentManagerImpl.Build)
+
+        override fun startNotified(event: ProcessEvent) {
+            buildWindow?.activate(null, false)
+            val startEvent = StartBuildEventImpl(
+                DefaultBuildDescriptor(id, title, workDirectory, System.currentTimeMillis()),
+                event.text.orEmpty()
+            )
+            buildView.onEvent(id, startEvent)
+        }
+
+        override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+            buildView.onEvent(id, OutputBuildEventImpl(id, event.text.orEmpty(), true))
+        }
+
+        override fun processTerminated(event: ProcessEvent) {
+            val finishEvent = if (event.exitCode == 0) {
+                FinishBuildEventImpl(
+                    id,
+                    null,
+                    System.currentTimeMillis(),
+                    "success",
+                    SuccessResultImpl()
+                )
+            } else {
+                FinishBuildEventImpl(
+                    id,
+                    null,
+                    System.currentTimeMillis(),
+                    "failed with code: ${event.exitCode}",
+                    AndroidStudioFailureResult()
+                )
+            }
+            buildView.onEvent(id, finishEvent)
+        }
+
+        override fun processWillTerminate(event: ProcessEvent, willBeDestroyed: Boolean) {}
+
+        //Android Studio shows success result if FailureResultImpl doesn't contains list of failures ¯\_(ツ)_/¯
+        //hence there is work around
+        private class AndroidStudioFailureResult : FailureResultImpl(), MessageEventResult {
+            override fun getKind() = MessageEvent.Kind.ERROR
+        }
     }
 }

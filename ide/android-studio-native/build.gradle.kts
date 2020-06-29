@@ -24,6 +24,7 @@ dependencies {
         "platform-api",
         "platform-impl",
         "platform-util-ex",
+        "platform-core-ui",
         "platform-util-ui",
         "platform-ide-util-io",
         "util"
