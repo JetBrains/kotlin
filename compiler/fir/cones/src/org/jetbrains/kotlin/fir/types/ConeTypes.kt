@@ -243,7 +243,7 @@ class ConeIntersectionType(
 
     override val attributes: ConeAttributes = intersectedTypes.foldMap(
         { it.attributes },
-        { a, b -> a.union(b) }
+        { a, b -> a.intersect(b) }
     )
 
     private var hashCode = 0
