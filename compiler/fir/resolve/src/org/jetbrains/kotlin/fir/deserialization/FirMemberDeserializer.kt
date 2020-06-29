@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -233,19 +232,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                             c.containerSource, proto, local.nameResolver, local.typeTable, setterFlags
                         )
                     this.symbol = FirPropertyAccessorSymbol()
-                    valueParameters += proto.setterValueParameter.let {
-                        val parameterFlags = if (it.hasFlags()) it.flags else 0
-                        buildValueParameter {
-                            session = c.session
-                            origin = FirDeclarationOrigin.Library
-                            this.returnTypeRef = returnTypeRef
-                            name = if (it.hasName()) c.nameResolver.getName(it.name) else Name.special("<default-setter-parameter>")
-                            this.symbol = FirVariableSymbol(CallableId(FqName.ROOT, name))
-                            isCrossinline = Flags.IS_CROSSINLINE.get(parameterFlags)
-                            isNoinline = Flags.IS_NOINLINE.get(parameterFlags)
-                            isVararg = it.hasVarargElementType()
-                        }
-                    }
+                    valueParameters += local.memberDeserializer.valueParameters(
+                        listOf(proto.setterValueParameter),
+                        proto,
+                        AbstractAnnotationDeserializer.CallableKind.PROPERTY_SETTER
+                    )
                 }
             } else {
                 FirDefaultPropertySetter(null, c.session, FirDeclarationOrigin.Library, returnTypeRef, visibility)
