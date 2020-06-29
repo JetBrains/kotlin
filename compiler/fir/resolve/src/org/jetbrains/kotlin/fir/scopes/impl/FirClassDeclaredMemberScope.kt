@@ -30,7 +30,7 @@ class FirClassDeclaredMemberScope(
             when (declaration) {
                 is FirCallableMemberDeclaration<*> -> {
                     val name = when (declaration) {
-                        is FirConstructor -> Name.special("<init>")
+                        is FirConstructor -> constructorName
                         is FirVariable<*> -> declaration.name
                         is FirSimpleFunction -> declaration.name
                         else -> continue@loop
@@ -43,6 +43,7 @@ class FirClassDeclaredMemberScope(
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+        if (name == constructorName) return
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
             if (symbol is FirFunctionSymbol<*>) {
@@ -52,7 +53,7 @@ class FirClassDeclaredMemberScope(
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        val symbols = callablesIndex[Name.special("<init>")] ?: return
+        val symbols = callablesIndex[constructorName] ?: return
         for (symbol in symbols) {
             if (symbol is FirConstructorSymbol) {
                 processor(symbol)
@@ -76,3 +77,6 @@ class FirClassDeclaredMemberScope(
         nestedClassifierScope?.processClassifiersByNameWithSubstitution(name, processor)
     }
 }
+
+
+private val constructorName = Name.special("<init>")
