@@ -9,4 +9,6 @@ import org.jetbrains.kotlin.name.FqName
 
 abstract class KtPackageSymbol : KtSymbol {
     abstract val fqName: FqName
+
+    abstract override fun createPointer(): KtSymbolPointer<KtPackageSymbol>
 }

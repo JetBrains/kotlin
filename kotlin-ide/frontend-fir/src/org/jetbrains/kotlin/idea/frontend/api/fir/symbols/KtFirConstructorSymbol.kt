@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.getPrimaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.idea.fir.findPsi
@@ -16,10 +17,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorParameterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 
 internal class KtFirConstructorSymbol(
@@ -48,5 +46,19 @@ internal class KtFirConstructorSymbol(
             ?: error("Class with id $classId id was not found")
         check(firClass is FirRegularClass) { "Owner class for constructor should be FirRegularClass, but ${firClass::class} was met" }
         builder.buildClassSymbol(firClass)
+    }
+
+    override fun createPointer(): KtSymbolPointer<KtConstructorSymbol> = withValidityAssertion {
+        if (!isPrimary) {
+            // TODO for now we can not find symbol for member function :(
+            return NonRestorableKtSymbolPointer
+        }
+        val ownerClassId = owner.classId
+        return symbolPointer { session ->
+            val ownerSymbol = session.symbolProvider.getClassOrObjectSymbolByClassId(ownerClassId) ?: return@symbolPointer null
+            check(ownerSymbol is KtFirSymbol<*>)
+            val classFir = (ownerSymbol.fir as? FirRegularClass) ?: error("FirRegularClass expected but ${ownerSymbol.fir::class} found")
+            classFir.getPrimaryConstructorIfAny()?.let(builder::buildConstructorSymbol)
+        }
     }
 }

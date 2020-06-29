@@ -31,4 +31,6 @@ internal class KtFirAnonymousFunctionSymbol(
             builder.buildParameterSymbol(valueParameter)
         }
     }
+
+    override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = NonRestorableKtSymbolPointer
 }

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 interface KtSymbol : ValidityOwner {
     val origin: KtSymbolOrigin
     val psi: PsiElement?
+
+    fun createPointer(): KtSymbolPointer<KtSymbol> = NonRestorableKtSymbolPointer
 }
 
 enum class KtSymbolOrigin {
