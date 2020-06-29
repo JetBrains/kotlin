@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight
@@ -74,16 +63,13 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
             for ((counter, pointer) in pointers.withIndex()) {
                 indicator.fraction = counter.toDouble() / myTotal
 
-                runReadAction {
-                    val element = pointer.element
-                    if (element?.isValid == true) element!! else null
-                }?.let { directive ->
-                    val presentableUrl = runReadAction { directive.containingFile }.virtualFile.presentableUrl
+                runReadAction { pointer.element?.takeIf { it.isValid }?.containingKtFile?.virtualFile }?.let { virtualFile ->
+                    val presentableUrl = virtualFile.presentableUrl
                     indicator.text2 = presentableUrl
                     ApplicationManager.getApplication().invokeAndWait {
                         project.executeWriteCommand(KotlinBundle.message("delete.0", presentableUrl)) {
                             try {
-                                directive.delete()
+                                pointer.element?.delete()
                             } catch (e: IncorrectOperationException) {
                                 LOG.error(e)
                             }
@@ -103,10 +89,8 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
         private val REMOVING_REDUNDANT_IMPORTS_TITLE = KotlinBundle.message("optimize.imports.task.removing.redundant.imports")
     }
 
-    override fun prepareOperation(usages: Array<UsageInfo>): Set<KtFile> {
-        return usages.mapNotNullTo(LinkedHashSet()) {
-            if (!it.isNonCodeUsage) it.file as? KtFile else null
-        }
+    override fun prepareOperation(usages: Array<UsageInfo>): Set<KtFile> = usages.mapNotNullTo(LinkedHashSet()) {
+        if (!it.isNonCodeUsage) it.file as? KtFile else null
     }
 
     override fun performOperation(project: Project, operationData: Set<KtFile>) {
@@ -128,6 +112,7 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
                 progressManager.run(progressTask)
             }
         }
+
         progressManager.run(collectTask)
     }
 }
