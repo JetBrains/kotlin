@@ -54,9 +54,9 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         generationStart = PerformanceCounter.currentTime()
     }
 
-    open fun notifyGenerationFinished(lines: Int, files: Int, additionalDescription: String) {
+    open fun notifyGenerationFinished(files: Int, lines: Int, additionalDescription: String) {
         val time = PerformanceCounter.currentTime() - generationStart
-        measurements += CodeGenerationMeasurement(lines, files, TimeUnit.NANOSECONDS.toMillis(time), additionalDescription)
+        measurements += CodeGenerationMeasurement(files, lines, TimeUnit.NANOSECONDS.toMillis(time), additionalDescription)
     }
 
     fun dumpPerformanceReport(destination: File) {
