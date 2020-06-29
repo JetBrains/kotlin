@@ -23,6 +23,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.TestOnly
 
 object GotoDeclarationOrUsageHandler2 : CodeInsightActionHandler {
 
@@ -95,6 +96,23 @@ object GotoDeclarationOrUsageHandler2 : CodeInsightActionHandler {
         showUsages(project, dataContext, it)
       }
       popup.showInBestPositionFor(dataContext)
+    }
+  }
+
+  @TestOnly
+  enum class GTDUOutcome {
+    GTD,
+    SU,
+    ;
+  }
+
+  @TestOnly
+  @JvmStatic
+  fun testGTDUOutcome(editor: Editor, file: PsiFile, offset: Int): GTDUOutcome? {
+    return when (gotoDeclarationOrUsages(file.project, editor, file, offset)?.result()) {
+      null -> null
+      is GTDUActionResult.GTD -> GTDUOutcome.GTD
+      is GTDUActionResult.SU -> GTDUOutcome.SU
     }
   }
 }
