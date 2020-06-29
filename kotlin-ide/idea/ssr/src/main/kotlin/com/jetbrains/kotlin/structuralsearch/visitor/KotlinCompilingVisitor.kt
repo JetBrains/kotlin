@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi2ir.deparenthesize
 import java.util.regex.Pattern
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
@@ -95,7 +96,10 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitReferenceExpression(expression: KtReferenceExpression) {
         visitElement(expression)
-        if (getHandler(expression) is SubstitutionHandler) getHandler(expression).setFilter { it is PsiElement }
+        val handler = getHandler(expression)
+        handler.filter =
+            if (handler is SubstitutionHandler) NodeFilter { it is PsiElement } // accept all
+            else ReferenceExpressionFilter
     }
 
     private fun visitLeafPsiElement(element: LeafPsiElement) {
@@ -104,6 +108,11 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         when (element.elementType) {
             KDocTokens.TEXT, KDocTokens.TAG_NAME -> processPatternStringWithFragments(element)
         }
+    }
+
+    override fun visitExpression(expression: KtExpression) {
+        super.visitExpression(expression)
+        getHandler(expression).filter = ExpressionFilter
     }
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
@@ -246,7 +255,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
         super.visitPrimaryConstructor(constructor)
-        if (constructor.children.all {it.allowsAbsenceOfMatch}) {
+        if (constructor.children.all { it.allowsAbsenceOfMatch }) {
             setHandler(constructor, absenceOfMatchHandler(constructor))
         }
     }
@@ -269,30 +278,50 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     }
 
     companion object {
+
+        private fun deparIfNecessary(element: PsiElement): PsiElement =
+            if (element is KtParenthesizedExpression) element.deparenthesize() else element
+
+        val ExpressionFilter: NodeFilter = NodeFilter {
+            val element = deparIfNecessary(it)
+            element is KtExpression
+        }
+
         val ArrayAccessExpressionFilter: NodeFilter = NodeFilter {
-            it is KtArrayAccessExpression || it is KtDotQualifiedExpression
+            val element = deparIfNecessary(it)
+            element is KtArrayAccessExpression || element is KtDotQualifiedExpression
         }
 
         /** translated op matching */
         val CallExpressionFilter: NodeFilter = NodeFilter {
-            it is KtCallExpression || it is KtDotQualifiedExpression
+            val element = deparIfNecessary(it)
+            element is KtCallExpression || element is KtDotQualifiedExpression
         }
 
         /** translated op matching */
         val UnaryExpressionFilter: NodeFilter = NodeFilter {
-            it is KtUnaryExpression || it is KtDotQualifiedExpression
+            val element = deparIfNecessary(it)
+            element is KtUnaryExpression || element is KtDotQualifiedExpression
         }
 
         val BinaryExpressionFilter: NodeFilter = NodeFilter {
-            it is KtBinaryExpression || it is KtDotQualifiedExpression || it is KtPrefixExpression
+            val element = deparIfNecessary(it)
+            element is KtBinaryExpression || element is KtDotQualifiedExpression || element is KtPrefixExpression
         }
 
         val ConstantExpressionFilter: NodeFilter = NodeFilter {
-            it is KtConstantExpression || it is KtParenthesizedExpression
+            val element = deparIfNecessary(it)
+            element is KtConstantExpression || element is KtParenthesizedExpression
         }
 
         val DotQualifiedExpressionFilter: NodeFilter = NodeFilter {
-            it is KtDotQualifiedExpression || it is KtReferenceExpression
+            val element = deparIfNecessary(it)
+            element is KtDotQualifiedExpression || element is KtReferenceExpression
+        }
+
+        val ReferenceExpressionFilter: NodeFilter = NodeFilter {
+            val element = deparIfNecessary(it)
+            element is KtReferenceExpression
         }
 
         val ParameterFilter: NodeFilter = NodeFilter {

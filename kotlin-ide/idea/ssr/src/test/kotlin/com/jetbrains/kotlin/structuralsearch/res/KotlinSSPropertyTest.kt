@@ -21,9 +21,11 @@ class KotlinSSPropertyTest : KotlinSSResourceInspectionTest() {
 
     fun testVarTypeProjection() { doTest("var '_ : Comparable<'_T>") }
 
-    fun testVarStringAssign() { doTest("var '_  = \"Hell world\"") }
+    fun testVarStringAssign() { doTest("var '_  = \"Hello world\"") }
 
-    fun testVarStringAssignPar() { doTest("var '_  = (\"Hell world\")") }
+    fun testVarStringAssignPar() { doTest("var '_  = (\"Hello world\")") }
 
     fun testVarRefAssign() { doTest("var '_  = a") }
+
+    fun testVarNoInitializer() { doTest("var '_ = '_{0,0}") }
 }

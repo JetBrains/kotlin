@@ -1,3 +1,3 @@
-var a = "Hell world"
-<warning descr="SSR">var b = ("Hell world")</warning>
-var c = (("Hell world"))
+var a = "Hello world"
+<warning descr="SSR">var b = ("Hello world")</warning>
+var c = (("Hello world"))
