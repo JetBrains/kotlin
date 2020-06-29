@@ -55,28 +55,6 @@ class FirSignatureEnhancement(
         FirJavaEnhancementContext(session) { null }.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, owner.annotations)
 
     private val enhancements = mutableMapOf<FirCallableSymbol<*>, FirCallableSymbol<*>>()
-    private val overriddenFunctions = mutableMapOf<FirFunctionSymbol<*>, Collection<FirFunctionSymbol<*>>>()
-
-    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        useSiteMemberScope.processPropertiesByName(name) process@{ original ->
-
-            val field = enhancements.getOrPut(original) { enhance(original, name) }
-            processor(field as FirVariableSymbol<*>)
-        }
-
-        return super.processPropertiesByName(name, processor)
-    }
-
-    override fun getCallableNames(): Set<Name> {
-        return useSiteMemberScope.getCallableNames() + super.getCallableNames()
-    }
-
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
-        useSiteMemberScope.processFunctionsByName(name) process@{ original ->
-
-            val function = enhancements.getOrPut(original) { enhance(original, name) }
-            processor(function as FirFunctionSymbol<*>)
-        }
 
     fun enhancedFunction(
         function: FirFunctionSymbol<*>,

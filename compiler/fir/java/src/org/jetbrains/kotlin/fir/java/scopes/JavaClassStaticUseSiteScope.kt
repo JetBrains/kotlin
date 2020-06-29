@@ -79,4 +79,18 @@ class JavaClassStaticUseSiteScope internal constructor(
 
         return result
     }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun getCallableNames(): Set<Name> {
+        return buildSet {
+            addAll(declaredMemberScope.getCallableNames())
+            for (superTypesScope in superTypesScopes) {
+                addAll(superTypesScope.getCallableNames())
+            }
+        }
+    }
+
+    override fun mayContainName(name: Name): Boolean {
+        return declaredMemberScope.mayContainName(name) || superTypesScopes.any { it.mayContainName(name) }
+    }
 }

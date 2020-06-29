@@ -100,4 +100,12 @@ class JavaClassMembersEnhancementScope(
         propertySymbol, processor, overriddenProperties, useSiteMemberScope,
         FirTypeScope::processOverriddenPropertiesWithDepth
     )
+
+    override fun getCallableNames(): Set<Name> {
+        return useSiteMemberScope.getCallableNames()
+    }
+
+    override fun mayContainName(name: Name): Boolean {
+        return useSiteMemberScope.mayContainName(name)
+    }
 }
