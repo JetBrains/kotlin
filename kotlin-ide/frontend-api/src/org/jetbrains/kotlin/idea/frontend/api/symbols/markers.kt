@@ -32,3 +32,17 @@ interface KtPossibleExtensionSymbol {
 interface KtSymbolWithTypeParameters {
     val typeParameters: List<KtTypeParameterSymbol>
 }
+
+interface KtSymbolWithModality<M : KtSymbolModality> {
+    val modality: M
+}
+
+sealed class KtSymbolModality {
+    object SEALED : KtSymbolModality()
+}
+
+sealed class KtCommonSymbolModality : KtSymbolModality() {
+    object FINAL : KtCommonSymbolModality()
+    object ABSTRACT : KtCommonSymbolModality()
+    object OPEN : KtCommonSymbolModality()
+}

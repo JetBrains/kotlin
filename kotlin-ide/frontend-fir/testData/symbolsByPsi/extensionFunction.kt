@@ -7,6 +7,7 @@ KtFirFunctionSymbol:
   isExtension: true
   isOperator: false
   isSuspend: false
+  modality: FINAL
   name: foo
   origin: SOURCE
   receiverType: kotlin/String

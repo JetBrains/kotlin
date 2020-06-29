@@ -16,10 +16,10 @@ abstract class KtTypeAliasSymbol : KtClassLikeSymbol() {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.TOP_LEVEL
 }
 
-abstract class KtClassOrObjectSymbol : KtClassLikeSymbol(), KtSymbolWithTypeParameters {
+abstract class KtClassOrObjectSymbol : KtClassLikeSymbol(), KtSymbolWithTypeParameters, KtSymbolWithModality<KtSymbolModality> {
     abstract val classKind: KtClassKind
 }
 
 enum class KtClassKind {
-    CLASS, ABSTRACT_CLASS, ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, OBJECT, COMPANION_OBJECT, INTERFACE
+    CLASS, ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, OBJECT, COMPANION_OBJECT, INTERFACE
 }

@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.ReadOnlyWeakRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -31,6 +29,9 @@ internal class KtFirClassOrObjectSymbol(
     override val name: Name get() = withValidityAssertion { fir.classId.shortClassName }
     override val classId: ClassId get() = withValidityAssertion { fir.classId }
 
+    override val modality: KtSymbolModality
+        get() = withValidityAssertion { fir.modality.getSymbolModality() }
+
     override val typeParameters by cached {
         fir.typeParameters.map { typeParameter ->
             builder.buildTypeParameterSymbol(typeParameter.symbol.fir)
@@ -44,7 +45,7 @@ internal class KtFirClassOrObjectSymbol(
                 ClassKind.ENUM_CLASS -> KtClassKind.ENUM_CLASS
                 ClassKind.ENUM_ENTRY -> KtClassKind.ENUM_ENTRY
                 ClassKind.ANNOTATION_CLASS -> KtClassKind.ANNOTATION_CLASS
-                ClassKind.CLASS -> if (fir.modality == Modality.ABSTRACT) KtClassKind.ABSTRACT_CLASS else KtClassKind.CLASS
+                ClassKind.CLASS -> KtClassKind.CLASS
                 ClassKind.OBJECT -> if (fir.isCompanion) KtClassKind.COMPANION_OBJECT else KtClassKind.OBJECT
             }
         }

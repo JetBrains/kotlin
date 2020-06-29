@@ -14,6 +14,7 @@ KtFirFunctionSymbol:
   isExtension: false
   isOperator: false
   isSuspend: false
+  modality: FINAL
   name: foo
   origin: SOURCE
   symbolKind: TOP_LEVEL

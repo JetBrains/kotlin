@@ -6,17 +6,15 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
-import org.jetbrains.kotlin.fir.declarations.isLocal
-import org.jetbrains.kotlin.fir.declarations.isOperator
-import org.jetbrains.kotlin.fir.declarations.isSuspend
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.idea.frontend.api.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
@@ -56,4 +54,5 @@ internal class KtFirFunctionSymbol(
                 else -> KtSymbolKind.MEMBER
             }
         }
+    override val modality: KtCommonSymbolModality get() = withValidityAssertion { fir.modality.getSymbolModality() }
 }
