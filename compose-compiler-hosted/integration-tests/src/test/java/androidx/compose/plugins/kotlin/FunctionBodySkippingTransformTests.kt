@@ -1756,7 +1756,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
             }
         """,
         """
-            val unstableUnused: Function4<Foo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+            val unstableUnused: @[ExtensionFunctionType] Function4<Foo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
               %dirty = %dirty or 0b0110
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
@@ -1765,11 +1765,11 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
             }
-            val unstableUsed: Function4<Foo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+            val unstableUsed: @[ExtensionFunctionType] Function4<Foo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
               print(x)
             }
-            val stableUnused: Function4<StableFoo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+            val stableUnused: @[ExtensionFunctionType] Function4<StableFoo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
               %dirty = %dirty or 0b0110
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
@@ -1778,7 +1778,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
             }
-            val stableUsed: Function4<StableFoo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+            val stableUsed: @[ExtensionFunctionType] Function4<StableFoo, Composer<*>, Int, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010

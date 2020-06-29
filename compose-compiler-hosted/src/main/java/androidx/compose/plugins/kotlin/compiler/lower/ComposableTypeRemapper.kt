@@ -19,6 +19,7 @@ package androidx.compose.plugins.kotlin.compiler.lower
 import androidx.compose.plugins.kotlin.ComposeFqNames
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -71,6 +72,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
@@ -386,7 +388,9 @@ class ComposerTypeRemapper(
             ),
             type.hasQuestionMark,
             newIrArguments.map { remapTypeArgument(it) },
-            emptyList(),
+            type.annotations.filter { !it.isComposableAnnotation() }.map {
+                it.transform(deepCopy, null) as IrConstructorCall
+            },
             null
         )
     }
@@ -430,3 +434,7 @@ fun List<IrProvider>.getDeclaration(symbol: IrSymbol) {
         provider.getDeclaration(symbol)
     } ?: error("Could not find declaration for unbound symbol $symbol")
 }
+
+private fun IrConstructorCall.isComposableAnnotation() =
+    this.symbol.descriptor.returnType.constructor.declarationDescriptor?.fqNameSafe ==
+        ComposeFqNames.Composable
