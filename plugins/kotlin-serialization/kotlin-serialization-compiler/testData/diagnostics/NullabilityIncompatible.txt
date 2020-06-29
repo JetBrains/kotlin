@@ -2,7 +2,7 @@ package
 
 @kotlinx.serialization.Serializable public final class Foo {
     public constructor Foo(/*0*/ foo: Nope)
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor Foo(/*0*/ seen1: kotlin.Int, /*1*/ foo: Nope?, /*2*/ serializationConstructorMarker: kotlinx.serialization.SerializationConstructorMarker?)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor Foo(/*0*/ seen1: kotlin.Int, /*1*/ foo: Nope?, /*2*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
     public final val foo: Nope
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

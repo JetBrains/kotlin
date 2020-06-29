@@ -16,12 +16,12 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           GETSTATIC (INSTANCE, LListOfUsers$$serializer;)
           CHECKCAST
           ICONST_1
-          INVOKESPECIAL (kotlinx/serialization/internal/SerialClassDescImpl, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
+          INVOKESPECIAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
           ASTORE (0)
           ALOAD (0)
           LDC (list)
           ICONST_0
-          INVOKEVIRTUAL (kotlinx/serialization/internal/SerialClassDescImpl, addElement, (Ljava/lang/String;Z)V)
+          INVOKEVIRTUAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, addElement, (Ljava/lang/String;Z)V)
           ALOAD (0)
           CHECKCAST
           PUTSTATIC (descriptor, Lkotlinx/serialization/SerialDescriptor;)
@@ -155,7 +155,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           CHECKCAST
           ACONST_NULL
           CHECKCAST
-          INVOKESPECIAL (ListOfUsers, <init>, (ILjava/util/List;Lkotlinx/serialization/SerializationConstructorMarker;)V)
+          INVOKESPECIAL (ListOfUsers, <init>, (ILjava/util/List;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN
         LABEL (L9)
     }
@@ -279,7 +279,7 @@ public final class ListOfUsers : java/lang/Object {
         LABEL (L3)
     }
 
-    public void <init>(int seen1, java.util.List list, kotlinx.serialization.SerializationConstructorMarker serializationConstructorMarker) {
+    public void <init>(int seen1, java.util.List list, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
         LABEL (L0)
           ALOAD (0)
         LABEL (L1)
@@ -325,12 +325,12 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           GETSTATIC (INSTANCE, LOptionalUser$$serializer;)
           CHECKCAST
           ICONST_1
-          INVOKESPECIAL (kotlinx/serialization/internal/SerialClassDescImpl, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
+          INVOKESPECIAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
           ASTORE (0)
           ALOAD (0)
           LDC (user)
           ICONST_1
-          INVOKEVIRTUAL (kotlinx/serialization/internal/SerialClassDescImpl, addElement, (Ljava/lang/String;Z)V)
+          INVOKEVIRTUAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, addElement, (Ljava/lang/String;Z)V)
           ALOAD (0)
           CHECKCAST
           PUTSTATIC (descriptor, Lkotlinx/serialization/SerialDescriptor;)
@@ -452,7 +452,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           CHECKCAST
           ACONST_NULL
           CHECKCAST
-          INVOKESPECIAL (OptionalUser, <init>, (ILUser;Lkotlinx/serialization/SerializationConstructorMarker;)V)
+          INVOKESPECIAL (OptionalUser, <init>, (ILUser;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN
         LABEL (L9)
     }
@@ -615,7 +615,7 @@ public final class OptionalUser : java/lang/Object {
           RETURN
     }
 
-    public void <init>(int seen1, User user, kotlinx.serialization.SerializationConstructorMarker serializationConstructorMarker) {
+    public void <init>(int seen1, User user, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
         LABEL (L0)
           ALOAD (0)
         LABEL (L1)
@@ -678,16 +678,16 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           GETSTATIC (INSTANCE, LUser$$serializer;)
           CHECKCAST
           ICONST_2
-          INVOKESPECIAL (kotlinx/serialization/internal/SerialClassDescImpl, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
+          INVOKESPECIAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
           ASTORE (0)
           ALOAD (0)
           LDC (firstName)
           ICONST_0
-          INVOKEVIRTUAL (kotlinx/serialization/internal/SerialClassDescImpl, addElement, (Ljava/lang/String;Z)V)
+          INVOKEVIRTUAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, addElement, (Ljava/lang/String;Z)V)
           ALOAD (0)
           LDC (lastName)
           ICONST_0
-          INVOKEVIRTUAL (kotlinx/serialization/internal/SerialClassDescImpl, addElement, (Ljava/lang/String;Z)V)
+          INVOKEVIRTUAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, addElement, (Ljava/lang/String;Z)V)
           ALOAD (0)
           CHECKCAST
           PUTSTATIC (descriptor, Lkotlinx/serialization/SerialDescriptor;)
@@ -830,7 +830,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ALOAD (7)
           ACONST_NULL
           CHECKCAST
-          INVOKESPECIAL (User, <init>, (ILjava/lang/String;Ljava/lang/String;Lkotlinx/serialization/SerializationConstructorMarker;)V)
+          INVOKESPECIAL (User, <init>, (ILjava/lang/String;Ljava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN
         LABEL (L10)
     }
@@ -962,7 +962,7 @@ public final class User : java/lang/Object {
         LABEL (L3)
     }
 
-    public void <init>(int seen1, java.lang.String firstName, java.lang.String lastName, kotlinx.serialization.SerializationConstructorMarker serializationConstructorMarker) {
+    public void <init>(int seen1, java.lang.String firstName, java.lang.String lastName, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
         LABEL (L0)
           ALOAD (0)
         LABEL (L1)

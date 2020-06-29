@@ -2,7 +2,7 @@ package
 
 @kotlinx.serialization.Serializable public final class Basic {
     public constructor Basic(/*0*/ foo: NonSerializable)
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor Basic(/*0*/ seen1: kotlin.Int, /*1*/ foo: NonSerializable?, /*2*/ serializationConstructorMarker: kotlinx.serialization.SerializationConstructorMarker?)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor Basic(/*0*/ seen1: kotlin.Int, /*1*/ foo: NonSerializable?, /*2*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
     public final val foo: NonSerializable
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -31,7 +31,7 @@ package
 }
 
 @kotlinx.serialization.Serializable public final class Inside {
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor Inside(/*0*/ seen1: kotlin.Int, /*1*/ foo: kotlin.collections.List<NonSerializable>?, /*2*/ serializationConstructorMarker: kotlinx.serialization.SerializationConstructorMarker?)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor Inside(/*0*/ seen1: kotlin.Int, /*1*/ foo: kotlin.collections.List<NonSerializable>?, /*2*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
     public constructor Inside(/*0*/ foo: kotlin.collections.List<NonSerializable>)
     public final val foo: kotlin.collections.List<NonSerializable>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -69,7 +69,7 @@ public final class NonSerializable {
 
 @kotlinx.serialization.Serializable public final class WithImplicitType {
     public constructor WithImplicitType()
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor WithImplicitType(/*0*/ seen1: kotlin.Int, /*1*/ foo: NonSerializable?, /*2*/ serializationConstructorMarker: kotlinx.serialization.SerializationConstructorMarker?)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor WithImplicitType(/*0*/ seen1: kotlin.Int, /*1*/ foo: NonSerializable?, /*2*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
     public final val foo: NonSerializable
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

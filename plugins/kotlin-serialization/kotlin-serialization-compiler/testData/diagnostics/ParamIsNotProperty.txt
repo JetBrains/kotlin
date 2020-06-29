@@ -1,7 +1,7 @@
 package
 
 @kotlinx.serialization.Serializable public final class Test {
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor Test(/*0*/ seen1: kotlin.Int, /*1*/ someData: kotlin.String?, /*2*/ serializationConstructorMarker: kotlinx.serialization.SerializationConstructorMarker?)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor Test(/*0*/ seen1: kotlin.Int, /*1*/ someData: kotlin.String?, /*2*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
     public constructor Test(/*0*/ someData: kotlin.String, /*1*/ cantBeDeserialized: kotlin.Int)
     public final val someData: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
