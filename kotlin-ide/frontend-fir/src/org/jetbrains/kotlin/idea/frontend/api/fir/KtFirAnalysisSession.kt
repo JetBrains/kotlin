@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper.toTargetSymbol
 import org.jetbrains.kotlin.name.ClassId

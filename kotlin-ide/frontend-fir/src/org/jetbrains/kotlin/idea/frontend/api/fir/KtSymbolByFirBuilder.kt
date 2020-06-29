@@ -26,14 +26,20 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirLocalVariableSymb
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionValueParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirClassType
+import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirErrorType
+import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirFlexibleType
+import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirIntersectionType
+import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirTypeArgumentWithVariance
+import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirTypeParameterType
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 
 internal class KtSymbolByFirBuilder(
     firProvider: FirSymbolProvider,
