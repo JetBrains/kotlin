@@ -63,7 +63,8 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     final override var type: ConeKotlinType = type
         private set
 
-    private var implicitScope: FirTypeScope? = type.scope(useSiteSession, scopeSession)
+    var implicitScope: FirTypeScope? = type.scope(useSiteSession, scopeSession)
+        private set
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
 
