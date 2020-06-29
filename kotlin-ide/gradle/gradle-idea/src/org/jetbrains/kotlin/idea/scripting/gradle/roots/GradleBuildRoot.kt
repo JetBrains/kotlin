@@ -88,19 +88,20 @@ class New(
  */
 class Imported(
     override val pathPrefix: String,
-    val javaHome: File?,
     val data: GradleBuildRootData,
     lastModifiedFiles: LastModifiedFiles
 ) : GradleBuildRoot(lastModifiedFiles) {
     override val projectRoots: Collection<String>
         get() = data.projectRoots
 
+    val javaHome = data.javaHome?.takeIf { it.isNotBlank() }?.let { File(it) }
+
     fun collectConfigurations(builder: ScriptClassRootsBuilder) {
         if (javaHome != null) {
             builder.sdks.addSdk(javaHome)
         }
 
-        val definitions = GradleScriptDefinitionsContributor.getDefinitions(builder.project, pathPrefix, data.gradleHome)
+        val definitions = GradleScriptDefinitionsContributor.getDefinitions(builder.project, pathPrefix, data.gradleHome, data.javaHome)
         if (definitions == null) {
             // needed to recreate classRoots if correct script definitions weren't loaded at this moment
             // in this case classRoots will be recreated after script definitions update

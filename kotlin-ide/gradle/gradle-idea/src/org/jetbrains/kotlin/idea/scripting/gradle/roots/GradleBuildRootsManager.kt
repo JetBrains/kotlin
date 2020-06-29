@@ -161,7 +161,10 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
                 return
             }
 
-            val newData = GradleBuildRootData(sync.ts, sync.projectRoots, gradleHome, sync.models)
+
+            val newData = GradleBuildRootData(
+                sync.ts, sync.projectRoots, gradleHome, sync.javaHome, sync.models
+            )
             val mergedData = if (sync.failed && oldRoot is Imported) merge(oldRoot.data, newData) else newData
 
             val lastModifiedFilesReset = LastModifiedFiles()
@@ -183,7 +186,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         val models = old.models.associateByTo(mutableMapOf()) { it.file }
         new.models.associateByTo(models) { it.file }
 
-        return GradleBuildRootData(new.importTs, roots, new.gradleHome, models.values)
+        return GradleBuildRootData(new.importTs, roots, new.gradleHome, new.javaHome, models.values)
     }
 
     private val modifiedFilesCheckScheduled = AtomicBoolean()
@@ -345,12 +348,8 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     ): Imported? {
         val buildRoot = VfsUtil.findFile(Paths.get(externalProjectPath), true) ?: return null
         val data = dataProvider(buildRoot) ?: return null
-        // TODO: can be outdated, should be taken from sync
-        val javaHome = ExternalSystemApiUtil
-            .getExecutionSettings<GradleExecutionSettings>(project, externalProjectPath, GradleConstants.SYSTEM_ID)
-            .javaHome?.let { File(it) }
 
-        return Imported(externalProjectPath, javaHome, data, lastModifiedFiles)
+        return Imported(externalProjectPath, data, lastModifiedFiles)
     }
 
     private fun add(newRoot: GradleBuildRoot) {
