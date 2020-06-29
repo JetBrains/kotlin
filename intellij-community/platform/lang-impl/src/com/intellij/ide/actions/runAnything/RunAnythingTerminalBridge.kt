@@ -4,6 +4,8 @@ package com.intellij.ide.actions.runAnything
 import com.intellij.ide.actions.runAnything.activity.RunAnythingCommandProvider
 import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider
 import com.intellij.ide.actions.runAnything.activity.RunAnythingRecentProjectProvider
+import com.intellij.internal.statistic.collectors.fus.TerminalFusAwareHandler
+import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
@@ -12,18 +14,19 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.terminal.TerminalShellCommandHandler
 import com.intellij.terminal.TerminalExecutorAction
 
-class RunAnythingTerminalBridge : TerminalShellCommandHandler {
+class RunAnythingTerminalBridge : TerminalShellCommandHandler, TerminalFusAwareHandler {
   override fun matches(project: Project, workingDirectory: String?, localSession: Boolean, command: String): Boolean {
+    val dataContext = createDataContext(project, localSession, workingDirectory)
     return RunAnythingProvider.EP_NAME.extensionList
       .filter { checkForCLI(it) }
-      .any { provider -> provider.findMatchingValue(createDataContext(project, localSession, workingDirectory), command) != null }
+      .any { provider -> provider.findMatchingValue(dataContext, command) != null }
   }
 
   override fun execute(project: Project, workingDirectory: String?, localSession: Boolean, command: String, executorAction: TerminalExecutorAction): Boolean {
+    val dataContext = createDataContext(project, localSession, workingDirectory, executorAction)
     return RunAnythingProvider.EP_NAME.extensionList
       .filter { checkForCLI(it) }
       .any { provider ->
-        val dataContext = createDataContext(project, localSession, workingDirectory, executorAction)
         provider.findMatchingValue(dataContext, command)?.let { provider.execute(dataContext, it); return true } ?: false
       }
   }
@@ -47,5 +50,13 @@ class RunAnythingTerminalBridge : TerminalShellCommandHandler {
     private fun checkForCLI(it: RunAnythingProvider<*>?) = it !is RunAnythingCommandProvider
                                                            && it !is RunAnythingRecentProjectProvider
                                                            && it !is RunAnythingRunConfigurationProvider
+  }
+
+  override fun fillData(project: Project, workingDirectory: String?, localSession: Boolean, command: String, data: FeatureUsageData) {
+    val dataContext = createDataContext(project, localSession, workingDirectory)
+    val runAnythingProvider = RunAnythingProvider.EP_NAME.extensionList
+      .filter { checkForCLI(it) }.ifEmpty { return }.first { provider -> provider.findMatchingValue(dataContext, command) != null }
+
+    data.addData("runAnythingProvider", runAnythingProvider::class.java.simpleName)
   }
 }
