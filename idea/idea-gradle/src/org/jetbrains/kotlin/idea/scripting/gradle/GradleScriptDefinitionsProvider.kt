@@ -46,7 +46,7 @@ import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class GradleScriptDefinitionsContributor(private val project: Project) : ScriptDefinitionSourceAsContributor {
     companion object {
-        fun getDefinitions(project: Project, workingDir: String, gradleHome: String?): List<ScriptDefinition>? {
+        fun getDefinitions(project: Project, workingDir: String, gradleHome: String?, javaHome: String?): List<ScriptDefinition>? {
             val contributor = ScriptDefinitionContributor.EP_NAME.getExtensions(project)
                 .filterIsInstance<GradleScriptDefinitionsContributor>()
                 .singleOrNull()
@@ -63,7 +63,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
                 return null
             }
 
-            val root = LightGradleBuildRoot(workingDir, gradleHome)
+            val root = LightGradleBuildRoot(workingDir, gradleHome, javaHome)
             val definitions = contributor.definitionsByRoots[root]
             if (definitions == null) {
                 scriptingInfoLog(
@@ -128,7 +128,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
     override val id: String = "Gradle Kotlin DSL"
 
-    private data class LightGradleBuildRoot(val workingDir: String, val gradleHome: String?)
+    private data class LightGradleBuildRoot(val workingDir: String, val gradleHome: String?, val javaHome: String?)
 
     private val definitionsByRoots = ConcurrentHashMap<LightGradleBuildRoot, List<ScriptDefinition>>()
 
@@ -148,8 +148,8 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
     }
 
     // TODO: remove old roots
-    fun reloadIfNeeded(workingDir: String, gradleHome: String?) {
-        val root = LightGradleBuildRoot(workingDir, gradleHome)
+    fun reloadIfNeeded(workingDir: String, gradleHome: String?, javaHome: String?) {
+        val root = LightGradleBuildRoot(workingDir, gradleHome, javaHome)
         val value = definitionsByRoots[root]
         if (value != null) {
             if (root.isError()) {
@@ -177,15 +177,17 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             loadGradleTemplates(
                 projectPath,
                 templateClass = "org.gradle.kotlin.dsl.KotlinInitScript",
-                root.gradleHome,
-                templateClasspath,
-                additionalClassPath
+                gradleHome = root.gradleHome,
+                javaHome = root.javaHome,
+                templateClasspath = templateClasspath,
+                additionalClassPath = additionalClassPath
             ).let { kotlinDslTemplates.addAll(it) }
 
             loadGradleTemplates(
                 projectPath,
                 templateClass = "org.gradle.kotlin.dsl.KotlinSettingsScript",
                 gradleHome = root.gradleHome,
+                javaHome = root.javaHome,
                 templateClasspath = templateClasspath,
                 additionalClassPath = additionalClassPath
             ).let { kotlinDslTemplates.addAll(it) }
@@ -195,6 +197,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
                 projectPath,
                 templateClass = "org.gradle.kotlin.dsl.KotlinBuildScript",
                 gradleHome = root.gradleHome,
+                javaHome = root.javaHome,
                 templateClasspath = templateClasspath,
                 additionalClassPath = additionalClassPath
             ).let { kotlinDslTemplates.addAll(it) }
@@ -223,6 +226,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         projectPath: String,
         templateClass: String,
         gradleHome: String?,
+        javaHome: String?,
         templateClasspath: List<File>,
         additionalClassPath: List<File>
     ): List<ScriptDefinition> {
@@ -231,7 +235,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             projectPath,
             GradleConstants.SYSTEM_ID
         )
-        val hostConfiguration = createHostConfiguration(projectPath, gradleHome, gradleExeSettings)
+        val hostConfiguration = createHostConfiguration(projectPath, gradleHome, javaHome, gradleExeSettings)
         return loadDefinitionsFromTemplates(
             listOf(templateClass),
             templateClasspath,
@@ -253,6 +257,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
     private fun createHostConfiguration(
         projectPath: String,
         gradleHome: String?,
+        javaHome: String?,
         gradleExeSettings: GradleExecutionSettings
     ): ScriptingHostConfiguration {
         val gradleJvmOptions = gradleExeSettings.daemonVmOptions?.let { vmOptions ->
@@ -264,7 +269,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
         val environment = mapOf(
             "gradleHome" to gradleHome?.let(::File),
-            "gradleJavaHome" to gradleExeSettings.javaHome, // TODO: should be taken from information from gradle sync
+            "gradleJavaHome" to javaHome,
 
             "projectRoot" to projectPath.let(::File),
 
@@ -317,19 +322,20 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
                 // otherwise KotlinDslSyncListener should run reloadIfNeeded for valid roots
                 GradleBuildRootsManager.getInstance(project).getAllRoots().forEach {
                     val workingDir = it.pathPrefix
-                    val gradleHome = when (it) {
+                    val (gradleHome, javaHome) = when (it) {
                         is Imported -> {
-                            it.data.gradleHome
+                            it.data.gradleHome to it.data.javaHome
                         }
                         is WithoutScriptModels -> {
-                            ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
+                            val settings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
                                 project,
                                 workingDir,
                                 GradleConstants.SYSTEM_ID
-                            ).gradleHome
+                            )
+                            settings.gradleHome to settings.javaHome
                         }
                     }
-                    val root = LightGradleBuildRoot(workingDir, gradleHome)
+                    val root = LightGradleBuildRoot(workingDir, gradleHome, javaHome)
                     definitionsByRoots[root] = loadGradleDefinitions(root)
                 }
             }

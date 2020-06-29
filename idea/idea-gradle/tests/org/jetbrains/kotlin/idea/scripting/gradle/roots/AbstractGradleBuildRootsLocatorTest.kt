@@ -35,11 +35,11 @@ open class AbstractGradleBuildRootsLocatorTest {
         val pathPrefix = "$dir/"
         val root = Imported(
             dir,
-            null,
             GradleBuildRootData(
                 ts,
                 relativeProjectRoots.map { (pathPrefix + it).removeSuffix("/") },
-                "",
+                "gradleHome",
+                "javaHome",
                 listOf()
             ),
             LastModifiedFiles()
