@@ -24,8 +24,8 @@ class KtFirPackageSymbol(
     private val project: Project,
     override val token: ValidityOwner
 ) : KtPackageSymbol(), ValidityOwnerByValidityToken {
-    override val psi: PsiElement by cached {
-        KtPackage(PsiManager.getInstance(project), fqName, GlobalSearchScope.allScope(project))
+    override val psi: PsiElement? by cached {
+        PsiPackageImpl(PsiManager.getInstance(project), fqName.asString().replace('/', '.'))
     }
 
     override val origin: KtSymbolOrigin
@@ -35,14 +35,4 @@ class KtFirPackageSymbol(
         check(session is KtFirAnalysisSession)
         session.firSymbolBuilder.createPackageSymbolIfOneExists(fqName)
     }
-}
-
-class KtPackage(
-    manager: PsiManager,
-    private val fqName: FqName,
-    private val scope: GlobalSearchScope
-) : PsiPackageImpl(manager, fqName.asString()) {
-    override fun copy() = KtPackage(manager, fqName, scope)
-
-    override fun isValid(): Boolean = PackageIndexUtil.packageExists(fqName, scope, project)
 }

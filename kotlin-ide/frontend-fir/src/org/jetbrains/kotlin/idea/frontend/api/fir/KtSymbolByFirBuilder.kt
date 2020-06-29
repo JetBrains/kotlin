@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 
 /**
  * Maps FirElement to KtSymbol & ConeType to KtType, thread safe
