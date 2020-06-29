@@ -37,7 +37,7 @@ public final class Override5Kt$inlineMe$1$generic$1 {
 
 @kotlin.Metadata
 public final class Override5Kt$inlineMe$1$generic$2 {
-    public final static @org.jetbrains.annotations.NotNull field INSTANCE: Override5Kt$inlineMe$1$generic$2
+    public final static field INSTANCE: Override5Kt$inlineMe$1$generic$2
     inner (anonymous) class Override5Kt$inlineMe$1
     inner (anonymous) class Override5Kt$inlineMe$1$generic$2
     static method <clinit>(): void
