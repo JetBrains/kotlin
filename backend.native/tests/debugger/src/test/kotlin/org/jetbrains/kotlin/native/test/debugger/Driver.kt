@@ -19,9 +19,14 @@ import java.nio.file.Path
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 
+
+/**
+ * TODO: This constructor looks weird in conjunction with [DistProperties]
+ */
 class ToolDriver(
         private val konancDriver: Path,
         private val lldb: Path,
+        private val dwarfDump: Path,
         private val lldbPrettyPrinters: Path,
         private val useInProcessCompiler: Boolean = false
 ) {
@@ -45,6 +50,11 @@ class ToolDriver(
         return subprocess(lldb, program.toString(), "-b", *args.toTypedArray())
                 .thrownIfFailed()
                 .stdout
+    }
+
+    fun runDwarfDump(program: Path, processor:List<DwarfTag>.()->Unit) {
+        val out = subprocess(dwarfDump, "${program}.dSYM/Contents/Resources/DWARF/${program.fileName}").takeIf { it.process.exitValue() == 0 }?.stdout ?: error("${program}.dSYM/Contents/Resources/DWARF/${program.fileName}")
+        DwarfUtilParser().parse(StringReader(out)).tags.toList().processor()
     }
 }
 

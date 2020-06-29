@@ -78,7 +78,7 @@ fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
     val source = tmpdir.resolve("main.kt")
     val output = tmpdir.resolve("program.kexe")
 
-    val driver = ToolDriver(DistProperties.konanc, DistProperties.lldb, DistProperties.lldbPrettyPrinters)
+    val driver = ToolDriver(DistProperties.konanc, DistProperties.lldb, DistProperties.dwarfDump, DistProperties.lldbPrettyPrinters)
     Files.write(source, programText.trimIndent().toByteArray())
     driver.compile(source, output, "-g")
     val result = driver.runLldb(output, lldbSessionSpec.commands)
@@ -92,6 +92,47 @@ private val isOsxDevToolsEnabled: Boolean by lazy {
 
     val r = Regex("^.*\\ (enabled|disabled).$")
     r.find(rawStatus.stdout)?.destructured?.component1() == "enabled"
+}
+
+fun dwarfDumpTest(@Language("kotlin") programText: String, flags: List<String>, test:List<DwarfTag>.()->Unit) {
+    if (!haveDwarfDump) {
+        println("Skipping test: no dwarfdump")
+        return
+    }
+
+
+    with(Files.createTempDirectory("dwarfdump_test")) {
+        toFile().deleteOnExit()
+        val source = resolve("main.kt")
+        val output = resolve("program.kexe")
+
+        val driver = ToolDriver(
+                DistProperties.konanc,
+                DistProperties.lldb,
+                DistProperties.dwarfDump,
+                DistProperties.lldbPrettyPrinters)
+        Files.write(source, programText.trimIndent().toByteArray())
+        driver.compile(source, output, "-g", *flags.toTypedArray())
+        driver.runDwarfDump(output, test)
+    }
+}
+
+private val haveDwarfDump: Boolean by lazy {
+    val version = try {
+        subprocess(DistProperties.dwarfDump, "--version")
+                .takeIf { it.process.exitValue() == 0 }
+                ?.stdout
+    } catch (e: IOException) {
+        null
+    }
+
+    if (version == null) {
+        println("No LLDB found")
+    } else {
+        println("Using $version")
+    }
+
+    version != null
 }
 
 private val haveLldb: Boolean by lazy {

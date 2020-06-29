@@ -16,6 +16,7 @@ object DistProperties {
     val konanc: Path = dist.resolve("bin/$konancDriver")
     val lldb: Path = Paths.get("lldb")
     val devToolsSecurity: Path = Paths.get("DevToolsSecurity")
+    val dwarfDump: Path = Paths.get("dwarfdump")
     val lldbPrettyPrinters: Path = dist.resolve("tools/konan_lldb.py")
 
     private fun requireProp(name: String): String
