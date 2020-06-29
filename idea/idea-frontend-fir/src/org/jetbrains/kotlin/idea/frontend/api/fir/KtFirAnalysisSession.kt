@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirScopeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeProvider
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolProvider
@@ -58,6 +60,8 @@ constructor(
             firResolveState,
             firSymbolBuilder
         )
+
+    override val scopeProvider: KtScopeProvider = KtFirScopeProvider(token, firSymbolBuilder, firSession)
 
     init {
         assertIsValid()
