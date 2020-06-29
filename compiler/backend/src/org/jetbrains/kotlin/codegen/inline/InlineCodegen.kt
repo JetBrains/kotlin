@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructors
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.Position
+import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -87,12 +90,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         isSameModule = sourceCompiler.isCallInsideSameModuleAsDeclared(functionDescriptor)
 
         if (functionDescriptor !is FictitiousArrayConstructor) {
-            val functionOrAccessorName = jvmSignature.asmMethod.name
             //track changes for property accessor and @JvmName inline functions/property accessors
-            if (functionOrAccessorName != functionDescriptor.name.asString()) {
-                val scope = getMemberScope(functionDescriptor)
-                //Fake lookup to track track changes for property accessors and @JvmName functions/property accessors
-                scope?.getContributedFunctions(Name.identifier(functionOrAccessorName), sourceCompiler.lookupLocation)
+            if (jvmSignature.asmMethod.name != functionDescriptor.name.asString()) {
+                trackLookup(functionDescriptor)
             }
         }
     }
@@ -500,18 +500,23 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         return true
     }
 
+    private fun trackLookup(functionOrAccessor: FunctionDescriptor) {
+        val functionOrAccessorName = jvmSignature.asmMethod.name
+        val lookupTracker = state.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: return
+        val location = sourceCompiler.lookupLocation.location ?: return
+        val position = if (lookupTracker.requiresPosition) location.position else Position.NO_POSITION
+        val classOrPackageFragment = functionOrAccessor.containingDeclaration
+        lookupTracker.record(
+            location.filePath,
+            position,
+            DescriptorUtils.getFqName(classOrPackageFragment).asString(),
+            ScopeKind.CLASSIFIER,
+            functionOrAccessorName
+        )
+    }
+
 
     companion object {
-
-        private fun getMemberScope(functionOrAccessor: FunctionDescriptor): MemberScope? {
-            val callableMemberDescriptor = JvmCodegenUtil.getDirectMember(functionOrAccessor)
-            val classOrPackageFragment = callableMemberDescriptor.containingDeclaration
-            return when (classOrPackageFragment) {
-                is ClassDescriptor -> classOrPackageFragment.unsubstitutedMemberScope
-                is PackageFragmentDescriptor -> classOrPackageFragment.getMemberScope()
-                else -> null
-            }
-        }
 
         internal fun createInlineMethodNode(
             functionDescriptor: FunctionDescriptor,
