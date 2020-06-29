@@ -5,7 +5,6 @@ import com.intellij.codeInsight.daemon.impl.analysis.DefaultHighlightingSettingP
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightLevelUtil
 import com.intellij.codeInsight.documentation.render.DocRenderManager
-import com.intellij.codeInsight.hints.InlayHintsPassFactory
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.impl.AppEditorFontOptions
@@ -87,11 +86,5 @@ class FontReaderModeProvider : ReaderModeProvider {
 class DocsRenderingReaderModeProvider : ReaderModeProvider {
   override fun applyModeChanged(project: Project, editor: Editor, readerMode: Boolean, fileIsOpenAlready: Boolean) {
     DocRenderManager.setDocRenderingEnabled(editor, if (readerMode) ReaderModeSettings.instance(project).showRenderedDocs else null)
-  }
-}
-
-class InlaysReaderModeProvider : ReaderModeProvider {
-  override fun applyModeChanged(project: Project, editor: Editor, readerMode: Boolean, fileIsOpenAlready: Boolean) {
-    InlayHintsPassFactory.setHintsEnabled(editor, readerMode && ReaderModeSettings.instance(project).showInlaysHints)
   }
 }
