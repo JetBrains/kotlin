@@ -1,0 +1,7 @@
+fun foo(): Boolean {
+    val v = (bar() ?: return true) as? String ?: return false
+
+    return true
+}
+
+fun bar(): Any? = ""

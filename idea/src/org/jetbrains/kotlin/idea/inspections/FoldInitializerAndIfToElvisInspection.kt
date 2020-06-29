@@ -66,7 +66,7 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
 
             if (data.initializer !is KtParenthesizedExpression
                 && data.initializer.isMultiLine()
-                && createElvisExpression(element, data, KtPsiFactory(element)).left is KtParenthesizedExpression
+                && createElvisExpression(element, data, KtPsiFactory(element)).first.left is KtParenthesizedExpression
             ) return null
 
             val type = data.ifNullExpression.analyze().getType(data.ifNullExpression) ?: return null
@@ -97,11 +97,11 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
             val commentSaver = CommentSaver(childRangeBefore)
             val childRangeAfter = childRangeBefore.withoutLastStatement()
 
-            val elvis = createElvisExpression(element, data, factory)
+            val (elvis, newInitializer) = createElvisExpression(element, data, factory)
 
             return runWriteAction {
                 if (typeReference != null) {
-                    elvis.left!!.replace(factory.createExpressionByPattern("$0 as? $1", initializer, typeReference))
+                    elvis.left!!.replace(factory.createExpressionByPattern("$0 as? $1", newInitializer, typeReference))
                 }
                 val newElvis = initializer.replaced(elvis)
                 element.delete()
@@ -115,12 +115,25 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
             }
         }
 
-        private fun createElvisExpression(element: KtIfExpression, data: Data, factory: KtPsiFactory): KtBinaryExpression {
+        private fun createElvisExpression(
+            element: KtIfExpression,
+            data: Data,
+            factory: KtPsiFactory
+        ): Pair<KtBinaryExpression, KtExpression> {
             val (initializer, declaration, ifNullExpr, _) = data
             val margin = CodeStyle.getSettings(element.containingKtFile).defaultRightMargin
             val declarationTextLength = declaration.text.split("\n").lastOrNull()?.trim()?.length ?: 0
             val pattern = elvisPattern(declarationTextLength + ifNullExpr.textLength + 5 >= margin || element.then?.hasComments() == true)
-            return factory.createExpressionByPattern(pattern, initializer, ifNullExpr) as KtBinaryExpression
+            val newInitializer = if (initializer is KtBinaryExpression &&
+                initializer.operationToken == KtTokens.ELVIS &&
+                initializer.right?.text == ifNullExpr.text
+            ) {
+                initializer.left ?: initializer
+            } else {
+                initializer
+            }
+            val elvis = factory.createExpressionByPattern(pattern, newInitializer, ifNullExpr) as KtBinaryExpression
+            return elvis to newInitializer
         }
 
         private fun calcData(ifExpression: KtIfExpression): Data? {
