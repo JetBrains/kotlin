@@ -359,19 +359,3 @@ internal fun FirExpression.getExpectedType(
 fun ConeKotlinType.varargElementType(session: FirSession): ConeKotlinType {
     return this.arrayElementType() ?: error("Failed to extract! ${this.render()}!")
 }
-
-fun FirTypeRef.isExtensionFunctionType(session: FirSession): Boolean {
-    if (annotations.any(FirAnnotationCall::isExtensionFunctionAnnotationCall)) return true
-
-    if (this !is FirResolvedTypeRef) return false
-    val type = type as? ConeClassLikeType ?: return false
-    if (type.fullyExpandedType(session) === type) return false
-
-    val typeAlias = type.lookupTag
-        .toSymbol(session)
-        ?.safeAs<FirTypeAliasSymbol>()?.fir ?: return false
-
-    if (typeAlias.expandedTypeRef.annotations.any(FirAnnotationCall::isExtensionFunctionAnnotationCall)) return true
-
-    return false
-}

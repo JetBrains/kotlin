@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -18,6 +22,7 @@ import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object ConeNullabilityChecker {
     fun isSubtypeOfAny(context: ConeTypeContext, type: ConeKotlinType): Boolean {
@@ -216,4 +221,13 @@ fun ConeClassifierLookupTag.constructType(typeArguments: Array<out ConeTypeProje
         is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isNullable)
         else -> error("! ${this::class}")
     }
+}
+
+fun FirTypeRef.isExtensionFunctionType(session: FirSession): Boolean {
+    return coneTypeSafe<ConeKotlinType>()?.isExtensionFunctionType(session) == true
+}
+
+fun ConeKotlinType.isExtensionFunctionType(session: FirSession): Boolean {
+    val type = this.lowerBoundIfFlexible().fullyExpandedType(session)
+    return type.attributes.extensionFunctionType != null
 }

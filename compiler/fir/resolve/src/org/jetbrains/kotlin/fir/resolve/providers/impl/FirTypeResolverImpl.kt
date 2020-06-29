@@ -101,7 +101,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
         return ConeClassLikeTypeImpl(
             resolveBuiltInQualified(classId, session).toLookupTag(),
             parameters.toTypedArray(),
-            typeRef.isMarkedNullable
+            typeRef.isMarkedNullable,
+            attributes
         )
     }
 

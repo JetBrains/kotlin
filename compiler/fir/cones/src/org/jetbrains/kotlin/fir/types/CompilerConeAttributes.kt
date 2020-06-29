@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.reflect.KClass
 
 object CompilerConeAttributes {
@@ -30,7 +31,18 @@ object CompilerConeAttributes {
 
         override val key: KClass<out NoInfer> = NoInfer::class
     }
+
+    object ExtensionFunctionType : ConeAttribute<ExtensionFunctionType>() {
+        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("ExtensionFunctionType"))
+
+        override fun union(other: ExtensionFunctionType?): ExtensionFunctionType? = other
+        override fun intersect(other: ExtensionFunctionType?): ExtensionFunctionType? = this
+        override fun isSubtypeOf(other: ExtensionFunctionType?): Boolean = true
+
+        override val key: KClass<out ExtensionFunctionType> = ExtensionFunctionType::class
+    }
 }
 
 val ConeAttributes.exact: CompilerConeAttributes.Exact? by ConeAttributes.attributeAccessor<CompilerConeAttributes.Exact>()
 val ConeAttributes.noInfer: CompilerConeAttributes.NoInfer? by ConeAttributes.attributeAccessor<CompilerConeAttributes.NoInfer>()
+val ConeAttributes.extensionFunctionType: CompilerConeAttributes.ExtensionFunctionType? by ConeAttributes.attributeAccessor<CompilerConeAttributes.ExtensionFunctionType>()
