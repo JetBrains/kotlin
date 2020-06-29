@@ -37,6 +37,7 @@ sealed class TowerGroupKind(private val index: Int) : Comparable<TowerGroupKind>
         return 0
     }
 
+    @Suppress("FunctionName")
     companion object {
         // These two groups intentionally have the same priority
         fun Implicit(depth: Int): TowerGroupKind = ImplicitOrNonLocal(depth, "Implicit")

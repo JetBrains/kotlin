@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -113,12 +111,17 @@ class CandidateFactory private constructor(
 
 fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(statement: FirStatement) {
     when (statement) {
-        is FirFunctionCall, is FirQualifiedAccessExpression, is FirWhenExpression, is FirTryExpression, is FirCheckNotNullCall, is FirCallableReferenceAccess ->
-            (statement as FirResolvable).candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
+        is FirFunctionCall,
+        is FirQualifiedAccessExpression,
+        is FirWhenExpression,
+        is FirTryExpression,
+        is FirCheckNotNullCall,
+        is FirCallableReferenceAccess
+        -> (statement as FirResolvable).candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
+
         is FirSafeCallExpression -> addSubsystemFromExpression(statement.regularQualifiedAccess)
         is FirWrappedArgumentExpression -> addSubsystemFromExpression(statement.expression)
         is FirBlock -> statement.returnExpressions().forEach { addSubsystemFromExpression(it) }
-        else -> {}
     }
 }
 

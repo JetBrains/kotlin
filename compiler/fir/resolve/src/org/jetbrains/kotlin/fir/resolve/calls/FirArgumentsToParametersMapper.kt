@@ -18,7 +18,6 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
-
 data class ArgumentMapping(
     // This map should be ordered by arguments as written, e.g.:
     //      fun foo(a: Int, b: Int) {}

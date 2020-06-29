@@ -39,6 +39,44 @@ class FirSyntheticPropertiesScope(
     private val baseScope: FirTypeScope
 ) : FirScope() {
 
+    companion object {
+        private const val GETTER_PREFIX = "get"
+        private const val IS_PREFIX = "is"
+
+        fun possibleGetterNamesByPropertyName(name: Name): List<Name> {
+            if (name.isSpecial) return emptyList()
+            val identifier = name.identifier
+            val capitalizedAsciiName = identifier.capitalizeAsciiOnly()
+            val capitalizedFirstWordName = identifier.capitalizeFirstWord(asciiOnly = true)
+            return listOfNotNull(
+                Name.identifier(GETTER_PREFIX + capitalizedAsciiName),
+                if (capitalizedFirstWordName == capitalizedAsciiName) null else Name.identifier(GETTER_PREFIX + capitalizedFirstWordName),
+                name.takeIf { identifier.startsWith(IS_PREFIX) }
+            ).filter {
+                propertyNameByGetMethodName(it) == name
+            }
+        }
+
+        fun setterNameByGetterName(name: Name): Name {
+            val identifier = name.identifier
+            val prefix = when {
+                identifier.startsWith("get") -> "get"
+                identifier.startsWith("is") -> "is"
+                else -> throw IllegalArgumentException()
+            }
+            return Name.identifier("set" + identifier.removePrefix(prefix))
+        }
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        val getterNames = possibleGetterNamesByPropertyName(name)
+        for (getterName in getterNames) {
+            baseScope.processFunctionsByName(getterName) {
+                checkGetAndCreateSynthetic(name, getterName, it, processor)
+            }
+        }
+    }
+
     private fun checkGetAndCreateSynthetic(
         propertyName: Name,
         getterName: Name,
@@ -94,44 +132,5 @@ class FirSyntheticPropertiesScope(
         }
 
         return result
-    }
-
-    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        val getterNames = possibleGetterNamesByPropertyName(name)
-        for (getterName in getterNames) {
-            baseScope.processFunctionsByName(getterName) {
-                checkGetAndCreateSynthetic(name, getterName, it, processor)
-            }
-        }
-    }
-
-    companion object {
-        fun possibleGetterNamesByPropertyName(name: Name): List<Name> {
-            if (name.isSpecial) return emptyList()
-            val identifier = name.identifier
-            val capitalizedAsciiName = identifier.capitalizeAsciiOnly()
-            val capitalizedFirstWordName = identifier.capitalizeFirstWord(asciiOnly = true)
-            return listOfNotNull(
-                Name.identifier(GETTER_PREFIX + capitalizedAsciiName),
-                if (capitalizedFirstWordName == capitalizedAsciiName) null else Name.identifier(GETTER_PREFIX + capitalizedFirstWordName),
-                name.takeIf { identifier.startsWith(IS_PREFIX) }
-            ).filter {
-                propertyNameByGetMethodName(it) == name
-            }
-        }
-
-        fun setterNameByGetterName(name: Name): Name {
-            val identifier = name.identifier
-            val prefix = when {
-                identifier.startsWith("get") -> "get"
-                identifier.startsWith("is") -> "is"
-                else -> throw IllegalArgumentException()
-            }
-            return Name.identifier("set" + identifier.removePrefix(prefix))
-        }
-
-        private const val GETTER_PREFIX = "get"
-
-        private const val IS_PREFIX = "is"
     }
 }

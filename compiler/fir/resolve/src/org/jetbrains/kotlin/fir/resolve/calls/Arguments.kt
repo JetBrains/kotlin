@@ -291,7 +291,6 @@ internal fun Candidate.resolveArgument(
     argument: FirExpression,
     parameter: FirValueParameter?,
     isReceiver: Boolean,
-    isSafeCall: Boolean,
     sink: CheckerSink
 ) {
 

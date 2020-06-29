@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
@@ -23,11 +22,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 
-interface Receiver {
-
-}
+interface Receiver
 
 interface ReceiverValue : Receiver {
     val type: ConeKotlinType
@@ -36,26 +32,6 @@ interface ReceiverValue : Receiver {
 
     fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? =
         type.scope(useSiteSession, scopeSession)
-}
-
-private fun receiverExpression(symbol: AbstractFirBasedSymbol<*>, type: ConeKotlinType): FirThisReceiverExpression =
-    buildThisReceiverExpression {
-        calleeReference = buildImplicitThisReference {
-            boundSymbol = symbol
-        }
-        typeRef = buildResolvedTypeRef {
-            this.type = type
-        }
-    }
-
-class ClassDispatchReceiverValue(klassSymbol: FirClassSymbol<*>) : ReceiverValue {
-    override val type: ConeKotlinType = ConeClassLikeTypeImpl(
-        klassSymbol.toLookupTag(),
-        (klassSymbol.fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { ConeStarProjection }?.toTypedArray().orEmpty(),
-        isNullable = false
-    )
-
-    override val receiverExpression: FirExpression = receiverExpression(klassSymbol, type)
 }
 
 // TODO: should inherit just Receiver, not ReceiverValue
@@ -85,8 +61,7 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     final override var type: ConeKotlinType = type
         private set
 
-    var implicitScope: FirTypeScope? = type.scope(useSiteSession, scopeSession)
-        private set
+    private var implicitScope: FirTypeScope? = type.scope(useSiteSession, scopeSession)
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
 
@@ -112,6 +87,16 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
         implicitScope = type.scope(useSiteSession, scopeSession)
     }
 }
+
+private fun receiverExpression(symbol: AbstractFirBasedSymbol<*>, type: ConeKotlinType): FirThisReceiverExpression =
+    buildThisReceiverExpression {
+        calleeReference = buildImplicitThisReference {
+            boundSymbol = symbol
+        }
+        typeRef = buildResolvedTypeRef {
+            this.type = type
+        }
+    }
 
 class ImplicitDispatchReceiverValue internal constructor(
     boundSymbol: FirClassSymbol<*>,

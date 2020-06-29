@@ -20,12 +20,6 @@ abstract class AbstractConeCallConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
     protected val inferenceComponents: InferenceComponents
 ) : ConeCallConflictResolver() {
-    protected fun Collection<Candidate>.setIfOneOrEmpty(): Set<Candidate>? = when (size) {
-        0 -> emptySet()
-        1 -> setOf(single())
-        else -> null
-    }
-
     /**
      * Returns `true` if [call1] is definitely more or equally specific [call2],
      * `false` otherwise.
@@ -56,6 +50,7 @@ abstract class AbstractConeCallConflictResolver(
         )
     }
 
+    @Suppress("PrivatePropertyName")
     private val SpecificityComparisonWithNumerics = object : SpecificityComparisonCallbacks {
         override fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean {
             requireOrDescribe(specific is ConeKotlinType, specific)
@@ -83,18 +78,18 @@ abstract class AbstractConeCallConflictResolver(
             when {
                 //TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float) -> return true
                 specificClassId == int -> {
-                    when {
-                        generalClassId == long -> return true
-                        generalClassId == byte -> return true
-                        generalClassId == short -> return true
+                    when (generalClassId) {
+                        long -> return true
+                        byte -> return true
+                        short -> return true
                     }
                 }
                 specificClassId == short && generalClassId == byte -> return true
                 specificClassId == uInt -> {
-                    when {
-                        generalClassId == uLong -> return true
-                        generalClassId == uByte -> return true
-                        generalClassId == uShort -> return true
+                    when (generalClassId) {
+                        uLong -> return true
+                        uByte -> return true
+                        uShort -> return true
                     }
                 }
                 specificClassId == uShort && generalClassId == uByte -> return true
@@ -117,7 +112,7 @@ abstract class AbstractConeCallConflictResolver(
         return FlatSignature(
             call,
             (variable as? FirProperty)?.typeParameters?.map { it.symbol }.orEmpty(),
-            listOfNotNull<ConeKotlinType>(variable.receiverTypeRef?.coneTypeUnsafe()),
+            listOfNotNull(variable.receiverTypeRef?.coneTypeUnsafe()),
             variable.receiverTypeRef != null,
             false,
             0,

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.FirDeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 
-
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val declaration = candidate.symbol.fir
@@ -40,7 +39,6 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             sink.yieldApplicability(CandidateApplicability.INAPPLICABLE) //TODO: auto report it
             return
         }
-
 
         // optimization
         if (candidate.typeArgumentMapping == TypeArgumentMapping.NoExplicitArguments /*&& knownTypeParametersResultingSubstitutor == null*/) {
@@ -62,8 +60,6 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 //                continue
 //            }
 
-
-            //
             when (val typeArgument = candidate.typeArgumentMapping[index]) {
                 is FirTypeProjectionWithVariance -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
@@ -111,7 +107,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
 }
 
-fun createToFreshVariableSubstitutorAndAddInitialConstraints(
+private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
     declaration: FirTypeParameterRefsOwner,
     candidate: Candidate,
     csBuilder: ConstraintSystemOperation,

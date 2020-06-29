@@ -41,13 +41,6 @@ abstract class ResolutionStage {
 
 abstract class CheckerStage : ResolutionStage()
 
-internal fun FirExpression.isSuperReferenceExpression(): Boolean {
-    return if (this is FirQualifiedAccessExpression) {
-        val calleeReference = calleeReference
-        calleeReference is FirSuperReference
-    } else false
-}
-
 internal object CheckExplicitReceiverConsistency : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val receiverKind = candidate.explicitReceiverKind
@@ -101,7 +94,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
         override fun Candidate.getReceiverType(): ConeKotlinType? {
             val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
             val callable = callableSymbol.fir
-            val receiverType = (callable.receiverTypeRef as FirResolvedTypeRef?)?.type
+            val receiverType = callable.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
             if (receiverType != null) return receiverType
             val returnTypeRef = callable.returnTypeRef as? FirResolvedTypeRef ?: return null
             if (!returnTypeRef.isExtensionFunctionType(bodyResolveComponents.session)) return null
@@ -153,6 +146,13 @@ internal sealed class CheckReceivers : ResolutionStage() {
     }
 }
 
+private fun FirExpression.isSuperReferenceExpression(): Boolean {
+    return if (this is FirQualifiedAccessExpression) {
+        val calleeReference = calleeReference
+        calleeReference is FirSuperReference
+    } else false
+}
+
 internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
@@ -184,14 +184,13 @@ internal object MapArguments : ResolutionStage() {
 internal object CheckArguments : CheckerStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val argumentMapping =
-            candidate.argumentMapping ?: throw IllegalStateException("Argument should be already mapped while checking arguments!")
+            candidate.argumentMapping ?: error("Argument should be already mapped while checking arguments!")
         for (argument in callInfo.arguments) {
             val parameter = argumentMapping[argument]
             candidate.resolveArgument(
                 argument,
                 parameter,
                 isReceiver = false,
-                isSafeCall = false,
                 sink = sink
             )
             if (candidate.system.hasContradiction) {
@@ -205,9 +204,11 @@ internal object CheckArguments : CheckerStage() {
 internal object EagerResolveOfCallableReferences : CheckerStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         if (candidate.postponedAtoms.isEmpty()) return
-        for (atom in candidate.postponedAtoms.filterIsInstance<ResolvedCallableReferenceAtom>()) {
-            if (!candidate.bodyResolveComponents.callResolver.resolveCallableReference(candidate.csBuilder, atom)) {
-                sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
+        for (atom in candidate.postponedAtoms) {
+            if (atom is ResolvedCallableReferenceAtom) {
+                if (!candidate.bodyResolveComponents.callResolver.resolveCallableReference(candidate.csBuilder, atom)) {
+                    sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
+                }
             }
         }
     }
@@ -224,7 +225,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             else -> null
         }
 
-        val fir = with(candidate.bodyResolveComponents) {
+        val fir: FirCallableDeclaration<*> = with(candidate.bodyResolveComponents) {
             candidateSymbol.phasedFir
         }
 
@@ -332,17 +333,28 @@ internal object DiscriminateSynthetics : CheckerStage() {
 }
 
 internal object CheckVisibility : CheckerStage() {
-    private fun AbstractFirBasedSymbol<*>.packageFqName(): FqName {
-        return when (this) {
-            is FirClassLikeSymbol<*> -> classId.packageFqName
-            is FirCallableSymbol<*> -> callableId.packageName
-            else -> error("No package fq name for $this")
+    override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        val symbol = candidate.symbol
+        val declaration = symbol.fir
+        if (declaration is FirMemberDeclaration) {
+            if (!checkVisibility(declaration, symbol, sink, candidate)) {
+                return
+            }
+        }
+
+        if (declaration is FirConstructor) {
+            val ownerClassId = declaration.symbol.callableId.classId!!
+            val provider = declaration.session.firSymbolProvider
+            val classSymbol = provider.getClassLikeSymbolByFqName(ownerClassId)
+
+            if (classSymbol is FirRegularClassSymbol) {
+                if (classSymbol.fir.classKind.isSingleton) {
+                    sink.yieldApplicability(CandidateApplicability.HIDDEN)
+                }
+                checkVisibility(classSymbol.fir, classSymbol, sink, candidate)
+            }
         }
     }
-
-    // 'local' isn't taken into account here
-    private fun ClassId.isSame(other: ClassId): Boolean =
-        packageFqName == other.packageFqName && relativeClassName == other.relativeClassName
 
     private fun canSeePrivateMemberOf(
         containingDeclarationOfUseSite: List<FirDeclaration>,
@@ -364,19 +376,15 @@ internal object CheckVisibility : CheckerStage() {
         return false
     }
 
+    // 'local' isn't taken into account here
+    private fun ClassId.isSame(other: ClassId): Boolean =
+        packageFqName == other.packageFqName && relativeClassName == other.relativeClassName
+
     private fun ClassId.ownerIfCompanion(session: FirSession): ClassId? {
         if (outerClassId == null || isLocal) return null
         val ownerSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(this) as? FirRegularClassSymbol
 
         return outerClassId.takeIf { ownerSymbol?.fir?.isCompanion == true }
-    }
-
-    private fun FirClass<*>.isSubClass(ownerId: ClassId, session: FirSession): Boolean {
-        if (classId.isSame(ownerId)) return true
-
-        return lookupSuperTypes(this, lookupInterfaces = true, deep = true, session).any { superType ->
-            (superType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag?.classId?.isSame(ownerId) == true
-        }
     }
 
     private fun canSeeProtectedMemberOf(
@@ -392,45 +400,16 @@ internal object CheckVisibility : CheckerStage() {
         return containingUseSiteClass.isSubClass(ownerId, session)
     }
 
-    private fun canSeeProtectedMemberOf(
-        containingDeclarationOfUseSite: List<FirDeclaration>,
-        dispatchReceiver: ReceiverValue?,
-        ownerId: ClassId, session: FirSession
-    ): Boolean {
-        if (canSeePrivateMemberOf(containingDeclarationOfUseSite, ownerId, session)) return true
+    private fun FirClass<*>.isSubClass(ownerId: ClassId, session: FirSession): Boolean {
+        if (classId.isSame(ownerId)) return true
 
-        for (containingDeclaration in containingDeclarationOfUseSite) {
-            if (containingDeclaration !is FirClass<*>) continue
-            val boundSymbol = containingDeclaration.symbol
-            if (canSeeProtectedMemberOf(boundSymbol.fir, dispatchReceiver, ownerId, session)) return true
+        return lookupSuperTypes(this, lookupInterfaces = true, deep = true, session).any { superType ->
+            (superType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag?.classId?.isSame(ownerId) == true
         }
-
-        return false
     }
 
     private fun ReceiverValue?.ownerIfCompanion(session: FirSession): ClassId? =
         (this?.type as? ConeClassLikeType)?.lookupTag?.classId?.ownerIfCompanion(session)
-
-    private fun AbstractFirBasedSymbol<*>.getOwnerId(): ClassId? {
-        return when (this) {
-            is FirClassLikeSymbol<*> -> {
-                val ownerId = classId.outerClassId
-                if (classId.isLocal) {
-                    ownerId?.asLocal() ?: classId
-                } else {
-                    ownerId
-                }
-            }
-            is FirCallableSymbol<*> -> {
-                callableId.classId
-            }
-            else -> {
-                throw AssertionError("Unsupported owner search for ${fir.javaClass}: ${fir.render()}")
-            }
-        }
-    }
-
-    private fun ClassId.asLocal(): ClassId = ClassId(packageFqName, relativeClassName, true)
 
     private suspend fun checkVisibility(
         declaration: FirMemberDeclaration,
@@ -489,26 +468,44 @@ internal object CheckVisibility : CheckerStage() {
         return true
     }
 
-    override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
-        val symbol = candidate.symbol
-        val declaration = symbol.fir
-        if (declaration is FirMemberDeclaration) {
-            if (!checkVisibility(declaration, symbol, sink, candidate)) {
-                return
+    private fun AbstractFirBasedSymbol<*>.getOwnerId(): ClassId? {
+        return when (this) {
+            is FirClassLikeSymbol<*> -> {
+                val ownerId = classId.outerClassId
+                if (classId.isLocal) {
+                    ownerId?.asLocal() ?: classId
+                } else {
+                    ownerId
+                }
             }
+            is FirCallableSymbol<*> -> callableId.classId
+            else -> error("Unsupported owner search for ${fir.javaClass}: ${fir.render()}")
+        }
+    }
+
+    private fun ClassId.asLocal(): ClassId = ClassId(packageFqName, relativeClassName, true)
+
+    private fun canSeeProtectedMemberOf(
+        containingDeclarationOfUseSite: List<FirDeclaration>,
+        dispatchReceiver: ReceiverValue?,
+        ownerId: ClassId, session: FirSession
+    ): Boolean {
+        if (canSeePrivateMemberOf(containingDeclarationOfUseSite, ownerId, session)) return true
+
+        for (containingDeclaration in containingDeclarationOfUseSite) {
+            if (containingDeclaration !is FirClass<*>) continue
+            val boundSymbol = containingDeclaration.symbol
+            if (canSeeProtectedMemberOf(boundSymbol.fir, dispatchReceiver, ownerId, session)) return true
         }
 
-        if (declaration is FirConstructor) {
-            val ownerClassId = declaration.symbol.callableId.classId!!
-            val provider = declaration.session.firSymbolProvider
-            val classSymbol = provider.getClassLikeSymbolByFqName(ownerClassId)
+        return false
+    }
 
-            if (classSymbol is FirRegularClassSymbol) {
-                if (classSymbol.fir.classKind.isSingleton) {
-                    sink.yieldApplicability(CandidateApplicability.HIDDEN)
-                }
-                checkVisibility(classSymbol.fir, classSymbol, sink, candidate)
-            }
+    private fun AbstractFirBasedSymbol<*>.packageFqName(): FqName {
+        return when (this) {
+            is FirClassLikeSymbol<*> -> classId.packageFqName
+            is FirCallableSymbol<*> -> callableId.packageName
+            else -> error("No package fq name for $this")
         }
     }
 }
@@ -523,8 +520,9 @@ internal object CheckLowPriorityInOverloadResolution : CheckerStage() {
             is FirProperty -> fir.annotations
             else -> return
         }
+
         val hasLowPriorityAnnotation = annotations.any {
-            val lookupTag = ((it.annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeClassLikeType)?.lookupTag ?: return@any false
+            val lookupTag = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return@any false
             lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
         }
 
