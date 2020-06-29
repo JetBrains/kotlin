@@ -48,7 +48,7 @@ class JpsPluginTestArtifacts private constructor(override val kotlinPluginDirect
                 // On my machine (Intel Core i5-9300H + 32 gb of ram) all jps-plugin tests run for
                 //   6m56s with this hashing
                 //   7m41s without hashing
-                // Tests were made during not complete setup of kotlin-ide repo
+                // Measurements were made during not complete setup of kotlin-ide repo
                 // so they might change when kotlin-ide will be fully setup
                 return JpsPluginTestArtifacts(kotlinPluginDirectory)
             }
