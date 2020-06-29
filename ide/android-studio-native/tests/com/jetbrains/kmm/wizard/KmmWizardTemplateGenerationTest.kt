@@ -10,7 +10,10 @@ import com.android.tools.idea.sdk.SdkPaths
 import com.android.tools.idea.util.toIoFile
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileFilter
+import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.util.containers.isEmpty
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.tools.projectWizard.cli.BuildSystem
@@ -24,7 +27,24 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 
+object FilelessDirectoryFilter : VirtualFileFilter {
+    override fun accept(directory: VirtualFile?): Boolean {
+        if (directory == null) return false
+
+        if (!directory.isDirectory) return true
+
+        val filesUnderDirectory = Files.walk(directory.toIoFile().toPath())
+            .filter { path -> !Files.isDirectory(path) }
+
+        return !filesUnderDirectory.isEmpty()
+
+    }
+
+}
+
 class KmmWizardTemplateGenerationTest : AbstractNewWizardProjectImportTest() {
+
+    private val referenceProjectSubdir = "generationExpected"
 
     // this directory contains reference result of wizard execution
     private val testdataExpectedDir = File("testData/wizard/expected")
@@ -81,7 +101,7 @@ class KmmWizardTemplateGenerationTest : AbstractNewWizardProjectImportTest() {
         val generationActualDir = KotlinTestUtils.tmpDir("generationActual")
         val generationActualVfs = LocalFileSystem.getInstance().findFileByIoFile(generationActualDir)!!
 
-        val generationExpectedDir = KotlinTestUtils.tmpDir("generationExpected")
+        val generationExpectedDir = KotlinTestUtils.tmpDir(referenceProjectSubdir)
         val generationExpectedVfs = LocalFileSystem.getInstance().findFileByIoFile(generationExpectedDir)!!
 
         generateLocalProperties(generationExpectedVfs)
@@ -98,7 +118,15 @@ class KmmWizardTemplateGenerationTest : AbstractNewWizardProjectImportTest() {
             GenerationPhase.ALL
         ).assertSuccess()
 
-        PlatformTestUtil.assertDirectoriesEqual(generationExpectedVfs, generationActualVfs)
+        // since reference files moved to temp directory, IDEA does not provide handy tool for
+        // update with new value of actual
+        try {
+            PlatformTestUtil.assertDirectoriesEqual(generationExpectedVfs, generationActualVfs, FilelessDirectoryFilter)
+        } catch (e: FileComparisonFailure) {
+            val relativeIndex = e.filePath.indexOf(referenceProjectSubdir) + referenceProjectSubdir.length
+            val path = testdataExpectedDir.absoluteFile.resolve(e.filePath.substring(relativeIndex + 1))
+            throw FileComparisonFailure(e.message, e.expected, e.actual, path.toString(), e.actualFilePath)
+        }
     }
 
     fun testImport() {
