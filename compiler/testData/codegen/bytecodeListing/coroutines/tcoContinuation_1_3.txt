@@ -13,8 +13,8 @@ public final class TcoContinuationKt$collect$2$emit$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$collect$2
-    inner class TcoContinuationKt$collect$2
-    inner class TcoContinuationKt$collect$2$emit$1
+    inner (anonymous) class TcoContinuationKt$collect$2
+    inner (anonymous) class TcoContinuationKt$collect$2$emit$1
     public method <init>(p0: TcoContinuationKt$collect$2, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -22,8 +22,8 @@ public final class TcoContinuationKt$collect$2$emit$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$collect$2 {
     synthetic final field $action: kotlin.jvm.functions.Function2
-    inner class TcoContinuationKt$collect$2
-    inner class TcoContinuationKt$collect$2$emit$1
+    inner (anonymous) class TcoContinuationKt$collect$2
+    inner (anonymous) class TcoContinuationKt$collect$2$emit$1
     public method <init>(p0: kotlin.jvm.functions.Function2): void
     public @org.jetbrains.annotations.Nullable method emit$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method emit(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -34,8 +34,8 @@ public final class TcoContinuationKt$flow$1$collect$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$flow$1
-    inner class TcoContinuationKt$flow$1
-    inner class TcoContinuationKt$flow$1$collect$1
+    inner (anonymous) class TcoContinuationKt$flow$1
+    inner (anonymous) class TcoContinuationKt$flow$1$collect$1
     public method <init>(p0: TcoContinuationKt$flow$1, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -43,8 +43,8 @@ public final class TcoContinuationKt$flow$1$collect$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$flow$1 {
     synthetic final field $block: kotlin.jvm.functions.Function2
-    inner class TcoContinuationKt$flow$1
-    inner class TcoContinuationKt$flow$1$collect$1
+    inner (anonymous) class TcoContinuationKt$flow$1
+    inner (anonymous) class TcoContinuationKt$flow$1$collect$1
     public method <init>(p0: kotlin.jvm.functions.Function2): void
     public @org.jetbrains.annotations.Nullable method collect$$forInline(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -52,14 +52,14 @@ public final class TcoContinuationKt$flow$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$foo$$inlined$collect$1 {
-    inner class TcoContinuationKt$foo$$inlined$collect$1
+    inner (anonymous) class TcoContinuationKt$foo$$inlined$collect$1
     public method <init>(): void
     public @org.jetbrains.annotations.Nullable method emit(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class TcoContinuationKt$foo$$inlined$flow$1 {
-    inner class TcoContinuationKt$foo$$inlined$flow$1
+    inner (anonymous) class TcoContinuationKt$foo$$inlined$flow$1
     public method <init>(): void
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -78,8 +78,8 @@ public final class TcoContinuationKt$foo$$inlined$map$1$2$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$foo$$inlined$map$1$2
-    inner class TcoContinuationKt$foo$$inlined$map$1$2
-    inner class TcoContinuationKt$foo$$inlined$map$1$2$1
+    inner (anonymous) class TcoContinuationKt$foo$$inlined$map$1$2
+    inner (anonymous) class TcoContinuationKt$foo$$inlined$map$1$2$1
     public method <init>(p0: TcoContinuationKt$foo$$inlined$map$1$2, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -88,8 +88,8 @@ public final class TcoContinuationKt$foo$$inlined$map$1$2$1 {
 public final class TcoContinuationKt$foo$$inlined$map$1$2 {
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$foo$$inlined$map$1
-    inner class TcoContinuationKt$foo$$inlined$map$1$2
-    inner class TcoContinuationKt$foo$$inlined$map$1$2$1
+    inner (anonymous) class TcoContinuationKt$foo$$inlined$map$1$2
+    inner (anonymous) class TcoContinuationKt$foo$$inlined$map$1$2$1
     public method <init>(p0: FlowCollector, p1: TcoContinuationKt$foo$$inlined$map$1): void
     public @org.jetbrains.annotations.Nullable method emit(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -97,7 +97,7 @@ public final class TcoContinuationKt$foo$$inlined$map$1$2 {
 @kotlin.Metadata
 public final class TcoContinuationKt$foo$$inlined$map$1 {
     synthetic final field $this_transform$inlined: Flow
-    inner class TcoContinuationKt$foo$$inlined$map$1
+    inner (anonymous) class TcoContinuationKt$foo$$inlined$map$1
     public method <init>(p0: Flow): void
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -107,8 +107,8 @@ public final class TcoContinuationKt$map$$inlined$transform$1$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$1
-    inner class TcoContinuationKt$map$$inlined$transform$1
-    inner class TcoContinuationKt$map$$inlined$transform$1$1
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$1
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$1$1
     public method <init>(p0: TcoContinuationKt$map$$inlined$transform$1, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -127,8 +127,8 @@ public final class TcoContinuationKt$map$$inlined$transform$1$2$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$1$2
-    inner class TcoContinuationKt$map$$inlined$transform$1$2
-    inner class TcoContinuationKt$map$$inlined$transform$1$2$1
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$1$2
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$1$2$1
     public method <init>(p0: TcoContinuationKt$map$$inlined$transform$1$2, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -137,8 +137,8 @@ public final class TcoContinuationKt$map$$inlined$transform$1$2$1 {
 public final class TcoContinuationKt$map$$inlined$transform$1$2 {
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$1
-    inner class TcoContinuationKt$map$$inlined$transform$1$2
-    inner class TcoContinuationKt$map$$inlined$transform$1$2$1
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$1$2
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$1$2$1
     public method <init>(p0: FlowCollector, p1: TcoContinuationKt$map$$inlined$transform$1): void
     public @org.jetbrains.annotations.Nullable method emit$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method emit(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -148,8 +148,8 @@ public final class TcoContinuationKt$map$$inlined$transform$1$2 {
 public final class TcoContinuationKt$map$$inlined$transform$1 {
     synthetic final field $this_transform$inlined: Flow
     synthetic final field $transformer$inlined$1: kotlin.jvm.functions.Function2
-    inner class TcoContinuationKt$map$$inlined$transform$1
-    inner class TcoContinuationKt$map$$inlined$transform$1$1
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$1
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$1$1
     public method <init>(p0: Flow, p1: kotlin.jvm.functions.Function2): void
     public @org.jetbrains.annotations.Nullable method collect$$forInline(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -160,8 +160,8 @@ public final class TcoContinuationKt$map$$inlined$transform$2$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$2
-    inner class TcoContinuationKt$map$$inlined$transform$2
-    inner class TcoContinuationKt$map$$inlined$transform$2$1
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$2
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$2$1
     public method <init>(p0: TcoContinuationKt$map$$inlined$transform$2, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -180,8 +180,8 @@ public final class TcoContinuationKt$map$$inlined$transform$2$2$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$2$2
-    inner class TcoContinuationKt$map$$inlined$transform$2$2
-    inner class TcoContinuationKt$map$$inlined$transform$2$2$1
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$2$2
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$2$2$1
     public method <init>(p0: TcoContinuationKt$map$$inlined$transform$2$2, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -190,8 +190,8 @@ public final class TcoContinuationKt$map$$inlined$transform$2$2$1 {
 public final class TcoContinuationKt$map$$inlined$transform$2$2 {
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$2
-    inner class TcoContinuationKt$map$$inlined$transform$2$2
-    inner class TcoContinuationKt$map$$inlined$transform$2$2$1
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$2$2
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$2$2$1
     public method <init>(p0: FlowCollector, p1: TcoContinuationKt$map$$inlined$transform$2): void
     public @org.jetbrains.annotations.Nullable method emit$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method emit(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -201,8 +201,8 @@ public final class TcoContinuationKt$map$$inlined$transform$2$2 {
 public final class TcoContinuationKt$map$$inlined$transform$2 {
     synthetic final field $this_transform$inlined: Flow
     synthetic final field $transformer$inlined$1: kotlin.jvm.functions.Function2
-    inner class TcoContinuationKt$map$$inlined$transform$2
-    inner class TcoContinuationKt$map$$inlined$transform$2$1
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$2
+    inner (anonymous) class TcoContinuationKt$map$$inlined$transform$2$1
     public method <init>(p0: Flow, p1: kotlin.jvm.functions.Function2): void
     public @org.jetbrains.annotations.Nullable method collect$$forInline(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -213,8 +213,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$1$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$1
-    inner class TcoContinuationKt$transform$$inlined$flow$1
-    inner class TcoContinuationKt$transform$$inlined$flow$1$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$1$1
     public method <init>(p0: TcoContinuationKt$transform$$inlined$flow$1, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -224,8 +224,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$1$lambda$1$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$1$lambda$1
-    inner class TcoContinuationKt$transform$$inlined$flow$1$lambda$1
-    inner class TcoContinuationKt$transform$$inlined$flow$1$lambda$1$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$1$lambda$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$1$lambda$1$1
     public method <init>(p0: TcoContinuationKt$transform$$inlined$flow$1$lambda$1, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -234,8 +234,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$1$lambda$1$1 {
 public final class TcoContinuationKt$transform$$inlined$flow$1$lambda$1 {
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$1
-    inner class TcoContinuationKt$transform$$inlined$flow$1$lambda$1
-    inner class TcoContinuationKt$transform$$inlined$flow$1$lambda$1$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$1$lambda$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$1$lambda$1$1
     public method <init>(p0: FlowCollector, p1: TcoContinuationKt$transform$$inlined$flow$1): void
     public @org.jetbrains.annotations.Nullable method emit$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method emit(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -245,8 +245,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$1$lambda$1 {
 public final class TcoContinuationKt$transform$$inlined$flow$1 {
     synthetic final field $this_transform$inlined: Flow
     synthetic final field $transformer$inlined: kotlin.jvm.functions.Function3
-    inner class TcoContinuationKt$transform$$inlined$flow$1
-    inner class TcoContinuationKt$transform$$inlined$flow$1$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$1$1
     public method <init>(p0: Flow, p1: kotlin.jvm.functions.Function3): void
     public @org.jetbrains.annotations.Nullable method collect$$forInline(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -257,8 +257,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$2$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$2
-    inner class TcoContinuationKt$transform$$inlined$flow$2
-    inner class TcoContinuationKt$transform$$inlined$flow$2$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$2
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$2$1
     public method <init>(p0: TcoContinuationKt$transform$$inlined$flow$2, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -268,8 +268,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$2$lambda$1$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$2$lambda$1
-    inner class TcoContinuationKt$transform$$inlined$flow$2$lambda$1
-    inner class TcoContinuationKt$transform$$inlined$flow$2$lambda$1$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$2$lambda$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$2$lambda$1$1
     public method <init>(p0: TcoContinuationKt$transform$$inlined$flow$2$lambda$1, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -278,8 +278,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$2$lambda$1$1 {
 public final class TcoContinuationKt$transform$$inlined$flow$2$lambda$1 {
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$2
-    inner class TcoContinuationKt$transform$$inlined$flow$2$lambda$1
-    inner class TcoContinuationKt$transform$$inlined$flow$2$lambda$1$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$2$lambda$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$2$lambda$1$1
     public method <init>(p0: FlowCollector, p1: TcoContinuationKt$transform$$inlined$flow$2): void
     public @org.jetbrains.annotations.Nullable method emit$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method emit(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -289,8 +289,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$2$lambda$1 {
 public final class TcoContinuationKt$transform$$inlined$flow$2 {
     synthetic final field $this_transform$inlined: Flow
     synthetic final field $transformer$inlined: kotlin.jvm.functions.Function3
-    inner class TcoContinuationKt$transform$$inlined$flow$2
-    inner class TcoContinuationKt$transform$$inlined$flow$2$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$2
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$2$1
     public method <init>(p0: Flow, p1: kotlin.jvm.functions.Function3): void
     public @org.jetbrains.annotations.Nullable method collect$$forInline(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -301,8 +301,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$3$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$3
-    inner class TcoContinuationKt$transform$$inlined$flow$3
-    inner class TcoContinuationKt$transform$$inlined$flow$3$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$3
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$3$1
     public method <init>(p0: TcoContinuationKt$transform$$inlined$flow$3, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -312,8 +312,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$3$lambda$1$1 {
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$3$lambda$1
-    inner class TcoContinuationKt$transform$$inlined$flow$3$lambda$1
-    inner class TcoContinuationKt$transform$$inlined$flow$3$lambda$1$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$3$lambda$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$3$lambda$1$1
     public method <init>(p0: TcoContinuationKt$transform$$inlined$flow$3$lambda$1, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -322,8 +322,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$3$lambda$1$1 {
 public final class TcoContinuationKt$transform$$inlined$flow$3$lambda$1 {
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$3
-    inner class TcoContinuationKt$transform$$inlined$flow$3$lambda$1
-    inner class TcoContinuationKt$transform$$inlined$flow$3$lambda$1$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$3$lambda$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$3$lambda$1$1
     public method <init>(p0: FlowCollector, p1: TcoContinuationKt$transform$$inlined$flow$3): void
     public @org.jetbrains.annotations.Nullable method emit$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method emit(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -333,8 +333,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$3$lambda$1 {
 public final class TcoContinuationKt$transform$$inlined$flow$3 {
     synthetic final field $this_transform$inlined: Flow
     synthetic final field $transformer$inlined: kotlin.jvm.functions.Function3
-    inner class TcoContinuationKt$transform$$inlined$flow$3
-    inner class TcoContinuationKt$transform$$inlined$flow$3$1
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$3
+    inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$3$1
     public method <init>(p0: Flow, p1: kotlin.jvm.functions.Function3): void
     public @org.jetbrains.annotations.Nullable method collect$$forInline(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -342,8 +342,8 @@ public final class TcoContinuationKt$transform$$inlined$flow$3 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt {
-    inner class TcoContinuationKt$collect$2
-    inner class TcoContinuationKt$flow$1
+    inner (anonymous) class TcoContinuationKt$collect$2
+    inner (anonymous) class TcoContinuationKt$flow$1
     private final static @org.jetbrains.annotations.Nullable method collect$$forInline(@org.jetbrains.annotations.NotNull p0: Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: Flow, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method flow(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): Flow

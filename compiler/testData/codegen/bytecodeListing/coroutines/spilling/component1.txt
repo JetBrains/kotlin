@@ -4,7 +4,7 @@ final class Component1Kt$test$1 {
     field L$0: java.lang.Object
     field label: int
     private field p$: Foo
-    inner class Component1Kt$test$1
+    inner (anonymous) class Component1Kt$test$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public final method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
@@ -13,7 +13,7 @@ final class Component1Kt$test$1 {
 
 @kotlin.Metadata
 public final class Component1Kt {
-    inner class Component1Kt$test$1
+    inner (anonymous) class Component1Kt$test$1
     public final static @org.jetbrains.annotations.NotNull method generate(): Result
     public final static method test(): void
     public final static method use(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): void
