@@ -20,7 +20,7 @@ abstract class KtFunctionSymbol : KtFunctionLikeSymbol(), KtNamedSymbol, KtPossi
     abstract val isOperator: Boolean
     abstract val fqName: FqName?
 
-    abstract override val valueParameters: List<KtSimpleFunctionParameterSymbol>
+    abstract override val valueParameters: List<KtFunctionParameterSymbol>
 }
 
 abstract class KtConstructorSymbol : KtFunctionLikeSymbol() {

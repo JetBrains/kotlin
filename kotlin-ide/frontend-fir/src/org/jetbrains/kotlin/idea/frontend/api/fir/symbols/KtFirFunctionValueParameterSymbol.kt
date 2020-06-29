@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.frontend.api.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSimpleFunctionParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
@@ -22,12 +22,12 @@ internal class KtFirFunctionValueParameterSymbol(
     fir: FirValueParameterImpl,
     override val token: ValidityOwner,
     private val builder: KtSymbolByFirBuilder
-) : KtSimpleFunctionParameterSymbol(),
-    KtFirSymbol<FirValueParameterImpl> {
+) : KtFunctionParameterSymbol(), KtFirSymbol<FirValueParameterImpl> {
     override val fir: FirValueParameterImpl by weakRef(fir)
     override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
 
     override val name: Name get() = withValidityAssertion { fir.name }
+    override val isVararg: Boolean get() = withValidityAssertion { fir.isVararg }
     override val type: KtType by cached { builder.buildKtType(fir.returnTypeRef) }
     override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
 }
