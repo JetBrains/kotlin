@@ -57,6 +57,6 @@ class RunAnythingTerminalBridge : TerminalShellCommandHandler, TerminalFusAwareH
     val runAnythingProvider = RunAnythingProvider.EP_NAME.extensionList
       .filter { checkForCLI(it) }.ifEmpty { return }.first { provider -> provider.findMatchingValue(dataContext, command) != null }
 
-    data.addData("runAnythingProvider", runAnythingProvider::class.java.simpleName)
+    data.addData("runAnythingProvider", runAnythingProvider::class.java.name)
   }
 }
