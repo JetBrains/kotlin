@@ -9,10 +9,7 @@ import com.intellij.openapi.paths.PsiDynaReference;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
@@ -139,7 +136,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
 
     try {
 
-      Map<PsiFile, FileASTNode> movedFiles = new LinkedHashMap<>();
+      Map<SmartPsiElementPointer<PsiFile>, FileASTNode> movedFiles = new LinkedHashMap<>();
       final Map<PsiElement, PsiElement> oldToNewMap = new HashMap<>();
       if (mySearchForReferences) {
         for (final PsiElement element : myElementsToMove) {
@@ -173,7 +170,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
           }
           moving = myNewParent.findFile(movedFile.getName());
           if (moving != null) {
-            movedFiles.put(moving, moving.getNode());
+            movedFiles.put(SmartPointerManager.createPointer(moving), moving.getNode());
             ObjectUtils.reachabilityFence(node);
           }
         }
@@ -186,9 +183,12 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
       DumbService.getInstance(myProject).completeJustSubmittedTasks();
 
       // fix references in moved files to outer files
-      for (PsiFile movedFile : movedFiles.keySet()) {
-        MoveFileHandler.forElement(movedFile).updateMovedFile(movedFile);
-        if (mySearchForReferences) FileReferenceContextUtil.decodeFileReferences(movedFile);
+      for (SmartPsiElementPointer<PsiFile> pointer : movedFiles.keySet()) {
+        PsiFile movedFile = pointer.getElement();
+        if (movedFile != null) {
+          MoveFileHandler.forElement(movedFile).updateMovedFile(movedFile);
+          if (mySearchForReferences) FileReferenceContextUtil.decodeFileReferences(movedFile);
+        }
       }
 
       retargetUsages(usages, oldToNewMap);
@@ -199,7 +199,7 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
         myMoveCallback.refactoringCompleted();
       }
       if (MoveFilesOrDirectoriesDialog.isOpenInEditorProperty()) {
-        List<PsiFile> justFiles = new ArrayList<>(movedFiles.keySet());
+        List<PsiFile> justFiles = ContainerUtil.mapNotNull(movedFiles.keySet(), SmartPsiElementPointer::getElement);
         ApplicationManager.getApplication().invokeLater(() ->
           EditorHelper.openFilesInEditor(justFiles.stream().filter(PsiElement::isValid).toArray(PsiFile[]::new))
         );
@@ -241,9 +241,9 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
     return data;
   }
 
-  private static void encodeDirectoryFiles(@NotNull PsiElement psiElement, @NotNull Map<PsiFile, FileASTNode> movedFiles) {
+  private static void encodeDirectoryFiles(@NotNull PsiElement psiElement, @NotNull Map<SmartPsiElementPointer<PsiFile>, FileASTNode> movedFiles) {
     if (psiElement instanceof PsiFile) {
-      movedFiles.put((PsiFile)psiElement, ((PsiFile)psiElement).getNode());
+      movedFiles.put(SmartPointerManager.createPointer((PsiFile)psiElement), ((PsiFile)psiElement).getNode());
       FileReferenceContextUtil.encodeFileReferences(psiElement);
     }
     else if (psiElement instanceof PsiDirectory) {
@@ -253,10 +253,10 @@ public class MoveFilesOrDirectoriesProcessor extends BaseRefactoringProcessor {
     }
   }
 
-  private static void processDirectoryFiles(@NotNull Map<PsiFile, FileASTNode> movedFiles, @NotNull Map<PsiElement, PsiElement> oldToNewMap, @NotNull PsiElement psiElement) {
+  private static void processDirectoryFiles(@NotNull Map<SmartPsiElementPointer<PsiFile>, FileASTNode> movedFiles, @NotNull Map<PsiElement, PsiElement> oldToNewMap, @NotNull PsiElement psiElement) {
     if (psiElement instanceof PsiFile) {
       final PsiFile movedFile = (PsiFile)psiElement;
-      movedFiles.put(movedFile, movedFile.getNode());
+      movedFiles.put(SmartPointerManager.createPointer(movedFile), movedFile.getNode());
       MoveFileHandler.forElement(movedFile).prepareMovedFile(movedFile, movedFile.getParent(), oldToNewMap);
     }
     else if (psiElement instanceof PsiDirectory) {
