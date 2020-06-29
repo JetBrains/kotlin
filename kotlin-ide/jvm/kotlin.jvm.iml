@@ -39,8 +39,6 @@
     <orderEntry type="module" module-name="kotlin.jvm-debugger.util" />
     <orderEntry type="module" module-name="kotlin.gradle.gradle-tooling" />
     <orderEntry type="module" module-name="kotlin.repl" />
-    <orderEntry type="module" module-name="kotlin.completion" />
-    <orderEntry type="module" module-name="kotlin.analysis" />
     <orderEntry type="module" module-name="intellij.java.debugger.impl" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" />
     <orderEntry type="module" module-name="intellij.java.coverage" />

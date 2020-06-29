@@ -16,11 +16,20 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <content url="file://$MODULE_DIR$/../completion">
+      <sourceFolder url="file://$MODULE_DIR$/../completion/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../completion/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../completion/src" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/resources-en" type="java-resource" />
+    </content>
+    <content url="file://$MODULE_DIR$/../live-templates">
+      <sourceFolder url="file://$MODULE_DIR$/../live-templates/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../live-templates/test" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -46,14 +55,11 @@
     <orderEntry type="module" module-name="kotlin.j2k.old" />
     <orderEntry type="module" module-name="kotlin.formatter" />
     <orderEntry type="module" module-name="kotlin.j2k.idea" />
-    <orderEntry type="module" module-name="kotlin.completion" />
     <orderEntry type="module" module-name="kotlin.gradle.gradle-tooling" />
-    <orderEntry type="module" module-name="kotlin.live-templates" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.sequence" />
     <orderEntry type="module" module-name="kotlin.scripting" />
     <orderEntry type="module" module-name="kotlin.jvm" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.core" />
-    <orderEntry type="module" module-name="kotlin.analysis" />
     <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.repl" scope="TEST" />
@@ -91,5 +97,20 @@
     <orderEntry type="module" module-name="intellij.statsCollector" />
     <orderEntry type="module" module-name="intellij.copyright" />
     <orderEntry type="module" module-name="intellij.properties.psi" scope="TEST" />
+    <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="module-library">
+      <library name="completion-ranking-kotlin-2" type="repository">
+        <properties maven-id="org.jetbrains.intellij.deps.completion:completion-ranking-kotlin:0.1.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-kotlin/0.1.2/completion-ranking-kotlin-0.1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-kotlin/0.1.2/completion-ranking-kotlin-0.1.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.impl" />
   </component>
 </module>

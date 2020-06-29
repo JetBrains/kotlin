@@ -2120,7 +2120,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" filepath="$PROJECT_DIR$/intellij/plugins/Yeoman/intellij.yeoman.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" filepath="$PROJECT_DIR$/intellij/plugins/zkm/intellij.zkm.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/kotlin.all-tests/kotlin.all-tests.iml" filepath="$PROJECT_DIR$/kotlin/kotlin.all-tests/kotlin.all-tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/kotlin/analysis/kotlin.analysis.iml" filepath="$PROJECT_DIR$/kotlin/analysis/kotlin.analysis.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/common/kotlin.common.iml" filepath="$PROJECT_DIR$/kotlin/common/kotlin.common.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/allopen/kotlin.compiler-plugins.allopen.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/allopen/kotlin.compiler-plugins.allopen.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/annotation-based-compiler-support/kotlin.compiler-plugins.annotation-based-compiler-support.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/annotation-based-compiler-support/kotlin.compiler-plugins.annotation-based-compiler-support.iml" />
@@ -2130,7 +2129,6 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/sam-with-receiver/kotlin.compiler-plugins.sam-with-receiver.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/sam-with-receiver/kotlin.compiler-plugins.sam-with-receiver.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/scripting/kotlin.compiler-plugins.scripting.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/scripting/kotlin.compiler-plugins.scripting.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/compiler-plugins/scripting-ide-services/kotlin.compiler-plugins.scripting-ide-services.iml" filepath="$PROJECT_DIR$/kotlin/compiler-plugins/scripting-ide-services/kotlin.compiler-plugins.scripting-ide-services.iml" />
-      <module fileurl="file://$PROJECT_DIR$/kotlin/completion/kotlin.completion.iml" filepath="$PROJECT_DIR$/kotlin/completion/kotlin.completion.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/core/kotlin.core.iml" filepath="$PROJECT_DIR$/kotlin/core/kotlin.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/jvm-debugger/eval4j/kotlin.eval4j.iml" filepath="$PROJECT_DIR$/kotlin/jvm-debugger/eval4j/kotlin.eval4j.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/fir/kotlin.fir.iml" filepath="$PROJECT_DIR$/kotlin/fir/kotlin.fir.iml" />
@@ -2155,7 +2153,6 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/jvm-debugger/test/kotlin.jvm-debugger.test.iml" filepath="$PROJECT_DIR$/kotlin/jvm-debugger/test/kotlin.jvm-debugger.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/jvm-debugger/util/kotlin.jvm-debugger.util.iml" filepath="$PROJECT_DIR$/kotlin/jvm-debugger/util/kotlin.jvm-debugger.util.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin.kotlin-ide.iml" filepath="$PROJECT_DIR$/kotlin.kotlin-ide.iml" />
-      <module fileurl="file://$PROJECT_DIR$/kotlin/live-templates/kotlin.live-templates.iml" filepath="$PROJECT_DIR$/kotlin/live-templates/kotlin.live-templates.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/maven/kotlin.maven.iml" filepath="$PROJECT_DIR$/kotlin/maven/kotlin.maven.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/native/kotlin.native.iml" filepath="$PROJECT_DIR$/kotlin/native/kotlin.native.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/performance-tests/kotlin.performance-tests.iml" filepath="$PROJECT_DIR$/kotlin/performance-tests/kotlin.performance-tests.iml" />

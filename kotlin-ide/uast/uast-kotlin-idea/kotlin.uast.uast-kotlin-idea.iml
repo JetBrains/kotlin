@@ -25,7 +25,6 @@
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="module" module-name="kotlin.common" />
     <orderEntry type="module" module-name="kotlin.core" />
-    <orderEntry type="module" module-name="kotlin.analysis" />
     <orderEntry type="module" module-name="kotlin.uast.uast-kotlin" />
     <orderEntry type="module" module-name="intellij.platform.util.ex" />
     <orderEntry type="module" module-name="intellij.platform.core.impl" />

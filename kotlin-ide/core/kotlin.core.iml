@@ -16,6 +16,10 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <content url="file://$MODULE_DIR$/../analysis">
+      <sourceFolder url="file://$MODULE_DIR$/../analysis/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../analysis/resources" type="java-resource" />
+    </content>
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
@@ -34,11 +38,20 @@
     <orderEntry type="library" name="kotlinc.kotlin-script-runtime" level="project" />
     <orderEntry type="module" module-name="kotlin.common" />
     <orderEntry type="module" module-name="kotlin.jps-common" />
-    <orderEntry type="module" module-name="kotlin.analysis" />
     <orderEntry type="module" module-name="intellij.platform.statistics" />
     <orderEntry type="module" module-name="intellij.java" />
     <orderEntry type="module" module-name="intellij.java.indexing.impl" />
     <orderEntry type="module" module-name="intellij.xml.psi" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="library" name="javax-inject" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel.impl" />
+    <orderEntry type="module" module-name="intellij.platform.indexing" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" />
+    <orderEntry type="module" module-name="intellij.platform.diff.impl" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" />
   </component>
 </module>

@@ -27,7 +27,6 @@
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="module" module-name="kotlin.common" />
     <orderEntry type="module" module-name="kotlin.core" />
-    <orderEntry type="module" module-name="kotlin.analysis" />
     <orderEntry type="module" module-name="kotlin.idea" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.j2k.old" />
     <orderEntry type="module" module-name="kotlin.j2k.idea" scope="TEST" />

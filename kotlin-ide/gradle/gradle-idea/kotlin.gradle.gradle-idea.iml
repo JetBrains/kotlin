@@ -36,7 +36,6 @@
     <orderEntry type="library" name="kotlinc.kotlin-gradle-statistics" level="project" />
     <orderEntry type="module" module-name="kotlin.common" />
     <orderEntry type="module" module-name="kotlin.core" />
-    <orderEntry type="module" module-name="kotlin.analysis" />
     <orderEntry type="module" module-name="kotlin.jps-common" />
     <orderEntry type="module" module-name="kotlin.jvm" />
     <orderEntry type="module" module-name="kotlin.idea" />
@@ -44,7 +43,6 @@
     <orderEntry type="module" module-name="kotlin.gradle.gradle-tooling" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.coroutines" />
     <orderEntry type="module" module-name="kotlin.native" />
-    <orderEntry type="module" module-name="kotlin.completion" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.gradle.gradle-native" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.compiler-plugins.kapt" scope="RUNTIME" />
     <orderEntry type="module" module-name="kotlin.compiler-plugins.scripting" scope="RUNTIME" />

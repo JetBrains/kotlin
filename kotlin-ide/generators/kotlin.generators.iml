@@ -29,7 +29,6 @@
     <orderEntry type="library" scope="TEST" name="Guava" level="project" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.test" />
     <orderEntry type="module" module-name="kotlin.idea" />
-    <orderEntry type="module" module-name="kotlin.completion" />
     <orderEntry type="module" module-name="kotlin.fir" />
     <orderEntry type="module" module-name="kotlin.scripting-support" />
     <orderEntry type="module" module-name="kotlin.maven" />

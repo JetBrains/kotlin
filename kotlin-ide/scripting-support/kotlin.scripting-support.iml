@@ -33,7 +33,6 @@
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-scripting-common" level="project" />
     <orderEntry type="module" module-name="kotlin.common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.core" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.analysis" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.idea" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jvm" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.coroutines" scope="TEST" />
