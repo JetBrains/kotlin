@@ -366,11 +366,17 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
         val other = getTreeElementDepar<KtExpression>() ?: return
-        if (other is KtDotQualifiedExpression) { // Regular matching
+        val handler = getHandler(expression.receiverExpression)
+        if ( other is KtDotQualifiedExpression && handler is SubstitutionHandler && handler.maxOccurs == 0) {
+            // Don't match '_{0,0}.'_
+            myMatchingVisitor.result = false
+        }
+        else if (other is KtDotQualifiedExpression) {
+            // Regular matching
             myMatchingVisitor.result = myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
                     && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
-        } else { // Match '_?.'_
-            val handler = getHandler(expression.receiverExpression)
+        } else {
+            // Match '_?.'_
             myMatchingVisitor.result = handler is SubstitutionHandler
                     && handler.minOccurs == 0
                     && other.parent !is KtDotQualifiedExpression

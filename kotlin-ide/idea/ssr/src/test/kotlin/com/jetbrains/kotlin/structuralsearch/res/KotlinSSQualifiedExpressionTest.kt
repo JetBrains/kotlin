@@ -10,4 +10,6 @@ class KotlinSSQualifiedExpressionTest : KotlinSSResourceInspectionTest() {
     fun testDotOptionalReference() { doTest("'_?.'_") }
 
     fun testSafeAccess() { doTest("\$e1\$?.'_") }
+
+    fun testDotNoReceiver() { doTest("'_{0,0}.'_()") }
 }
