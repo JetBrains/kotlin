@@ -9,12 +9,12 @@ import com.intellij.openapi.vfs.newvfs.persistent.FSRecords;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl;
 import com.intellij.util.indexing.flavor.FileIndexingFlavorProvider;
 import com.intellij.util.indexing.flavor.HashBuilder;
-import com.intellij.util.io.DigestUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 
 @ApiStatus.Internal
 public final class IndexedHashesSupport {
@@ -34,12 +34,20 @@ public final class IndexedHashesSupport {
     return hash;
   }
 
+  public static byte @NotNull [] getBinaryContentHash(byte @NotNull [] content) {
+    MessageDigest digest = FSRecords.getContentHashDigest();
+    digest.update(String.valueOf(content.length).getBytes(StandardCharsets.UTF_8));
+    digest.update("\u0000".getBytes(StandardCharsets.UTF_8));
+    digest.update(content);
+    return digest.digest();
+  }
+
   private static byte @NotNull [] calculateIndexedHashForFileContent(@NotNull FileContentImpl content) {
     Hasher hasher = INDEXED_FILE_CONTENT_HASHER.newHasher();
 
     byte[] contentHash = PersistentFSImpl.getContentHashIfStored(content.getFile());
     if (contentHash == null) {
-      contentHash = DigestUtil.calculateContentHash(FSRecords.CONTENT_HASH_DIGEST, ((FileContent)content).getContent());
+      contentHash = getBinaryContentHash(content.getContent());
       // todo store content hash in FS
     }
     hasher.putBytes(contentHash);
