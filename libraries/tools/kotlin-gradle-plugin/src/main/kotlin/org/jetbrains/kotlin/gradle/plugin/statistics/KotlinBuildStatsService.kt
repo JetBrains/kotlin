@@ -118,6 +118,23 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
             }
         }
 
+        /**
+         * Invokes provided collector if the reporting service is initialised.
+         * The duration of collector's wall time is reported into overall overhead metric.
+         */
+        fun applyIfInitialised(collector: (IStatisticsValuesConsumer) -> Unit) {
+            getInstance()?.apply {
+                try {
+                    val duration = measureTimeMillis {
+                        collector.invoke(this)
+                    }
+                    this.report(NumericalMetrics.STATISTICS_COLLECT_METRICS_OVERHEAD, duration)
+                } catch (e: Throwable) {
+                    logException("Could collect statistics metrics", e)
+                }
+            }
+        }
+
         @JvmStatic
         internal fun getLogger() = Logging.getLogger(KotlinBuildStatsService::class.java)
 

@@ -11,10 +11,7 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.CompilerId
@@ -26,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
@@ -33,6 +31,7 @@ import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.io.File
 import java.lang.ref.WeakReference
 
@@ -114,6 +113,14 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             compilerArgs.version = false
         }
         val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
+        KotlinBuildStatsService.applyIfInitialised {
+            if (compilerArgs is K2JVMCompilerArguments) {
+                val args = K2JVMCompilerArguments()
+                parseCommandLineArguments(argsArray.toList(), args)
+                KotlinBuildStatsService.getInstance()?.report(BooleanMetrics.JVM_COMPILER_IR_MODE, args.useIR)
+            }
+        }
+
         val incrementalCompilationEnvironment = environment.incrementalCompilationEnvironment
         val modulesInfo = incrementalCompilationEnvironment?.let { buildModulesInfo(project.gradle) }
         val workArgs = GradleKotlinCompilerWorkArguments(
