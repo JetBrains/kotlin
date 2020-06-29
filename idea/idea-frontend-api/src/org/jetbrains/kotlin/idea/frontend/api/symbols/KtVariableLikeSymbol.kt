@@ -30,7 +30,9 @@ abstract class KtPropertySymbol : KtVariableSymbol(), KtPossibleExtensionSymbol 
 
 abstract class KtLocalVariableSymbol : KtVariableSymbol()
 
-abstract class KtSimpleFunctionParameterSymbol : KtParameterSymbol()
+abstract class KtFunctionParameterSymbol : KtParameterSymbol() {
+    abstract val isVararg: Boolean
+}
 
 abstract class KtConstructorParameterSymbol : KtParameterSymbol(), KtNamedSymbol {
     abstract val constructorParameterKind: KtConstructorParameterSymbolKind
