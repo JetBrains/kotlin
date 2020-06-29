@@ -451,6 +451,6 @@ class Fir2IrClassifierStorage(
         typeContext: ConversionTypeContext
     ): IrTypeParameterSymbol {
         return getCachedIrTypeParameter(firTypeParameterSymbol.fir, typeContext = typeContext)?.symbol
-            ?: throw AssertionError("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name}")
+            ?: error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name}")
     }
 }

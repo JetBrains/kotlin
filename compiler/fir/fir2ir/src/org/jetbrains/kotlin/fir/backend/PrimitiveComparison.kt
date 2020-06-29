@@ -47,7 +47,7 @@ private fun leastCommonPrimitiveNumericType(t1: ConeClassLikeType, t2: ConeClass
         pt1.isFloat() || pt2.isFloat() -> PrimitiveTypes.Float
         pt1.isLong() || pt2.isLong() -> PrimitiveTypes.Long
         pt1.isInt() || pt2.isInt() -> PrimitiveTypes.Int
-        else -> throw AssertionError("Unexpected types: t1=$t1, t2=$t2")
+        else -> error("Unexpected types: t1=$t1, t2=$t2")
     }
 }
 
@@ -55,7 +55,7 @@ private fun ConeClassLikeType.promoteIntegerTypeToIntIfRequired(): ConeClassLike
     when (lookupTag.classId) {
         StandardClassIds.Byte, StandardClassIds.Short -> PrimitiveTypes.Int
         StandardClassIds.Long, StandardClassIds.Int, StandardClassIds.Float, StandardClassIds.Double, StandardClassIds.Char -> this
-        else -> throw AssertionError("Primitive number type expected: $this")
+        else -> error("Primitive number type expected: $this")
     }
 
 private fun ConeKotlinType.getPrimitiveTypeOrSupertype(): ConeClassLikeType? =

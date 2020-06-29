@@ -68,7 +68,7 @@ class Fir2IrLazyConstructor(
     override var visibility: Visibility
         get() = fir.visibility
         set(_) {
-            throw AssertionError("Mutating Fir2Ir lazy elements is not possible")
+            error("Mutating Fir2Ir lazy elements is not possible")
         }
 
     override var returnType: IrType by lazyVar {
@@ -93,7 +93,7 @@ class Fir2IrLazyConstructor(
     override var extensionReceiverParameter: IrValueParameter?
         get() = null
         set(_) {
-            throw AssertionError("Mutating Fir2Ir lazy elements is not possible")
+            error("Mutating Fir2Ir lazy elements is not possible")
         }
 
     override var valueParameters: List<IrValueParameter> by lazyVar {

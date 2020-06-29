@@ -106,7 +106,7 @@ fun FirClassifierSymbol<*>.toSymbol(
         is FirClassSymbol -> {
             classifierStorage.getIrClassSymbol(this)
         }
-        else -> throw AssertionError("Should not be here: $this")
+        else -> error("Unknown symbol: $this")
     }
 }
 
@@ -127,7 +127,7 @@ fun FirReference.toSymbol(
                     resolvedSymbol.toSymbol(session, classifierStorage)
                 }
                 else -> {
-                    throw AssertionError("Unknown symbol: $resolvedSymbol")
+                    error("Unknown symbol: $resolvedSymbol")
                 }
             }
         }

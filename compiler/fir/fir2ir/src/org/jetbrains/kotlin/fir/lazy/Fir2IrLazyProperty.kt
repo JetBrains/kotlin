@@ -74,7 +74,7 @@ class Fir2IrLazyProperty(
     override var visibility: Visibility
         get() = fir.visibility
         set(_) {
-            throw AssertionError("Mutating Fir2Ir lazy elements is not possible")
+            error("Mutating Fir2Ir lazy elements is not possible")
         }
 
     override val modality: Modality

@@ -201,7 +201,7 @@ class Fir2IrDeclarationStorage(
             val containerFile = when (firBasedSymbol) {
                 is FirCallableSymbol -> firProvider.getFirCallableContainerFile(firBasedSymbol)
                 is FirClassLikeSymbol -> firProvider.getFirClassifierContainerFileIfAny(firBasedSymbol)
-                else -> throw AssertionError("Unexpected: $firBasedSymbol")
+                else -> error("Unknown symbol: $firBasedSymbol")
             }
 
             when {
@@ -302,8 +302,7 @@ class Fir2IrDeclarationStorage(
                 if (function !is FirAnonymousFunction && containingClass != null && !isStatic) {
                     dispatchReceiverParameter = declareThisReceiverParameter(
                         symbolTable,
-                        thisType = containingClass.thisReceiver?.type
-                            ?: throw AssertionError(),
+                        thisType = containingClass.thisReceiver?.type ?: error("No this receiver"),
                         thisOrigin = thisOrigin
                     )
                 }
@@ -831,8 +830,8 @@ class Fir2IrDeclarationStorage(
                 constructorCache[firConstructor] = irFunction
                 return irConstructorSymbol
             }
-            if (parentOrigin == IrDeclarationOrigin.DEFINED) {
-                throw AssertionError()
+            assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
+                "Should not have reference to public API uncached constructor from source code"
             }
             val symbol = Fir2IrConstructorSymbol(signature)
             val irConstructor = firConstructor.convertWithOffsets { startOffset, endOffset ->
@@ -870,8 +869,8 @@ class Fir2IrDeclarationStorage(
                     }
                     // TODO: package fragment members (?)
                     if (firDeclaration is FirSimpleFunction && irParent is Fir2IrLazyClass) {
-                        if (parentOrigin == IrDeclarationOrigin.DEFINED) {
-                            throw AssertionError()
+                        assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
+                            "Should not have reference to public API uncached simple function from source code"
                         }
                         val symbol = Fir2IrSimpleFunctionSymbol(signature, firDeclaration.containerSource)
                         val irFunction = firDeclaration.convertWithOffsets { startOffset, endOffset ->
@@ -899,7 +898,7 @@ class Fir2IrDeclarationStorage(
             is FirConstructor -> {
                 getIrConstructorSymbol(firDeclaration.symbol)
             }
-            else -> throw AssertionError("Should not be here: ${firDeclaration::class.java}: ${firDeclaration.render()}")
+            else -> error("Unknown kind of function: ${firDeclaration::class.java}: ${firDeclaration.render()}")
         }
     }
 
@@ -918,8 +917,8 @@ class Fir2IrDeclarationStorage(
                     }
                     // TODO: package fragment members (?)
                     if (irParent is Fir2IrLazyClass) {
-                        if (parentOrigin == IrDeclarationOrigin.DEFINED) {
-                            throw AssertionError()
+                        assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
+                            "Should not have reference to public API uncached property from source code"
                         }
                         val symbol = Fir2IrPropertySymbol(signature, fir.containerSource)
                         val irProperty = fir.convertWithOffsets { startOffset, endOffset ->

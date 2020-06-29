@@ -145,14 +145,14 @@ internal class OperatorExpressionGenerator(
         targetType: ConeClassLikeType?
     ): IrExpression {
         if (targetType == null) return this
-        if (operandType == null) throw AssertionError("operandType should be non-null")
+        if (operandType == null) error("operandType should be non-null if targetType is non-null")
 
         val operandClassId = operandType.lookupTag.classId
         val targetClassId = targetType.lookupTag.classId
         if (operandClassId == targetClassId) return this
         val conversionFunction =
             typeConverter.classIdToSymbolMap[operandClassId]?.getSimpleFunction("to${targetType.lookupTag.classId.shortClassName.asString()}")
-                ?: throw AssertionError("No conversion function for $operandType ~> $targetType")
+                ?: error("No conversion function for $operandType ~> $targetType")
 
         val dispatchReceiver = this@asComparisonOperand
         val unsafeIrCall = IrCallImpl(

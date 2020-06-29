@@ -250,7 +250,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                                 components.irBuiltIns.booleanType -> FirImplicitBooleanTypeRef(null)
                                 components.irBuiltIns.intType -> FirImplicitIntTypeRef(null)
                                 components.irBuiltIns.stringType -> FirImplicitStringTypeRef(null)
-                                else -> throw AssertionError("Should not be here")
+                                else -> error("Unexpected synthetic data class function return type: $returnType")
                             }
                             if (irValueParameter != null) {
                                 this.valueParameters.add(

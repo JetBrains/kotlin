@@ -485,9 +485,7 @@ class CallAndReferenceGenerator(
             ?: run {
                 if (this is FirCallableReferenceAccess) return null
                 val name = if (isDispatch) "Dispatch" else "Extension"
-                throw AssertionError(
-                    "$name receiver expected: ${render()} to ${calleeReference.render()}"
-                )
+                error("$name receiver expected: ${render()} to ${calleeReference.render()}")
             }
     }
 

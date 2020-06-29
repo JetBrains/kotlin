@@ -56,19 +56,19 @@ class Fir2IrLazyClass(
     override var visibility: Visibility
         get() = fir.visibility
         set(_) {
-            throw AssertionError("Mutating Fir2Ir lazy elements is not possible")
+            error("Mutating Fir2Ir lazy elements is not possible")
         }
 
     override var modality: Modality
         get() = fir.modality!!
         set(_) {
-            throw AssertionError("Mutating Fir2Ir lazy elements is not possible")
+            error("Mutating Fir2Ir lazy elements is not possible")
         }
 
     override var attributeOwnerId: IrAttributeContainer
         get() = this
         set(_) {
-            throw AssertionError("Mutating Fir2Ir lazy elements is not possible")
+            error("Mutating Fir2Ir lazy elements is not possible")
         }
 
     override val kind: ClassKind
@@ -160,9 +160,10 @@ class Fir2IrLazyClass(
         with(fakeOverrideGenerator) {
             result += getFakeOverrides(fir, processedNames)
         }
+        // TODO: remove this check to save time
         for (declaration in result) {
             if (declaration.parent != this) {
-                throw AssertionError()
+                throw AssertionError("Unmatched parent for lazy class member")
             }
         }
         result

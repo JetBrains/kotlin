@@ -241,7 +241,7 @@ class Fir2IrVisitor(
                 when (irTarget) {
                     is IrConstructor -> irTarget.symbol
                     is IrSimpleFunction -> irTarget.symbol
-                    else -> throw AssertionError("Should not be here: $irTarget")
+                    else -> error("Unknown return target: $irTarget")
                 },
                 convertToIrExpression(result)
             )

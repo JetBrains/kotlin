@@ -92,8 +92,7 @@ class Fir2IrLazySimpleFunction(
             declarationStorage.enterScope(this)
             declareThisReceiverParameter(
                 symbolTable,
-                thisType = containingClass.thisReceiver?.type
-                    ?: throw AssertionError(),
+                thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"),
                 thisOrigin = origin
             ).apply {
                 declarationStorage.leaveScope(this@Fir2IrLazySimpleFunction)

@@ -91,7 +91,7 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
                     callableId.packageName.asString(), callableId.relativeCallableName.asString(), builder.hashId, builder.mask
                 )
             }
-            else -> throw AssertionError("Unsupported FIR declaration in signature composer: ${declaration.render()}")
+            else -> error("Unsupported FIR declaration in signature composer: ${declaration.render()}")
         }
     }
 
