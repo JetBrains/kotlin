@@ -10,14 +10,14 @@ import com.intellij.psi.SmartPsiElementPointer
 
 class NGramModelRunnerManager {
 
-  private val myModelRunners: MutableMap<Language, ModelRunnerWithCache> = mutableMapOf()
+  private val myModelRunners: MutableMap<String, ModelRunnerWithCache> = mutableMapOf()
 
   fun processFile(filePointer: SmartPsiElementPointer<PsiFile>, language: Language) {
-    myModelRunners.getOrPut(language, { ModelRunnerWithCache() }).processFile(filePointer)
+    myModelRunners.getOrPut(language.id, { ModelRunnerWithCache() }).processFile(filePointer)
   }
 
   fun getModelRunnerForLanguage(language: Language): ModelRunner? {
-    return myModelRunners[language]
+    return myModelRunners[language.id]
   }
 
   companion object {
