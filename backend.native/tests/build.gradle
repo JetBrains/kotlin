@@ -51,6 +51,7 @@ repositories {
 }
 
 dependencies {
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
     def updateTestData = true
     if (project.hasProperty("kotlinProjectPath")) {

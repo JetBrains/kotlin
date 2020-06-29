@@ -5,9 +5,18 @@
 
 package org.jetbrains.kotlin.native.test.debugger
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.bc.K2Native
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.io.StringReader
+import java.lang.StringBuilder
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 
 class ToolDriver(
@@ -31,7 +40,7 @@ class ToolDriver(
     }
 
     fun runLldb(program: Path, commands: List<String>): String {
-        val args = listOf("-o", "command script import \"$lldbPrettyPrinters\"") +
+        val args = listOf("-b", "-o", "command script import \"$lldbPrettyPrinters\"") +
                 commands.flatMap { listOf("-o", it) }
         return subprocess(lldb, program.toString(), "-b", *args.toTypedArray())
                 .thrownIfFailed()
@@ -63,15 +72,41 @@ data class ProcessOutput(
 fun subprocess(program: Path, vararg args: String): ProcessOutput {
     val start = System.currentTimeMillis()
     val process = ProcessBuilder(program.toString(), *args).start()
-    val outReader = process.inputStream.bufferedReader()
-    val errReader = process.errorStream.bufferedReader()
-
-    val timeout = 5L
-    if (!process.waitFor(timeout, TimeUnit.MINUTES)) {
-        process.destroy()
-        error("$program is running for more then $timeout minutes")
+    val out = GlobalScope.async(Dispatchers.IO) {
+        readStream(process, process.inputStream.buffered())
     }
-    val stdout = outReader.readText()
-    val stderr = errReader.readText()
-    return ProcessOutput(program, process, stdout, stderr, System.currentTimeMillis() - start)
+
+    val err = GlobalScope.async(Dispatchers.IO) {
+        readStream(process, process.errorStream.buffered())
+    }
+
+    return runBlocking {
+        try {
+            val status = process.waitFor(5L, TimeUnit.MINUTES)
+            if (!status) {
+                out.cancel()
+                err.cancel()
+                error("$program timeouted")
+            }
+        }catch (e:Exception) {
+            out.cancel()
+            err.cancel()
+            error(e)
+        }
+        ProcessOutput(program, process, out.await(), err.await(), System.currentTimeMillis() - start)
+    }
+}
+
+private fun readStream(process: Process, stream: InputStream): String {
+    var size = 4096
+    val buffer = ByteArray(size) { 0 }
+    val sunk = ByteArrayOutputStream()
+    while (true) {
+        size = stream.read(buffer, 0, buffer.size)
+        if (size < 0 && !process.isAlive)
+            break
+        if (size > 0)
+            sunk.write(buffer, 0, size)
+    }
+    return String(sunk.toByteArray())
 }

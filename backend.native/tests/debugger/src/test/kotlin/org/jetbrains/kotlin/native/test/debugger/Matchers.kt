@@ -62,6 +62,15 @@ fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
         return
     }
 
+    if (!isOsxDevToolsEnabled) {
+        println("""Development tools aren't available.
+                   |Please consider to execute:
+                   |  ${DistProperties.devToolsSecurity} -enable
+                   |or
+                   |  csrutil disable
+                   |to run lldb tests""".trimMargin())
+        return
+    }
     val lldbSessionSpec = LldbSessionSpecification.parse(lldbSession)
 
     val tmpdir = Files.createTempDirectory("debugger_test")
@@ -74,6 +83,15 @@ fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
     driver.compile(source, output, "-g")
     val result = driver.runLldb(output, lldbSessionSpec.commands)
     lldbSessionSpec.match(result)
+}
+
+private val isOsxDevToolsEnabled: Boolean by lazy {
+    //TODO: add OSX checks.
+    val rawStatus = subprocess(DistProperties.devToolsSecurity, "-status")
+    println("> status: $rawStatus")
+
+    val r = Regex("^.*\\ (enabled|disabled).$")
+    r.find(rawStatus.stdout)?.destructured?.component1() == "enabled"
 }
 
 private val haveLldb: Boolean by lazy {
