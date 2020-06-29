@@ -188,8 +188,8 @@ class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
     // find initializer method with same parameter types
     val correspondingInitializer = memberScope?.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)?.find {
       it.name.asString().startsWith("init")
-      && it is SimpleFunctionDescriptor
-      && it.valueParameters.map { it.type } == constructorDescriptor.valueParameters.map { it.type }
+              && it is SimpleFunctionDescriptor
+              && it.valueParameters.map { it.type } == constructorDescriptor.valueParameters.map { it.type }
     }
     return correspondingInitializer?.findPsi() as? KtNamedFunction
   }

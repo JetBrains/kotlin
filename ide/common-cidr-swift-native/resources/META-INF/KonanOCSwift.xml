@@ -1,0 +1,44 @@
+<idea-plugin>
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.konan.konanConsumer" interface="org.jetbrains.konan.resolve.konan.KonanConsumer"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceImplementation="org.jetbrains.konan.resolve.konan.KonanBridgeFileManager"/>
+    <projectService serviceImplementation="org.jetbrains.konan.resolve.KtModificationCount"/>
+    <projectService serviceImplementation="org.jetbrains.konan.resolve.KtPendingTranslationsManager"/>
+
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinFunctionOCUsagesSearcher"/>
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinOCUsageSearcher"/>
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinInitializerSwiftUsageSearcher"/>
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinSwiftUsageSearcher"/>
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinFileClassSwiftUsageSearcher"/>
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinFileClassOCUsageSearcher"/>
+
+    <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
+    <automaticRenamerFactory implementation="org.jetbrains.konan.refactoring.rename.AdditionalKotlinReferencesInSwiftAndObjCRenamer"/>
+    <renamePsiElementProcessor implementation="org.jetbrains.konan.refactoring.rename.ObjcKotlinClassRenameProcessor"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <foreignUsagesRenameProcessor implementation="org.jetbrains.konan.refactoring.rename.KotlinUsagesInSwiftAndObjCRenameProcessor" />
+  </extensions>
+
+  <extensions defaultExtensionNs="swift">
+    <kotlinNative implementation="org.jetbrains.konan.resolve.konan.KonanSwiftExtensionPoint"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="cidr.lang">
+    <symbolTableProvider implementation="org.jetbrains.konan.resolve.konan.KonanBridgeSymbolTableProvider" order="before OCSymbolTableProvider, before SwiftObjcSymbolTableProvider"/>
+    <symbolTableProvider implementation="org.jetbrains.konan.resolve.KtSymbolTableProvider"/>
+    <symbolTableProvider implementation="org.jetbrains.konan.resolve.konan.KonanKNMSymbolTableProvider"/>
+    <serializerProvider implementation="org.jetbrains.konan.resolve.symbols.serialization.KtSerializer"/>
+  </extensions>
+
+  <!--suppress PluginXmlValidity -->
+  <projectListeners>
+    <listener class="org.jetbrains.konan.resolve.KtDependencyGraph$Listener"
+              topic="com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesPackListener" />
+  </projectListeners>
+
+</idea-plugin>

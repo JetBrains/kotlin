@@ -40,11 +40,13 @@ dependencies {
 
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
+    compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
 
     implementation(project(":libraries:tools:new-project-wizard"))
     api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     api(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
+    api(project(":kotlin-ultimate:ide:common-cidr-mobile")) { isTransitive = false }
 
     testImplementation(project(":idea:idea-new-project-wizard"))
     testImplementation(kotlin("stdlib"))
@@ -74,8 +76,9 @@ val jarTask = (tasks.findByName("jar") as Jar? ?: task<Jar>("jar")).apply {
         val wizardLib = project(":libraries:tools:new-project-wizard").tasks.getByName("jar")
         val commonNative = project(":kotlin-ultimate:ide:common-native").tasks.getByName("jar")
         val noncidrNative = project(":kotlin-ultimate:ide:common-noncidr-native").tasks.getByName("jar")
+        val cidrMobile = project(":kotlin-ultimate:ide:common-cidr-mobile").tasks.getByName("jar")
 
-        for (jar in listOf(wizardLib, commonNative, noncidrNative)) {
+        for (jar in listOf(wizardLib, commonNative, noncidrNative, cidrMobile)) {
             result.from(zipTree(
                 jar.outputs.files.singleFile
             ))

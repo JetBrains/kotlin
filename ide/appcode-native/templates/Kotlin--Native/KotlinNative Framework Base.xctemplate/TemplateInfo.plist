@@ -29,7 +29,7 @@
                 <key>PRODUCT_NAME</key>
                 <string>$(TARGET_NAME:c99extidentifier)</string>
                 <key>PRODUCT_MODULE_NAME</key>
-                <string>_$(PRODUCT_NAME:c99extidentifier)</string>
+                <string>$(PRODUCT_NAME:c99extidentifier)</string>
                 <key>PRODUCT_BUNDLE_IDENTIFIER</key>
                 <string>___VARIABLE_bundleIdentifierPrefix:bundleIdentifier___.___PACKAGENAMEASRFC1034IDENTIFIER___</string>
             </dict>

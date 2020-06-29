@@ -1,0 +1,115 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/KonanCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/android-kotlin-extensions-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/CidrMobile.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <id>com.intellij.kotlin.mobile</id>
+  <name>Mobile</name>
+  <!--version_placeholder-->
+  <vendor>JetBrains</vendor>
+
+  <!--idea_version_placeholder-->
+
+  <change-notes/>
+
+  <depends>com.intellij.modules.mobile.ide</depends>
+  <depends>org.jetbrains.kotlin</depends>
+
+  <application-components>
+    <component>
+      <implementation-class>com.jetbrains.swift.MobileSwiftInitializer</implementation-class>
+    </component>
+  </application-components>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <actionConfigurationCustomizer implementation="com.jetbrains.mobile.actions.MobileActionsCustomizer"/>
+
+    <configurationType implementation="com.jetbrains.mobile.execution.MobileAppRunConfigurationType"/>
+    <configurationType implementation="com.jetbrains.mobile.execution.testing.MobileTestRunConfigurationType"/>
+    <stepsBeforeRunProvider implementation="com.jetbrains.mobile.execution.MobileBeforeRunTaskProvider"/>
+    <projectTaskRunner implementation="com.jetbrains.mobile.execution.MobileProjectTaskRunner" order="first, before gradle.mpp"/>
+
+    <applicationService serviceImplementation="com.jetbrains.mobile.execution.testing.AppleXCTestLocator"
+                        serviceInterface="com.jetbrains.cidr.execution.testing.xctest.OCUnitTestLocator"/>
+
+    <applicationService serviceImplementation="com.jetbrains.cidr.execution.JBDeviceFramework" preload="true"/>
+    <projectService serviceInterface="com.jetbrains.mobile.execution.DeviceService"
+                    serviceImplementation="com.jetbrains.mobile.execution.MobileDeviceService" overrides="true"/>
+    <programRunner implementation="com.jetbrains.mobile.execution.MobileRunner" order="first"/>
+
+    <externalProjectDataService implementation="com.jetbrains.mobile.gradle.AndroidProjectDataService"/>
+
+    <!-- apple gradle project model -->
+    <externalProjectDataService implementation="com.jetbrains.cidr.apple.gradle.AppleProjectDataService"/>
+    <projectService serviceImplementation="com.jetbrains.cidr.apple.gradle.GradleAppleWorkspace"/>
+
+    <!-- swift -->
+    <applicationService serviceInterface="com.jetbrains.swift.SwiftCompilerSettings"
+                        serviceImplementation="com.jetbrains.swift.MobileSwiftCompilerSettings"/>
+    <!--<applicationService serviceInterface="com.jetbrains.swift.codeinsight.highlighting.SwiftSourceKitAnnotator$Producer"
+                        serviceImplementation="com.jetbrains.swift.swiftpm.codeinsight.highlighting.CLionSwiftSourceKitAnnotator$Producer"/>-->
+    <applicationService serviceInterface="com.jetbrains.swift.codeinsight.resolve.module.SwiftModuleIOCache"
+                        serviceImplementation="com.jetbrains.swift.codeinsight.resolve.module.MobileSwiftModuleIOCache"/>
+
+    <applicationService serviceImplementation="com.jetbrains.swift.SwiftSettings"/>
+
+    <projectService serviceInterface="com.jetbrains.swift.codeinsight.resolve.SwiftModuleManager"
+                    serviceImplementation="com.jetbrains.swift.codeinsight.resolve.MobileSwiftModuleManager"/>
+
+    <applicationService serviceInterface="com.jetbrains.swift.codeinsight.resolve.module.SwiftModuleReader"
+                        serviceImplementation="com.jetbrains.swift.codeinsight.resolve.module.MobileSwiftModuleReader"/>
+
+    <applicationService serviceInterface="com.jetbrains.swift.sourcekitd.SourceKitServiceManager"
+                        serviceImplementation="com.jetbrains.swift.sourcekitd.MobileSourceKitServiceManager"/>
+
+    <!--<externalAnnotator implementationClass="com.jetbrains.swift.swiftpm.codeinsight.highlighting.CLionSwiftSourceKitAnnotator"
+                       language="Swift"/>-->
+
+    <projectService serviceInterface="com.jetbrains.cidr.documentation.CocoaDocumentationManager"
+                    serviceImplementation="com.jetbrains.mobile.documentation.AppleDocumentationManager"/>
+
+    <moduleService serviceInterface="org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager"
+                   serviceImplementation="org.jetbrains.kotlin.android.synthetic.idea.res.IDEAndroidCommonLayoutXmlFileManager"/>
+
+    <registryKey key="konan.enable.lazy.symbol.translation" defaultValue="false"
+                 description="Enables lazy translation of Kotlin symbols into Swift, Obj-C symbols."/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin.android.model">
+    <androidModuleInfoProvider implementation="com.jetbrains.mobile.gradle.AndroidModuleInfoProviderImpl"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="cidr.lang">
+    <testFramework implementation="com.jetbrains.mobile.execution.testing.AppleXCTestFramework"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.konan">
+    <konanConsumer implementation="com.jetbrains.mobile.bridging.MobileKonanConsumer"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+    <projectResolve implementation="com.jetbrains.cidr.apple.gradle.AppleProjectResolver"/>
+    <projectResolve implementation="com.jetbrains.mobile.gradle.AndroidProjectResolver"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="cidr.lang">
+    <moduleMapManagerRequestor implementation="com.jetbrains.cidr.apple.gradle.GradleAppleModuleMapManagerRequestor"/>
+    <customHeaderProvider implementation="com.jetbrains.mobile.bridging.MobileKonanFrameworkHeaderProvider"/>
+    <!-- swift -->
+    <swiftSourceModuleProvider implementation="com.jetbrains.swift.codeinsight.resolve.MobileSwiftSourceModuleProvider"/>
+    <swiftCustomIncludePathProvider implementation="com.jetbrains.swift.codeinsight.resolve.module.MobileXCTestPathProvider"/>
+    <customHeaderProvider implementation="com.jetbrains.swift.bridging.MobileSwiftBridgeHeaderProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="cidr.cocoa">
+    <xcodeProjectFileProvider implementation="com.jetbrains.cidr.apple.gradle.AppleXcodeProjectFileProvider"/>
+  </extensions>
+
+  <actions>
+    <group id="CIDR.Swift.NewGroup">
+      <reference id="Swift.NewGroup"/>
+      <add-to-group group-id="CIDR.Lang.NewGroup" anchor="first"/>
+    </group>
+  </actions>
+</idea-plugin>

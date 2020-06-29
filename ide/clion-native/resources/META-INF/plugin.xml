@@ -1,5 +1,5 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <xi:include href="/META-INF/KonanCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/KonanCidrCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <id>org.jetbrains.kotlin.native.clion</id>
   <name>Kotlin/Native for CLion</name>
@@ -12,7 +12,7 @@
 
   <change-notes/>
 
-  <depends>com.intellij.modules.clion</depends>
+  <depends>com.intellij.modules.cidr.lang</depends>
   <!--java_plugin_dependency-->
 
   <application-components>
@@ -25,7 +25,10 @@
   <extensions defaultExtensionNs="org.jetbrains.kotlin.native">
     <gradleLauncherProvider implementation="org.jetbrains.konan.gradle.execution.CLionGradleKonanLauncherProvider"/>
   </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
+    <externalProjectDataService implementation="org.jetbrains.konan.gradle.CLionKonanProjectDataService"
+                                order="after KonanProjectDataService"/>
     <directoryProjectGenerator implementation="org.jetbrains.konan.KonanGradleProjectGenerator"/>
     <projectTaskRunner implementation="org.jetbrains.konan.gradle.execution.GradleKonanProjectTaskRunner"/>
 

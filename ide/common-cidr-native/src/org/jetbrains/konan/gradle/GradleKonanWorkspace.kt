@@ -9,6 +9,7 @@ import com.intellij.execution.ExecutionTargetManager
 import com.intellij.execution.RunManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager
 import com.intellij.openapi.progress.BackgroundTaskQueue
@@ -34,7 +35,16 @@ class GradleKonanWorkspace(val project: Project) : ProjectComponent {
 
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): GradleKonanWorkspace = project.getComponent(GradleKonanWorkspace::class.java)
+        fun getInstance(project: Project): GradleKonanWorkspace {
+            val instance = getInstanceOrNull(project)
+            if (instance == null) {
+                Logger.getInstance(this::class.java).error("GradleKonanWorkspace is null")
+            }
+            return instance!!
+        }
+
+        @JvmStatic
+        fun getInstanceOrNull(project: Project): GradleKonanWorkspace? = project.getComponent(GradleKonanWorkspace::class.java)
     }
 
     private val reloadsQueue = BackgroundTaskQueue(project, KonanBundle.message("label.loadProject.text"))

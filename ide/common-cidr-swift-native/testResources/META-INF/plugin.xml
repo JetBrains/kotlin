@@ -1,0 +1,23 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/CidrCorePlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/SwiftLangPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <id>com.intellij.kotlin.ocswift.test</id>
+  <name>common-cidr-swift-native test</name>
+  <vendor>JetBrains</vendor>
+
+  <depends>org.jetbrains.kotlin</depends>
+
+  <project-components>
+    <component>
+      <interface-class>com.jetbrains.cidr.lang.workspace.OCWorkspace</interface-class>
+      <implementation-class>com.jetbrains.cidr.lang.workspace.OCWorkspaceImpl</implementation-class>
+    </component>
+  </project-components>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="konan.enable.lazy.symbol.translation" defaultValue="true"
+                 description="Enables lazy translation of Kotlin symbols into Swift, Obj-C symbols."/>
+  </extensions>
+</idea-plugin>

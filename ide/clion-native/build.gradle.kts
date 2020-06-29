@@ -32,6 +32,7 @@ dependencies {
     }
     api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     api(project(":kotlin-ultimate:ide:common-cidr-native")) { isTransitive = false }
+    compileOnly(project(":kotlin-ultimate:ide:cidr-gradle-tooling")) { isTransitive = false }
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {

@@ -1,5 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="/META-INF/CocoaCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/CidrMobile.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <id>org.jetbrains.mobile-mpp</id>
   <name>Mobile Multiplatform</name>
   <version>0.1</version>
@@ -22,9 +23,6 @@
     <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
                         serviceImplementation="com.jetbrains.mpp.PathManagerCustomization" overrides="true"/>
 
-    <applicationService serviceImplementation="com.jetbrains.mpp.execution.DeviceService"/>
-
-    <executionTargetProvider implementation="com.jetbrains.mpp.execution.DeviceExecutionTargetProvider"/>
     <executionTargetProvider implementation="com.jetbrains.mpp.BinaryExecutionTargetProvider"/>
     <externalProjectDataService implementation="com.jetbrains.mpp.ProjectDataService"/>
     <configurationType implementation="com.jetbrains.kmm.AppleRunConfigurationType"/>

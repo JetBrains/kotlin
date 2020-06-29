@@ -6,10 +6,10 @@
 package com.jetbrains.kmm
 
 import com.intellij.execution.ExecutionTarget
+import com.jetbrains.mobile.execution.Device
 import com.jetbrains.mpp.BinaryTargetListener
 import com.jetbrains.mpp.AppleRunConfiguration
 import com.jetbrains.mpp.ProjectWorkspace
-import com.jetbrains.mpp.execution.Device
 
 class KMMTargetListener(workspace: ProjectWorkspace) : BinaryTargetListener(workspace) {
     override fun activeTargetChanged(target: ExecutionTarget) {

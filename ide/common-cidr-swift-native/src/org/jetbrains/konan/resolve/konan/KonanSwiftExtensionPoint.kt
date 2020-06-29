@@ -1,0 +1,5 @@
+package org.jetbrains.konan.resolve.konan
+
+import com.jetbrains.swift.kotlinNative.KotlinNativeExtensionPoint
+
+class KonanSwiftExtensionPoint: KotlinNativeExtensionPoint

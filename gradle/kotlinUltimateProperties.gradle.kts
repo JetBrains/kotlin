@@ -47,6 +47,8 @@ val clionJavaPluginDownloadUrl: URL by rootProject.extra(
             URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$clionRepo/$clionVersion/CL-plugins/java.zip")
 )
 
+val kotlinNativeBackendVersion: String by rootProject.extra(rootProject.extra["versions.kotlinNativeBackend"] as String)
+val kotlinNativeBackendRepo: String by rootProject.extra(rootProject.extra["versions.kotlinNativeBackend.repo"] as String)
 val appcodeVersion: String by rootProject.extra(rootProject.extra["versions.appcode"] as String)
 val appcodeVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.appcode.strict"].toBoolean())
 val appcodeFriendlyVersion: String by rootProject.extra(cidrProductFriendlyVersion("AppCode", appcodeVersion))
@@ -57,6 +59,8 @@ val appcodeJavaPluginDownloadUrl: URL by rootProject.extra(
             URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$appcodeRepo/$appcodeVersion/OC-plugins/java.zip")
 )
 val xCodeCompatPluginVersion by rootProject.extra(rootProject.extra["versions.xcode-compat"] as String)
+
+val cidrVersion: String by rootProject.extra(detectCidrPlatformVersion())
 
 val clionCocoaCommonArtifacts: List<String> by rootProject.extra(
     listOf("$clionRepo:$clionVersion:cocoa-common-binaries/Bridge.framework.tar",
@@ -105,12 +109,10 @@ val artifactsForCidrDir: File by rootProject.extra(rootProject.rootDir.resolve("
 val clionPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("clionPlugin/Kotlin"))
 val appcodePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("appcodePlugin/Kotlin"))
 val mobileMppPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobileMppPlugin/mobile-mpp"))
-
-val useAppCodeForCommon = findProperty("useAppCodeForCommon").toBoolean()
-val cidrVersion: String by rootProject.extra(if (useAppCodeForCommon) appcodeVersion else clionVersion)
+val mobilePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobilePlugin/Mobile"))
 
 if (isStandaloneBuild) { // setup additional properties that are required only when running in standalone mode:
-    if (useAppCodeForCommon) {
+    if (!rootProject.gradle.startParameter.taskNames.any { it.contains("clion", true) }) {
         val cidrUnscrambledJarDir: File by rootProject.extra(appcodeUnscrambledJarDir)
     }
     else {
@@ -162,6 +164,18 @@ val clionPluginZipPath: File by rootProject.extra(
 )
 val clionCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath))
 
+// Note:
+// - "mobilePluginNumber" Gradle property can be used to override the default plugin number (SNAPSHOT)
+// - "mobilePluginZipPath" Gradle property can be used to override the standard location of packed plugin artifacts
+// - "mobilePluginRepoUrl" Gradle property can be used to override the URL of custom plugin repo specified in updatePlugins-*.xml
+val mobilePluginNumber: String = findProperty("mobilePluginNumber")?.toString() ?: "SNAPSHOT"
+val mobilePluginVersionFull: String by rootProject.extra(cidrPluginVersionFull("Mobile", clionVersion, mobilePluginNumber))
+val mobilePluginZipPath: File by rootProject.extra(
+        propertyAsPath("mobilePluginZipPath")
+                ?: defaultCidrPluginZipPath(mobilePluginVersionFull, "mobile")
+)
+val mobileCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath))
+
 val excludesListFromIdeaPlugin: List<String> by rootProject.extra(listOf(
         "lib/android-*.jar", // no need Android stuff
         "lib/kapt3-*.jar", // no annotation processing
@@ -172,6 +186,23 @@ val excludesListFromIdeaPlugin: List<String> by rootProject.extra(listOf(
 fun ijProductBranch(productVersion: String): Int {
     return productVersion.substringBefore(".", productVersion.substringBefore("-"))
         .toIntOrNull() ?: error("Invalid product version format: $productVersion")
+}
+
+fun detectCidrPlatformVersion(): String {
+    val taskNames = rootProject.gradle.startParameter.taskNames
+
+    var count = 0
+    val containsAppCode = taskNames.any { it.contains("appcode", true) }.also { if (it) count += 1 }
+    val containsCLion = taskNames.any { it.contains("clion", true) }.also { if (it) count += 1 }
+    val containsMobile = taskNames.any { it.contains("mobile", true) }.also { if (it) count += 1 }
+    if (count > 1) {
+        throw InvalidUserDataException("Only one CIDR-dependent artifact can be built in a single run to avoid ambiguity of dependencies")
+    }
+    return when {
+        containsAppCode -> appcodeVersion
+        containsCLion -> clionVersion
+        else -> rootProject.extra["versions.cidrPlatform"] as String
+    }
 }
 
 fun cidrProductFriendlyVersion(productName: String, productVersion: String): String {
@@ -197,8 +228,8 @@ fun cidrPluginVersionFull(productName: String, productVersion: String, cidrPlugi
 
 fun propertyAsPath(propertyName: String): File? = findProperty(propertyName)?.let { File(it.toString()).canonicalFile }
 
-fun defaultCidrPluginZipPath(cidrProductVersionFull: String): File =
-        artifactsForCidrDir.resolve("kotlin-plugin-$cidrProductVersionFull.zip").canonicalFile
+fun defaultCidrPluginZipPath(cidrProductVersionFull: String, productName: String = "kotlin"): File =
+        artifactsForCidrDir.resolve("$productName-plugin-$cidrProductVersionFull.zip").canonicalFile
 
 fun cidrCustomPluginRepoUrl(repoUrlPropertyName: String, cidrPluginZipPath: File): URL =
         findProperty(repoUrlPropertyName)?.let {

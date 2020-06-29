@@ -13,12 +13,18 @@ pluginManagement {
 includeSubprojects(
         ":kotlin-ultimate:ide:cidr-gradle-tooling",
         ":kotlin-ultimate:ide:common-native",
+        ":kotlin-ultimate:ide:common-cidr-mobile",
         ":kotlin-ultimate:ide:common-cidr-native",
+        ":kotlin-ultimate:ide:common-cidr-swift-native",
         ":kotlin-ultimate:ide:clion-native",
         ":kotlin-ultimate:ide:appcode-native",
+        ":kotlin-ultimate:ide:mobile-native",
         ":kotlin-ultimate:prepare:cidr-plugin",
         ":kotlin-ultimate:prepare:clion-plugin",
-        ":kotlin-ultimate:prepare:appcode-plugin"
+        ":kotlin-ultimate:prepare:appcode-plugin",
+        ":kotlin-ultimate:prepare:mobile-plugin",
+        ":kotlin-ultimate:libraries:tools:apple-gradle-plugin",
+        ":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"
 )
 
 // The root of Kotlin Ultimate has different Gradle paths in standalone and composite build modes.

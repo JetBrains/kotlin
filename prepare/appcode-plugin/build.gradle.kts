@@ -1,9 +1,18 @@
-import java.util.Locale
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import org.gradle.jvm.tasks.Jar
 import java.net.URL
+import java.util.*
 
 plugins {
     kotlin("jvm")
+    id("com.github.jk1.tcdeps") version "1.2"
+}
+
+repositories {
+    teamcityServer {
+        setUrl("https://buildserver.labs.intellij.net")
+    }
 }
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
@@ -25,6 +34,8 @@ val appcodePluginVersionFull: String by rootProject.extra
 val appcodePluginZipPath: File by rootProject.extra
 val appcodeCustomPluginRepoUrl: URL by rootProject.extra
 val appcodeJavaPluginDownloadUrl: URL by rootProject.extra
+val kotlinNativeBackendVersion: String by rootProject.extra
+val kotlinNativeBackendRepo: String by rootProject.extra
 
 val cidrPlugin: Configuration by configurations.creating
 val cidrGradleTooling: Configuration by configurations.creating
@@ -33,20 +44,27 @@ dependencies {
     cidrPlugin(project(":kotlin-ultimate:prepare:cidr-plugin"))
     cidrGradleTooling(project(":kotlin-ultimate:ide:cidr-gradle-tooling"))
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
+    runtime(project(":kotlin-ultimate:ide:common-cidr-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:appcode-native")) { isTransitive = false }
+    runtime(tc("$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}:backend.native.jar"))
+}
+
+val copyRuntimeDeps: Task by tasks.creating(Copy::class) {
+    from(configurations.runtime)
+    into(temporaryDir)
 }
 
 val preparePluginXmlTask: Task = preparePluginXml(
-        project,
-        ":kotlin-ultimate:ide:appcode-native",
-        appcodeVersion,
-        appcodeVersionStrict,
-        appcodePluginVersionFull
+    project,
+    ":kotlin-ultimate:ide:appcode-native",
+    appcodeVersion,
+    appcodeVersionStrict,
+    appcodePluginVersionFull
 )
 
 val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXmlTask))
 
-val additionalJars = listOf(pluginJarTask, cidrGradleTooling)
+val additionalJars = listOf(pluginJarTask, copyRuntimeDeps, cidrGradleTooling)
 
 val appcodePluginTask: Task = packageCidrPlugin(
         project,

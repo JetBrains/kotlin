@@ -7,7 +7,6 @@ package com.jetbrains.mpp
 
 import com.intellij.execution.BeforeRunTask
 import com.intellij.execution.ExecutionTarget
-import com.intellij.execution.Executor
 import com.intellij.execution.configurations.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction
@@ -18,20 +17,21 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.ui.ComponentUtil
+import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriverConfiguration
+import com.jetbrains.cidr.execution.testing.CidrLauncher
 import com.jetbrains.kmm.AppleConfigurationFactory
 import com.jetbrains.kmm.AppleRunConfigurationEditor
 import com.jetbrains.konan.KonanBundle
 import com.jetbrains.konan.WorkspaceXML
-import com.jetbrains.mpp.execution.ApplePhysicalDevice
-import com.jetbrains.mpp.execution.Device
+import com.jetbrains.mobile.execution.*
 import org.jdom.Element
 import java.io.File
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigurationFactory, name: String) :
-    LocatableConfigurationBase<Element>(project, configurationFactory, name), RunConfigurationWithSuppressedDefaultRunAction {
-
+    LocatableConfigurationBase<Element>(project, configurationFactory, name), RunConfigurationWithSuppressedDefaultRunAction,
+    MobileRunConfiguration {
     val workspace = ProjectWorkspace.getInstance(project)
 
     private val xcodeSchemeLock = ReentrantLock()
@@ -62,9 +62,6 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         AppleRunConfigurationEditor(project)
-
-    override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState? =
-        (environment.executionTarget as? Device)?.createState(this, environment)
 
     override fun getBeforeRunTasks(): MutableList<BeforeRunTask<*>> {
         val result = mutableListOf<BeforeRunTask<*>>()
@@ -124,21 +121,30 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
 
     override fun canRunOn(target: ExecutionTarget): Boolean = target is Device
 
-    fun getProductBundle(environment: ExecutionEnvironment): File {
+    override fun getProductBundle(environment: ExecutionEnvironment): File {
         val buildType = if (environment.executionTarget is ApplePhysicalDevice) "Debug-iphoneos" else "Debug-iphonesimulator"
         if (project.basePath == null) throw RuntimeConfigurationError("Can't run ${this::class.simpleName} on project without base path.")
         return File(project.basePath).resolve(iosBuildDirectory).resolve("$buildType/$xcodeScheme.app")
     }
 
+    override fun createOtherState(environment: ExecutionEnvironment): CommandLineState {
+        throw IllegalStateException()
+    }
+
+    override fun createCidrLauncher(environment: ExecutionEnvironment, device: AppleDevice): CidrLauncher =
+        object : AppleLauncher<AppleRunConfiguration>(this, environment, device) {
+            override fun createDebuggerDriverConfiguration(): DebuggerDriverConfiguration = AppleLLDBDriverConfiguration()
+        }
+
     var selectedDevice: Device? = null
 
     override fun readExternal(element: Element) {
-        super.readExternal(element)
+        super<LocatableConfigurationBase>.readExternal(element)
         xcodeScheme = element.getAttributeValue(WorkspaceXML.RunConfiguration.attributeXcodeScheme)
     }
 
     override fun writeExternal(element: Element) {
-        super.writeExternal(element)
+        super<LocatableConfigurationBase>.writeExternal(element)
         if (xcodeScheme != null) {
             element.setAttribute(WorkspaceXML.RunConfiguration.attributeXcodeScheme, xcodeScheme)
         }

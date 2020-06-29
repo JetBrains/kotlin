@@ -3,6 +3,11 @@ versions.ideaPluginForCidr=1.4.0-dev-8382
 versions.ideaPluginForCidr.ide=IJ2019.2-1
 versions.ideaPluginForCidr.repo=Kotlin_KotlinDev_Aggregate
 
+# Used for dependencies in shared modules when syncing to IDE
+# During build this value is substituted with the actual dependency
+# This version is intentionally incorrect
+versions.cidrPlatform=193.7405
+
 versions.appcode=192.7142.40
 versions.appcode.strict=true
 versions.appcode.repo=ijplatform_IjPlatform192_CIDR_AppCode_PublicInstallers
@@ -14,6 +19,9 @@ versions.clion.repo=ijplatform_IjPlatform192_CIDR_CLion_Installers
 
 versions.nativeDebug=192.5728.12
 versions.nativeDebug.repo=ijplatform_IjPlatform192_Idea_InstallersForEapRelease
+
+versions.kotlinNativeBackend=1.4-M3-dev-15369
+versions.kotlinNativeBackend.repo=Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle
 
 versions.lldbFrontend.hash=a04617bf697726124f958411e2dd401e4aced0b6
 versions.lldbFrontend.macos.artifact=LLDBFrontend
