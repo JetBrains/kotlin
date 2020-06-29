@@ -19,12 +19,12 @@ abstract class KtVariableSymbol : KtVariableLikeSymbol() {
     abstract val isVal: Boolean
 }
 
-abstract class KtFieldSymbol : KtVariableSymbol() {
+abstract class KtFieldSymbol : KtVariableSymbol(), KtSymbolWithModality<KtCommonSymbolModality> {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
 }
 
 // TODO getters & setters
-abstract class KtPropertySymbol : KtVariableSymbol(), KtPossibleExtensionSymbol {
+abstract class KtPropertySymbol : KtVariableSymbol(), KtPossibleExtensionSymbol, KtSymbolWithModality<KtCommonSymbolModality> {
     abstract val fqName: FqName
 }
 

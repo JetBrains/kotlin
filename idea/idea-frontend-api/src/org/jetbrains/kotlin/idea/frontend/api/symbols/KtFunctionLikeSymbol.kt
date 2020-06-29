@@ -15,7 +15,12 @@ abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol() {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
 }
 
-abstract class KtFunctionSymbol : KtFunctionLikeSymbol(), KtNamedSymbol, KtPossibleExtensionSymbol, KtSymbolWithTypeParameters {
+abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
+    KtNamedSymbol,
+    KtPossibleExtensionSymbol,
+    KtSymbolWithTypeParameters,
+    KtSymbolWithModality<KtCommonSymbolModality> {
+
     abstract val isSuspend: Boolean
     abstract val isOperator: Boolean
     abstract val fqName: FqName?

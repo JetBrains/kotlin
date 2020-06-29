@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 abstract class KtSymbolProvider : ValidityOwner {
@@ -38,4 +40,6 @@ abstract class KtSymbolProvider : ValidityOwner {
      * @return symbol with specified [classId] or `null` in case such symbol is not found
      */
     abstract fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol?
+
+    abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtSymbol>
 }
