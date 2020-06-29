@@ -19,7 +19,7 @@ import java.io.DataInputStream
 import java.io.DataOutput
 
 internal object GradleBuildRootDataSerializer {
-    private val attribute = FileAttribute("kotlin-dsl-script-models", 7, false)
+    private val attribute = FileAttribute("kotlin-dsl-script-models", 8, false)
 
     fun read(buildRoot: VirtualFile): GradleBuildRootData? {
         return attribute.readAttribute(buildRoot)?.use {
@@ -47,6 +47,7 @@ internal fun writeKotlinDslScriptModels(output: DataOutput, data: GradleBuildRoo
     val strings = StringsPool.writer(output)
     strings.addStrings(data.projectRoots)
     strings.addString(data.gradleHome)
+    strings.addString(data.javaHome)
     data.models.forEach {
         strings.addString(it.file)
         strings.addStrings(it.classPath)
@@ -57,6 +58,7 @@ internal fun writeKotlinDslScriptModels(output: DataOutput, data: GradleBuildRoo
     output.writeLong(data.importTs)
     strings.writeStringIds(data.projectRoots)
     strings.writeStringId(data.gradleHome)
+    strings.writeStringId(data.javaHome)
     output.writeList(data.models) {
         strings.writeStringId(it.file)
         output.writeString(it.inputs.sections)
@@ -73,6 +75,7 @@ internal fun readKotlinDslScriptModels(input: DataInputStream, buildRoot: String
     val importTs = input.readLong()
     val projectRoots = strings.readStrings()
     val gradleHome = strings.readString()
+    val javaHome = strings.readNullableString()
     val models = input.readList {
         KotlinDslScriptModel(
             strings.readString(),
@@ -84,7 +87,7 @@ internal fun readKotlinDslScriptModels(input: DataInputStream, buildRoot: String
         )
     }
 
-    return GradleBuildRootData(importTs, projectRoots, gradleHome, models)
+    return GradleBuildRootData(importTs, projectRoots, gradleHome, javaHome, models)
 }
 
 private object StringsPool {
@@ -99,8 +102,8 @@ private object StringsPool {
             ids.size
         }
 
-        fun addString(string: String) {
-            getStringId(string)
+        fun addString(string: String?) {
+            getStringId(string ?: "null")
         }
 
         fun addStrings(list: Collection<String>) {
@@ -119,8 +122,8 @@ private object StringsPool {
             }
         }
 
-        fun writeStringId(it: String) {
-            output.writeInt(getStringId(it))
+        fun writeStringId(it: String?) {
+            output.writeInt(getStringId(it ?: "null"))
         }
 
         fun writeStringIds(strings: Collection<String>) {
@@ -140,6 +143,11 @@ private object StringsPool {
         fun getString(id: Int) = strings[id]
 
         fun readString() = getString(input.readInt())
+        fun readNullableString(): String? {
+            val string = getString(input.readInt())
+            if (string == "null") return null
+            return string
+        }
 
         fun readStrings(): List<String> = input.readList { readString() }
     }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel
+import org.jetbrains.plugins.gradle.service.project.DefaultProjectResolverContext
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import java.io.File
 
@@ -28,6 +29,10 @@ fun saveGradleBuildEnvironment(resolverCtx: ProjectResolverContext) {
             ?: resolverCtx.settings?.gradleHome
         synchronized(sync) {
             sync.gradleVersion = resolverCtx.projectGradleVersion
+            sync.javaHome = (resolverCtx as? DefaultProjectResolverContext)
+                ?.buildEnvironment
+                ?.java?.javaHome?.canonicalPath
+                ?.let { toSystemIndependentName(it) }
 
             if (gradleHome != null) {
                 sync.gradleHome = toSystemIndependentName(gradleHome)
@@ -125,6 +130,7 @@ class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSyste
     var project: Project? = null
     var gradleVersion: String? = null
     var gradleHome: String? = null
+    var javaHome: String? = null
     val projectRoots = mutableSetOf<String>()
     val models = mutableListOf<KotlinDslScriptModel>()
     var failed = false

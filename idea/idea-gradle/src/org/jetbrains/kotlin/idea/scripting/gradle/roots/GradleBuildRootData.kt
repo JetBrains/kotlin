@@ -11,5 +11,6 @@ data class GradleBuildRootData(
     val importTs: Long,
     val projectRoots: Collection<String>,
     val gradleHome: String,
+    val javaHome: String?,
     val models: Collection<KotlinDslScriptModel>
 )

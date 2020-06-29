@@ -10,11 +10,15 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsContributor
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
+import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
+import org.jetbrains.plugins.gradle.util.GradleConstants
+import java.io.File
 import java.util.*
 
 class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
@@ -54,8 +58,16 @@ class KotlinDslSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
                 ?.canonicalPath
         }
 
+        if (sync.javaHome == null) {
+            sync.javaHome = ExternalSystemApiUtil
+                .getExecutionSettings<GradleExecutionSettings>(project, sync.workingDir, GradleConstants.SYSTEM_ID)
+                .javaHome
+        }
+
         @Suppress("DEPRECATION")
-        ScriptDefinitionContributor.find<GradleScriptDefinitionsContributor>(project)?.reloadIfNeeded(sync.workingDir, sync.gradleHome)
+        ScriptDefinitionContributor.find<GradleScriptDefinitionsContributor>(project)?.reloadIfNeeded(
+            sync.workingDir, sync.gradleHome, sync.javaHome
+        )
 
         saveScriptModels(project, sync)
     }
