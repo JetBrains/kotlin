@@ -57,9 +57,6 @@ class IrConstTransformer(irBuiltIns: IrBuiltIns) : IrElementTransformerVoid() {
 
     private fun transformAnnotations(annotationContainer: IrAnnotationContainer) {
         annotationContainer.annotations.forEach { annotation ->
-            // TODO this check can be removed after fix with annotation call arguments mapping
-            if ((0 until annotation.valueArgumentsCount).any { annotation.getValueArgument(it) == null }) return@forEach
-
             for (i in 0 until annotation.valueArgumentsCount) {
                 val arg = annotation.getValueArgument(i) ?: continue
                 when (arg) {
