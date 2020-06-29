@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi2ir.deparenthesize
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.regex.Pattern
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
@@ -224,6 +226,17 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    override fun visitSuperTypeEntry(specifier: KtSuperTypeEntry) {
+        super.visitSuperTypeEntry(specifier)
+        val handler = getHandler(specifier)
+        if (handler is SubstitutionHandler) {
+            val newHandler = SubstitutionHandler(handler.name, false, 1, 1, false)
+            handler.predicate?.let { newHandler.predicate = it }
+            specifier.typeReference?.let { setHandler(it, newHandler) }
+            specifier.typeReference?.typeElement?.let { setHandler(it, newHandler) }
+        }
+    }
+
     override fun visitModifierList(list: KtModifierList) {
         super.visitModifierList(list)
         if (list.allChildren.isEmpty || list.allChildren.all { it.allowsAbsenceOfMatch }) {
@@ -256,6 +269,13 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         super.visitPrimaryConstructor(constructor)
         if (constructor.children.all { it.allowsAbsenceOfMatch }) {
             setHandler(constructor, absenceOfMatchHandler(constructor))
+        }
+    }
+
+    override fun visitSuperTypeList(list: KtSuperTypeList) {
+        super.visitSuperTypeList(list)
+        if (list.children.isEmpty() || list.children.all { it.allowsAbsenceOfMatch }) {
+            setHandler(list, absenceOfMatchHandler(list))
         }
     }
 
