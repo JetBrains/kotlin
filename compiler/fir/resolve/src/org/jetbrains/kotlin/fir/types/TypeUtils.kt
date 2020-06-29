@@ -125,8 +125,8 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability, typeCon
     @Suppress("UNCHECKED_CAST")
     return when (this) {
         is ConeClassErrorType -> this
-        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable)
-        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable)
+        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable, attributes)
+        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable, attributes)
         is ConeFlexibleType -> {
             if (nullability == ConeNullability.UNKNOWN) {
                 if (lowerBound.nullability != upperBound.nullability || lowerBound.nullability == ConeNullability.UNKNOWN) {
@@ -136,7 +136,7 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability, typeCon
             coneFlexibleOrSimpleType(typeContext, lowerBound.withNullability(nullability), upperBound.withNullability(nullability))
         }
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag)
-        is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor)
+        is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor, attributes)
         is ConeIntersectionType -> when (nullability) {
             ConeNullability.NULLABLE -> this.mapTypes {
                 it.withNullability(nullability)
