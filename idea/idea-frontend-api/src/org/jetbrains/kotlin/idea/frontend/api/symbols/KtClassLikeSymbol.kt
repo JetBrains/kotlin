@@ -18,6 +18,8 @@ abstract class KtTypeAliasSymbol : KtClassLikeSymbol() {
 
 abstract class KtClassOrObjectSymbol : KtClassLikeSymbol(), KtSymbolWithTypeParameters, KtSymbolWithModality<KtSymbolModality> {
     abstract val classKind: KtClassKind
+
+    abstract override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol>
 }
 
 enum class KtClassKind {

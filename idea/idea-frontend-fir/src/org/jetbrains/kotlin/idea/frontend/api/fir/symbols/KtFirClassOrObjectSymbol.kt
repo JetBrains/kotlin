@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.findPsi
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.ReadOnlyWeakRef
@@ -57,4 +58,9 @@ internal class KtFirClassOrObjectSymbol(
                 else -> KtSymbolKind.TOP_LEVEL
             }
         }
+
+    override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol> {
+        val classId = classId
+        return symbolPointer { session -> session.symbolProvider.getClassOrObjectSymbolByClassId(classId) }
+    }
 }

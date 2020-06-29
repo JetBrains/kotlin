@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 

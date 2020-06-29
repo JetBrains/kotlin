@@ -32,4 +32,6 @@ abstract class KtConstructorSymbol : KtFunctionLikeSymbol() {
     abstract override val valueParameters: List<KtConstructorParameterSymbol>
     abstract val isPrimary: Boolean
     abstract val owner: KtClassOrObjectSymbol
+
+    abstract override fun createPointer(): KtSymbolPointer<KtConstructorSymbol>
 }

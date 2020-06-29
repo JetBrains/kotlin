@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+
 sealed class KtTypeArgument
 
 object KtStarProjectionTypeArgument : KtTypeArgument()
