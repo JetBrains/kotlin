@@ -346,10 +346,15 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
         lastModifiedFiles: LastModifiedFiles = loadLastModifiedFiles(externalProjectPath) ?: LastModifiedFiles(),
         dataProvider: (buildRoot: VirtualFile) -> GradleBuildRootData?
     ): Imported? {
-        val buildRoot = VfsUtil.findFile(Paths.get(externalProjectPath), true) ?: return null
-        val data = dataProvider(buildRoot) ?: return null
+        try {
+            val buildRoot = VfsUtil.findFile(Paths.get(externalProjectPath), true) ?: return null
+            val data = dataProvider(buildRoot) ?: return null
 
-        return Imported(externalProjectPath, data, lastModifiedFiles)
+            return Imported(externalProjectPath, data, lastModifiedFiles)
+        } catch (e: Exception) {
+            scriptingErrorLog("Cannot load script configurations from file attributes for $externalProjectPath", e)
+            return null
+        }
     }
 
     private fun add(newRoot: GradleBuildRoot) {
