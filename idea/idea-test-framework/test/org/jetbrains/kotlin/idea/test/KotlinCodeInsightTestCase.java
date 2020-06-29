@@ -18,12 +18,8 @@ package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import kotlin.Unit;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.MuteWithDatabaseKt;
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
-
-import static org.jetbrains.kotlin.test.MuteWithDatabaseKt.isIgnoredInDatabaseWithLog;
 
 /**
  * Please use KotlinLightCodeInsightFixtureTestCase as the base class for all new tests.

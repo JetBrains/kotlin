@@ -20,12 +20,9 @@ import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
-import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
-import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
 import org.jetbrains.kotlin.test.runTest
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
