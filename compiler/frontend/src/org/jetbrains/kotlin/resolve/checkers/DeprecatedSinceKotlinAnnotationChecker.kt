@@ -71,9 +71,9 @@ object DeprecatedSinceKotlinAnnotationChecker : DeclarationChecker {
         fun AnnotationDescriptor.getCheckedSinceVersion(name: String) =
             getSinceVersion(name).also { checkVersion(it, name, context, deprecatedSinceAnnotationName) }
 
-        val warningSince = deprecatedSinceAnnotation.getCheckedSinceVersion(DeprecatedSinceKotlin::warningSince.name)
-        val errorSince = deprecatedSinceAnnotation.getCheckedSinceVersion(DeprecatedSinceKotlin::errorSince.name)
-        val hiddenSince = deprecatedSinceAnnotation.getCheckedSinceVersion(DeprecatedSinceKotlin::hiddenSince.name)
+        val warningSince = deprecatedSinceAnnotation.getCheckedSinceVersion("warningSince")
+        val errorSince = deprecatedSinceAnnotation.getCheckedSinceVersion("errorSince")
+        val hiddenSince = deprecatedSinceAnnotation.getCheckedSinceVersion("hiddenSince")
 
         if (!lessOrNull(warningSince, errorSince) || !lessOrNull(errorSince, hiddenSince) || !lessOrNull(warningSince, hiddenSince)) {
             context.trace.report(
