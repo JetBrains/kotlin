@@ -88,6 +88,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolve
 import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
+import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractStdlibSymbolsBuildingTest
 import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByPsiBuildingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
@@ -946,6 +947,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractSymbolsByPsiBuildingTest> {
                 model("symbolsByPsi")
+            }
+
+            testClass<AbstractStdlibSymbolsBuildingTest> {
+                model("stdLibSymbols", extension = "txt")
             }
         }
 
