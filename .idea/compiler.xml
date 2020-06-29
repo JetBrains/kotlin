@@ -29,9 +29,6 @@
       <entry name="!*.gant" />
       <entry name="!*.bnf" />
     </wildcardResourcePatterns>
-    <annotationProcessing>
-      <profile default="true" name="Default" enabled="true" />
-    </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="intellij.java.jshell.frontend" target="1.8" />
     </bytecodeTargetLevel>
