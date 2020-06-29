@@ -219,29 +219,28 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
             )
             val newHandler = SubstitutionHandler(handler.name, false, 1, 1, false)
             handler.predicate?.let { newHandler.predicate = it }
-            setHandler(
-                calleeExpression, newHandler
-            )
+            setHandler(calleeExpression, newHandler)
+            calleeExpression.constructorReferenceExpression?.let { setHandler(it, newHandler) }
         }
     }
 
     override fun visitModifierList(list: KtModifierList) {
         super.visitModifierList(list)
-        if (list.allChildren.all { it.allowsAbsenceOfMatch }) {
+        if (list.allChildren.isEmpty || list.allChildren.all { it.allowsAbsenceOfMatch }) {
             setHandler(list, absenceOfMatchHandler(list))
         }
     }
 
     override fun visitParameterList(list: KtParameterList) {
         super.visitParameterList(list)
-        if (list.children.all { it.allowsAbsenceOfMatch }) {
+        if (list.children.isEmpty() || list.children.all { it.allowsAbsenceOfMatch }) {
             setHandler(list, absenceOfMatchHandler(list))
         }
     }
 
     override fun visitValueArgumentList(list: KtValueArgumentList) {
         super.visitValueArgumentList(list)
-        if (list.children.all { it.allowsAbsenceOfMatch }) {
+        if (list.children.isEmpty() || list.children.all { it.allowsAbsenceOfMatch }) {
             setHandler(list, absenceOfMatchHandler(list))
         }
     }

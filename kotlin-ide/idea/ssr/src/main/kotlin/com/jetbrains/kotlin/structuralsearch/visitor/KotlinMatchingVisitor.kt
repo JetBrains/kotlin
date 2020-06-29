@@ -741,8 +741,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitConstructorCalleeExpression(constructorCalleeExpression: KtConstructorCalleeExpression) {
         val other = getTreeElementDepar<KtConstructorCalleeExpression>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.match(constructorCalleeExpression.typeReference, other.typeReference)
-                && myMatchingVisitor.match(
+        myMatchingVisitor.result = myMatchingVisitor.match(
             constructorCalleeExpression.constructorReferenceExpression, other.constructorReferenceExpression
         )
     }
