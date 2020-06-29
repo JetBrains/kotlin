@@ -73,6 +73,7 @@ open class CoverageTest : DefaultTask() {
         val suffix = target.family.exeSuffix
         val pathToBinary = "$outputDir/$binaryName/$target/$binaryName.$suffix"
         runProcess(localExecutor(project), pathToBinary)
+                .ensureSuccessful(pathToBinary)
         exec("llvm-profdata", "merge", profrawFile, "-o", profdataFile)
         val llvmCovResult = exec("llvm-cov", "export", pathToBinary, "-instr-profile", profdataFile)
         val jsonReport = llvmCovResult.stdOut
@@ -93,18 +94,22 @@ open class CoverageTest : DefaultTask() {
     private fun exec(llvmTool: String, vararg args: String): ProcessOutput {
         val executable = "$llvmToolsDir/$llvmTool"
         val result = runProcess(localExecutor(project), executable, args.toList())
-        if (result.exitCode != 0) {
-            println("""
-                $llvmTool failed.
-                exitCode: ${result.exitCode}
-                stdout:
-                ${result.stdOut}
-                stderr:
-                ${result.stdErr}
-            """.trimIndent())
-            error("$llvmTool failed")
-        }
+        result.ensureSuccessful(llvmTool)
         return result
+    }
+
+    private fun ProcessOutput.ensureSuccessful(executable: String) {
+        if (exitCode != 0) {
+            println("""
+                    $executable failed.
+                    exitCode: $exitCode
+                    stdout:
+                    $stdOut
+                    stderr:
+                    $stdErr
+                """.trimIndent())
+            error("$executable failed")
+        }
     }
 }
 
