@@ -4517,9 +4517,7 @@ project.tasks.named("test").configure {
 }
 
 project.tasks.register("debugger_test", Test.class) {
-    // FIXME: fix debugger output or test
-    // enabled = (target.family == Family.OSX)  // KT-30366
-    enabled = false
+    enabled = (target.family == Family.OSX)  // KT-30366
     testLogging { exceptionFormat = 'full' }
     UtilsKt.dependsOnDist(it)
     systemProperties = ['kotlin.native.home': dist]
