@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.common
 
 import org.jetbrains.kotlin.util.PerformanceCounter
 import java.io.File
+import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
@@ -18,11 +19,14 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     private var analysisStart: Long = 0
     private var generationStart: Long = 0
 
+    private var startGCData = mutableMapOf<String, GCData>()
+
     fun getMeasurementResults(): List<PerformanceMeasurement> = measurements
 
     fun enableCollectingPerformanceStatistics() {
         isEnabled = true
         PerformanceCounter.setTimeCounterEnabled(true)
+        ManagementFactory.getGarbageCollectorMXBeans().associateTo(startGCData) { it.name to GCData(it) }
     }
 
     open fun notifyCompilerInitialized() {
@@ -63,7 +67,14 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         if (!isEnabled) return
 
         ManagementFactory.getGarbageCollectorMXBeans().forEach {
-            measurements += GarbageCollectionMeasurement(it.name, it.collectionTime)
+            val startCounts = startGCData[it.name]
+            val startCollectionTime = startCounts?.collectionTime ?: 0
+            val startCollectionCount = startCounts?.collectionCount ?: 0
+            measurements += GarbageCollectionMeasurement(
+                it.name,
+                it.collectionTime - startCollectionTime,
+                it.collectionCount - startCollectionCount
+            )
         }
     }
 
@@ -89,4 +100,8 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     }.toByteArray()
 
     open fun notifyRepeat(total: Int, number: Int) {}
+
+    private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
+        constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)
+    }
 }
