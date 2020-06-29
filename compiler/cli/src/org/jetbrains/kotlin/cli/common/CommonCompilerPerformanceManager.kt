@@ -21,6 +21,9 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
 
     private var startGCData = mutableMapOf<String, GCData>()
 
+    private var irTranslationStart: Long = 0
+    private var irGenerationStart: Long = 0
+
     fun getMeasurementResults(): List<PerformanceMeasurement> = measurements
 
     fun enableCollectingPerformanceStatistics() {
@@ -28,6 +31,8 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         PerformanceCounter.setTimeCounterEnabled(true)
         ManagementFactory.getGarbageCollectorMXBeans().associateTo(startGCData) { it.name to GCData(it) }
     }
+
+    private fun deltaTime(start: Long): Long = PerformanceCounter.currentTime() - start
 
     open fun notifyCompilerInitialized() {
         if (!isEnabled) return
@@ -57,6 +62,36 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     open fun notifyGenerationFinished(files: Int, lines: Int, additionalDescription: String) {
         val time = PerformanceCounter.currentTime() - generationStart
         measurements += CodeGenerationMeasurement(files, lines, TimeUnit.NANOSECONDS.toMillis(time), additionalDescription)
+    }
+
+    open fun notifyIRTranslationStarted() {
+        irTranslationStart = PerformanceCounter.currentTime()
+    }
+
+    open fun notifyIRTranslationFinished(files: Int, lines: Int, additionalDescription: String?) {
+        val time = deltaTime(irTranslationStart)
+        measurements += IRMeasurement(
+            files,
+            lines,
+            TimeUnit.NANOSECONDS.toMillis(time),
+            additionalDescription,
+            IRMeasurement.Kind.Translation
+        )
+    }
+
+    open fun notifyIRGenerationStarted() {
+        irGenerationStart = PerformanceCounter.currentTime()
+    }
+
+    open fun notifyIRGenerationFinished(files: Int, lines: Int, additionalDescription: String) {
+        val time = deltaTime(irGenerationStart)
+        measurements += IRMeasurement(
+            files,
+            lines,
+            TimeUnit.NANOSECONDS.toMillis(time),
+            additionalDescription,
+            IRMeasurement.Kind.Generation
+        )
     }
 
     fun dumpPerformanceReport(destination: File) {

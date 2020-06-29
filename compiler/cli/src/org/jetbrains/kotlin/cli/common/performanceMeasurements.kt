@@ -48,3 +48,15 @@ class GarbageCollectionMeasurement(private val garbageCollectionKind: String, pr
 class PerformanceCounterMeasurement(private val counterReport: String) : PerformanceMeasurement {
     override fun render(): String = counterReport
 }
+
+class IRMeasurement(val files: Int, val lines: Int, val milliseconds: Long, private val description: String?, val kind: Kind) :
+    PerformanceMeasurement {
+
+    val lps: Double = lines.toDouble() * 1000 / milliseconds
+    override fun render(): String =
+        "IR: $kind $files files ($lines lines) ${description ?: ""}in $milliseconds ms - ${"%.3f".format(lps)} loc/s"
+
+    enum class Kind {
+        Generation, Translation
+    }
+}
