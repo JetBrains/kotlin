@@ -77,4 +77,12 @@ class JavaClassMembersEnhancementScope(
         functionSymbol: FirFunctionSymbol<*>,
         processor: (FirFunctionSymbol<*>) -> ProcessorAction
     ): ProcessorAction = doProcessOverriddenFunctions(functionSymbol, processor, overriddenFunctions, useSiteMemberScope)
+
+    override fun getCallableNames(): Set<Name> {
+        return useSiteMemberScope.getCallableNames()
+    }
+
+    override fun mayContainName(name: Name): Boolean {
+        return useSiteMemberScope.mayContainName(name)
+    }
 }

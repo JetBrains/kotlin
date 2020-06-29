@@ -48,4 +48,12 @@ class JavaClassStaticEnhancementScope(
             processor(function as FirConstructorSymbol)
         }
     }
+
+    override fun getCallableNames(): Set<Name> {
+        return useSiteStaticScope.getCallableNames()
+    }
+
+    override fun mayContainName(name: Name): Boolean {
+        return useSiteStaticScope.mayContainName(name)
+    }
 }
