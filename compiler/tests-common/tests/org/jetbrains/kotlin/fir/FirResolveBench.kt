@@ -452,15 +452,23 @@ private fun RTableContext.printMeasureAsTable(measure: FirResolveBench.Measure, 
         timeCell(measure.gcTime, inputUnit = TableTimeUnit.MS)
         cell(measure.gcCollections.toString())
 
-        run {
-            val linePerSec = statistics.totalLines / TableTimeUnit.S.convert(time, TableTimeUnit.NS)
-            val df = DecimalFormat().apply {
-                maximumFractionDigits = 1
-                isGroupingUsed = true
-            }
-            cell(df.format(linePerSec))
-        }
+        linePerSecondCell(statistics.totalLines, time, timeUnit = TableTimeUnit.NS)
     }
 }
+
+
+
+fun RTableContext.RTableRowContext.linePerSecondCell(linePerSec: Double) {
+    val df = DecimalFormat().apply {
+        maximumFractionDigits = 1
+        isGroupingUsed = true
+    }
+    cell(df.format(linePerSec))
+}
+fun RTableContext.RTableRowContext.linePerSecondCell(lines: Int, time: Long, timeUnit: TableTimeUnit = TableTimeUnit.NS) {
+    val linePerSec = lines / TableTimeUnit.S.convert(time, from = timeUnit)
+    linePerSecondCell(linePerSec)
+}
+
 
 class FirRuntimeException(override val message: String, override val cause: Throwable) : RuntimeException(message, cause)
