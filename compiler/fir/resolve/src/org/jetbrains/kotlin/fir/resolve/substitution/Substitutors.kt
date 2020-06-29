@@ -107,7 +107,8 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
                 is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                     lookupTag,
                     newArguments as Array<ConeTypeProjection>,
-                    nullability.isNullable
+                    nullability.isNullable,
+                    attributes
                 )
                 is ConeClassLikeType -> error("Unknown class-like type to substitute: $this, ${this::class}")
                 else -> error("Unknown type to substitute: $this, ${this::class}")
