@@ -2533,6 +2533,26 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     @Test
+    fun testCompose_InlineReceiver(): Unit = ensureSetup {
+        compose("""
+            object Context {
+                fun t() {}
+            }
+
+            @Composable
+            inline fun b(content: @Composable Context.() -> Unit) { Context.content() }
+
+            @Composable
+            inline fun c(content: @Composable () -> Unit) { b { t(); content() } }
+            """,
+            "",
+            noParameters
+        ).then {
+            // Nothing to do, tests code can be generated
+        }
+    }
+
+    @Test
     fun testRecomposeScope_Method(): Unit = ensureSetup {
         compose("""
             val m = mutableStateOf(0)
