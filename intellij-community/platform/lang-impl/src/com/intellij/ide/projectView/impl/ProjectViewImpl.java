@@ -27,6 +27,9 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.ex.EditorEventMulticasterEx;
+import com.intellij.openapi.editor.ex.FocusChangeListener;
 import com.intellij.openapi.extensions.ExtensionPointListener;
 import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -861,6 +864,28 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       }
     });
     viewSelectionChanged();
+
+    Object multicaster = EditorFactory.getInstance().getEventMulticaster();
+    if (multicaster instanceof EditorEventMulticasterEx) {
+      EditorEventMulticasterEx ex = (EditorEventMulticasterEx)multicaster;
+      ex.addFocusChangeListener(new FocusChangeListener() {
+        @Override
+        public void focusGained(@NotNull Editor editor) {
+          if (Registry.is("ide.autoscroll.from.source.on.focus.gained") && isAutoscrollFromSource(getCurrentViewId())) {
+            FileEditorManager manager = myProject.isDisposed() ? null : FileEditorManager.getInstance(myProject);
+            if (manager != null) {
+              JComponent component = editor.getComponent();
+              for (FileEditor fileEditor : manager.getAllEditors()) {
+                if (SwingUtilities.isDescendingFrom(component, fileEditor.getComponent())) {
+                  myAutoScrollFromSourceHandler.scrollFromSource();
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }, myProject);
+    }
   }
 
   private synchronized void reloadPanes() {
