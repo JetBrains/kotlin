@@ -2158,6 +2158,15 @@
                      language="kotlin"
                      key="inspection.obsolete.experimental.coroutines.display.name" bundle="messages.KotlinBundle"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ObsoleteKotlinJsPackagesInspection"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="ERROR"
+                     language="kotlin"
+                     key="inspection.obsolete.kotlin.js.packages.display.name" bundle="messages.KotlinBundle"/>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantWithInspection"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
