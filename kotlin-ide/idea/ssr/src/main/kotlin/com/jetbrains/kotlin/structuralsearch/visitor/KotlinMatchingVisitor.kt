@@ -513,6 +513,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
         myMatchingVisitor.result = typeMatched
                 && myMatchingVisitor.match(parameter.defaultValue, other.defaultValue)
+                && myMatchingVisitor.match(parameter.valOrVarKeyword, other.valOrVarKeyword)
                 && matchTextOrVariable(parameter.nameIdentifier, other.nameIdentifier)
 
         parameter.nameIdentifier?.let { nameIdentifier ->
