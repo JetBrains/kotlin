@@ -48,7 +48,7 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         MAP.put(
             SerializationErrors.SERIALIZER_NOT_FOUND,
             "Serializer has not been found for type ''{0}''. " +
-                    "To use context serializer as fallback, explicitly annotate type or property with @ContextualSerialization",
+                    "To use context serializer as fallback, explicitly annotate type or property with @Contextual",
             Renderers.RENDER_TYPE_WITH_ANNOTATIONS
         )
         MAP.put(
