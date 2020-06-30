@@ -41,6 +41,7 @@ internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
 internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pass", "false").toBooleanLenient()!!
 private val APPEND_ERROR_REPORTS = System.getProperty("fir.bench.report.errors.append", "false").toBooleanLenient()!!
 private val RUN_CHECKERS = System.getProperty("fir.bench.run.checkers", "false").toBooleanLenient()!!
+private val USE_LIGHT_TREE = System.getProperty("fir.bench.use.light.tree", "false").toBooleanLenient()!!
 
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
@@ -49,7 +50,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     private var bestStatistics: FirResolveBench.TotalStatistics? = null
     private var bestPass: Int = 0
 
-    private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment, useLightTree: Boolean = false) {
+    private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
         val project = environment.project
         val ktFiles = environment.getSourceFiles()
 
@@ -68,7 +69,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         }
 
         val firProvider = session.firProvider as FirProviderImpl
-        val firFiles = if (useLightTree) {
+        val firFiles = if (USE_LIGHT_TREE) {
             val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, stubMode = false)
 
             val allSourceFiles = moduleData.sources.flatMap {
