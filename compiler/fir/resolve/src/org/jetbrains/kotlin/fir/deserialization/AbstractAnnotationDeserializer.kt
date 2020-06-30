@@ -135,6 +135,7 @@ abstract class AbstractAnnotationDeserializer(
         containerSource: DeserializedContainerSource?,
         callableProto: MessageLite,
         valueParameterProto: ProtoBuf.ValueParameter,
+        classProto: ProtoBuf.Class?,
         nameResolver: NameResolver,
         typeTable: TypeTable,
         kind: CallableKind,
