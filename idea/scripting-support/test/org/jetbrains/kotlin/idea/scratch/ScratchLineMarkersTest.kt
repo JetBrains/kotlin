@@ -46,7 +46,7 @@ abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
         val project = myFixture.project
         val document = myFixture.editor.document
 
-        val data = ExpectedHighlightingData(document, false, false, false, myFixture.file)
+        val data = ExpectedHighlightingData(document, false, false, false)
         data.init()
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
@@ -69,7 +69,7 @@ abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
     ): List<LineMarkerInfo<*>> {
         myFixture.doHighlighting()
 
-        return AbstractLineMarkersTest.checkHighlighting(myFixture.project, documentToAnalyze, expectedHighlighting, expectedFile)
+        return AbstractLineMarkersTest.checkHighlighting(myFixture.file, documentToAnalyze, expectedHighlighting, expectedFile)
     }
 
 }

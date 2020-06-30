@@ -7,5 +7,5 @@ package org.jetbrains.kotlin.findUsages
 
 import com.intellij.util.Processor
 
-// FIX ME WHEN BUNCH 193 REMOVED
-typealias ProcessorInCompat<T> = Processor<T>
+// FIX ME WHEN BUNCH 201 REMOVED
+typealias ProcessorInCompat<T> = Processor<in T>
