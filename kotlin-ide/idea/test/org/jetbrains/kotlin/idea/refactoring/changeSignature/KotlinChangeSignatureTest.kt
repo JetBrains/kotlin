@@ -564,6 +564,14 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
+    fun testJavaMethodJvmStaticKotlinUsages() {
+        doJavaTest {
+            val first = newParameters[1]
+            newParameters[1] = newParameters[0]
+            newParameters[0] = first
+        }
+    }
+
     fun testJavaConstructorKotlinUsages() {
         doJavaTest { newParameters.removeAt(1) }
     }
