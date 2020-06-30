@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
 
-internal val DEPRECATED_ANNOTATION_FQN: FqName = FqName(Deprecated::class.java.name)
+internal val DEPRECATED_ANNOTATION_FQN: FqName = FqName(Deprecated::class.java.name).intern()
+internal val DEPRECATED_ANNOTATION_CID: ClassId = internedClassId(DEPRECATED_ANNOTATION_FQN)
 
 private val STANDARD_KOTLIN_PACKAGE_PREFIXES = listOf(
     KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString(),

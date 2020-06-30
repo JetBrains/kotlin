@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassConstructo
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
 
 internal fun CirClassNode.buildDescriptors(
     components: GlobalDeclarationsBuilderComponents,
@@ -26,10 +26,10 @@ internal fun CirClassNode.buildDescriptors(
     val markAsActual = commonClass != null && commonClass.kind != ClassKind.ENUM_ENTRY
 
     targetDeclarations.forEachIndexed { index, clazz ->
-        clazz?.buildDescriptor(components, output, index, containingDeclarations, fqName, isActual = markAsActual)
+        clazz?.buildDescriptor(components, output, index, containingDeclarations, classId, isActual = markAsActual)
     }
 
-    commonClass?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, fqName, isExpect = true)
+    commonClass?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, classId, isExpect = true)
 
     // log stats
     components.statsCollector?.logStats(output)
@@ -40,7 +40,7 @@ internal fun CirClass.buildDescriptor(
     output: CommonizedGroup<in ClassifierDescriptorWithTypeParameters>,
     index: Int,
     containingDeclarations: List<DeclarationDescriptor?>,
-    fqName: FqName,
+    classId: ClassId,
     isExpect: Boolean = false,
     isActual: Boolean = false
 ) {
@@ -63,12 +63,12 @@ internal fun CirClass.buildDescriptor(
         isExpect = isExpect,
         isActual = isActual,
         cirDeclaredTypeParameters = typeParameters,
-        companionObjectName = companion?.shortName(),
+        companionObjectName = companion,
         cirSupertypes = supertypes
     )
 
     // cache created class descriptor:
-    components.cache.cache(fqName, index, classDescriptor)
+    components.cache.cache(classId, index, classDescriptor)
 
     output[index] = classDescriptor
 }

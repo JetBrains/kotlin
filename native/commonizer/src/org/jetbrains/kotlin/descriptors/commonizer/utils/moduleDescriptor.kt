@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -33,20 +35,31 @@ internal fun createKotlinNativeForwardDeclarationsModule(
         )
 
 // similar to org.jetbrains.kotlin.descriptors.DescriptorUtilKt#resolveClassByFqName, but resolves also type aliases
-internal fun ModuleDescriptor.resolveClassOrTypeAliasByFqName(
-    fqName: FqName,
-    lookupLocation: LookupLocation
-): ClassifierDescriptorWithTypeParameters? {
-    if (fqName.isRoot) return null
+internal fun ModuleDescriptor.resolveClassOrTypeAlias(classId: ClassId): ClassifierDescriptorWithTypeParameters? {
+    val relativeClassName: FqName = classId.relativeClassName
+    if (relativeClassName.isRoot)
+        return null
 
-    (getPackage(fqName.parent()).memberScope.getContributedClassifier(
-        fqName.shortName(),
-        lookupLocation
-    ) as? ClassifierDescriptorWithTypeParameters)?.let { return it }
+    var memberScope: MemberScope = getPackage(classId.packageFqName).memberScope
 
-    return (resolveClassOrTypeAliasByFqName(fqName.parent(), lookupLocation) as? ClassDescriptor)
-        ?.unsubstitutedInnerClassesScope
-        ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassifierDescriptorWithTypeParameters
+    val classifierName = if ('.' in relativeClassName.asString()) {
+        // resolve member scope of the nested class
+        relativeClassName.pathSegments().reduce { first, second ->
+            memberScope = (memberScope.getContributedClassifier(
+                first,
+                NoLookupLocation.FOR_ALREADY_TRACKED
+            ) as? ClassDescriptor)?.unsubstitutedMemberScope ?: return null
+
+            second
+        }
+    } else {
+        relativeClassName.shortName()
+    }
+
+    return memberScope.getContributedClassifier(
+        classifierName,
+        NoLookupLocation.FOR_ALREADY_TRACKED
+    ) as? ClassifierDescriptorWithTypeParameters
 }
 
 internal val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())

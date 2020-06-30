@@ -6,21 +6,21 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 data class CirAnnotationImpl(
-    override val fqName: FqName,
+    override val type: CirSimpleType,
     override val constantValueArguments: Map<Name, ConstantValue<*>>,
     override val annotationValueArguments: Map<Name, CirAnnotation>
 ) : CirAnnotation {
     // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
     private var cachedHashCode = 0
 
-    private fun computeHashCode() = hashCode(fqName)
+    private fun computeHashCode() = hashCode(type)
         .appendHashCode(constantValueArguments)
         .appendHashCode(annotationValueArguments)
 
@@ -37,7 +37,7 @@ data class CirAnnotationImpl(
         if (other === this) return true
 
         return other is CirAnnotation
-                && fqName == other.fqName
+                && type == other.type
                 && constantValueArguments == other.constantValueArguments
                 && annotationValueArguments == other.annotationValueArguments
     }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
+import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
 
 internal class CommonizationVisitor(
     private val root: CirRootNode
@@ -77,15 +78,16 @@ internal class CommonizationVisitor(
         }
 
         if (commonClass != null) {
-            // companion object should have the same FQ name for each target class, then it could be set to common class
-            val companionObjectFqName = node.targetDeclarations.mapTo(HashSet()) { it!!.companion }.singleOrNull()
-            if (companionObjectFqName != null) {
-                val companionObjectNode = root.cache.classes[companionObjectFqName]
-                    ?: error("Can't find companion object with FQ name $companionObjectFqName")
+            // companion object should have the same name for each target class, then it could be set to common class
+            val companionObjectName = node.targetDeclarations.mapTo(HashSet()) { it!!.companion }.singleOrNull()
+            if (companionObjectName != null) {
+                val companionObjectClassId = internedClassId(node.classId, companionObjectName)
+                val companionObjectNode = root.cache.classes[companionObjectClassId]
+                    ?: error("Can't find companion object with class ID $companionObjectClassId")
 
                 if (companionObjectNode.commonDeclaration() != null) {
                     // companion object has been successfully commonized
-                    commonClass.companion = companionObjectFqName
+                    commonClass.companion = companionObjectName
                 }
             }
 

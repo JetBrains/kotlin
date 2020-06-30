@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifier
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeAlias
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 class CirTypeAliasNode(
     override val targetDeclarations: CommonizedGroup<CirTypeAlias>,
     override val commonDeclaration: NullableLazyValue<CirClassifier>,
-    override val fqName: FqName
-) : CirNodeWithFqName<CirTypeAlias, CirClassifier> {
+    override val classId: ClassId
+) : CirNodeWithClassId<CirTypeAlias, CirClassifier> {
 
     override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
         visitor.visitTypeAliasNode(this, data)

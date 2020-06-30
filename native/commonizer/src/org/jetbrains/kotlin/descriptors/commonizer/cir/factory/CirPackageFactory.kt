@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackage
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPackageImpl
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.FqName
 
 object CirPackageFactory {

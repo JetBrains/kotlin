@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind.CLASS
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind.TYPE_ALIAS
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.Variance
@@ -26,24 +24,11 @@ sealed class CirType {
  *
  * Note: Annotations at simple types are not preserved. After commonization all annotations assigned to types will be lost.
  */
-abstract class CirSimpleType : CirType(), CirHasVisibility, CirHasFqName {
-    abstract val kind: CirSimpleTypeKind
+abstract class CirSimpleType : CirType(), CirHasVisibility {
+    abstract val classifierId: CirClassifierId
     abstract val arguments: List<CirTypeProjection>
     abstract val isMarkedNullable: Boolean
     abstract val isDefinitelyNotNullType: Boolean
-
-    inline val isClassOrTypeAlias: Boolean get() = (kind == CLASS || kind == TYPE_ALIAS)
-}
-
-enum class CirSimpleTypeKind {
-    CLASS,
-    TYPE_ALIAS,
-    TYPE_PARAMETER;
-
-    companion object {
-        fun areCompatible(expect: CirSimpleTypeKind, actual: CirSimpleTypeKind): Boolean =
-            expect == actual || (expect == CLASS && actual == TYPE_ALIAS)
-    }
 }
 
 data class CirTypeProjection(val projectionKind: Variance, val isStarProjection: Boolean, val type: CirType)

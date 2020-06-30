@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.builder.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTypeAliasNode
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -120,8 +121,8 @@ private fun createPackageFragmentForClassifier(classifierFqName: FqName): Packag
     }
 
 internal val EMPTY_CLASSIFIERS_CACHE = object : CirClassifiersCache {
-    override val classes: Map<FqName, CirClassNode> get() = emptyMap()
-    override val typeAliases: Map<FqName, CirTypeAliasNode> get() = emptyMap()
+    override val classes: Map<ClassId, CirClassNode> get() = emptyMap()
+    override val typeAliases: Map<ClassId, CirTypeAliasNode> get() = emptyMap()
 }
 
 internal class MockBuiltInsProvider(private val builtIns: KotlinBuiltIns) : BuiltInsProvider {

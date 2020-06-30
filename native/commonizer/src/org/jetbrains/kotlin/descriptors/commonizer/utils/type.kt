@@ -5,21 +5,27 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.types.AbbreviatedType
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 internal inline val KotlinType.declarationDescriptor: ClassifierDescriptor
     get() = (constructor.declarationDescriptor ?: error("No declaration descriptor found for $constructor"))
 
-internal inline val KotlinType.fqNameInterned: FqName
-    get() = declarationDescriptor.fqNameSafe.intern()
-
-internal fun FqName.intern(): FqName = fqNameInterner.intern(this)
-internal fun Name.intern(): Name = nameInterner.intern(this)
+internal val ClassifierDescriptorWithTypeParameters.internedClassId: ClassId
+    get() = when (val owner = containingDeclaration) {
+        is PackageFragmentDescriptor -> internedClassId(owner.fqName.intern(), name.intern())
+        is ClassDescriptor -> internedClassId(owner.internedClassId, name.intern())
+        else -> error("Unexpected containing declaration type for $this: ${owner::class}, $owner")
+    }
 
 internal val KotlinType.fqNameWithTypeParameters: String
     get() {
@@ -28,12 +34,10 @@ internal val KotlinType.fqNameWithTypeParameters: String
     }
 
 private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, exploredTypeParameters: MutableSet<KotlinType>) {
-    val abbreviation = (type as? AbbreviatedType)?.abbreviation ?: type
-    append(abbreviation.fqNameInterned)
-
     val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)
     if (typeParameterDescriptor != null) {
         // N.B this is type parameter type
+        append(typeParameterDescriptor.name.asString())
 
         if (exploredTypeParameters.add(type.makeNotNullable())) { // print upper bounds once the first time when type parameter type is met
             append(":[")
@@ -46,6 +50,8 @@ private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, explor
         }
     } else {
         // N.B. this is classifier type
+        val abbreviation = (type as? AbbreviatedType)?.abbreviation ?: type
+        append(abbreviation.declarationDescriptor.classId!!.asString())
 
         val arguments = type.arguments
         if (arguments.isNotEmpty()) {
@@ -73,6 +79,3 @@ private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, explor
 
 // dedicated to hold unique entries of "fqNameWithTypeParameters"
 private val stringInterner = Interner<String>()
-
-private val fqNameInterner = Interner<FqName>()
-private val nameInterner = Interner<Name>()

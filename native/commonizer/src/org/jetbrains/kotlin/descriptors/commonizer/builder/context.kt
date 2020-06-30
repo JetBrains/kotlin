@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
-import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.createKotlinNativeForwardDeclarationsModule
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
@@ -33,8 +33,8 @@ class DeclarationsBuilderCache(private val dimension: Int) {
 
     private val modules = CommonizedGroup<List<ModuleDescriptorImpl>>(dimension)
     private val packageFragments = CommonizedGroupMap<Pair<Name, FqName>, CommonizedPackageFragmentDescriptor>(dimension)
-    private val classes = CommonizedGroupMap<FqName, CommonizedClassDescriptor>(dimension)
-    private val typeAliases = CommonizedGroupMap<FqName, CommonizedTypeAliasDescriptor>(dimension)
+    private val classes = CommonizedGroupMap<ClassId, CommonizedClassDescriptor>(dimension)
+    private val typeAliases = CommonizedGroupMap<ClassId, CommonizedTypeAliasDescriptor>(dimension)
 
     private val forwardDeclarationsModules = CommonizedGroup<ModuleDescriptorImpl>(dimension)
     private val allModulesWithDependencies = CommonizedGroup<List<ModuleDescriptor>>(dimension)
@@ -42,15 +42,15 @@ class DeclarationsBuilderCache(private val dimension: Int) {
     fun getCachedPackageFragments(moduleName: Name, packageFqName: FqName): List<CommonizedPackageFragmentDescriptor?> =
         packageFragments.getOrFail(moduleName to packageFqName)
 
-    fun getCachedClasses(fqName: FqName): List<CommonizedClassDescriptor?> = classes.getOrFail(fqName)
+    fun getCachedClasses(classId: ClassId): List<CommonizedClassDescriptor?> = classes.getOrFail(classId)
 
-    fun getCachedClassifier(fqName: FqName, index: Int): ClassifierDescriptorWithTypeParameters? {
+    fun getCachedClassifier(classId: ClassId, index: Int): ClassifierDescriptorWithTypeParameters? {
         // first, look up for class
-        val classes: CommonizedGroup<CommonizedClassDescriptor>? = classes.getOrNull(fqName)
+        val classes: CommonizedGroup<CommonizedClassDescriptor>? = classes.getOrNull(classId)
         classes?.get(index)?.let { return it }
 
         // then, for type alias
-        val typeAliases: CommonizedGroup<CommonizedTypeAliasDescriptor>? = typeAliases.getOrNull(fqName)
+        val typeAliases: CommonizedGroup<CommonizedTypeAliasDescriptor>? = typeAliases.getOrNull(classId)
         typeAliases?.get(index)?.let { return it }
 
         val indexOfCommon = dimension - 1
@@ -73,12 +73,12 @@ class DeclarationsBuilderCache(private val dimension: Int) {
         packageFragments[moduleName to packageFqName][index] = descriptor
     }
 
-    fun cache(fqName: FqName, index: Int, descriptor: CommonizedClassDescriptor) {
-        classes[fqName][index] = descriptor
+    fun cache(classId: ClassId, index: Int, descriptor: CommonizedClassDescriptor) {
+        classes[classId][index] = descriptor
     }
 
-    fun cache(fqName: FqName, index: Int, descriptor: CommonizedTypeAliasDescriptor) {
-        typeAliases[fqName][index] = descriptor
+    fun cache(classId: ClassId, index: Int, descriptor: CommonizedTypeAliasDescriptor) {
+        typeAliases[classId][index] = descriptor
     }
 
     fun getOrPutForwardDeclarationsModule(index: Int, computable: () -> ModuleDescriptorImpl): ModuleDescriptorImpl {
@@ -136,31 +136,21 @@ class TargetDeclarationsBuilderComponents(
     private val cache: DeclarationsBuilderCache
 ) {
     // N.B. this function may create new classifiers for types from Kotlin/Native forward declarations packages
-    fun findAppropriateClassOrTypeAlias(fqName: FqName): ClassifierDescriptorWithTypeParameters? {
+    fun findAppropriateClassOrTypeAlias(classId: ClassId): ClassifierDescriptorWithTypeParameters? {
 
-        return if (fqName.isUnderKotlinNativeSyntheticPackages) {
+        return if (classId.packageFqName.isUnderKotlinNativeSyntheticPackages) {
             // that's a synthetic Kotlin/Native classifier that was exported as forward declaration in one or more modules,
             // but did not match any existing class or typealias
-            val module = cache.getOrPutForwardDeclarationsModule(index) {
+            cache.getOrPutForwardDeclarationsModule(index) {
                 // N.B. forward declarations module is created only on demand
                 createKotlinNativeForwardDeclarationsModule(
                     storageManager = storageManager,
                     builtIns = builtIns
                 )
-            }
-
-            // create and return new classifier
-            module.packageFragmentProvider
-                .getPackageFragments(fqName.parent())
-                .single()
-                .getMemberScope()
-                .getContributedClassifier(
-                    name = fqName.shortName(),
-                    location = NoLookupLocation.FOR_ALREADY_TRACKED
-                ) as ClassifierDescriptorWithTypeParameters
+            }.resolveClassOrTypeAlias(classId)
         } else {
             // look up in created descriptors cache
-            cache.getCachedClassifier(fqName, index)
+            cache.getCachedClassifier(classId, index)
         }
     }
 }

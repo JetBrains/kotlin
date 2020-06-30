@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassifierRecursi
 import org.jetbrains.kotlin.descriptors.commonizer.core.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.CirClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NullableLazyValue
@@ -81,7 +82,7 @@ internal fun buildClassNode(
     size: Int,
     cacheRW: CirClassifiersCacheImpl,
     parentCommonDeclaration: NullableLazyValue<*>?,
-    fqName: FqName
+    classId: ClassId
 ): CirClassNode = buildNode(
     storageManager = storageManager,
     size = size,
@@ -89,8 +90,8 @@ internal fun buildClassNode(
     commonizerProducer = { ClassCommonizer(cacheRW) },
     recursionMarker = CirClassRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
-        CirClassNode(targetDeclarations, commonDeclaration, fqName).also {
-            cacheRW.classes[fqName] = it
+        CirClassNode(targetDeclarations, commonDeclaration, classId).also {
+            cacheRW.classes[classId] = it
         }
     }
 )
@@ -112,15 +113,15 @@ internal fun buildTypeAliasNode(
     storageManager: StorageManager,
     size: Int,
     cacheRW: CirClassifiersCacheImpl,
-    fqName: FqName
+    classId: ClassId
 ): CirTypeAliasNode = buildNode(
     storageManager = storageManager,
     size = size,
     commonizerProducer = { TypeAliasCommonizer(cacheRW) },
     recursionMarker = CirClassifierRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
-        CirTypeAliasNode(targetDeclarations, commonDeclaration, fqName).also {
-            cacheRW.typeAliases[fqName] = it
+        CirTypeAliasNode(targetDeclarations, commonDeclaration, classId).also {
+            cacheRW.typeAliases[classId] = it
         }
     }
 )
