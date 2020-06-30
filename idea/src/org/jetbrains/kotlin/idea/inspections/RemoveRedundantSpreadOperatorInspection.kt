@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.isArrayOfMethod
+import org.jetbrains.kotlin.idea.refactoring.replaceWithCopyWithResolveCheck
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -38,11 +39,13 @@ class RemoveRedundantSpreadOperatorInspection : AbstractKotlinInspection() {
                         if (argumentExpression.valueArguments.isEmpty()) {
                             val call = argument.getStrictParentOfType<KtCallExpression>()
                             if (call != null) {
-                                val index = call.valueArguments.indexOfFirst { it == argument }
-                                val newCall = call.copy() as KtCallExpression
-                                newCall.valueArgumentList?.removeArgument(index)
-                                val newContext = newCall.analyzeAsReplacement(call, call.analyze(BodyResolveMode.PARTIAL))
-                                if (newCall.getResolvedCall(newContext)?.resultingDescriptor == null) return
+                                val bindingContext = call.analyze(BodyResolveMode.PARTIAL)
+                                if (call.replaceWithCopyWithResolveCheck(
+                                        resolveStrategy = { expr, context -> expr.getResolvedCall(context)?.resultingDescriptor },
+                                        context = bindingContext,
+                                        preHook = { valueArgumentList?.removeArgument(call.valueArguments.indexOfFirst { it == argument }) }
+                                    ) == null
+                                ) return
                             }
                         }
                         argumentExpression.calleeExpression!!.endOffset - argumentOffset
