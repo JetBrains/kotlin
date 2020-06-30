@@ -48,6 +48,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.reference.SoftReference;
 import com.intellij.ui.LightweightHint;
 import com.intellij.ui.ReplacePromptDialog;
 import com.intellij.usages.ChunkExtractor;
@@ -364,7 +365,8 @@ public final class FindManagerImpl extends FindManager {
       return true;
     }
   }
-  private static final Key<ThreadLocal<FindExceptCommentsOrLiteralsData>> ourExceptCommentsOrLiteralsDataKey = KeyWithDefaultValue.create("except.comments.literals.search.data", () -> new ThreadLocal<>());
+  private static final Key<ThreadLocal<SoftReference<FindExceptCommentsOrLiteralsData>>> ourExceptCommentsOrLiteralsDataKey
+    = KeyWithDefaultValue.create("except.comments.literals.search.data", () -> new ThreadLocal<>());
 
   private Predicate<FindResult> getFindContextPredicate(@NotNull FindModel model, @Nullable VirtualFile file, @NotNull CharSequence text) {
     if (file == null) return null;
@@ -374,15 +376,16 @@ public final class FindManagerImpl extends FindManager {
       return null;
     }
 
-    ThreadLocal<FindExceptCommentsOrLiteralsData> data;
+    ThreadLocal<SoftReference<FindExceptCommentsOrLiteralsData>> data;
     synchronized (model) {
       data = model.getUserData(ourExceptCommentsOrLiteralsDataKey);
       assert data != null;
     }
 
-    FindExceptCommentsOrLiteralsData currentThreadData = data.get();
+    SoftReference<FindExceptCommentsOrLiteralsData> currentThreadDataRef = data.get();
+    FindExceptCommentsOrLiteralsData currentThreadData = currentThreadDataRef == null ? null : currentThreadDataRef.get();
     if (currentThreadData == null || !currentThreadData.isAcceptableFor(model, file, text)) {
-      data.set(currentThreadData = FindExceptCommentsOrLiteralsData.create(file, model, text, this));
+      data.set(new SoftReference<>(currentThreadData = FindExceptCommentsOrLiteralsData.create(file, model, text, this)));
     }
     return currentThreadData;
   }
@@ -529,7 +532,8 @@ public final class FindManagerImpl extends FindManager {
     }
   }
 
-  private static final Key<ThreadLocal<CommentsLiteralsSearchData>> ourCommentsLiteralsSearchDataKey = KeyWithDefaultValue.create("comments.literals.search.data", () -> new ThreadLocal<>());
+  private static final Key<ThreadLocal<SoftReference<CommentsLiteralsSearchData>>> ourCommentsLiteralsSearchDataKey
+    = KeyWithDefaultValue.create("comments.literals.search.data", () -> new ThreadLocal<>());
 
   @NotNull
   private FindResult findInCommentsAndLiterals(@NotNull CharSequence text,
@@ -537,7 +541,7 @@ public final class FindManagerImpl extends FindManager {
                                                       int offset,
                                                       @NotNull FindModel model,
                                                       @NotNull final VirtualFile file) {
-    ThreadLocal<CommentsLiteralsSearchData> data;
+    ThreadLocal<SoftReference<CommentsLiteralsSearchData>> data;
     synchronized (model) {
       data = model.getUserData(ourCommentsLiteralsSearchDataKey);
       assert data != null;
@@ -546,7 +550,8 @@ public final class FindManagerImpl extends FindManager {
     FileType ftype = file.getFileType();
     Language lang = LanguageUtil.getLanguageForPsi(myProject, file);
 
-    CommentsLiteralsSearchData currentThreadData = data.get();
+    SoftReference<CommentsLiteralsSearchData> currentThreadDataRef = data.get();
+    CommentsLiteralsSearchData currentThreadData = currentThreadDataRef == null ? null : currentThreadDataRef.get();
     if (currentThreadData == null || !Comparing.equal(currentThreadData.lastFile, file) || !currentThreadData.model.equals(model)) {
       SyntaxHighlighter highlighter = getHighlighter(file, lang);
 
@@ -605,7 +610,7 @@ public final class FindManagerImpl extends FindManager {
         LayeredLexer.ourDisableLayersFlag.set(null);
       }
 
-      data.set(currentThreadData);
+      data.set(new SoftReference<>(currentThreadData));
     }
 
     int initialStartOffset = model.isForward() && currentThreadData.startOffset < offset ? currentThreadData.startOffset : 0;
