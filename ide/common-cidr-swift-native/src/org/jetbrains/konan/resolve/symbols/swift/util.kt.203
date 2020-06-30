@@ -92,7 +92,7 @@ private class TypeConverter(
     }
 
     private fun optionalType(component: SwiftType) = typeFactory.createOptionalType(component, context)
-    private fun selfType() = findClass(symbol)?.let { clazz -> typeFactory.createSelfType(clazz) } ?: SwiftType.UNKNOWN
+    private fun selfType() = findClass(symbol)?.let { clazz -> typeFactory.createSelfType(clazz, false) } ?: SwiftType.UNKNOWN
     private fun classType(ref: String) = typeFactory.createClassType(ref, context)
 }
 
