@@ -405,9 +405,6 @@ allprojects {
     val commonCompilerArgs = listOfNotNull(
         "-Xopt-in=kotlin.RequiresOptIn",
         "-Xread-deserialized-contracts",
-        "-Xjvm-default=compatibility",
-        "-Xno-optimized-callable-references",
-        "-Xno-kotlin-nothing-value-exception",
         "-progressive".takeIf { hasProperty("test.progressive.mode") }
     )
 
@@ -419,9 +416,16 @@ allprojects {
         }
     }
 
+    val jvmCompilerArgs = listOf(
+        "-Xjvm-default=compatibility",
+        "-Xno-optimized-callable-references",
+        "-Xno-kotlin-nothing-value-exception",
+        "-Xnormalize-constructor-calls=enable"
+    )
+
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
         kotlinOptions {
-            freeCompilerArgs = commonCompilerArgs + listOf("-Xnormalize-constructor-calls=enable")
+            freeCompilerArgs = commonCompilerArgs + jvmCompilerArgs
         }
     }
 
