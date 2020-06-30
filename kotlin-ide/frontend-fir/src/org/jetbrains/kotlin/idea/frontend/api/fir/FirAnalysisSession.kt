@@ -75,12 +75,12 @@ class FirAnalysisSession(
     override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): TypeInfo {
         assertIsValid()
         val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration<*>>()
-        return firDeclaration.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().asTypeInfo(declaration.session)
+        return firDeclaration.returnTypeRef.coneType.asTypeInfo(declaration.session)
     }
 
     override fun getKtExpressionType(expression: KtExpression): TypeInfo {
         assertIsValid()
-        return expression.getOrBuildFirOfType<FirExpression>().typeRef.coneTypeUnsafe<ConeKotlinType>().asTypeInfo(expression.session)
+        return expression.getOrBuildFirOfType<FirExpression>().typeRef.coneType.asTypeInfo(expression.session)
     }
 
     override fun isSubclassOf(klass: KtClassOrObject, superClassId: ClassId): Boolean {
