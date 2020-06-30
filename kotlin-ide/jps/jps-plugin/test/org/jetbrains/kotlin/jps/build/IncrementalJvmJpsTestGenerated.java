@@ -507,6 +507,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             runTest("testData/incremental/pureKotlin/inlineUsedWhereDeclared/");
         }
 
+        @TestMetadata("innerClassesFromSupertypes")
+        public void testInnerClassesFromSupertypes() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/innerClassesFromSupertypes/");
+        }
+
         @TestMetadata("internalClassChanged")
         public void testInternalClassChanged() throws Exception {
             runTest("testData/incremental/pureKotlin/internalClassChanged/");
