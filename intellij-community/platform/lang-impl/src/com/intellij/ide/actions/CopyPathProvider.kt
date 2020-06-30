@@ -12,7 +12,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -77,17 +76,11 @@ abstract class CopyPathProvider : DumbAwareAction() {
     return if (refs.isNotEmpty()) refs.joinToString("\n") else null
   }
 
-  open fun getPathToElement(project: Project, virtualFile: VirtualFile?, editor: Editor?): String? {
-    return null
-  }
+  open fun getPathToElement(project: Project, virtualFile: VirtualFile?, editor: Editor?): String? = null
 }
 
 class CopyAbsolutePathProvider : CopyPathProvider() {
-  override fun getPathToElement(project: Project,
-                                virtualFile: VirtualFile?,
-                                editor: Editor?): String? {
-    return virtualFile?.presentableUrl
-  }
+  override fun getPathToElement(project: Project, virtualFile: VirtualFile?, editor: Editor?) = virtualFile?.presentableUrl
 }
 
 class CopyContentRootPathProvider : CopyPathProvider() {
@@ -97,7 +90,7 @@ class CopyContentRootPathProvider : CopyPathProvider() {
     return virtualFile?.let {
       ProjectFileIndex.getInstance(project).getModuleForFile(virtualFile, false)?.let { module ->
         ModuleRootManager.getInstance(module).contentRoots.mapNotNull { root ->
-          VfsUtilCore.getRelativePath(virtualFile, root)?.let { FileUtil.toSystemDependentName(it) }
+          VfsUtilCore.getRelativePath(virtualFile, root)
         }.singleOrNull()
       }
     }
@@ -114,14 +107,10 @@ class CopyFileWithLineNumberPathProvider : CopyPathProvider() {
 }
 
 class CopySourceRootPathProvider : CopyPathProvider() {
-  override fun getPathToElement(project: Project,
-                                virtualFile: VirtualFile?,
-                                editor: Editor?): String? {
-    return virtualFile?.let {
-      VfsUtilCore.getRelativePath(virtualFile, ProjectFileIndex.getInstance(project).getSourceRootForFile(virtualFile)
-                                               ?: return null)?.let { FileUtil.toSystemDependentName(it) }
+  override fun getPathToElement(project: Project, virtualFile: VirtualFile?, editor: Editor?) =
+    virtualFile?.let {
+      VfsUtilCore.getRelativePath(virtualFile, ProjectFileIndex.getInstance(project).getSourceRootForFile(virtualFile) ?: return null)
     }
-  }
 }
 
 class CopyTBXReferenceProvider : CopyPathProvider() {
