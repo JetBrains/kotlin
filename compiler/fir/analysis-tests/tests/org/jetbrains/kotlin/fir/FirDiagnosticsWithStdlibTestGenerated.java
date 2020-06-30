@@ -870,6 +870,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/KotlinClassParameterGeneric.kt");
         }
 
+        @TestMetadata("kt39076.kt")
+        public void testKt39076() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/kt39076.kt");
+        }
+
         @TestMetadata("LoggerInstance.kt")
         public void testLoggerInstance() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/LoggerInstance.kt");
