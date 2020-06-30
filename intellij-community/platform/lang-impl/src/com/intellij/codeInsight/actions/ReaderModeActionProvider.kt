@@ -17,9 +17,11 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.JBColor
 import com.intellij.ui.scale.JBUIScale
+import com.intellij.util.IconUtil
 import com.intellij.util.NotNullProducer
 import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import javax.swing.JComponent
 import javax.swing.plaf.FontUIResource
 
@@ -39,7 +41,7 @@ class ReaderModeActionProvider(override val separator: Separator? = Separator.cr
                 .setTitle(myPresentation.description)
                 .setDescription(LangBundle.message("action.ReaderModeProvider.description"))
                 .setLink(LangBundle.message("action.ReaderModeProvider.link.configure"))
-                { ShowSettingsUtil.getInstance().editConfigurable(project, ReaderModeConfigurableProvider(project).createConfigurable()); }
+                { ShowSettingsUtil.getInstance().showSettingsDialog(project, ReaderModeConfigurable::class.java) }
                 .installOn(this)
             }
             else {
@@ -86,7 +88,7 @@ class ReaderModeActionProvider(override val separator: Separator? = Separator.cr
         else {
           presentation.text = LangBundle.message("action.ReaderModeProvider.text")
           presentation.icon = EmptyIcon.ICON_16
-          presentation.hoveredIcon = AllIcons.Actions.Cancel
+          presentation.hoveredIcon = IconUtil.colorize(AllIcons.Actions.Cancel, ACTIONS_GREY_COLOR_KEY.defaultColor)
           presentation.description = LangBundle.message("action.ReaderModeProvider.text.exit")
         }
       }
@@ -94,6 +96,7 @@ class ReaderModeActionProvider(override val separator: Separator? = Separator.cr
   }
 
   companion object {
-    val FOREGROUND = ColorKey.createColorKey("ActionButton.iconTextForeground",com.intellij.util.ui.UIUtil.getContextHelpForeground())
+    val FOREGROUND = ColorKey.createColorKey("ActionButton.iconTextForeground", UIUtil.getContextHelpForeground())
+    val ACTIONS_GREY_COLOR_KEY = ColorKey.createColorKey("Actions.Grey", UIUtil.getContextHelpForeground())
   }
 }

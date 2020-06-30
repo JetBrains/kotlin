@@ -32,7 +32,7 @@ class ReaderModeConfigurable(val project: Project) : BoundSearchableConfigurable
       row {
         enabled = checkBox(cdEnabled).comment(LangBundle.message("checkbox.reader.mode.toggle.comment"))
       }
-      titledRow(LangBundle.message("titled.border.reader.mode.settings")) {
+      row(LangBundle.message("titled.border.reader.mode.settings")) {
         row {
           checkBox(cdRenderedDocs).enableIf(enabled.selected)
         }
