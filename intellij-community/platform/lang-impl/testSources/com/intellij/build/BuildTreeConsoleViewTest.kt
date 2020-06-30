@@ -12,6 +12,7 @@ import com.intellij.ui.tree.TreeVisitor
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.tree.TreeUtil
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.groups.Tuple
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -105,7 +106,8 @@ class BuildTreeConsoleViewTest : LightPlatformTestCase() {
 
       StartEventImpl("event_id_3", buildDescriptor.id, 1000, "build event 3"),
       FileMessageEventImpl("event_id_3", MessageEvent.Kind.WARNING, null, "file message 3", null, FilePosition(File("a3.file"), 0, 0)),
-      FileMessageEventImpl("event_id_3", MessageEvent.Kind.ERROR, null, "file message with error  ", null, FilePosition(File("a4.file"), 0, 0)),
+      FileMessageEventImpl("event_id_3", MessageEvent.Kind.ERROR, null, "file message with error", null,
+                           FilePosition(File("a4.file"), 5, 0)),
       FinishEventImpl("event_id_3", buildDescriptor.id, 1500, "build event 3", FailureResultImpl()),
 
       FinishBuildEventImpl(buildDescriptor.id, null, 2000, "build failed", FailureResultImpl())
@@ -126,6 +128,15 @@ class BuildTreeConsoleViewTest : LightPlatformTestCase() {
                                            "   +a3.file\n" +
                                            "   -a4.file\n" +
                                            "    file message with error")
+
+    val visitor = CollectingTreeVisitor()
+    TreeUtil.visitVisibleRows(tree, visitor)
+    assertThat(visitor.userObjects)
+      .extracting("name", "myHint")
+      .contains(
+        Tuple("file message", ":1"),
+        Tuple("file message with error", ":6")
+      )
   }
 
   @Test
@@ -159,7 +170,8 @@ class BuildTreeConsoleViewTest : LightPlatformTestCase() {
 
 
     assertThat(visitor.userObjects.map { (it as ExecutionNode).name + "--" + it.result!!.javaClass.simpleName })
-      .containsExactly("build finished--FailureResultImpl", "build event--FailureResultImpl", "build nested event--FailureResultImpl", "error message--")
+      .containsExactly("build finished--FailureResultImpl", "build event--FailureResultImpl", "build nested event--FailureResultImpl",
+                       "error message--")
   }
 
   @Test
