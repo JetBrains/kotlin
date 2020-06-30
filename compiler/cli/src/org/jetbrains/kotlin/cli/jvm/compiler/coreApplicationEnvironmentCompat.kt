@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.extensions.ExtensionsArea
 import java.io.File
+import java.nio.file.FileSystems
 
 // FIX ME WHEN BUNCH 193 REMOVED
 fun registerExtensionPointAndExtensionsEx(pluginFile: File, fileName: String, area: ExtensionsArea) {
+    val pluginRoot = FileSystems.getDefault().getPath(pluginFile.path)
     @Suppress("MissingRecentApi")
-    CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginFile, fileName, area)
+    CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, fileName, area)
 }

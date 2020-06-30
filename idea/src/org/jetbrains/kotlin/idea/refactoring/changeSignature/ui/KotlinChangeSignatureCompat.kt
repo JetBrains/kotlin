@@ -24,8 +24,10 @@ fun showOkCancelDialog(
         project,
         message,
         title,
+        Messages.getOkButton(),
+        Messages.getCancelButton(),
         icon
     )
 }
 
-typealias ComboBox = javax.swing.JComboBox<Visibility>
+typealias ComboBox = com.intellij.openapi.ui.ComboBox<Visibility>
