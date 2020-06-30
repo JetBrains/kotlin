@@ -7,17 +7,23 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
+import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -27,6 +33,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.ir.IrElement
@@ -775,6 +782,72 @@ class Fir2IrVisitor(
                 putValueArgument(0, convertToIrExpression(checkNotNullCall.argument))
             }
         }
+    }
+
+    override fun visitElvisCall(elvisCall: FirElvisCall, data: Any?): IrElement {
+        val subjectName = Name.special("<elvis>")
+        val subjectVariable = buildProperty {
+            source = elvisCall.source
+            session = this@Fir2IrVisitor.session
+            origin = FirDeclarationOrigin.Source
+            returnTypeRef = elvisCall.lhs.typeRef
+            name = subjectName
+            initializer = elvisCall.lhs
+            symbol = FirPropertySymbol(name)
+            isVar = false
+            isLocal = true
+            status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+        }
+
+        @OptIn(FirContractViolation::class)
+        val ref = FirExpressionRef<FirWhenExpression>()
+        val subjectExpression = buildWhenSubjectExpression {
+            source = elvisCall.source
+            whenRef = ref
+        }
+
+        val whenExpression = buildWhenExpression {
+            source = elvisCall.source
+            this.subject = elvisCall.lhs
+            this.subjectVariable = subjectVariable
+            branches += buildWhenBranch {
+                condition = buildOperatorCall {
+                    operation = FirOperation.EQ
+                    argumentList = buildBinaryArgumentList(
+                        subjectExpression, buildConstExpression(null, FirConstKind.Null, null).apply {
+                            replaceTypeRef(session.builtinTypes.nullableNothingType)
+                        }
+                    )
+                }
+                result = buildSingleExpressionBlock(elvisCall.rhs)
+            }
+            branches += buildWhenBranch {
+                condition = buildElseIfTrueCondition {}
+                var resultExpression = buildQualifiedAccessExpression {
+                    calleeReference = buildResolvedNamedReference {
+                        name = subjectVariable.name
+                        resolvedSymbol = subjectVariable.symbol
+                    }
+                    typeRef = subjectVariable.returnTypeRef
+                }
+                val originalType = resultExpression.typeRef.coneTypeUnsafe<ConeKotlinType>()
+                val notNullType = originalType.withNullability(ConeNullability.NOT_NULL)
+                if (notNullType != originalType) {
+                    resultExpression = buildExpressionWithSmartcast {
+                        originalExpression = resultExpression
+                        typeRef = resultExpression.typeRef.resolvedTypeFromPrototype(notNullType)
+                        typesFromSmartCast = setOf(notNullType)
+                    }
+                }
+                result = buildSingleExpressionBlock(resultExpression)
+            }
+            typeRef = elvisCall.typeRef
+            isExhaustive = true
+        }.also {
+            ref.bind(it)
+        }
+        val result = whenExpression.accept(this, data)
+        return result
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Any?): IrElement {
