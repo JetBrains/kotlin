@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -243,26 +242,32 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
         return declaration
     }
 
-    private fun IrField.isInlinedClassField(): Boolean {
-        val parentClass = this.parent as? IrClass
-        return parentClass != null && parentClass.isInlined()
-    }
-
     override fun visitGetField(expression: IrGetField): IrExpression {
         super.visitGetField(expression)
 
-        return if (expression.symbol.owner.isInlinedClassField()) {
-            expression.receiver!!
-        } else {
+        val field = expression.symbol.owner
+        val parentClass = field.parentClassOrNull
+        return if (parentClass == null || !parentClass.isInlined())
             expression
+        else {
+            builder.at(expression)
+                    .irCall(symbols.reinterpret, field.type,
+                            listOf(parentClass.defaultType, field.type)
+                    ).apply {
+                        extensionReceiver = expression.receiver!!
+                    }
         }
     }
 
     override fun visitSetField(expression: IrSetField): IrExpression {
         super.visitSetField(expression)
 
-        return if (expression.symbol.owner.isInlinedClassField()) {
+        return if (expression.symbol.owner.parentClassOrNull?.isInlined() == true) {
             // TODO: it is better to get rid of functions setting such fields.
+            // Here we're trying to maintain all IR nodes as is, albeit the transformed IR isn't equivalent to the original.
+            // By far SET_FIELD can only be in the constructor which won't be codegened.
+            // Box functions use createUninitializedInstance instead of constructor calls
+            // and are placed separately so they won't be processed here.
             val startOffset = expression.startOffset
             val endOffset = expression.endOffset
             IrBlockImpl(startOffset, endOffset, irBuiltIns.unitType).apply {
