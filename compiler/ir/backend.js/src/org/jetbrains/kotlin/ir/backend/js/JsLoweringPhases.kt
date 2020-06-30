@@ -33,7 +33,7 @@ private fun makeJsModulePhase(
     lowering: (JsIrBackendContext) -> FileLoweringPass,
     name: String,
     description: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet()
+    prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet()
 ) = makeCustomJsModulePhase(
     op = { context, modules -> lowering(context).lower(modules) },
     name = name,
@@ -45,7 +45,7 @@ private fun makeCustomJsModulePhase(
     op: (JsIrBackendContext, IrModuleFragment) -> Unit,
     description: String,
     name: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet()
+    prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet()
 ) = NamedCompilerPhase(
     name = name,
     description = description,
@@ -85,7 +85,7 @@ sealed class Lowering(val name: String) {
 class DeclarationLowering(
     name: String,
     description: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet(),
     private val factory: (JsIrBackendContext) -> DeclarationTransformer
 ) : Lowering(name) {
     fun declarationTransformer(context: JsIrBackendContext): DeclarationTransformer {
@@ -98,7 +98,7 @@ class DeclarationLowering(
 class BodyLowering(
     name: String,
     description: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet(),
     private val factory: (JsIrBackendContext) -> BodyLoweringPass
 ) : Lowering(name) {
     fun bodyLowering(context: JsIrBackendContext): BodyLoweringPass {

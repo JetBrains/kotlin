@@ -26,14 +26,14 @@ private fun makeWasmModulePhase(
     lowering: (WasmBackendContext) -> FileLoweringPass,
     name: String,
     description: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet()
-) = makeIrModulePhase<WasmBackendContext>(lowering, name, description, prerequisite, actions = setOf(validationAction, defaultDumper))
+    prerequisite: Set<NamedCompilerPhase<WasmBackendContext, *>> = emptySet()
+) = makeIrModulePhase(lowering, name, description, prerequisite, actions = setOf(validationAction, defaultDumper))
 
 private fun makeCustomWasmModulePhase(
     op: (WasmBackendContext, IrModuleFragment) -> Unit,
     description: String,
     name: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet()
+    prerequisite: Set<NamedCompilerPhase<WasmBackendContext, *>> = emptySet()
 ) = namedIrModulePhase(
     name,
     description,

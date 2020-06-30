@@ -28,7 +28,7 @@ inline fun <R, D> PhaserState<D>.downlevel(nlevels: Int, block: () -> R): R {
 interface CompilerPhase<in Context : CommonBackendContext, Input, Output> {
     fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output
 
-    fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, AnyNamedPhase>> = emptyList()
+    fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, NamedCompilerPhase<Context, *>>> = emptyList()
 
     // In phase trees, `stickyPostconditions` is inherited along the right edge to be used in `then`.
     val stickyPostconditions: Set<Checker<Output>> get() = emptySet()
@@ -67,7 +67,7 @@ infix operator fun <Data, Context> Action<Data, Context>.plus(other: Action<Data
 class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
     val name: String,
     val description: String,
-    val prerequisite: Set<AnyNamedPhase>,
+    val prerequisite: Set<NamedCompilerPhase<Context, *>>,
     private val lower: CompilerPhase<Context, Data, Data>,
     val preconditions: Set<Checker<Data>> = emptySet(),
     val postconditions: Set<Checker<Data>> = emptySet(),
@@ -136,7 +136,7 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
         return result!!
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<*, *>>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *>>> =
         listOf(startDepth to this) + lower.getNamedSubphases(startDepth + nlevels)
 
     override fun toString() = "Compiler Phase @$name"

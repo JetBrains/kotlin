@@ -33,7 +33,7 @@ private class CompositePhase<Context : CommonBackendContext, Input, Output>(
         return result as Output
     }
 
-    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AnyNamedPhase>> =
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *>>> =
         phases.flatMap { it.getNamedSubphases(startDepth) }
 
     override val stickyPostconditions get() = phases.last().stickyPostconditions
@@ -51,7 +51,7 @@ infix fun <Context : CommonBackendContext, Input, Mid, Output> CompilerPhase<Con
 fun <Context : CommonBackendContext> namedIrModulePhase(
     name: String,
     description: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
     lower: CompilerPhase<Context, IrModuleFragment, IrModuleFragment>,
     preconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     postconditions: Set<Checker<IrModuleFragment>> = emptySet(),
@@ -73,7 +73,7 @@ fun <Context : CommonBackendContext> namedIrModulePhase(
 fun <Context : CommonBackendContext> namedIrFilePhase(
     name: String,
     description: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
     lower: CompilerPhase<Context, IrFile, IrFile>,
     preconditions: Set<Checker<IrFile>> = emptySet(),
     postconditions: Set<Checker<IrFile>> = emptySet(),
@@ -96,7 +96,7 @@ fun <Context : CommonBackendContext, Element : IrElement> makeCustomPhase(
     op: (Context, Element) -> Unit,
     description: String,
     name: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
     preconditions: Set<Checker<Element>> = emptySet(),
     postconditions: Set<Checker<Element>> = emptySet(),
     stickyPostconditions: Set<Checker<Element>> = emptySet(),
@@ -127,7 +127,7 @@ fun <Context : CommonBackendContext, Element : IrElement> makeCustomPhase(
 fun <Context : CommonBackendContext> namedUnitPhase(
     name: String,
     description: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
     nlevels: Int = 1,
     lower: CompilerPhase<Context, Unit, Unit>
 ) = NamedCompilerPhase(
@@ -140,7 +140,7 @@ fun <Context : CommonBackendContext> namedUnitPhase(
 fun <Context : CommonBackendContext> namedOpUnitPhase(
     name: String,
     description: String,
-    prerequisite: Set<AnyNamedPhase>,
+    prerequisite: Set<NamedCompilerPhase<Context, *>>,
     op: Context.() -> Unit
 ) = namedUnitPhase(
     name, description, prerequisite,
@@ -155,7 +155,7 @@ fun <Context : CommonBackendContext> namedOpUnitPhase(
 fun <Context : CommonBackendContext> performByIrFile(
     name: String = "PerformByIrFile",
     description: String = "Perform phases by IrFile",
-    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
     preconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     postconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     stickyPostconditions: Set<Checker<IrModuleFragment>> = emptySet(),
@@ -195,7 +195,7 @@ fun <Context : CommonBackendContext> makeIrFilePhase(
     lowering: (Context) -> FileLoweringPass,
     name: String,
     description: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
     preconditions: Set<Checker<IrFile>> = emptySet(),
     postconditions: Set<Checker<IrFile>> = emptySet(),
     stickyPostconditions: Set<Checker<IrFile>> = emptySet(),
@@ -219,7 +219,7 @@ fun <Context : CommonBackendContext> makeIrModulePhase(
     lowering: (Context) -> FileLoweringPass,
     name: String,
     description: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
     preconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     postconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     stickyPostconditions: Set<Checker<IrModuleFragment>> = emptySet(),

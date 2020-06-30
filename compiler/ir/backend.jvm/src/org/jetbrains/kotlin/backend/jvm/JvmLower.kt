@@ -108,7 +108,7 @@ internal val propertiesPhase = makeIrFilePhase(
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
-internal val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
+internal val localDeclarationsPhase = makeIrFilePhase(
     { context ->
         LocalDeclarationsLowering(
             context,
@@ -214,7 +214,7 @@ private val staticInitializersPhase = makeIrFilePhase(
     description = "Move code from object init blocks and static field initializers to a new <clinit> function"
 )
 
-private val initializersPhase = makeIrFilePhase<JvmBackendContext>(
+private val initializersPhase = makeIrFilePhase(
     ::InitializersLowering,
     name = "Initializers",
     description = "Merge init blocks and field initializers into constructors",
@@ -222,7 +222,7 @@ private val initializersPhase = makeIrFilePhase<JvmBackendContext>(
     prerequisite = setOf(jvmLocalClassExtractionPhase)
 )
 
-private val initializersCleanupPhase = makeIrFilePhase<JvmBackendContext>(
+private val initializersCleanupPhase = makeIrFilePhase(
     { context ->
         InitializersCleanupLowering(context) {
             it.constantValue(context) == null && (!it.isStatic || it.correspondingPropertySymbol?.owner?.isConst != true)
