@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
-import org.jetbrains.kotlin.metadata.deserialization.hasReceiver
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
@@ -145,28 +142,34 @@ class JvmBinaryAnnotationDeserializer(
         containerSource: DeserializedContainerSource?,
         callableProto: MessageLite,
         valueParameterProto: ProtoBuf.ValueParameter,
+        classProto: ProtoBuf.Class?,
         nameResolver: NameResolver,
         typeTable: TypeTable,
         kind: CallableKind,
         parameterIndex: Int,
     ): List<FirAnnotationCall> {
         val methodSignature = getCallableSignature(callableProto, nameResolver, typeTable, kind) ?: return emptyList()
-        val index = parameterIndex + computeJvmParameterIndexShift(callableProto)
+        val index = parameterIndex + computeJvmParameterIndexShift(classProto, callableProto)
         val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
         return findJvmBinaryClassAndLoadMemberAnnotations(containerSource, paramSignature)
     }
 
-    /*
-     * TODO: Support container proto and fix index shift for
-     *    constructors of inner classes and enums
-     *
-     * See [AbstractBinaryClassAnnotationAndConstantLoader]
-     */
-    private fun computeJvmParameterIndexShift(message: MessageLite): Int {
+    private fun computeJvmParameterIndexShift(classProto: ProtoBuf.Class?, message: MessageLite): Int {
         return when (message) {
             is ProtoBuf.Function -> if (message.hasReceiver()) 1 else 0
             is ProtoBuf.Property -> if (message.hasReceiver()) 1 else 0
-            is ProtoBuf.Constructor -> 0
+            is ProtoBuf.Constructor -> {
+                assert(classProto != null) {
+                    "Constructor call without information about enclosing Class: $message"
+                }
+                val kind = Flags.CLASS_KIND.get(classProto!!.flags) ?: ProtoBuf.Class.Kind.CLASS
+                val isInner = Flags.IS_INNER.get(classProto.flags)
+                when {
+                    kind == ProtoBuf.Class.Kind.ENUM_CLASS -> 2
+                    isInner -> 1
+                    else -> 0
+                }
+            }
             else -> throw UnsupportedOperationException("Unsupported message: ${message::class.java}")
         }
     }

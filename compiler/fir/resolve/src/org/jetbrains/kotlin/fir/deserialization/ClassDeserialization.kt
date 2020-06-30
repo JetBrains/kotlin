@@ -100,7 +100,6 @@ fun deserializeClassToSymbol(
         typeParameters += context.typeDeserializer.ownTypeParameters.map { it.fir }
         if (status.isInner)
             typeParameters += parentContext?.allTypeParameters?.map { buildOuterClassTypeParameterRef { this.symbol = it } }.orEmpty()
-//        annotations += context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
 
         val typeDeserializer = context.typeDeserializer
         val classDeserializer = context.memberDeserializer
@@ -114,12 +113,21 @@ fun deserializeClassToSymbol(
             buildResolvedTypeRef { type = it }
         }
 
-        addDeclarations(classProto.functionList.map(classDeserializer::loadFunction))
-        addDeclarations(classProto.propertyList.map(classDeserializer::loadProperty))
+        addDeclarations(
+            classProto.functionList.map {
+                classDeserializer.loadFunction(it, classProto)
+            }
+        )
+
+        addDeclarations(
+            classProto.propertyList.map {
+                classDeserializer.loadProperty(it, classProto)
+            }
+        )
 
         addDeclarations(
             classProto.constructorList.map {
-                classDeserializer.loadConstructor(it, this)
+                classDeserializer.loadConstructor(it, classProto, this)
             }
         )
 
@@ -167,7 +175,8 @@ fun deserializeClassToSymbol(
                 ClassId.fromString(nameResolver.getQualifiedClassName(nameIndex))
             }
         }
-        (it.annotations as MutableList<FirAnnotationCall>) += context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
+        (it.annotations as MutableList<FirAnnotationCall>) +=
+            context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
     }
 }
 
