@@ -36,12 +36,26 @@
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-stdlib-jdk8" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-reflect" level="project" />
+    <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
+    <orderEntry type="module-library">
+      <library name="completion-ranking-kotlin" type="repository">
+        <properties maven-id="org.jetbrains.intellij.deps.completion:completion-ranking-kotlin:0.1.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-kotlin/0.1.2/completion-ranking-kotlin-0.1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-kotlin/0.1.2/completion-ranking-kotlin-0.1.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="library" scope="TEST" name="javaslang" level="project" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="JDOM" level="project" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="library" name="swingx" level="project" />
     <orderEntry type="library" name="ASM" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-script-runtime" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-scripting-compiler" level="project" />
@@ -97,20 +111,6 @@
     <orderEntry type="module" module-name="intellij.statsCollector" />
     <orderEntry type="module" module-name="intellij.copyright" />
     <orderEntry type="module" module-name="intellij.properties.psi" scope="TEST" />
-    <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
-    <orderEntry type="library" name="Trove4j" level="project" />
-    <orderEntry type="module-library">
-      <library name="completion-ranking-kotlin-2" type="repository">
-        <properties maven-id="org.jetbrains.intellij.deps.completion:completion-ranking-kotlin:0.1.2" />
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-kotlin/0.1.2/completion-ranking-kotlin-0.1.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-kotlin/0.1.2/completion-ranking-kotlin-0.1.2-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="intellij.java.impl" />
   </component>
 </module>
