@@ -13,7 +13,6 @@
         <element id="library" level="project" name="kotlinc.kotlinx-serialization-compiler-plugin" />
         <element id="library" level="project" name="kotlinc.sam-with-receiver-compiler-plugin" />
         <element id="library" level="project" name="kotlinc.noarg-compiler-plugin" />
-        <element id="library" level="project" name="kotlinc.kotlin-compiler" />
         <element id="library" level="project" name="kotlinc.kotlin-scripting-compiler-impl" />
         <element id="directory" name="jps">
           <element id="archive" name="kotlin-jps-plugin.jar">
@@ -162,6 +161,9 @@
         </element>
         <element id="archive" name="kotlin-reflect.jar">
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.4.20-dev-1232/kotlin-reflect-1.4.20-dev-1232.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-compiler-for-ide.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4.20-dev-1232/kotlin-compiler-for-ide-1.4.20-dev-1232.jar" path-in-jar="/" />
         </element>
       </element>
     </root>
