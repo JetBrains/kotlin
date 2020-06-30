@@ -48,6 +48,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.io.PathKt;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -191,8 +192,8 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     ExternalSystemModulePropertyManager modulePropertyManager = ExternalSystemModulePropertyManager.getInstance(module);
     modulePropertyManager.setExternalId(GradleConstants.SYSTEM_ID);
     // set linked project path to be able to map the module with the module data obtained from the import
-    modulePropertyManager.setRootProjectPath(rootProjectPath.toString());
-    modulePropertyManager.setLinkedProjectPath(rootProjectPath.toString());
+    modulePropertyManager.setRootProjectPath(PathKt.getSystemIndependentPath(rootProjectPath));
+    modulePropertyManager.setLinkedProjectPath(PathKt.getSystemIndependentPath(rootProjectPath));
 
     Project project = module.getProject();
 
@@ -241,14 +242,14 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     previewSpec.usePreviewMode();
     previewSpec.use(MODAL_SYNC);
     previewSpec.callback(new ConfigureGradleModuleCallback(previewSpec));
-    ExternalSystemUtil.refreshProject(rootProjectPath.toString(), previewSpec);
+    ExternalSystemUtil.refreshProject(PathKt.getSystemIndependentPath(rootProjectPath), previewSpec);
   }
 
   private void reloadProject(@NotNull Project project) {
     ImportSpecBuilder importSpec = new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID);
     importSpec.createDirectoriesForEmptyContentRoots();
     importSpec.callback(new ConfigureGradleModuleCallback(importSpec));
-    ExternalSystemUtil.refreshProject(rootProjectPath.toString(), importSpec);
+    ExternalSystemUtil.refreshProject(PathKt.getSystemIndependentPath(rootProjectPath), importSpec);
   }
 
   private void createWrapper(@NotNull Project project, @NotNull GradleVersion gradleVersion, @NotNull Runnable callback) {

@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.text.nullize
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
@@ -62,7 +63,7 @@ fun GradleSettings.setupGradleSettings() {
 
 @ApiStatus.Internal
 fun GradleProjectSettings.setupGradleProjectSettings(projectDirectory: Path) {
-  externalProjectPath = projectDirectory.toString()
+  externalProjectPath = projectDirectory.systemIndependentPath
   isUseQualifiedModuleNames = true
   distributionType = GradleEnvironment.Headless.GRADLE_DISTRIBUTION_TYPE?.let(DistributionType::valueOf)
                      ?: DistributionType.DEFAULT_WRAPPED

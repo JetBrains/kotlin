@@ -13,6 +13,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.io.systemIndependentPath
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
@@ -42,7 +43,7 @@ private class EnsureInstalledWrapperExecutionTask(
   project: Project,
   externalProjectPath: Path,
   private val gradleVersion: GradleVersion
-) : AbstractExternalSystemTask(SYSTEM_ID, EXECUTE_TASK, project, externalProjectPath.toString()) {
+) : AbstractExternalSystemTask(SYSTEM_ID, EXECUTE_TASK, project, externalProjectPath.systemIndependentPath) {
   private val progressNotificationManager = ExternalSystemProgressNotificationManagerImpl.getInstanceImpl()
   private val newCancellationTokenSource = GradleConnector.newCancellationTokenSource()
 
