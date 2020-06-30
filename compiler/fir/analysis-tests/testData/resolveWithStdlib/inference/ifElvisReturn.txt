@@ -1,0 +1,30 @@
+FILE: ifElvisReturn.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public abstract interface B : R|A| {
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public final fun <K : R|A|> materialize(): R|K?| {
+        ^materialize R|kotlin/TODO|()
+    }
+    public final fun foo(b: R|B|): R|kotlin/Unit| {
+        lval x: R|A| = when () {
+            CMP(>, R|<local>/b|.R|kotlin/Any.hashCode|().R|kotlin/Int.compareTo|(Int(0))) ->  {
+                R|<local>/b|
+            }
+            else ->  {
+                when (lval <elvis>: R|A?| = R|/materialize|<R|A|>()) {
+                    ==($subj$, Null(null)) ->  {
+                        ^foo Unit
+                    }
+                    else ->  {
+                        R|<local>/<elvis>|
+                    }
+                }
+
+            }
+        }
+
+        R|<local>/x|.<Unresolved name: bar>#()
+    }

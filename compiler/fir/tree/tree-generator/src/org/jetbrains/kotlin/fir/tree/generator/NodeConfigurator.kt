@@ -187,6 +187,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             needTransformOtherChildren()
         }
 
+        elvisCall.configure {
+            +field("lhs", expression).withTransform()
+            +field("rhs", expression).withTransform()
+        }
+
         qualifiedAccessWithoutCallee.configure {
             +typeArguments.withTransform()
             +receivers
