@@ -17,6 +17,7 @@
 package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.ComposeFqNames
+import androidx.compose.plugins.kotlin.ComposeUtils
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.allowsComposableCalls
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
@@ -199,6 +200,14 @@ abstract class AbstractComposeLowering(
             symbolTable.referenceSimpleFunction(descriptor)
         )
     }
+
+    fun getInternalFunction(name: String) = getTopLevelFunction(
+        ComposeUtils.composeInternalFqName(name)
+    )
+
+    fun getInternalClass(name: String) = getTopLevelClass(
+        ComposeUtils.composeInternalFqName(name)
+    )
 
     fun getTopLevelPropertyGetter(fqName: FqName): IrFunctionSymbol {
         val descriptor = context.moduleDescriptor.getPackage(fqName.parent()).memberScope
@@ -679,6 +688,14 @@ abstract class AbstractComposeLowering(
         UNDEFINED_OFFSET,
         context.irBuiltIns.intType,
         IrConstKind.Int,
+        value
+    )
+
+    protected fun irConst(value: String): IrConst<String> = IrConstImpl(
+        UNDEFINED_OFFSET,
+        UNDEFINED_OFFSET,
+        context.irBuiltIns.stringType,
+        IrConstKind.String,
         value
     )
 

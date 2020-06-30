@@ -18,7 +18,7 @@ package androidx.compose.plugins.kotlin
 
 import org.junit.Test
 
-class ControlFlowTransformTests : AbstractIrTransformTest() {
+class ControlFlowTransformTests : ComposeIrTransformTest() {
     private fun controlFlow(
         source: String,
         expectedTransformed: String,
