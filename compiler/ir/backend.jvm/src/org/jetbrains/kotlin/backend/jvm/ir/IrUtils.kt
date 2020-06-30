@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -44,7 +45,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 /**
  * Perform as much type erasure as is significant for JVM signature generation.
@@ -158,9 +158,10 @@ fun IrSimpleFunction.isCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boo
     }
     if (origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return false
     if (hasJvmDefault()) return true
-    val parentDescriptor = propertyIfAccessor.parentAsClass.descriptor
-    if (parentDescriptor !is DeserializedClassDescriptor) return jvmDefaultMode.forAllMethodsWithBody
-    return JvmProtoBufUtil.isNewPlaceForBodyGeneration(parentDescriptor.classProto)
+    (parentAsClass as? IrLazyClass)?.classProto?.let {
+        return JvmProtoBufUtil.isNewPlaceForBodyGeneration(it)
+    }
+    return jvmDefaultMode.forAllMethodsWithBody
 }
 
 fun IrFunction.hasJvmDefault(): Boolean = propertyIfAccessor.hasAnnotation(JVM_DEFAULT_FQ_NAME)
