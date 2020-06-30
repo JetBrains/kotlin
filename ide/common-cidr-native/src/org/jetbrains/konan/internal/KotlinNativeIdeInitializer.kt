@@ -111,7 +111,7 @@ class KotlinNativeIdeInitializer {
             this(extension).also { result ->
                 if (result) LOG.warn("unregistering extension $extensionPointName, ${extension::class.java}, ${extension.pluginDescriptor}")
             }
-        }.negate()
+        }//.negate()
 
     private fun ((String, ExtensionComponentAdapter) -> Boolean).wrap(extensionPointName: String) =
         BiPredicate<String, ExtensionComponentAdapter> { className, adapter ->

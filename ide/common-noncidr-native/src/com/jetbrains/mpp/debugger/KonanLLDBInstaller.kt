@@ -22,8 +22,6 @@ class KonanLLDBInstaller(
 ) : Installer {
     override fun getExecutableFile(): File = executableFile
 
-    override fun getAppWorkingDir(): File? = executableFile.parentFile
-
     override fun install(): GeneralCommandLine {
         val result = GeneralCommandLine()
         configureCommandLine(result)

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.konan.documentation
@@ -8,17 +8,16 @@ package org.jetbrains.konan.documentation
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.util.Function
-import com.intellij.util.containers.ContainerUtil
-import com.jetbrains.cidr.CocoaDocumentationManagerImpl
-import com.jetbrains.cidr.CocoaDocumentationManagerImpl.DocTokenType.*
-import com.jetbrains.cidr.doc.XcodeDocumentationCandidateInfo
-import com.jetbrains.cidr.documentation.AppCodeDocumentationProvider
-import com.jetbrains.cidr.lang.settings.OCExternalDocSettings
+import com.jetbrains.cidr.documentation.CocoaDocumentationManagerImpl
+import com.jetbrains.cidr.documentation.CocoaDocumentationManagerImpl.DocTokenType.*
+import com.jetbrains.cidr.documentation.XcodeDocumentationCandidateInfo
+import com.jetbrains.cidr.documentation.XcodeDocumentationProvider
 import org.jetbrains.kotlin.asJava.finder.KtLightPackage
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.psi.*
@@ -26,19 +25,22 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 // TODO: doc for modules, correct mapping of some parent class names from api notes (e.x. Swift specific bool getters)
-class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
+class KonanXcodeDocumentationProvider : XcodeDocumentationProvider() {
   private companion object {
     const val META_SUFFIX = "Meta"
     const val PROTOCOL_SUFFIX = "Protocol"
     val NON_CAPITALIZABLE_PROPERTY = Regex("^[A-Z0-9]{2,}+")
   }
 
-  override fun <T : Any?> doWithTokenInfo(element: PsiElement?,
-                                          originalElement: PsiElement?,
-                                          `fun`: Function<Info, T>, falseVal: T): T {
+  override fun <T : Any?> doWithTokenInfo(
+    element: PsiElement?,
+    originalElement: PsiElement?,
+    `fun`: Function<Info, T>, falseVal: T
+  ): T {
     ApplicationManager.getApplication().assertReadAccessAllowed()
 
     // Some Xcode docs clash with Kotlin stdlib names
@@ -48,20 +50,24 @@ class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
 
     when (element) {
       is KtSimpleNameExpression -> { // workaround, until resolve will work correctly
-        val referenceText = element.references.firstOrNull()?.canonicalText ?: element.text
+        val referenceText = element.references.firstIsInstanceOrNull<KtSimpleNameReference>()?.canonicalText ?: element.text
         if (referenceText != null) {
-          return `fun`.`fun`(InfoBuilder.createWithoutContainer(referenceText.getObjcClassName())
-                               .addTokenTypes(FUNCTION, CLASS, STRUCT, INSTANCE_PROPERTY, PROTOCOL, TYPEDEF, MACRO, ENUM, MODULE)
-                               .buildInfo())
+          return `fun`.`fun`(
+            InfoBuilder.createWithoutContainer(referenceText.getObjcClassName())
+              .addTokenTypes(FUNCTION, CLASS, STRUCT, INSTANCE_PROPERTY, PROTOCOL, TYPEDEF, MACRO, ENUM, MODULE)
+              .buildInfo()
+          )
         }
       }
       is KtEnumEntry -> {
         val name = element.name
         if (name != null) {
-          return `fun`.`fun`(InfoBuilder.create(name)
-                               .addContainers(element.containingClass()?.getObjcName())
-                               .addTokenTypes(ENUM_CASE, MACRO)
-                               .buildInfo())
+          return `fun`.`fun`(
+            InfoBuilder.create(name)
+              .addContainers(element.containingClass()?.getObjcName())
+              .addTokenTypes(ENUM_CASE, MACRO)
+              .buildInfo()
+          )
         }
       }
       is KtLightPackage -> {
@@ -75,9 +81,11 @@ class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
       is KtClass -> {
         val className = element.getObjcName()
         if (className != null) {
-          return `fun`.`fun`(InfoBuilder.createWithoutContainer(className)
-                               .addTokenTypes(CLASS, STRUCT, ENUM, PROTOCOL)
-                               .buildInfo())
+          return `fun`.`fun`(
+            InfoBuilder.createWithoutContainer(className)
+              .addTokenTypes(CLASS, STRUCT, ENUM, PROTOCOL)
+              .buildInfo()
+          )
         }
       }
       is KtProperty -> {
@@ -99,16 +107,19 @@ class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
             InfoBuilder.createWithoutContainer(propertyName)
               .addPossibleContainerNames(parentName, element)
               .addTokenTypes(MACRO, TYPEDEF, ENUM_CASE, GLOBAL_VARIABLE, INSTANCE_PROPERTY, CLASS_PROPERTY)
-              .buildInfo())
+              .buildInfo()
+          )
         }
       }
       is KtTypeAlias -> {
         // Aliases produce additional entity with 'Var' suffix
         val propertyName = element.name?.removeSuffix("Var")
         if (propertyName != null) {
-          return `fun`.`fun`(InfoBuilder.createWithoutContainer(propertyName)
-                               .addTokenTypes(TYPEDEF, MACRO, ENUM, STRUCT)
-                               .buildInfo())
+          return `fun`.`fun`(
+            InfoBuilder.createWithoutContainer(propertyName)
+              .addTokenTypes(TYPEDEF, MACRO, ENUM, STRUCT)
+              .buildInfo()
+          )
         }
       }
       is KtNamedFunction -> {
@@ -125,26 +136,30 @@ class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
             // dealing with property accessor.
             val possiblePropertyName = buildObjcPropertyName(originalFunctionName, element)
             if (possiblePropertyName != null) {
-              val result = `fun`.`fun`(InfoBuilder
-                                         .create(possiblePropertyName)
-                                         .addPossibleContainerNames(element.getParentOrReceiverClassName(), element)
-                                         .addTokenTypes(INSTANCE_PROPERTY, CLASS_PROPERTY)
-                                         .buildInfo())
+              val result = `fun`.`fun`(
+                InfoBuilder.create(possiblePropertyName)
+                  .addPossibleContainerNames(element.getParentOrReceiverClassName(), element)
+                  .addTokenTypes(INSTANCE_PROPERTY, CLASS_PROPERTY)
+                  .buildInfo()
+              )
               if (result != falseVal) {
                 return result
               }
             }
           } else { // plain C function
-            return `fun`.`fun`(InfoBuilder.createWithoutContainer(functionName)
-                                 .addTokenTypes(FUNCTION)
-                                 .buildInfo())
+            return `fun`.`fun`(
+              InfoBuilder.createWithoutContainer(functionName)
+                .addTokenTypes(FUNCTION)
+                .buildInfo()
+            )
           }
 
-          return `fun`.`fun`(InfoBuilder
-                               .create(functionName)
-                               .addPossibleContainerNames(element.getParentOrReceiverClassName(), element)
-                               .addTokenTypes(INSTANCE_METHOD, CLASS_METHOD, INSTANCE_PROPERTY, CLASS_PROPERTY) // TODO: add InstanceVariable
-                               .buildInfo())
+          return `fun`.`fun`(
+            InfoBuilder.create(functionName)
+              .addPossibleContainerNames(element.getParentOrReceiverClassName(), element)
+              .addTokenTypes(INSTANCE_METHOD, CLASS_METHOD, INSTANCE_PROPERTY, CLASS_PROPERTY) // TODO: add InstanceVariable
+              .buildInfo()
+          )
         }
       }
       is KtObjectDeclaration -> {
@@ -167,11 +182,12 @@ class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
 
             if (initializerName != null) {
               // We can't build correct Swift name, that's why we don't search for `LanguageEntityType::Initializer`
-              return `fun`.`fun`(InfoBuilder
-                                   .create(initializerName)
-                                   .addPossibleContainerNames(element.getParentOrReceiverClassName(), element)
-                                   .addTokenTypes(INSTANCE_METHOD)
-                                   .buildInfo())
+              return `fun`.`fun`(
+                InfoBuilder.create(initializerName)
+                  .addPossibleContainerNames(element.getParentOrReceiverClassName(), element)
+                  .addTokenTypes(INSTANCE_METHOD)
+                  .buildInfo()
+              )
             }
           }
           return doWithTokenInfo(containingClass, originalElement, `fun`, falseVal)
@@ -181,15 +197,17 @@ class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
     return falseVal
   }
 
-  private fun findInitKtMethodForConstructor(classType: SimpleType,
-                                             constructorDescriptor: ClassConstructorDescriptor): KtNamedFunction? {
+  private fun findInitKtMethodForConstructor(
+    classType: SimpleType,
+    constructorDescriptor: ClassConstructorDescriptor
+  ): KtNamedFunction? {
     val memberScope = TypeUtils.getClassDescriptor(classType)?.unsubstitutedMemberScope
 
     // find initializer method with same parameter types
     val correspondingInitializer = memberScope?.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)?.find {
       it.name.asString().startsWith("init")
-              && it is SimpleFunctionDescriptor
-              && it.valueParameters.map { it.type } == constructorDescriptor.valueParameters.map { it.type }
+          && it is SimpleFunctionDescriptor
+          && it.valueParameters.map { it.type } == constructorDescriptor.valueParameters.map { it.type }
     }
     return correspondingInitializer?.findPsi() as? KtNamedFunction
   }
@@ -245,8 +263,10 @@ class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
   }
 
   // TODO: collect bridges Swift parent names too, or fix them in [XcodeJsonDocSearch]
-  private fun InfoBuilder.addPossibleContainerNames(parentClassName: String?,
-                                                    element: KtCallableDeclaration): InfoBuilder {
+  private fun InfoBuilder.addPossibleContainerNames(
+    parentClassName: String?,
+    element: KtCallableDeclaration
+  ): InfoBuilder {
     addContainers(parentClassName)
     // Manually add NSObject because it isn't resolved correctly for now
     addContainers("NSObject")
@@ -300,17 +320,17 @@ class KonanXcodeDocumentationProvider : AppCodeDocumentationProvider() {
     }
 
     fun addTokenTypes(vararg types: CocoaDocumentationManagerImpl.DocTokenType): InfoBuilder {
-      ContainerUtil.addAll(myDocTokenTypes, *types)
+      myDocTokenTypes.addAll(types)
       return this
     }
 
     fun addContainers(vararg containers: String?): InfoBuilder {
-      ContainerUtil.addAll(myContainers, *containers)
+      myContainers.addAll(containers)
       return this
     }
 
     fun addContainers(containers: List<String>): InfoBuilder {
-      ContainerUtil.addAll(myContainers, containers)
+      myContainers.addAll(containers)
       return this
     }
 

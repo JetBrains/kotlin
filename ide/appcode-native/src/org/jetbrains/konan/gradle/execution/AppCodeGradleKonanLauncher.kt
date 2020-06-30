@@ -10,7 +10,6 @@ import com.intellij.execution.ProgramRunnerUtil
 import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.PtyCommandLine
-import com.intellij.execution.configurations.SimpleProgramParameters
 import com.intellij.execution.filters.TextConsoleBuilder
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
@@ -218,15 +217,14 @@ class AppCodeGradleKonanLauncher(
           @Suppress("UNUSED_PARAMETER") buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations
   ) = CidrToolEnvironment()
 
-  private fun getParameters(defaultWorkingDir: String): SimpleProgramParameters {
-    val params = SimpleProgramParameters()
+  private fun getParameters(defaultWorkingDir: String): CidrProgramParameters {
     val configurator = object : ProgramParametersConfigurator() {
       override fun getDefaultWorkingDir(project: Project): String {
         return defaultWorkingDir
       }
     }
-    configurator.configureConfiguration(params, myConfiguration)
-    return params
+
+    return CidrProgramParameters().apply { configurator.configureConfiguration(this, myConfiguration) }
   }
 
   companion object {
