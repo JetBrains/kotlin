@@ -46,7 +46,7 @@ private fun makeCustomJsModulePhase(
     description: String,
     name: String,
     prerequisite: Set<AnyNamedPhase> = emptySet()
-) = SameTypeNamedPhaseWrapper(
+) = NamedCompilerPhase(
     name = name,
     description = description,
     prerequisite = prerequisite,
@@ -79,7 +79,7 @@ private fun <C> Action<IrElement, C>.toMultiModuleAction(): Action<Iterable<IrMo
 }
 
 sealed class Lowering(val name: String) {
-    abstract val modulePhase: SameTypeNamedPhaseWrapper<JsIrBackendContext, Iterable<IrModuleFragment>>
+    abstract val modulePhase: NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
 }
 
 class DeclarationLowering(
@@ -110,7 +110,7 @@ class BodyLowering(
 
 class ModuleLowering(
     name: String,
-    override val modulePhase: SameTypeNamedPhaseWrapper<JsIrBackendContext, Iterable<IrModuleFragment>>
+    override val modulePhase: NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
 ) : Lowering(name)
 
 private fun makeDeclarationTransformerPhase(
@@ -127,7 +127,7 @@ private fun makeBodyLoweringPhase(
     prerequisite: Set<Lowering> = emptySet()
 ) = BodyLowering(name, description, prerequisite.map { it.modulePhase }.toSet(), lowering)
 
-fun SameTypeNamedPhaseWrapper<JsIrBackendContext, Iterable<IrModuleFragment>>.toModuleLowering() = ModuleLowering(this.name, this)
+fun NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>.toModuleLowering() = ModuleLowering(this.name, this)
 
 private val validateIrBeforeLowering = makeCustomJsModulePhase(
     { context, module -> validationCallback(context, module) },
@@ -732,7 +732,7 @@ val loweringList = listOf<Lowering>(
 // TODO comment? Eliminate ModuleLowering's? Don't filter them here?
 val pirLowerings = loweringList.filter { it is DeclarationLowering || it is BodyLowering } + staticMembersLoweringPhase
 
-val jsPhases = SameTypeNamedPhaseWrapper(
+val jsPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     prerequisite = emptySet(),

@@ -23,7 +23,7 @@ private class CompositePhase<Context : CommonBackendContext, Input, Output>(
         var result = phases.first().invoke(phaseConfig, currentState, context, input)
         for ((previous, next) in phases.zip(phases.drop(1))) {
             if (next !is SameTypeCompilerPhase<*, *>) {
-                // Discard `stickyPostcoditions`, they are useless since data type is changing.
+                // Discard `stickyPostconditions`, they are useless since data type is changing.
                 currentState = currentState.changeType()
             }
             currentState.stickyPostconditions.addAll(previous.stickyPostconditions)
@@ -58,7 +58,7 @@ fun <Context : CommonBackendContext> namedIrModulePhase(
     stickyPostconditions: Set<Checker<IrModuleFragment>> = lower.stickyPostconditions,
     actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper, validationAction),
     nlevels: Int = 1
-) = SameTypeNamedPhaseWrapper(
+) = NamedCompilerPhase(
     name,
     description,
     prerequisite,
@@ -80,7 +80,7 @@ fun <Context : CommonBackendContext> namedIrFilePhase(
     stickyPostconditions: Set<Checker<IrFile>> = lower.stickyPostconditions,
     actions: Set<Action<IrFile, Context>> = setOf(defaultDumper, validationAction),
     nlevels: Int = 1
-) = SameTypeNamedPhaseWrapper(
+) = NamedCompilerPhase(
     name,
     description,
     prerequisite,
@@ -102,7 +102,7 @@ fun <Context : CommonBackendContext, Element : IrElement> makeCustomPhase(
     stickyPostconditions: Set<Checker<Element>> = emptySet(),
     actions: Set<Action<Element, Context>> = setOf(defaultDumper, validationAction),
     nlevels: Int = 1
-) = SameTypeNamedPhaseWrapper(
+) = NamedCompilerPhase(
     name,
     description,
     prerequisite,
@@ -130,12 +130,13 @@ fun <Context : CommonBackendContext> namedUnitPhase(
     prerequisite: Set<AnyNamedPhase> = emptySet(),
     nlevels: Int = 1,
     lower: CompilerPhase<Context, Unit, Unit>
-) = SameTypeNamedPhaseWrapper(
+) = NamedCompilerPhase(
     name, description, prerequisite,
     lower = lower,
     nlevels = nlevels
 )
 
+@Suppress("unused") // Used in kotlin-native
 fun <Context : CommonBackendContext> namedOpUnitPhase(
     name: String,
     description: String,
@@ -225,7 +226,7 @@ fun <Context : CommonBackendContext> makeIrModulePhase(
     actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper, validationAction)
 ) = namedIrModulePhase(
     name, description, prerequisite,
-    preconditions=preconditions,
+    preconditions = preconditions,
     postconditions = postconditions,
     stickyPostconditions = stickyPostconditions,
     actions = actions,
@@ -243,29 +244,13 @@ fun <Context : CommonBackendContext> makeIrModulePhase(
     }
 )
 
-fun <Context : CommonBackendContext, Input> unitPhase(
-    name: String,
-    description: String,
-    prerequisite: Set<AnyNamedPhase>,
-    preconditions: Set<Checker<Input>>,
-    op: Context.() -> Unit
-) =
-    object : AbstractNamedPhaseWrapper<Context, Input, Unit>(
-        name, description, prerequisite,
-        preconditions = preconditions,
-        nlevels = 0,
-        lower = object : CompilerPhase<Context, Input, Unit> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input) {
-                context.op()
-            }
-        }
-    ) {}
-
+@Suppress("unused") // Used in kotlin-native
 fun <Context : CommonBackendContext, Input> unitSink() = object : CompilerPhase<Context, Input, Unit> {
     override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input) {}
 }
 
 // Intermediate phases to change the object of transformations
+@Suppress("unused") // Used in kotlin-native
 fun <Context : CommonBackendContext, OldData, NewData> takeFromContext(op: (Context) -> NewData) =
     object : CompilerPhase<Context, OldData, NewData> {
         override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<OldData>, context: Context, input: OldData) = op(context)
