@@ -132,6 +132,12 @@ fun KtElement.analyzeAndGetResult(): AnalysisResult {
     return analyzeAndGetResult(getResolutionFacade())
 }
 
+/**
+ * **Please, use overload with providing resolutionFacade for stable results of subsequent calls**
+ */
+fun KtElement.analyzeWithContentAndGetResult(): AnalysisResult =
+    analyzeWithContentAndGetResult(getResolutionFacade())
+
 fun KtElement.findModuleDescriptor(): ModuleDescriptor = getResolutionFacade().moduleDescriptor
 
 // This function is used on declarations to make analysis not only declaration itself but also it content:
