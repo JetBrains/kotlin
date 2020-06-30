@@ -19,7 +19,6 @@ interface CirFunctionOrProperty :
     CirHasModality,
     CirMaybeCallableMemberOfClass {
 
-    val isExternal: Boolean
     val extensionReceiver: CirExtensionReceiver?
     val returnType: CirType
     val kind: CallableMemberDescriptor.Kind

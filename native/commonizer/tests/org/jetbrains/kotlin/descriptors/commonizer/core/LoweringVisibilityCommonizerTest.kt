@@ -56,7 +56,6 @@ abstract class LoweringVisibilityCommonizerTest(
                 modality = Modality.OPEN,
                 isData = false
             ) else null
-        override val isExternal get() = unsupported()
         override val extensionReceiver get() = unsupported()
         override val returnType get() = unsupported()
         override val kind get() = unsupported()

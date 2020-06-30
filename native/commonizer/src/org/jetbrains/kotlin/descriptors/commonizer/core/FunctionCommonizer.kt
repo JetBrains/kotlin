@@ -26,7 +26,6 @@ class FunctionCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropert
         valueParameters = valueParameters.result,
         hasStableParameterNames = hasStableParameterNames,
         hasSynthesizedParameterNames = hasSynthesizedParameterNames,
-        isExternal = false,
         extensionReceiver = extensionReceiver.result,
         returnType = returnType.result,
         kind = kind,
