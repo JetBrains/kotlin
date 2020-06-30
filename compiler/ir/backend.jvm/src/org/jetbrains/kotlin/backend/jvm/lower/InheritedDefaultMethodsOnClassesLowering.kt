@@ -88,7 +88,8 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
 
         val superMethod = firstSuperMethodFromKotlin(irFunction, interfaceImplementation).owner
         val defaultImplFun = context.cachedDeclarations.getDefaultImplsFunction(superMethod)
-        context.createIrBuilder(irFunction.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
+        val classStartOffset = classOverride.parentAsClass.startOffset
+        context.createIrBuilder(irFunction.symbol, classStartOffset, classStartOffset).apply {
             irFunction.body = irBlockBody {
                 +irReturn(
                     irCall(defaultImplFun.symbol, irFunction.returnType).apply {

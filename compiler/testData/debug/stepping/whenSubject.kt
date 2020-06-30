@@ -18,8 +18,6 @@ fun box() {
     foo(21)
 }
 
-// JVM_IR stops on line 8 when exiting the first when.
-
 // LINENUMBERS
 // test.kt:18 box
 // test.kt:4 foo
@@ -28,24 +26,15 @@ fun box() {
 // test.kt:6 foo
 // test.kt:4 foo
 // test.kt:7 foo
-// LINENUMBERS JVM_IR
-// test.kt:8 foo
-// LINENUMBERS
 // test.kt:10 foo
 // test.kt:13 foo
 // test.kt:10 foo
 // test.kt:15 foo
 // test.kt:6 foo
-// LINENUMBERS JVM_IR
-// test.kt:8 foo
-// LINENUMBERS
 // test.kt:10 foo
 // test.kt:12 foo
 // test.kt:4 foo
 // test.kt:7 foo
-// LINENUMBERS JVM_IR
-// test.kt:8 foo
-// LINENUMBERS
 // test.kt:10 foo
 // test.kt:13 foo
 // test.kt:10 foo
@@ -54,33 +43,21 @@ fun box() {
 // test.kt:10 foo
 // test.kt:15 foo
 // test.kt:5 foo
-// LINENUMBERS JVM_IR
-// test.kt:8 foo
-// LINENUMBERS
 // test.kt:10 foo
 // test.kt:11 foo
 // test.kt:4 foo
 // test.kt:6 foo
 // test.kt:4 foo
 // test.kt:7 foo
-// LINENUMBERS JVM_IR
-// test.kt:8 foo
-// LINENUMBERS
 // test.kt:10 foo
 // test.kt:13 foo
 // test.kt:10 foo
 // test.kt:15 foo
 // test.kt:6 foo
-// LINENUMBERS JVM_IR
-// test.kt:8 foo
-// LINENUMBERS
 // test.kt:10 foo
 // test.kt:12 foo
 // test.kt:4 foo
 // test.kt:7 foo
-// LINENUMBERS JVM_IR
-// test.kt:8 foo
-// LINENUMBERS
 // test.kt:10 foo
 // test.kt:13 foo
 // test.kt:10 foo

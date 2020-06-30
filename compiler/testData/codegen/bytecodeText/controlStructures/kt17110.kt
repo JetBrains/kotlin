@@ -21,6 +21,5 @@ fun infiniteLoop() {
 // 1 GOTO L1
 
 // JVM_IR_TEMPLATES
-// 1 GOTO L6
-// 1 GOTO L7
+// 2 GOTO L6
 // 1 GOTO L0

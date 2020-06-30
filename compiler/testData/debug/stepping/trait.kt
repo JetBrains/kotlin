@@ -8,34 +8,38 @@ interface A {
     }
 }
 
+class B : A
+
 fun box() {
     (object : A {}).bar()
+    B().bar()
 }
 
-// The JVM backend generates non-synthetic overrides of foo and bar
-// in the object both with line number 12. That means that there will
-// be steps on line number 12 on entry and exit to both bar and foo.
-
-// TODO: Is this what we want? Should they be marked as bridges instead?
-// Doesn't look like the intellij debugger skips non-synthetic bridges?
-// There seems to be some heuristics in intellij dealing with this as
-// the stepping behavior with repeated step-into is mostly OK.
-
-// IGNORE_BACKEND: JVM_IR
-// The JVM_IR backend generates non-synthetic overrides of foo and bar
-// with no line numbers. That leads to steps on line -1 but only on
-// exit from bar and foo.
+// The dispatch methods added to classes directly implementing
+// interfaces with default methods (forwarding to the actual implementation
+// on A$DefaultImpls) have the line number of the class declaration.
 
 // LINENUMBERS
-// test.kt:12 box
-// test.kt:12 <init>
-// test.kt:12 box
-// test.kt:12 bar
+// test.kt:14 box
+// test.kt:14 <init>
+// test.kt:14 box
+// test.kt:14 bar
 // test.kt:7 bar
-// test.kt:12 foo
+// test.kt:14 foo
 // test.kt:4 foo
-// test.kt:12 foo
+// test.kt:14 foo
 // test.kt:7 bar
-// test.kt:12 bar
-// test.kt:12 box
-// test.kt:13 box
+// test.kt:14 bar
+// test.kt:14 box
+// test.kt:15 box
+// test.kt:11 <init>
+// test.kt:15 box
+// test.kt:11 bar
+// test.kt:7 bar
+// test.kt:11 foo
+// test.kt:4 foo
+// test.kt:11 foo
+// test.kt:7 bar
+// test.kt:11 bar
+// test.kt:15 box
+// test.kt:16 box
