@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.ir.IrElement
@@ -559,16 +558,69 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun generateWhenSubjectVariable(whenExpression: FirWhenExpression): IrVariable? {
-        val subjectVariable = whenExpression.subjectVariable
-        val subjectExpression = whenExpression.subject
-        return when {
-            subjectVariable != null -> subjectVariable.accept(this, null) as IrVariable
-            subjectExpression != null -> {
-                applyParentFromStackTo(declarationStorage.declareTemporaryVariable(convertToIrExpression(subjectExpression), "subject"))
-            }
-            else -> null
+    override fun visitElvisCall(elvisCall: FirElvisCall, data: Any?): IrElement {
+        val subjectName = Name.special("<elvis>")
+        val subjectVariable = buildProperty {
+            source = elvisCall.source
+            session = this@Fir2IrVisitor.session
+            origin = FirDeclarationOrigin.Source
+            returnTypeRef = elvisCall.lhs.typeRef
+            name = subjectName
+            initializer = elvisCall.lhs
+            symbol = FirPropertySymbol(name)
+            isVar = false
+            isLocal = true
+            status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
         }
+
+        @OptIn(FirContractViolation::class)
+        val ref = FirExpressionRef<FirWhenExpression>()
+        val subjectExpression = buildWhenSubjectExpression {
+            source = elvisCall.source
+            whenRef = ref
+        }
+
+        val whenExpression = buildWhenExpression {
+            source = elvisCall.source
+            this.subject = elvisCall.lhs
+            this.subjectVariable = subjectVariable
+            branches += buildWhenBranch {
+                condition = buildOperatorCall {
+                    operation = FirOperation.EQ
+                    argumentList = buildBinaryArgumentList(
+                        subjectExpression, buildConstExpression(null, FirConstKind.Null, null).apply {
+                            replaceTypeRef(session.builtinTypes.nullableNothingType)
+                        }
+                    )
+                }
+                result = buildSingleExpressionBlock(elvisCall.rhs)
+            }
+            branches += buildWhenBranch {
+                condition = buildElseIfTrueCondition {}
+                var resultExpression = buildQualifiedAccessExpression {
+                    calleeReference = buildResolvedNamedReference {
+                        name = subjectVariable.name
+                        resolvedSymbol = subjectVariable.symbol
+                    }
+                    typeRef = subjectVariable.returnTypeRef
+                }
+                val originalType = resultExpression.typeRef.coneTypeUnsafe<ConeKotlinType>()
+                val notNullType = originalType.withNullability(ConeNullability.NOT_NULL)
+                if (notNullType != originalType) {
+                    resultExpression = buildExpressionWithSmartcast {
+                        originalExpression = resultExpression
+                        typeRef = resultExpression.typeRef.resolvedTypeFromPrototype(notNullType)
+                        typesFromSmartCast = setOf(notNullType)
+                    }
+                }
+                result = buildSingleExpressionBlock(resultExpression)
+            }
+            typeRef = elvisCall.typeRef
+            isExhaustive = true
+        }.also {
+            ref.bind(it)
+        }
+        return whenExpression.accept(this, data)
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Any?): IrElement {
@@ -626,6 +678,18 @@ class Fir2IrVisitor(
                     IrBlockImpl(startOffset, endOffset, irWhen.type, origin, listOf(subjectVariable, irWhen))
                 }
             }
+        }
+    }
+
+    private fun generateWhenSubjectVariable(whenExpression: FirWhenExpression): IrVariable? {
+        val subjectVariable = whenExpression.subjectVariable
+        val subjectExpression = whenExpression.subject
+        return when {
+            subjectVariable != null -> subjectVariable.accept(this, null) as IrVariable
+            subjectExpression != null -> {
+                applyParentFromStackTo(declarationStorage.declareTemporaryVariable(convertToIrExpression(subjectExpression), "subject"))
+            }
+            else -> null
         }
     }
 
@@ -782,72 +846,6 @@ class Fir2IrVisitor(
                 putValueArgument(0, convertToIrExpression(checkNotNullCall.argument))
             }
         }
-    }
-
-    override fun visitElvisCall(elvisCall: FirElvisCall, data: Any?): IrElement {
-        val subjectName = Name.special("<elvis>")
-        val subjectVariable = buildProperty {
-            source = elvisCall.source
-            session = this@Fir2IrVisitor.session
-            origin = FirDeclarationOrigin.Source
-            returnTypeRef = elvisCall.lhs.typeRef
-            name = subjectName
-            initializer = elvisCall.lhs
-            symbol = FirPropertySymbol(name)
-            isVar = false
-            isLocal = true
-            status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
-        }
-
-        @OptIn(FirContractViolation::class)
-        val ref = FirExpressionRef<FirWhenExpression>()
-        val subjectExpression = buildWhenSubjectExpression {
-            source = elvisCall.source
-            whenRef = ref
-        }
-
-        val whenExpression = buildWhenExpression {
-            source = elvisCall.source
-            this.subject = elvisCall.lhs
-            this.subjectVariable = subjectVariable
-            branches += buildWhenBranch {
-                condition = buildOperatorCall {
-                    operation = FirOperation.EQ
-                    argumentList = buildBinaryArgumentList(
-                        subjectExpression, buildConstExpression(null, FirConstKind.Null, null).apply {
-                            replaceTypeRef(session.builtinTypes.nullableNothingType)
-                        }
-                    )
-                }
-                result = buildSingleExpressionBlock(elvisCall.rhs)
-            }
-            branches += buildWhenBranch {
-                condition = buildElseIfTrueCondition {}
-                var resultExpression = buildQualifiedAccessExpression {
-                    calleeReference = buildResolvedNamedReference {
-                        name = subjectVariable.name
-                        resolvedSymbol = subjectVariable.symbol
-                    }
-                    typeRef = subjectVariable.returnTypeRef
-                }
-                val originalType = resultExpression.typeRef.coneTypeUnsafe<ConeKotlinType>()
-                val notNullType = originalType.withNullability(ConeNullability.NOT_NULL)
-                if (notNullType != originalType) {
-                    resultExpression = buildExpressionWithSmartcast {
-                        originalExpression = resultExpression
-                        typeRef = resultExpression.typeRef.resolvedTypeFromPrototype(notNullType)
-                        typesFromSmartCast = setOf(notNullType)
-                    }
-                }
-                result = buildSingleExpressionBlock(resultExpression)
-            }
-            typeRef = elvisCall.typeRef
-            isExhaustive = true
-        }.also {
-            ref.bind(it)
-        }
-        val result = whenExpression.accept(this, data)
-        return result
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Any?): IrElement {
