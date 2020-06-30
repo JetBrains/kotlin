@@ -5083,6 +5083,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/implicitThis/already.kt");
         }
 
+        @TestMetadata("callVariableAsFunction.kt")
+        public void testCallVariableAsFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/implicitThis/callVariableAsFunction.kt");
+        }
+
+        @TestMetadata("callVariableAsFunction2.kt")
+        public void testCallVariableAsFunction2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/implicitThis/callVariableAsFunction2.kt");
+        }
+
         @TestMetadata("function.kt")
         public void testFunction() throws Exception {
             runTest("idea/testData/inspectionsLocal/implicitThis/function.kt");

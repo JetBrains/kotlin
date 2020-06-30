@@ -10,12 +10,15 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.util.getFactoryForImplicitReceiverWithSubtypeOf
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 
 class ImplicitThisInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : KtVisitorVoid() {
@@ -41,10 +44,10 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
             val context = reference.analyze()
             val scope = reference.getResolutionScope(context) ?: return
 
-            val descriptor = reference.getCallableDescriptor() ?: return
-            val receiverDescriptor = descriptor.extensionReceiverParameter
-                ?: descriptor.dispatchReceiverParameter
-                ?: return
+            val resolvedCall = reference.getResolvedCall(context) ?: return
+            val variableDescriptor = (resolvedCall as? VariableAsFunctionResolvedCall)?.variableCall?.resultingDescriptor
+            val callableDescriptor = resolvedCall.resultingDescriptor
+            val receiverDescriptor = variableDescriptor?.receiverDescriptor() ?: callableDescriptor.receiverDescriptor() ?: return
             val receiverType = receiverDescriptor.type
 
             val expressionFactory = scope.getFactoryForImplicitReceiverWithSubtypeOf(receiverType) ?: return
@@ -57,6 +60,10 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 fix
             )
+        }
+
+        private fun CallableDescriptor.receiverDescriptor(): ReceiverParameterDescriptor? {
+            return extensionReceiverParameter ?: dispatchReceiverParameter
         }
 
         private fun KtExpression.isSelectorOfDotQualifiedExpression(): Boolean {
