@@ -89,7 +89,7 @@ val jarTask = (tasks.findByName("jar") as Jar? ?: task<Jar>("jar")).apply {
     })
 
     from(classes)
-    archiveFileName.set("mobile-mpp.jar")
+    archiveFileName.set("kmm.jar")
 }
 
 sourceSets {

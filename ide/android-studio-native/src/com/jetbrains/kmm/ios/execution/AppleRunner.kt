@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.mpp.execution
+package com.jetbrains.kmm.ios.execution
 
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.RunProfile
@@ -16,12 +16,15 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.intellij.xml.util.XmlStringUtil
 import com.jetbrains.cidr.execution.CidrCommandLineState
+import com.jetbrains.kmm.ios.AppleRunConfiguration
+import com.jetbrains.kmm.ios.ProjectWorkspace
 import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mobile.execution.ApplePhysicalDevice
 import com.jetbrains.mpp.*
-import com.jetbrains.mpp.XcFileExtensions
+import com.jetbrains.kmm.ios.XcFileExtensions
 import com.jetbrains.mpp.debugger.KonanExternalSystemState
 import java.io.File
+import kotlin.jvm.Throws
 
 internal const val ACTUAL_XC_PROJECT_FILE = "project.pbxproj"
 internal const val DEBUG_INFORMATION_FORMAT_KEY = "DEBUG_INFORMATION_FORMAT"

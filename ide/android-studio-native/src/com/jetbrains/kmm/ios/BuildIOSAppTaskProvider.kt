@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.mpp
+package com.jetbrains.kmm.ios
 
 import com.intellij.build.BuildContentManagerImpl
 import com.intellij.build.BuildViewManager
@@ -27,7 +27,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.wm.ToolWindowManager
-import com.jetbrains.KMM_LOG
+import com.jetbrains.kmm.KMM_LOG
 import com.jetbrains.cidr.execution.CidrBuildConfiguration
 import com.jetbrains.cidr.execution.ExecutionResult
 import com.jetbrains.cidr.execution.build.CidrBuild
@@ -35,7 +35,6 @@ import com.jetbrains.cidr.execution.build.CidrBuild.startProcess
 import com.jetbrains.cidr.execution.build.CidrBuildId
 import com.jetbrains.cidr.execution.build.CidrBuildResult
 import com.jetbrains.cidr.execution.build.CidrBuildTaskType
-import com.jetbrains.kmm.XcProjectFile
 import java.io.File
 
 
@@ -89,7 +88,12 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
         )
 
         buildContext.processHandler.addProcessListener(
-            BuildProcessListener(configuration.project, name, workDirectory, buildContext.id)
+            BuildProcessListener(
+                configuration.project,
+                name,
+                workDirectory,
+                buildContext.id
+            )
         )
 
         val future = ApplicationManager.getApplication().executeOnPooledThread<ExecutionResult<CidrBuildResult>> {

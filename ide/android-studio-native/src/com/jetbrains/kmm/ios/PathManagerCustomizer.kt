@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.mpp
+package com.jetbrains.kmm.ios
 
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.cidr.OCPathManagerCustomization
@@ -16,9 +16,9 @@ class PathManagerCustomization : OCPathManagerCustomization() {
          Expected layout:
          <folder-with-installed-idea-plugins>
             |- Kotlin                  (Kotlin plugin installation folder)
-            |- mobile-mpp              (Mobile plugin installation folder)
+            |- kmm                     (Mobile plugin installation folder)
             |  |- lib
-            |  |  |- mobile-mpp.jar    (jar with all native-plugin classes)
+            |  |  |- kmm.jar    (jar with all native-plugin classes)
             |  |  |- ... other jars needed for native-plugin ...
             |  |- native
             |     |- Bridge.framework
@@ -27,10 +27,10 @@ class PathManagerCustomization : OCPathManagerCustomization() {
             |- ... other plugins installation folders ...
 
          */
-        val mobileMppPluginJar = PathUtil.getResourcePathForClass(this::class.java).takeIf { it.name == "mobile-mpp.jar" }!!
-        val libFolder = mobileMppPluginJar.parentFile
-        val mobileMppPluginInstallationFolder = libFolder.parentFile
-        val nativeFolder = File(mobileMppPluginInstallationFolder, "bin")
+        val kmmPluginJar = PathUtil.getResourcePathForClass(this::class.java).takeIf { it.name == "kmm.jar" }!!
+        val libFolder = kmmPluginJar.parentFile
+        val kmmPluginInstallationFolder = libFolder.parentFile
+        val nativeFolder = File(kmmPluginInstallationFolder, "bin")
 
         return File(nativeFolder, relativePath).also {
             FileUtil.setExecutable(it) // FIXME omit when CLion build script is corrected

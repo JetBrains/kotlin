@@ -3,14 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.mpp
+package com.jetbrains.kmm.ios
 
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.RunManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.mpp.debugger.LLDBBackendBase
-import com.jetbrains.mpp.execution.BinaryRunConfiguration
-import com.jetbrains.mpp.execution.BinaryRunConfigurationType
+import com.jetbrains.kmm.ios.execution.BinaryRunConfiguration
+import com.jetbrains.kmm.ios.execution.BinaryRunConfigurationType
+import com.jetbrains.mpp.KonanExecutable
 
 class LLDBBackend : LLDBBackendBase() {
 

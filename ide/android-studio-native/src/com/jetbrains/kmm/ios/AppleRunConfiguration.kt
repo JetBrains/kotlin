@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.mpp
+package com.jetbrains.kmm.ios
 
 import com.intellij.execution.BeforeRunTask
 import com.intellij.execution.ExecutionTarget
@@ -19,8 +19,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.ui.ComponentUtil
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriverConfiguration
 import com.jetbrains.cidr.execution.testing.CidrLauncher
-import com.jetbrains.kmm.AppleConfigurationFactory
-import com.jetbrains.kmm.AppleRunConfigurationEditor
 import com.jetbrains.konan.KonanBundle
 import com.jetbrains.konan.WorkspaceXML
 import com.jetbrains.mobile.execution.*
@@ -133,7 +131,8 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
 
     override fun createCidrLauncher(environment: ExecutionEnvironment, device: AppleDevice): CidrLauncher =
         object : AppleLauncher<AppleRunConfiguration>(this, environment, device) {
-            override fun createDebuggerDriverConfiguration(): DebuggerDriverConfiguration = AppleLLDBDriverConfiguration()
+            override fun createDebuggerDriverConfiguration(): DebuggerDriverConfiguration =
+                AppleLLDBDriverConfiguration()
         }
 
     var selectedDevice: Device? = null

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.mpp
+package com.jetbrains.kmm.ios
 
 import com.intellij.execution.ExecutionTargetManager
 import com.intellij.openapi.components.State
@@ -11,9 +11,8 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.jetbrains.kmm.KMMTargetListener
-import com.jetbrains.kmm.XcProjectFile
 import com.jetbrains.konan.WorkspaceXML
+import com.jetbrains.mpp.WorkspaceBase
 import org.jdom.Element
 import java.io.File
 
@@ -27,7 +26,8 @@ sealed class XcProjectStatus {
 @State(name = WorkspaceXML.projectComponentName, storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
 class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
 
-    var xcProjectStatus: XcProjectStatus = XcProjectStatus.NotLocated
+    var xcProjectStatus: XcProjectStatus =
+        XcProjectStatus.NotLocated
     var xcProjectFile: XcProjectFile? = null
 
     fun locateXCProject(path: String) {

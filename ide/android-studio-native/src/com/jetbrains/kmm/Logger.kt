@@ -3,8 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains
+package com.jetbrains.kmm
 
 import com.intellij.openapi.diagnostic.logger
 
-internal val KMM_LOG = logger("org.jetbrains.kmm-plugin")
+internal val KMM_LOG = logger("com.jetbrains.kmm")

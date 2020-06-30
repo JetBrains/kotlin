@@ -5,8 +5,9 @@
 
 package com.jetbrains.mpp.versions
 
-import com.jetbrains.mpp.versions.KmmCompatibilityChecker.CompatibilityCheckResult
-import com.jetbrains.mpp.versions.KmmCompatibilityChecker.CompatibilityCheckResult.*
+import com.jetbrains.kmm.versions.KmmCompatibilityChecker
+import com.jetbrains.kmm.versions.KmmCompatibilityChecker.CompatibilityCheckResult
+import com.jetbrains.kmm.versions.KmmCompatibilityChecker.CompatibilityCheckResult.*
 import org.jetbrains.kotlin.idea.KotlinPluginVersion
 import org.junit.Test
 import org.junit.Assert.*

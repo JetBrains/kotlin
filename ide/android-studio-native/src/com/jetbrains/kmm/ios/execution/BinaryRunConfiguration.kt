@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.mpp.execution
+package com.jetbrains.kmm.ios.execution
 
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationTypeBase
@@ -17,8 +17,8 @@ import com.jetbrains.mpp.BinaryRunConfigurationBase
 import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mpp.KonanExecutable
 import com.jetbrains.mpp.WorkspaceBase
-import com.jetbrains.mpp.AppleLLDBDriverConfiguration
-import com.jetbrains.mpp.ProjectWorkspace
+import com.jetbrains.kmm.ios.AppleLLDBDriverConfiguration
+import com.jetbrains.kmm.ios.ProjectWorkspace
 import java.awt.GridBagLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -48,7 +48,8 @@ class BinaryRunConfiguration(
         return BinaryRunConfigurationSettingsEditor(project)
     }
 
-    override fun lldbDriverConfiguration(env: ExecutionEnvironment) = AppleLLDBDriverConfiguration()
+    override fun lldbDriverConfiguration(env: ExecutionEnvironment) =
+        AppleLLDBDriverConfiguration()
 
     override fun getWorkspace(): WorkspaceBase = ProjectWorkspace.getInstance(project)
 }

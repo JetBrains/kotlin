@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.kmm
+package com.jetbrains.kmm.ios
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
@@ -11,7 +11,6 @@ import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.openapi.util.Key
 import com.intellij.util.concurrency.AppExecutorUtil
-import com.jetbrains.mpp.XcFileExtensions
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.locks.ReentrantLock
@@ -111,7 +110,10 @@ class XcProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher
                 }
             }
 
-            return if (candidates.isEmpty()) null else XcProjectFile(candidates.first(), DISPATCHER)
+            return if (candidates.isEmpty()) null else XcProjectFile(
+                candidates.first(),
+                DISPATCHER
+            )
         }
     }
 }

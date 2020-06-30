@@ -3,18 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.mpp.versions
+package com.jetbrains.kmm.versions
 
-import com.intellij.configurationStore.NOTIFICATION_GROUP_ID
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
-import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.text.StringUtilRt
-import com.jetbrains.mpp.versions.KmmCompatibilityChecker.CompatibilityCheckResult.*
+import com.jetbrains.kmm.versions.KmmCompatibilityChecker.CompatibilityCheckResult.*
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.KotlinPluginVersion
 
@@ -53,7 +51,7 @@ object KmmCompatibilityChecker {
                 
                 Kotlin Plugin version: ${KotlinPluginUtil.getPluginVersion()}
                 Compiled against Kotlin: ${MobileMultiplatformPluginVersionsInfo.compiledAgainstKotlin}
-                KMM Plugin version: ${MobileMultiplatformPluginVersionsInfo.mobilePluginVersion}
+                KMM Plugin version: ${MobileMultiplatformPluginVersionsInfo.pluginVersion}
             """.trimIndent()
         }
 
@@ -67,7 +65,7 @@ object KmmCompatibilityChecker {
                     null
                 ).notify(project)
 
-                PluginManagerCore.disablePlugin("org.jetbrains.mobile-mpp")
+                PluginManagerCore.disablePlugin("com.jetbrains.kmm")
             }
         }
     }
@@ -76,7 +74,8 @@ object KmmCompatibilityChecker {
         val actualKotlinVersion =
             KotlinVersion.parseFromString(actualKotlinPlugin.kotlinVersion)?.stripHotfixes() ?: return UNKNOWN
         val compiledAgainstKotlinVersion =
-            KotlinVersion.parseFromString(compiledAgainstKotlinPlugin.kotlinVersion)?.stripHotfixes() ?: return UNKNOWN
+            KotlinVersion.parseFromString(compiledAgainstKotlinPlugin.kotlinVersion)
+                ?.stripHotfixes() ?: return UNKNOWN
 
 
         return when {

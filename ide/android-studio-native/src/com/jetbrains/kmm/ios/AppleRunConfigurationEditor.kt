@@ -3,9 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.kmm
+package com.jetbrains.kmm.ios
 
-import com.intellij.execution.configurations.RuntimeConfigurationError
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
@@ -13,11 +12,8 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.GridBag
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.konan.KonanLog
-import com.jetbrains.mpp.AppleRunConfiguration
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import javax.swing.JComboBox
 import javax.swing.JComponent
 import javax.swing.JPanel
 

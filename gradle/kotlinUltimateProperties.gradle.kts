@@ -108,7 +108,7 @@ if (rootProject.extra.has("versions.LLDB.framework")) {
 val artifactsForCidrDir: File by rootProject.extra(rootProject.rootDir.resolve("dist/artifacts"))
 val clionPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("clionPlugin/Kotlin"))
 val appcodePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("appcodePlugin/Kotlin"))
-val mobileMppPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobileMppPlugin/mobile-mpp"))
+val kmmPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("androidStudioPlugin/kmm"))
 val mobilePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobilePlugin/Mobile"))
 
 if (isStandaloneBuild) { // setup additional properties that are required only when running in standalone mode:

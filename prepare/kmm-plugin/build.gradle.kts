@@ -4,7 +4,7 @@ plugins {
 
 val artifactsForCidrDir: File by rootProject.extra
 val clionCocoaCommonBinariesDir: File by rootProject.extra
-val mobileMppPluginDir: File by rootProject.extra
+val kmmPluginDir: File by rootProject.extra
 val lldbFrontendMacosDir: File by rootProject.extra
 val lldbFrameworkDir: File by rootProject.extra
 
@@ -15,14 +15,14 @@ val mainModule = ":kotlin-ultimate:ide:android-studio-native"
 val binariesDir = "bin"
 
 val kotlinVersion: String by rootProject.extra
-val mobilePluginVersion: String = findProperty("mobilePluginDeployVersion")?.toString() ?: "0.1-SNAPSHOT"
+val kmmPluginVersion: String = findProperty("kmmPluginDeployVersion")?.toString() ?: "0.1-SNAPSHOT"
 
 dependencies {
     embedded(project(mainModule)) { isTransitive = false }
 }
 
 val copyAppCodeBinaries: Task by tasks.creating(Copy::class) {
-    val targetDir = File(mobileMppPluginDir, binariesDir)
+    val targetDir = File(kmmPluginDir, binariesDir)
 
     from(clionCocoaCommonBinariesDir)
     eachFile {
@@ -32,7 +32,7 @@ val copyAppCodeBinaries: Task by tasks.creating(Copy::class) {
 }
 
 val copyAppCodeModules: Task by tasks.creating(Copy::class) {
-    into(File(mobileMppPluginDir, "lib"))
+    into(File(kmmPluginDir, "lib"))
     project("$mainModule").configurations["compileClasspath"].forEach {
         if (it.name.startsWith("cidr")) {
             from(it.absolutePath)
@@ -42,41 +42,41 @@ val copyAppCodeModules: Task by tasks.creating(Copy::class) {
 
 val copyLLDBFrontend: Task by tasks.creating(Copy::class) {
     from(lldbFrontendMacosDir)
-    into(File(mobileMppPluginDir, binariesDir))
+    into(File(kmmPluginDir, binariesDir))
 }
 
 val copyLLDBFramework: Task by tasks.creating(Copy::class) {
     from(lldbFrameworkDir)
-    into(File(mobileMppPluginDir, binariesDir))
+    into(File(kmmPluginDir, binariesDir))
 }
 
-val mobileMppPluginTask: Copy = task<Copy>("mobileMppPlugin") {
+val kmmPluginTask: Copy = task<Copy>("kmmPlugin") {
     dependsOn(
         copyLLDBFramework,
         copyLLDBFrontend,
         copyAppCodeBinaries,
         copyAppCodeModules
     )
-    val jarTask = project("$mainModule").tasks.findByName("jar")!!
+    val jarTask = project(mainModule).tasks.findByName("jar")!!
     dependsOn(jarTask)
 
     from(jarTask.outputs.files.singleFile)
-    into(File(mobileMppPluginDir, "lib"))
+    into(File(kmmPluginDir, "lib"))
 }
 
-val zipMobileMppPluginTask: Zip = task<Zip>("zipMobileMppPlugin") {
-    dependsOn(mobileMppPluginTask)
-    val pluginNumber: String = findProperty("mobileMppPluginNumber")?.toString() ?: "SNAPSHOT"
-    val destinationFile: File = artifactsForCidrDir.resolve("mobile-mpp-plugin-$pluginNumber.zip").canonicalFile
+val zipKmmPluginTask: Zip = task<Zip>("zipKmmPlugin") {
+    dependsOn(kmmPluginTask)
+    val pluginNumber: String = findProperty("kmmPluginNumber")?.toString() ?: "SNAPSHOT"
+    val destinationFile: File = artifactsForCidrDir.resolve("kmm-plugin-$pluginNumber.zip").canonicalFile
 
     destinationDirectory.set(destinationFile.parentFile)
     archiveFileName.set(destinationFile.name)
 
-    from(mobileMppPluginDir)
-    into("mobile-mpp")
+    from(kmmPluginDir)
+    into("kmm-plugin")
 
     doLast {
-        logger.lifecycle("Mobile MPP plugin artifacts are packed to $destinationFile")
+        logger.lifecycle("KMM plugin artifacts are packed to $destinationFile")
     }
 }
 
@@ -92,12 +92,12 @@ fun addPlugin(oldArgs: List<String>, pluginLocation: String): List<String> {
 
 if (rootProject.findProperty("versions.androidStudioRelease") != null) {
     (rootProject.tasks.findByPath("idea-runner:runIde") as? JavaExec)?.apply {
-        dependsOn(":kotlin-ultimate:prepare:mobile-mpp-plugin:mobileMppPlugin")
-        this.setJvmArgs(addPlugin(this.getAllJvmArgs(), mobileMppPluginDir.absolutePath))
+        dependsOn(":kotlin-ultimate:prepare:kmm-plugin:kmmPlugin")
+        this.setJvmArgs(addPlugin(this.allJvmArgs, kmmPluginDir.absolutePath))
     }
 }
 
-fun replaceVersion(versionFile: java.io.File, versionPattern: String, replacement: (MatchResult) -> String) {
+fun replaceVersion(versionFile: File, versionPattern: String, replacement: (MatchResult) -> String) {
     check(versionFile.isFile) { "Version file $versionFile is not found" }
     val text = versionFile.readText()
     val pattern = Regex(versionPattern)
@@ -109,17 +109,15 @@ fun replaceVersion(versionFile: java.io.File, versionPattern: String, replacemen
 val writePluginVersion by tasks.registering {
     val versionFile = project(":kotlin-ultimate:ide:android-studio-native")
         .projectDir
-        .resolve("src/com/jetbrains/mpp/versions/VersionsUtils.kt")
+        .resolve("src/com/jetbrains/kmm/versions/VersionsUtils.kt")
 
-    inputs.property("version", mobilePluginVersion)
+    inputs.property("version", kmmPluginVersion)
     inputs.property("kotlinVersion", kotlinVersion)
     outputs.file(versionFile)
 
     doLast {
-        requireNotNull(mobilePluginVersion) { "Specify 'pluginVersion' property" }
-
-        replaceVersion(versionFile, """const val mobilePluginVersion: String = "([^"]+)"""") {
-            mobilePluginVersion
+        replaceVersion(versionFile, """const val pluginVersion: String = "([^"]+)"""") {
+            kmmPluginVersion
         }
 
         replaceVersion(versionFile, """const val compiledAgainstKotlin: String = "([^"]+)"""") {
