@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
+import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationTest.Companion.useDefaultTemplate
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
@@ -32,16 +33,15 @@ import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.projectLibrary
 import java.io.File
 import java.nio.file.Paths
+import java.util.regex.Pattern
+import kotlin.reflect.full.findAnnotation
 import kotlin.script.dependencies.Environment
 import kotlin.script.experimental.api.ScriptDiagnostic
-
-private val validKeys = setOf("javaHome", "sources", "classpath", "imports", "template-classes-names")
-private const val useDefaultTemplate = "// DEPENDENCIES:"
-private const val templatesSettings = "// TEMPLATES: "
 
 // some bugs can only be reproduced when some module and script have intersecting library dependencies
 private const val configureConflictingModule = "// CONFLICTING_MODULE"
@@ -55,6 +55,24 @@ internal val switches = listOf(
 abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     companion object {
         private const val SCRIPT_NAME = "script.kts"
+
+        val validKeys = setOf("javaHome", "sources", "classpath", "imports", "template-classes-names")
+        const val useDefaultTemplate = "// DEPENDENCIES:"
+        const val templatesSettings = "// TEMPLATES: "
+    }
+
+    protected fun testDataFile(fileName: String): File = File(testDataPath, fileName)
+
+    protected fun testDataFile(): File = testDataFile(fileName())
+
+    protected fun testPath(fileName: String = fileName()): String = testDataFile(fileName).toString()
+
+    protected fun testPath(): String = testPath(fileName())
+
+    protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
+
+    override fun getTestDataPath(): String {
+        return this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
     }
 
     override fun setUpModule() {
@@ -77,12 +95,12 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         }
     }
 
-    protected fun configureScriptFile(path: File) {
+    protected fun configureScriptFile(path: File): VirtualFile {
         val mainScriptFile = findMainScript(path)
-        configureScriptFile(path, mainScriptFile)
+        return configureScriptFile(path, mainScriptFile)
     }
 
-    protected fun configureScriptFile(path: File, mainScriptFile: File) {
+    protected fun configureScriptFile(path: File, mainScriptFile: File): VirtualFile {
         val environment = createScriptEnvironment(mainScriptFile)
         registerScriptTemplateProvider(environment)
 
@@ -129,7 +147,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             }
         }
 
-        createFileAndSyncDependencies(mainScriptFile)
+        return createFileAndSyncDependencies(mainScriptFile)
     }
 
     private val oldScripClasspath: String? = System.getProperty("kotlin.script.classpath")
@@ -259,7 +277,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         )
     }
 
-    protected fun createFileAndSyncDependencies(scriptFile: File) {
+    protected fun createFileAndSyncDependencies(scriptFile: File): VirtualFile {
         var script: VirtualFile? = null
         if (module != null) {
             script = module.moduleFile?.parent?.findChild(scriptFile.name)
@@ -275,6 +293,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
         configureByExistingFile(script)
         loadScriptConfigurationSynchronously(script)
+        return script!!
     }
 
     protected open fun loadScriptConfigurationSynchronously(script: VirtualFile) {

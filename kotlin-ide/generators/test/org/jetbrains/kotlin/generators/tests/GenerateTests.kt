@@ -113,10 +113,7 @@ import org.jetbrains.kotlin.idea.repl.AbstractIdeReplCompletionTest
 import org.jetbrains.kotlin.idea.resolve.*
 import org.jetbrains.kotlin.idea.scratch.AbstractScratchLineMarkersTest
 import org.jetbrains.kotlin.idea.scratch.AbstractScratchRunActionTest
-import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationCompletionTest
-import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingTest
-import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
-import org.jetbrains.kotlin.idea.script.AbstractScriptDefinitionsOrderTest
+import org.jetbrains.kotlin.idea.script.*
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerLeafGroupingTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerMultiplatformTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerNullnessGroupingTest
@@ -824,6 +821,23 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractScriptConfigurationCompletionTest> {
             model("script/definition/completion", pattern = DIRECTORY, isRecursive = false)
+        }
+
+        testClass<AbstractScriptConfigurationInsertImportOnPasteTest> {
+            model(
+                "script/definition/imports",
+                testMethod = "doTestCopy",
+                testClassName = "Copy",
+                extension = null,
+                recursive = false
+            )
+            model(
+                "script/definition/imports",
+                testMethod = "doTestCut",
+                testClassName = "Cut",
+                extension = null,
+                recursive = false
+            )
         }
 
         testClass<AbstractScriptDefinitionsOrderTest> {
