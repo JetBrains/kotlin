@@ -27,11 +27,13 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInDispatchThread
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.ReviewAddedImports.reviewAddedImports
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.util.end
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.core.util.start
@@ -48,6 +50,7 @@ import org.jetbrains.kotlin.idea.util.getSourceRoot
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_EXT
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -428,13 +431,30 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
              
             """.trimIndent()
 
+        val sourceFileUrl = transferableData.sourceFileUrl
+        val script = !sourceFileUrl.endsWith(KotlinFileType.EXTENSION)
+        val extension = run {
+            if (!script) return@run KotlinFileType.EXTENSION
+            ScriptDefinitionsManager.getInstance(project).getKnownFilenameExtensions().filter {
+                sourceFileUrl.endsWith(it)
+            }.sortedByDescending { it.length }.firstOrNull() ?: KotlinFileType.EXTENSION
+        }
+
         val dummyOriginalFile = runReadAction {
             KtPsiFactory(project)
                 .createAnalyzableFile(
-                    "dummy-original.kt",
+                    "dummy-original.$extension",
                     "$dummyOrigFileProlog${transferableData.sourceText}",
                     ctxFile
                 )
+        }
+
+        if (script) {
+            val originalFile = runReadAction {
+                val virtualFile = VirtualFileManager.getInstance().findFileByUrl(sourceFileUrl) ?: return@runReadAction null
+                PsiManager.getInstance(project).findFile(virtualFile)
+            } ?: return emptyList()
+            dummyOriginalFile.originalFile = originalFile
         }
 
         val offsetDelta = dummyOrigFileProlog.length - transferableData.sourceTextOffset
@@ -476,7 +496,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         // - those source package imports those are not present in a fake package
         // - all rest imports
 
-        val sourceImportPrefix = "import $sourcePkgName"
+        val sourceImportPrefix = "import ${if (sourcePkgName.isEmpty()) fakePkgName else sourcePkgName}"
         val fakeImportPrefix = "import $fakePkgName"
 
         val affectedSourcePkgImports = imports.filter { it.startsWith(sourceImportPrefix) }
@@ -511,7 +531,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         return """
             ${joinLines(dummyFileImports)}
-            import ${sourcePkgName}.*
+            ${if (sourcePkgName.isNotEmpty()) "import ${sourcePkgName}.*" else ""}
             ${joinLines(filteredImports)}
         """
     }
