@@ -16,6 +16,9 @@ import org.jetbrains.concurrency.Promise
 import org.jetbrains.concurrency.resolvedPromise
 
 class MobileProjectTaskRunner : CidrProjectTaskRunner() {
+    override val buildSystemId: String
+        get() = "Mobile IDE"
+
     @Suppress("UnstableApiUsage")
     class BuildableElement : ProjectModelBuildableElement {
         override fun getExternalSource(): ProjectModelExternalSource =

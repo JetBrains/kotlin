@@ -20,6 +20,7 @@ import com.jetbrains.mobile.bridging.MobileKonanSwiftModule
 import com.jetbrains.swift.codeinsight.resolve.module.SwiftSourceModuleFile
 import com.jetbrains.swift.psi.SwiftFile
 import com.jetbrains.swift.psi.types.SwiftContext
+import com.jetbrains.swift.psi.types.SwiftPlace
 import com.jetbrains.swift.symbols.SwiftAttributesInfo
 import com.jetbrains.swift.symbols.SwiftBridgeVirtualFile
 import com.jetbrains.swift.symbols.SwiftModuleSymbol
@@ -67,7 +68,7 @@ class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : Swif
 
     override fun buildModuleCache(): SwiftGlobalSymbols {
         val swiftSymbols = SwiftGlobalSymbolsImpl(this)
-        val processor = SwiftGlobalSymbolsImpl.SymbolProcessor(swiftSymbols)
+        val processor = SwiftGlobalSymbolsImpl.SymbolProcessor(swiftSymbols, SwiftPlace.of(project))
 
         for (file in files) {
             val psiFile = PsiManager.getInstance(project).findFile(file)

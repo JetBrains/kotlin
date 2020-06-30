@@ -26,9 +26,6 @@ class AndroidModuleInfoProviderImpl(override val module: Module) : AndroidModule
             .groupBy { it.parentFile.name }
             .map { Mirror(it.key, it.value) }
 
-    override fun getMainSourceProvider(): AndroidModuleInfoProvider.SourceProviderMirror? =
-        getActiveSourceProviders().find { it.name == "main" }
-
     @Suppress("OverridingDeprecatedMember")
     override fun getMainAndFlavorSourceProviders(): List<AndroidModuleInfoProvider.SourceProviderMirror> =
         getActiveSourceProviders()

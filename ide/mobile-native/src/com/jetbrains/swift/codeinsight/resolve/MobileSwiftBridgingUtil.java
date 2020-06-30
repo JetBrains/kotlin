@@ -15,6 +15,7 @@ import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable;
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration;
 import com.jetbrains.cidr.xcode.Xcode;
 import com.jetbrains.swift.languageKind.SwiftLanguageKind;
+import com.jetbrains.swift.psi.types.SwiftPlace;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,7 @@ class MobileSwiftBridgingUtil {
 
         SwiftGlobalSymbolsImpl bridgedSymbols = new SwiftGlobalSymbolsImpl(SwiftGlobalSymbols.SymbolsOrigin.OBJC);
 
-        SwiftGlobalSymbolsImpl.SymbolProcessor processor = new SwiftGlobalSymbolsImpl.SymbolProcessor(bridgedSymbols, false);
+        SwiftGlobalSymbolsImpl.SymbolProcessor processor = new SwiftGlobalSymbolsImpl.SymbolProcessor(bridgedSymbols, SwiftPlace.of(project), false);
 
         for (VirtualFile header : headers) {
             if (!header.isValid()) continue;
