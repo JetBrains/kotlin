@@ -139,7 +139,7 @@ class EditorOptionsPanel : BoundCompositeConfigurable<UnnamedConfigurable>(messa
           textField({ editorSettings.softWrapFileMasks }, { editorSettings.softWrapFileMasks = it })
             .growPolicy(GrowPolicy.MEDIUM_TEXT)
             .applyToComponent { emptyText.text = message("soft.wraps.file.masks.empty.text") }
-            .commentComponent(message("soft.wraps.file.masks.hint"))
+            .comment(message("soft.wraps.file.masks.hint"), forComponent = true)
             .enableIf(useSoftWraps.selected)
         }
         row {
