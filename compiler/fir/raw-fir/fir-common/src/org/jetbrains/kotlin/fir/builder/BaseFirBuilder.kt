@@ -285,7 +285,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     buildConstOrErrorExpression(
                         sourceElement,
                         FirConstKind.Double,
-                        convertedText as Double,
+                        convertedText as? Double,
                         ConeSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.IllegalConstExpression)
                     )
                 }
