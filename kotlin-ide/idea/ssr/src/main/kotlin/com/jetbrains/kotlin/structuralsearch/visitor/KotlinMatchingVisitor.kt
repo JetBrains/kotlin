@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
@@ -367,11 +368,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
         val other = getTreeElementDepar<KtExpression>() ?: return
         val handler = getHandler(expression.receiverExpression)
-        if ( other is KtDotQualifiedExpression && handler is SubstitutionHandler && handler.maxOccurs == 0) {
+        if (other is KtDotQualifiedExpression && handler is SubstitutionHandler && handler.maxOccurs == 0) {
             // Don't match '_{0,0}.'_
             myMatchingVisitor.result = false
-        }
-        else if (other is KtDotQualifiedExpression) {
+        } else if (other is KtDotQualifiedExpression) {
             // Regular matching
             myMatchingVisitor.result = myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
                     && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
@@ -642,6 +642,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(function.typeParameterList, other.typeParameterList)
                 && matchTypeReferenceWithDeclaration(function.typeReference, other)
                 && myMatchingVisitor.match(function.valueParameterList, other.valueParameterList)
+                && myMatchingVisitor.match(function.receiverTypeReference, other.receiverTypeReference)
                 && if (funExpr == null || othExpr == null) { // both bodies are not single expression
             myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
         } else myMatchingVisitor.match(funExpr, othExpr)
@@ -769,7 +770,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && property.isVar == other.isVar
                 && myMatchingVisitor.match(property.docComment, other.docComment)
                 && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.matchOptionally(
-            property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer ))
+            property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
+        ))
                 && myMatchingVisitor.match(property.getter, other.getter)
                 && myMatchingVisitor.match(property.setter, other.setter)
         val handler = getHandler(property.nameIdentifier!!)

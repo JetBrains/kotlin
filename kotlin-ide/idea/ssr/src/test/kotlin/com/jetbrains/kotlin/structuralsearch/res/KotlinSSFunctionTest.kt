@@ -56,4 +56,10 @@ class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
     fun testFunExprBlock() { doTest("fun '_(): Int = 0") }
 
     fun testFunAnnotation() { doTest("@Foo fun '_('_*)") }
+
+    fun testFunReceiverTypeReference() { doTest("fun '_.'_()") }
+
+    fun testFunFqReceiverTypeReference() { doTest("fun kotlin.Int.'_()") }
+
+    fun testFunNoReceiverTypeReference() { doTest("fun '_{0,0}.'_()") }
 }

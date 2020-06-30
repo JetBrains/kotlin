@@ -199,7 +199,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     companion object {
         const val TYPED_VAR_PREFIX: String = "_____"
         val DEFAULT_CONTEXT: PatternContext = PatternContext("default", "Default")
-        val PROPERTY_CONTEXT: PatternContext = PatternContext("property", "Top Level / Class property")
+        val PROPERTY_CONTEXT: PatternContext = PatternContext("property", "Top-level / Class property")
         private val PATTERN_CONTEXTS: MutableList<PatternContext> = mutableListOf(DEFAULT_CONTEXT, PROPERTY_CONTEXT)
 
         fun getNonWhitespaceChildren(fragment: PsiElement): List<PsiElement> {
