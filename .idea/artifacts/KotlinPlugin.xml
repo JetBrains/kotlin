@@ -107,7 +107,6 @@
         <element id="archive" name="kotlin-completion.jar">
           <element id="module-output" name="kotlin.completion" />
         </element>
-        <element id="library" level="module" name="completion-ranking-kotlin" module-name="kotlin.completion" />
         <element id="archive" name="kotlin-core.jar">
           <element id="module-output" name="kotlin.core" />
         </element>
@@ -151,6 +150,19 @@
         <element id="library" level="project" name="javaslang" />
         <element id="library" level="project" name="kotlinx-collections-immutable-jvm" />
         <element id="library" level="project" name="javax-inject" />
+        <element id="library" level="module" name="completion-ranking-kotlin" module-name="kotlin.idea" />
+        <element id="archive" name="kotlin-stdlib.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.4.20-dev-1232/kotlin-stdlib-1.4.20-dev-1232.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-stdlib-jdk7.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.4.20-dev-1232/kotlin-stdlib-jdk7-1.4.20-dev-1232.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-stdlib-jdk8.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.4.20-dev-1232/kotlin-stdlib-jdk8-1.4.20-dev-1232.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-reflect.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.4.20-dev-1232/kotlin-reflect-1.4.20-dev-1232.jar" path-in-jar="/" />
+        </element>
       </element>
     </root>
   </artifact>
