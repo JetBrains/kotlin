@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.ui.IdeUICustomization;
@@ -112,8 +113,9 @@ public class FileSearchEverywhereContributor extends AbstractGotoSEContributor {
       return element;
     }
 
-    if (SearchEverywhereDataKeys.ITEM_STRING_DESCRIPTION.is(dataId) && element instanceof PsiFile) {
-      String path = ((PsiFile)element).getVirtualFile().getPath();
+    if (SearchEverywhereDataKeys.ITEM_STRING_DESCRIPTION.is(dataId)
+        && (element instanceof PsiFile || element instanceof PsiDirectory)) {
+      String path = ((PsiFileSystemItem)element).getVirtualFile().getPath();
       path = FileUtil.toSystemIndependentName(path);
       if (myProject != null) {
         String basePath = myProject.getBasePath();
