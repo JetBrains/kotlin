@@ -18,7 +18,7 @@ package androidx.compose.plugins.kotlin
 
 import org.junit.Test
 
-class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
+class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     private fun comparisonPropagation(
         unchecked: String,
         checked: String,
