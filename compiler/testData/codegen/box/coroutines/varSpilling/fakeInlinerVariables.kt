@@ -1,4 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.*
