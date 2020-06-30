@@ -76,10 +76,14 @@ class KotlinChangeSignatureProcessor(
 
     override fun findUsages(): Array<UsageInfo> {
         val allUsages = ArrayList<UsageInfo>()
+        val javaUsages = mutableSetOf<UsageInfo>()
         ktChangeInfo.getOrCreateJavaChangeInfos()?.let { javaChangeInfos ->
             val javaProcessor = JavaChangeSignatureUsageProcessor()
             javaChangeInfos.mapTo(allUsages) {
-                KotlinWrapperForJavaUsageInfos(it, javaProcessor.findUsages(it), changeInfo.method)
+                val javaUsagesForKtChange = javaProcessor.findUsages(it)
+                val uniqueJavaUsagesForKtChange = javaUsagesForKtChange.filterNot<UsageInfo> { javaUsages.contains(it) }
+                javaUsages.addAll(javaUsagesForKtChange)
+                KotlinWrapperForJavaUsageInfos(it, uniqueJavaUsagesForKtChange.toTypedArray(), changeInfo.method)
             }
         }
         super.findUsages().filterTo(allUsages) { it is KotlinUsageInfo<*> || it is UnresolvableCollisionUsageInfo }
