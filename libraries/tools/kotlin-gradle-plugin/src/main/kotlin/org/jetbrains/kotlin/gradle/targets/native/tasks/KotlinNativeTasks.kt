@@ -339,7 +339,7 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
     compilation.map { if (it.isMain()) project.name else "${project.name}_${name}" }
 
     // Store as an explicit provider in order to allow Gradle Instant Execution to capture the state
-    private val allSourceProvider = compilation.map { project.files(it.allSources).asFileTree }
+//    private val allSourceProvider = compilation.map { project.files(it.allSources).asFileTree }
 
     @get:Input
     val moduleName: String by project.provider {
@@ -451,16 +451,12 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     final override val compilation: Property<KotlinNativeCompilation> = project.newProperty()
 
     init {
-        dependsOn(project.provider { compilation.compileKotlinTask })
+        dependsOn(project.provider { compilation.get().compileKotlinTask })
     }
 
     @Internal
     @Transient
     lateinit var binary: NativeBinary
-
-     // Taken into account by getSources().
-    val intermediateLibrary: File
-    @Internal get() = compilation.get().compileKotlinTask.outputFile.get()
 
     @Internal // Taken into account by getSources().
     val intermediateLibrary: Provider<File> = compilation.map { compilationInstance ->
@@ -587,6 +583,9 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     override fun buildSourceArgs(): List<String> =
         listOf("-Xinclude=${intermediateLibrary.get().absolutePath}")
 
+    @get:Internal
+    val apiFilesProvider = compilation.map {project.configurations.getByName(it.apiConfigurationName).files.filterKlibsPassedToCompiler(project)}
+
     private fun validatedExportedLibraries() {
         val exportConfiguration = exportLibraries as? Configuration ?: return
         val apiFiles = apiFilesProvider.get()
@@ -609,7 +608,7 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
             }
 
             """
-                |Following dependencies exported in the ${binaryNameProvider.get()} binary are not specified as API-dependencies of a corresponding source set:
+                |Following dependencies exported in the ${binary.name} binary are not specified as API-dependencies of a corresponding source set:
                 |
                 $failedDependenciesList
                 |
