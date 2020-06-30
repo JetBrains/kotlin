@@ -1,6 +1,8 @@
 package com.jetbrains.kotlin.structuralsearch.res
 
+import com.intellij.structuralsearch.MatchOptions
 import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
+import com.jetbrains.kotlin.structuralsearch.KotlinStructuralSearchProfile
 
 class KotlinSSPropertyTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "property"
@@ -28,4 +30,16 @@ class KotlinSSPropertyTest : KotlinSSResourceInspectionTest() {
     fun testVarRefAssign() { doTest("var '_  = a") }
 
     fun testVarNoInitializer() { doTest("var '_ = '_{0,0}") }
+
+    fun testVarGetterModifier() {
+        doTest("""
+            var '_Field = '_ 
+                @'_Ann get() = '_
+        """, KotlinStructuralSearchProfile.PROPERTY_CONTEXT) }
+
+    fun testVarSetterModifier() {
+        doTest("""
+            var '_Field = '_ 
+                private set('_x) { '_* }
+        """, KotlinStructuralSearchProfile.PROPERTY_CONTEXT) }
 }

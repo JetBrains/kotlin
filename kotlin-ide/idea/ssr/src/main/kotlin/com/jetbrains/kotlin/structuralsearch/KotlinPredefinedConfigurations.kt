@@ -1,5 +1,6 @@
 package com.jetbrains.kotlin.structuralsearch
 
+import com.intellij.structuralsearch.PatternContext
 import com.intellij.structuralsearch.PredefinedConfigurationUtil.createSearchTemplateInfo
 import com.intellij.structuralsearch.plugin.ui.Configuration
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -10,9 +11,14 @@ object KotlinPredefinedConfigurations {
     private val FUNCTION_TYPE = KSSRBundle.message("category.functions")
     private val OPERATOR_TYPE = KSSRBundle.message("category.operators")
     private val COMMENT_TYPE = KSSRBundle.message("category.comments")
+    private val INTERESTING_TYPE = KSSRBundle.message("category.interesting")
 
-    private fun searchTemplate(name: String, pattern: String, category: String) =
-        createSearchTemplateInfo(name, pattern, category, KotlinFileType.INSTANCE)
+    private fun searchTemplate(
+        name: String,
+        pattern: String,
+        category: String,
+        context: PatternContext = KotlinStructuralSearchProfile.DEFAULT_CONTEXT
+    ) = createSearchTemplateInfo(name, pattern, category, KotlinFileType.INSTANCE, context)
 
     fun createPredefinedTemplates(): Array<Configuration> = arrayOf(
         // Classes
@@ -183,6 +189,14 @@ object KotlinPredefinedConfigurations {
                 } while ('_Condition)
             """.trimIndent(),
             OPERATOR_TYPE
+        ),
+
+        // Interesting
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.properties.getter"),
+            "var '_Inst = '_Expr\n\tget() = '_Getter",
+            INTERESTING_TYPE,
+            KotlinStructuralSearchProfile.PROPERTY_CONTEXT
         )
     )
 }

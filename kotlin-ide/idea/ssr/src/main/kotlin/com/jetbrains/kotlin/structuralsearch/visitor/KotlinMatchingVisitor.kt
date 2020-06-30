@@ -621,16 +621,17 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         }
     }
 
-    private fun normalizeExpressionRet(expression: KtExpression?) = if (
-        expression is KtBlockExpression && expression.statements.size == 1
-    ) {
-        val firstExpr = expression.firstStatement
-        if (firstExpr is KtReturnExpression) firstExpr.returnedExpression else firstExpr
-    } else expression
+    private fun normalizeExpressionRet(expression: KtExpression?): KtExpression? = when {
+        expression is KtBlockExpression && expression.statements.size == 1 -> expression.firstStatement?.let {
+            if (it is KtReturnExpression) it.returnedExpression else it
+        }
+        else -> expression
+    }
 
-    private fun normalizeExpression(expression: KtExpression?) = if (
-        expression is KtBlockExpression && expression.statements.size == 1
-    ) expression.firstStatement else expression
+    private fun normalizeExpression(expression: KtExpression?): KtExpression? = when {
+        expression is KtBlockExpression && expression.statements.size == 1 -> expression.firstStatement
+        else -> expression
+    }
 
     override fun visitNamedFunction(function: KtNamedFunction) {
         val other = getTreeElementDepar<KtNamedFunction>() ?: return
@@ -768,12 +769,21 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && property.isVar == other.isVar
                 && myMatchingVisitor.match(property.docComment, other.docComment)
                 && (property.delegateExpressionOrInitializer == null || myMatchingVisitor.matchOptionally(
-            property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer
-        ))
+            property.delegateExpressionOrInitializer, other.delegateExpressionOrInitializer ))
+                && myMatchingVisitor.match(property.getter, other.getter)
+                && myMatchingVisitor.match(property.setter, other.setter)
         val handler = getHandler(property.nameIdentifier!!)
         if (myMatchingVisitor.result && handler is SubstitutionHandler) {
             handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
         }
+    }
+
+    override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
+        val other = getTreeElementDepar<KtPropertyAccessor>() ?: return
+        val accessorBody = if (accessor.hasBlockBody()) accessor.bodyBlockExpression else accessor.bodyExpression
+        val otherBody = if (other.hasBlockBody()) other.bodyBlockExpression else other.bodyExpression
+        myMatchingVisitor.result = myMatchingVisitor.match(accessor.modifierList, other.modifierList)
+                && myMatchingVisitor.match(normalizeExpressionRet(accessorBody), normalizeExpressionRet(otherBody))
     }
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {

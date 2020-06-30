@@ -1,6 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch
 
 import com.intellij.structuralsearch.Matcher
+import com.intellij.structuralsearch.PatternContext
 import com.intellij.structuralsearch.inspection.SSBasedInspection
 import com.intellij.structuralsearch.inspection.StructuralSearchProfileActionProvider
 import com.intellij.structuralsearch.plugin.ui.SearchConfiguration
@@ -19,13 +20,14 @@ abstract class KotlinSSResourceInspectionTest : BasePlatformTestCase() {
         myFixture.enableInspections(myInspection)
     }
 
-    protected fun doTest(pattern: String) {
+    protected fun doTest(pattern: String, context: PatternContext = KotlinStructuralSearchProfile.DEFAULT_CONTEXT) {
         myFixture.configureByFile(getTestName(true) + ".kt")
         val configuration = SearchConfiguration()
         configuration.name = "SSR"
         val options = configuration.matchOptions.apply {
             fileType = KotlinFileType.INSTANCE
             fillSearchCriteria(pattern)
+            patternContext = context
         }
         Matcher.validate(project, options)
         StructuralSearchProfileActionProvider.createNewInspection(configuration, project)

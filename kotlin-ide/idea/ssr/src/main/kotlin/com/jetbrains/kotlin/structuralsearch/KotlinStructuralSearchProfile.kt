@@ -77,10 +77,17 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         project: Project,
         physical: Boolean
     ): Array<PsiElement> {
-        val fragment = KtPsiFactory(project, false).createBlockCodeFragment("Unit\n$text", null)
-        var elements = when (fragment.lastChild) {
-            is PsiComment -> getNonWhitespaceChildren(fragment).drop(1)
-            else -> getNonWhitespaceChildren(fragment.firstChild).drop(1)
+        var elements: List<PsiElement> = listOf()
+        if (PROPERTY_CONTEXT.id == contextId) {
+            val fragment = KtPsiFactory(project, false).createProperty(text)
+            elements = listOf(getNonWhitespaceChildren(fragment).first().parent)
+            if (elements.first() !is KtProperty) return PsiElement.EMPTY_ARRAY
+        } else {
+            val fragment = KtPsiFactory(project, false).createBlockCodeFragment("Unit\n$text", null)
+            elements = when (fragment.lastChild) {
+                is PsiComment -> getNonWhitespaceChildren(fragment).drop(1)
+                else -> getNonWhitespaceChildren(fragment.firstChild).drop(1)
+            }
         }
 
         if (elements.isEmpty()) return PsiElement.EMPTY_ARRAY
@@ -187,8 +194,13 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     override fun getReplaceHandler(project: Project, replaceOptions: ReplaceOptions): DocumentBasedReplaceHandler =
         DocumentBasedReplaceHandler(project)
 
+    override fun getPatternContexts(): MutableList<PatternContext> = PATTERN_CONTEXTS
+
     companion object {
         const val TYPED_VAR_PREFIX: String = "_____"
+        val DEFAULT_CONTEXT: PatternContext = PatternContext("default", "Default")
+        val PROPERTY_CONTEXT: PatternContext = PatternContext("property", "Top Level / Class property")
+        private val PATTERN_CONTEXTS: MutableList<PatternContext> = mutableListOf(DEFAULT_CONTEXT, PROPERTY_CONTEXT)
 
         fun getNonWhitespaceChildren(fragment: PsiElement): List<PsiElement> {
             var element = fragment.firstChild
