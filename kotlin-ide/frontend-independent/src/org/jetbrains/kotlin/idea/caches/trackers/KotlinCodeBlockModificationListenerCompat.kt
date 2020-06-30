@@ -340,7 +340,11 @@ val KtFile.inBlockModifications: Collection<KtElement>
 private fun KtFile.addInBlockModifiedItem(element: KtElement) {
     val collection = putUserDataIfAbsent(IN_BLOCK_MODIFICATIONS, mutableSetOf())
     synchronized(collection) {
-        collection.add(element)
+        val needToAddBlock = collection.none { it.isAncestor(element, strict = false) }
+        if (needToAddBlock) {
+            collection.removeIf { element.isAncestor(it, strict = false) }
+            collection.add(element)
+        }
     }
     val count = getUserData(FILE_IN_BLOCK_MODIFICATION_COUNT) ?: 0
     putUserData(FILE_IN_BLOCK_MODIFICATION_COUNT, count + 1)
