@@ -6,12 +6,11 @@
   <version>0.1</version>
   <vendor url="http://jetbrains.com">JetBrains</vendor>
 
-  <depends>com.intellij.modules.androidstudio</depends>
   <depends>org.jetbrains.kotlin</depends>
   <depends>org.jetbrains.android</depends>
 
   <description>Kotlin for cross-platform mobile development.</description>
-  <idea-version since-build="201.0" until-build="201.*"/>
+  <idea-version since-build="193.0" until-build="193.*"/>
 
   <project-components>
     <component>

@@ -60,7 +60,6 @@ object KmmTemplate : Template {
 
     override val name: String = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.title")
     override val description: String = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.description")
-    override val documentationUrl = "https://www.jetbrains.com/lp/mobilecrossplatform/"
 
     override val recipe: Recipe = { data -> recipeImpl(data) }
 
@@ -69,7 +68,5 @@ object KmmTemplate : Template {
     override val uiContexts: Collection<WizardUiContext> = listOf(WizardUiContext.NewProject)
     override val widgets: Collection<Widget<*>> = emptyList()
 
-    override fun thumb() = Thumb {
-        this.javaClass.getResource("/META-INF/kmm-project-logo.png")
-    }
+    override fun thumb() = Thumb(this.javaClass.getResource("/META-INF/kmm-project-logo.png"))
 }
