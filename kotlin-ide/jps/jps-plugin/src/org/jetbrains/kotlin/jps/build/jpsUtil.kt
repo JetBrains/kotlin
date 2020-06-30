@@ -21,6 +21,10 @@ import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.module.JpsModule
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.ProductionLikeKotlinArtifacts
+import org.jetbrains.kotlin.utils.PathUtil
+import java.io.File
 
 fun ModuleChunk.isDummy(context: CompileContext): Boolean {
     val targetIndex = context.projectDescriptor.buildTargetIndex
@@ -45,3 +49,19 @@ val JpsModule.productionBuildTarget
 
 val JpsModule.testBuildTarget
     get() = ModuleBuildTarget(this, true)
+
+fun KotlinArtifacts.Companion.getInstanceForJps(context: CompileContext): KotlinArtifacts {
+    if (context.testingContext != null) {
+        val artifactsClass = Class.forName("org.jetbrains.kotlin.jps.artifacts.JpsPluginTestArtifacts")
+        return artifactsClass.getMethod("getInstance").invoke(null) as KotlinArtifacts
+    } else {
+        return JpsProductionKotlinArtifacts
+    }
+}
+
+private object JpsProductionKotlinArtifacts : ProductionLikeKotlinArtifacts() {
+    override val kotlinPluginDirectory: File by lazy {
+        val jpsPluginPath = PathUtil.getResourcePathForClass(JpsProductionKotlinArtifacts::class.java)
+        return@lazy jpsPluginPath.parentFile?.parentFile?.parentFile ?: error("Can't find Kotlin plugin root directory")
+    }
+}

@@ -25,6 +25,7 @@ import java.io.FileNotFoundException
  */
 class JpsPluginTestArtifacts private constructor(override val kotlinPluginDirectory: File) : ProductionLikeKotlinArtifacts() {
     companion object {
+        @JvmStatic
         fun getInstance(): JpsPluginTestArtifacts {
             val classFile = File(PathUtil.getJarPathForClass(JpsPluginTestArtifacts::class.java))
             if (!classFile.exists()) {
