@@ -10,6 +10,7 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.completion.ml.common.PrefixMatchingUtil
 import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.lang.Language
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.registry.Registry
@@ -263,7 +264,7 @@ class MLSorter : CompletionFinalSorter() {
   interface SortingRestriction {
     companion object {
       fun forLanguage(language: Language): SortingRestriction {
-        if (language.id.equals("Java", ignoreCase = true)) {
+        if (language.id.equals("Java", ignoreCase = true) && !ApplicationManager.getApplication().isUnitTestMode) {
           return SortOnlyWithRecommendersScore()
         }
         return SortAll()
