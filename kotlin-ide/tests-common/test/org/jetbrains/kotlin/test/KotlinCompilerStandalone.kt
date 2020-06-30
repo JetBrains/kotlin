@@ -66,11 +66,16 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
     init {
         assert(platform is JdkPlatform || platform is JsPlatform) { "Only JVM and JS targets are supported" }
 
-        if (platform is JdkPlatform && includeKotlinStdlib) {
-            this.classpath = classpath + listOf(TestKotlinArtifacts.kotlinStdlib, TestKotlinArtifacts.jetbrainsAnnotations)
-        } else {
-            this.classpath = classpath
+        val completeClasspath = classpath.toMutableList()
+
+        if (includeKotlinStdlib) {
+            when (platform) {
+                is JdkPlatform -> completeClasspath += listOf(TestKotlinArtifacts.kotlinStdlib, TestKotlinArtifacts.jetbrainsAnnotations)
+                is JsPlatform -> completeClasspath += TestKotlinArtifacts.kotlinStdlibJs
+            }
         }
+
+        this.classpath = completeClasspath
     }
 
     fun compile(): File {
@@ -116,18 +121,26 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
 
         args += files.map { it.absolutePath }
         if (classpath.isNotEmpty()) {
-            args += "-classpath"
+            when (platform) {
+                is JdkPlatform -> args += "-classpath"
+                is JsPlatform -> args += "-libraries"
+                else -> error("Unexpected platform $platform")
+            }
+
             args += classpath.joinToString(File.pathSeparator) { it.absolutePath }
         }
-        args += options
+
+        args += "-no-stdlib"
 
         if (files.none { it.extension.toLowerCase() == "kts" }) {
             args += "-Xdisable-default-scripting-plugin"
         }
 
+        args += options
+
         val kotlincFun = when (platform) {
             is JdkPlatform -> {
-                args += listOf("-no-stdlib", "-d", target.absolutePath)
+                args += listOf("-d", target.absolutePath)
                 if (hasJavaFiles) {
                     args += "-Xjava-source-roots=" + sources.joinToString(File.pathSeparator) { it.absolutePath }
                 }
