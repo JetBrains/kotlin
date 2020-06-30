@@ -100,6 +100,11 @@ class PsiDefaultLambda(
     override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method {
         return sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod
     }
+
+    override fun findInvokeMethodDescriptor(): FunctionDescriptor =
+        parameterDescriptor.type.memberScope
+            .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
+            .single()
 }
 
 abstract class DefaultLambda(
@@ -150,14 +155,10 @@ abstract class DefaultLambda(
             }
         }, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES or ClassReader.SKIP_DEBUG)
 
-        invokeMethodDescriptor =
-            parameterDescriptor.type.memberScope
-                .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
-                .single()
-                .let {
-                    //property reference generates erased 'get' method
-                    if (isPropertyReference) it.original else it
-                }
+        invokeMethodDescriptor = findInvokeMethodDescriptor().let {
+            //property reference generates erased 'get' method
+            if (isPropertyReference) it.original else it
+        }
 
         val descriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *capturedArgs)
         val constructor = getMethodNode(
@@ -205,6 +206,8 @@ abstract class DefaultLambda(
     }
 
     protected abstract fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method
+
+    protected abstract fun findInvokeMethodDescriptor(): FunctionDescriptor
 
     private companion object {
         val PROPERTY_REFERENCE_SUPER_CLASSES =
