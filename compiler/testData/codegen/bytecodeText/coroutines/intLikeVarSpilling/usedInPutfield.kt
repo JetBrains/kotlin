@@ -71,8 +71,4 @@ fun box(): String {
     return "OK"
 }
 
-// 1 PUTFIELD .*\.B\$0 : B
-// 1 PUTFIELD .*\.C\$0 : C
-// 1 PUTFIELD .*\.S\$0 : S
-// 1 PUTFIELD .*\.Z\$0 : Z
-// 1 PUTFIELD .*\.I\$0 : I
+// 5 PUTFIELD .*\.I\$0 : I

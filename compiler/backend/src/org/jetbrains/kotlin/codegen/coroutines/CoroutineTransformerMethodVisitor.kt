@@ -647,7 +647,7 @@ class CoroutineTransformerMethodVisitor(
                     }
 
             for ((index, basicValue) in variablesToSpill) {
-                if (basicValue.type == NULL_TYPE) {
+                if (basicValue == StrictBasicValue.NULL_VALUE) {
                     postponedActions.add {
                         with(instructions) {
                             insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
