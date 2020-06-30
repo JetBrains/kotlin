@@ -33,7 +33,7 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
   }
 
   public boolean isShowDiffEnabled() {
-    return myState.rankingEnabled && myState.showDiff;
+    return myState.showDiff;
   }
 
   public void setRankingEnabled(boolean value) {

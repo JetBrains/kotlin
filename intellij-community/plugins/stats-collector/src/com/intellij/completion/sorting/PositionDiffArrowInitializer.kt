@@ -29,8 +29,7 @@ class PositionDiffArrowInitializer : ProjectManagerListener {
     LookupManager.getInstance(project).addPropertyChangeListener(object : LookupTracker() {
       private fun shouldShowDiff(lookupStorage: LookupStorage): Boolean {
         val mlRankingSettings = CompletionMLRankingSettings.getInstance()
-        if (!mlRankingSettings.isShowDiffEnabled) return false
-        return lookupStorage.model != null
+        return lookupStorage.model != null && mlRankingSettings.isShowDiffEnabled
       }
 
       override fun lookupCreated(lookup: LookupImpl, storage: MutableLookupStorage) {

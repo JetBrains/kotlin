@@ -47,8 +47,10 @@ class CompletionFileLogger(private val installationUID: String,
     event.isAutoPopup = CompletionUtil.getCurrentCompletionParameters()?.isAutoPopup
     event.fillCompletionParameters()
     event.additionalDetails["alphabetical"] = UISettings.instance.sortLookupElementsLexicographically.toString()
-    if (CompletionMLRankingSettings.getInstance().isShowDiffEnabled) {
-      event.additionalDetails["diff"] = "1"
+    if (lookupStorage != null) {
+      if (lookupStorage.mlUsed() && CompletionMLRankingSettings.getInstance().isShowDiffEnabled) {
+        event.additionalDetails["diff"] = "1"
+      }
     }
 
     eventLogger.log(event)
