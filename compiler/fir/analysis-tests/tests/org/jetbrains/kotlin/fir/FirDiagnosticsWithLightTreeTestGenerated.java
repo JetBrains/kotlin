@@ -243,6 +243,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/analysis-tests/testData/resolve/lambdaArgInScopeFunction.kt");
     }
 
+    @TestMetadata("lambdaInLhsOfTypeOperatorCall.kt")
+    public void testLambdaInLhsOfTypeOperatorCall() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/lambdaInLhsOfTypeOperatorCall.kt");
+    }
+
     @TestMetadata("lambdaPropertyTypeInference.kt")
     public void testLambdaPropertyTypeInference() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/lambdaPropertyTypeInference.kt");
