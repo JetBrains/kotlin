@@ -240,7 +240,7 @@ class FindInProjectTask {
             String message = FindBundle.message("find.excessive.total.size.prompt",
                                                 UsageViewManagerImpl.presentableSize(myTotalFilesSize.longValue()),
                                                 ApplicationNamesInfo.getInstance().getProductName());
-            UsageLimitUtil.Result ret = UsageLimitUtil.showTooManyUsagesWarning(myProject, message, processPresentation.getUsageViewPresentation());
+            UsageLimitUtil.Result ret = UsageLimitUtil.showTooManyUsagesWarning(myProject, message);
             if (ret == UsageLimitUtil.Result.ABORT) {
               myProgress.cancel();
             }
