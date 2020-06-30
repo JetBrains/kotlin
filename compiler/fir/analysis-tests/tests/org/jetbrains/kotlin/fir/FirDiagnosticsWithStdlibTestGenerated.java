@@ -108,6 +108,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/factoryFunctionOverloads.kt");
     }
 
+    @TestMetadata("fillInStackTrace.kt")
+    public void testFillInStackTrace() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/fillInStackTrace.kt");
+    }
+
     @TestMetadata("functionAndFunctionN.kt")
     public void testFunctionAndFunctionN() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/functionAndFunctionN.kt");

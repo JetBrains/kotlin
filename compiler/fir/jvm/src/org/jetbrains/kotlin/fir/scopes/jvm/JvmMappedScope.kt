@@ -30,11 +30,11 @@ class JvmMappedScope(
             val jvmSignature = symbol.fir.computeJvmDescriptor()
                 .replace("kotlin/Any", "java/lang/Object")
                 .replace("kotlin/String", "java/lang/String")
+                .replace("kotlin/Throwable", "java/lang/Throwable")
             if (jvmSignature in whiteListSignatures) {
                 processor(symbol)
             }
         }
-
 
         declaredMemberScope.processFunctionsByName(name, processor)
     }
