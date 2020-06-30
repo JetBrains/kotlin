@@ -310,7 +310,7 @@ public abstract class AbstractLayoutCodeProcessor {
   private void runProcessFiles() {
     boolean isSuccess = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-      return processAllUnderProgress(indicator);
+      return processFilesUnderProgress(indicator);
     }, myCommandName, true, myProject);
 
     if (isSuccess && myPostRunnable != null) {
@@ -335,7 +335,7 @@ public abstract class AbstractLayoutCodeProcessor {
     new ReformatFilesTask(new EmptyProgressIndicator()).performFileProcessing(myFile);
   }
 
-  public boolean processAllUnderProgress(ProgressIndicator indicator) {
+  public boolean processFilesUnderProgress(@NotNull ProgressIndicator indicator) {
     indicator.setIndeterminate(false);
     ReformatFilesTask task = new ReformatFilesTask(indicator);
     return task.process();
