@@ -54,6 +54,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/emptyMultifileFacade.kt");
     }
 
+    @TestMetadata("enum.kt")
+    public void testEnum() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/enum.kt");
+    }
+
     @TestMetadata("extension.kt")
     public void testExtension() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/extension.kt");

@@ -576,6 +576,9 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         // There is never a problem with visibility of inline functions, as those don't end up as Java entities
         if (declaration is IrFunction && declaration.isInline) return true
 
+        // Enum entry constructors are generated as package-private and are accessed only from corresponding enum class
+        if (declaration is IrConstructor && declaration.constructedClass.isEnumEntry) return true
+
         // `internal` maps to public and requires no accessor.
         if (!withSuper && !declaration.visibility.isPrivate && !declaration.visibility.isProtected) return true
 

@@ -70,7 +70,8 @@ class FunctionCodegen(
         }
 
         if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
-            irFunction.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+            irFunction.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
+            irFunction.origin != IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
         ) {
             val skipNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE != 0 || flags and Opcodes.ACC_SYNTHETIC != 0
             object : AnnotationCodegen(classCodegen, context, skipNullabilityAnnotations) {
@@ -145,6 +146,7 @@ class FunctionCodegen(
         val modalityFlag = when ((this as? IrSimpleFunction)?.modality) {
             Modality.FINAL -> when {
                 origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER -> 0
+                origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> 0
                 parentAsClass.isInterface && body != null -> 0
                 parentAsClass.isAnnotationClass && !isStatic -> Opcodes.ACC_ABSTRACT
                 else -> Opcodes.ACC_FINAL
