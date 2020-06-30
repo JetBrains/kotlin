@@ -113,8 +113,8 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
         LABEL (L4)
           ICONST_0
           ISTORE (3)
-          GOTO (L5)
-        LABEL (L6)
+          GOTO (L2)
+        LABEL (L5)
           ALOAD (7)
           ALOAD (2)
           ICONST_0
@@ -131,21 +131,16 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           ICONST_1
           IOR
           ISTORE (5)
-          GOTO (L5)
-        LABEL (L7)
+          GOTO (L2)
+        LABEL (L6)
           NEW
           DUP
           ILOAD (4)
           INVOKESPECIAL (kotlinx/serialization/UnknownFieldException, <init>, (I)V)
           ATHROW
-        LABEL (L5)
-        LINENUMBER (13)
-          GOTO (L2)
         LABEL (L3)
           ALOAD (7)
           ALOAD (2)
-        LABEL (L8)
-        LINENUMBER (12)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, endStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
           NEW
           DUP
@@ -156,7 +151,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           CHECKCAST
           INVOKESPECIAL (ListOfUsers, <init>, (ILjava/util/List;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN
-        LABEL (L9)
+        LABEL (L7)
     }
 
     public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder) {
@@ -295,10 +290,8 @@ public final class ListOfUsers : java/lang/Object {
           ALOAD (0)
           ALOAD (2)
           PUTFIELD (list, Ljava/util/List;)
-        LABEL (L2)
-        LINENUMBER (13)
           RETURN
-        LABEL (L3)
+        LABEL (L2)
     }
 
     public final java.util.List getList()
@@ -411,8 +404,8 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
         LABEL (L4)
           ICONST_0
           ISTORE (3)
-          GOTO (L5)
-        LABEL (L6)
+          GOTO (L2)
+        LABEL (L5)
           ALOAD (7)
           ALOAD (2)
           ICONST_0
@@ -425,21 +418,16 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ICONST_1
           IOR
           ISTORE (5)
-          GOTO (L5)
-        LABEL (L7)
+          GOTO (L2)
+        LABEL (L6)
           NEW
           DUP
           ILOAD (4)
           INVOKESPECIAL (kotlinx/serialization/UnknownFieldException, <init>, (I)V)
           ATHROW
-        LABEL (L5)
-        LINENUMBER (10)
-          GOTO (L2)
         LABEL (L3)
           ALOAD (7)
           ALOAD (2)
-        LABEL (L8)
-        LINENUMBER (9)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, endStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
           NEW
           DUP
@@ -450,7 +438,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           CHECKCAST
           INVOKESPECIAL (OptionalUser, <init>, (ILUser;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN
-        LABEL (L9)
+        LABEL (L7)
     }
 
     public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder) {
@@ -636,7 +624,6 @@ public final class OptionalUser : java/lang/Object {
           ALOAD (2)
           PUTFIELD (user, LUser;)
         LABEL (L4)
-        LINENUMBER (10)
           RETURN
         LABEL (L5)
     }
@@ -779,8 +766,8 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
         LABEL (L4)
           ICONST_0
           ISTORE (3)
-          GOTO (L5)
-        LABEL (L6)
+          GOTO (L2)
+        LABEL (L5)
           ALOAD (8)
           ALOAD (2)
           ICONST_0
@@ -790,8 +777,8 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ICONST_1
           IOR
           ISTORE (5)
-          GOTO (L5)
-        LABEL (L7)
+          GOTO (L2)
+        LABEL (L6)
           ALOAD (8)
           ALOAD (2)
           ICONST_1
@@ -801,21 +788,16 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ICONST_2
           IOR
           ISTORE (5)
-          GOTO (L5)
-        LABEL (L8)
+          GOTO (L2)
+        LABEL (L7)
           NEW
           DUP
           ILOAD (4)
           INVOKESPECIAL (kotlinx/serialization/UnknownFieldException, <init>, (I)V)
           ATHROW
-        LABEL (L5)
-        LINENUMBER (7)
-          GOTO (L2)
         LABEL (L3)
           ALOAD (8)
           ALOAD (2)
-        LABEL (L9)
-        LINENUMBER (6)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, endStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
           NEW
           DUP
@@ -826,7 +808,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           CHECKCAST
           INVOKESPECIAL (User, <init>, (ILjava/lang/String;Ljava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN
-        LABEL (L10)
+        LABEL (L8)
     }
 
     public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder) {
@@ -973,26 +955,21 @@ public final class User : java/lang/Object {
           ALOAD (0)
           ALOAD (2)
           PUTFIELD (firstName, Ljava/lang/String;)
-        LABEL (L2)
-        LINENUMBER (7)
-        LINENUMBER (6)
           ILOAD (1)
           ICONST_2
           IAND
-          IFNE (L3)
+          IFNE (L2)
           NEW
           DUP
           LDC (lastName)
           INVOKESPECIAL (kotlinx/serialization/MissingFieldException, <init>, (Ljava/lang/String;)V)
           ATHROW
-        LABEL (L3)
+        LABEL (L2)
           ALOAD (0)
           ALOAD (3)
           PUTFIELD (lastName, Ljava/lang/String;)
-        LABEL (L4)
-        LINENUMBER (7)
           RETURN
-        LABEL (L5)
+        LABEL (L3)
     }
 
     public final java.lang.String getFirstName()

@@ -85,7 +85,7 @@ abstract class AbstractSteppingTest : AbstractDebugTest() {
                     LINENUMBERS_MARKER -> TargetBackend.ANY
                     JVM_LINENUMBER_MARKER -> TargetBackend.JVM
                     JVM_IR_LINENUMBER_MARKER -> TargetBackend.JVM_IR
-                    else -> error("Expected JVM backend")
+                    else -> error("Expected JVM backend: $line")
                 }
                 continue
             }
