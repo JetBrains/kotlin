@@ -9873,6 +9873,39 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/obsoleteKotlinJsPackages")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ObsoleteKotlinJsPackages extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInObsoleteKotlinJsPackages() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/obsoleteKotlinJsPackages"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("kotlinBrowserPropertyImport.kt")
+        public void testKotlinBrowserPropertyImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserPropertyImport.kt");
+        }
+
+        @TestMetadata("kotlinBrowserStarImport.kt")
+        public void testKotlinBrowserStarImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserStarImport.kt");
+        }
+
+        @TestMetadata("kotlinDomPropertyImport.kt")
+        public void testKotlinDomPropertyImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinDomPropertyImport.kt");
+        }
+
+        @TestMetadata("kotlinDomStarImport.kt")
+        public void testKotlinDomStarImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinDomStarImport.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/optimizeImports")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
