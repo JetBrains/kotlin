@@ -201,7 +201,7 @@ internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
         // Uses `getProgressionLastElement(UInt, UInt, Int): UInt`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.uInt!!],
         unsignedType = symbols.uInt!!.defaultType,
-        unsignedConversionFunction = symbols.toUIntByExtensionReceiver.getValue(symbols.int.defaultType.toKotlinType())
+        unsignedConversionFunction = symbols.toUIntByExtensionReceiver.getValue(symbols.int)
     ) {
     override fun DeclarationIrBuilder.minValueExpression() = irInt(UInt.MIN_VALUE.toInt())
 
@@ -219,7 +219,7 @@ internal class ULongProgressionType(symbols: Symbols<CommonBackendContext>) :
         // Uses `getProgressionLastElement(ULong, ULong, Long): ULong`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.uLong!!],
         unsignedType = symbols.uLong!!.defaultType,
-        unsignedConversionFunction = symbols.toULongByExtensionReceiver.getValue(symbols.long.defaultType.toKotlinType())
+        unsignedConversionFunction = symbols.toULongByExtensionReceiver.getValue(symbols.long)
     ) {
     override fun DeclarationIrBuilder.minValueExpression() = irLong(ULong.MIN_VALUE.toLong())
 
