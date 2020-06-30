@@ -221,7 +221,7 @@ private fun FirTypeParameter.getErasedUpperBound(
 ): ConeKotlinType {
     if (this === potentiallyRecursiveTypeParameter) return defaultValue()
 
-    val firstUpperBound = this.bounds.first().coneTypeUnsafe<ConeKotlinType>()
+    val firstUpperBound = this.bounds.first().coneType
 
     return getErasedVersionOfFirstUpperBound(firstUpperBound, mutableSetOf(this, potentiallyRecursiveTypeParameter), defaultValue)
 }
@@ -256,7 +256,7 @@ private fun getErasedVersionOfFirstUpperBound(
             val current = firstUpperBound.lookupTag.typeParameterSymbol.fir
 
             if (alreadyVisitedParameters.add(current)) {
-                val nextUpperBound = current.bounds.first().coneTypeUnsafe<ConeKotlinType>()
+                val nextUpperBound = current.bounds.first().coneType
                 getErasedVersionOfFirstUpperBound(nextUpperBound, alreadyVisitedParameters, defaultValue)
             } else {
                 defaultValue()

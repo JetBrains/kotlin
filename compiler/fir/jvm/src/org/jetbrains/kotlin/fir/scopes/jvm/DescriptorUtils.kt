@@ -108,7 +108,7 @@ private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
         }
         is ConeTypeParameterType -> {
             val representative = coneType.lookupTag.typeParameterSymbol.fir.bounds.firstOrNull {
-                (it as? FirResolvedTypeRef)?.type is ConeClassLikeType
+                it.coneType is ConeClassLikeType
             }
             if (representative == null || representative is FirImplicitNullableAnyTypeRef || representative is FirImplicitAnyTypeRef) {
                 append("Ljava/lang/Object")

@@ -418,7 +418,7 @@ class DeclarationsConverter(
                             delegatedSuperTypeRef = buildResolvedTypeRef {
                                 type = ConeClassLikeTypeImpl(
                                     implicitEnumType.type.lookupTag,
-                                    arrayOf(selfType.coneTypeUnsafe()),
+                                    arrayOf(selfType.type),
                                     isNullable = false
                                 )
                             }

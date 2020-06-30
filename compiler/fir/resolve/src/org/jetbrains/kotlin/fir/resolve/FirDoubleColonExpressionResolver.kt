@@ -132,7 +132,7 @@ class FirDoubleColonExpressionResolver(
     }
 
     private fun resolveExpressionOnLHS(expression: FirExpression): DoubleColonLHS.Expression? {
-        val type = (expression.typeRef as? FirResolvedTypeRef)?.type ?: return null
+        val type = expression.typeRef.coneType
 
         if (expression is FirResolvedQualifier) {
             val firClass = expression.expandedRegularClassIfAny() ?: return null
@@ -161,9 +161,8 @@ class FirDoubleColonExpressionResolver(
                 if (typeArgument == null) ConeStarProjection
                 else when (typeArgument) {
                     is FirTypeProjectionWithVariance -> {
-                        val coneType = typeArgument.typeRef.coneTypeSafe<ConeKotlinType>()
-                        if (coneType == null) ConeStarProjection
-                        else when (typeArgument.variance) {
+                        val coneType = typeArgument.typeRef.coneType
+                        when (typeArgument.variance) {
                             Variance.INVARIANT -> coneType
                             Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(coneType)
                             Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(coneType)

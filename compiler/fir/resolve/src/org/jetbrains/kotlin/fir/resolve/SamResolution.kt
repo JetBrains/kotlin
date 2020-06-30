@@ -148,7 +148,7 @@ class FirSamResolverImpl(
             newTypeParameter.bounds += declared.bounds.mapNotNull { typeRef ->
                 buildResolvedTypeRef {
                     source = typeRef.source
-                    type = substitutor.substituteOrSelf(typeRef.coneTypeSafe() ?: return@mapNotNull null)
+                    type = substitutor.substituteOrSelf(typeRef.coneType)
                 }
             }
         }
@@ -333,9 +333,7 @@ fun FirSimpleFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
 }
 
 private fun FirValueParameter.hasTypeOf(classId: ClassId, allowNullable: Boolean): Boolean {
-    val type = returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return false
-
-    val classLike = when (type) {
+    val classLike = when (val type = returnTypeRef.coneType) {
         is ConeClassLikeType -> type
         is ConeFlexibleType -> type.upperBound as? ConeClassLikeType ?: return false
         else -> return false
@@ -354,7 +352,7 @@ private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(): ConeLookupTagB
 
     return createFunctionalType(
         parameterTypes, receiverType = null,
-        rawReturnType = returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $this"),
+        rawReturnType = returnTypeRef.coneType,
         isSuspend = this.isSuspend
     )
 }

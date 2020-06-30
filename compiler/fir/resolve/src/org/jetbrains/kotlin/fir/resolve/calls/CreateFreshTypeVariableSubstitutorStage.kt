@@ -64,7 +64,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 is FirTypeProjectionWithVariance -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     getTypePreservingFlexibilityWrtTypeVariable(
-                        typeArgument.typeRef.coneTypeUnsafe(),
+                        typeArgument.typeRef.coneType,
                         typeParameter,
                         candidate.bodyResolveComponents.inferenceComponents.ctx
                     ),
@@ -72,7 +72,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 )
                 is FirStarProjection -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
-                    typeParameter.symbol.fir.bounds.firstOrNull()?.coneTypeUnsafe()
+                    typeParameter.symbol.fir.bounds.firstOrNull()?.coneType
                         ?: sink.components.session.builtinTypes.nullableAnyType.type,
                     SimpleConstraintSystemConstraintPosition
                 )
@@ -98,7 +98,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
     private fun FirTypeParameterRef.shouldBeFlexible(context: ConeTypeContext): Boolean {
         return symbol.fir.bounds.any {
-            val type = it.coneTypeUnsafe<ConeKotlinType>()
+            val type = it.coneType
             type is ConeFlexibleType || with(context) {
                 (type.typeConstructor() as? FirTypeParameterSymbol)?.fir?.shouldBeFlexible(context) ?: false
             }
@@ -147,7 +147,7 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         //val position = DeclaredUpperBoundConstraintPosition(typeParameter)
 
         for (upperBound in typeParameter.symbol.fir.bounds) {
-            freshVariable.addSubtypeConstraint(upperBound.coneTypeUnsafe()/*, position*/)
+            freshVariable.addSubtypeConstraint(upperBound.coneType/*, position*/)
         }
     }
 

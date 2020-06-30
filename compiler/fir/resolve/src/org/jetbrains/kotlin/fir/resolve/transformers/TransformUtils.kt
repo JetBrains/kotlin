@@ -97,7 +97,7 @@ internal fun FirValueParameter.transformVarargTypeToArrayType() {
 }
 
 internal fun FirTypedDeclaration.transformTypeToArrayType() {
-    val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+    val returnType = returnTypeRef.coneType
     transformReturnTypeRef(
         StoreType,
         returnTypeRef.withReplacedConeType(

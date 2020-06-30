@@ -37,7 +37,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
                 useSiteSession,
                 FirStandardOverrideChecker(useSiteSession),
                 fir.bounds.mapNotNullTo(mutableListOf()) {
-                    it.coneTypeUnsafe<ConeKotlinType>().scope(useSiteSession, scopeSession)
+                    it.coneType.scope(useSiteSession, scopeSession)
                 }
             )
         }

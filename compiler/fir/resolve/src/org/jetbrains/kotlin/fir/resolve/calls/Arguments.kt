@@ -132,7 +132,7 @@ private fun Candidate.resolveBlockArgument(
     if (returnArguments.isEmpty()) {
         checkApplicabilityForArgumentType(
             csBuilder,
-            block.typeRef.coneTypeUnsafe(),
+            block.typeRef.coneType,
             expectedType?.type,
             SimpleConstraintSystemConstraintPosition,
             isReceiver = false,
@@ -177,9 +177,9 @@ fun Candidate.resolveSubCallArgument(
      *   placeholder type with value 0, but argument contains type with proper literal value
      */
     val type: ConeKotlinType = if (candidate.symbol.fir is FirIntegerOperator) {
-        (argument as FirFunctionCall).resultType.coneTypeUnsafe()
+        (argument as FirFunctionCall).resultType.coneType
     } else {
-        sink.components.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).coneTypeUnsafe()
+        sink.components.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).type
     }
     val argumentType = candidate.substitutor.substituteOrSelf(type)
     resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isDispatch, useNullableArgumentType)
@@ -308,7 +308,7 @@ internal fun Candidate.resolveArgument(
 
 private fun Candidate.prepareExpectedType(session: FirSession, argument: FirExpression, parameter: FirValueParameter?): ConeKotlinType? {
     if (parameter == null) return null
-    if (parameter.returnTypeRef is FirILTTypeRefPlaceHolder) return argument.resultType.coneTypeUnsafe()
+    if (parameter.returnTypeRef is FirILTTypeRefPlaceHolder) return argument.resultType.coneType
     val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
     val expectedType = getExpectedTypeWithSAMConversion(session, argument, basicExpectedType) ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
@@ -350,9 +350,9 @@ internal fun FirExpression.getExpectedType(
     }
 
     return if (parameter.isVararg && shouldUnwrapVarargType) {
-        parameter.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().varargElementType(session)
+        parameter.returnTypeRef.coneType.varargElementType(session)
     } else {
-        parameter.returnTypeRef.coneTypeUnsafe()
+        parameter.returnTypeRef.coneType
     }
 }
 

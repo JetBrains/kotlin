@@ -85,7 +85,7 @@ class Fir2IrDeclarationStorage(
         return irFunction.valueParameters.size == firFunction.valueParameters.size &&
                 irFunction.valueParameters.zip(firFunction.valueParameters).all { (irParameter, firParameter) ->
                     val irType = irParameter.type
-                    val firType = (firParameter.returnTypeRef as FirResolvedTypeRef).type
+                    val firType = firParameter.returnTypeRef.coneType
                     if (irType is IrSimpleType) {
                         when (val irClassifierSymbol = irType.classifier) {
                             is IrTypeParameterSymbol -> {
@@ -741,7 +741,7 @@ class Fir2IrDeclarationStorage(
                     startOffset, endOffset, origin, symbol,
                     valueParameter.name, index, type,
                     if (!valueParameter.isVararg) null
-                    else valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.arrayElementType()?.toIrType(typeContext),
+                    else valueParameter.returnTypeRef.coneType.arrayElementType()?.toIrType(typeContext),
                     valueParameter.isCrossinline, valueParameter.isNoinline
                 ).apply {
                     descriptor.bind(this)

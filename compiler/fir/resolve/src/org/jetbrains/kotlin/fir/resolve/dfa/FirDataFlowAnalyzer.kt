@@ -103,8 +103,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     private var contractDescriptionVisitingMode = false
 
-    protected val any = components.session.builtinTypes.anyType.coneTypeUnsafe<ConeKotlinType>()
-    private val nullableNothing = components.session.builtinTypes.nullableNothingType.coneTypeUnsafe<ConeKotlinType>()
+    protected val any = components.session.builtinTypes.anyType.type
+    private val nullableNothing = components.session.builtinTypes.nullableNothingType.type
 
     // ----------------------------------- Requests -----------------------------------
 
@@ -263,7 +263,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     fun exitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall) {
         val node = graphBuilder.exitTypeOperatorCall(typeOperatorCall).mergeIncomingFlow()
         if (typeOperatorCall.operation !in FirOperation.TYPES) return
-        val type = typeOperatorCall.conversionTypeRef.coneTypeUnsafe<ConeKotlinType>()
+        val type = typeOperatorCall.conversionTypeRef.coneType
         val operandVariable = variableStorage.getOrCreateVariable(node.previousFlow, typeOperatorCall.argument)
         val flow = node.flow
 
@@ -388,8 +388,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     private fun processEq(node: OperatorCallNode, leftOperand: FirExpression, rightOperand: FirExpression, operation: FirOperation) {
-        val leftIsNullable = leftOperand.coneType?.isMarkedNullable ?: return
-        val rightIsNullable = rightOperand.coneType?.isMarkedNullable ?: return
+        val leftIsNullable = leftOperand.coneType.isMarkedNullable
+        val rightIsNullable = rightOperand.coneType.isMarkedNullable
         // left == right && right not null -> left != null
         when {
             leftIsNullable && rightIsNullable -> return
@@ -638,8 +638,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         safeCall.receiver.let { receiver ->
-            val type = receiver.coneType
-                ?.takeIf { it.isMarkedNullable }
+            val type = receiver.coneType.takeIf { it.isMarkedNullable }
                 ?.withNullability(ConeNullability.NOT_NULL)
                 ?: return@let
 
@@ -837,7 +836,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         if (isAssignment) {
             if (initializer is FirConstExpression<*> && initializer.kind == FirConstKind.Null) return
-            flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneTypeUnsafe())
+            flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)
         }
     }
 

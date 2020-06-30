@@ -119,7 +119,7 @@ private fun coneFlexibleOrSimpleType(
             // TODO: we need enhancement for type parameter bounds for this code to work properly
             // At this moment, this condition is always true
             if (lookupTag.typeParameterSymbol.fir.bounds.any {
-                    val type = (it as FirResolvedTypeRef).type
+                    val type = it.coneType
                     type is ConeTypeParameterType || type.isNullable
                 }
             ) {

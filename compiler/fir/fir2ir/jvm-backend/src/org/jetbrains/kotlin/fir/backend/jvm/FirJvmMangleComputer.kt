@@ -135,7 +135,7 @@ open class FirJvmMangleComputer(
 
         receiverTypeRef?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-            mangleType(builder, it.coneTypeUnsafe())
+            mangleType(builder, it.coneType)
         }
 
         valueParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
@@ -148,7 +148,7 @@ open class FirJvmMangleComputer(
             }
 
         if (!isCtor && !returnTypeRef.isUnit && addReturnType()) {
-            mangleType(builder, returnTypeRef.coneTypeUnsafe())
+            mangleType(builder, returnTypeRef.coneType)
         }
     }
 
@@ -171,7 +171,7 @@ open class FirJvmMangleComputer(
     }
 
     private fun mangleValueParameter(vpBuilder: StringBuilder, param: FirValueParameter) {
-        mangleType(vpBuilder, param.returnTypeRef.coneTypeUnsafe())
+        mangleType(vpBuilder, param.returnTypeRef.coneType)
 
         if (param.isVararg) {
             vpBuilder.appendSignature(MangleConstant.VAR_ARG_MARK)
@@ -182,7 +182,7 @@ open class FirJvmMangleComputer(
         tpBuilder.appendSignature(index)
         tpBuilder.appendSignature(MangleConstant.UPPER_BOUND_SEPARATOR)
 
-        param.bounds.map { it.coneTypeUnsafe<ConeKotlinType>() }.collectForMangler(tpBuilder, MangleConstant.UPPER_BOUNDS) {
+        param.bounds.map { it.coneType }.collectForMangler(tpBuilder, MangleConstant.UPPER_BOUNDS) {
             mangleType(this, it)
         }
     }
@@ -262,7 +262,7 @@ open class FirJvmMangleComputer(
 
         property.receiverTypeRef?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-            mangleType(builder, it.coneTypeUnsafe())
+            mangleType(builder, it.coneType)
         }
 
         property.typeParameters.withIndex().toList().collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { (index, typeParameter) ->

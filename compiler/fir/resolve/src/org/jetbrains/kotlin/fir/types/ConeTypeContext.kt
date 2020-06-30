@@ -228,7 +228,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         //require(this is ConeSymbol)
         return when (this) {
             is ConeTypeVariableTypeConstructor -> emptyList()
-            is FirTypeParameterSymbol -> fir.bounds.map { it.coneTypeUnsafe() }
+            is FirTypeParameterSymbol -> fir.bounds.map { it.coneType }
             is FirClassSymbol<*> -> fir.superConeTypes
             is FirTypeAliasSymbol -> listOfNotNull(fir.expandedConeType)
             is ConeCapturedTypeConstructor -> supertypes!!
@@ -259,7 +259,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeParameterMarker.getUpperBound(index: Int): KotlinTypeMarker {
         require(this is FirTypeParameterSymbol)
-        return this.fir.bounds[index].coneTypeUnsafe()
+        return this.fir.bounds[index].coneType
     }
 
     override fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker {
@@ -477,7 +477,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker {
         require(this is FirTypeParameterSymbol)
-        return this.fir.bounds.getOrNull(0)?.let { (it as? FirResolvedTypeRef)?.type }
+        return this.fir.bounds.getOrNull(0)?.let { it.coneType }
             ?: session.builtinTypes.nullableAnyType.type
     }
 

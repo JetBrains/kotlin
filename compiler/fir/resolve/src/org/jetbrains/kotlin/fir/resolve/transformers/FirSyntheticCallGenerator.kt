@@ -185,7 +185,7 @@ class FirSyntheticCallGenerator(
 
         val (typeParameter, returnType) = generateSyntheticSelectTypeParameter()
 
-        val argumentType = buildResolvedTypeRef { type = returnType.coneTypeUnsafe<ConeKotlinType>().createArrayOf() }
+        val argumentType = buildResolvedTypeRef { type = returnType.type.createArrayOf() }
         val typeArgument = buildTypeProjectionWithVariance {
             typeRef = returnType
             variance = Variance.INVARIANT
@@ -208,7 +208,7 @@ class FirSyntheticCallGenerator(
         val (typeParameter, returnType) = generateSyntheticSelectTypeParameter()
 
         val argumentType = buildResolvedTypeRef {
-            type = returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.typeContext)
+            type = returnType.type.withNullability(ConeNullability.NULLABLE, session.typeContext)
         }
         val typeArgument = buildTypeProjectionWithVariance {
             typeRef = returnType

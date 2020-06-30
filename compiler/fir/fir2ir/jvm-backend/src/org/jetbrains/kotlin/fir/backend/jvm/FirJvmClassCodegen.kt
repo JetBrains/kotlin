@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -73,9 +70,9 @@ class FirJvmClassCodegen(
         conf: TypeApproximatorConfiguration = TypeApproximatorConfiguration.PublicDeclaration
     ): FirTypeRef {
         val approximatedType = if (toSuper)
-            approximator.approximateToSuperType(this.coneTypeUnsafe(), conf)
+            approximator.approximateToSuperType(coneType, conf)
         else
-            approximator.approximateToSubType(this.coneTypeUnsafe(), conf)
+            approximator.approximateToSubType(coneType, conf)
         return withReplacedConeType(approximatedType as? ConeKotlinType)
     }
 

@@ -41,6 +41,7 @@ abstract class AbstractExplicitReceiver<E : FirExpression> : Receiver {
 
 abstract class AbstractExplicitReceiverValue<E : FirExpression> : AbstractExplicitReceiver<E>(), ReceiverValue {
     override val type: ConeKotlinType
+        // NB: safe cast is necessary here
         get() = explicitReceiver.typeRef.coneTypeSafe()
             ?: ConeKotlinErrorType("No type calculated for: ${explicitReceiver.renderWithType()}") // TODO: assert here
 
@@ -75,7 +76,7 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     internal fun replaceType(type: ConeKotlinType) {
         if (type == this.type) return
         this.type = type
-        receiverExpression = if (type == originalReceiverExpression.typeRef.coneTypeUnsafe()) {
+        receiverExpression = if (type == originalReceiverExpression.typeRef.coneType) {
             originalReceiverExpression
         } else {
             buildExpressionWithSmartcast {

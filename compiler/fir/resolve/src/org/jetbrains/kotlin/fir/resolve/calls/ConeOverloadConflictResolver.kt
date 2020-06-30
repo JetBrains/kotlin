@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.TypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
@@ -192,7 +192,7 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl) : Simp
             for (upperBound in typeParameter.fir.bounds) {
                 addSubtypeConstraint(
                     substitutionMap[typeParameter] ?: error("No ${typeParameter.fir.render()} in substitution map"),
-                    substitutor.substituteOrSelf(upperBound.coneTypeUnsafe())
+                    substitutor.substituteOrSelf(upperBound.coneType)
                 )
             }
         }

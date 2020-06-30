@@ -100,7 +100,7 @@ fun FirClassifierSymbol<*>.toSymbol(
         }
         is FirTypeAliasSymbol -> {
             val typeAlias = fir
-            val coneClassLikeType = (typeAlias.expandedTypeRef as FirResolvedTypeRef).type as ConeClassLikeType
+            val coneClassLikeType = typeAlias.expandedTypeRef.coneType as ConeClassLikeType
             coneClassLikeType.lookupTag.toSymbol(session)!!.toSymbol(session, classifierStorage)
         }
         is FirClassSymbol -> {

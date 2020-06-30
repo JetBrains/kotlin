@@ -94,7 +94,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
         override fun Candidate.getReceiverType(): ConeKotlinType? {
             val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
             val callable = callableSymbol.fir
-            val receiverType = callable.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
+            val receiverType = callable.receiverTypeRef?.coneType
             if (receiverType != null) return receiverType
             val returnTypeRef = callable.returnTypeRef as? FirResolvedTypeRef ?: return null
             if (!returnTypeRef.type.isExtensionFunctionType(bodyResolveComponents.session)) return null
@@ -244,7 +244,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             }
 
             val declarationReceiverType: ConeKotlinType? =
-                (fir as? FirCallableMemberDeclaration<*>)?.receiverTypeRef?.coneTypeSafe<ConeKotlinType>()
+                (fir as? FirCallableMemberDeclaration<*>)?.receiverTypeRef?.coneType
                     ?.let(candidate.substitutor::substituteOrSelf)
 
             if (resultingReceiverType != null && declarationReceiverType != null) {
@@ -273,7 +273,7 @@ private fun createKPropertyType(
     receiverType: ConeKotlinType?,
     returnTypeRef: FirResolvedTypeRef
 ): ConeKotlinType {
-    val propertyType = returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for of $propertyOrField")
+    val propertyType = returnTypeRef.type
     return createKPropertyType(
         receiverType, propertyType, isMutable = propertyOrField.isVar
     )
@@ -296,8 +296,7 @@ private fun FirSession.createKFunctionType(
     }
     for ((index, valueParameter) in function.valueParameters.withIndex()) {
         if (expectedParameterNumber == null || index < expectedParameterNumber || valueParameter.defaultValue == null) {
-            parameterTypes += valueParameter.returnTypeRef.coneTypeSafe()
-                ?: ConeKotlinErrorType("No type for parameter $valueParameter")
+            parameterTypes += valueParameter.returnTypeRef.coneType
         }
     }
 
@@ -305,7 +304,7 @@ private fun FirSession.createKFunctionType(
         if (expectedReturnType != null && typeContext.run { expectedReturnType.isUnit() })
             expectedReturnType
         else
-            returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $function")
+            returnTypeRef.type
 
     return createFunctionalType(
         parameterTypes, receiverType = receiverType,
@@ -532,7 +531,7 @@ internal object PostponedVariablesInitializerResolutionStage : ResolutionStage()
         if (candidate.typeArgumentMapping is TypeArgumentMapping.Mapped) return
         for (parameter in argumentMapping.values) {
             if (!parameter.hasBuilderInferenceMarker()) continue
-            val type = parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: continue
+            val type = parameter.returnTypeRef.coneType
             val receiverType = type.receiverType(callInfo.session) ?: continue
 
             for (freshVariable in candidate.freshVariables) {

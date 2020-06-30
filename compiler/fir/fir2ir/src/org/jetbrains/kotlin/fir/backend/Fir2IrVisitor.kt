@@ -298,7 +298,7 @@ class Fir2IrVisitor(
             val afterNotNullCheck = safeCallExpression.regularQualifiedAccess.accept(this, data) as IrExpression
 
             val isReceiverNullable = with(components.session.typeContext) {
-                safeCallExpression.receiver.typeRef.coneTypeSafe<ConeKotlinType>()?.isNullableType() == true
+                safeCallExpression.receiver.typeRef.coneType.isNullableType()
             }
 
             components.createSafeCallConstruction(

@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.checker.requireOrDescribe
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -112,7 +109,7 @@ abstract class AbstractConeCallConflictResolver(
         return FlatSignature(
             call,
             (variable as? FirProperty)?.typeParameters?.map { it.symbol }.orEmpty(),
-            listOfNotNull(variable.receiverTypeRef?.coneTypeUnsafe()),
+            listOfNotNull(variable.receiverTypeRef?.coneType),
             variable.receiverTypeRef != null,
             false,
             0,
@@ -149,7 +146,7 @@ abstract class AbstractConeCallConflictResolver(
     }
 
     private fun FirValueParameter.argumentType(): ConeKotlinType {
-        val type = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+        val type = returnTypeRef.coneType
         if (isVararg) return type.arrayElementType()!!
         return type
     }
@@ -158,7 +155,7 @@ abstract class AbstractConeCallConflictResolver(
         call: Candidate,
         function: FirFunction<*>
     ): List<ConeKotlinType> {
-        return listOfNotNull(function.receiverTypeRef?.coneTypeUnsafe()) +
+        return listOfNotNull(function.receiverTypeRef?.coneType) +
                 (call.resultingTypeForCallableReference?.typeArguments?.map { it as ConeKotlinType }
                     ?: call.argumentMapping?.map { it.value.argumentType() }.orEmpty())
     }

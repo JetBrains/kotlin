@@ -48,7 +48,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             ?: return null
 
         // TODO: add some report logic about flexible type (see WHEN_ENUM_CAN_BE_NULL_IN_JAVA diagnostic in old frontend)
-        val type = typeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible() ?: return null
+        val type = typeRef.coneType.lowerBoundIfFlexible()
         val lookupTag = (type as? ConeLookupTagBasedType)?.lookupTag ?: return null
         val nullable = type.nullability == ConeNullability.NULLABLE
         val isExhaustive = when {

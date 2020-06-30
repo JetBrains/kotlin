@@ -411,7 +411,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             FirOperation.SAFE_AS -> {
                 resolved.resultType =
                     conversionTypeRef.withReplacedConeType(
-                        conversionTypeRef.coneTypeUnsafe<ConeKotlinType>().withNullability(
+                        conversionTypeRef.coneType.withNullability(
                             ConeNullability.NULLABLE, session.typeContext,
                         ),
                     )
@@ -550,7 +550,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     lhs.replaceTypeRef(buildResolvedTypeRef { type = typeRef })
                     typeRef
                 } else {
-                    lhs.resultType.coneTypeUnsafe()
+                    lhs.resultType.coneType
                 }
             }
             is FirResolvedReifiedParameterReference -> {
@@ -558,7 +558,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 symbol.constructType(emptyArray(), isNullable = false)
             }
             else -> {
-                lhs.resultType.coneTypeUnsafe<ConeKotlinType>()
+                lhs.resultType.coneType
             }
         }
 

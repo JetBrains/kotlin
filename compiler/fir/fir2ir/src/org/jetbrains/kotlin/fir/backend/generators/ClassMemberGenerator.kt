@@ -257,7 +257,7 @@ internal class ClassMemberGenerator(
         val firDispatchReceiver = dispatchReceiver
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
-            val typeArguments = (constructedTypeRef as? FirResolvedTypeRef)?.type?.fullyExpandedType(session)?.typeArguments
+            val typeArguments = constructedTypeRef.coneType.fullyExpandedType(session).typeArguments
             val constructor = constructorSymbol.fir
             if (constructor.isFromEnumClass || constructor.returnTypeRef.isEnum) {
                 IrEnumConstructorCallImpl(
@@ -277,7 +277,7 @@ internal class ClassMemberGenerator(
                 )
             }.let {
                 if (constructor.typeParameters.isNotEmpty()) {
-                    if (typeArguments?.isNotEmpty() == true) {
+                    if (typeArguments.isNotEmpty()) {
                         for ((index, typeArgument) in typeArguments.withIndex()) {
                             if (index >= constructor.typeParameters.size) break
                             val irType = (typeArgument as ConeKotlinTypeProjection).type.toIrType()

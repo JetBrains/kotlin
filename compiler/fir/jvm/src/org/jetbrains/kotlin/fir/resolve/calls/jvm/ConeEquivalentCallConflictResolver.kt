@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
@@ -55,7 +54,7 @@ class ConeEquivalentCallConflictResolver(
     ): Boolean {
         if (first.symbol.callableId != second.symbol.callableId) return false
         if (first.isExpect != second.isExpect) return false
-        if (first.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>() != second.receiverTypeRef?.coneTypeUnsafe()) {
+        if (first.receiverTypeRef?.coneType != second.receiverTypeRef?.coneType) {
             return false
         }
         val firstSignature = createFlatSignature(firstCandidate, first)

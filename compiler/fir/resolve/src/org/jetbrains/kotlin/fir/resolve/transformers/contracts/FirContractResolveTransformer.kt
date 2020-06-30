@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -59,7 +59,7 @@ class FirContractResolveTransformer(
             return withTypeParametersOf(simpleFunction) {
                 val receiverTypeRef = simpleFunction.receiverTypeRef
                 if (receiverTypeRef != null) {
-                    withLabelAndReceiverType(simpleFunction.name, simpleFunction, receiverTypeRef.coneTypeUnsafe()) {
+                    withLabelAndReceiverType(simpleFunction.name, simpleFunction, receiverTypeRef.coneType) {
                         transformContractDescriptionOwner(simpleFunction)
                     }
                 } else {
@@ -101,7 +101,7 @@ class FirContractResolveTransformer(
             }
             val receiverTypeRef = owner.receiverTypeRef
             return if (receiverTypeRef != null) {
-                withLabelAndReceiverType(owner.name, propertyAccessor, receiverTypeRef.coneTypeUnsafe()) {
+                withLabelAndReceiverType(owner.name, propertyAccessor, receiverTypeRef.coneType) {
                     transformContractDescriptionOwner(propertyAccessor)
                 }
             } else {

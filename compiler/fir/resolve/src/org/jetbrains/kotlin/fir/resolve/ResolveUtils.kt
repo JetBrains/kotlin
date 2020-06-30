@@ -217,9 +217,9 @@ fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirRe
     val parameters = valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter")
     }
-    val rawReturnType = (this as FirTypedDeclaration).returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+    val rawReturnType = (this as FirTypedDeclaration).returnTypeRef.coneType
 
-    val functionalType = createFunctionalType(parameters, receiverTypeRef?.coneTypeSafe(), rawReturnType, isSuspend = isSuspend)
+    val functionalType = createFunctionalType(parameters, receiverTypeRef?.coneType, rawReturnType, isSuspend = isSuspend)
 
     return buildResolvedTypeRef {
         source = this@constructFunctionalTypeRef.source?.withKind(FirFakeSourceElementKind.ImplicitTypeRef)
@@ -362,13 +362,13 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
 private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<*>, makeNullable: Boolean): FirResolvedTypeRef {
     return when (symbol) {
         is FirCallableSymbol<*> -> {
-            val returnType = returnTypeCalculator.tryCalculateReturnType(symbol.phasedFir)
+            val returnTypeRef = returnTypeCalculator.tryCalculateReturnType(symbol.phasedFir)
             if (makeNullable) {
-                returnType.withReplacedConeType(
-                    returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.typeContext),
+                returnTypeRef.withReplacedConeType(
+                    returnTypeRef.type.withNullability(ConeNullability.NULLABLE, session.typeContext),
                 )
             } else {
-                returnType
+                returnTypeRef
             }
         }
         is FirClassifierSymbol<*> -> {
@@ -385,7 +385,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): FirQualifiedAccessExpression {
     val typesFromSmartCast = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression) ?: return qualifiedAccessExpression
     val allTypes = typesFromSmartCast.also {
-        it += qualifiedAccessExpression.resultType.coneTypeUnsafe<ConeKotlinType>()
+        it += qualifiedAccessExpression.resultType.coneType
     }
     val intersectedType = ConeTypeIntersector.intersectTypes(inferenceComponents.ctx, allTypes)
     // TODO: add check that intersectedType is not equal to original type
@@ -463,7 +463,7 @@ private fun FirQualifiedAccess.expressionTypeOrUnitForAssignment(): ConeKotlinTy
 }
 
 fun FirAnnotationCall.getCorrespondingConstructorReferenceOrNull(session: FirSession): FirResolvedNamedReference? =
-    annotationTypeRef.coneTypeSafe<ConeKotlinType>()?.classId?.let {
+    annotationTypeRef.coneType.classId?.let {
         (session.firSymbolProvider.getClassLikeSymbolByFqName(it) as? FirRegularClassSymbol)?.fir
             ?.getPrimaryConstructorIfAny()
             ?.let { annotationConstructor ->

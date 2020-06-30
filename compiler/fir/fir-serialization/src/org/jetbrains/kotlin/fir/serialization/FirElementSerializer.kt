@@ -488,13 +488,11 @@ class FirElementSerializer private constructor(
         }
 
         if (parameter.isVararg) {
-            val varargElementType = parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.varargElementType(session)
-            if (varargElementType != null) {
-                if (useTypeTable()) {
-                    builder.varargElementTypeId = typeId(varargElementType)
-                } else {
-                    builder.setVarargElementType(typeProto(varargElementType))
-                }
+            val varargElementType = parameter.returnTypeRef.coneType.varargElementType(session)
+            if (useTypeTable()) {
+                builder.varargElementTypeId = typeId(varargElementType)
+            } else {
+                builder.setVarargElementType(typeProto(varargElementType))
             }
         }
 
@@ -544,7 +542,7 @@ class FirElementSerializer private constructor(
     fun typeId(type: ConeKotlinType): Int = typeTable[typeProto(type)]
 
     internal fun typeProto(typeRef: FirTypeRef): ProtoBuf.Type.Builder {
-        return typeProto((typeRef as FirResolvedTypeRef).type)
+        return typeProto(typeRef.coneType)
     }
 
     internal fun typeProto(type: ConeKotlinType): ProtoBuf.Type.Builder {

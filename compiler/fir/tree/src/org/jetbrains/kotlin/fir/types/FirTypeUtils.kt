@@ -21,6 +21,7 @@ inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe(): T? {
     }
     return (this as? FirResolvedTypeRef)?.type as? T
 }
+inline val FirTypeRef.coneType: ConeKotlinType get() = coneTypeUnsafe()
 
 val FirTypeRef.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, false)
 val FirTypeRef.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any, true)

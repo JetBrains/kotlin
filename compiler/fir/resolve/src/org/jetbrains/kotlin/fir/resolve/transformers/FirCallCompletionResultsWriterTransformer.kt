@@ -282,7 +282,7 @@ class FirCallCompletionResultsWriterTransformer(
             qualifiedAccessExpression: FirQualifiedAccessExpression,
             data: Nothing?
         ): CompositeTransformResult<FirStatement> {
-            val originalType = qualifiedAccessExpression.typeRef.coneTypeUnsafe<ConeKotlinType>()
+            val originalType = qualifiedAccessExpression.typeRef.coneType
             val substitutedReceiverType = finalSubstitutor.substituteOrNull(originalType) ?: return qualifiedAccessExpression.compose()
             qualifiedAccessExpression.replaceTypeRef(
                 qualifiedAccessExpression.typeRef.resolvedTypeFromPrototype(substitutedReceiverType)
@@ -292,8 +292,7 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     private fun FirTypeRef.substitute(candidate: Candidate): ConeKotlinType =
-        coneTypeUnsafe<ConeKotlinType>()
-            .let { candidate.substitutor.substituteOrSelf(it) }
+        coneType.let { candidate.substitutor.substituteOrSelf(it) }
             .let { finalSubstitutor.substituteOrSelf(it) }
 
     private fun Candidate.createArgumentsMapping(): ExpectedArgumentType? {
@@ -532,7 +531,7 @@ class FirDeclarationCompletionResultsWriter(private val finalSubstitutor: ConeSu
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
-        return finalSubstitutor.substituteOrNull(typeRef.coneTypeUnsafe())?.let {
+        return finalSubstitutor.substituteOrNull(typeRef.coneType)?.let {
             typeRef.resolvedTypeFromPrototype(it)
         }?.compose() ?: typeRef.compose()
     }
