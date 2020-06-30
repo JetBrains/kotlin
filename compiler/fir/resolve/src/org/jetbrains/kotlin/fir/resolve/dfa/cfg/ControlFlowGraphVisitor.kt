@@ -307,6 +307,24 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    // ----------------------------------- Elvis -----------------------------------
+
+    open fun visitElvisLhsExitNode(node: ElvisLhsExitNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitElvisLhsIsNotNullNode(node: ElvisLhsIsNotNullNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitElvisRhsEnterNode(node: ElvisRhsEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitElvisExitNode(node: ElvisExitNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     // ----------------------------------- Other -----------------------------------
 
     open fun visitAnnotationEnterNode(node: AnnotationEnterNode, data: D): R {

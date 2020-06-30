@@ -208,4 +208,31 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
             dataFlowAnalyzer.exitThrowExceptionNode(it.single as FirThrowExpression)
         }
     }
+
+    // ------------------------------- Elvis -------------------------------
+
+    override fun transformElvisCall(elvisCall: FirElvisCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        if (elvisCall.calleeReference is FirResolvedNamedReference) return elvisCall.compose()
+        elvisCall.transformAnnotations(transformer, data)
+        elvisCall.transformLhs(transformer, ResolutionMode.ContextDependent)
+        dataFlowAnalyzer.exitElvisLhs(elvisCall)
+        elvisCall.transformRhs(transformer, ResolutionMode.ContextDependent)
+
+        var callCompleted = false
+        val result = syntheticCallGenerator.generateCalleeForElvisCall(elvisCall)?.let {
+            val completionResult = callCompleter.completeCall(elvisCall, data.expectedType)
+            callCompleted = completionResult.callCompleted
+            completionResult.result
+        } ?: run {
+            elvisCall.resultType = buildErrorTypeRef {
+                diagnostic = ConeSimpleDiagnostic("Can't resolve ?: operator call", DiagnosticKind.InferenceError)
+            }
+            callCompleted = true
+            elvisCall
+        }
+
+        dataFlowAnalyzer.exitElvis(callCompleted)
+
+        return result.compose()
+    }
 }

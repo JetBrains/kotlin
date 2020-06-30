@@ -6,25 +6,17 @@ FILE: ifElvisReturn.kt
 
     }
     public final fun <K : R|A|> materialize(): R|K?| {
-        ^materialize R|kotlin/TODO|()
+        ^materialize Null(null)!!
     }
-    public final fun foo(b: R|B|): R|kotlin/Unit| {
-        lval x: R|A| = when () {
-            CMP(>, R|<local>/b|.R|kotlin/Any.hashCode|().R|kotlin/Int.compareTo|(Int(0))) ->  {
+    public final fun foo(b: R|B|, cond: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval x: R|B| = when () {
+            R|<local>/cond| ->  {
                 R|<local>/b|
             }
             else ->  {
-                when (lval <elvis>: R|A?| = R|/materialize|<R|A|>()) {
-                    ==($subj$, Null(null)) ->  {
-                        ^foo Unit
-                    }
-                    else ->  {
-                        R|<local>/<elvis>|
-                    }
-                }
-
+                R|/materialize|<R|kotlin/Nothing|>() ?: ^foo Unit
             }
         }
 
-        R|<local>/x|.<Unresolved name: bar>#()
+        R|<local>/x|.R|/B.bar|()
     }

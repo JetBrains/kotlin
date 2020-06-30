@@ -246,7 +246,7 @@ class ExpressionsConverter(
 
         when (operationToken) {
             ELVIS ->
-                return leftArgAsFir.generateNotNullOrOther(baseSession, rightArgAsFir, "elvis", baseSource)
+                return leftArgAsFir.generateNotNullOrOther(rightArgAsFir, baseSource)
             ANDAND, OROR ->
                 return leftArgAsFir.generateLazyLogicalOperation(rightArgAsFir, operationToken == ANDAND, baseSource)
             in OperatorConventions.IN_OPERATIONS ->

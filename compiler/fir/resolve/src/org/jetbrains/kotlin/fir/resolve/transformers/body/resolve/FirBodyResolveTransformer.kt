@@ -304,6 +304,10 @@ open class FirBodyResolveTransformer(
         return controlFlowStatementsTransformer.transformThrowExpression(throwExpression, data)
     }
 
+    override fun transformElvisCall(elvisCall: FirElvisCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        return controlFlowStatementsTransformer.transformElvisCall(elvisCall, data)
+    }
+
     // --------------------------------------------------------------------------
 
     fun <D> FirElement.visitNoTransform(transformer: FirTransformer<D>, data: D) {

@@ -292,6 +292,12 @@ fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, proc
             processCandidateIfApplicable(processor, processBlocks)
             this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
         }
+
+        is FirElvisCall -> {
+            processCandidateIfApplicable(processor, processBlocks)
+            lhs.processAllContainingCallCandidates(processBlocks, processor)
+            rhs.processAllContainingCallCandidates(processBlocks, processor)
+        }
     }
 }
 

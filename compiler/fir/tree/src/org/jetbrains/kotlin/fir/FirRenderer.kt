@@ -1022,6 +1022,12 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         print("!!")
     }
 
+    override fun visitElvisCall(elvisCall: FirElvisCall) {
+        elvisCall.lhs.accept(this)
+        print(" ?: ")
+        elvisCall.rhs.accept(this)
+    }
+
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
         callableReferenceAccess.annotations.renderAnnotations()
         callableReferenceAccess.explicitReceiver?.accept(this)

@@ -70,15 +70,7 @@ FILE: boundSmartcasts.kt
     public final fun R|kotlin/Any|.baz(): R|kotlin/Unit| {
     }
     public final fun test_5(d: R|D|): R|kotlin/Unit| {
-        lval a: R|kotlin/Any| = when (lval <elvis>: R|kotlin/Any?| = R|<local>/d|.R|/D.any|) {
-            ==($subj$, Null(null)) ->  {
-                ^test_5 Unit
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
+        lval a: R|kotlin/Any| = R|<local>/d|.R|/D.any| ?: ^test_5 Unit
         R|<local>/a|.R|/baz|()
         R|<local>/d|.R|/D.any|.R|/baz|()
         (R|<local>/a| as R|A|)

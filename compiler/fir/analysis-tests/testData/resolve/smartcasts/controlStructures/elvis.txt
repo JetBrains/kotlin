@@ -8,15 +8,7 @@ FILE: elvis.kt
     }
     public final fun test_1(x: R|A?|): R|kotlin/Unit| {
         when () {
-            when (lval <elvis>: R|kotlin/Boolean?| = R|<local>/x|?.{ $subj$.R|/A.b| }) {
-                ==($subj$, Null(null)) ->  {
-                    ^test_1 Unit
-                }
-                else ->  {
-                    R|<local>/<elvis>|
-                }
-            }
-             ->  {
+            R|<local>/x|?.{ $subj$.R|/A.b| } ?: ^test_1 Unit ->  {
                 R|<local>/x|.R|/A.foo|()
             }
         }
@@ -35,13 +27,5 @@ FILE: elvis.kt
             }
         }
 
-        ^test2 when (lval <elvis>: R|kotlin/String?| = R|<local>/a|) {
-            ==($subj$, Null(null)) ->  {
-                R|<local>/b|
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
+        ^test2 R|<local>/a| ?: R|<local>/b|
     }

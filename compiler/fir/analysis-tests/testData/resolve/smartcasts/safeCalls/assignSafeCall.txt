@@ -34,15 +34,7 @@ FILE: assignSafeCall.kt
 
     }
     public final fun test_3(x: R|kotlin/Any?|): R|kotlin/Unit| {
-        lval a: R|A| = when (lval <elvis>: R|A?| = (R|<local>/x| as? R|A|)) {
-            ==($subj$, Null(null)) ->  {
-                ^test_3 Unit
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
+        lval a: R|A| = (R|<local>/x| as? R|A|) ?: ^test_3 Unit
         R|<local>/a|.R|/A.foo|()
         R|<local>/x|.R|/A.foo|()
     }
@@ -74,15 +66,7 @@ FILE: assignSafeCall.kt
 
     }
     public final fun test_3(x: R|kotlin/Any?|): R|kotlin/Unit| {
-        lval a: R|B| = when (lval <elvis>: R|B?| = (R|<local>/x| as? R|B|)) {
-            ==($subj$, Null(null)) ->  {
-                ^test_3 Unit
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
+        lval a: R|B| = (R|<local>/x| as? R|B|) ?: ^test_3 Unit
         R|<local>/a|.R|/B.foo|()
         R|<local>/x|.R|/B.foo|()
     }

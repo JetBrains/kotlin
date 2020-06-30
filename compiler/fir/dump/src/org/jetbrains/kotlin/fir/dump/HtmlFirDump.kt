@@ -1359,6 +1359,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         +"!!"
     }
 
+    private fun FlowContent.generate(elvisCall: FirElvisCall) {
+        generate(elvisCall.lhs)
+        +" ?: "
+        generate(elvisCall.rhs)
+    }
+
     @Suppress("UNUSED_PARAMETER")
     private fun FlowContent.generate(elseIfTrueCondition: FirElseIfTrueCondition) {
         keyword("else")
@@ -1563,6 +1569,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirOperatorCall -> generate(expression)
                 is FirBinaryLogicExpression -> generate(expression)
                 is FirCheckNotNullCall -> generate(expression)
+                is FirElvisCall -> generate(expression)
                 is FirVarargArgumentsExpression -> generate(expression)
                 is FirResolvedReifiedParameterReference -> generate(expression)
                 is FirComparisonExpression -> generate(expression)

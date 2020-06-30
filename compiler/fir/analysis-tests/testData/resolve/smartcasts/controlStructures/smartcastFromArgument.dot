@@ -50,61 +50,32 @@ digraph smartcastFromArgument_kt {
                 subgraph cluster_7 {
                     color=blue
                     14 [label="Enter when branch condition "];
-                    subgraph cluster_8 {
-                        color=blue
-                        15 [label="Enter when"];
-                        16 [label="Access variable R|<local>/a|"];
-                        17 [label="Type operator: (R|<local>/a| as? R|A|)"];
-                        18 [label="Variable declaration: lval <elvis>: R|A?|"];
-                        subgraph cluster_9 {
-                            color=blue
-                            19 [label="Enter when branch condition "];
-                            20 [label="Const: Null(null)"];
-                            21 [label="Operator =="];
-                            22 [label="Exit when branch condition"];
-                        }
-                        subgraph cluster_10 {
-                            color=blue
-                            23 [label="Enter when branch condition else"];
-                            24 [label="Exit when branch condition"];
-                        }
-                        25 [label="Enter when branch result"];
-                        subgraph cluster_11 {
-                            color=blue
-                            26 [label="Enter block"];
-                            27 [label="Access variable R|<local>/<elvis>|"];
-                            28 [label="Exit block"];
-                        }
-                        29 [label="Exit when branch result"];
-                        30 [label="Enter when branch result"];
-                        subgraph cluster_12 {
-                            color=blue
-                            31 [label="Enter block"];
-                            32 [label="Jump: ^test Unit"];
-                            33 [label="Stub" style="filled" fillcolor=gray];
-                            34 [label="Exit block" style="filled" fillcolor=gray];
-                        }
-                        35 [label="Exit when branch result" style="filled" fillcolor=gray];
-                        36 [label="Exit when"];
-                    }
-                    37 [label="Function call: R|/takeA|(...)"];
-                    38 [label="Exit when branch condition"];
+                    15 [label="Access variable R|<local>/a|"];
+                    16 [label="Type operator: (R|<local>/a| as? R|A|)"];
+                    17 [label="Exit lhs of ?:"];
+                    18 [label="Enter rhs of ?:"];
+                    19 [label="Jump: ^test Unit"];
+                    20 [label="Stub" style="filled" fillcolor=gray];
+                    21 [label="Lhs of ?: is not null"];
+                    22 [label="Exit ?:"];
+                    23 [label="Function call: R|/takeA|(...)"];
+                    24 [label="Exit when branch condition"];
                 }
-                39 [label="Synthetic else branch"];
-                40 [label="Enter when branch result"];
-                subgraph cluster_13 {
+                25 [label="Synthetic else branch"];
+                26 [label="Enter when branch result"];
+                subgraph cluster_8 {
                     color=blue
-                    41 [label="Enter block"];
-                    42 [label="Access variable R|<local>/a|"];
-                    43 [label="Function call: R|<local>/a|.R|/A.foo|()"];
-                    44 [label="Exit block"];
+                    27 [label="Enter block"];
+                    28 [label="Access variable R|<local>/a|"];
+                    29 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                    30 [label="Exit block"];
                 }
-                45 [label="Exit when branch result"];
-                46 [label="Exit when"];
+                31 [label="Exit when branch result"];
+                32 [label="Exit when"];
             }
-            47 [label="Exit block"];
+            33 [label="Exit block"];
         }
-        48 [label="Exit function test" style="filled" fillcolor=red];
+        34 [label="Exit function test" style="filled" fillcolor=red];
     }
     11 -> {12};
     12 -> {13};
@@ -112,37 +83,23 @@ digraph smartcastFromArgument_kt {
     14 -> {15};
     15 -> {16};
     16 -> {17};
-    17 -> {18};
+    17 -> {21 18};
     18 -> {19};
-    19 -> {20};
-    20 -> {21};
+    19 -> {34};
+    19 -> {20} [style=dotted];
+    20 -> {22} [style=dotted];
     21 -> {22};
-    22 -> {30 23};
+    22 -> {23};
     23 -> {24};
-    24 -> {25};
-    25 -> {26};
+    24 -> {26 25};
+    25 -> {32};
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    29 -> {36};
+    29 -> {30};
     30 -> {31};
     31 -> {32};
-    32 -> {48};
-    32 -> {33} [style=dotted];
-    33 -> {34} [style=dotted];
-    34 -> {35} [style=dotted];
-    35 -> {36} [style=dotted];
-    36 -> {37};
-    37 -> {38};
-    38 -> {40 39};
-    39 -> {46};
-    40 -> {41};
-    41 -> {42};
-    42 -> {43};
-    43 -> {44};
-    44 -> {45};
-    45 -> {46};
-    46 -> {47};
-    47 -> {48};
+    32 -> {33};
+    33 -> {34};
 
 }

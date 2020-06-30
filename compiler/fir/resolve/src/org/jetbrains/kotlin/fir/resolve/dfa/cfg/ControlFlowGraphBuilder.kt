@@ -91,6 +91,7 @@ class ControlFlowGraphBuilder {
     private val initBlockExitNodes: Stack<InitBlockExitNode> = stackOf()
 
     private val exitSafeCallNodes: Stack<ExitSafeCallNode> = stackOf()
+    private val exitElvisCallNodes: Stack<ElvisExitNode> = stackOf()
 
     // ----------------------------------- API for node builders -----------------------------------
 
@@ -984,6 +985,37 @@ class ControlFlowGraphBuilder {
             addNewSimpleNode(it)
             it.updateDeadStatus()
         }
+    }
+
+    // ----------------------------------- Elvis -----------------------------------
+
+    fun exitElvisLhs(elvisCall: FirElvisCall): Triple<ElvisLhsExitNode, ElvisLhsIsNotNullNode, ElvisRhsEnterNode> {
+        val exitNode = createElvisExitNode(elvisCall).also {
+            exitElvisCallNodes.push(it)
+        }
+
+        val lhsExitNode = createElvisLhsExitNode(elvisCall).also {
+            popAndAddEdge(it)
+        }
+
+        val lhsIsNotNullNode = createElvisLhsIsNotNullNode(elvisCall).also {
+            addEdge(lhsExitNode, it)
+            addEdge(it, exitNode)
+        }
+
+        val rhsEnterNode = createElvisRhsEnterNode(elvisCall).also {
+            addEdge(lhsExitNode, it)
+        }
+        lastNodes.push(rhsEnterNode)
+        return Triple(lhsExitNode, lhsIsNotNullNode, rhsEnterNode)
+    }
+
+    fun exitElvis(callCompleted: Boolean): Pair<ElvisExitNode, UnionFunctionCallArgumentsNode?> {
+        val exitNode = exitElvisCallNodes.pop()
+        addNewSimpleNode(exitNode)
+        exitNode.updateDeadStatus()
+        val (_, unionNode) = processUnionOfArguments(exitNode, callCompleted)
+        return exitNode to unionNode
     }
 
     // ----------------------------------- Contract description -----------------------------------

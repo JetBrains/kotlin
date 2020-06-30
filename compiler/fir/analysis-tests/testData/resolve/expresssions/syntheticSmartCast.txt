@@ -16,27 +16,11 @@ FILE: test.kt
 
     }
     public final fun test1(x: R|AnotherClass?|): R|kotlin/Unit| {
-        lval bar: R|kotlin/CharSequence| = when (lval <elvis>: R|kotlin/CharSequence?| = R|<local>/x|?.{ $subj$.R|/AnotherClass.bar| }) {
-            ==($subj$, Null(null)) ->  {
-                ^test1 Unit
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
+        lval bar: R|kotlin/CharSequence| = R|<local>/x|?.{ $subj$.R|/AnotherClass.bar| } ?: ^test1 Unit
         R|<local>/x|.R|/AnotherClass.bar|
     }
     public final fun test2(x: R|SomeClass?|): R|kotlin/Unit| {
-        lval bar: R|kotlin/CharSequence| = when (lval <elvis>: R|kotlin/CharSequence?| = R|<local>/x|?.{ $subj$.R|/SomeClass.bar| }) {
-            ==($subj$, Null(null)) ->  {
-                ^test2 Unit
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
+        lval bar: R|kotlin/CharSequence| = R|<local>/x|?.{ $subj$.R|/SomeClass.bar| } ?: ^test2 Unit
         R|<local>/x|.R|/SomeClass.bar|
     }
     public final fun test3(x: R|AnotherClass?|): R|kotlin/Unit| {
@@ -58,62 +42,22 @@ FILE: test.kt
 
     }
     public final fun test5(x: R|AnotherClass?|): R|kotlin/Unit| {
-        lval bar: R|kotlin/String| = when (lval <elvis>: R|kotlin/String?| = (R|<local>/x|?.{ $subj$.R|/AnotherClass.bar| } as? R|kotlin/String|)) {
-            ==($subj$, Null(null)) ->  {
-                ^test5 Unit
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
+        lval bar: R|kotlin/String| = (R|<local>/x|?.{ $subj$.R|/AnotherClass.bar| } as? R|kotlin/String|) ?: ^test5 Unit
         R|<local>/x|.R|/AnotherClass.foo|
     }
     public final fun test6(x: R|SomeClass?|): R|kotlin/Unit| {
-        lval bar: R|kotlin/String| = when (lval <elvis>: R|kotlin/String?| = (R|<local>/x|?.{ $subj$.R|/SomeClass.bar| } as? R|kotlin/String|)) {
-            ==($subj$, Null(null)) ->  {
-                ^test6 Unit
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
+        lval bar: R|kotlin/String| = (R|<local>/x|?.{ $subj$.R|/SomeClass.bar| } as? R|kotlin/String|) ?: ^test6 Unit
         R|<local>/x|.R|/SomeClass.foo|
     }
     public final fun test7(x: R|AnotherClass?|): R|kotlin/Unit| {
-        lval baz: R|kotlin/Boolean| = when (lval <elvis>: R|kotlin/Boolean?| = (R|<local>/x|?.{ $subj$.R|/AnotherClass.baz|() } as? R|kotlin/Boolean|)) {
-            ==($subj$, Null(null)) ->  {
-                ^test7 Unit
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
+        lval baz: R|kotlin/Boolean| = (R|<local>/x|?.{ $subj$.R|/AnotherClass.baz|() } as? R|kotlin/Boolean|) ?: ^test7 Unit
         R|<local>/x|.R|/AnotherClass.foo|
     }
     public final fun test8(x: R|AnotherClass?|): R|kotlin/Unit| {
-        lval bar: R|kotlin/CharSequence| = when (lval <elvis>: R|kotlin/CharSequence?| = R|<local>/x|?.{ $subj$.R|/AnotherClass.bar| }) {
-            ==($subj$, Null(null)) ->  {
-                ^test8 Unit
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
+        lval bar: R|kotlin/CharSequence| = R|<local>/x|?.{ $subj$.R|/AnotherClass.bar| } ?: ^test8 Unit
         R|<local>/x|.R|/AnotherClass.foo|
     }
     public final fun test9(x: R|AnotherClass?|): R|kotlin/Unit| {
-        lval baz: R|kotlin/Any| = when (lval <elvis>: R|kotlin/Any?| = R|<local>/x|?.{ $subj$.R|/AnotherClass.baz|() }) {
-            ==($subj$, Null(null)) ->  {
-                ^test9 Unit
-            }
-            else ->  {
-                R|<local>/<elvis>|
-            }
-        }
-
+        lval baz: R|kotlin/Any| = R|<local>/x|?.{ $subj$.R|/AnotherClass.baz|() } ?: ^test9 Unit
         R|<local>/x|.R|/AnotherClass.foo|
     }

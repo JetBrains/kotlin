@@ -601,6 +601,32 @@ class ExitSafeCallNode(owner: ControlFlowGraph, override val fir: FirSafeCallExp
     }
 }
 
+// ----------------------------------- Elvis -----------------------------------
+
+class ElvisLhsExitNode(owner: ControlFlowGraph, override val fir: FirElvisCall, level: Int, id: Int) : CFGNode<FirElvisCall>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitElvisLhsExitNode(this, data)
+    }
+}
+
+class ElvisLhsIsNotNullNode(owner: ControlFlowGraph, override val fir: FirElvisCall, level: Int, id: Int) : CFGNode<FirElvisCall>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitElvisLhsIsNotNullNode(this, data)
+    }
+}
+
+class ElvisRhsEnterNode(owner: ControlFlowGraph, override val fir: FirElvisCall, level: Int, id: Int) : CFGNode<FirElvisCall>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitElvisRhsEnterNode(this, data)
+    }
+}
+
+class ElvisExitNode(owner: ControlFlowGraph, override val fir: FirElvisCall, level: Int, id: Int) : AbstractBinaryExitNode<FirElvisCall>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitElvisExitNode(this, data)
+    }
+}
+
 // ----------------------------------- Other -----------------------------------
 
 class AnnotationEnterNode(owner: ControlFlowGraph, override val fir: FirAnnotationCall, level: Int, id: Int) : CFGNode<FirAnnotationCall>(owner, level, id), EnterNodeMarker {

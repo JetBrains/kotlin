@@ -116,7 +116,8 @@ fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(statement: Fir
         is FirWhenExpression,
         is FirTryExpression,
         is FirCheckNotNullCall,
-        is FirCallableReferenceAccess
+        is FirCallableReferenceAccess,
+        is FirElvisCall
         -> (statement as FirResolvable).candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
 
         is FirSafeCallExpression -> addSubsystemFromExpression(statement.regularQualifiedAccess)

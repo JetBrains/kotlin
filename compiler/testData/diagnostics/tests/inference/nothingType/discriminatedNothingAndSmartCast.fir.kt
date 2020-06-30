@@ -15,5 +15,5 @@ fun test(s: String?, silent: Boolean) {
             throw Exception()
         }
 
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s.length
 }

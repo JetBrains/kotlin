@@ -711,6 +711,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         public void testFlexibleTypeInSystem() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/flexibleTypeInSystem.kt");
         }
+
+        @TestMetadata("ifElvisReturn.kt")
+        public void testIfElvisReturn() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/ifElvisReturn.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k")

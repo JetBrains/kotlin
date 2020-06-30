@@ -1015,6 +1015,37 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitContractDescription()
     }
 
+    // ----------------------------------- Elvis -----------------------------------
+
+    fun exitElvisLhs(elvisCall: FirElvisCall) {
+        val (lhsExitNode, lhsIsNotNullNode, rhsEnterNode) = graphBuilder.exitElvisLhs(elvisCall)
+        lhsExitNode.mergeIncomingFlow()
+        val flow = lhsExitNode.flow
+        val lhsVariable = variableStorage.getOrCreateVariable(flow, elvisCall.lhs)
+        rhsEnterNode.flow = logicSystem.approveStatementsInsideFlow(
+            flow,
+            lhsVariable eq null,
+            shouldForkFlow = true,
+            shouldRemoveSynthetics = false
+        )
+        lhsIsNotNullNode.flow = logicSystem.approveStatementsInsideFlow(
+            flow,
+            lhsVariable notEq null,
+            shouldForkFlow = true,
+            shouldRemoveSynthetics = false
+        ).also {
+            if (lhsVariable.isReal()) {
+                it.addTypeStatement(lhsVariable typeEq any)
+            }
+        }
+    }
+
+    fun exitElvis(callCompleted: Boolean) {
+        val (elvisExitNode, unionNode) = graphBuilder.exitElvis(callCompleted)
+        elvisExitNode.mergeIncomingFlow()
+        unionNode?.let { unionFlowFromArguments(it) }
+    }
+
     // ------------------------------------------------------ Utils ------------------------------------------------------
 
     private var CFGNode<*>.flow: FLOW

@@ -125,6 +125,18 @@ fun ControlFlowGraphBuilder.createAnnotationExitNode(fir: FirAnnotationCall): An
 fun ControlFlowGraphBuilder.createAnnotationEnterNode(fir: FirAnnotationCall): AnnotationEnterNode =
     AnnotationEnterNode(currentGraph, fir, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createElvisLhsIsNotNullNode(fir: FirElvisCall): ElvisLhsIsNotNullNode =
+    ElvisLhsIsNotNullNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createElvisRhsEnterNode(fir: FirElvisCall): ElvisRhsEnterNode =
+    ElvisRhsEnterNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createElvisLhsExitNode(fir: FirElvisCall): ElvisLhsExitNode =
+    ElvisLhsExitNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createElvisExitNode(fir: FirElvisCall): ElvisExitNode =
+    ElvisExitNode(currentGraph, fir, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createVariableDeclarationNode(fir: FirProperty): VariableDeclarationNode =
     VariableDeclarationNode(currentGraph, fir, levelCounter, createId())
 

@@ -1554,7 +1554,7 @@ class RawFirBuilder(
 
             when (operationToken) {
                 ELVIS ->
-                    return leftArgument.generateNotNullOrOther(baseSession, rightArgument, "elvis", source)
+                    return leftArgument.generateNotNullOrOther(rightArgument, source)
                 ANDAND, OROR ->
                     return leftArgument.generateLazyLogicalOperation(rightArgument, operationToken == ANDAND, source)
                 in OperatorConventions.IN_OPERATIONS ->
