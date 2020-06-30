@@ -93,7 +93,7 @@ class NoArgGradleSubplugin @Inject internal constructor(private val registry: To
         kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
     ): List<SubpluginOption> = throw GradleException(
         "This version of the kotlin-noarg Gradle plugin is built for a newer Kotlin version. " +
-                "Please use an older version of kotlin-noarg or upgrade the Kotlin version to make them match."
+                "Please use an older version of kotlin-noarg or upgrade the Kotlin Gradle plugin version to make them match."
     )
     //endregion
 }

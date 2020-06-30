@@ -203,7 +203,7 @@ class SubpluginsIT : BaseGradleIT() {
                 		mavenCentral()
                 	}
                 	dependencies {
-                		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.70")
+                		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
                 	}
                 }
                 
@@ -244,7 +244,7 @@ class SubpluginsIT : BaseGradleIT() {
                 assertFailed()
                 assertContains(
                     "This version of the kotlin-$plugin Gradle plugin is built for a newer Kotlin version. " +
-                            "Please use an older version of kotlin-$plugin or upgrade the Kotlin version to make them match."
+                            "Please use an older version of kotlin-$plugin or upgrade the Kotlin Gradle plugin version to make them match."
                 )
             }
         }

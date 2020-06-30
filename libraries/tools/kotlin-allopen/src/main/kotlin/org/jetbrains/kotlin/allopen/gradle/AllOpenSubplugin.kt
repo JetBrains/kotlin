@@ -89,7 +89,7 @@ class AllOpenGradleSubplugin @Inject internal constructor(private val registry: 
         kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
     ): List<SubpluginOption> = throw GradleException(
         "This version of the kotlin-allopen Gradle plugin is built for a newer Kotlin version. " +
-                "Please use an older version of kotlin-allopen or upgrade the Kotlin version to make them match."
+                "Please use an older version of kotlin-allopen or upgrade the Kotlin Gradle plugin version to make them match."
     )
     //endregion
 }
