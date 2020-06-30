@@ -5618,6 +5618,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/declarationChecks/MultiDeclarationErrors.kt");
             }
 
+            @TestMetadata("nameWithDangerousCharacters.kt")
+            public void testNameWithDangerousCharacters() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/declarationChecks/nameWithDangerousCharacters.kt");
+            }
+
             @TestMetadata("namedFunAsLastExpressionInBlock.kt")
             public void testNamedFunAsLastExpressionInBlock() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/declarationChecks/namedFunAsLastExpressionInBlock.kt");

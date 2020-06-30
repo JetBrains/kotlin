@@ -141,6 +141,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory2<KtDeclaration, CallableDescriptor, CallableDescriptor> EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE = DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
+    DiagnosticFactory1<PsiElement, String> DANGEROUS_CHARACTERS = DiagnosticFactory1.create(WARNING);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

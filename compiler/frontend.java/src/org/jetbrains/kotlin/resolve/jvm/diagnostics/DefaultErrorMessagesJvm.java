@@ -165,6 +165,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 "or annotate the class with @JvmDefaultWithoutCompatibility. " +
                 "Please refer to KT-39603 for details",
                 COMPACT, SHORT_NAMES_IN_TYPES);
+
+        MAP.put(DANGEROUS_CHARACTERS, "Name contains characters which can cause problems on Windows: {0}", STRING);
     }
 
     @NotNull
