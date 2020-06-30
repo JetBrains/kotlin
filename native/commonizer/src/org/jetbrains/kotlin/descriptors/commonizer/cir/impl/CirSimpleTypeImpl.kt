@@ -6,17 +6,13 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleType
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeProjection
+import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
-import org.jetbrains.kotlin.name.FqName
 
 data class CirSimpleTypeImpl(
-    override val kind: CirSimpleTypeKind,
+    override val classifierId: CirClassifierId,
     override val visibility: Visibility, // visibility of the classifier descriptor
-    override val fqName: FqName,
     override val arguments: List<CirTypeProjection>,
     override val isMarkedNullable: Boolean,
     override val isDefinitelyNotNullType: Boolean,
@@ -25,9 +21,8 @@ data class CirSimpleTypeImpl(
     // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
     private var cachedHashCode = 0
 
-    private fun computeHashCode() = hashCode(kind)
+    private fun computeHashCode() = hashCode(classifierId)
         .appendHashCode(visibility)
-        .appendHashCode(fqName)
         .appendHashCode(arguments)
         .appendHashCode(isMarkedNullable)
         .appendHashCode(isDefinitelyNotNullType)
@@ -46,8 +41,7 @@ data class CirSimpleTypeImpl(
         other === this -> true
         other is CirSimpleType -> {
             isMarkedNullable == other.isMarkedNullable
-                    && fqName == other.fqName
-                    && kind == other.kind
+                    && classifierId == other.classifierId
                     && visibility == other.visibility
                     && arguments == other.arguments
                     && fqNameWithTypeParameters == other.fqNameWithTypeParameters

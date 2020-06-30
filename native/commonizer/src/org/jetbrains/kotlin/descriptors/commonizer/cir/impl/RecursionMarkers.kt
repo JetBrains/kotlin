@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifier
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRecursionMarker
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 object CirClassRecursionMarker : CirClass, CirRecursionMarker {
     override val annotations get() = unsupported()
@@ -17,7 +17,7 @@ object CirClassRecursionMarker : CirClass, CirRecursionMarker {
     override val visibility get() = unsupported()
     override val modality get() = unsupported()
     override val kind get() = unsupported()
-    override var companion: FqName?
+    override var companion: Name?
         get() = unsupported()
         set(_) = unsupported()
     override val isCompanion get() = unsupported()

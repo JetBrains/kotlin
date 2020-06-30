@@ -8,15 +8,15 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 class CirClassNode(
     override val targetDeclarations: CommonizedGroup<CirClass>,
     override val commonDeclaration: NullableLazyValue<CirClass>,
-    override val fqName: FqName
-) : CirNodeWithFqName<CirClass, CirClass> {
+    override val classId: ClassId
+) : CirNodeWithClassId<CirClass, CirClass> {
 
     val constructors: MutableMap<ConstructorApproximationKey, CirClassConstructorNode> = THashMap()
     val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = THashMap()

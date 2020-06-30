@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 object CirClassFactory {
     fun create(source: ClassDescriptor): CirClass = create(
@@ -27,7 +25,7 @@ object CirClassFactory {
         visibility = source.visibility,
         modality = source.modality,
         kind = source.kind,
-        companion = source.companionObjectDescriptor?.fqNameSafe?.intern(),
+        companion = source.companionObjectDescriptor?.name?.intern(),
         isCompanion = source.isCompanionObject,
         isData = source.isData,
         isInline = source.isInline,
@@ -44,7 +42,7 @@ object CirClassFactory {
         visibility: Visibility,
         modality: Modality,
         kind: ClassKind,
-        companion: FqName?,
+        companion: Name?,
         isCompanion: Boolean,
         isData: Boolean,
         isInline: Boolean,

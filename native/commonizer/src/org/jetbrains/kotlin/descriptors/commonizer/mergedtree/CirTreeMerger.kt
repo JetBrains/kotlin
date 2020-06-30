@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.CirClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
+import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
@@ -115,10 +116,20 @@ class CirTreeMerger(
         val typeAliases: MutableMap<Name, CirTypeAliasNode> = packageNode.typeAliases
 
         packageMemberScope.collectMembers(
-            PropertyCollector { processProperty(properties, targetIndex, it, null) },
-            FunctionCollector { processFunction(functions, targetIndex, it, null) },
-            ClassCollector { processClass(classes, targetIndex, it, null) },
-            TypeAliasCollector { processTypeAlias(typeAliases, targetIndex, it) }
+            PropertyCollector { propertyDescriptor ->
+                processProperty(properties, targetIndex, propertyDescriptor, null)
+            },
+            FunctionCollector { functionDescriptor ->
+                processFunction(functions, targetIndex, functionDescriptor, null)
+            },
+            ClassCollector { classDescriptor ->
+                processClass(classes, targetIndex, classDescriptor, null) { className ->
+                    internedClassId(packageFqName, className)
+                }
+            },
+            TypeAliasCollector { typeAliasDescriptor ->
+                processTypeAlias(typeAliases, targetIndex, typeAliasDescriptor, packageFqName)
+            }
         )
     }
 
@@ -150,10 +161,14 @@ class CirTreeMerger(
         classes: MutableMap<Name, CirClassNode>,
         targetIndex: Int,
         classDescriptor: ClassDescriptor,
-        parentCommonDeclaration: NullableLazyValue<*>?
+        parentCommonDeclaration: NullableLazyValue<*>?,
+        classIdFunction: (Name) -> ClassId
     ) {
-        val classNode: CirClassNode = classes.getOrPut(classDescriptor.name.intern()) {
-            buildClassNode(storageManager, size, cacheRW, parentCommonDeclaration, classDescriptor.fqNameSafe.intern())
+        val className = classDescriptor.name.intern()
+        val classId = classIdFunction(className)
+
+        val classNode: CirClassNode = classes.getOrPut(className) {
+            buildClassNode(storageManager, size, cacheRW, parentCommonDeclaration, classId)
         }
         classNode.targetDeclarations[targetIndex] = CirClassFactory.create(classDescriptor)
 
@@ -167,9 +182,17 @@ class CirTreeMerger(
         classDescriptor.constructors.forEach { processClassConstructor(constructors, targetIndex, it, parentCommonDeclarationForMembers) }
 
         classDescriptor.unsubstitutedMemberScope.collectMembers(
-            PropertyCollector { processProperty(properties, targetIndex, it, parentCommonDeclarationForMembers) },
-            FunctionCollector { processFunction(functions, targetIndex, it, parentCommonDeclarationForMembers) },
-            ClassCollector { processClass(nestedClasses, targetIndex, it, parentCommonDeclarationForMembers) }
+            PropertyCollector { propertyDescriptor ->
+                processProperty(properties, targetIndex, propertyDescriptor, parentCommonDeclarationForMembers)
+            },
+            FunctionCollector { functionDescriptor ->
+                processFunction(functions, targetIndex, functionDescriptor, parentCommonDeclarationForMembers)
+            },
+            ClassCollector { nestedClassDescriptor ->
+                processClass(nestedClasses, targetIndex, nestedClassDescriptor, parentCommonDeclarationForMembers) { nestedClassName ->
+                    internedClassId(classId, nestedClassName)
+                }
+            }
         )
     }
 
@@ -188,10 +211,14 @@ class CirTreeMerger(
     private fun processTypeAlias(
         typeAliases: MutableMap<Name, CirTypeAliasNode>,
         targetIndex: Int,
-        typeAliasDescriptor: TypeAliasDescriptor
+        typeAliasDescriptor: TypeAliasDescriptor,
+        packageFqName: FqName
     ) {
-        val typeAliasNode: CirTypeAliasNode = typeAliases.getOrPut(typeAliasDescriptor.name.intern()) {
-            buildTypeAliasNode(storageManager, size, cacheRW, typeAliasDescriptor.fqNameSafe.intern())
+        val typeAliasName = typeAliasDescriptor.name.intern()
+        val typeAliasClassId = internedClassId(packageFqName, typeAliasName)
+
+        val typeAliasNode: CirTypeAliasNode = typeAliases.getOrPut(typeAliasName) {
+            buildTypeAliasNode(storageManager, size, cacheRW, typeAliasClassId)
         }
         typeAliasNode.targetDeclarations[targetIndex] = CirTypeAliasFactory.create(typeAliasDescriptor)
     }

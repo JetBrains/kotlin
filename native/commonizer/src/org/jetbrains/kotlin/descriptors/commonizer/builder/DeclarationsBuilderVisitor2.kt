@@ -80,7 +80,7 @@ internal class DeclarationsBuilderVisitor2(
     }
 
     override fun visitClassNode(node: CirClassNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
-        val classes = components.cache.getCachedClasses(node.fqName)
+        val classes = components.cache.getCachedClasses(node.classId)
 
         // build class constructors:
         val allConstructorsByTargets = Array<MutableList<CommonizedClassConstructorDescriptor>>(node.dimension) { ArrayList() }

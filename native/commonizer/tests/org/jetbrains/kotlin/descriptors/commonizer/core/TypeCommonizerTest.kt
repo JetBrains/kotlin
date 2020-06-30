@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildTypeAliasNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockTAType
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.getAbbreviation
@@ -459,27 +459,26 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
             val descriptor = (type.getAbbreviation() ?: type).constructor.declarationDescriptor
             when (descriptor) {
                 is ClassDescriptor -> {
-                    val fqName = descriptor.fqNameSafe
-                    val node = cache.classes.getOrPut(fqName) {
+                    val classId = descriptor.classId ?: error("No class ID for ${descriptor::class.java}, $descriptor")
+                    val node = cache.classes.getOrPut(classId) {
                         buildClassNode(
                             storageManager = LockBasedStorageManager.NO_LOCKS,
                             size = variants.size,
                             cacheRW = cache,
                             parentCommonDeclaration = null,
-                            fqName = fqName
+                            classId = classId
                         )
                     }
                     node.targetDeclarations[index] = CirClassFactory.create(descriptor)
                 }
                 is TypeAliasDescriptor -> {
-                    val fqName = descriptor.fqNameSafe
-                    val node = cache.typeAliases.getOrPut(fqName) {
+                    val classId = descriptor.classId ?: error("No class ID for ${descriptor::class.java}, $descriptor")
+                    val node = cache.typeAliases.getOrPut(classId) {
                         buildTypeAliasNode(
                             storageManager = LockBasedStorageManager.NO_LOCKS,
                             size = variants.size,
                             cacheRW = cache,
-                            fqName = fqName
-
+                            classId = classId
                         )
                     }
                     node.targetDeclarations[index] = CirTypeAliasFactory.create(descriptor)

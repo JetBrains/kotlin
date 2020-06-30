@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeAlias
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTypeAliasNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
 
 internal fun CirTypeAliasNode.buildDescriptors(
     components: GlobalDeclarationsBuilderComponents,
@@ -29,14 +29,14 @@ internal fun CirTypeAliasNode.buildDescriptors(
 
     if (!isLiftedUp) {
         targetDeclarations.forEachIndexed { index, typeAlias ->
-            typeAlias?.buildDescriptor(components, output, index, containingDeclarations, fqName, isActual = markAsActual)
+            typeAlias?.buildDescriptor(components, output, index, containingDeclarations, classId, isActual = markAsActual)
         }
     }
 
     if (commonTypeAlias != null) {
-        commonTypeAlias.buildDescriptor(components, output, indexOfCommon, containingDeclarations, fqName)
+        commonTypeAlias.buildDescriptor(components, output, indexOfCommon, containingDeclarations, classId)
     } else if (commonClassifier != null && commonClassifier is CirClass) {
-        commonClassifier.buildDescriptor(components, output, indexOfCommon, containingDeclarations, fqName, isExpect = true)
+        commonClassifier.buildDescriptor(components, output, indexOfCommon, containingDeclarations, classId, isExpect = true)
     }
 
     // log stats
@@ -48,7 +48,7 @@ private fun CirTypeAlias.buildDescriptor(
     output: CommonizedGroup<ClassifierDescriptorWithTypeParameters>,
     index: Int,
     containingDeclarations: List<DeclarationDescriptor?>,
-    fqName: FqName,
+    classId: ClassId,
     isActual: Boolean = false
 ) {
     val targetComponents = components.targetComponents[index]
@@ -77,7 +77,7 @@ private fun CirTypeAlias.buildDescriptor(
     )
 
     // cache created type alias descriptor:
-    components.cache.cache(fqName, index, typeAliasDescriptor)
+    components.cache.cache(classId, index, typeAliasDescriptor)
 
     output[index] = typeAliasDescriptor
 }

@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFlexibleType
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleType
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleTypeKind
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
@@ -39,29 +36,42 @@ internal fun areTypesEqual(cache: CirClassifiersCache, a: CirType, b: CirType): 
 }
 
 private fun areSimpleTypesEqual(cache: CirClassifiersCache, a: CirSimpleType, b: CirSimpleType): Boolean {
-    if (a !== b
-        && (a.arguments.size != b.arguments.size
-                || a.isMarkedNullable != b.isMarkedNullable
-                || a.isDefinitelyNotNullType != b.isDefinitelyNotNullType
-                || a.fqName != b.fqName)
-    ) {
-        return false
+    val aId = a.classifierId
+    val bId = b.classifierId
+
+    if (a !== b) {
+        if (a.arguments.size != b.arguments.size
+            || a.isMarkedNullable != b.isMarkedNullable
+            || a.isDefinitelyNotNullType != b.isDefinitelyNotNullType
+        ) {
+            return false
+        }
+
+        if (aId is CirClassifierId.ClassOrTypeAlias) {
+            if (bId !is CirClassifierId.ClassOrTypeAlias || aId.classId != bId.classId) return false
+        }
+
+        if (aId is CirClassifierId.TypeParameter) {
+            if (bId !is CirClassifierId.TypeParameter || aId.name != bId.name) return false
+        }
     }
 
-    fun isClassOrTypeAliasUnderStandardKotlinPackages() =
-        // N.B. only for descriptors that represent classes or type aliases, but not type parameters!
-        a.isClassOrTypeAlias && b.isClassOrTypeAlias && a.fqName.isUnderStandardKotlinPackages
+    // N.B. only for descriptors that represent classes or type aliases, but not type parameters!
+    fun isClassOrTypeAliasUnderStandardKotlinPackages(): Boolean {
+        return (aId as? CirClassifierId.ClassOrTypeAlias)?.classId?.packageFqName?.isUnderStandardKotlinPackages == true
+    }
 
-    fun descriptorsCanBeCommonizedThemselves() =
-        a.kind == b.kind && when (a.kind) {
-            CirSimpleTypeKind.CLASS -> cache.classes[a.fqName].canBeCommonized()
-            CirSimpleTypeKind.TYPE_ALIAS -> cache.typeAliases[a.fqName].canBeCommonized()
-            CirSimpleTypeKind.TYPE_PARAMETER -> {
+    fun descriptorsCanBeCommonizedThemselves(): Boolean {
+        return when (aId) {
+            is CirClassifierId.Class -> bId is CirClassifierId.Class && cache.classes[aId.classId].canBeCommonized()
+            is CirClassifierId.TypeAlias -> bId is CirClassifierId.TypeAlias && cache.typeAliases[aId.classId].canBeCommonized()
+            is CirClassifierId.TypeParameter -> {
                 // Real type parameter commonization is performed in TypeParameterCommonizer.
                 // Here it is enough to check that FQ names are equal (which is already done above).
                 true
             }
         }
+    }
 
     val descriptorsCanBeCommonized =
         /* either class or type alias from Kotlin stdlib */ isClassOrTypeAliasUnderStandardKotlinPackages()

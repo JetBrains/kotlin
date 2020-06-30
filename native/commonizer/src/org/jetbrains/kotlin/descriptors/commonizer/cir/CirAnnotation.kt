@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
-interface CirAnnotation : CirHasFqName {
+interface CirAnnotation {
+    val type: CirSimpleType
     val constantValueArguments: Map<Name, ConstantValue<*>>
     val annotationValueArguments: Map<Name, CirAnnotation>
 }
