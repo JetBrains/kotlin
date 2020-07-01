@@ -76,6 +76,10 @@ class FirClassDeclaredMemberScope(
     ) {
         nestedClassifierScope?.processClassifiersByNameWithSubstitution(name, processor)
     }
+
+    override fun getCallableNames(): Set<Name> {
+        return callablesIndex.keys
+    }
 }
 
 

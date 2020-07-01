@@ -341,6 +341,10 @@ class FirTypeIntersectionScope private constructor(
         return ProcessorAction.NEXT
     }
 
+    override fun getCallableNames(): Set<Name> {
+        return scopes.flatMapTo(mutableSetOf()) { it.getCallableNames() }
+    }
+
     companion object {
         fun prepareIntersectionScope(
             session: FirSession,

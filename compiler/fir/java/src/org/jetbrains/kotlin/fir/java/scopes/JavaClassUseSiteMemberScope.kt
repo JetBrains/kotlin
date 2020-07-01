@@ -45,6 +45,10 @@ class JavaClassUseSiteMemberScope(
         }
     }
 
+    override fun getCallableNames(): Set<Name> {
+        return declaredMemberScope.getCallableNames() + superTypesScope.getCallableNames()
+    }
+
     private fun generateAccessorSymbol(
         functionSymbol: FirFunctionSymbol<*>,
         syntheticPropertyName: Name,
