@@ -638,46 +638,56 @@ class Fir2IrVisitor(
             KtNodeTypes.POSTFIX_EXPRESSION -> IrStatementOrigin.EXCLEXCL
             else -> null
         }
-        // If the constant true branch has empty body, it won't be converted. Thus, the entire `when` expression is effectively _not_
-        // exhaustive anymore. In that case, coerce the return type of `when` expression to Unit as per the backend expectation.
-        val effectivelyNotExhaustive = !whenExpression.isExhaustive ||
-                whenExpression.branches.any { it.condition is FirElseIfTrueCondition && it.result.statements.isEmpty() }
         return conversionScope.withWhenSubject(subjectVariable) {
             whenExpression.convertWithOffsets { startOffset, endOffset ->
-                val irWhen = IrWhenImpl(
-                    startOffset, endOffset,
-                    if (effectivelyNotExhaustive) irBuiltIns.unitType else whenExpression.typeRef.toIrType(),
-                    origin
-                ).apply {
-                    var unconditionalBranchFound = false
-                    for (branch in whenExpression.branches) {
-                        if (branch.condition !is FirElseIfTrueCondition) {
-                            branches += branch.accept(this@Fir2IrVisitor, data) as IrBranch
-                        } else {
-                            unconditionalBranchFound = true
-                            if (branch.result.statements.isNotEmpty()) {
-                                branches += branch.accept(this@Fir2IrVisitor, data) as IrBranch
-                            }
-                        }
-                    }
-                    if (whenExpression.isExhaustive && !unconditionalBranchFound) {
-                        val irResult = IrCallImpl(
-                            startOffset, endOffset, irBuiltIns.nothingType,
-                            irBuiltIns.noWhenBranchMatchedExceptionSymbol,
-                            typeArgumentsCount = 0,
-                            valueArgumentsCount = 0
-                        )
-                        branches += IrElseBranchImpl(
-                            IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true), irResult
-                        )
-                    }
+                // If the constant true branch has empty body, it won't be converted. Thus, the entire `when` expression is effectively _not_
+                // exhaustive anymore. In that case, coerce the return type of `when` expression to Unit as per the backend expectation.
+                val irBranches = whenExpression.branches.mapNotNullTo(mutableListOf()) { branch ->
+                    branch.takeIf {
+                        it.condition !is FirElseIfTrueCondition || it.result.statements.isNotEmpty()
+                    }?.toIrWhenBranch()
                 }
-                if (subjectVariable == null) {
-                    irWhen
-                } else {
-                    IrBlockImpl(startOffset, endOffset, irWhen.type, origin, listOf(subjectVariable, irWhen))
+                if (whenExpression.isExhaustive && whenExpression.branches.none { it.condition is FirElseIfTrueCondition }) {
+                    val irResult = IrCallImpl(
+                        startOffset, endOffset, irBuiltIns.nothingType,
+                        irBuiltIns.noWhenBranchMatchedExceptionSymbol,
+                        typeArgumentsCount = 0,
+                        valueArgumentsCount = 0
+                    )
+                    irBranches += IrElseBranchImpl(
+                        IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true), irResult
+                    )
                 }
+                generateWhen(
+                    startOffset, endOffset, origin,
+                    subjectVariable, irBranches,
+                    whenExpression.isExhaustive && whenExpression.branches.none {
+                        it.condition is FirElseIfTrueCondition && it.result.statements.isEmpty()
+                    },
+                    whenExpression.typeRef
+                )
             }
+        }
+    }
+
+    private fun generateWhen(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrStatementOrigin?,
+        subjectVariable: IrVariable?,
+        branches: List<IrBranch>,
+        isEffectivelyExhaustive: Boolean,
+        resultTypeRef: FirTypeRef
+    ): IrExpression {
+        val irWhen = IrWhenImpl(
+            startOffset, endOffset,
+            if (isEffectivelyExhaustive) resultTypeRef.toIrType() else irBuiltIns.unitType,
+            origin, branches
+        )
+        return if (subjectVariable == null) {
+            irWhen
+        } else {
+            IrBlockImpl(startOffset, endOffset, irWhen.type, origin, listOf(subjectVariable, irWhen))
         }
     }
 
@@ -693,10 +703,10 @@ class Fir2IrVisitor(
         }
     }
 
-    override fun visitWhenBranch(whenBranch: FirWhenBranch, data: Any?): IrElement {
-        return whenBranch.convertWithOffsets { startOffset, endOffset ->
-            val condition = whenBranch.condition
-            val irResult = convertToIrExpression(whenBranch.result)
+    private fun FirWhenBranch.toIrWhenBranch(): IrBranch {
+        return convertWithOffsets { startOffset, endOffset ->
+            val condition = condition
+            val irResult = convertToIrExpression(result)
             if (condition is FirElseIfTrueCondition) {
                 IrElseBranchImpl(IrConstImpl.boolean(irResult.startOffset, irResult.endOffset, irBuiltIns.booleanType, true), irResult)
             } else {
