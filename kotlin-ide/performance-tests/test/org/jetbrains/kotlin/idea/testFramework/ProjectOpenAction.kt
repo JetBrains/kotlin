@@ -26,11 +26,11 @@ import com.intellij.util.io.exists
 import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.runAndMeasure
 import org.jetbrains.kotlin.idea.perf.util.logMessage
+import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import java.io.File
 import java.nio.file.Paths
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 data class OpenProject(val projectPath: String, val projectName: String, val jdk: Sdk, val projectOpenAction: ProjectOpenAction)
@@ -64,7 +64,7 @@ enum class ProjectOpenAction {
             val projectManagerEx = ProjectManagerEx.getInstanceEx()
 
             val project = loadProjectWithName(projectPath, projectName)
-            assertNotNull(project, "project $projectName at $projectPath is not loaded")
+                ?: error("project $projectName at $projectPath is not loaded")
 
             runWriteAction {
                 ProjectRootManager.getInstance(project).projectSdk = jdk
@@ -123,6 +123,7 @@ enum class ProjectOpenAction {
 
     open fun postOpenProject(project: Project, openProject: OpenProject) {
         ApplicationManager.getApplication().executeOnPooledThread {
+            ResolveElementCache.forceFullAnalysisModeInTests = true
             DumbService.getInstance(project).waitForSmartMode()
 
             for (module in getModulesWithKotlinFiles(project)) {
