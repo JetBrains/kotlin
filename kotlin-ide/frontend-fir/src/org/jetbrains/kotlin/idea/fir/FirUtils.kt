@@ -24,6 +24,8 @@ fun KtElement.getOrBuildFir(
     phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
 ) = LowLevelFirApiFacade.getOrBuildFirFor(this, resolveState, phase)
 
+fun KtElement.getFirOfClosestParent() = LowLevelFirApiFacade.getFirOfClosestParent(this)
+
 inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
     resolveState: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE

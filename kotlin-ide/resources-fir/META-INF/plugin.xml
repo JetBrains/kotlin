@@ -89,6 +89,11 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
     <projectService serviceInterface="org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService"
                     serviceImplementation="org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateServiceImpl"/>
     <projectService serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
+
+    <completion.contributor language="kotlin"
+                            id="KotlinCompletionContributor"
+                            order="first"
+                            implementationClass="org.jetbrains.kotlin.idea.completion.KotlinFirCompletionContributor"/>
   </extensions>
 
   <!--  scripts  -->

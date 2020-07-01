@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
 
 internal class FirIdeProvider(
     val project: Project,
@@ -78,6 +79,10 @@ internal class FirIdeProvider(
                 file
             }
         }
+    }
+
+    fun buildFunctionWithBody(ktNamedFunction: KtNamedFunction): FirFunction<*> {
+        return RawFirBuilder(session, cacheProvider.kotlinScopeProvider, stubMode = false).buildFunctionWithBody(ktNamedFunction)
     }
 
     fun getFile(ktFile: KtFile): FirFile? {
