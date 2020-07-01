@@ -368,7 +368,10 @@ class ControlFlowGraphBuilder {
             } ?: continue
             addEdge(node, graph.enterNode, preferredKind = EdgeKind.CfgForward)
             node = graph.exitNode
-            classGraph.addSubGraph(graph)
+            // TODO Fix this
+            if (graph.owner == null) {
+                classGraph.addSubGraph(graph)
+            }
         }
         addEdge(node, exitNode, preferredKind = EdgeKind.CfgForward)
         return popGraph()
