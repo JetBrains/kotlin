@@ -27,7 +27,7 @@ class AppleXCTestLauncher(configuration: MobileTestRunConfiguration, environment
             val sessionID = UUID.randomUUID()
             val appleDevice = device
 
-            object : OCTestCommandLineConfigurator(
+            return object : OCTestCommandLineConfigurator(
                 this, params, platform, device.arch, null, productFileName,
                 File(bundle, productFileName), testBundle.path, false, testScope, sessionID
             ) {
@@ -36,7 +36,6 @@ class AppleXCTestLauncher(configuration: MobileTestRunConfiguration, environment
 
                 override fun getProductModuleName(): String? = null // TODO
             }
-            return super.createCommandLineBuilder(params, platform, arch)
         }
     }
 }
