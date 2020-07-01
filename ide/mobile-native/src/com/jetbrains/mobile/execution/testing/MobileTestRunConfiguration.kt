@@ -55,9 +55,6 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
 
     override fun createOtherState(environment: ExecutionEnvironment): CommandLineState = AndroidTestCommandLineState(this, environment)
 
-    override fun createCidrLauncher(environment: ExecutionEnvironment, device: AppleDevice): CidrLauncher =
-        AppleXCTestLauncher(this, environment, device)
-
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         MobileTestRunConfigurationEditor(project, helper, ::isSuitable)
 
@@ -66,7 +63,8 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
         testScope: CidrTestScope
     ): CidrRerunFailedTestsAction.CidrReturnTestProfile = CidrRerunFailedTestsAction.CidrReturnTestProfile(rerunAction, this, testScope)
 
-    override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher = throw IllegalStateException()
+    override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher =
+        AppleXCTestLauncher(this, environment, environment.executionTarget as AppleDevice)
 
     override fun writeExternal(element: Element) {
         super<MobileRunConfigurationBase>.writeExternal(element)

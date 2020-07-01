@@ -19,13 +19,13 @@ interface MobileRunConfiguration : RunConfiguration {
         }
 
     fun createAppleState(environment: ExecutionEnvironment, executor: Executor, device: AppleDevice): CommandLineState {
-        return CidrCommandLineState(environment, createCidrLauncher(environment, device)).also {
+        return CidrCommandLineState(environment, createLauncher(environment)).also {
             it.consoleBuilder = CidrConsoleBuilder(project, null, project.basePath?.let { File(it) })
         }
     }
 
     fun createOtherState(environment: ExecutionEnvironment): CommandLineState
 
-    fun createCidrLauncher(environment: ExecutionEnvironment, device: AppleDevice): CidrLauncher =
-        AppleLauncher(this, environment, device)
+    fun createLauncher(environment: ExecutionEnvironment): CidrLauncher =
+        AppleLauncher(this, environment, environment.executionTarget as AppleDevice)
 }
