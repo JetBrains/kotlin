@@ -270,109 +270,109 @@ private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendCont
     description = "Throw proper exception for calls returning value of type 'kotlin.Nothing'"
 )
 
-@Suppress("Reformat")
-private val jvmFilePhases =
-        typeAliasAnnotationMethodsPhase then
-        stripTypeAliasDeclarationsPhase then
-        provisionalFunctionExpressionPhase then
+private val jvmFilePhases = listOf(
+    typeAliasAnnotationMethodsPhase,
+    stripTypeAliasDeclarationsPhase,
+    provisionalFunctionExpressionPhase,
 
-        jvmOverloadsAnnotationPhase then
-        mainMethodGenerationPhase then
+    jvmOverloadsAnnotationPhase,
+    mainMethodGenerationPhase,
 
-        inventNamesForLocalClassesPhase then
-        kCallableNamePropertyPhase then
-        annotationPhase then
-        polymorphicSignaturePhase then
-        varargPhase then
-        arrayConstructorPhase then
-        checkNotNullPhase then
+    inventNamesForLocalClassesPhase,
+    kCallableNamePropertyPhase,
+    annotationPhase,
+    polymorphicSignaturePhase,
+    varargPhase,
+    arrayConstructorPhase,
+    checkNotNullPhase,
 
-        lateinitNullableFieldsPhase then
-        lateinitDeclarationLoweringPhase then
-        lateinitUsageLoweringPhase then
+    lateinitNullableFieldsPhase,
+    lateinitDeclarationLoweringPhase,
+    lateinitUsageLoweringPhase,
 
-        moveOrCopyCompanionObjectFieldsPhase then
-        inlineCallableReferenceToLambdaPhase then
-        propertyReferencePhase then
-        constPhase then
-        propertiesPhase then
-        remapObjectFieldAccesses then
-        anonymousObjectSuperConstructorPhase then
-        tailrecPhase then
+    moveOrCopyCompanionObjectFieldsPhase,
+    inlineCallableReferenceToLambdaPhase,
+    propertyReferencePhase,
+    constPhase,
+    propertiesPhase,
+    remapObjectFieldAccesses,
+    anonymousObjectSuperConstructorPhase,
+    tailrecPhase,
 
-        jvmStandardLibraryBuiltInsPhase then
+    jvmStandardLibraryBuiltInsPhase,
 
-        forLoopsPhase then
-        jvmInlineClassPhase then
+    forLoopsPhase,
+    jvmInlineClassPhase,
 
-        sharedVariablesPhase then
+    sharedVariablesPhase,
 
-        makePatchParentsPhase(1) then
+    makePatchParentsPhase(1),
 
-        enumWhenPhase then
-        singletonReferencesPhase then
+    enumWhenPhase,
+    singletonReferencesPhase,
 
-        functionReferencePhase then
-        singleAbstractMethodPhase then
-        assertionPhase then
-        returnableBlocksPhase then
-        localDeclarationsPhase then
-        jvmLocalClassExtractionPhase then
-        staticLambdaPhase then
+    functionReferencePhase,
+    singleAbstractMethodPhase,
+    assertionPhase,
+    returnableBlocksPhase,
+    localDeclarationsPhase,
+    jvmLocalClassExtractionPhase,
+    staticLambdaPhase,
 
-        jvmDefaultConstructorPhase then
+    jvmDefaultConstructorPhase,
 
-        flattenStringConcatenationPhase then
-        foldConstantLoweringPhase then
-        computeStringTrimPhase then
-        jvmStringConcatenationLowering then
+    flattenStringConcatenationPhase,
+    foldConstantLoweringPhase,
+    computeStringTrimPhase,
+    jvmStringConcatenationLowering,
 
-        defaultArgumentStubPhase then
-        defaultArgumentInjectorPhase then
-        defaultArgumentCleanerPhase then
+    defaultArgumentStubPhase,
+    defaultArgumentInjectorPhase,
+    defaultArgumentCleanerPhase,
 
-        interfacePhase then
-        inheritedDefaultMethodsOnClassesPhase then
-        interfaceSuperCallsPhase then
-        interfaceDefaultCallsPhase then
-        interfaceObjectCallsPhase then
+    interfacePhase,
+    inheritedDefaultMethodsOnClassesPhase,
+    interfaceSuperCallsPhase,
+    interfaceDefaultCallsPhase,
+    interfaceObjectCallsPhase,
 
-        tailCallOptimizationPhase then
-        addContinuationPhase then
+    tailCallOptimizationPhase,
+    addContinuationPhase,
 
-        innerClassesPhase then
-        innerClassesMemberBodyPhase then
-        innerClassConstructorCallsPhase then
+    innerClassesPhase,
+    innerClassesMemberBodyPhase,
+    innerClassConstructorCallsPhase,
 
-        makePatchParentsPhase(2) then
+    makePatchParentsPhase(2),
 
-        enumClassPhase then
-        objectClassPhase then
-        staticInitializersPhase then
-        initializersPhase then
-        initializersCleanupPhase then
-        collectionStubMethodLowering then
-        functionNVarargBridgePhase then
-        jvmStaticAnnotationPhase then
-        staticDefaultFunctionPhase then
-        bridgePhase then
-        syntheticAccessorPhase then
+    enumClassPhase,
+    objectClassPhase,
+    staticInitializersPhase,
+    initializersPhase,
+    initializersCleanupPhase,
+    collectionStubMethodLowering,
+    functionNVarargBridgePhase,
+    jvmStaticAnnotationPhase,
+    staticDefaultFunctionPhase,
+    bridgePhase,
+    syntheticAccessorPhase,
 
-        jvmArgumentNullabilityAssertions then
-        toArrayPhase then
-        jvmOptimizationLoweringPhase then
-        ifNullExpressionsFusionPhase then
-        additionalClassAnnotationPhase then
-        typeOperatorLowering then
-        replaceKFunctionInvokeWithFunctionInvokePhase then
-        kotlinNothingValueExceptionPhase then
+    jvmArgumentNullabilityAssertions,
+    toArrayPhase,
+    jvmOptimizationLoweringPhase,
+    ifNullExpressionsFusionPhase,
+    additionalClassAnnotationPhase,
+    typeOperatorLowering,
+    replaceKFunctionInvokeWithFunctionInvokePhase,
+    kotlinNothingValueExceptionPhase,
 
-        checkLocalNamesWithOldBackendPhase then
+    checkLocalNamesWithOldBackendPhase,
 
-        renameFieldsPhase then
-        fakeInliningLocalVariablesLowering then
+    renameFieldsPhase,
+    fakeInliningLocalVariablesLowering,
 
-        makePatchParentsPhase(3)
+    makePatchParentsPhase(3)
+)
 
 val jvmPhases = namedIrModulePhase(
     name = "IrLowering",
