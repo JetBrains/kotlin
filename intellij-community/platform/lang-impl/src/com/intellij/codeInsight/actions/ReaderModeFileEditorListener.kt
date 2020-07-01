@@ -6,13 +6,15 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
+import com.intellij.openapi.fileEditor.FileEditorProvider
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.FileIndexFacade
+import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
 
 class ReaderModeFileEditorListener : FileEditorManagerListener {
-  override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+  override fun fileOpenedSync(source: FileEditorManager, file: VirtualFile, editors: Pair<Array<FileEditor>, Array<FileEditorProvider>>) {
     if (!instance(source.project).enabled) return
     applyReaderMode(source.project, source.getSelectedEditor(file))
   }
