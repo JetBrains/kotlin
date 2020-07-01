@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.time
 
+import kotlin.contracts.*
 import kotlin.math.abs
 
 @OptIn(ExperimentalTime::class)
@@ -104,8 +105,10 @@ public inline class Duration internal constructor(internal val value: Double) : 
      *   If the value doesn't fit in [Int] range, i.e. it's greater than [Int.MAX_VALUE] or less than [Int.MIN_VALUE],
      *   it is coerced into that range.
      */
-    public inline fun <T> toComponents(action: (days: Int, hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
-        action(inDays.toInt(), hoursComponent, minutesComponent, secondsComponent, nanosecondsComponent)
+    public inline fun <T> toComponents(action: (days: Int, hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T {
+        contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
+        return action(inDays.toInt(), hoursComponent, minutesComponent, secondsComponent, nanosecondsComponent)
+    }
 
     /**
      * Splits this duration into hours, minutes, seconds, and nanoseconds and executes the given [action] with these components.
@@ -118,8 +121,10 @@ public inline class Duration internal constructor(internal val value: Double) : 
      *   If the value doesn't fit in [Int] range, i.e. it's greater than [Int.MAX_VALUE] or less than [Int.MIN_VALUE],
      *   it is coerced into that range.
      */
-    public inline fun <T> toComponents(action: (hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
-        action(inHours.toInt(), minutesComponent, secondsComponent, nanosecondsComponent)
+    public inline fun <T> toComponents(action: (hours: Int, minutes: Int, seconds: Int, nanoseconds: Int) -> T): T {
+        contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
+        return action(inHours.toInt(), minutesComponent, secondsComponent, nanosecondsComponent)
+    }
 
     /**
      * Splits this duration into minutes, seconds, and nanoseconds and executes the given [action] with these components.
@@ -131,8 +136,10 @@ public inline class Duration internal constructor(internal val value: Double) : 
      *   If the value doesn't fit in [Int] range, i.e. it's greater than [Int.MAX_VALUE] or less than [Int.MIN_VALUE],
      *   it is coerced into that range.
      */
-    public inline fun <T> toComponents(action: (minutes: Int, seconds: Int, nanoseconds: Int) -> T): T =
-        action(inMinutes.toInt(), secondsComponent, nanosecondsComponent)
+    public inline fun <T> toComponents(action: (minutes: Int, seconds: Int, nanoseconds: Int) -> T): T {
+        contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
+        return action(inMinutes.toInt(), secondsComponent, nanosecondsComponent)
+    }
 
     /**
      * Splits this duration into seconds, and nanoseconds and executes the given [action] with these components.
@@ -143,8 +150,10 @@ public inline class Duration internal constructor(internal val value: Double) : 
      *   If the value doesn't fit in [Long] range, i.e. it's greater than [Long.MAX_VALUE] or less than [Long.MIN_VALUE],
      *   it is coerced into that range.
      */
-    public inline fun <T> toComponents(action: (seconds: Long, nanoseconds: Int) -> T): T =
-        action(inSeconds.toLong(), nanosecondsComponent)
+    public inline fun <T> toComponents(action: (seconds: Long, nanoseconds: Int) -> T): T {
+        contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
+        return action(inSeconds.toLong(), nanosecondsComponent)
+    }
 
     @PublishedApi
     internal val hoursComponent: Int get() = (inHours % 24).toInt()
