@@ -292,6 +292,24 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
         """
     }
 
+    @Test
+    fun testEnumEntryMultipleArgs(): Unit = assertKeys(
+        "Int%arg-0%call-%init%%entry-Bar%class-A",
+        "Int%arg-0%call-%init%%entry-Baz%class-A",
+        "Int%arg-0%call-%init%%entry-Foo%class-A",
+        "Int%arg-1%call-%init%%entry-Bar%class-A",
+        "Int%arg-1%call-%init%%entry-Baz%class-A",
+        "Int%arg-1%call-%init%%entry-Foo%class-A"
+    ) {
+        """
+        enum class A(val x: Int, val y: Int) {
+            Foo(1, 2),
+            Bar(2, 3),
+            Baz(3, 4)
+        }
+        """
+    }
+
     fun testCommentsAbove() = assertDurableChange(
         """
             fun Test() {
