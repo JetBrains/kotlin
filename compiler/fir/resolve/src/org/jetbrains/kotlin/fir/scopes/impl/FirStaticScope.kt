@@ -35,4 +35,8 @@ class FirStaticScope(private val delegateScope: FirScope) : FirScope() {
             }
         }
     }
+
+    override fun getCallableNames(): Set<Name> {
+        return delegateScope.getCallableNames()
+    }
 }

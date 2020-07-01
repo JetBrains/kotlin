@@ -56,4 +56,8 @@ class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirSc
             }
         }
     }
+
+    override fun getCallableNames(): Set<Name> {
+        return symbolProvider.getAllCallableNamesInPackage()
+    }
 }
