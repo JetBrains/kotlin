@@ -150,4 +150,8 @@ abstract class AbstractFirUseSiteMemberScope(
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         declaredMemberScope.processDeclaredConstructors(processor)
     }
+
+    override fun getCallableNames(): Set<Name> {
+        return declaredMemberScope.getCallableNames() + superTypesScope.getCallableNames()
+    }
 }

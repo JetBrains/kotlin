@@ -34,6 +34,7 @@ abstract class FirScope {
 
     open fun mayContainName(name: Name) = true
 
+    open fun getCallableNames(): Set<Name> = emptySet()
 }
 
 fun FirTypeScope.processOverriddenFunctionsAndSelf(

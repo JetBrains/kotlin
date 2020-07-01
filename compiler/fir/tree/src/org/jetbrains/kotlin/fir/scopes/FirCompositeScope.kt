@@ -44,4 +44,8 @@ class FirCompositeScope(private val scopes: Iterable<FirScope>) : FirScope() {
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return processComposite(FirScope::processPropertiesByName, name, processor)
     }
+
+    override fun getCallableNames(): Set<Name> {
+        return scopes.flatMapTo(mutableSetOf()) { it.getCallableNames() }
+    }
 }
