@@ -336,7 +336,7 @@ internal val linkerPhase = konanUnitPhase(
         description = "Linker"
 )
 
-internal val allLoweringsPhase = namedIrModulePhase(
+internal val allLoweringsPhase = NamedCompilerPhase(
         name = "IrLowering",
         description = "IR Lowering",
         // TODO: The lowerings before inlinePhase should be aligned with [NativeInlineFunctionResolver.kt]
@@ -353,37 +353,39 @@ internal val allLoweringsPhase = namedIrModulePhase(
                 performByIrFile(
                         name = "IrLowerByFile",
                         description = "IR Lowering by file",
-                        lower = forLoopsPhase then
-                                stringConcatenationPhase then
-                                enumConstructorsPhase then
-                                initializersPhase then
-                                localFunctionsPhase then
-                                tailrecPhase then
-                                defaultParameterExtentPhase then
-                                innerClassPhase then
-                                dataClassesPhase then
-                                singleAbstractMethodPhase then
-                                ifNullExpressionsFusionPhase then
-                                builtinOperatorPhase then
-                                finallyBlocksPhase then
-                                testProcessorPhase then
-                                enumClassPhase then
-                                delegationPhase then
-                                callableReferencePhase then
-                                interopPhase then
-                                varargPhase then
-                                compileTimeEvaluatePhase then
-                                kotlinNothingValueExceptionPhase then
-                                coroutinesPhase then
-                                typeOperatorPhase then
-                                bridgesPhase then
-                                autoboxPhase then
-                                returnsInsertionPhase
+                        lower = listOf(
+                            forLoopsPhase,
+                            stringConcatenationPhase,
+                            enumConstructorsPhase,
+                            initializersPhase,
+                            localFunctionsPhase,
+                            tailrecPhase,
+                            defaultParameterExtentPhase,
+                            innerClassPhase,
+                            dataClassesPhase,
+                            singleAbstractMethodPhase,
+                            ifNullExpressionsFusionPhase,
+                            builtinOperatorPhase,
+                            finallyBlocksPhase,
+                            testProcessorPhase,
+                            enumClassPhase,
+                            delegationPhase,
+                            callableReferencePhase,
+                            interopPhase,
+                            varargPhase,
+                            compileTimeEvaluatePhase,
+                            kotlinNothingValueExceptionPhase,
+                            coroutinesPhase,
+                            typeOperatorPhase,
+                            bridgesPhase,
+                            autoboxPhase,
+                            returnsInsertionPhase,
+                        )
                 ),
         actions = setOf(defaultDumper, ::moduleValidationCallback)
 )
 
-internal val dependenciesLowerPhase = SameTypeNamedPhaseWrapper(
+internal val dependenciesLowerPhase = NamedCompilerPhase(
         name = "LowerLibIR",
         description = "Lower library's IR",
         prerequisite = emptySet(),
@@ -421,35 +423,31 @@ internal val dependenciesLowerPhase = SameTypeNamedPhaseWrapper(
             }
         })
 
-internal val entryPointPhase = SameTypeNamedPhaseWrapper(
+internal val entryPointPhase = makeCustomPhase<Context, IrModuleFragment>(
         name = "addEntryPoint",
         description = "Add entry point for program",
         prerequisite = emptySet(),
-        lower = object : CompilerPhase<Context, IrModuleFragment, IrModuleFragment> {
-            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>,
-                                context: Context, input: IrModuleFragment): IrModuleFragment {
-                assert(context.config.produce == CompilerOutputKind.PROGRAM)
+        op = { context, _ ->
+            assert(context.config.produce == CompilerOutputKind.PROGRAM)
 
-                val originalFile = context.ir.symbols.entryPoint!!.owner.file
-                val originalModule = originalFile.packageFragmentDescriptor.containingDeclaration
-                val file = if (context.llvmModuleSpecification.containsModule(originalModule)) {
-                    originalFile
-                } else {
-                    // `main` function is compiled to other LLVM module.
-                    // For example, test running support uses `main` defined in stdlib.
-                    context.irModule!!.addFile(originalFile.fileEntry, originalFile.fqName)
-                }
-
-                require(context.llvmModuleSpecification.containsModule(
-                        file.packageFragmentDescriptor.containingDeclaration))
-
-                file.addChild(makeEntryPoint(context))
-                return input
+            val originalFile = context.ir.symbols.entryPoint!!.owner.file
+            val originalModule = originalFile.packageFragmentDescriptor.containingDeclaration
+            val file = if (context.llvmModuleSpecification.containsModule(originalModule)) {
+                originalFile
+            } else {
+                // `main` function is compiled to other LLVM module.
+                // For example, test running support uses `main` defined in stdlib.
+                context.irModule!!.addFile(originalFile.fileEntry, originalFile.fqName)
             }
+
+            require(context.llvmModuleSpecification.containsModule(
+                    file.packageFragmentDescriptor.containingDeclaration))
+
+            file.addChild(makeEntryPoint(context))
         }
 )
 
-internal val bitcodePhase = namedIrModulePhase(
+internal val bitcodePhase = NamedCompilerPhase(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
         lower = contextLLVMSetupPhase then

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.backend.konan.lower.ExpectDeclarationsRemoving
 import org.jetbrains.kotlin.backend.konan.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -23,22 +22,22 @@ private fun makeKonanFileLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
-        prerequisite: Set<AnyNamedPhase> = emptySet()
+        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
 ) = makeIrFilePhase(lowering, name, description, prerequisite, actions = filePhaseActions)
 
 private fun makeKonanModuleLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         description: String,
-        prerequisite: Set<AnyNamedPhase> = emptySet()
+        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
 ) = makeIrModulePhase(lowering, name, description, prerequisite, actions = modulePhaseActions)
 
 internal fun makeKonanFileOpPhase(
         op: (Context, IrFile) -> Unit,
         name: String,
         description: String,
-        prerequisite: Set<AnyNamedPhase> = emptySet()
-) = namedIrFilePhase(
+        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
+) = NamedCompilerPhase(
         name, description, prerequisite, nlevels = 0,
         lower = object : SameTypeCompilerPhase<Context, IrFile> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrFile>, context: Context, input: IrFile): IrFile {
@@ -53,8 +52,8 @@ internal fun makeKonanModuleOpPhase(
         op: (Context, IrModuleFragment) -> Unit,
         name: String,
         description: String,
-        prerequisite: Set<AnyNamedPhase> = emptySet()
-) = namedIrModulePhase(
+        prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet()
+) = NamedCompilerPhase(
         name, description, prerequisite, nlevels = 0,
         lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
@@ -108,7 +107,7 @@ internal val sharedVariablesPhase = makeKonanModuleLoweringPhase(
         prerequisite = setOf(lateinitPhase)
 )
 
-internal val extractLocalClassesFromInlineBodies = namedIrModulePhase(
+internal val extractLocalClassesFromInlineBodies = NamedCompilerPhase(
         lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
                 LocalClassesInInlineLambdasLowering(context).run {
@@ -130,7 +129,7 @@ internal val extractLocalClassesFromInlineBodies = namedIrModulePhase(
         actions = modulePhaseActions
 )
 
-internal val inlinePhase = namedIrModulePhase(
+internal val inlinePhase = NamedCompilerPhase(
         lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
                 FunctionInlining(context, NativeInlineFunctionResolver(context)).run {
