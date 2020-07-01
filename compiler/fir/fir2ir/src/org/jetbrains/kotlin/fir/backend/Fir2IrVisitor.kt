@@ -16,14 +16,11 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
-import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -556,70 +553,54 @@ class Fir2IrVisitor(
     }
 
     override fun visitElvisCall(elvisCall: FirElvisCall, data: Any?): IrElement {
-        val subjectName = Name.special("<elvis>")
-        val firSubjectVariable = buildProperty {
+        val firLhsVariable = buildProperty {
             source = elvisCall.source
             session = this@Fir2IrVisitor.session
             origin = FirDeclarationOrigin.Source
             returnTypeRef = elvisCall.lhs.typeRef
-            name = subjectName
+            name = Name.special("<elvis>")
             initializer = elvisCall.lhs
             symbol = FirPropertySymbol(name)
             isVar = false
             isLocal = true
             status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
         }
-        val subjectVariable = firSubjectVariable.accept(this, null) as IrVariable
-        return conversionScope.withWhenSubject(subjectVariable) {
-            elvisCall.convertWithOffsets { startOffset, endOffset ->
-                val irBranches = listOf(
-                    IrBranchImpl(
-                        startOffset, endOffset, primitiveOp2(
-                            startOffset, endOffset, irBuiltIns.eqeqSymbol,
-                            irBuiltIns.booleanType, IrStatementOrigin.EQEQ,
-                            IrGetValueImpl(
-                                startOffset, endOffset,
-                                subjectVariable.type,
-                                subjectVariable.symbol
-                            ),
-                            IrConstImpl(
-                                startOffset, endOffset,
-                                irBuiltIns.nothingNType,
-                                IrConstKind.Null,
-                                value = null
-                            )
-                        ),
-                        convertToIrExpression(elvisCall.rhs)
-                    ),
-                    buildWhenBranch {
-                        condition = buildElseIfTrueCondition {}
-                        var resultExpression = buildQualifiedAccessExpression {
-                            calleeReference = buildResolvedNamedReference {
-                                name = subjectVariable.name
-                                resolvedSymbol = firSubjectVariable.symbol
-                            }
-                            typeRef = firSubjectVariable.returnTypeRef
-                        }
-                        // TODO: replace with .coneType
-                        val originalType = resultExpression.typeRef.coneTypeUnsafe<ConeKotlinType>()
-                        val notNullType = originalType.withNullability(ConeNullability.NOT_NULL)
-                        if (notNullType != originalType) {
-                            resultExpression = buildExpressionWithSmartcast {
-                                originalExpression = resultExpression
-                                typeRef = resultExpression.typeRef.resolvedTypeFromPrototype(notNullType)
-                                typesFromSmartCast = setOf(notNullType)
-                            }
-                        }
-                        result = buildSingleExpressionBlock(resultExpression)
-                    }.toIrWhenBranch()
-                )
+        val irLhsVariable = firLhsVariable.accept(this, null) as IrVariable
+        return elvisCall.convertWithOffsets { startOffset, endOffset ->
+            fun irGetLhsValue(): IrGetValue =
+                IrGetValueImpl(startOffset, endOffset, irLhsVariable.type, irLhsVariable.symbol)
 
-                generateWhen(
-                    startOffset, endOffset, IrStatementOrigin.ELVIS,
-                    subjectVariable, irBranches,
-                    elvisCall.typeRef.toIrType()
+            // TODO: replace with .coneType
+            val originalType = firLhsVariable.returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+            val notNullType = originalType.withNullability(ConeNullability.NOT_NULL)
+            val irBranches = listOf(
+                IrBranchImpl(
+                    startOffset, endOffset, primitiveOp2(
+                        startOffset, endOffset, irBuiltIns.eqeqSymbol,
+                        irBuiltIns.booleanType, IrStatementOrigin.EQEQ,
+                        irGetLhsValue(),
+                        IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType)
+                    ),
+                    convertToIrExpression(elvisCall.rhs)
+                ),
+                IrElseBranchImpl(
+                    IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true),
+                    if (notNullType == originalType) {
+                        irGetLhsValue()
+                    } else {
+                        implicitCastOrExpression(
+                            irGetLhsValue(),
+                            firLhsVariable.returnTypeRef.resolvedTypeFromPrototype(notNullType).toIrType()
+                        )
+                    }
                 )
-            }
+            )
+
+            generateWhen(
+                startOffset, endOffset, IrStatementOrigin.ELVIS,
+                irLhsVariable, irBranches,
+                elvisCall.typeRef.toIrType()
+            )
         }
     }
 
