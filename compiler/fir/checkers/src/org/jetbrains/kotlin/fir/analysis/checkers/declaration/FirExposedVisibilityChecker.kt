@@ -96,8 +96,8 @@ object FirExposedVisibilityChecker : FirMemberDeclarationChecker() {
     private fun checkFunction(declaration: FirFunction<*>, reporter: DiagnosticReporter) {
         val functionVisibility = (declaration as FirMemberDeclaration).firEffectiveVisibility(declaration.session)
         if (declaration !is FirConstructor) {
-            val restricting = declaration.returnTypeRef.coneType
-                .leastPermissiveDescriptor(declaration.session, functionVisibility)
+            val restricting = declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+                ?.leastPermissiveDescriptor(declaration.session, functionVisibility)
             if (restricting != null) {
                 reporter.reportExposure(
                     FirErrors.EXPOSED_FUNCTION_RETURN_TYPE,
