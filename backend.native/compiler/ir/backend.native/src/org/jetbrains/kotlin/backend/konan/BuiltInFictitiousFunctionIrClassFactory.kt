@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -113,7 +110,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
     val builtFunctionNClasses get() =
         builtClassesMap.values
-                .filter { (it.descriptor as FunctionClassDescriptor).functionKind == FunctionClassDescriptor.Kind.Function }
+                .filter { it ->  (it.descriptor as FunctionClassDescriptor).functionKind == FunctionClassDescriptor.Kind.Function }
                 .map { FunctionalInterface(it, (it.descriptor as FunctionClassDescriptor).arity) }
 
     private fun createTypeParameter(descriptor: TypeParameterDescriptor) =
@@ -122,8 +119,14 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                     descriptor
             )
                     ?: IrTypeParameterImpl(
-                            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, DECLARATION_ORIGIN_FUNCTION_CLASS,
-                            descriptor
+                            SYNTHETIC_OFFSET,
+                            SYNTHETIC_OFFSET,
+                            DECLARATION_ORIGIN_FUNCTION_CLASS,
+                            IrTypeParameterSymbolImpl(descriptor),
+                            descriptor.name,
+                            descriptor.index,
+                            descriptor.isReified,
+                            descriptor.variance
                     )
 
     private fun createSimpleFunction(
@@ -301,7 +304,23 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
         fun createFakeOverrideProperty(descriptor: PropertyDescriptor): IrProperty {
             val propertyDeclare = { s: IrPropertySymbol ->
-                IrPropertyImpl(offset, offset, memberOrigin, descriptor, s, descriptor.name)
+                @Suppress("DEPRECATION")
+                /* TODO: [PropertyDescriptor::isDelegated] is deprecated. */
+                IrPropertyImpl(
+                        startOffset = offset,
+                        endOffset = offset,
+                        origin = memberOrigin,
+                        symbol = s,
+                        name = descriptor.name,
+                        visibility = descriptor.visibility,
+                        modality = descriptor.modality,
+                        isVar = descriptor.isVar,
+                        isConst = descriptor.isConst,
+                        isLateinit = descriptor.isLateInit,
+                        isDelegated = descriptor.isDelegated,
+                        isExternal = descriptor.isExternal,
+                        isExpect = descriptor.isExpect,
+                        isFakeOverride = memberOrigin == IrDeclarationOrigin.FAKE_OVERRIDE)
             }
             val property = symbolTable?.declareProperty(offset, offset, memberOrigin, descriptor, propertyFactory = propertyDeclare)
                     ?: propertyDeclare(IrPropertySymbolImpl(descriptor))

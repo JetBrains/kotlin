@@ -147,7 +147,7 @@ class StubIrDriver(
     ) = Result.Metadata(StubIrMetadataEmitter(context, builderResult, moduleName, bridgeBuilderResult).emit())
 
     private fun emitCFile(context: StubIrContext, cFile: Appendable, entryPoint: String?, nativeBridges: NativeBridges) {
-        val out = { it: String -> cFile.appendln(it) }
+        val out = { it: String -> cFile.appendLine(it) }
 
         context.libraryForCStubs.preambleLines.forEach {
             out(it)

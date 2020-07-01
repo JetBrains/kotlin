@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
@@ -103,7 +103,7 @@ private fun createKotlinBridge(
         isExternal: Boolean
 ): IrFunctionImpl {
     val bridgeDescriptor = WrappedSimpleFunctionDescriptor()
-    val bridge = IrFunctionImpl(
+    @Suppress("DEPRECATION") val bridge = IrFunctionImpl(
             startOffset,
             endOffset,
             IrDeclarationOrigin.DEFINED,

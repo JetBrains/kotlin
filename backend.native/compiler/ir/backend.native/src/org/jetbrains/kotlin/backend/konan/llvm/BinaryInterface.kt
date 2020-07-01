@@ -133,7 +133,7 @@ internal fun RuntimeAware.getLlvmFunctionType(function: IrFunction): LLVMTypeRef
         paramTypes.add(kObjHeaderPtr)                       // Suspend functions have implicit parameter of type Continuation<>.
     if (isObjectType(returnType)) paramTypes.add(kObjHeaderPtrPtr)
 
-    return functionType(returnType, isVarArg = false, paramTypes = *paramTypes.toTypedArray())
+    return functionType(returnType, isVarArg = false, paramTypes = paramTypes.toTypedArray())
 }
 
 internal val IrClass.typeInfoHasVtableAttached: Boolean

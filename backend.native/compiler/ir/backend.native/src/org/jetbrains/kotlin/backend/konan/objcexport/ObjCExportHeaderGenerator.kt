@@ -201,7 +201,7 @@ internal class ObjCExportTranslatorImpl(
 
         return translateClassOrInterfaceName(descriptor).also {
             val objcName = forwardDeclarationObjcClassName(objcGenerics, descriptor, namer)
-            generator?.referenceClass(objcName, descriptor)
+            generator?.referenceClass(objcName)
         }
     }
 
@@ -211,7 +211,7 @@ internal class ObjCExportTranslatorImpl(
         generator?.requireClassOrInterface(descriptor)
 
         return translateClassOrInterfaceName(descriptor).also {
-            generator?.referenceProtocol(it.objCName, descriptor)
+            generator?.referenceProtocol(it.objCName)
         }
     }
 
@@ -1137,11 +1137,11 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         }
     }
 
-    internal fun referenceClass(objCName: String, descriptor: ClassDescriptor? = null) {
+    internal fun referenceClass(objCName: String) {
         classForwardDeclarations += objCName
     }
 
-    internal fun referenceProtocol(objCName: String, descriptor: ClassDescriptor? = null) {
+    internal fun referenceProtocol(objCName: String) {
         protocolForwardDeclarations += objCName
     }
 }

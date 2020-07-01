@@ -46,9 +46,11 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.library.SerializedIrModule
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 /**
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
@@ -56,7 +58,7 @@ import org.jetbrains.kotlin.library.SerializedIrModule
 
 internal class SpecialDeclarationsFactory(val context: Context) {
     private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
-    private val outerThisFields = mutableMapOf<ClassDescriptor, IrField>()
+    private val outerThisFields = mutableMapOf<IrClass, IrField>()
     private val bridgesDescriptors = mutableMapOf<Pair<IrSimpleFunction, BridgeDirections>, IrSimpleFunction>()
     private val loweredEnums = mutableMapOf<IrClass, LoweredEnum>()
     private val ordinals = mutableMapOf<ClassDescriptor, Map<ClassDescriptor, Int>>()
@@ -67,8 +69,8 @@ internal class SpecialDeclarationsFactory(val context: Context) {
             IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
 
     fun getOuterThisField(innerClass: IrClass): IrField =
-        if (!innerClass.descriptor.isInner) throw AssertionError("Class is not inner: ${innerClass.descriptor}")
-        else outerThisFields.getOrPut(innerClass.descriptor) {
+        if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.descriptor}")
+        else outerThisFields.getOrPut(innerClass) {
             val outerClass = innerClass.parent as? IrClass
                     ?: throw AssertionError("No containing class for inner class ${innerClass.descriptor}")
 
@@ -87,11 +89,16 @@ internal class SpecialDeclarationsFactory(val context: Context) {
             }
 
             IrFieldImpl(
-                    innerClass.startOffset,
-                    innerClass.endOffset,
-                    DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS,
-                    descriptor,
-                    outerClass.defaultType
+                    startOffset = innerClass.startOffset,
+                    endOffset = innerClass.endOffset,
+                    origin = DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS,
+                    symbol = IrFieldSymbolImpl(descriptor),
+                    name = descriptor.name,
+                    type = outerClass.defaultType,
+                    visibility = descriptor.visibility,
+                    isFinal = !descriptor.isVar,
+                    isExternal = descriptor.isEffectivelyExternal(),
+                    isStatic = descriptor.dispatchReceiverParameter == null
             ).apply {
                 parent = innerClass
             }

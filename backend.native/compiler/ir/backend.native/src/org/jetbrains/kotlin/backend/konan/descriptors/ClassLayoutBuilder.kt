@@ -120,7 +120,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
          *     else binary_search(0, -size)
          */
         val interfaceColors = assignColorsToInterfaces()
-        val maxColor = interfaceColors.values.max() ?: 0
+        val maxColor = interfaceColors.values.maxOrNull() ?: 0
         var bitsPerColor = 0
         var x = maxColor
         while (x > 0) {

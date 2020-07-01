@@ -229,7 +229,7 @@ internal class CallGraphBuilder(val context: Context,
             }
             val body = function.body
             body.forEachCallSite { call ->
-                val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.let { devirtualizedCallSites?.get(it) }
+                val devirtualizedCallSite = (call as? DataFlowIR.Node.VirtualCall)?.let { devirtualizedCallSites.get(it) }
                 if (devirtualizedCallSite == null) {
                     val callee = call.callee.resolved()
                     if (moduleDFG.functions.containsKey(callee))

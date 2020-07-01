@@ -178,7 +178,7 @@ private fun reparseWithCodeSnippets(library: CompilationWithPCH,
             }
 
             assert(codeSnippetLines.size == CODE_SNIPPET_LINES_NUMBER)
-            codeSnippetLines.forEach { writer.appendln(it) }
+            codeSnippetLines.forEach { writer.appendLine(it) }
         }
     }
     clang_reparseTranslationUnit(translationUnit, 0, null, 0)

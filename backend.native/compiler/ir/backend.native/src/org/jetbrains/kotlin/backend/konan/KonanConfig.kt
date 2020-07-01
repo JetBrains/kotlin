@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
@@ -32,7 +33,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             configuration.get(KonanConfigKeys.RUNTIME_FILE)
     )
 
-    internal val platformManager = PlatformManager(distribution)
+    private val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
     internal val target = targetManager.target
     internal val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)!!
@@ -78,7 +79,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val resolvedLibraries get() = resolve.resolvedLibraries
 
-    internal val cacheSupport = CacheSupport(configuration, resolvedLibraries, target, produce)
+    private val cacheSupport = CacheSupport(configuration, resolvedLibraries, target, produce)
 
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries
@@ -106,12 +107,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
-
-        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder) as List<KonanLibrary>
+        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).cast()
     }
 
     val shouldCoverSources = configuration.getBoolean(KonanConfigKeys.COVERAGE)
-    val shouldCoverLibraries = !configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER).isNullOrEmpty()
+    private val shouldCoverLibraries = !configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER).isNullOrEmpty()
 
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         add(if (debug) "debug.bc" else "release.bc")

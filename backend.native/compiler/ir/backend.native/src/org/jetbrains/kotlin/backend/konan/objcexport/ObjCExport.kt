@@ -313,6 +313,6 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         return allPackages.map { it.fqName }.distinct()
             .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
             // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
-            .maxBy { it.asString().length }!!
+            .maxByOrNull { it.asString().length }!!
     }
 }

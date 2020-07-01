@@ -141,6 +141,12 @@ kotlinNativeInterop {
     }
 }
 
+compileKotlin {
+    kotlinOptions {
+        allWarningsAsErrors=true
+    }
+}
+
 tasks.matching { it.name == 'linkClangstubsSharedLibrary' }.all {
     it.dependsOn libclangextTask
     it.inputs.dir libclangextDir

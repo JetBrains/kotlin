@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
         name = "ContextLLVMSetup",
@@ -45,7 +46,7 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
                     producer = DWARF.producer,
                     isOptimized = 0,
                     flags = "",
-                    rv = DWARF.runtimeVersion(context.config)) as DIScopeOpaqueRef?
+                    rv = DWARF.runtimeVersion(context.config)).cast()
             else null
         }
 )

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
@@ -79,12 +79,14 @@ internal interface DescriptorToIrTranslationMixin {
                 is PropertyDescriptor -> createProperty(it)
                 is FunctionDescriptor -> createFunction(it, IrDeclarationOrigin.FAKE_OVERRIDE)
                 else -> error("Unexpected fake override descriptor: $it")
-            } as IrDeclaration // Assistance for type inference.
+            }
         }
     }
 
     fun createConstructor(constructorDescriptor: ClassConstructorDescriptor): IrConstructor {
         val irConstructor = symbolTable.declareConstructor(constructorDescriptor) {
+            // TODO: [IrUninitializedType] is deprecated.
+            @Suppress("DEPRECATION")
             IrConstructorImpl(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,

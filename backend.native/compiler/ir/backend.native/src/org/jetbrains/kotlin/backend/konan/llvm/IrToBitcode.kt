@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
-import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -424,7 +423,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     }
                     context.llvm.fileInitializers
                             .forEach { irField ->
-                                val expression = irField.initializer?.expression
                                 if (irField.initializer != null && irField.storageKind == FieldStorageKind.THREAD_LOCAL) {
                                     val initialization = evaluateExpression(irField.initializer!!.expression)
                                     val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
@@ -713,15 +711,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 declaration.location(start = false)) {
             using(FunctionScope(declaration, it)) {
                 val parameterScope = ParameterScope(declaration, functionGenerationContext)
-                using(parameterScope) {
-                    using(VariableScope()) {
+                using(parameterScope) usingParameterScope@{
+                    using(VariableScope()) usingVariableScope@{
                         recordCoverage(body)
                         if (declaration.isReifiedInline) {
                             callDirect(context.ir.symbols.throwIllegalStateExceptionWithMessage.owner,
                                     listOf(context.llvm.staticData.kotlinStringLiteral(
                                             "unsupported call of reified inlined function `${declaration.fqNameForIrSerialization}`").llvm),
                                     Lifetime.IRRELEVANT)
-                            return@using
+                            return@usingVariableScope
                         }
                         when (body) {
                             is IrBlockBody -> body.statements.forEach { generateStatement(it) }
@@ -1669,7 +1667,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         var bbExit : LLVMBasicBlockRef? = null
         var resultPhi : LLVMValueRef? = null
         private val functionScope by lazy { returnableBlock.inlineFunctionSymbol?.owner?.scope() }
-        private val outerScope = currentCodeContext.scope()
 
         private fun getExit(): LLVMBasicBlockRef {
             val location = returnableBlock.inlineFunctionSymbol?.let {
@@ -1709,7 +1706,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         override fun location(offset: Int): LocationInfo? {
             return if (returnableBlock.inlineFunctionSymbol != null) {
                 val diScope = functionScope ?: return null
-                val outerFileEntry = outerFileEntry()
                 val inlinedAt = outerContext.location(returnableBlock.startOffset)
                         ?: error("no location for inlinedAt:\n" +
                                 "${returnableBlock.startOffset} ${returnableBlock.endOffset}\n" +
@@ -1719,11 +1715,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 outerContext.location(offset)
             }
         }
-
-        private fun outerFileEntry() =
-                (outerContext.fileScope() as? FileScope)?.file?.fileEntry
-                        ?: error("returnable block should be inlined at some file")
-
 
         /**
          * Note: DILexicalBlocks aren't nested, they should be scoped with the parent function.
@@ -1932,10 +1923,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             context.debugInfo.subprograms.getOrPut(functionLlvmValue) {
                 memScoped {
                     val subroutineType = subroutineType(context, codegen.llvmTargetData)
-                    val functionLlvmValue = codegen.llvmFunction(this@scope)
-                    diFunctionScope(name.asString(), functionLlvmValue.name!!, startLine, subroutineType).also {
+                    val llvmFunnction = codegen.llvmFunction(this@scope)
+                    diFunctionScope(name.asString(), llvmFunnction.name!!, startLine, subroutineType).also {
                         if (!this@scope.isInline)
-                            DIFunctionAddSubprogram(functionLlvmValue, it)
+                            DIFunctionAddSubprogram(llvmFunnction, it)
                     }
                 }
             } as DIScopeOpaqueRef
@@ -2301,21 +2292,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return result
     }
 
-
-    private fun call(symbol: DataFlowIR.FunctionSymbol, function: LLVMValueRef, args: List<LLVMValueRef>,
-                     resultLifetime: Lifetime): LLVMValueRef {
-        val result = call(function, args, resultLifetime)
-        if (symbol.returnsNothing) {
-            functionGenerationContext.unreachable()
-        }
-
-        if (LLVMGetReturnType(getFunctionType(function)) == voidType) {
-            return codegen.theUnitInstanceRef.llvm
-        }
-
-        return result
-    }
-
     private fun call(function: LLVMValueRef, args: List<LLVMValueRef>,
                      resultLifetime: Lifetime = Lifetime.IRRELEVANT,
                      exceptionHandler: ExceptionHandler = currentCodeContext.exceptionHandler): LLVMValueRef {
@@ -2512,8 +2488,6 @@ private fun Name.debugNameConversion(): Name = when(this) {
     thisName -> underscoreThisName
     else -> this
 }
-
-class NoContextFound : Throwable()
 
 internal class LocationInfo(val scope: DIScopeOpaqueRef,
                             val line: Int,

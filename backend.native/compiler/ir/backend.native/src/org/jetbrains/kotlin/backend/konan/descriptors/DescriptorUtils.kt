@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
-import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
-import org.jetbrains.kotlin.backend.konan.ir.getSuperInterfaces
-import org.jetbrains.kotlin.backend.konan.isInlinedNative
+import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.longName
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -27,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -214,11 +211,11 @@ internal val IrClass.isFrozen: Boolean
             // RTTI is used for non-reference type box:
             !this.defaultType.binaryTypeIsReference()
 
-fun IrConstructorCall.getAnnotationStringValue() = (getValueArgument(0) as? IrConst<String>)?.value
+fun IrConstructorCall.getAnnotationStringValue() = getValueArgument(0).safeAs<IrConst<String>>()?.value
 
 fun IrConstructorCall.getAnnotationStringValue(name: String): String {
     val parameter = symbol.owner.valueParameters.single { it.name.asString() == name }
-    return (getValueArgument(parameter.index) as IrConst<String>).value
+    return getValueArgument(parameter.index).cast<IrConst<String>>().value
 }
 
 fun AnnotationDescriptor.getAnnotationStringValue(name: String): String {
@@ -227,7 +224,7 @@ fun AnnotationDescriptor.getAnnotationStringValue(name: String): String {
 
 fun <T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? {
     val parameter = symbol.owner.valueParameters.atMostOne { it.name.asString() == name }
-    return parameter?.let { getValueArgument(it.index)?.let { (it as IrConst<T>).value } }
+    return parameter?.let { getValueArgument(it.index)?.let { (it.cast<IrConst<T>>()).value } }
 }
 
 fun IrFunction.externalSymbolOrThrow(): String? {

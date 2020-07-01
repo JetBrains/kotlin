@@ -233,7 +233,7 @@ val Compilation.preambleLines: List<String>
 
 internal fun Appendable.appendPreamble(compilation: Compilation) = this.apply {
     compilation.preambleLines.forEach {
-        this.appendln(it)
+        this.appendLine(it)
     }
 }
 
@@ -340,7 +340,7 @@ fun List<List<String>>.mapFragmentIsCompilable(originalLibrary: CompilationWithP
                     fragmentsToCheck.forEach {
                         it.value.forEach {
                             assert(!it.contains('\n'))
-                            writer.appendln(it)
+                            writer.appendLine(it)
                         }
                     }
                 }

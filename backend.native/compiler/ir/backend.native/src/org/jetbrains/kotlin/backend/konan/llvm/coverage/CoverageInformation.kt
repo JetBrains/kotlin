@@ -87,8 +87,8 @@ class FunctionRegions(
     val structuralHash: Long = 0
 
     override fun toString(): String = buildString {
-        appendln("${function.symbolName} regions:")
-        regions.forEach { (irElem, region) -> appendln("${ir2string(irElem)} -> ($region)") }
+        appendLine("${function.symbolName} regions:")
+        regions.forEach { (irElem, region) -> appendLine("${ir2string(irElem)} -> ($region)") }
     }
 }
 

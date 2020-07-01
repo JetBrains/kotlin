@@ -97,7 +97,7 @@ private fun ObjCExportMapper.isHiddenByDeprecation(descriptor: CallableMemberDes
 }
 
 internal fun ObjCExportMapper.getDeprecation(descriptor: DeclarationDescriptor): Deprecation? {
-    deprecationResolver?.getDeprecations(descriptor).orEmpty().maxBy {
+    deprecationResolver?.getDeprecations(descriptor).orEmpty().maxByOrNull {
         when (it.deprecationLevel) {
             DeprecationLevelValue.WARNING -> 1
             DeprecationLevelValue.ERROR -> 2

@@ -132,24 +132,6 @@ internal object Devirtualization {
 
         private val symbolTable = moduleDFG.symbolTable
 
-        // TODO: Make custom hashtable.
-        class IntHashSet : Iterable<Int> {
-            private val hashSet = HashSet<Int>()
-            val size get() = hashSet.size
-            fun isEmpty() = size == 0
-            fun add(x: Int) = hashSet.add(x)
-
-            override operator fun iterator(): Iterator<Int> = Itr()
-
-            private inner class Itr : Iterator<Int> {
-                private val itr = hashSet.iterator()
-                override fun hasNext() = itr.hasNext()
-
-                override fun next() = itr.next()
-
-            }
-        }
-
         sealed class Node(val id: Int) {
             var directCastEdges: MutableList<CastEdge>? = null
             var reversedCastEdges: MutableList<CastEdge>? = null
@@ -818,8 +800,8 @@ internal object Devirtualization {
                 return true
             }
 
-            private fun makePrime(x: Int): Int {
-                var x = x
+            private fun makePrime(p: Int): Int {
+                var x = p
                 while (true) {
                     if (isPrime(x)) return x
                     ++x
@@ -832,6 +814,7 @@ internal object Devirtualization {
             val directEdgesCount = IntArrayList()
             val reversedEdgesCount = IntArrayList()
 
+            @OptIn(ExperimentalUnsignedTypes::class)
             private fun addEdge(from: Node, to: Node) {
                 val fromId = from.id
                 val toId = to.id
@@ -1600,7 +1583,7 @@ internal object Devirtualization {
                             expression
                         else with (cast) {
                             IrTypeOperatorCallImpl(startOffset, endOffset, type, operator,
-                                    typeOperand, typeOperandClassifier, expression)
+                                    typeOperand, expression)
                         }
                 with (coercion) {
                     return IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, origin).apply {

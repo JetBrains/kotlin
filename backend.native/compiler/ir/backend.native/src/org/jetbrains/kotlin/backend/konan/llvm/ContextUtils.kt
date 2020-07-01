@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.get
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.toKString
 import llvm.*
-import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
@@ -15,18 +17,16 @@ import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isReal
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -208,7 +208,7 @@ internal interface ContextUtils : RuntimeAware {
      */
     fun GlobalHash.getBytes(): ByteArray {
         val size = GlobalHash.size
-        assert(size.toLong() == LLVMStoreSizeOfType(llvmTargetData, runtime.globalHashType))
+        assert(size == LLVMStoreSizeOfType(llvmTargetData, runtime.globalHashType))
 
         return this.bits.getBytes(size)
     }
@@ -394,7 +394,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
                 .filter {
                     require(it is KonanLibrary)
                     (!it.isDefault && !context.config.purgeUserLibs) || imports.nativeDependenciesAreUsed(it)
-                } as List<KonanLibrary>
+                }.cast<List<KonanLibrary>>()
 
     }
 
@@ -406,7 +406,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     }
 
     val bitcodeToLink: List<KonanLibrary> by lazy {
-        (context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder) as List<KonanLibrary>)
+        (context.config.resolvedLibraries.getFullList(TopologicalLibraryOrder).cast<List<KonanLibrary>>())
                 .filter { shouldContainBitcode(it) }
     }
 

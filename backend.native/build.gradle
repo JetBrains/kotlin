@@ -56,7 +56,8 @@ compileCompilerKotlin {
     // but not for Kotlin.
     dependsOn('generateCompilerProto')
     kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += "-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
+    kotlinOptions.allWarningsAsErrors=true
+    kotlinOptions.freeCompilerArgs += ['-Xopt-in=kotlin.RequiresOptIn', '-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI']
 }
 
 compileCompilerJava {
@@ -200,7 +201,9 @@ final List<File> stdLibSrc = [
 targetList.each { target ->
     def konanJvmArgs =  [*HostManager.regularJvmArgs]
 
-    def defaultArgs = ['-nopack', '-nostdlib', '-no-default-libs', '-no-endorsed-libs']
+    def defaultArgs = ['-nopack', '-nostdlib', '-no-default-libs', '-no-endorsed-libs',
+                       //Uncomment this '-Werror' when common stdlib will be ready
+    ]
     if (target != "wasm32") defaultArgs += '-g'
     def konanArgs = [*defaultArgs,
                      '-target', target,

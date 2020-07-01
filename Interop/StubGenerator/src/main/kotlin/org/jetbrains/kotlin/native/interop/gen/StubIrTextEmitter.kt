@@ -57,7 +57,7 @@ class StubIrTextEmitter(
     }
 
     private fun <R> withOutput(appendable: Appendable, action: () -> R): R {
-        return withOutput({ appendable.appendln(it) }, action)
+        return withOutput({ appendable.appendLine(it) }, action)
     }
 
     private fun generateLinesBy(action: () -> Unit): List<String> {
@@ -148,7 +148,7 @@ class StubIrTextEmitter(
     }
     private val printer = object : StubIrVisitor<StubContainer?, Unit> {
 
-        override fun visitClass(element: ClassStub, owner: StubContainer?) {
+        override fun visitClass(element: ClassStub, data: StubContainer?) {
             element.annotations.forEach {
                 out(renderAnnotation(it))
             }
@@ -173,13 +173,13 @@ class StubIrTextEmitter(
             }
         }
 
-        override fun visitTypealias(element: TypealiasStub, owner: StubContainer?) {
+        override fun visitTypealias(element: TypealiasStub, data: StubContainer?) {
             val alias = renderClassifierDeclaration(element.alias)
             val aliasee = renderStubType(element.aliasee)
             out("typealias $alias = $aliasee")
         }
 
-        override fun visitFunction(element: FunctionStub, owner: StubContainer?) {
+        override fun visitFunction(element: FunctionStub, data: StubContainer?) {
             if (element in bridgeBuilderResult.excludedStubs) return
 
             val header = run {
@@ -187,7 +187,7 @@ class StubIrTextEmitter(
                 val receiver = element.receiver?.let { renderFunctionReceiver(it) + "." } ?: ""
                 val typeParameters = renderTypeParameters(element.typeParameters)
                 val override = if (element.isOverride) "override " else ""
-                val modality = renderMemberModality(element.modality, owner)
+                val modality = renderMemberModality(element.modality, data)
                 "$override${modality}fun$typeParameters $receiver${element.name.asSimpleName()}$parameters: ${renderStubType(element.returnType)}"
             }
             if (!nativeBridges.isSupported(element)) {
@@ -205,17 +205,17 @@ class StubIrTextEmitter(
                 element.isOptionalObjCMethod() -> out("$header = optional()")
                 element.origin is StubOrigin.Synthetic.EnumByValue ->
                     out("$header = values().find { it.value == value }!!")
-                owner != null && owner.isInterface -> out(header)
+                data != null && data.isInterface -> out(header)
                 else -> block(header) {
                     functionBridgeBodies.getValue(element).forEach(out)
                 }
             }
         }
 
-        override fun visitProperty(element: PropertyStub, owner: StubContainer?) =
-            emitProperty(element, owner)
+        override fun visitProperty(element: PropertyStub, data: StubContainer?) =
+            emitProperty(element, data)
 
-        override fun visitConstructor(constructorStub: ConstructorStub, owner: StubContainer?) {
+        override fun visitConstructor(constructorStub: ConstructorStub, data: StubContainer?) {
             constructorStub.annotations.forEach {
                 out(renderAnnotation(it))
             }
@@ -223,11 +223,11 @@ class StubIrTextEmitter(
             out("${visibility}constructor(${constructorStub.parameters.joinToString { renderFunctionParameter(it) }}) {}")
         }
 
-        override fun visitPropertyAccessor(propertyAccessor: PropertyAccessor, owner: StubContainer?) {
+        override fun visitPropertyAccessor(propertyAccessor: PropertyAccessor, data: StubContainer?) {
 
         }
 
-        override fun visitSimpleStubContainer(simpleStubContainer: SimpleStubContainer, owner: StubContainer?) {
+        override fun visitSimpleStubContainer(simpleStubContainer: SimpleStubContainer, data: StubContainer?) {
             if (simpleStubContainer.meta.textAtStart.isNotEmpty()) {
                 out(simpleStubContainer.meta.textAtStart)
             }

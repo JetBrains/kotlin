@@ -61,7 +61,7 @@ kotlin {
 
         jvm().compilations.all {
             kotlinOptions {
-                freeCompilerArgs = ["-Xopt-in=kotlinx.cli.ExperimentalCli"]
+                freeCompilerArgs = ["-Xopt-in=kotlinx.cli.ExperimentalCli", "-Xopt-in=kotlin.RequiresOptIn"]
                 suppressWarnings = true
             }
         }
@@ -100,7 +100,7 @@ targetList.each { target ->
                 '-produce', 'library', '-module-name', moduleName, '-XXLanguage:+AllowContractsForCustomFunctions',
                 '-Xmulti-platform', '-Xopt-in=kotlinx.cli.ExperimentalCli',
                 '-Xopt-in=kotlin.ExperimentalMultiplatform',
-                '-Xallow-result-return-type',
+                '-Xallow-result-return-type',  '-Werror', '-Xopt-in=kotlin.RequiresOptIn',
                 commonSrc.absolutePath,
                 "-Xcommon-sources=${commonSrc.absolutePath}",
                 nativeSrc]

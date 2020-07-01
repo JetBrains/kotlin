@@ -39,7 +39,6 @@ private val objCConstructorFqName = FqName("kotlinx.cinterop.ObjCConstructor")
 private val objCFactoryFqName = interopPackageName.child(Name.identifier("ObjCFactory"))
 private val objcnamesForwardDeclarationsPackageName = Name.identifier("objcnames")
 
-@Deprecated("Use IR version rather than descriptor version")
 fun ClassDescriptor.isObjCClass(): Boolean =
         this.getAllSuperClassifiers().any { it.fqNameSafe == objCObjectFqName } && // TODO: this is not cheap. Cache me!
                 this.containingDeclaration.fqNameSafe != interopPackageName
@@ -53,7 +52,6 @@ private fun IrClass.getAllSuperClassifiers(): List<IrClass> =
 internal fun IrClass.isObjCClass() = this.getAllSuperClassifiers().any { it.fqNameForIrSerialization == objCObjectFqName } &&
         this.parent.fqNameForIrSerialization != interopPackageName
 
-@Deprecated("Use IR version rather than descriptor version")
 fun ClassDescriptor.isExternalObjCClass(): Boolean = this.isObjCClass() &&
         this.parentsWithSelf.filterIsInstance<ClassDescriptor>().any {
             it.annotations.findAnnotation(externalObjCClassFqName) != null
@@ -86,7 +84,6 @@ fun FunctionDescriptor.isObjCClassMethod() =
 fun IrFunction.isObjCClassMethod() =
         this.parent.let { it is IrClass && it.isObjCClass() }
 
-@Deprecated("Use IR version rather than descriptor version")
 fun FunctionDescriptor.isExternalObjCClassMethod() =
         this.containingDeclaration.let { it is ClassDescriptor && it.isExternalObjCClass() }
 
@@ -94,14 +91,12 @@ internal fun IrFunction.isExternalObjCClassMethod() =
     this.parent.let {it is IrClass && it.isExternalObjCClass()}
 
 // Special case: methods from Kotlin Objective-C classes can be called virtually from bridges.
-@Deprecated("Use IR version rather than descriptor version")
 fun FunctionDescriptor.canObjCClassMethodBeCalledVirtually(overriddenDescriptor: FunctionDescriptor) =
         overriddenDescriptor.isOverridable && this.kind.isReal && !this.isExternalObjCClassMethod()
 
 internal fun IrFunction.canObjCClassMethodBeCalledVirtually(overridden: IrFunction) =
     overridden.isOverridable && this.origin != IrDeclarationOrigin.FAKE_OVERRIDE && !this.isExternalObjCClassMethod()
 
-@Deprecated("Use IR version rather than descriptor version")
 fun ClassDescriptor.isKotlinObjCClass(): Boolean = this.isObjCClass() && !this.isExternalObjCClass()
 
 fun IrClass.isKotlinObjCClass(): Boolean = this.isObjCClass() && !this.isExternalObjCClass()
@@ -249,7 +244,6 @@ fun IrConstructor.objCConstructorIsDesignated(): Boolean =
     this.getAnnotationArgumentValue<Boolean>(objCConstructorFqName, "designated")
         ?: error("Could not find 'designated' argument")
 
-@Deprecated("Use IR version rather than descriptor version")
 fun ConstructorDescriptor.objCConstructorIsDesignated(): Boolean {
     val annotation = this.annotations.findAnnotation(objCConstructorFqName)!!
     val value = annotation.allValueArguments[Name.identifier("designated")]!!

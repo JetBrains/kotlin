@@ -622,7 +622,7 @@ private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
     val functionClassesByArity =
             context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.associateBy { it.arity }
 
-    var count = ((functionClassesByArity.keys.max() ?: -1) + 1)
+    var count = ((functionClassesByArity.keys.maxOrNull() ?: -1) + 1)
     // TODO: ugly hack to avoid huge unneeded adaptors linked into every binary, needs rework.
     if (context.config.produce.isCache) {
         count = count.coerceAtMost(maxConvertorsInCache)

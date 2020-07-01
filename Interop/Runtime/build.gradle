@@ -75,7 +75,9 @@ sourceSets.main.kotlin.srcDirs += "src/jvm/kotlin"
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xopt-in=kotlin.ExperimentalUnsignedTypes', '-Xinline-classes']
+        freeCompilerArgs = ['-Xuse-experimental=kotlin.ExperimentalUnsignedTypes', '-Xuse-experimental=kotlin.Experimental',
+                            '-Xopt-in=kotlin.RequiresOptIn', "-XXLanguage:+InlineClasses"]
+        allWarningsAsErrors=true
     }
 }
 

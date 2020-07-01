@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal fun Context.getExportedDependencies(): List<ModuleDescriptor> = getDescriptorsFromLibraries((config.resolve.exportedLibraries + config.resolve.includedLibraries).toSet())
 internal fun Context.getIncludedLibraryDescriptors(): List<ModuleDescriptor> = getDescriptorsFromLibraries(config.resolve.includedLibraries.toSet())
@@ -93,11 +94,11 @@ private sealed class FeaturedLibrariesReporter {
 
         override fun reportNotIncludedLibraries(includedLibraries: List<KonanLibrary>, remainingFeaturedLibraries: Set<File>) {
             val message = buildString {
-                appendln(notIncludedLibraryMessageTitle())
-                remainingFeaturedLibraries.forEach { appendln(it) }
-                appendln()
-                appendln("Included libraries:")
-                includedLibraries.forEach { appendln(it.libraryFile) }
+                appendLine(notIncludedLibraryMessageTitle())
+                remainingFeaturedLibraries.forEach { appendLine(it) }
+                appendLine()
+                appendLine("Included libraries:")
+                includedLibraries.forEach { appendLine(it.libraryFile) }
             }
 
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
@@ -163,7 +164,8 @@ private fun getFeaturedLibraries(
 ) : List<KonanLibrary> {
     val remainingFeaturedLibraries = featuredLibraryFiles.toMutableSet()
     val result = mutableListOf<KonanLibrary>()
-    val libraries = resolvedLibraries.getFullList(null) as List<KonanLibrary>
+    //TODO: please add type checks before cast.
+    val libraries = resolvedLibraries.getFullList(null).cast<List<KonanLibrary>>()
 
     for (library in libraries) {
         val libraryFile = library.libraryFile

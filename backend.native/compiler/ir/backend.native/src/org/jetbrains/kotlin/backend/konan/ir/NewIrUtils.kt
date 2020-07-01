@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val IrField.fqNameForIrSerialization: FqName get() = this.parent.fqNameForIrSerialization.child(this.name)
 
@@ -67,12 +68,12 @@ val IrClass.isFinalClass: Boolean
 
 fun IrClass.isSpecialClassWithNoSupertypes() = this.isAny() || this.isNothing()
 
-fun <T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
+inline fun <reified T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
     val annotation = this.annotations.findAnnotation(fqName) ?: return null
     for (index in 0 until annotation.valueArgumentsCount) {
         val parameter = annotation.symbol.owner.valueParameters[index]
         if (parameter.name == Name.identifier(argumentName)) {
-            val actual = annotation.getValueArgument(index) as? IrConst<T>
+            val actual = annotation.getValueArgument(index).safeAs<IrConst<T>>()
             return actual?.value
         }
     }

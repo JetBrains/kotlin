@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 /**
  * Check given function is a getter or setter
@@ -230,8 +231,7 @@ private fun InteropCallContext.writePointerToMemory(
 
 private fun InteropCallContext.writeObjCReferenceToMemory(
         nativePtr: IrExpression,
-        value: IrExpression,
-        pointerType: IrType
+        value: IrExpression
 ): IrExpression {
     val valueToWrite = builder.irCall(symbols.interopObjCObjectRawValueGetter).also {
         it.extensionReceiver = value
@@ -316,7 +316,7 @@ private fun InteropCallContext.generateEnumVarValueAccess(callSite: IrCall): IrE
 private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpression {
     val accessor = callSite.symbol.owner
     val memberAt = accessor.getAnnotation(RuntimeNames.cStructMemberAt)!!
-    val offset = (memberAt.getValueArgument(0) as IrConst<Long>).value
+    val offset = memberAt.getValueArgument(0).cast<IrConst<Long>>().value
     val fieldPointer = calculateFieldPointer(callSite.dispatchReceiver!!, offset)
     return when {
         accessor.isGetter -> {
@@ -337,7 +337,7 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
                 type.isCEnumType() -> writeEnumValueToMemory(fieldPointer, value, type)
                 type.isStoredInMemoryDirectly() -> writeValueToMemory(fieldPointer, value, type)
                 type.isCPointer() -> writePointerToMemory(fieldPointer, value, type)
-                type.isSupportedReference() -> writeObjCReferenceToMemory(fieldPointer, value, type)
+                type.isSupportedReference() -> writeObjCReferenceToMemory(fieldPointer, value)
                 else -> failCompilation("Unsupported struct field type: ${type.getClass()?.name}")
             }
         }
@@ -348,7 +348,7 @@ private fun InteropCallContext.generateMemberAtAccess(callSite: IrCall): IrExpre
 private fun InteropCallContext.generateArrayMemberAtAccess(callSite: IrCall): IrExpression {
     val accessor = callSite.symbol.owner
     val memberAt = accessor.getAnnotation(RuntimeNames.cStructArrayMemberAt)!!
-    val offset = (memberAt.getValueArgument(0) as IrConst<Long>).value
+    val offset = memberAt.getValueArgument(0).cast<IrConst<Long>>().value
     val fieldPointer = calculateFieldPointer(callSite.dispatchReceiver!!, offset)
     return builder.irCall(symbols.interopInterpretCPointer).also {
         it.putValueArgument(0, fieldPointer)
@@ -407,8 +407,8 @@ private fun InteropCallContext.readBits(
 private fun InteropCallContext.generateBitFieldAccess(callSite: IrCall): IrExpression {
     val accessor = callSite.symbol.owner
     val bitField = accessor.getAnnotation(RuntimeNames.cStructBitField)!!
-    val offset = (bitField.getValueArgument(0) as IrConst<Long>).value
-    val size = (bitField.getValueArgument(1) as IrConst<Int>).value
+    val offset = bitField.getValueArgument(0).cast<IrConst<Long>>().value
+    val size = bitField.getValueArgument(1).cast<IrConst<Int>>().value
     val base = builder.irCall(symbols.interopNativePointedRawPtrGetter).also {
         it.dispatchReceiver = callSite.dispatchReceiver!!
     }

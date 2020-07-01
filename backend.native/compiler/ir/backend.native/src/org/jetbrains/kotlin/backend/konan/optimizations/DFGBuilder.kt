@@ -133,8 +133,7 @@ private class ExpressionValuesExtractor(val context: Context,
                 else { // Propagate cast to sub-values.
                     forEachValue(expression.argument) { value ->
                         with(expression) {
-                            block(IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand,
-                                    typeOperand.classifierOrFail, value))
+                            block(IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand, value))
                         }
                     }
                 }
@@ -404,7 +403,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "invokeSuspend" }.symbol
 
     private val getContinuationSymbol = symbols.getContinuation
-    private val continuationType = getContinuationSymbol.owner.returnType
 
     private val arrayGetSymbols = symbols.arrayGet.values
     private val arraySetSymbols = symbols.arraySet.values

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal object DWARF {
     val producer                       = "konanc ${CompilerVersion.CURRENT} / kotlin-compiler: ${KotlinVersion.CURRENT}"
@@ -173,7 +174,7 @@ internal fun generateDebugInfoHeader(context: Context) {
                 derivedFrom   = null,
                 elements      = null,
                 elementsCount = 0,
-                refPlace      = null)!! as DITypeOpaqueRef
+                refPlace      = null).cast<DITypeOpaqueRef>()
         context.debugInfo.objHeaderPointerType = dwarfPointerType(context, objHeaderType)
     }
 }
@@ -181,7 +182,7 @@ internal fun generateDebugInfoHeader(context: Context) {
 @Suppress("UNCHECKED_CAST")
 internal fun IrType.dwarfType(context: Context, targetData: LLVMTargetDataRef): DITypeOpaqueRef {
     when {
-        this.computePrimitiveBinaryTypeOrNull() != null -> return debugInfoBaseType(context, targetData, this.render(), llvmType(context), encoding(context).value.toInt())
+        this.computePrimitiveBinaryTypeOrNull() != null -> return debugInfoBaseType(context, targetData, this.render(), llvmType(context), encoding().value.toInt())
         else -> {
             return when {
                 classOrNull != null || this.isTypeParameter() -> context.debugInfo.objHeaderPointerType!!
@@ -225,7 +226,7 @@ internal fun IrType.llvmType(context:Context): LLVMTypeRef = context.debugInfo.l
     }
 }
 
-internal fun IrType.encoding(context: Context): DwarfTypeKind = when(computePrimitiveBinaryTypeOrNull()) {
+internal fun IrType.encoding(): DwarfTypeKind = when(computePrimitiveBinaryTypeOrNull()) {
     PrimitiveBinaryType.FLOAT -> DwarfTypeKind.DW_ATE_float
     PrimitiveBinaryType.DOUBLE -> DwarfTypeKind.DW_ATE_float
     PrimitiveBinaryType.BOOLEAN -> DwarfTypeKind.DW_ATE_boolean
