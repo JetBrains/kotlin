@@ -10906,6 +10906,230 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceIsEmptyWithIfEmpty extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReplaceIsEmptyWithIfEmpty() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("defaultValueBlockHasMultiStatement.kt")
+        public void testDefaultValueBlockHasMultiStatement() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/defaultValueBlockHasMultiStatement.kt");
+        }
+
+        @TestMetadata("defaultValueBlockHasMultiStatement2.kt")
+        public void testDefaultValueBlockHasMultiStatement2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/defaultValueBlockHasMultiStatement2.kt");
+        }
+
+        @TestMetadata("elseIf.kt")
+        public void testElseIf() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/elseIf.kt");
+        }
+
+        @TestMetadata("implicitReceiver.kt")
+        public void testImplicitReceiver() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/implicitReceiver.kt");
+        }
+
+        @TestMetadata("negated.kt")
+        public void testNegated() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/negated.kt");
+        }
+
+        @TestMetadata("noElse.kt")
+        public void testNoElse() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/noElse.kt");
+        }
+
+        @TestMetadata("notSelfValue.kt")
+        public void testNotSelfValue() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/notSelfValue.kt");
+        }
+
+        @TestMetadata("notSelfValue2.kt")
+        public void testNotSelfValue2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/notSelfValue2.kt");
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/array")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Array extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInArray() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/array"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+            }
+
+            @TestMetadata("isEmpty.kt")
+            public void testIsEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/array/isEmpty.kt");
+            }
+
+            @TestMetadata("isNotEmpty.kt")
+            public void testIsNotEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/array/isNotEmpty.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/collection")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Collection extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCollection() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/collection"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+            }
+
+            @TestMetadata("isEmpty.kt")
+            public void testIsEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/collection/isEmpty.kt");
+            }
+
+            @TestMetadata("isNotEmpty.kt")
+            public void testIsNotEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/collection/isNotEmpty.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/intArray")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class IntArray extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIntArray() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/intArray"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+            }
+
+            @TestMetadata("isEmpty.kt")
+            public void testIsEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/intArray/isEmpty.kt");
+            }
+
+            @TestMetadata("isNotEmpty.kt")
+            public void testIsNotEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/intArray/isNotEmpty.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/list")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class List extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInList() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/list"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+            }
+
+            @TestMetadata("isEmpty.kt")
+            public void testIsEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/list/isEmpty.kt");
+            }
+
+            @TestMetadata("isNotEmpty.kt")
+            public void testIsNotEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/list/isNotEmpty.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/map")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Map extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInMap() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/map"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+            }
+
+            @TestMetadata("isEmpty.kt")
+            public void testIsEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/map/isEmpty.kt");
+            }
+
+            @TestMetadata("isNotEmpty.kt")
+            public void testIsNotEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/map/isNotEmpty.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/set")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Set extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInSet() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/set"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+            }
+
+            @TestMetadata("isEmpty.kt")
+            public void testIsEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/set/isEmpty.kt");
+            }
+
+            @TestMetadata("isNotEmpty.kt")
+            public void testIsNotEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/set/isNotEmpty.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/str")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Str extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInStr() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/str"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+            }
+
+            @TestMetadata("isBlank.kt")
+            public void testIsBlank() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/str/isBlank.kt");
+            }
+
+            @TestMetadata("isEmpty.kt")
+            public void testIsEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/str/isEmpty.kt");
+            }
+
+            @TestMetadata("isNotBlank.kt")
+            public void testIsNotBlank() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/str/isNotBlank.kt");
+            }
+
+            @TestMetadata("isNotEmpty.kt")
+            public void testIsNotEmpty() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceIsEmptyWithIfEmpty/str/isNotEmpty.kt");
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+class Api(val name: String)
+
+fun test(api: Api) {
+    val name = api.name.ifBlank { "John" }
+}

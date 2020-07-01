@@ -2571,6 +2571,14 @@
                      language="kotlin"
                      key="inspection.unused.result.of.data.class.copy" bundle="messages.KotlinBundle"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceIsEmptyWithIfEmptyInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.replace.isempty.with.ifempty.display.name" bundle="messages.KotlinBundle"/>
+
   </extensions>
 
 </idea-plugin>

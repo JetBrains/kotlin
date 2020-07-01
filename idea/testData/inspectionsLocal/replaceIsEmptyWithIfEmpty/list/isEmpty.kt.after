@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun test(list: List<Int>): List<Int> {
+    return list.ifEmpty {
+        listOf(1)
+    }
+}

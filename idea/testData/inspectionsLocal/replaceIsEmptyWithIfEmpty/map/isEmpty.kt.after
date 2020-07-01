@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun test(map: Map<Int, Int>): Map<Int, Int> {
+    return map.ifEmpty {
+        mapOf(1 to 2)
+    }
+}
