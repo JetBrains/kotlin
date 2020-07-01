@@ -166,6 +166,11 @@ internal class FirIdeProvider(
         // TODO: check that this implementation is correct
         cacheProvider.recordGeneratedMember(owner, klass)
     }
+
+    // TODO this should be reworked because [FirIdeProvider] should not have such method
+    override fun getAllCallableNamesInPackage(): Set<Name> {
+        return cacheProvider.getAllCallableNamesInPackage()
+    }
 }
 
 internal val FirSession.firIdeProvider: FirIdeProvider by FirSession.sessionComponentAccessor()

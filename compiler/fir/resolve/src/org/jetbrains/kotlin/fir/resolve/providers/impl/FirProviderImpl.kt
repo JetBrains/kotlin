@@ -76,6 +76,12 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         klass.accept(FirRecorder, state to owner.file)
     }
 
+    override fun getAllCallableNamesInPackage(): Set<Name> {
+        return state.callableMap.keys.asSequence()
+            .filter { it.className == null }
+            .mapTo(mutableSetOf()) { it.callableName }
+    }
+
     private val FirAnnotatedDeclaration.file: FirFile
         get() = when (this) {
             is FirFile -> this

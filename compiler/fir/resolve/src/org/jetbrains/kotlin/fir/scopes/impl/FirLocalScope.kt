@@ -71,5 +71,5 @@ class FirLocalScope private constructor(
 
     override fun mayContainName(name: Name) = properties.containsKey(name) || functions[name].isNotEmpty() || classes.containsKey(name)
 
-    override fun getCallableNames(): Set<Name> = properties.keys + functions.keys + classes.keys
+    override fun getCallableNames(): Set<Name> = properties.keys + functions.keys
 }
