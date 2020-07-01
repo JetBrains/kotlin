@@ -9,23 +9,24 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.idea.fir.getFirOfClosestParent
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class KotlinFirCompletionContributor : CompletionContributor() {
     init {
@@ -50,81 +51,57 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         val completionContext = LowLevelFirApiFacade.buildCompletionContextForFunction(originalFileFir, parentFunction)
 
         val element = nameExpression.getFirOfClosestParent() as? FirQualifiedAccessExpression ?: return
-
-        for (scope in getScopes(element, completionContext.session)) {
-            for (name in scope.availableNames()) {
-                result.addElement(LookupElementBuilder.create(name.asString()))
-            }
-        }
-
         val towerDataContext = completionContext.getTowerDataContext(nameExpression)
 
-        for (localScope in towerDataContext.localScopes) {
-            for (name in localScope.getCallableNames()) {
-                result.addElement(LookupElementBuilder.create(name.asString()))
-            }
-        }
-
-
-//        val receiver = element.explicitReceiver
-//        if (receiver != null) {
-//
-//            val firScope =
-//                receiver.typeRef.coneTypeUnsafe<ConeKotlinType>().scope(firFunction.session, ScopeSession()) ?: return
-//                // (symbolProvider.getSymbolByTypeRef<FirClassSymbol<*>>(receiver.typeRef))?.buildUseSiteMemberScope(firFunction.session, ScopeSession()) ?: return
-//
-//            for (name in firScope.getCallableNames()) {
-//                firScope.processFunctionsByName(name) {
-//                    it.fir
-//                    result.addElement(LookupElementBuilder.create(name.asString()))
-//                }
-//
-//                firScope.processPropertiesByName(name) {
-//                    result.addElement(LookupElementBuilder.create(name.asString()))
-//                }
-//            }
-//        }
-
-//        val symbolProvider = originalFileFir.session.firSymbolProvider
-//
-//        val allCallableNamesInPackage =
-////            symbolProvider.getTopLevelCallableSymbols(originalFile.packageFqName, Name.identifier("bar"))
-//            symbolProvider.getAllCallableNamesInPackage(originalFileFir.packageFqName)
-//
-//        for (it in allCallableNamesInPackage) {
-//            result.addElement(LookupElementBuilder.create(it.asString()))
-//        }
-//
-//        val scope = ((nameExpression.getOrBuildFir() as? FirQualifiedAccessExpression)?.explicitReceiver as? FirFunctionCall)?.typeRef?.let {
-//            (symbolProvider.getSymbolByTypeRef<AbstractFirBasedSymbol<*>>(it) as? FirClassSymbol<*>)?.classId?.let {
-//                symbolProvider.getAllCallableNamesInClass(it)
-//            }
-//        }
-//
-////        val type = (((nameExpression.getOrBuildFir() as FirQualifiedAccessExpression).explicitReceiver as FirFunctionCall).typeRef as FirResolvedTypeRef).type as ConeClassLikeType
-////        originalFileFir.session.declaredMemberScopeProvider.declaredMemberScope(type.lookupTag.toSymbol(originalFileFir.session).fir as FirRegularClass)
-//
-        return
-    }
-
-    interface ScopeWrapper {
-        fun availableNames(): Set<Name>
-    }
-
-    fun getScopes(element: FirQualifiedAccessExpression, session: FirSession): Sequence<ScopeWrapper> = sequence {
         val receiver = element.explicitReceiver
-        if (receiver != null) {
+        val explicitReceiverType = receiver?.typeRef?.coneTypeUnsafe<ConeKotlinType>()
 
-            val firScope = receiver.typeRef.coneTypeUnsafe<ConeKotlinType>().scope(session, ScopeSession())
-            // (symbolProvider.getSymbolByTypeRef<FirClassSymbol<*>>(receiver.typeRef))?.buildUseSiteMemberScope(firFunction.session, ScopeSession()) ?: return
+        val scopes: Sequence<FirScope> = sequence {
+            val explicitReceiverScope = explicitReceiverType?.scope(completionContext.session, ScopeSession())
+            if (explicitReceiverScope != null) {
+                yield(explicitReceiverScope)
+            }
 
-            if (firScope != null) {
-                yield(object : ScopeWrapper {
-                    override fun availableNames(): Set<Name> {
-                        return firScope.getCallableNames()
+            yieldAll(towerDataContext.localScopes)
+
+            val implicitReceiversScopes = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver?.implicitScope }
+            yieldAll(implicitReceiversScopes)
+
+            val nonLocalScopes = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope }
+            yieldAll(nonLocalScopes)
+        }
+
+        for (scope in scopes) {
+            for (name in scope.getCallableNames()) {
+                if (name.isConstructor) continue
+
+                fun processor(symbol: FirCallableSymbol<*>) {
+                    val expectedReceiverType = symbol.fir.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
+
+                    if (expectedReceiverType != null) {
+                        val receiverTypes = if (explicitReceiverType != null) {
+                            listOf(explicitReceiverType)
+                        } else {
+                            towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver?.type }
+                        }
+
+                        val expectedReceiverTypeIsPresent = receiverTypes.any {
+                            AbstractTypeChecker.isSubtypeOf(completionContext.session.typeContext, it, expectedReceiverType)
+                        }
+
+                        if (expectedReceiverTypeIsPresent) {
+                            result.addElement(LookupElementBuilder.create(name.asString()))
+                        }
+                    } else if (explicitReceiverType == null || symbol.callableId.classId == explicitReceiverType.classId) {
+                        result.addElement(LookupElementBuilder.create(name.asString()))
                     }
-                })
+                }
+
+                scope.processFunctionsByName(name, ::processor)
+                scope.processPropertiesByName(name, ::processor)
             }
         }
     }
+
+    private val Name.isConstructor get() = this == Name.special("<init>")
 }
