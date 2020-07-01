@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,8 @@
 @file:kotlin.jvm.JvmName("StringsKt")
 
 package kotlin.text
+
+import kotlin.contracts.*
 
 /**
  * A mutable sequence of characters.
@@ -399,8 +401,10 @@ public inline fun StringBuilder.append(obj: Any?): StringBuilder = this.append(o
  * and then converting it to [String].
  */
 @kotlin.internal.InlineOnly
-public inline fun buildString(builderAction: StringBuilder.() -> Unit): String =
-    StringBuilder().apply(builderAction).toString()
+public inline fun buildString(builderAction: StringBuilder.() -> Unit): String {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return StringBuilder().apply(builderAction).toString()
+}
 
 /**
  * Builds new string by populating newly created [StringBuilder] initialized with the given [capacity]
@@ -408,8 +412,10 @@ public inline fun buildString(builderAction: StringBuilder.() -> Unit): String =
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline fun buildString(capacity: Int, builderAction: StringBuilder.() -> Unit): String =
-    StringBuilder(capacity).apply(builderAction).toString()
+public inline fun buildString(capacity: Int, builderAction: StringBuilder.() -> Unit): String {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return StringBuilder(capacity).apply(builderAction).toString()
+}
 
 /**
  * Appends all arguments to the given StringBuilder.
