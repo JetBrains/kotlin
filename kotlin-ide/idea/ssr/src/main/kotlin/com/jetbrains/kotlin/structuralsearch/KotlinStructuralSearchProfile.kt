@@ -9,7 +9,6 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.impl.DebugUtil
 import com.intellij.structuralsearch.*
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
@@ -77,7 +76,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         project: Project,
         physical: Boolean
     ): Array<PsiElement> {
-        var elements: List<PsiElement> = listOf()
+        var elements: List<PsiElement>
         if (PROPERTY_CONTEXT.id == contextId) {
             val fragment = KtPsiFactory(project, false).createProperty(text)
             elements = listOf(getNonWhitespaceChildren(fragment).first().parent)
@@ -96,7 +95,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         if (elements.first() is KtAnnotatedExpression && elements.first().lastChild is PsiErrorElement)
             elements = getNonWhitespaceChildren(elements.first()).dropLast(1)
 
-        for (element in elements) print(DebugUtil.psiToString(element, false))
+//        for (element in elements) print(DebugUtil.psiToString(element, false))
 
         return elements.toTypedArray()
     }
@@ -146,6 +145,12 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
 
     override fun isIdentifier(element: PsiElement?): Boolean = element != null && element.node.elementType == KtTokens.IDENTIFIER
 
+    private fun ancestors(node: PsiElement?): List<PsiElement?> {
+        val family = mutableListOf<PsiElement?>(node)
+        repeat(5) { family.add(family.last()?.parent) }
+        return family.drop(1)
+    }
+
     override fun isApplicableConstraint(
         constraintName: String?,
         variableNode: PsiElement?,
@@ -153,20 +158,77 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         target: Boolean
     ): Boolean {
         when (constraintName) {
-            UIUtil.TYPE -> variableNode?.let { varNode ->
-                val parent: PsiElement? = varNode.parent
-                val gParent: PsiElement? = parent?.parent
-                val ggParent: PsiElement? = gParent?.parent
-                val gggParent: PsiElement? = ggParent?.parent
-                return@isApplicableConstraint when {
-                    gParent is KtDeclarationWithInitializer && gParent.initializer == parent -> false
-                    gggParent is KtCallableDeclaration && gggParent.typeReference == ggParent -> false
-                    parent is KtExpression -> true
+            UIUtil.TYPE -> {
+                val family = ancestors(variableNode)
+                return when {
+                    family[1] is KtDeclarationWithInitializer
+                            && (family[1] as KtDeclarationWithInitializer).initializer == family[0] -> false
+                    family[3] is KtCallableDeclaration
+                            && (family[3] as KtCallableDeclaration).typeReference == family[2] -> false
+                    family[0] is KtExpression -> true
                     else -> false
                 }
-            } ?: return false
+            }
+            UIUtil.MINIMUM_ZERO -> return when (variableNode) {
+                null -> false
+                else -> isApplicableMinCount(variableNode) || isApplicableMinMaxCount(variableNode)
+            }
+            UIUtil.MAXIMUM_UNLIMITED -> return when (variableNode) {
+                null -> false
+                else -> isApplicableMaxCount(variableNode) || isApplicableMinMaxCount(variableNode)
+            }
         }
         return super.isApplicableConstraint(constraintName, variableNode, completePattern, target)
+    }
+
+    /**
+     * Returns true if the largest count filter should be [0; 1].
+     */
+    private fun isApplicableMinCount(variableNode: PsiElement): Boolean {
+        val family = ancestors(variableNode)
+        return when {
+            // var x = $y$
+            family[0] is KtNameReferenceExpression && family[1] is KtProperty -> true
+            // $x$.y()
+            family[0] is KtNameReferenceExpression && family[1] is KtDotQualifiedExpression -> true
+            else -> false
+        }
+    }
+
+    /**
+     * Returns true if the largest count filter should be [1; +inf].
+     */
+    private fun isApplicableMaxCount(variableNode: PsiElement): Boolean {
+//        val family = ancestors(variableNode)
+//        return when {
+//            else -> false
+//        }
+        return false
+    }
+
+    /**
+     * Returns true if the largest count filter should be [0; +inf].
+     */
+    private fun isApplicableMinMaxCount(variableNode: PsiElement): Boolean {
+        val family = ancestors(variableNode)
+//        println(family.map { if (it == null) "null" else it::class.java })
+        return when {
+            // Containers (lists, bodies, ...)
+            family[1] is KtClassBody -> true
+            family[0] is KtParameter && family[1] is KtParameterList -> true
+            family[2] is KtTypeParameter && family[3] is KtTypeParameterList -> true
+            family[1] is KtUserType && family[4] is KtSuperTypeList -> true
+            family[1] is KtValueArgument && family[2] is KtValueArgumentList -> true
+            family[1] is KtBlockExpression && family[3] is KtDoWhileExpression -> true
+            family[0] is KtNameReferenceExpression && family[1] is KtBlockExpression -> true
+            // Annotations
+            family[1] is KtUserType && family[4] is KtAnnotationEntry -> true
+            // Strings
+            family[1] is KtStringTemplateExpression -> true
+            family[1] is KtSimpleNameStringTemplateEntry -> true
+            // Default: count filter not applicable
+            else -> false
+        }
     }
 
     override fun getCustomPredicates(
