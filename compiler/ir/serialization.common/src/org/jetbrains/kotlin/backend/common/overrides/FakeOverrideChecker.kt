@@ -40,14 +40,7 @@ class FakeOverrideChecker(
             .filter { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
             .filterNot { it.visibility == Visibilities.PRIVATE || it.visibility == Visibilities.INVISIBLE_FAKE }
 
-        val (internalDescriptorFakeOverrides, restDescriptorFakeOverrides) =
-            descriptorFakeOverrides.partition{ it.visibility == Visibilities.INTERNAL }
-
-        val internalDescriptorSignatures = internalDescriptorFakeOverrides
-            .map { with(descriptorMangler) { it.signatureString }}
-            .sorted()
-
-        val restDescriptorSignatures = restDescriptorFakeOverrides
+        val descriptorSignatures = descriptorFakeOverrides
             .map { with(descriptorMangler) { it.signatureString }}
             .sorted()
 
@@ -59,28 +52,18 @@ class FakeOverrideChecker(
             checkOverriddenSymbols(it)
         }
 
-        val (internalIrFakeOverrides, restIrFakeOverrides) =
-            irFakeOverrides.partition{ it.visibility == Visibilities.INTERNAL }
-
-        val internalIrSignatures = internalIrFakeOverrides
+        val irSignatures = irFakeOverrides
             .map { with(irMangler) { it.signatureString }}
             .sorted()
 
-        val restIrSignatures = restIrFakeOverrides
-            .map { with(irMangler) { it.signatureString }}
-            .sorted()
-
-        require(restDescriptorSignatures == restIrSignatures) {
-            "[IR VALIDATION] Fake override mismatch for ${clazz.fqNameWhenAvailable!!}\n" +
-            "\tDescriptor based: $restDescriptorSignatures\n" +
-            "\tIR based        : $restIrSignatures"
-        }
-
+        // We can't have equality here because dependency libraries could have
+        // been compiled with -friend-modules.
         // There can be internal fake overrides in IR absent in descriptors.
-        require(internalIrSignatures.containsAll(internalDescriptorSignatures)) {
+        // Also there can be members inherited from internal interfaces of other modules.
+        require(irSignatures.containsAll(descriptorSignatures)) {
             "[IR VALIDATION] Internal fake override mismatch for ${clazz.fqNameWhenAvailable!!}\n" +
-            "\tDescriptor based: $internalDescriptorSignatures\n" +
-            "\tIR based        : $internalIrSignatures"
+            "\tDescriptor based: $descriptorSignatures\n" +
+            "\tIR based        : $irSignatures"
         }
     }
 
