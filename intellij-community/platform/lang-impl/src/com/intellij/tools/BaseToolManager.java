@@ -90,7 +90,7 @@ public abstract class BaseToolManager<T extends Tool> {
 
   protected abstract String getActionIdPrefix();
 
-  private void unregisterActions(@Nullable ActionManager actionManager) {
+  protected void unregisterActions(@Nullable ActionManager actionManager) {
     if (actionManager == null) {
       return;
     }
