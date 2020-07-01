@@ -616,8 +616,8 @@ class Fir2IrVisitor(
 
                 generateWhen(
                     startOffset, endOffset, IrStatementOrigin.ELVIS,
-                    subjectVariable, irBranches, true,
-                    elvisCall.typeRef
+                    subjectVariable, irBranches,
+                    elvisCall.typeRef.toIrType()
                 )
             }
         }
@@ -660,10 +660,10 @@ class Fir2IrVisitor(
                 generateWhen(
                     startOffset, endOffset, origin,
                     subjectVariable, irBranches,
-                    whenExpression.isExhaustive && whenExpression.branches.none {
-                        it.condition is FirElseIfTrueCondition && it.result.statements.isEmpty()
-                    },
-                    whenExpression.typeRef
+                    if (whenExpression.isExhaustive && whenExpression.branches.none {
+                            it.condition is FirElseIfTrueCondition && it.result.statements.isEmpty()
+                        }
+                    ) whenExpression.typeRef.toIrType() else irBuiltIns.unitType
                 )
             }
         }
@@ -675,14 +675,9 @@ class Fir2IrVisitor(
         origin: IrStatementOrigin?,
         subjectVariable: IrVariable?,
         branches: List<IrBranch>,
-        isEffectivelyExhaustive: Boolean,
-        resultTypeRef: FirTypeRef
+        resultType: IrType
     ): IrExpression {
-        val irWhen = IrWhenImpl(
-            startOffset, endOffset,
-            if (isEffectivelyExhaustive) resultTypeRef.toIrType() else irBuiltIns.unitType,
-            origin, branches
-        )
+        val irWhen = IrWhenImpl(startOffset, endOffset, resultType, origin, branches)
         return if (subjectVariable == null) {
             irWhen
         } else {
