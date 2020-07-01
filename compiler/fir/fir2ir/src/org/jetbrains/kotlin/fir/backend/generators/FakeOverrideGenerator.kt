@@ -144,6 +144,7 @@ class FakeOverrideGenerator(
                             )
                         irProperty.parent = this
                         result += irProperty.withProperty {
+                            discardAccessorsAccordingToBaseVisibility(baseSymbol)
                             setOverriddenSymbolsForAccessors(declarationStorage, originalProperty, firOverriddenSymbol = baseSymbol)
                         }
                     } else if (fakeOverrideMode != FakeOverrideMode.SUBSTITUTION && originalProperty.allowsToHaveFakeOverrideIn(klass)) {
@@ -160,15 +161,7 @@ class FakeOverrideGenerator(
                             fakeOverrideProperty, irParent = this,
                             thisReceiverOwner = declarationStorage.findIrParent(originalProperty) as? IrClass,
                             origin = origin
-                        ).apply {
-                            // Do not create fake overrides for accessors if not allowed to do so, e.g., private lateinit var.
-                            if (baseSymbol.fir.getter?.allowsToHaveFakeOverride != true) {
-                                getter = null
-                            }
-                            if (baseSymbol.fir.setter?.allowsToHaveFakeOverride != true) {
-                                setter = null
-                            }
-                        }
+                        )
                         if (irProperty.backingField?.type?.containsErrorType() == true ||
                             irProperty.getter?.returnType?.containsErrorType() == true
                         ) {
@@ -176,6 +169,7 @@ class FakeOverrideGenerator(
                         }
                         irProperty.parent = this
                         result += irProperty.withProperty {
+                            discardAccessorsAccordingToBaseVisibility(baseSymbol)
                             setOverriddenSymbolsForAccessors(declarationStorage, fakeOverrideProperty, firOverriddenSymbol = baseSymbol)
                         }
                     }
@@ -183,6 +177,17 @@ class FakeOverrideGenerator(
             }
         }
         return result
+    }
+
+    private fun IrProperty.discardAccessorsAccordingToBaseVisibility(baseSymbol: FirPropertySymbol) {
+        // Do not create fake overrides for accessors if not allowed to do so, e.g., private lateinit var.
+        if (baseSymbol.fir.getter?.allowsToHaveFakeOverride != true) {
+            getter = null
+        }
+        // or private setter
+        if (baseSymbol.fir.setter?.allowsToHaveFakeOverride != true) {
+            setter = null
+        }
     }
 
     private fun IrProperty.setOverriddenSymbolsForAccessors(
