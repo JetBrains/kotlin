@@ -158,7 +158,7 @@ internal fun KtFile.getOrBuildFirWithDiagnostics(state: FirModuleResolveState): 
     return firFile
 }
 
-private fun FirDeclaration.runResolve(
+internal fun FirDeclaration.runResolve(
     file: FirFile,
     firProvider: FirIdeProvider,
     toPhase: FirResolvePhase,
@@ -255,47 +255,59 @@ internal fun KtElement.getOrBuildFir(
         else -> this
     }
     return state.getCachedMapping(this) ?: run {
-        containerFir.accept(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                (element.realPsi as? KtElement)?.let {
-                    state.record(it, element)
-                }
-                element.acceptChildren(this)
-            }
+        state.recordElementsFrom(containerFir)
 
-            override fun visitReference(reference: FirReference) {}
-
-            override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {}
-
-            override fun visitNamedReference(namedReference: FirNamedReference) {}
-
-            override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {}
-
-            override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference) {}
-
-            override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference) {}
-
-            override fun visitSuperReference(superReference: FirSuperReference) {}
-
-            override fun visitThisReference(thisReference: FirThisReference) {}
-
-            override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {}
-
-            override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
-                userTypeRef.acceptChildren(this)
-            }
-        })
-        var current: PsiElement? = psi
-        while (current is KtElement) {
-            val mappedFir = state.getCachedMapping(current)
-            if (mappedFir != null) {
-                if (current != this) {
-                    state.record(current, mappedFir)
-                }
-                return mappedFir
-            }
-            current = current.parent
+        val (current, mappedFir) = psi.getFirOfClosestParent(state) ?: error("FirElement is not found for: $text")
+        if (current != this) {
+            state.record(current, mappedFir)
         }
-        error("FirElement is not found for: $text")
+
+        mappedFir
     }
+}
+
+internal fun KtElement.getFirOfClosestParent(state: FirModuleResolveState): Pair<KtElement, FirElement>? {
+    var current: PsiElement? = this
+    while (current is KtElement) {
+        val mappedFir = state.getCachedMapping(current)
+        if (mappedFir != null) {
+            return current to mappedFir
+        }
+        current = current.parent
+    }
+
+    return null
+}
+
+internal fun FirModuleResolveState.recordElementsFrom(containerFir: FirDeclaration) {
+    containerFir.accept(object : FirVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            (element.realPsi as? KtElement)?.let {
+                record(it, element)
+            }
+            element.acceptChildren(this)
+        }
+
+        override fun visitReference(reference: FirReference) {}
+
+        override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {}
+
+        override fun visitNamedReference(namedReference: FirNamedReference) {}
+
+        override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {}
+
+        override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference) {}
+
+        override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference) {}
+
+        override fun visitSuperReference(superReference: FirSuperReference) {}
+
+        override fun visitThisReference(thisReference: FirThisReference) {}
+
+        override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {}
+
+        override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
+            userTypeRef.acceptChildren(this)
+        }
+    })
 }
