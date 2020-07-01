@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContextInterface
-import org.jetbrains.kotlin.ir.builders.constFalse
-import org.jetbrains.kotlin.ir.builders.constTrue
-import org.jetbrains.kotlin.ir.builders.elseBranch
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -560,7 +557,7 @@ class Fir2IrVisitor(
 
     override fun visitElvisCall(elvisCall: FirElvisCall, data: Any?): IrElement {
         val subjectName = Name.special("<elvis>")
-        val subjectVariable = buildProperty {
+        val firSubjectVariable = buildProperty {
             source = elvisCall.source
             session = this@Fir2IrVisitor.session
             origin = FirDeclarationOrigin.Source
@@ -572,55 +569,58 @@ class Fir2IrVisitor(
             isLocal = true
             status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
         }
-
-        @OptIn(FirContractViolation::class)
-        val ref = FirExpressionRef<FirWhenExpression>()
-        val subjectExpression = buildWhenSubjectExpression {
-            source = elvisCall.source
-            whenRef = ref
-        }
-
-        val whenExpression = buildWhenExpression {
-            source = elvisCall.source
-            this.subject = elvisCall.lhs
-            this.subjectVariable = subjectVariable
-            branches += buildWhenBranch {
-                condition = buildOperatorCall {
-                    operation = FirOperation.EQ
-                    argumentList = buildBinaryArgumentList(
-                        subjectExpression, buildConstExpression(null, FirConstKind.Null, null).apply {
-                            replaceTypeRef(session.builtinTypes.nullableNothingType)
+        val subjectVariable = firSubjectVariable.accept(this, null) as IrVariable
+        return conversionScope.withWhenSubject(subjectVariable) {
+            elvisCall.convertWithOffsets { startOffset, endOffset ->
+                val irBranches = listOf(
+                    IrBranchImpl(
+                        startOffset, endOffset, primitiveOp2(
+                            startOffset, endOffset, irBuiltIns.eqeqSymbol,
+                            irBuiltIns.booleanType, IrStatementOrigin.EQEQ,
+                            IrGetValueImpl(
+                                startOffset, endOffset,
+                                subjectVariable.type,
+                                subjectVariable.symbol
+                            ),
+                            IrConstImpl(
+                                startOffset, endOffset,
+                                irBuiltIns.nothingNType,
+                                IrConstKind.Null,
+                                value = null
+                            )
+                        ),
+                        convertToIrExpression(elvisCall.rhs)
+                    ),
+                    buildWhenBranch {
+                        condition = buildElseIfTrueCondition {}
+                        var resultExpression = buildQualifiedAccessExpression {
+                            calleeReference = buildResolvedNamedReference {
+                                name = subjectVariable.name
+                                resolvedSymbol = firSubjectVariable.symbol
+                            }
+                            typeRef = firSubjectVariable.returnTypeRef
                         }
-                    )
-                }
-                result = buildSingleExpressionBlock(elvisCall.rhs)
+                        // TODO: replace with .coneType
+                        val originalType = resultExpression.typeRef.coneTypeUnsafe<ConeKotlinType>()
+                        val notNullType = originalType.withNullability(ConeNullability.NOT_NULL)
+                        if (notNullType != originalType) {
+                            resultExpression = buildExpressionWithSmartcast {
+                                originalExpression = resultExpression
+                                typeRef = resultExpression.typeRef.resolvedTypeFromPrototype(notNullType)
+                                typesFromSmartCast = setOf(notNullType)
+                            }
+                        }
+                        result = buildSingleExpressionBlock(resultExpression)
+                    }.toIrWhenBranch()
+                )
+
+                generateWhen(
+                    startOffset, endOffset, IrStatementOrigin.ELVIS,
+                    subjectVariable, irBranches, true,
+                    elvisCall.typeRef
+                )
             }
-            branches += buildWhenBranch {
-                condition = buildElseIfTrueCondition {}
-                var resultExpression = buildQualifiedAccessExpression {
-                    calleeReference = buildResolvedNamedReference {
-                        name = subjectVariable.name
-                        resolvedSymbol = subjectVariable.symbol
-                    }
-                    typeRef = subjectVariable.returnTypeRef
-                }
-                val originalType = resultExpression.typeRef.coneTypeUnsafe<ConeKotlinType>()
-                val notNullType = originalType.withNullability(ConeNullability.NOT_NULL)
-                if (notNullType != originalType) {
-                    resultExpression = buildExpressionWithSmartcast {
-                        originalExpression = resultExpression
-                        typeRef = resultExpression.typeRef.resolvedTypeFromPrototype(notNullType)
-                        typesFromSmartCast = setOf(notNullType)
-                    }
-                }
-                result = buildSingleExpressionBlock(resultExpression)
-            }
-            typeRef = elvisCall.typeRef
-            isExhaustive = true
-        }.also {
-            ref.bind(it)
         }
-        return whenExpression.accept(this, data)
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Any?): IrElement {
@@ -630,7 +630,6 @@ class Fir2IrVisitor(
             KtNodeTypes.WHEN -> IrStatementOrigin.WHEN
             KtNodeTypes.IF -> IrStatementOrigin.IF
             KtNodeTypes.BINARY_EXPRESSION -> when ((psi as? KtBinaryExpression)?.operationToken) {
-                KtTokens.ELVIS -> IrStatementOrigin.ELVIS
                 KtTokens.OROR -> IrStatementOrigin.OROR
                 KtTokens.ANDAND -> IrStatementOrigin.ANDAND
                 else -> null
