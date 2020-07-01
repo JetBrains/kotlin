@@ -116,7 +116,7 @@ private class ExpressionValuesExtractor(val context: Context,
 
             is IrWhen -> expression.branches.forEach { forEachValue(it.result, block) }
 
-            is IrMemberAccessExpression -> block(expression)
+            is IrMemberAccessExpression<*> -> block(expression)
 
             is IrGetValue -> block(expression)
 
@@ -319,7 +319,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
         override fun visitExpression(expression: IrExpression) {
             when (expression) {
-                is IrMemberAccessExpression,
+                is IrMemberAccessExpression<*>,
                 is IrGetField,
                 is IrGetObjectValue,
                 is IrVararg,

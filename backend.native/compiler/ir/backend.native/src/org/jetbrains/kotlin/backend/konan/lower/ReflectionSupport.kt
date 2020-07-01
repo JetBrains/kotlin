@@ -67,7 +67,7 @@ internal class KTypeGenerator(
 
     private fun IrBuilderWithScope.irKTypeProjectionsList(
             irTypeArguments: List<IrTypeArgument>
-    ): IrMemberAccessExpression {
+    ): IrMemberAccessExpression<*> {
         val kTypeProjectionType = symbols.kTypeProjection.typeWithoutArguments
 
         return if (irTypeArguments.isEmpty()) {

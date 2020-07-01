@@ -424,7 +424,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     }
 
     private fun IrBuilderWithScope.lowerConstructorCallToValue(
-            expression: IrMemberAccessExpression,
+            expression: IrMemberAccessExpression<*>,
             callee: IrConstructor
     ): IrExpression = if (callee.isPrimary) {
         expression.getValueArgument(0)!!

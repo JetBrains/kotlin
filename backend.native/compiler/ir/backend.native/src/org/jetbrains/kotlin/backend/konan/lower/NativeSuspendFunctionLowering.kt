@@ -270,7 +270,7 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
             return sliceExpression(expression)
         }
 
-        override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
+        override fun visitMemberAccess(expression: IrMemberAccessExpression<*>): IrExpression {
             expression.transformChildrenVoid(this)
 
             return sliceExpression(expression)
@@ -281,7 +281,7 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
             irBuilder.run {
                 val children = when (expression) {
                     is IrSetField -> listOf(expression.receiver, expression.value)
-                    is IrMemberAccessExpression -> (
+                    is IrMemberAccessExpression<*> -> (
                             listOf(expression.dispatchReceiver, expression.extensionReceiver)
                                     + (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it) }
                             )
@@ -365,7 +365,7 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                         expression.receiver = newChildren[0]
                         expression.value = newChildren[1]!!
                     }
-                    is IrMemberAccessExpression -> {
+                    is IrMemberAccessExpression<*> -> {
                         expression.dispatchReceiver = newChildren[0]
                         expression.extensionReceiver = newChildren[1]
                         newChildren.drop(2).forEachIndexed { index, newChild ->
@@ -549,7 +549,7 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
         }
     }
 
-    fun IrBlockBodyBuilder.irSuccess(value: IrExpression): IrMemberAccessExpression {
+    fun IrBlockBodyBuilder.irSuccess(value: IrExpression): IrMemberAccessExpression<*> {
         val createResult = symbols.kotlinResult.owner.constructors.single { it.isPrimary }
         return irCall(createResult).apply {
             putValueArgument(0, value)

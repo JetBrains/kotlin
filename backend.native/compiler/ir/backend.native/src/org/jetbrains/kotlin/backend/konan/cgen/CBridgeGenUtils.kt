@@ -186,7 +186,7 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
 
     fun build(
             function: IrFunction,
-            transformCall: (IrMemberAccessExpression) -> IrExpression = { it }
+            transformCall: (IrMemberAccessExpression<*>) -> IrExpression = { it }
     ): IrExpression {
         val arguments = this.arguments.toMutableList()
 
