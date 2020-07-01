@@ -192,9 +192,7 @@ class SuggestedRefactoringChangeListener(
     override fun beforeDocumentChange(event: DocumentEvent) {
       val document = event.document
       val psiFile = psiDocumentManager.getCachedPsiFile(document) ?: return
-      if (!psiFile.isPhysical || psiFile is PsiCodeFragment) {
-        return
-      }
+      if (!psiFile.isPhysical || psiFile.fileType.isBinary || psiFile is PsiCodeFragment) return
 
       val firstChangeInsideCommand = isFirstChangeInsideCommand
       isFirstChangeInsideCommand = false
@@ -234,7 +232,7 @@ class SuggestedRefactoringChangeListener(
 
       val document = event.document
       val psiFile = psiDocumentManager.getCachedPsiFile(document) ?: return
-      if (!psiFile.isPhysical || psiFile is PsiCodeFragment) return
+      if (!psiFile.isPhysical || psiFile.fileType.isBinary || psiFile is PsiCodeFragment) return
 
       newIdentifierWatcher.documentChanged(event, psiFile.language)
 
