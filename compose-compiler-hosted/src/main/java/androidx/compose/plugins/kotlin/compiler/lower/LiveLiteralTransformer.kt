@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
+import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrSetField
@@ -409,6 +410,30 @@ open class LiveLiteralTransformer(
         // compile-time values only, so we can't transform them at all.
         if (owner.parentAsClass.isAnnotationClass) return expression
 
+        val name = owner.name.asJvmFriendlyString()
+
+        return enter("call-$name") {
+            expression.dispatchReceiver = enter("\$this") {
+                expression.dispatchReceiver?.transform(this, null)
+            }
+            expression.extensionReceiver = enter("\$\$this") {
+                expression.extensionReceiver?.transform(this, null)
+            }
+
+            for (i in 0 until expression.valueArgumentsCount) {
+                val arg = expression.getValueArgument(i)
+                if (arg != null) {
+                    enter("arg-$i") {
+                        expression.putValueArgument(i, arg.transform(this, null))
+                    }
+                }
+            }
+            expression
+        }
+    }
+
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
+        val owner = expression.symbol.bindIfNecessary().owner
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
