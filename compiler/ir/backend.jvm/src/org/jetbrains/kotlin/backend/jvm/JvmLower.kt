@@ -28,22 +28,17 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.NameUtils
 
-private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
-    lower = object : SameTypeCompilerPhase<CommonBackendContext, IrFile> {
-        override fun invoke(
-            phaseConfig: PhaseConfig,
-            phaserState: PhaserState<IrFile>,
-            context: CommonBackendContext,
-            input: IrFile
-        ): IrFile {
-            input.acceptVoid(PatchDeclarationParentsVisitor())
-            return input
-        }
-    },
+private fun makePatchParentsPhase(number: Int): NamedCompilerPhase<CommonBackendContext, IrFile> = makeIrFilePhase(
+    { PatchDeclarationParents() },
     name = "PatchParents$number",
     description = "Patch parent references in IrFile, pass $number",
-    nlevels = 0
 )
+
+private class PatchDeclarationParents : FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        irFile.acceptVoid(PatchDeclarationParentsVisitor())
+    }
+}
 
 private val validateIrBeforeLowering = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
     { context, module -> validationCallback(context, module, checkProperties = true) },
@@ -374,7 +369,7 @@ private val jvmFilePhases = listOf(
     makePatchParentsPhase(3)
 )
 
-val jvmPhases = namedIrModulePhase(
+val jvmPhases = NamedCompilerPhase(
     name = "IrLowering",
     description = "IR lowering",
     lower = validateIrBeforeLowering then

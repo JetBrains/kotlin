@@ -27,31 +27,20 @@ private fun makeWasmModulePhase(
     name: String,
     description: String,
     prerequisite: Set<NamedCompilerPhase<WasmBackendContext, *>> = emptySet()
-) = makeIrModulePhase(lowering, name, description, prerequisite, actions = setOf(validationAction, defaultDumper))
+): NamedCompilerPhase<WasmBackendContext, IrModuleFragment> =
+    makeIrModulePhase(
+        lowering, name, description, prerequisite, actions = setOf(validationAction, defaultDumper)
+    )
 
 private fun makeCustomWasmModulePhase(
     op: (WasmBackendContext, IrModuleFragment) -> Unit,
     description: String,
     name: String,
     prerequisite: Set<NamedCompilerPhase<WasmBackendContext, *>> = emptySet()
-) = namedIrModulePhase(
-    name,
-    description,
-    prerequisite,
-    actions = setOf(defaultDumper, validationAction),
-    nlevels = 0,
-    lower = object : SameTypeCompilerPhase<WasmBackendContext, IrModuleFragment> {
-        override fun invoke(
-            phaseConfig: PhaseConfig,
-            phaserState: PhaserState<IrModuleFragment>,
-            context: WasmBackendContext,
-            input: IrModuleFragment
-        ): IrModuleFragment {
-            op(context, input)
-            return input
-        }
-    }
-)
+): NamedCompilerPhase<WasmBackendContext, IrModuleFragment> =
+    makeCustomPhase(
+        op, name, description, prerequisite, actions = setOf(defaultDumper, validationAction), nlevels = 0,
+    )
 
 private val validateIrBeforeLowering = makeCustomWasmModulePhase(
     { context, module -> validationCallback(context, module) },
@@ -351,7 +340,7 @@ private val objectUsageLoweringPhase = makeWasmModulePhase(
     description = "Transform IrGetObjectValue into instance generator call"
 )
 
-val wasmPhases = namedIrModulePhase<WasmBackendContext>(
+val wasmPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = validateIrBeforeLowering then

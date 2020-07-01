@@ -67,7 +67,7 @@ infix operator fun <Data, Context> Action<Data, Context>.plus(other: Action<Data
 class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
     val name: String,
     val description: String,
-    val prerequisite: Set<NamedCompilerPhase<Context, *>>,
+    val prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
     private val lower: CompilerPhase<Context, Data, Data>,
     val preconditions: Set<Checker<Data>> = emptySet(),
     val postconditions: Set<Checker<Data>> = emptySet(),

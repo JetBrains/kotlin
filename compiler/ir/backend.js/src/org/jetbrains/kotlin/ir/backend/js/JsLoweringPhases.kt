@@ -34,7 +34,7 @@ private fun makeJsModulePhase(
     name: String,
     description: String,
     prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet()
-) = makeCustomJsModulePhase(
+): NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> = makeCustomJsModulePhase(
     op = { context, modules -> lowering(context).lower(modules) },
     name = name,
     description = description,
@@ -46,7 +46,7 @@ private fun makeCustomJsModulePhase(
     description: String,
     name: String,
     prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet()
-) = NamedCompilerPhase(
+): NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> = NamedCompilerPhase(
     name = name,
     description = description,
     prerequisite = prerequisite,
@@ -63,11 +63,7 @@ private fun makeCustomJsModulePhase(
             return input
         }
     },
-    preconditions = emptySet(),
-    postconditions = emptySet(),
-    stickyPostconditions = emptySet(),
     actions = setOf(defaultDumper.toMultiModuleAction(), validationAction.toMultiModuleAction()),
-    nlevels = 0
 )
 
 private fun <C> Action<IrElement, C>.toMultiModuleAction(): Action<Iterable<IrModuleFragment>, C> {
@@ -735,12 +731,10 @@ val pirLowerings = loweringList.filter { it is DeclarationLowering || it is Body
 val jsPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    prerequisite = emptySet(),
-    lower = loweringList.map { it.modulePhase as CompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>, Iterable<IrModuleFragment>> }
-        .reduce { acc, lowering -> acc.then(lowering) },
-    preconditions = emptySet(),
-    postconditions = emptySet(),
-    stickyPostconditions = emptySet(),
+    lower = loweringList.map {
+        @Suppress("USELESS_CAST")
+        it.modulePhase as CompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>, Iterable<IrModuleFragment>>
+    }.reduce { acc, lowering -> acc.then(lowering) },
     actions = setOf(defaultDumper.toMultiModuleAction(), validationAction.toMultiModuleAction()),
     nlevels = 1
 )

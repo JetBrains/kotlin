@@ -48,40 +48,10 @@ infix fun <Context : CommonBackendContext, Input, Mid, Output> CompilerPhase<Con
     return CompositePhase(if (this is CompositePhase<Context, *, *>) phases + unsafeOther else listOf(unsafeThis, unsafeOther))
 }
 
-fun <Context : CommonBackendContext> namedIrModulePhase(
-    name: String,
-    description: String,
-    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
-    lower: CompilerPhase<Context, IrModuleFragment, IrModuleFragment>,
-    preconditions: Set<Checker<IrModuleFragment>> = emptySet(),
-    postconditions: Set<Checker<IrModuleFragment>> = emptySet(),
-    stickyPostconditions: Set<Checker<IrModuleFragment>> = lower.stickyPostconditions,
-    actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper, validationAction),
-    nlevels: Int = 1
-): NamedCompilerPhase<Context, IrModuleFragment> =
-    NamedCompilerPhase(
-        name, description, prerequisite, lower, preconditions, postconditions, stickyPostconditions, actions, nlevels
-    )
-
-fun <Context : CommonBackendContext> namedIrFilePhase(
-    name: String,
-    description: String,
-    prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
-    lower: CompilerPhase<Context, IrFile, IrFile>,
-    preconditions: Set<Checker<IrFile>> = emptySet(),
-    postconditions: Set<Checker<IrFile>> = emptySet(),
-    stickyPostconditions: Set<Checker<IrFile>> = lower.stickyPostconditions,
-    actions: Set<Action<IrFile, Context>> = setOf(defaultDumper, validationAction),
-    nlevels: Int = 1
-): NamedCompilerPhase<Context, IrFile> =
-    NamedCompilerPhase(
-        name, description, prerequisite, lower, preconditions, postconditions, stickyPostconditions, actions, nlevels
-    )
-
 fun <Context : CommonBackendContext, Element : IrElement> makeCustomPhase(
     op: (Context, Element) -> Unit,
-    description: String,
     name: String,
+    description: String,
     prerequisite: Set<NamedCompilerPhase<Context, *>> = emptySet(),
     preconditions: Set<Checker<Element>> = emptySet(),
     postconditions: Set<Checker<Element>> = emptySet(),
@@ -134,7 +104,7 @@ fun <Context : CommonBackendContext> performByIrFile(
     description: String = "Perform phases by IrFile",
     lower: List<CompilerPhase<Context, IrFile, IrFile>>
 ): NamedCompilerPhase<Context, IrModuleFragment> =
-    namedIrModulePhase(
+    NamedCompilerPhase(
         name, description, emptySet(), PerformByIrFilePhase(lower), emptySet(), emptySet(), emptySet(),
         setOf(defaultDumper), nlevels = 1,
     )
@@ -173,7 +143,7 @@ fun <Context : CommonBackendContext> makeIrFilePhase(
     stickyPostconditions: Set<Checker<IrFile>> = emptySet(),
     actions: Set<Action<IrFile, Context>> = setOf(defaultDumper, validationAction)
 ): NamedCompilerPhase<Context, IrFile> =
-    namedIrFilePhase(
+    NamedCompilerPhase(
         name, description, prerequisite, FileLoweringPhaseAdapter(lowering), preconditions, postconditions, stickyPostconditions, actions,
         nlevels = 0,
     )
@@ -197,7 +167,7 @@ fun <Context : CommonBackendContext> makeIrModulePhase(
     stickyPostconditions: Set<Checker<IrModuleFragment>> = emptySet(),
     actions: Set<Action<IrModuleFragment, Context>> = setOf(defaultDumper, validationAction)
 ): NamedCompilerPhase<Context, IrModuleFragment> =
-    namedIrModulePhase(
+    NamedCompilerPhase(
         name, description, prerequisite, ModuleLoweringPhaseAdapter(lowering), preconditions, postconditions, stickyPostconditions, actions,
         nlevels = 0,
     )
