@@ -12,7 +12,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.GradleUtil
 import java.io.File
 
-class AndroidModuleInfoProviderImpl(override val module: Module) : AndroidModuleInfoProvider {
+class MobileAndroidModuleInfoProvider(override val module: Module) : AndroidModuleInfoProvider {
     override fun isAndroidModule(): Boolean = module.isAndroid
     override fun isGradleModule(): Boolean = ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module)
 

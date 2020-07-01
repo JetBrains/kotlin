@@ -77,7 +77,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin.android.model">
-    <androidModuleInfoProvider implementation="com.jetbrains.mobile.gradle.AndroidModuleInfoProviderImpl"/>
+    <androidModuleInfoProvider implementation="com.jetbrains.mobile.gradle.MobileAndroidModuleInfoProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="cidr.lang">
