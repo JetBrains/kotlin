@@ -520,6 +520,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(parameter.valOrVarKeyword, other.valOrVarKeyword)
                 && matchTextOrVariable(parameter.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(parameter.modifierList, other.modifierList)
+                && myMatchingVisitor.match(parameter.destructuringDeclaration, other.destructuringDeclaration)
 
         parameter.nameIdentifier?.let { nameIdentifier ->
             val handler = getHandler(nameIdentifier)

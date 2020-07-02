@@ -9,4 +9,5 @@ class KotlinSSDestructuringDeclarationTest : KotlinSSResourceInspectionTest() {
 
     fun testLoop() { doTest("for (('_, '_) in '_) { '_* }") }
 
+    fun testCount() { doTest("for (('_{3,3}) in '_) { '_* }") }
 }

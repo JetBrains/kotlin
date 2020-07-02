@@ -9,6 +9,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.util.elementType
 import com.intellij.structuralsearch.*
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
@@ -218,10 +219,11 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
      * Returns true if the largest count filter should be [1; +inf].
      */
     private fun isApplicableMaxCount(variableNode: PsiElement): Boolean {
-//        val family = ancestors(variableNode)
-//        return when {
-//            else -> false
-//        }
+        val family = ancestors(variableNode)
+        return when {
+            family[0] is KtDestructuringDeclarationEntry -> true
+            else -> false
+        }
         return false
     }
 
@@ -230,7 +232,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
      */
     private fun isApplicableMinMaxCount(variableNode: PsiElement): Boolean {
         val family = ancestors(variableNode)
-//        println(family.map { if (it == null) "null" else it::class.java })
+//        println(family.map { if (it == null) "null" else it::class.java.toString().split(".").last() })
         return when {
             // Containers (lists, bodies, ...)
             family[1] is KtClassBody -> true
