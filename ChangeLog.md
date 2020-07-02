@@ -100,6 +100,8 @@
 - [`KT-38668`](https://youtrack.jetbrains.com/issue/KT-38668) Project with module dependency in KN, build fails with Kotlin 1.3.71 and associated libs but passes with 1.3.61.
 - [`KT-38857`](https://youtrack.jetbrains.com/issue/KT-38857) Class versions V1_5 or less must use F_NEW frames.
 - [`KT-39113`](https://youtrack.jetbrains.com/issue/KT-39113) "AssertionError: Uninitialized value on stack" with EXACTLY_ONCE contract in non-inline function and lambda destructuring
+- [`KT-28483`](https://youtrack.jetbrains.com/issue/KT-28483) Override of generic-return-typed function with inline class should lead to a boxing
+- [`KT-37963`](https://youtrack.jetbrains.com/issue/KT-37963) ClassCastException: Value of inline class represented as 'java.lang.Object' is not boxed properly on return from lambda
 
 ### Docs & Examples
 
@@ -325,6 +327,7 @@
 - [`KT-38579`](https://youtrack.jetbrains.com/issue/KT-38579) New Project wizard 1.4+: multiplatform mobile application: build fails on lint task: Configuration with name 'compileClasspath' not found
 - [`KT-38929`](https://youtrack.jetbrains.com/issue/KT-38929) New project wizard: update libraries in project template according to kotlin IDE plugin version
 - [`KT-38417`](https://youtrack.jetbrains.com/issue/KT-38417) Enable new project wizard by-default
+- [`KT-38158`](https://youtrack.jetbrains.com/issue/KT-38158) java.lang.NullPointerException when try to create new project via standard wizard on Mac os
 
 ### JS. Tools
 
@@ -377,6 +380,7 @@
 - [`KT-16529`](https://youtrack.jetbrains.com/issue/KT-16529) Names of KProperty's type parameters are inconsistent with ReadOnlyProperty/ReadWriteProperty
 - [`KT-36356`](https://youtrack.jetbrains.com/issue/KT-36356) Specify which element Iterable.distinctBy(selector) retains
 - [`KT-38060`](https://youtrack.jetbrains.com/issue/KT-38060) runningFold and runningReduce instead of scanReduce
+- [`KT-38566`](https://youtrack.jetbrains.com/issue/KT-38566) Kotlin/JS IR: kx.serialization & ktor+JsonFeature: SerializationException: Can't locate argument-less serializer for class
 
 ### Reflection
 
