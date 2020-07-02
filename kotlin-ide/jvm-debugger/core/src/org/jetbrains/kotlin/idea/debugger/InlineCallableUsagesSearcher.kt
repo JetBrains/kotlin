@@ -9,6 +9,7 @@ import com.intellij.debugger.engine.DebugProcess
 import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
-class InlineCallableUsagesSearcher(private val myDebugProcess: DebugProcess) {
+class InlineCallableUsagesSearcher(val project: Project, val searchScope: GlobalSearchScope) {
     fun findInlinedCalls(
         declaration: KtDeclaration,
         alreadyVisited: Set<PsiElement>,
@@ -56,7 +57,7 @@ class InlineCallableUsagesSearcher(private val myDebugProcess: DebugProcess) {
                     task,
                     KotlinDebuggerCoreBundle.message("find.inline.calls.task.compute.names", declarationName),
                     true,
-                    myDebugProcess.project
+                    project
                 )
             } else {
                 try {
@@ -70,7 +71,7 @@ class InlineCallableUsagesSearcher(private val myDebugProcess: DebugProcess) {
                 XDebuggerManagerImpl.NOTIFICATION_GROUP.createNotification(
                     KotlinDebuggerCoreBundle.message("find.inline.calls.task.cancelled", declarationName),
                     MessageType.WARNING
-                ).notify(myDebugProcess.project)
+                ).notify(project)
             }
 
             val newAlreadyVisited = HashSet<PsiElement>().apply {
@@ -105,12 +106,12 @@ class InlineCallableUsagesSearcher(private val myDebugProcess: DebugProcess) {
 
     private fun getScopeForInlineDeclarationUsages(inlineDeclaration: KtDeclaration): GlobalSearchScope {
         val virtualFile = runReadAction { inlineDeclaration.containingFile.virtualFile }
-        return if (virtualFile != null && ProjectRootsUtil.isLibraryFile(myDebugProcess.project, virtualFile)) {
-            myDebugProcess.searchScope.uniteWith(
-                KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(myDebugProcess.project), myDebugProcess.project)
+        return if (virtualFile != null && ProjectRootsUtil.isLibraryFile(project, virtualFile)) {
+            searchScope.uniteWith(
+                KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project)
             )
         } else {
-            myDebugProcess.searchScope
+            searchScope
         }
     }
 }
