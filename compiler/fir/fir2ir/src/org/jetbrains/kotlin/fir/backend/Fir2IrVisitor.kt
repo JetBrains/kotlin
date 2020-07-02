@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -330,6 +331,17 @@ class Fir2IrVisitor(
         return callGenerator.convertToIrCall(qualifiedAccessExpression, qualifiedAccessExpression.typeRef, explicitReceiverExpression)
     }
 
+    // Note that this mimics psi2ir [StatementGenerator#isThisForClassPhysicallyAvailable].
+    private fun isThisForClassPhysicallyAvailable(irClass: IrClass): Boolean {
+        var lastClass = conversionScope.lastClass()
+        while (lastClass != null) {
+            if (irClass == lastClass) return true
+            if (!lastClass.isInner) return false
+            lastClass = lastClass.parentClassOrNull
+        }
+        return false
+    }
+
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): IrElement {
         val calleeReference = thisReceiverExpression.calleeReference
         val boundSymbol = calleeReference.boundSymbol
@@ -337,11 +349,9 @@ class Fir2IrVisitor(
             // Object case
             val firClass = boundSymbol.fir as FirClass
             val irClass = classifierStorage.getCachedIrClass(firClass)!!
-            if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.classKind == ClassKind.OBJECT) {
-                if (irClass != conversionScope.lastClass()) {
-                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
-                    }
+            if (firClass.classKind == ClassKind.OBJECT && !isThisForClassPhysicallyAvailable(irClass)) {
+                return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                    IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
                 }
             }
 
