@@ -99,7 +99,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     override fun visitReferenceExpression(expression: KtReferenceExpression) {
         visitElement(expression)
         val handler = getHandler(expression)
-        handler.filter =
+        getHandler(expression).filter =
             if (handler is SubstitutionHandler) NodeFilter { it is PsiElement } // accept all
             else ReferenceExpressionFilter
     }
@@ -191,6 +191,10 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     override fun visitParameter(parameter: KtParameter) {
         super.visitParameter(parameter)
         getHandler(parameter).filter = ParameterFilter
+        parameter.typeReference?.resetCountFilter()
+        parameter.typeReference?.typeElement?.resetCountFilter()
+        parameter.typeReference?.typeElement?.firstChild?.resetCountFilter()
+        parameter.typeReference?.typeElement?.firstChild?.firstChild?.resetCountFilter()
     }
 
     override fun visitComment(comment: PsiComment) {
@@ -219,22 +223,15 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
                     false
                 )
             )
-            val newHandler = SubstitutionHandler(handler.name, false, 1, 1, false)
-            handler.predicate?.let { newHandler.predicate = it }
-            setHandler(calleeExpression, newHandler)
-            calleeExpression.constructorReferenceExpression?.let { setHandler(it, newHandler) }
+            calleeExpression.resetCountFilter()
+            calleeExpression.constructorReferenceExpression?.resetCountFilter()
         }
     }
 
     override fun visitSuperTypeEntry(specifier: KtSuperTypeEntry) {
         super.visitSuperTypeEntry(specifier)
-        val handler = getHandler(specifier)
-        if (handler is SubstitutionHandler) {
-            val newHandler = SubstitutionHandler(handler.name, false, 1, 1, false)
-            handler.predicate?.let { newHandler.predicate = it }
-            specifier.typeReference?.let { setHandler(it, newHandler) }
-            specifier.typeReference?.typeElement?.let { setHandler(it, newHandler) }
-        }
+        specifier.typeReference?.resetCountFilter()
+        specifier.typeReference?.typeElement?.resetCountFilter()
     }
 
     override fun visitModifierList(list: KtModifierList) {
@@ -279,6 +276,14 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    private fun visitKDoc(kDoc: KDoc) {
+        getHandler(kDoc).setFilter { it is KDoc }
+    }
+
+    private fun visitKDocLink(link: KDocLink) {
+        getHandler(link).setFilter { it is KDocLink }
+    }
+
     private fun absenceOfMatchHandler(element: PsiElement): SubstitutionHandler =
         SubstitutionHandler("${element.hashCode()}_optional", false, 0, 1, false)
 
@@ -288,13 +293,16 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
             return handler is SubstitutionHandler && handler.minOccurs == 0
         }
 
-    private fun visitKDoc(kDoc: KDoc) {
-        getHandler(kDoc).setFilter { it is KDoc }
+    private fun PsiElement.resetCountFilter() {
+        val handler = getHandler(this)
+        if (handler is SubstitutionHandler && (handler.minOccurs != 1 || handler.maxOccurs != 1)) {
+            val newHandler = SubstitutionHandler(handler.name, false, 1, 1, false)
+            val predicate = handler.predicate
+            if (predicate != null) newHandler.predicate = predicate
+            setHandler(this, newHandler)
+        }
     }
 
-    private fun visitKDocLink(link: KDocLink) {
-        getHandler(link).setFilter { it is KDocLink }
-    }
 
     companion object {
 

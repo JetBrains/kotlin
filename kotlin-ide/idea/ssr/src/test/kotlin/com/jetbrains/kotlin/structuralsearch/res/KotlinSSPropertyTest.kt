@@ -1,6 +1,5 @@
 package com.jetbrains.kotlin.structuralsearch.res
 
-import com.intellij.structuralsearch.MatchOptions
 import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
 import com.jetbrains.kotlin.structuralsearch.KotlinStructuralSearchProfile
 
@@ -42,4 +41,6 @@ class KotlinSSPropertyTest : KotlinSSResourceInspectionTest() {
             var '_Field = '_ 
                 private set('_x) { '_* }
         """, KotlinStructuralSearchProfile.PROPERTY_CONTEXT) }
+
+    fun testFunctionType() { doTest("val '_ : ('_{2,2}) -> Unit") }
 }

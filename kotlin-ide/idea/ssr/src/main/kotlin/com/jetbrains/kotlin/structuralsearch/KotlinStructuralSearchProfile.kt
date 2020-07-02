@@ -97,7 +97,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         if (elements.first() is KtAnnotatedExpression && elements.first().lastChild is PsiErrorElement)
             elements = getNonWhitespaceChildren(elements.first()).dropLast(1)
 
-//        for (element in elements) print(DebugUtil.psiToString(element, false))
+        for (element in elements) print(DebugUtil.psiToString(element, false))
 
         return elements.toTypedArray()
     }
@@ -242,6 +242,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             family[1] is KtValueArgument && family[2] is KtValueArgumentList -> true
             family[1] is KtBlockExpression && family[3] is KtDoWhileExpression -> true
             family[0] is KtNameReferenceExpression && family[1] is KtBlockExpression -> true
+            family[1] is KtUserType && family[4] is KtParameterList -> true
             // Annotations
             family[1] is KtUserType && family[4] is KtAnnotationEntry -> true
             // Strings
