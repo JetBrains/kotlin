@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
@@ -45,9 +46,9 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
         library.create(myProject)
     }
 
-    override fun runTest() {
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
         runTest {
-            super.runTest()
+            super.runTestRunnable(testRunnable)
         }
     }
 }
