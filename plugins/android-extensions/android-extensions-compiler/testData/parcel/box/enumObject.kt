@@ -25,7 +25,6 @@ fun box() = parcelTest { parcel ->
 
     val bytes = parcel.marshall()
     parcel.unmarshall(bytes, 0, bytes.size)
-    parcel.setDataPosition(0)
 
     val black2 = readFromParcel<Color>(parcel)
     val obj2 = readFromParcel<Obj>(parcel)

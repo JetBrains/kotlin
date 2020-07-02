@@ -3,10 +3,9 @@
 
 import android.util.Size
 import kotlinx.android.parcel.*
-import android.os.Parcelable
 
 @Parcelize
-class TestNullable(val a: Size?) : Parcelable
+class TestNullable(val a: Size?)
 
 @Parcelize
-class TestNotNull(val a: Size) : Parcelable
+class TestNotNull(val a: Size)
