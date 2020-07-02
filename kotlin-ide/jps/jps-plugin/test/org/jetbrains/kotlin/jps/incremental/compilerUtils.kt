@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.jps.artifacts.JpsPluginTestArtifacts
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
+import org.jetbrains.kotlin.jps.build.getInstanceForJps
 import java.io.*
 
 fun createTestingCompilerEnvironment(
@@ -34,7 +35,7 @@ fun createTestingCompilerEnvironment(
 ): JpsCompilerEnvironment {
     val wrappedMessageCollector = MessageCollectorToOutputItemsCollectorAdapter(messageCollector, outputItemsCollector)
     return JpsCompilerEnvironment(
-        KotlinArtifacts.getInstance(),
+        KotlinArtifacts.getInstanceForJps(),
         services,
         KotlinBuilder.classesToLoadByParent,
         wrappedMessageCollector,

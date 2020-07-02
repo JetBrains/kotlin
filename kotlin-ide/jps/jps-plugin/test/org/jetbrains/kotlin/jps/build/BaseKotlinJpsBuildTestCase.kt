@@ -34,12 +34,6 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
-        TestApplicationManager.getInstance() // Trigger Application initialization
-        ApplicationManager.getApplication().replaceService(
-            KotlinArtifacts::class.java,
-            JpsPluginTestArtifacts.getInstance(),
-            testRootDisposable
-        )
     }
 
     @Throws(Exception::class)
