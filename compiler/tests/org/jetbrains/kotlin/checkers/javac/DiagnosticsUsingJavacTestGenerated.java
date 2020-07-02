@@ -10661,6 +10661,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionWithoutExpectedType.kt");
                 }
 
+                @TestMetadata("coerctionToUnitForATypeWithUpperBound.kt")
+                public void testCoerctionToUnitForATypeWithUpperBound() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coerctionToUnitForATypeWithUpperBound.kt");
+                }
+
                 @TestMetadata("coersionWithAnonymousFunctionsAndUnresolved.kt")
                 public void testCoersionWithAnonymousFunctionsAndUnresolved() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coersionWithAnonymousFunctionsAndUnresolved.kt");

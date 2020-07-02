@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
@@ -62,9 +63,30 @@ fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(
     lowerType: KotlinTypeMarker,
     upperType: KotlinTypeMarker,
     position: ConstraintPosition
+): Boolean =
+    addConstraintIfCompatible(lowerType, upperType, position, ConstraintKind.LOWER)
+
+fun ConstraintSystemBuilder.addEqualityConstraintIfCompatible(
+    lowerType: KotlinTypeMarker,
+    upperType: KotlinTypeMarker,
+    position: ConstraintPosition
+): Boolean =
+    addConstraintIfCompatible(lowerType, upperType, position, ConstraintKind.EQUALITY)
+
+private fun ConstraintSystemBuilder.addConstraintIfCompatible(
+    lowerType: KotlinTypeMarker,
+    upperType: KotlinTypeMarker,
+    position: ConstraintPosition,
+    kind: ConstraintKind
 ) =
     runTransaction {
-        if (!hasContradiction) addSubtypeConstraint(lowerType, upperType, position)
+        if (!hasContradiction) {
+            when (kind) {
+                ConstraintKind.LOWER -> addSubtypeConstraint(lowerType, upperType, position)
+                ConstraintKind.UPPER -> addSubtypeConstraint(upperType, lowerType, position)
+                ConstraintKind.EQUALITY -> addEqualityConstraint(lowerType, upperType, position)
+            }
+        }
         !hasContradiction
     }
 
