@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_FIR: JVM_IR
 
 // java.lang.NoSuchMethodError: java.util.TreeMap.remove
 // IGNORE_BACKEND: ANDROID

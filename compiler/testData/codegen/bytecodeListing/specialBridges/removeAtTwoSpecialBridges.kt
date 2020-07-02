@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 open class A0<E> : MutableList<E> {
     override fun add(element: E): Boolean {
         throw UnsupportedOperationException()
