@@ -158,16 +158,9 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         target: Boolean
     ): Boolean {
         when (constraintName) {
-            UIUtil.TYPE -> {
-                val family = ancestors(variableNode)
-                return when {
-                    family[1] is KtDeclarationWithInitializer
-                            && (family[1] as KtDeclarationWithInitializer).initializer == family[0] -> false
-                    family[3] is KtCallableDeclaration
-                            && (family[3] as KtCallableDeclaration).typeReference == family[2] -> false
-                    family[0] is KtExpression -> true
-                    else -> false
-                }
+            UIUtil.TYPE -> return when (variableNode) {
+                null -> false
+                else -> isApplicableType(variableNode)
             }
             UIUtil.MINIMUM_ZERO -> return when (variableNode) {
                 null -> false
@@ -181,15 +174,37 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         return super.isApplicableConstraint(constraintName, variableNode, completePattern, target)
     }
 
+    private fun isApplicableType(variableNode: PsiElement): Boolean {
+        val family = ancestors(variableNode)
+        return when {
+            family[0] is KtNameReferenceExpression -> when (family[1]) {
+                is KtValueArgument,
+                is KtProperty,
+                is KtBinaryExpression, is KtBinaryExpressionWithTypeRHS,
+                is KtIsExpression,
+                is KtBlockExpression,
+                is KtContainerNode,
+                is KtArrayAccessExpression,
+                is KtPostfixExpression,
+                is KtSafeQualifiedExpression,
+                is KtSimpleNameStringTemplateEntry, is KtBlockStringTemplateEntry,
+                is KtPropertyAccessor,
+                is KtWhenEntry -> true
+                else -> false
+            }
+            else -> false
+        }
+    }
+
     /**
      * Returns true if the largest count filter should be [0; 1].
      */
     private fun isApplicableMinCount(variableNode: PsiElement): Boolean {
         val family = ancestors(variableNode)
         return when {
-            // var x = $y$
+            // var field = $x$
             family[0] is KtNameReferenceExpression && family[1] is KtProperty -> true
-            // $x$.y()
+            // $x$.fun()
             family[0] is KtNameReferenceExpression && family[1] is KtDotQualifiedExpression -> true
             else -> false
         }
