@@ -506,7 +506,11 @@ public abstract class KtUsefulTestCase extends TestCase {
      * If you want a more shorter name than runInEdtAndWait.
      */
     protected void edt(@NotNull ThrowableRunnable<Throwable> runnable) {
-        EdtTestUtil.runInEdtAndWait(runnable);
+        try {
+            EdtTestUtil.runInEdtAndWait(runnable);
+        } catch (Throwable throwable) {
+            LOG.warn(throwable);
+        }
     }
 
     @NotNull
@@ -1149,20 +1153,24 @@ public abstract class KtUsefulTestCase extends TestCase {
     }
 
     public static void waitForAppLeakingThreads(long timeout, @NotNull TimeUnit timeUnit) {
-        EdtTestUtil.runInEdtAndWait(() -> {
-            Application app = ApplicationManager.getApplication();
-            if (app != null && !app.isDisposed()) {
-                FileBasedIndexImpl index = (FileBasedIndexImpl)app.getServiceIfCreated(FileBasedIndex.class);
-                if (index != null) {
-                    index.getChangedFilesCollector().waitForVfsEventsExecuted(timeout, timeUnit);
-                }
+        try {
+            EdtTestUtil.runInEdtAndWait(() -> {
+                Application app = ApplicationManager.getApplication();
+                if (app != null && !app.isDisposed()) {
+                    FileBasedIndexImpl index = (FileBasedIndexImpl)app.getServiceIfCreated(FileBasedIndex.class);
+                    if (index != null) {
+                        index.getChangedFilesCollector().waitForVfsEventsExecuted(timeout, timeUnit);
+                    }
 
-                DocumentCommitThread commitThread = (DocumentCommitThread)app.getServiceIfCreated(DocumentCommitProcessor.class);
-                if (commitThread != null) {
-                    commitThread.waitForAllCommits(timeout, timeUnit);
+                    DocumentCommitThread commitThread = (DocumentCommitThread)app.getServiceIfCreated(DocumentCommitProcessor.class);
+                    if (commitThread != null) {
+                        commitThread.waitForAllCommits(timeout, timeUnit);
+                    }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            LOG.warn(e);
+        }
     }
 
     protected class TestDisposable implements Disposable {

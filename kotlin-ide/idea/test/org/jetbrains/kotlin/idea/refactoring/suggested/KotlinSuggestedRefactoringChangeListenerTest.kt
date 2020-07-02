@@ -10,6 +10,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.executeCommand
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.refactoring.suggested.BaseSuggestedRefactoringChangeListenerTest
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -386,8 +387,8 @@ class KotlinSuggestedRefactoringChangeListenerTest : BaseSuggestedRefactoringCha
         }
     }
 
-    override fun runTest() {
-        runTest { super.runTest() }
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+        runTest { super.runTestRunnable(testRunnable) }
     }
 
     private fun addImport(fqName: String) {

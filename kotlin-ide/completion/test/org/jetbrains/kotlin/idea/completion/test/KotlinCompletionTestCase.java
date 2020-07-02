@@ -10,6 +10,7 @@ import com.intellij.codeInsight.completion.CompletionTestCase;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
@@ -59,8 +60,7 @@ abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     }
 
     @Override
-    protected void runTest() throws Throwable {
-        //noinspection Convert2MethodRef
-        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
+    protected void runTestRunnable(@NotNull ThrowableRunnable<Throwable> testRunnable) throws Throwable {
+        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTestRunnable(testRunnable));
     }
 }

@@ -17,6 +17,7 @@ import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Signature
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import com.intellij.refactoring.suggested.BaseSuggestedRefactoringChangeCollectorTest
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.runTest
 
@@ -200,7 +201,7 @@ class KotlinSuggestedRefactoringChangeCollectorTest : BaseSuggestedRefactoringCh
         )
     }
 
-    override fun runTest() {
-        runTest { super.runTest() }
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+        runTest { super.runTestRunnable(testRunnable) }
     }
 }

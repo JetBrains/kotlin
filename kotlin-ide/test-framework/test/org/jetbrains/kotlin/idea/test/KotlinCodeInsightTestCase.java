@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.test;
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Ref;
+import com.intellij.util.ThrowableRunnable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
 
@@ -48,7 +50,7 @@ public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
     }
 
     @Override
-    protected void runTest() throws Throwable {
-        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
+    protected void runTestRunnable(@NotNull ThrowableRunnable<Throwable> testRunnable) throws Throwable {
+        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTestRunnable(testRunnable));
     }
 }

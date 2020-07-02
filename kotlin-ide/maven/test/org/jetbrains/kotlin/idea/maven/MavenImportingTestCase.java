@@ -39,6 +39,7 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
+import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -104,8 +105,8 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
     }
 
     @Override
-    protected void runTest() throws Throwable {
-        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
+    protected void runTestRunnable(@NotNull ThrowableRunnable<Throwable> testRunnable) throws Throwable {
+        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTestRunnable(testRunnable));
     }
 
     protected void assertModules(String... expectedNames) {

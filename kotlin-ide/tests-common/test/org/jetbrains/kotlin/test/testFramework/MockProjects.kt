@@ -20,6 +20,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.testFramework.runInEdtAndWait
 
 interface ProjectEx : Project {
     fun init()

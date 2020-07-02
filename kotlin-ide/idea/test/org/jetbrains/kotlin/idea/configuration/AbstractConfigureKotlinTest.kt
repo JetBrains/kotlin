@@ -112,7 +112,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         return File(projectFilePath).toPath()
     }
 
-    override fun doCreateProject(projectFile: Path): Project {
+    override fun doCreateAndOpenProject(projectFile: Path): Project {
         return loadProjectCompat(projectFile)
     }
 
@@ -135,8 +135,8 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         UsefulTestCase.assertDoesntExist(File(JS_CONFIGURATOR.getDefaultPathToJarFile(project)))
     }
 
-    override fun runTest() {
-        return runTest { super.runTest() }
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+        runTest { super.runTestRunnable(testRunnable) }
     }
 
     companion object {

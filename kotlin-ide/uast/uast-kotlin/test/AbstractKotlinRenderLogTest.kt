@@ -152,7 +152,7 @@ fun checkDescriptorsLeak(node: UElement) {
         10,
         mapOf(node to node.javaClass.name),
         Any::class.java,
-        Conditions.alwaysTrue(),
+        Conditions.alwaysTrue<Any>()::value,
         PairProcessor { value, backLink ->
             descriptorsClasses.find { it.isInstance(value) }?.let {
                 TestCase.fail("""Leaked descriptor ${it.qualifiedName} in ${node.javaClass.name}\n$backLink""")

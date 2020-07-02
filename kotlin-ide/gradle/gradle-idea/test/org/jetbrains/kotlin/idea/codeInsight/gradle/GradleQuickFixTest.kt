@@ -61,7 +61,7 @@ class GradleQuickFixTest : GradleImportingTestCase() {
 
     private fun applyInspectionFixes(tool: LocalInspectionTool, file: VirtualFile) {
         runInEdtAndWait {
-            invokeTestRunnable {
+            runTestRunnable {
                 val presentation = runInspection(tool, myProject, listOf(file))
 
                 WriteCommandAction.runWriteCommandAction(myProject) {

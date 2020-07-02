@@ -318,7 +318,7 @@ object UltraLightChecker {
             10,
             mapOf(element to element.javaClass.name),
             Any::class.java,
-            Conditions.alwaysTrue(),
+            Conditions.alwaysTrue<Any>()::value,
             PairProcessor { value, backLink ->
                 if (value is DeclarationDescriptor) {
                     assertFails {
