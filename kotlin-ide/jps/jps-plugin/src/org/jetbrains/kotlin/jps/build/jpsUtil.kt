@@ -51,7 +51,7 @@ val JpsModule.productionBuildTarget
 val JpsModule.testBuildTarget
     get() = ModuleBuildTarget(this, true)
 
-fun KotlinArtifacts.Companion.getInstanceForJps(context: CompileContext): KotlinArtifacts {
+fun KotlinArtifacts.Companion.getInstanceForJps(): KotlinArtifacts {
     if (System.getProperty("kotlin.jps.tests") == "true") {
         val artifactsClass = Class.forName("org.jetbrains.kotlin.jps.artifacts.JpsPluginTestArtifacts")
         return artifactsClass.getMethod("getInstance").invoke(null) as KotlinArtifacts
