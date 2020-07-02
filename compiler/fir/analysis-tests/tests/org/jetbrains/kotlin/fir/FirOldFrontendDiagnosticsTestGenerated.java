@@ -10049,6 +10049,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inference/commonSuperTypeOfErrorTypes.kt");
         }
 
+        @TestMetadata("compatibilityResolveWhenVariableHasComplexIntersectionType.kt")
+        public void testCompatibilityResolveWhenVariableHasComplexIntersectionType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/compatibilityResolveWhenVariableHasComplexIntersectionType.kt");
+        }
+
         @TestMetadata("completeInferenceIfManyFailed.kt")
         public void testCompleteInferenceIfManyFailed() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/completeInferenceIfManyFailed.kt");
@@ -10197,6 +10202,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
         @TestMetadata("intersectionTypeMultipleBoundsAsReceiver.kt")
         public void testIntersectionTypeMultipleBoundsAsReceiver() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/intersectionTypeMultipleBoundsAsReceiver.kt");
+        }
+
+        @TestMetadata("intersectionTypesWithContravariantTypes.kt")
+        public void testIntersectionTypesWithContravariantTypes() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/intersectionTypesWithContravariantTypes.kt");
         }
 
         @TestMetadata("intersectionWithEnum.kt")

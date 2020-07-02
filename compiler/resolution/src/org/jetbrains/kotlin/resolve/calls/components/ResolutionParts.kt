@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckVisibility : ResolutionPart() {
@@ -247,6 +248,24 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
                 }
             }
         }
+    }
+}
+
+internal object CompatibilityOfTypeVariableAsIntersectionTypePart : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        for ((_, variableWithConstraints) in csBuilder.currentStorage().notFixedTypeVariables) {
+            val constraints = variableWithConstraints.constraints.filter { csBuilder.isProperType(it.type) }
+
+            if (constraints.size <= 1) continue
+            if (constraints.any { it.kind.isLower() || it.kind.isEqual() }) continue
+
+            // See TypeBoundsImpl.computeValues(). It returns several values for such situation which means an error in OI
+            if (callComponents.statelessCallbacks.isOldIntersectionIsEmpty(constraints.map { it.type }.cast())) {
+                addDiagnostic(LowerPriorityToPreserveCompatibility)
+                return
+            }
+        }
+
     }
 }
 
