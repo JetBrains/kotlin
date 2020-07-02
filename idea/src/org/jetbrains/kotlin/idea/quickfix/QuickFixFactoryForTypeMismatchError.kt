@@ -50,10 +50,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
-import org.jetbrains.kotlin.types.typeUtil.isInterface
-import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
 //TODO: should use change signature to deal with cases of multiple overridden descriptors
@@ -168,7 +165,11 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         if (!expectedType.isMarkedNullable && TypeUtils.isNullableType(expressionType)) {
             val nullableExpected = expectedType.makeNullable()
             if (expressionType.isSubtypeOf(nullableExpected)) {
-                actions.add(AddExclExclCallFix(diagnosticElement.getTopMostQualifiedForSelectorIfAny()))
+                val targetExpression = diagnosticElement.getTopMostQualifiedForSelectorIfAny()
+                actions.add(AddExclExclCallFix(targetExpression))
+                if (expectedType.isBoolean()) {
+                    actions.add(AddEqEqTrueFix(targetExpression))
+                }
             }
         }
 
