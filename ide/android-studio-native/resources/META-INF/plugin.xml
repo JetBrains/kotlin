@@ -20,6 +20,7 @@
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="com.jetbrains.cidr.execution.JBDeviceFramework" preload="true"/>
     <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
                         serviceImplementation="com.jetbrains.kmm.ios.PathManagerCustomization" overrides="true"/>
 
