@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.test
 
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.lang.UrlClassLoader
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -174,7 +175,7 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
                 for (source in sources) {
                     for (file in source.walk()) {
                         if (file.isFile) {
-                            val path = file.toRelativeString(source)
+                            val path = FileUtil.toSystemIndependentName(file.toRelativeString(source))
                             zos.putNextEntry(ZipEntry(path))
                             zos.write(file.readBytes())
                             zos.closeEntry()
