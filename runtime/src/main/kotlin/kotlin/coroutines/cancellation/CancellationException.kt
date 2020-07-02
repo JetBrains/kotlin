@@ -5,14 +5,11 @@
 
 package kotlin.coroutines.cancellation
 
-/**
- * Thrown by cancellable suspending functions if the coroutine is cancelled while it is suspended.
- * It indicates _normal_ cancellation of a coroutine.
- */
+@ExperimentalStdlibApi
 @SinceKotlin("1.4")
-public open class CancellationException : IllegalStateException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
+public actual open class CancellationException : IllegalStateException {
+    actual constructor() : super()
+    actual constructor(message: String?) : super(message)
     constructor(message: String?, cause: Throwable?) : super(message, cause)
     constructor(cause: Throwable?) : super(cause)
 }
