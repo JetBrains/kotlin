@@ -71,7 +71,8 @@ class FunctionCodegen(
 
         if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
             irFunction.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
-            irFunction.origin != IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
+            irFunction.origin != IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER &&
+            irFunction.origin != IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
         ) {
             val skipNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE != 0 || flags and Opcodes.ACC_SYNTHETIC != 0
             object : AnnotationCodegen(classCodegen, context, skipNullabilityAnnotations) {
