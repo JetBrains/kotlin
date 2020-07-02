@@ -9,6 +9,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.elementType
 import com.intellij.structuralsearch.*
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
@@ -206,6 +207,9 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             family[0] is KtNameReferenceExpression && family[1] is KtProperty -> true
             // $x$.fun()
             family[0] is KtNameReferenceExpression && family[1] is KtDotQualifiedExpression -> true
+            // $x$::y
+            family[0] is KtNameReferenceExpression && family[1] is KtCallableReferenceExpression
+                    && family[0]?.nextSibling.elementType == KtTokens.COLONCOLON -> true
             else -> false
         }
     }

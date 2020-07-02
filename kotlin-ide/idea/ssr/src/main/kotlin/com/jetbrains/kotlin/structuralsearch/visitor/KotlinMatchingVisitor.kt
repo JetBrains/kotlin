@@ -276,6 +276,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         )
         val handler = getHandler(expression.getReferencedNameElement())
         if (myMatchingVisitor.result && handler is SubstitutionHandler) {
+            if (handler.maxOccurs == 0) {
+                myMatchingVisitor.result = false
+                return
+            }
             handler.handle(
                 if (other is KtSimpleNameExpression) other.getReferencedNameElement() else other,
                 myMatchingVisitor.matchContext
@@ -488,7 +492,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression) {
         val other = getTreeElementDepar<KtCallableReferenceExpression>() ?: return
-        myMatchingVisitor.match(expression.callableReference, other.callableReference)
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.callableReference, other.callableReference)
                 && myMatchingVisitor.match(expression.receiverExpression, other.receiverExpression)
     }
 
