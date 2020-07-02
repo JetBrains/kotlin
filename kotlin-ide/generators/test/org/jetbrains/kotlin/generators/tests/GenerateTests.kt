@@ -943,6 +943,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         testClass<AbstractScratchLineMarkersTest> {
             model("scratch/lineMarker", testMethodName = "doScratchTest", pattern = KT_OR_KTS)
         }
+
+        testClass<AbstractScriptTemplatesFromDependenciesTest> {
+            model("script/templatesFromDependencies", pattern = DIRECTORY, isRecursive = false)
+        }
     }
 
     testGroup("maven") {
