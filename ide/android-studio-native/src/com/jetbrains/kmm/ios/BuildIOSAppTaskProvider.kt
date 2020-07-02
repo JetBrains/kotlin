@@ -40,11 +40,6 @@ import java.io.File
 
 private val BUILD_IOS_APP_TASK_ID = Key.create<BuildIOSAppTask>(BuildIOSAppTask::class.java.name)
 
-internal object XcFileExtensions {
-    const val project = "xcodeproj"
-    const val workspace = "xcworkspace"
-}
-
 class BuildIOSAppTask : BeforeRunTask<BuildIOSAppTask>(BUILD_IOS_APP_TASK_ID) {
     init {
         isEnabled = true
@@ -67,7 +62,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
     ): Boolean {
         if (configuration !is AppleRunConfiguration) return false
         val workDirectory = configuration.project.basePath ?: return false
-        val xcProjectFile = configuration.workspace.xcProjectFile ?: return false
+        val xcProjectFile = configuration.xcProjectFile ?: return false
         val xcodeScheme = configuration.xcodeScheme ?: return false
 
         KMM_LOG.debug("executeTask: preparing build")

@@ -19,12 +19,10 @@ class AppleLLDBDriverConfiguration : LLDBDriverConfiguration() {
         "LLDB.framework/Resources"
     )
 
-    override fun getLLDBFrontendFile(architecture: ArchitectureType): File {
-        return CidrPathManager.getBinFile(
-            AppleLLDBDriverConfiguration::class.java,
-            "",
-            "LLDBFrontend",
-            null
-        )
-    }
+    override fun getLLDBFrontendFile(architecture: ArchitectureType) = CidrPathManager.getBinFile(
+        AppleLLDBDriverConfiguration::class.java,
+        "",
+        "LLDBFrontend",
+        null
+    )
 }

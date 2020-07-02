@@ -7,9 +7,11 @@ package com.jetbrains.kmm.ios
 
 import com.intellij.execution.BeforeRunTask
 import com.intellij.execution.ExecutionTarget
-import com.intellij.execution.configurations.*
+import com.intellij.execution.configurations.CommandLineState
+import com.intellij.execution.configurations.LocatableConfigurationBase
+import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.execution.configurations.RuntimeConfigurationError
 import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction
 import com.intellij.ide.actions.OpenFileAction
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
@@ -28,18 +30,19 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigurationFactory, name: String) :
-    LocatableConfigurationBase<Element>(project, configurationFactory, name), RunConfigurationWithSuppressedDefaultRunAction,
+    LocatableConfigurationBase<Element>(project, configurationFactory, name),
     MobileRunConfiguration {
-    val workspace = ProjectWorkspace.getInstance(project)
+    private val workspace = ProjectWorkspace.getInstance(project)
 
+    val xcProjectFile get() = workspace.xcProjectFile
     private val xcodeSchemeLock = ReentrantLock()
     var xcodeScheme: String? = null
         get() = xcodeSchemeLock.withLock {
             if (field == null) {
                 // initially we pick scheme with the name of the project or first one
-                val schemes = workspace.xcProjectFile?.schemes ?: emptyList()
-                field = if (workspace.xcProjectFile?.projectName in schemes) {
-                    workspace.xcProjectFile?.projectName
+                val schemes = xcProjectFile?.schemes ?: emptyList()
+                field = if (xcProjectFile?.projectName in schemes) {
+                    xcProjectFile?.projectName
                 } else {
                     schemes.firstOrNull()
                 }
@@ -93,8 +96,7 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
                 reportXcFileError("Project is misconfigured: " + status.reason)
             XcProjectStatus.NotLocated ->
                 reportXcFileError(
-                    "Please specify Xcode project location in" +
-                            " $propertyKey property of gradle.properties",
+                    "Please specify Xcode project location in $propertyKey property of gradle.properties",
                     openGradleProperties
                 )
             is XcProjectStatus.NotFound ->
@@ -104,16 +106,16 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
                 )
         }
 
-        if (workspace.xcProjectFile!!.schemes.isEmpty()) {
-            throw RuntimeConfigurationError("Please check specified Xcode project file: " + workspace.xcProjectFile!!.schemesStatus)
+        if (xcProjectFile!!.schemes.isEmpty()) {
+            throw RuntimeConfigurationError("Please check specified Xcode project file: " + xcProjectFile!!.schemesStatus)
         }
 
         if (xcodeScheme == null) {
             throw RuntimeConfigurationError("Please select Xcode scheme")
         }
 
-        if (xcodeScheme !in workspace.xcProjectFile!!.schemes) {
-            throw RuntimeConfigurationError("Selected scheme '$xcodeScheme' is not found in ${workspace.xcProjectFile!!.absolutePath}")
+        if (xcodeScheme!! !in xcProjectFile!!.schemes) {
+            throw RuntimeConfigurationError("Selected scheme '$xcodeScheme' is not found in ${xcProjectFile!!.absolutePath}")
         }
     }
 
@@ -134,8 +136,6 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
             override fun createDebuggerDriverConfiguration(): DebuggerDriverConfiguration =
                 AppleLLDBDriverConfiguration()
         }
-
-    var selectedDevice: Device? = null
 
     override fun readExternal(element: Element) {
         super<LocatableConfigurationBase>.readExternal(element)

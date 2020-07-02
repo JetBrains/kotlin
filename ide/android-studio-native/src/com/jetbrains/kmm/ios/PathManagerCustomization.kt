@@ -20,7 +20,7 @@ class PathManagerCustomization : OCPathManagerCustomization() {
             |  |- lib
             |  |  |- kmm.jar    (jar with all native-plugin classes)
             |  |  |- ... other jars needed for native-plugin ...
-            |  |- native
+            |  |- bin
             |     |- Bridge.framework
             |     |- JBDevice.framework
             |     |- ... other binaries needed for native-plugin ...

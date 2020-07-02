@@ -17,7 +17,9 @@ import java.awt.GridBagLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class AppleRunConfigurationEditor(project: Project) : SettingsEditor<AppleRunConfiguration>() {
+class AppleRunConfigurationEditor(
+    private val project: Project
+) : SettingsEditor<AppleRunConfiguration>() {
     private val schemeCombo = ComboBox<String>()
 
     private val gridBag = GridBag()
@@ -30,7 +32,7 @@ class AppleRunConfigurationEditor(project: Project) : SettingsEditor<AppleRunCon
     override fun resetEditorFrom(configuration: AppleRunConfiguration) {
         schemeCombo.removeAllItems()
 
-        val xcProjectFile = configuration.workspace.xcProjectFile ?: return
+        val xcProjectFile = configuration.xcProjectFile ?: return
 
         for (scheme in xcProjectFile.schemes) {
             schemeCombo.addItem(scheme)
@@ -43,16 +45,11 @@ class AppleRunConfigurationEditor(project: Project) : SettingsEditor<AppleRunCon
         configuration.xcodeScheme = schemeCombo.selectedItem as? String
     }
 
-    override fun createEditor(): JComponent {
-        val panel = JPanel(GridBagLayout())
-
+    override fun createEditor() = JPanel(GridBagLayout()).apply {
         val schemeLabel = JBLabel("Xcode project scheme:")
-
-        panel.add(schemeLabel, gridBag.nextLine().next())
-        panel.add(schemeCombo, gridBag.next().coverLine())
-
         schemeLabel.labelFor = schemeCombo
 
-        return panel
+        add(schemeLabel, gridBag.nextLine().next())
+        add(schemeCombo, gridBag.next().coverLine())
     }
 }

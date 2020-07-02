@@ -16,69 +16,19 @@ import java.io.File
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-private class SchemeCollector : ProcessAdapter() {
-    enum class State { BEFORE, ACCEPTING, AFTER }
-
-    private var state = State.BEFORE
-
-    val schemes = mutableListOf<String>()
-
-    override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-        val line = event.text.trim()
-
-        when (state) {
-            State.BEFORE -> {
-                if (line == "Schemes:") {
-                    state = State.ACCEPTING
-                }
-            }
-
-            State.ACCEPTING -> {
-                if (line.isNotEmpty()) {
-                    schemes.add(line)
-                } else {
-                    state = State.AFTER
-                }
-            }
-        }
-    }
-}
-
-class XcProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher) {
-
-    init {
-        GlobalScope.async(coroutineDispatcher) {
-            val process = CapturingProcessHandler(schemeGrabCommand)
-            val schemeCollector = SchemeCollector()
-
-            process.addProcessListener(schemeCollector)
-
-            if (process.runProcess().exitCode != 0 || schemeCollector.schemes.isEmpty()) {
-                schemesStatus = "can't grab Xcode schemes with " + schemeGrabCommand.commandLineString
-                return@async
-            }
-
-            schemes = schemeCollector.schemes
-        }
-    }
-
-    val absolutePath: String = file.absolutePath
-
-    val projectName: String = file.nameWithoutExtension
-
+class XcProjectFile(
+    private val file: File
+) {
+    val absolutePath: String get() = file.absolutePath
+    val projectName: String get() = file.nameWithoutExtension
     val selector: String
         get() = if (absolutePath.endsWith(XcFileExtensions.workspace))
             "-workspace"
         else
             "-project"
 
-    private val schemeGrabCommand = GeneralCommandLine().also {
-        it.workDirectory = file.parentFile
-        it.exePath = "/usr/bin/xcodebuild"
-        it.addParameters(selector, absolutePath)
-        it.addParameter("-list")
-    }
-
+    var schemesStatus = "Xcode schemes not initialized"
+        private set
     private val schemesLock = ReentrantLock()
     var schemes: List<String> = emptyList()
         get() = schemesLock.withLock {
@@ -88,15 +38,64 @@ class XcProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher
             field = value
         }
 
+    init {
+        loadSchemes(DISPATCHER)
+    }
 
-    var schemesStatus = ""
+    private fun loadSchemes(dispatcher: CoroutineDispatcher) {
+        GlobalScope.launch(dispatcher) {
+            val schemeGrabCommand = GeneralCommandLine().apply {
+                workDirectory = file.parentFile
+                exePath = "/usr/bin/xcodebuild"
+                addParameters(selector, absolutePath)
+                addParameter("-list")
+            }
+            val process = CapturingProcessHandler(schemeGrabCommand)
+            val schemeCollector = SchemeCollector()
+
+            process.addProcessListener(schemeCollector)
+
+            if (process.runProcess().exitCode != 0 || schemeCollector.schemes.isEmpty()) {
+                schemesStatus = "can't grab Xcode schemes with " + schemeGrabCommand.commandLineString
+            } else {
+                schemesStatus = "Xcode schemes were successful loaded"
+                schemes = schemeCollector.schemes
+            }
+        }
+    }
+
+    private class SchemeCollector : ProcessAdapter() {
+        enum class State { BEFORE, ACCEPTING, AFTER }
+
+        private var state = State.BEFORE
+
+        val schemes = mutableListOf<String>()
+
+        override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+            val line = event.text.trim()
+
+            when (state) {
+                State.BEFORE -> {
+                    if (line == "Schemes:") {
+                        state = State.ACCEPTING
+                    }
+                }
+
+                State.ACCEPTING -> {
+                    if (line.isNotEmpty()) {
+                        schemes.add(line)
+                    } else {
+                        state = State.AFTER
+                    }
+                }
+            }
+        }
+    }
 
     companion object {
-
         private val DISPATCHER = AppExecutorUtil.createBoundedApplicationPoolExecutor(javaClass.simpleName, 1).asCoroutineDispatcher()
 
         fun findXcProjectFile(location: File): XcProjectFile? {
-
             val candidates = mutableListOf<File>()
 
             if (location.isFile) {
@@ -110,10 +109,12 @@ class XcProjectFile(file: File, coroutineDispatcher: ExecutorCoroutineDispatcher
                 }
             }
 
-            return if (candidates.isEmpty()) null else XcProjectFile(
-                candidates.first(),
-                DISPATCHER
-            )
+            return candidates.firstOrNull()?.let { XcProjectFile(it) }
         }
     }
+}
+
+internal object XcFileExtensions {
+    const val project = "xcodeproj"
+    const val workspace = "xcworkspace"
 }

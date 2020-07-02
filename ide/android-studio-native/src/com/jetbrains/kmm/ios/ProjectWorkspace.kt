@@ -12,6 +12,7 @@ import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.konan.WorkspaceXML
+import com.jetbrains.mpp.BinaryTargetListener
 import com.jetbrains.mpp.WorkspaceBase
 import org.jdom.Element
 import java.io.File
@@ -26,8 +27,8 @@ sealed class XcProjectStatus {
 @State(name = WorkspaceXML.projectComponentName, storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
 class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
 
-    var xcProjectStatus: XcProjectStatus =
-        XcProjectStatus.NotLocated
+    var xcProjectStatus: XcProjectStatus = XcProjectStatus.NotLocated
+        private set
     var xcProjectFile: XcProjectFile? = null
 
     fun locateXCProject(path: String) {
@@ -57,17 +58,20 @@ class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
 
     init {
         val connection = project.messageBus.connect()
-        connection.subscribe(ExecutionTargetManager.TOPIC, KMMTargetListener(this))
+        connection.subscribe(ExecutionTargetManager.TOPIC, BinaryTargetListener(this))
     }
 
     override fun getState(): Element {
         val stateElement = super.getState()
 
-        if (xcProjectFile != null) {
-            val xcElement = Element(WorkspaceXML.XCProject.nodeName)
-            val relativePath = File(xcProjectFile!!.absolutePath).relativeTo(File(project.basePath))
-            xcElement.setAttribute(WorkspaceXML.XCProject.attributePath, relativePath.path)
-            stateElement.addContent(xcElement)
+        xcProjectFile?.let { projectFile ->
+            val file = File(projectFile.absolutePath).relativeTo(File(project.basePath))
+
+            stateElement.addContent(
+                Element(WorkspaceXML.XCProject.nodeName).apply {
+                    setAttribute(WorkspaceXML.XCProject.attributePath, file.path)
+                }
+            )
         }
 
         return stateElement
@@ -75,11 +79,10 @@ class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
 
     override fun loadState(stateElement: Element) {
         super.loadState(stateElement)
-
-        val xcElement = stateElement.getChildren(WorkspaceXML.XCProject.nodeName).firstOrNull()
-        xcElement?.run {
-            val relativePath = getAttributeValue(WorkspaceXML.XCProject.attributePath) ?: return@run
-            locateXCProject(relativePath)
+        stateElement.getChildren(WorkspaceXML.XCProject.nodeName).firstOrNull()?.let { element ->
+            element.getAttributeValue(WorkspaceXML.XCProject.attributePath)?.let { value ->
+                locateXCProject(value)
+            }
         }
     }
 
