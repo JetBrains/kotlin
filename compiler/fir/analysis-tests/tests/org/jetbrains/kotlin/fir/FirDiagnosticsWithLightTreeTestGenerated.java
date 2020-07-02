@@ -1479,6 +1479,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/extensionCallableReferences.kt");
         }
 
+        @TestMetadata("integerLiteralAsComparable.kt")
+        public void testIntegerLiteralAsComparable() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/integerLiteralAsComparable.kt");
+        }
+
         @TestMetadata("intersectionTypesInConstraints.kt")
         public void testIntersectionTypesInConstraints() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/intersectionTypesInConstraints.kt");

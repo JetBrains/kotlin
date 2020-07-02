@@ -59,7 +59,7 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     override val supertypes: List<ConeClassLikeType> by lazy {
         listOf(
             NUMBER_TYPE,
-            ConeClassLikeTypeImpl(COMPARABLE_TAG, arrayOf(ConeKotlinTypeProjectionOut(this)), false)
+            ConeClassLikeTypeImpl(COMPARABLE_TAG, arrayOf(ConeKotlinTypeProjectionIn(this)), false)
         )
     }
 
