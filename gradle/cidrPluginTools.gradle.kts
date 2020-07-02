@@ -379,7 +379,7 @@ fun Copy.includeProjectTemplates(sourceProject: Project) {
 }
 
 enum class ReleaseType {
-    DEV, EAP, RELEASE, SNAPSHOT
+    DEV, EAP, RC, RELEASE, SNAPSHOT
 }
 
 fun Project.getTemplateParameters(): Map<String, String> {
@@ -389,6 +389,7 @@ fun Project.getTemplateParameters(): Map<String, String> {
      * 1.3.30-eap-125
      * 1.3.30-release-170
      * 1.4-M1-eap-125
+     * 1.4.0-rc-79
      * 1.3-SNAPSHOT
      */
     val kotlinBuildNumber = kotlinBuildNumberByIdeaPlugin
@@ -443,7 +444,7 @@ val Project.kotlinBuildNumberByIdeaPlugin: String
 fun customPluginRepos(releaseType: ReleaseType, kotlinBuildNumber: String, indentSpaces: Int): String {
     val repos = when (releaseType) {
         ReleaseType.RELEASE -> emptyList()
-        ReleaseType.EAP -> listOf(
+        ReleaseType.EAP, ReleaseType.RC -> listOf(
                 "https://dl.bintray.com/kotlin/kotlin-eap",
                 "https://dl.bintray.com/kotlin/kotlin-dev"
         )
