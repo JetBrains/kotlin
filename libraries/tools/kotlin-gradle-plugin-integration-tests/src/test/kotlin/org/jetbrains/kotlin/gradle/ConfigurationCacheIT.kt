@@ -20,7 +20,8 @@ class ConfigurationCacheIT : BaseGradleIT() {
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
             androidHome = KotlinTestUtils.findAndroidSdk(),
-            androidGradlePluginVersion = androidGradlePluginVersion
+            androidGradlePluginVersion = androidGradlePluginVersion,
+            configurationCaching = true
         )
 
     private val minimumGradleVersion = GradleVersionRequired.AtLeast("6.6-milestone-2")

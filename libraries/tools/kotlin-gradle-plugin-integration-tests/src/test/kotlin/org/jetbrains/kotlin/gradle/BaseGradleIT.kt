@@ -31,7 +31,7 @@ abstract class BaseGradleIT {
     protected open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
 
     open val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("6.6-milestone-2")
+        get() = GradleVersionRequired.None
 
     @Before
     fun setUp() {
@@ -206,7 +206,7 @@ abstract class BaseGradleIT {
         val kaptOptions: KaptOptions? = null,
         val parallelTasksInProject: Boolean? = null,
         val jsCompilerType: KotlinJsCompilerType? = null,
-        val configurationCaching: Boolean = true
+        val configurationCaching: Boolean = false
     )
 
     data class KaptOptions(
@@ -222,9 +222,6 @@ abstract class BaseGradleIT {
         directoryPrefix: String? = null,
         val minLogLevel: LogLevel = LogLevel.DEBUG
     ) {
-        //TODO remove it
-        val gradle6 = GradleVersionRequired.AtLeast("6.6-milestone-2")
-
         internal val testCase = this@BaseGradleIT
 
         val resourceDirName = if (directoryPrefix != null) "$directoryPrefix/$projectName" else projectName

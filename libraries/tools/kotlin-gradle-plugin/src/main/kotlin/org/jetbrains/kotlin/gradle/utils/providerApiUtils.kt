@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
-import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider

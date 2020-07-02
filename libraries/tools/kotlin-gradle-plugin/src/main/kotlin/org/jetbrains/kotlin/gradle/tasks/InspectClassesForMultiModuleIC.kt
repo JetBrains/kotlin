@@ -11,6 +11,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.newProperty
 import java.io.File
 
@@ -37,7 +38,13 @@ internal open class InspectClassesForMultiModuleIC : DefaultTask() {
 
     @get:Internal
     internal val fileTrees
-        get() = sourceSetOutputClassesDir?.map { objects.fileTree().from(it).include("**/*.class") }
+        get() = sourceSetOutputClassesDir?.map {
+            if (isGradleVersionAtLeast(6, 0)) {
+                objects.fileTree().from(it).include("**/*.class")
+            } else {
+                project.fileTree(it).include("**/*.class")
+            }
+        }
 
     @get:Internal
     internal val objects = project.objects
@@ -47,7 +54,6 @@ internal open class InspectClassesForMultiModuleIC : DefaultTask() {
     internal val classFiles: FileCollection
         get() {
             if (sourceSetOutputClassesDir != null) {
-                val fileTrees = sourceSetOutputClassesDir!!.map { objects.fileTree().from(it).include("**/*.class") }
                 return objects.fileCollection().from(fileTrees)
             }
             return objects.fileCollection()
