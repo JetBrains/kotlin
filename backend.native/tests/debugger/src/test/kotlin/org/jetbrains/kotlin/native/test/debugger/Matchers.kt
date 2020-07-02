@@ -78,7 +78,7 @@ fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
     val source = tmpdir.resolve("main.kt")
     val output = tmpdir.resolve("program.kexe")
 
-    val driver = ToolDriver(DistProperties.konanc, DistProperties.lldb, DistProperties.dwarfDump, DistProperties.lldbPrettyPrinters)
+    val driver = ToolDriver()
     Files.write(source, programText.trimIndent().toByteArray())
     driver.compile(source, output, "-g")
     val result = driver.runLldb(output, lldbSessionSpec.commands)
@@ -106,11 +106,7 @@ fun dwarfDumpTest(@Language("kotlin") programText: String, flags: List<String>, 
         val source = resolve("main.kt")
         val output = resolve("program.kexe")
 
-        val driver = ToolDriver(
-                DistProperties.konanc,
-                DistProperties.lldb,
-                DistProperties.dwarfDump,
-                DistProperties.lldbPrettyPrinters)
+        val driver = ToolDriver()
         Files.write(source, programText.trimIndent().toByteArray())
         driver.compile(source, output, "-g", *flags.toTypedArray())
         driver.runDwarfDump(output, test)

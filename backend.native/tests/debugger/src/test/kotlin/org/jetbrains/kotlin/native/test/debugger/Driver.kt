@@ -13,21 +13,12 @@ import org.jetbrains.kotlin.cli.bc.K2Native
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.StringReader
-import java.lang.StringBuilder
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 
 
-/**
- * TODO: This constructor looks weird in conjunction with [DistProperties]
- */
 class ToolDriver(
-        private val konancDriver: Path,
-        private val lldb: Path,
-        private val dwarfDump: Path,
-        private val lldbPrettyPrinters: Path,
         private val useInProcessCompiler: Boolean = false
 ) {
     fun compile(source: Path, output: Path, vararg args: String) {
@@ -37,7 +28,7 @@ class ToolDriver(
         if (useInProcessCompiler) {
             K2Native.main(allArgs)
         } else {
-            subprocess(konancDriver, *allArgs).thrownIfFailed()
+            subprocess(DistProperties.konanc, *allArgs).thrownIfFailed()
         }
         check(Files.exists(output)) {
             "Compiler has not produced an output at $output"
@@ -45,15 +36,15 @@ class ToolDriver(
     }
 
     fun runLldb(program: Path, commands: List<String>): String {
-        val args = listOf("-b", "-o", "command script import \"$lldbPrettyPrinters\"") +
+        val args = listOf("-b", "-o", "command script import \"${DistProperties.lldbPrettyPrinters}\"") +
                 commands.flatMap { listOf("-o", it) }
-        return subprocess(lldb, program.toString(), "-b", *args.toTypedArray())
+        return subprocess(DistProperties.lldb, program.toString(), "-b", *args.toTypedArray())
                 .thrownIfFailed()
                 .stdout
     }
 
     fun runDwarfDump(program: Path, processor:List<DwarfTag>.()->Unit) {
-        val out = subprocess(dwarfDump, "${program}.dSYM/Contents/Resources/DWARF/${program.fileName}").takeIf { it.process.exitValue() == 0 }?.stdout ?: error("${program}.dSYM/Contents/Resources/DWARF/${program.fileName}")
+        val out = subprocess(DistProperties.dwarfDump, "${program}.dSYM/Contents/Resources/DWARF/${program.fileName}").takeIf { it.process.exitValue() == 0 }?.stdout ?: error("${program}.dSYM/Contents/Resources/DWARF/${program.fileName}")
         DwarfUtilParser().parse(StringReader(out)).tags.toList().processor()
     }
 }
