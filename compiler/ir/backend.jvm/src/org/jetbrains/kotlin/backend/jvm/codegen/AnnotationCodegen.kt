@@ -124,9 +124,11 @@ abstract class AnnotationCodegen(
         declaration: IrDeclaration, // There is no superclass that encompasses IrFunction, IrField and nothing else.
         annotationDescriptorsAlreadyPresent: MutableSet<String>
     ) {
-        // No need to annotate privates, synthetic accessors and their parameters
-        if (isInvisibleFromTheOutside(declaration)) return
-        if (declaration is IrValueParameter && isInvisibleFromTheOutside(declaration.parent as? IrDeclaration)) return
+        if (isInvisibleForNullabilityAnalysis(declaration)) return
+        if (declaration is IrValueParameter) {
+            val parent = declaration.parent as IrDeclaration
+            if (isInvisibleForNullabilityAnalysis(parent)) return
+        }
 
         // No need to annotate annotation methods since they're always non-null
         if (declaration is IrSimpleFunction && declaration.correspondingPropertySymbol != null &&
@@ -208,11 +210,12 @@ abstract class AnnotationCodegen(
         val annotationClass = annotation.annotationClass
         for (param in annotation.symbol.owner.valueParameters) {
             val value = annotation.getValueArgument(param.index)
-            if (value == null) {
-                if (param.defaultValue != null) continue // Default value will be supplied by JVM at runtime.
-                else error("No value for annotation parameter $param")
-            }
-            genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, param.name), value, annotationVisitor)
+            if (value != null)
+                genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, param.name), value, annotationVisitor)
+            else if (param.defaultValue != null)
+                continue // Default value will be supplied by JVM at runtime.
+            else
+                error("No value for annotation parameter $param")
         }
     }
 
@@ -275,18 +278,17 @@ abstract class AnnotationCodegen(
     }
 
     companion object {
-        private fun isInvisibleFromTheOutside(declaration: IrDeclaration?): Boolean {
-            if (declaration != null && declaration.origin.isSynthetic) {
-                return true
+        private fun isInvisibleForNullabilityAnalysis(declaration: IrDeclaration): Boolean =
+            when {
+                declaration.origin.isSynthetic ->
+                    true
+                declaration.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ->
+                    true
+                declaration is IrDeclarationWithVisibility ->
+                    !declaration.visibility.isVisibleOutside()
+                else ->
+                    false
             }
-            if (declaration is IrDeclarationWithVisibility) {
-                return !declaration.visibility.isVisibleOutside()
-            }
-            if (declaration is IrValueParameter && (declaration.parent as IrDeclaration).origin.isSynthetic) {
-                return true
-            }
-            return false
-        }
 
         private val annotationRetentionMap = mapOf(
             KotlinRetention.SOURCE to RetentionPolicy.SOURCE,
