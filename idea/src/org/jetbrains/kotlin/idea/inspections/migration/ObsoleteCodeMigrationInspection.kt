@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 internal abstract class ObsoleteCodeMigrationInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool, MigrationFix {
     protected abstract val fromVersion: LanguageVersion
     protected abstract val toVersion: LanguageVersion
-    protected abstract val problems: List<ObsoleteCodeMigrationProblem>
+    protected abstract val problemReporters: List<ObsoleteCodeProblemReporter>
 
     final override fun isApplicable(migrationInfo: MigrationInfo): Boolean {
         return migrationInfo.isLanguageVersionUpdate(fromVersion, toVersion)
@@ -40,15 +40,13 @@ internal abstract class ObsoleteCodeMigrationInspection : AbstractKotlinInspecti
 
     final override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): KtVisitorVoid {
         return simpleNameExpressionVisitor(fun(simpleNameExpression) {
-            run {
-                val versionIsSatisfied = simpleNameExpression.languageVersionSettings.languageVersion >= toVersion
-                if (!versionIsSatisfied && !ApplicationManager.getApplication().isUnitTestMode) {
-                    return
-                }
+            val versionIsSatisfied = simpleNameExpression.languageVersionSettings.languageVersion >= toVersion
+            if (!versionIsSatisfied && !ApplicationManager.getApplication().isUnitTestMode) {
+                return
             }
 
-            for (registeredProblem in problems) {
-                if (registeredProblem.report(holder, isOnTheFly, simpleNameExpression)) {
+            for (reporter in problemReporters) {
+                if (reporter.report(holder, isOnTheFly, simpleNameExpression)) {
                     return
                 }
             }
@@ -56,7 +54,7 @@ internal abstract class ObsoleteCodeMigrationInspection : AbstractKotlinInspecti
     }
 }
 
-internal interface ObsoleteCodeMigrationProblem {
+internal interface ObsoleteCodeProblemReporter {
     fun report(holder: ProblemsHolder, isOnTheFly: Boolean, simpleNameExpression: KtSimpleNameExpression): Boolean
 }
 
@@ -109,7 +107,7 @@ internal abstract class ObsoleteCodeInWholeProjectFix : LocalQuickFix {
 }
 
 /**
- * There should be a single fix class with the same family name, this way it can be executed for all found coroutines problems from UI.
+ * There should be a single fix class with the same family name, this way it can be executed for all found problems from UI.
  */
 internal abstract class ObsoleteCodeFixDelegateQuickFix(private val delegate: ObsoleteCodeFix) : LocalQuickFix {
     final override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
@@ -117,7 +115,7 @@ internal abstract class ObsoleteCodeFixDelegateQuickFix(private val delegate: Ob
     }
 }
 
-internal abstract class ObsoleteImportsUsage : ObsoleteCodeMigrationProblem {
+internal abstract class ObsoleteImportsUsageReporter : ObsoleteCodeProblemReporter {
     /**
      * Required to report the problem only on one psi element instead of the every single qualifier
      * in the import statement.
@@ -144,7 +142,7 @@ internal abstract class ObsoleteImportsUsage : ObsoleteCodeMigrationProblem {
             reportExpression,
             problemMessage(),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-            *fixesWithWholeProject(isOnTheFly, wrapFix(ObsoleteCoroutineImportFix()), wholeProjectFix)
+            *fixesWithWholeProject(isOnTheFly, wrapFix(ObsoleteImportFix()), wholeProjectFix)
         )
 
         return true
@@ -170,10 +168,9 @@ internal abstract class ObsoleteImportsUsage : ObsoleteCodeMigrationProblem {
         )
     }
 
-    private inner class ObsoleteCoroutineImportFix : ObsoleteCodeFix {
+    private inner class ObsoleteImportFix : ObsoleteCodeFix {
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val element = descriptor.psiElement
-            val simpleNameExpression = when (element) {
+            val simpleNameExpression = when (val element = descriptor.psiElement) {
                 is KtSimpleNameExpression -> element
                 is KtDotQualifiedExpression -> element.selectorExpression as? KtSimpleNameExpression
                 else -> null
