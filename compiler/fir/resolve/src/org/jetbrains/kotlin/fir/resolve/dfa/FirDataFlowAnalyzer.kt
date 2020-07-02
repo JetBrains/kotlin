@@ -493,8 +493,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitWhenBranchResult(whenBranch).mergeIncomingFlow()
     }
 
-    fun exitWhenExpression(whenExpression: FirWhenExpression, callCompleted: Boolean) {
-        val (whenExitNode, syntheticElseNode, unionNode) = graphBuilder.exitWhenExpression(whenExpression, callCompleted)
+    fun exitWhenExpression(whenExpression: FirWhenExpression) {
+        val (whenExitNode, syntheticElseNode) = graphBuilder.exitWhenExpression(whenExpression)
         if (syntheticElseNode != null) {
             val previousConditionExitNode = syntheticElseNode.firstPreviousNode as? WhenBranchConditionExitNode
             // previous node for syntheticElseNode can be not WhenBranchConditionExitNode in case of `when` without any branches
@@ -512,7 +512,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             }
         }
         whenExitNode.mergeIncomingFlow(updateReceivers = true)
-        unionNode?.let { unionFlowFromArguments(unionNode) }
     }
 
     // ----------------------------------- While Loop -----------------------------------
@@ -1040,10 +1039,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    fun exitElvis(callCompleted: Boolean) {
-        val (elvisExitNode, unionNode) = graphBuilder.exitElvis(callCompleted)
-        elvisExitNode.mergeIncomingFlow()
-        unionNode?.let { unionFlowFromArguments(it) }
+    fun exitElvis() {
+        graphBuilder.exitElvis().mergeIncomingFlow()
     }
 
     // ------------------------------------------------------ Utils ------------------------------------------------------

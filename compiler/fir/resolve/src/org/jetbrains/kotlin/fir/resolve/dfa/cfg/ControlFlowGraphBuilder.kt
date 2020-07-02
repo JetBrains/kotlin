@@ -533,10 +533,7 @@ class ControlFlowGraphBuilder {
         return node
     }
 
-    fun exitWhenExpression(
-        whenExpression: FirWhenExpression,
-        callCompleted: Boolean
-    ): Triple<WhenExitNode, WhenSyntheticElseBranchNode?, UnionFunctionCallArgumentsNode?> {
+    fun exitWhenExpression(whenExpression: FirWhenExpression): Pair<WhenExitNode, WhenSyntheticElseBranchNode?> {
         val whenExitNode = whenExitNodes.pop()
         // exit from last condition node still on stack
         // we should remove it
@@ -549,9 +546,9 @@ class ControlFlowGraphBuilder {
         } else null
         whenExitNode.updateDeadStatus()
         lastNodes.push(whenExitNode)
-        val (_, unionNode) = processUnionOfArguments(whenExitNode, callCompleted)
+        dropPostponedLambdasForNonDeterministicCalls()
         levelCounter--
-        return Triple(whenExitNode, syntheticElseBranchNode, unionNode)
+        return whenExitNode to syntheticElseBranchNode
     }
 
     // ----------------------------------- While Loop -----------------------------------
@@ -870,6 +867,16 @@ class ControlFlowGraphBuilder {
         return node to unionNode
     }
 
+    /*
+     * This is needed for some control flow constructions which are resolved as calls (when and elvis)
+     * For usual call we have invariant that all arguments will be called before function call, but for
+     *   when and elvis only one of arguments will be actually called, so it's illegal to pass data flow info
+     *   from lambda in one of branches
+     */
+    private fun dropPostponedLambdasForNonDeterministicCalls() {
+        exitsFromCompletedPostponedAnonymousFunctions.clear()
+    }
+
     private fun processUnionOfArguments(
         node: CFGNode<*>,
         callCompleted: Boolean
@@ -1010,12 +1017,12 @@ class ControlFlowGraphBuilder {
         return Triple(lhsExitNode, lhsIsNotNullNode, rhsEnterNode)
     }
 
-    fun exitElvis(callCompleted: Boolean): Pair<ElvisExitNode, UnionFunctionCallArgumentsNode?> {
+    fun exitElvis(): ElvisExitNode {
         val exitNode = exitElvisCallNodes.pop()
         addNewSimpleNode(exitNode)
         exitNode.updateDeadStatus()
-        val (_, unionNode) = processUnionOfArguments(exitNode, callCompleted)
-        return exitNode to unionNode
+        dropPostponedLambdasForNonDeterministicCalls()
+        return exitNode
     }
 
     // ----------------------------------- Contract description -----------------------------------

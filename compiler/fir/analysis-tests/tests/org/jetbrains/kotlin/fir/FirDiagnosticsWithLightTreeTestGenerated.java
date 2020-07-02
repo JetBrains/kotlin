@@ -2095,6 +2095,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas/inPlaceLambdas.kt");
             }
 
+            @TestMetadata("lambdaInWhenBranch.kt")
+            public void testLambdaInWhenBranch() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas/lambdaInWhenBranch.kt");
+            }
+
             @TestMetadata("smartcastOnLambda.kt")
             public void testSmartcastOnLambda() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas/smartcastOnLambda.kt");

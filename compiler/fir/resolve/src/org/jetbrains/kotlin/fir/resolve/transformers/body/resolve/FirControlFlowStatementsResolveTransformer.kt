@@ -68,19 +68,18 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
 
-            val callCompleted = when {
-                whenExpression.branches.isEmpty() -> true
+            when {
+                whenExpression.branches.isEmpty() -> {}
                 whenExpression.isOneBranch() -> {
                     whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
                     whenExpression.resultType = whenExpression.branches.first().result.resultType
-                    true
                 }
                 else -> {
                     whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextDependent)
 
                     whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression) ?: run {
                         whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
-                        dataFlowAnalyzer.exitWhenExpression(whenExpression, callCompleted = true)
+                        dataFlowAnalyzer.exitWhenExpression(whenExpression)
                         whenExpression.resultType = buildErrorTypeRef {
                             diagnostic = ConeSimpleDiagnostic("Can't resolve when expression", DiagnosticKind.InferenceError)
                         }
@@ -90,11 +89,10 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
                     val expectedTypeRef = data.expectedType
                     val completionResult = callCompleter.completeCall(whenExpression, expectedTypeRef)
                     whenExpression = completionResult.result
-                    completionResult.callCompleted
                 }
             }
             whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
-            dataFlowAnalyzer.exitWhenExpression(whenExpression, callCompleted)
+            dataFlowAnalyzer.exitWhenExpression(whenExpression)
             whenExpression = whenExpression.replaceReturnTypeIfNotExhaustive()
             whenExpression.compose()
         }
@@ -218,21 +216,15 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         dataFlowAnalyzer.exitElvisLhs(elvisCall)
         elvisCall.transformRhs(transformer, ResolutionMode.ContextDependent)
 
-        var callCompleted = false
         val result = syntheticCallGenerator.generateCalleeForElvisCall(elvisCall)?.let {
-            val completionResult = callCompleter.completeCall(elvisCall, data.expectedType)
-            callCompleted = completionResult.callCompleted
-            completionResult.result
-        } ?: run {
-            elvisCall.resultType = buildErrorTypeRef {
+            callCompleter.completeCall(it, data.expectedType).result
+        } ?: elvisCall.also {
+            it.resultType = buildErrorTypeRef {
                 diagnostic = ConeSimpleDiagnostic("Can't resolve ?: operator call", DiagnosticKind.InferenceError)
             }
-            callCompleted = true
-            elvisCall
         }
 
-        dataFlowAnalyzer.exitElvis(callCompleted)
-
+        dataFlowAnalyzer.exitElvis()
         return result.compose()
     }
 }
