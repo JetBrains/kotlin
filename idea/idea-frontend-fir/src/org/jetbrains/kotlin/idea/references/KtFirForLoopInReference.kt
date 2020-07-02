@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtForExpression
 open class KtFirForLoopInReference(expression: KtForExpression) : KtForLoopInReference(expression), KtFirReference {
     override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
         check(analysisSession is KtFirAnalysisSession)
-        val firLoop = expression.getOrBuildFirSafe<FirWhileLoop>() ?: return emptyList()
+        val firLoop = expression.getOrBuildFirSafe<FirWhileLoop>(analysisSession.firResolveState) ?: return emptyList()
         val condition = firLoop.condition as? FirFunctionCall
         val iterator = run {
             val callee = (condition?.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference
