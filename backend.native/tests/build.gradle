@@ -4113,6 +4113,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
                         }
 
                         extraOpts fr.bitcode ? "-Xembed-bitcode" : "-Xembed-bitcode-marker"
+                        extraOpts fr.isStatic ? "-Xstatic-framework" : ""
                         extraOpts fr.opts
                         extraOpts project.globalTestArgs
 
@@ -4199,7 +4200,7 @@ if (isAppleTarget(project)) {
             bitcode = false
             artifact = frameworkArtifactName
             library = libraryName
-            opts = ['-Xstatic-framework']
+            isStatic = true
         }
         swiftSources = ['objcexport']
     }

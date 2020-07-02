@@ -46,6 +46,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
      * @param name is the framework name,
      * @param sources framework sources,
      * @param bitcode bitcode embedding in the framework,
+     * @param isStatic determines that framework is static
      * @param artifact the name of the resulting artifact,
      * @param library library dependency name,
      * @param opts additional options for the compiler.
@@ -54,6 +55,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
             val name: String,
             var sources: List<String> = emptyList(),
             var bitcode: Boolean = false,
+            var isStatic: Boolean = false,
             var artifact: String = name,
             var library: String? = null,
             var opts: List<String> = emptyList()
