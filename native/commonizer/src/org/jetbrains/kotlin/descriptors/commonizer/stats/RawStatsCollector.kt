@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.stats
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.stats.DeclarationType.Companion.declarationType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
-import org.jetbrains.kotlin.descriptors.commonizer.utils.fqNameWithTypeParameters
+import org.jetbrains.kotlin.descriptors.commonizer.utils.signature
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
@@ -78,7 +78,7 @@ class RawStatsCollector(
         // extension receiver
         if (firstNotNull is PropertyDescriptor || firstNotNull is SimpleFunctionDescriptor) {
             statsRow.extensionReceiver =
-                (firstNotNull as CallableDescriptor).extensionReceiverParameter?.type?.fqNameWithTypeParameters.orEmpty()
+                (firstNotNull as CallableDescriptor).extensionReceiverParameter?.type?.signature.orEmpty()
         }
 
         if (firstNotNull is ConstructorDescriptor || firstNotNull is SimpleFunctionDescriptor) {
@@ -86,7 +86,7 @@ class RawStatsCollector(
             // parameter names
             statsRow.parameterNames = functionDescriptor.valueParameters.joinToString { it.name.asString() }
             // parameter types
-            statsRow.parameterTypes = functionDescriptor.valueParameters.joinToString { it.type.fqNameWithTypeParameters }
+            statsRow.parameterTypes = functionDescriptor.valueParameters.joinToString { it.type.signature }
         }
 
         var isLiftedUp = !lastIsNull

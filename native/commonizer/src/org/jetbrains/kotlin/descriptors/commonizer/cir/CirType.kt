@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.Variance
 
+typealias CirTypeSignature = String
+
 sealed class CirType {
-    abstract val fqNameWithTypeParameters: String
+    abstract val signature: CirTypeSignature
 }
 
 /**
@@ -34,6 +36,6 @@ abstract class CirSimpleType : CirType(), CirHasVisibility {
 data class CirTypeProjection(val projectionKind: Variance, val isStarProjection: Boolean, val type: CirType)
 
 data class CirFlexibleType(val lowerBound: CirSimpleType, val upperBound: CirSimpleType) : CirType() {
-    override val fqNameWithTypeParameters: String
-        get() = lowerBound.fqNameWithTypeParameters
+    override val signature: CirTypeSignature
+        get() = lowerBound.signature
 }

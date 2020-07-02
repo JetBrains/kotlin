@@ -247,10 +247,10 @@ internal class ComparingDeclarationsVisitor(
             context.assertSetsEqual(expectedSealedSubclassesFqNames, actualSealedSubclassesFqNames, "Sealed subclasses FQ names")
         }
 
-        val expectedSupertypeFqNames = expected.typeConstructor.supertypes.mapTo(HashSet()) { it.fqNameWithTypeParameters }
-        val actualSupertypeFqNames = actual.typeConstructor.supertypes.mapTo(HashSet()) { it.fqNameWithTypeParameters }
+        val expectedSupertypeSignatures = expected.typeConstructor.supertypes.mapTo(HashSet()) { it.signature }
+        val actualSupertypeSignatures = actual.typeConstructor.supertypes.mapTo(HashSet()) { it.signature }
 
-        context.assertSetsEqual(expectedSupertypeFqNames, actualSupertypeFqNames, "Supertypes FQ names")
+        context.assertSetsEqual(expectedSupertypeSignatures, actualSupertypeSignatures, "Supertypes signatures")
 
         if (expected.constructors.isNotEmpty() || actual.constructors.isNotEmpty()) {
             val expectedConstructors = expected.constructors.associateBy { ConstructorApproximationKey(it) }

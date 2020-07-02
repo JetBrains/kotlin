@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirSimpleTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
 import org.jetbrains.kotlin.descriptors.commonizer.utils.declarationDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.utils.fqNameWithTypeParameters
+import org.jetbrains.kotlin.descriptors.commonizer.utils.signature
 import org.jetbrains.kotlin.types.*
 
 object CirTypeFactory {
@@ -42,7 +42,7 @@ object CirTypeFactory {
             },
             isMarkedNullable = abbreviation.isMarkedNullable,
             isDefinitelyNotNullType = abbreviation.isDefinitelyNotNullType,
-            fqNameWithTypeParameters = source.fqNameWithTypeParameters
+            signature = source.signature
         )
     }
 

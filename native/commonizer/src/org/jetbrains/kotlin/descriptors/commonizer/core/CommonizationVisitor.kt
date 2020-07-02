@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
@@ -92,10 +93,10 @@ internal class CommonizationVisitor(
             }
 
             // find out common (and commonized) supertypes
-            val supertypesMap = CommonizedGroupMap<String, CirType>(node.targetDeclarations.size)
+            val supertypesMap = CommonizedGroupMap<CirTypeSignature, CirType>(node.targetDeclarations.size)
             node.targetDeclarations.forEachIndexed { index, clazz ->
                 for (supertype in clazz!!.supertypes) {
-                    supertypesMap[supertype.fqNameWithTypeParameters][index] = supertype
+                    supertypesMap[supertype.signature][index] = supertype
                 }
             }
 

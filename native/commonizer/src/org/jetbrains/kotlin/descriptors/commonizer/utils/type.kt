@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.AbbreviatedType
@@ -27,13 +28,13 @@ internal val ClassifierDescriptorWithTypeParameters.internedClassId: ClassId
         else -> error("Unexpected containing declaration type for $this: ${owner::class}, $owner")
     }
 
-internal val KotlinType.fqNameWithTypeParameters: String
+internal val KotlinType.signature: CirTypeSignature
     get() {
         // use of interner saves up to 95% of duplicates
-        return stringInterner.intern(buildString { buildFqNameWithTypeParameters(this@fqNameWithTypeParameters, HashSet()) })
+        return typeSignatureInterner.intern(buildString { buildTypeSignature(this@signature, HashSet()) })
     }
 
-private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, exploredTypeParameters: MutableSet<KotlinType>) {
+private fun StringBuilder.buildTypeSignature(type: KotlinType, exploredTypeParameters: MutableSet<KotlinType>) {
     val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)
     if (typeParameterDescriptor != null) {
         // N.B this is type parameter type
@@ -44,7 +45,7 @@ private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, explor
             typeParameterDescriptor.upperBounds.forEachIndexed { index, upperBound ->
                 if (index > 0)
                     append(",")
-                buildFqNameWithTypeParameters(upperBound, exploredTypeParameters)
+                buildTypeSignature(upperBound, exploredTypeParameters)
             }
             append("]")
         }
@@ -66,7 +67,7 @@ private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, explor
                     val variance = argument.projectionKind
                     if (variance != Variance.INVARIANT)
                         append(variance).append(" ")
-                    buildFqNameWithTypeParameters(argument.type, exploredTypeParameters)
+                    buildTypeSignature(argument.type, exploredTypeParameters)
                 }
             }
             append(">")
@@ -77,5 +78,5 @@ private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, explor
         append("?")
 }
 
-// dedicated to hold unique entries of "fqNameWithTypeParameters"
-private val stringInterner = Interner<String>()
+// dedicated to hold unique entries of "signature"
+private val typeSignatureInterner = Interner<CirTypeSignature>()
