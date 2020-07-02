@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
@@ -219,7 +216,9 @@ public class FunctionCodegen {
 
         recordMethodForFunctionIfAppropriate(functionDescriptor, asmMethod);
 
-        boolean skipNullabilityAnnotations = (flags & ACC_PRIVATE) != 0 || (flags & ACC_SYNTHETIC) != 0;
+        boolean skipNullabilityAnnotations =
+                (flags & ACC_PRIVATE) != 0 || (flags & ACC_SYNTHETIC) != 0 ||
+                InlineClassDescriptorResolver.isSpecializedEqualsMethod(functionDescriptor);
         generateMethodAnnotationsIfRequired(
                 functionDescriptor, asmMethod, jvmSignature, mv,
                 isCompatibilityStubInDefaultImpls ? Collections.singletonList(Deprecated.class) : Collections.emptyList(),
@@ -533,14 +532,18 @@ public class FunctionCodegen {
                     ? iterator.next()
                     : kind == JvmMethodParameterKind.RECEIVER
                       ? JvmCodegenUtil.getDirectMember(functionDescriptor).getExtensionReceiverParameter()
-                      : isDefaultImpl && kind == JvmMethodParameterKind.THIS ? JvmCodegenUtil.getDirectMember(functionDescriptor)
-                              .getDispatchReceiverParameter() : null;
+                      : kind == JvmMethodParameterKind.THIS && isDefaultImpl
+                        ? JvmCodegenUtil.getDirectMember(functionDescriptor).getDispatchReceiverParameter()
+                        : null;
 
             if (annotated != null) {
-                //noinspection ConstantConditions
                 int parameterIndex = i - syntheticParameterCount;
-                AnnotationCodegen.forParameter(parameterIndex, mv, memberCodegen, state, skipNullabilityAnnotations)
-                        .genAnnotations(annotated, parameterSignature.getAsmType(), annotated.getReturnType(), functionDescriptor, Collections.emptyList());
+                AnnotationCodegen
+                        .forParameter(parameterIndex, mv, memberCodegen, state, skipNullabilityAnnotations)
+                        .genAnnotations(
+                                annotated, parameterSignature.getAsmType(), annotated.getReturnType(), functionDescriptor,
+                                Collections.emptyList()
+                        );
             }
         }
     }

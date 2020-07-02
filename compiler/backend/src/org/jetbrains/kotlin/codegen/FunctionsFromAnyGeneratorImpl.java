@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
@@ -46,6 +45,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
     private final GenerationState generationState;
     private final KotlinTypeMapper typeMapper;
     private final JvmKotlinType underlyingType;
+    private final boolean isInErasedInlineClass;
 
     public FunctionsFromAnyGeneratorImpl(
             @NotNull KtClassOrObject declaration,
@@ -67,23 +67,27 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
                 typeMapper.mapType(descriptor),
                 InlineClassesUtilsKt.substitutedUnderlyingType(descriptor.getDefaultType())
         );
+        this.isInErasedInlineClass = fieldOwnerContext.getContextKind() == OwnerKind.ERASED_INLINE_CLASS;
     }
 
     @Override
     protected void generateToStringMethod(
-            @NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> properties
+            @NotNull FunctionDescriptor function,
+            @NotNull List<? extends PropertyDescriptor> properties
     ) {
         MethodContext context = fieldOwnerContext.intoFunction(function);
         JvmDeclarationOrigin methodOrigin = JvmDeclarationOriginKt.OtherOrigin(function);
         String toStringMethodName = mapFunctionName(function);
         MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), toStringMethodName, getToStringDesc(), null, null);
 
-        if (fieldOwnerContext.getContextKind() != OwnerKind.ERASED_INLINE_CLASS && classDescriptor.isInline()) {
+        if (!isInErasedInlineClass && classDescriptor.isInline()) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
             return;
         }
 
-        visitEndForAnnotationVisitor(mv.visitAnnotation(Type.getDescriptor(NotNull.class), false));
+        if (!isInErasedInlineClass) {
+            visitEndForAnnotationVisitor(mv.visitAnnotation(Type.getDescriptor(NotNull.class), false));
+        }
 
         if (!generationState.getClassBuilderMode().generateBodies) {
             FunctionCodegen.endVisit(mv, toStringMethodName, getDeclaration());
@@ -144,7 +148,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         String hashCodeMethodName = mapFunctionName(function);
         MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), hashCodeMethodName, getHashCodeDesc(), null, null);
 
-        if (fieldOwnerContext.getContextKind() != OwnerKind.ERASED_INLINE_CLASS && classDescriptor.isInline()) {
+        if (!isInErasedInlineClass && classDescriptor.isInline()) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
             return;
         }
@@ -213,15 +217,14 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         String equalsMethodName = mapFunctionName(function);
         MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), equalsMethodName, getEqualsDesc(), null, null);
 
-        boolean isErasedInlineClassKind = fieldOwnerContext.getContextKind() == OwnerKind.ERASED_INLINE_CLASS;
-        if (!isErasedInlineClassKind && classDescriptor.isInline()) {
+        if (!isInErasedInlineClass && classDescriptor.isInline()) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
             return;
         }
 
-        visitEndForAnnotationVisitor(
-                mv.visitParameterAnnotation(isErasedInlineClassKind ? 1 : 0, Type.getDescriptor(Nullable.class), false)
-        );
+        if (!isInErasedInlineClass) {
+            visitEndForAnnotationVisitor(mv.visitParameterAnnotation(0, Type.getDescriptor(Nullable.class), false));
+        }
 
         if (!generationState.getClassBuilderMode().generateBodies) {
             FunctionCodegen.endVisit(mv, equalsMethodName, getDeclaration());
