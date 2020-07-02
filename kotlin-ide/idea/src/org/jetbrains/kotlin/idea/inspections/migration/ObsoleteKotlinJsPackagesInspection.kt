@@ -13,9 +13,9 @@ internal class ObsoleteKotlinJsPackagesInspection : ObsoleteCodeMigrationInspect
     override val fromVersion: LanguageVersion = LanguageVersion.KOTLIN_1_3
     override val toVersion: LanguageVersion = LanguageVersion.KOTLIN_1_4
 
-    override val problems: List<ObsoleteCodeMigrationProblem> = listOf(
-        KotlinBrowserImportUsageProblem,
-        KotlinDomImportUsageProblem
+    override val problemReporters: List<ObsoleteCodeProblemReporter> = listOf(
+        KotlinBrowserImportUsageReporter,
+        KotlinDomImportUsageReporter
     )
 }
 
@@ -24,30 +24,33 @@ private object ObsoleteKotlinJsPackagesUsagesInWholeProjectFix : ObsoleteCodeInW
     override fun getFamilyName(): String = KotlinBundle.message("obsolete.kotlin.js.packages.usage.in.whole.fix.family.name")
 }
 
+private const val KOTLIN_BROWSER_PACKAGE = "kotlin.browser"
+private const val KOTLIN_DOM_PACKAGE = "kotlin.dom"
+
 private class ObsoleteKotlinBrowserUsageFix(delegate: ObsoleteCodeFix) : ObsoleteCodeFixDelegateQuickFix(delegate) {
-    override fun getFamilyName(): String = KotlinBundle.message("obsolete.kotlin.browser.usage.fix.family.name")
+    override fun getFamilyName(): String = KotlinBundle.message("obsolete.package.usage.fix.family.name", KOTLIN_BROWSER_PACKAGE)
 }
 
 private class ObsoleteKotlinDomUsageFix(delegate: ObsoleteCodeFix) : ObsoleteCodeFixDelegateQuickFix(delegate) {
-    override fun getFamilyName(): String = KotlinBundle.message("obsolete.kotlin.dom.usage.fix.family.name")
+    override fun getFamilyName(): String = KotlinBundle.message("obsolete.package.usage.fix.family.name", KOTLIN_DOM_PACKAGE)
 }
 
-private object KotlinBrowserImportUsageProblem : ObsoleteImportsUsage() {
+private object KotlinBrowserImportUsageReporter : ObsoleteImportsUsageReporter() {
     override val textMarker: String = "browser"
-    override val packageBindings: Map<String, String> = mapOf("kotlin.browser" to "kotlinx.browser")
+    override val packageBindings: Map<String, String> = mapOf(KOTLIN_BROWSER_PACKAGE to "kotlinx.browser")
 
     override val wholeProjectFix: LocalQuickFix = ObsoleteKotlinJsPackagesUsagesInWholeProjectFix
-    override fun problemMessage(): String = KotlinBundle.message("kotlin.browser.usages.are.obsolete.since.1.3")
+    override fun problemMessage(): String = KotlinBundle.message("package.usages.are.obsolete.since.1.4", KOTLIN_BROWSER_PACKAGE)
 
     override fun wrapFix(fix: ObsoleteCodeFix): LocalQuickFix = ObsoleteKotlinBrowserUsageFix(fix)
 }
 
-private object KotlinDomImportUsageProblem : ObsoleteImportsUsage() {
+private object KotlinDomImportUsageReporter : ObsoleteImportsUsageReporter() {
     override val textMarker: String = "dom"
-    override val packageBindings: Map<String, String> = mapOf("kotlin.dom" to "kotlinx.dom")
+    override val packageBindings: Map<String, String> = mapOf(KOTLIN_DOM_PACKAGE to "kotlinx.dom")
 
     override val wholeProjectFix: LocalQuickFix = ObsoleteKotlinJsPackagesUsagesInWholeProjectFix
-    override fun problemMessage(): String = KotlinBundle.message("kotlin.dom.usages.are.obsolete.since.1.3")
+    override fun problemMessage(): String = KotlinBundle.message("package.usages.are.obsolete.since.1.4", KOTLIN_DOM_PACKAGE)
 
     override fun wrapFix(fix: ObsoleteCodeFix): LocalQuickFix = ObsoleteKotlinDomUsageFix(fix)
 }

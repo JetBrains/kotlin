@@ -31,28 +31,28 @@ internal class ObsoleteExperimentalCoroutinesInspection : ObsoleteCodeMigrationI
     override val fromVersion: LanguageVersion = LanguageVersion.KOTLIN_1_2
     override val toVersion: LanguageVersion = LanguageVersion.KOTLIN_1_3
 
-    override val problems = listOf(
-        ObsoleteTopLevelFunctionUsage(
+    override val problemReporters = listOf(
+        ObsoleteTopLevelFunctionUsageReporter(
             "buildSequence",
             "kotlin.coroutines.experimental.buildSequence",
             "kotlin.sequences.sequence"
         ),
-        ObsoleteTopLevelFunctionUsage(
+        ObsoleteTopLevelFunctionUsageReporter(
             "buildIterator",
             "kotlin.coroutines.experimental.buildIterator",
             "kotlin.sequences.iterator"
         ),
-        ObsoleteExtensionFunctionUsage(
+        ObsoleteExtensionFunctionUsageReporter(
             "resume",
             "kotlin.coroutines.experimental.Continuation.resume",
             "kotlin.coroutines.resume"
         ),
-        ObsoleteExtensionFunctionUsage(
+        ObsoleteExtensionFunctionUsageReporter(
             "resumeWithException",
             "kotlin.coroutines.experimental.Continuation.resumeWithException",
             "kotlin.coroutines.resumeWithException"
         ),
-        ObsoleteCoroutinesImportsUsage
+        ObsoleteCoroutinesImportsUsageReporter
     )
 }
 
@@ -91,9 +91,9 @@ internal fun fixesWithWholeProject(isOnTheFly: Boolean, fix: LocalQuickFix, whol
     return arrayOf(fix, wholeProjectFix)
 }
 
-private class ObsoleteTopLevelFunctionUsage(
+private class ObsoleteTopLevelFunctionUsageReporter(
     val textMarker: String, val oldFqName: String, val newFqName: String
-) : ObsoleteCodeMigrationProblem {
+) : ObsoleteCodeProblemReporter {
     override fun report(holder: ProblemsHolder, isOnTheFly: Boolean, simpleNameExpression: KtSimpleNameExpression): Boolean {
         if (simpleNameExpression.text != textMarker) return false
 
@@ -127,9 +127,9 @@ private class ObsoleteTopLevelFunctionUsage(
     }
 }
 
-private class ObsoleteExtensionFunctionUsage(
+private class ObsoleteExtensionFunctionUsageReporter(
     val textMarker: String, val oldFqName: String, val newFqName: String
-) : ObsoleteCodeMigrationProblem {
+) : ObsoleteCodeProblemReporter {
     override fun report(holder: ProblemsHolder, isOnTheFly: Boolean, simpleNameExpression: KtSimpleNameExpression): Boolean {
         if (simpleNameExpression.text != textMarker) return false
 
@@ -172,7 +172,7 @@ private class ObsoleteExtensionFunctionUsage(
     }
 }
 
-private object ObsoleteCoroutinesImportsUsage : ObsoleteImportsUsage() {
+private object ObsoleteCoroutinesImportsUsageReporter : ObsoleteImportsUsageReporter() {
     override val textMarker: String = "experimental"
 
     override val packageBindings: Map<String, String> = mapOf(
