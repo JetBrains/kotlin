@@ -1469,6 +1469,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypeForJavaTypeParameter.kt");
         }
 
+        @TestMetadata("coercionToUnitWithEarlyReturn.kt")
+        public void testCoercionToUnitWithEarlyReturn() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/coercionToUnitWithEarlyReturn.kt");
+        }
+
         @TestMetadata("definitelyNotNullIntersectionType.kt")
         public void testDefinitelyNotNullIntersectionType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/definitelyNotNullIntersectionType.kt");
