@@ -34,13 +34,17 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 class KtFirAnalysisSession(
-    element: KtElement
+    private val element: KtElement
 ) : KtAnalysisSession(element.project) {
     internal val token get() = validityToken
 
+    internal val firResolveState = LowLevelFirApiFacade.getResolveStateFor(element)
+
+    internal val firSession get() = LowLevelFirApiFacade.getSessionFor(element, firResolveState)
+
     internal val firSymbolBuilder = KtSymbolByFirBuilder(
-        element.session.firSymbolProvider,
-        ConeTypeCheckerContext(isErrorTypeEqualsToAnything = true, isStubTypeEqualsToAnything = true, element.session),
+        firSession.firSymbolProvider,
+        ConeTypeCheckerContext(isErrorTypeEqualsToAnything = true, isStubTypeEqualsToAnything = true, firSession),
         element.project,
         validityToken
     )
@@ -48,7 +52,8 @@ class KtFirAnalysisSession(
     override val symbolProvider: KtSymbolProvider =
         KtFirSymbolProvider(
             this,
-            element.session.firSymbolProvider,
+            firSession.firSymbolProvider,
+            firResolveState,
             firSymbolBuilder
         )
 
@@ -58,17 +63,16 @@ class KtFirAnalysisSession(
 
     override fun getSmartCastedToTypes(expression: KtExpression): Collection<KtType>? = withValidityAssertion {
         // TODO filter out not used smartcasts
-        expression.getOrBuildFirSafe<FirExpressionWithSmartcast>()?.typesFromSmartCast?.map { it.asTypeInfo() }
+        expression.getOrBuildFirSafe<FirExpressionWithSmartcast>(firResolveState)?.typesFromSmartCast?.map { it.asTypeInfo() }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
     override fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast> = withValidityAssertion {
         // TODO filter out not used smartcasts
-        val qualifiedExpression = expression.getOrBuildFirSafe<FirQualifiedAccessExpression>() ?: return emptyList()
+        val qualifiedExpression = expression.getOrBuildFirSafe<FirQualifiedAccessExpression>(firResolveState) ?: return emptyList()
         if (qualifiedExpression.dispatchReceiver !is FirExpressionWithSmartcast
             && qualifiedExpression.extensionReceiver !is FirExpressionWithSmartcast
         ) return emptyList()
-        val session = expression.session
         buildList {
             (qualifiedExpression.dispatchReceiver as? FirExpressionWithSmartcast)?.let { smartCasted ->
                 ImplicitReceiverSmartCast(
@@ -87,34 +91,34 @@ class KtFirAnalysisSession(
 
 
     override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {
-        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration<*>>()
+        val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration<*>>(firResolveState)
         firDeclaration.returnTypeRef.coneType.asTypeInfo()
     }
 
     override fun getKtExpressionType(expression: KtExpression): KtType = withValidityAssertion {
-        expression.getOrBuildFirOfType<FirExpression>().typeRef.coneType.asTypeInfo()
+        expression.getOrBuildFirOfType<FirExpression>(firResolveState).typeRef.coneType.asTypeInfo()
     }
 
     override fun isSubclassOf(klass: KtClassOrObject, superClassId: ClassId): Boolean {
         assertIsValid()
         var result = false
-        forEachSuperClass(klass.getOrBuildFirSafe() ?: return false) { type ->
-            result = result || type.firClassLike(klass.session)?.symbol?.classId == superClassId
+        forEachSuperClass(klass.getOrBuildFirSafe(firResolveState) ?: return false) { type ->
+            result = result || type.firClassLike(firSession)?.symbol?.classId == superClassId
         }
         return result
     }
 
     override fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic> = withValidityAssertion {
-        LowLevelFirApiFacade.getDiagnosticsFor(element)
+        LowLevelFirApiFacade.getDiagnosticsFor(element, firResolveState)
     }
 
     override fun resolveCall(call: KtBinaryExpression): CallInfo? = withValidityAssertion {
-        val firCall = call.getOrBuildFirSafe<FirFunctionCall>() ?: return null
+        val firCall = call.getOrBuildFirSafe<FirFunctionCall>(firResolveState) ?: return null
         resolveCall(firCall, call)
     }
 
     override fun resolveCall(call: KtCallExpression): CallInfo? = withValidityAssertion {
-        val firCall = when (val fir = call.getOrBuildFir()) {
+        val firCall = when (val fir = call.getOrBuildFir(firResolveState)) {
             is FirFunctionCall -> fir
             is FirSafeCallExpression -> fir.regularQualifiedAccess as? FirFunctionCall
             else -> null
@@ -123,7 +127,7 @@ class KtFirAnalysisSession(
     }
 
     private fun resolveCall(firCall: FirFunctionCall, callExpression: KtExpression): CallInfo? {
-        val session = callExpression.session
+        val session = LowLevelFirApiFacade.getSessionFor(callExpression, firResolveState)
         val resolvedFunctionSymbol = firCall.calleeReference.toTargetSymbol(session, firSymbolBuilder)
         val resolvedCalleeSymbol = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
         return when {
@@ -168,7 +172,6 @@ class KtFirAnalysisSession(
     private fun ConeKotlinType.asTypeInfo() = firSymbolBuilder.buildKtType(this)
 
     companion object {
-
         private val kotlinFunctionInvokeCallableIds = (0..23).flatMapTo(hashSetOf()) { arity ->
             listOf(
                 CallableId(KotlinBuiltIns.getFunctionClassId(arity), Name.identifier("invoke")),

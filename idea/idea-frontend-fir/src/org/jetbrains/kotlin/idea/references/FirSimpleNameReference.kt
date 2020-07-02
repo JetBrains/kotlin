@@ -18,7 +18,7 @@ internal class KtFirSimpleNameReference(
 ) : KtSimpleNameReference(expression), KtFirReference {
     override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
         check(analysisSession is KtFirAnalysisSession)
-        return FirReferenceResolveHelper.resolveSimpleNameReference(this, analysisSession.firSymbolBuilder)
+        return FirReferenceResolveHelper.resolveSimpleNameReference(this, analysisSession)
     }
 
     override fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean {

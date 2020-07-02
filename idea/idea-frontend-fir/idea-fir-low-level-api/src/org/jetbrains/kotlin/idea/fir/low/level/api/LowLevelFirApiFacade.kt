@@ -7,17 +7,23 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.psi.KtElement
 
 object LowLevelFirApiFacade {
-    fun getOrBuildFirFor(element: KtElement, phase: FirResolvePhase): FirElement =
-        element.getOrBuildFir(element.firResolveState(), phase)
+    fun getResolveStateFor(element: KtElement): FirModuleResolveState =
+        element.firResolveState()
 
-    fun getDiagnosticsFor(element: KtElement): Collection<Diagnostic> {
+    fun getSessionFor(element: KtElement, resolveState: FirModuleResolveState): FirSession =
+        resolveState.getSession(element)
+
+    fun getOrBuildFirFor(element: KtElement, resolveState: FirModuleResolveState, phase: FirResolvePhase): FirElement =
+        element.getOrBuildFir(resolveState, phase)
+
+    fun getDiagnosticsFor(element: KtElement, resolveState: FirModuleResolveState): Collection<Diagnostic> {
         val file = element.containingKtFile
-        val state = element.firResolveState()
-        file.getOrBuildFirWithDiagnostics(state)
-        return state.getDiagnostics(element)
+        file.getOrBuildFirWithDiagnostics(resolveState)
+        return resolveState.getDiagnostics(element)
     }
 }
