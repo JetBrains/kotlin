@@ -66,5 +66,6 @@
     <orderEntry type="module" module-name="intellij.testng" />
     <orderEntry type="module" module-name="intellij.gradle.java" />
     <orderEntry type="module" module-name="intellij.gradle.toolingExtension.impl" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>
