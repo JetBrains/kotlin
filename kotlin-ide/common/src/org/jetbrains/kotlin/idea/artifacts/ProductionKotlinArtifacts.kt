@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.idea.artifacts
 
-import com.intellij.util.PathUtil
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 abstract class ProductionLikeKotlinArtifacts : KotlinArtifacts() {
@@ -38,7 +38,7 @@ abstract class ProductionLikeKotlinArtifacts : KotlinArtifacts() {
 
 object ProductionKotlinArtifacts : ProductionLikeKotlinArtifacts() {
     override val kotlinPluginDirectory: File = run {
-        val pluginJar = File(PathUtil.getJarPathForClass(ProductionKotlinArtifacts::class.java))
+        val pluginJar = PathUtil.getResourcePathForClass(ProductionKotlinArtifacts::class.java)
         if (!pluginJar.exists()) {
             throw IllegalStateException("Plugin JAR not found for class ${ProductionKotlinArtifacts::class.java}")
         }
