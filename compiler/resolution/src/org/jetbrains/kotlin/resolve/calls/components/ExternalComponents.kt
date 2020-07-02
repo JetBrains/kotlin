@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.StubType
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -35,6 +36,8 @@ interface KotlinResolutionStatelessCallbacks {
     fun getVariableCandidateIfInvoke(functionCall: KotlinCall): KotlinResolutionCandidate?
     fun isCoroutineCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean
     fun isApplicableCallForBuilderInference(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean
+
+    fun isOldIntersectionIsEmpty(types: Collection<KotlinType>): Boolean
 
     fun createConstraintSystemForOverloadResolution(
         constraintInjector: ConstraintInjector, builtIns: KotlinBuiltIns

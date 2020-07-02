@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinResolutionStatelessCallbacksImpl(
@@ -85,6 +87,10 @@ class KotlinResolutionStatelessCallbacksImpl(
         languageVersionSettings: LanguageVersionSettings,
     ): Boolean {
         return org.jetbrains.kotlin.resolve.calls.inference.isApplicableCallForBuilderInference(descriptor, languageVersionSettings)
+    }
+
+    override fun isOldIntersectionIsEmpty(types: Collection<KotlinType>): Boolean {
+        return TypeIntersector.intersectTypes(types) == null
     }
 
     override fun createConstraintSystemForOverloadResolution(
