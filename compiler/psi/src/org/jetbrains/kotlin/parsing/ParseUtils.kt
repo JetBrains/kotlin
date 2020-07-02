@@ -10,6 +10,22 @@ import com.intellij.util.text.LiteralFormatUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.utils.extractRadix
 
+private val FP_LITERAL_PARTS = "(?:([_\\d]*)\\.?([_\\d]*)e?[+-]?([_\\d]*))[f]?".toRegex()
+
+fun hasIllegalUnderscore(text: String, elementType: IElementType): Boolean {
+    val parts: List<String?> = if (elementType === KtNodeTypes.INTEGER_CONSTANT) {
+        var start = 0
+        var end: Int = text.length
+        if (text.startsWith("0x", ignoreCase = true) || text.startsWith("0b", ignoreCase = true)) start += 2
+        if (text.endsWith('l', ignoreCase = true)) --end
+        listOf(text.substring(start, end))
+    } else {
+        FP_LITERAL_PARTS.findAll(text).flatMap { it.groupValues }.toList()
+    }
+
+    return parts.any { it != null && (it.startsWith("_") || it.endsWith("_")) }
+}
+
 fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
 fun hasUnsignedSuffix(text: String) = text.endsWith('u') || text.endsWith('U')
 fun hasUnsignedLongSuffix(text: String) =
