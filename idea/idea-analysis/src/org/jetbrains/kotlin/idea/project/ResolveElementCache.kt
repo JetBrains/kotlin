@@ -162,7 +162,7 @@ class ResolveElementCache(
         // neither result of PARTIAL nor result of PARTIAL_WITH_CFA analyses could be reused by FULL analysis.
         //
         // Force perform FULL analysis to avoid redundant analysis for the current selected files.
-        if (bodyResolveMode != BodyResolveMode.FULL && (!isUnitTestMode() || forceFullAnalysisModeInTests)) {
+        if (bodyResolveMode != BodyResolveMode.FULL && bodyResolveMode != BodyResolveMode.PARTIAL_FOR_COMPLETION && (!isUnitTestMode() || forceFullAnalysisModeInTests)) {
             val virtualFile = resolveElement.containingFile.virtualFile
             // applicable for real (physical) files only
             if (virtualFile != null && FileEditorManager.getInstance(resolveElement.project).selectedFiles.any { it == virtualFile }) {
