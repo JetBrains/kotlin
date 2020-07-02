@@ -105,11 +105,4 @@
   <extensions defaultExtensionNs="cidr.cocoa">
     <xcodeProjectFileProvider implementation="com.jetbrains.cidr.apple.gradle.AppleXcodeProjectFileProvider"/>
   </extensions>
-
-  <actions>
-    <group id="CIDR.Swift.NewGroup">
-      <reference id="Swift.NewGroup"/>
-      <add-to-group group-id="CIDR.Lang.NewGroup" anchor="first"/>
-    </group>
-  </actions>
 </idea-plugin>
