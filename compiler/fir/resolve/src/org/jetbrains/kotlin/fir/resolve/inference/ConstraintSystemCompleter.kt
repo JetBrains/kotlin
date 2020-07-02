@@ -134,12 +134,13 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
             c,
             c.notFixedTypeVariables.getValue(variable.typeConstructor),
             TypeVariableDirectionCalculator.ResolveDirection.TO_SUPERTYPE
-        ) as ConeKotlinType).lowerBoundIfFlexible() as ConeClassLikeType
+        ) as ConeKotlinType).lowerBoundIfFlexible()
         val isExtensionWithoutParameters = false
 //        TODO
 //             functionalType.isExtensionFunctionType && functionalType.arguments.size == 2 && parameterTypes?.isEmpty() == true
         if (parameterTypes?.all { type -> type != null } == true && !isExtensionWithoutParameters) return this
         if (!functionalType.isSuitable()) return this
+        require(functionalType is ConeClassLikeType)
         val returnVariable = typeVariableCreator()
         csBuilder.registerVariable(returnVariable)
 
