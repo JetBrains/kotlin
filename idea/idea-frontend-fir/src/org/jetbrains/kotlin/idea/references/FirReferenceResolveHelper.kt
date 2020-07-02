@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.idea.fir.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPackageSymbol
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
 internal object FirReferenceResolveHelper {
     fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): KtSymbol? {
@@ -102,11 +102,12 @@ internal object FirReferenceResolveHelper {
 
     internal fun resolveSimpleNameReference(
         ref: KtFirSimpleNameReference,
-        symbolBuilder: KtSymbolByFirBuilder
+        analysisSession: KtFirAnalysisSession
     ): Collection<KtSymbol> {
         val expression = ref.expression
-        val fir = expression.getOrBuildFir()
-        val session = expression.session
+        val symbolBuilder = analysisSession.firSymbolBuilder
+        val fir = expression.getOrBuildFir(analysisSession.firResolveState)
+        val session = analysisSession.firSession
         when (fir) {
             is FirResolvable -> {
                 val calleeReference =
@@ -136,7 +137,7 @@ internal object FirReferenceResolveHelper {
                         parent = parent.parent as? KtDotQualifiedExpression
                         continue
                     }
-                    val parentFir = selectorExpression.getOrBuildFir()
+                    val parentFir = selectorExpression.getOrBuildFir(analysisSession.firResolveState)
                     if (parentFir is FirQualifiedAccess) {
                         return listOfNotNull(classId.toTargetPsi(session, symbolBuilder, parentFir.calleeReference))
                     }
@@ -208,7 +209,7 @@ internal object FirReferenceResolveHelper {
                         parent = parent.parent as? KtDotQualifiedExpression
                         continue
                     }
-                    val parentFir = selectorExpression.getOrBuildFir()
+                    val parentFir = selectorExpression.getOrBuildFir(analysisSession.firResolveState)
                     if (parentFir is FirResolvedQualifier) {
                         var classId = parentFir.classId
                         while (unresolvedCounter > 0) {
