@@ -27,6 +27,7 @@ object FirErrors {
     val SYNTAX_ERROR by error0<FirSourceElement, PsiElement>()
     val UNRESOLVED_LABEL by error0<FirSourceElement, PsiElement>()
     val ILLEGAL_CONST_EXPRESSION by error0<FirSourceElement, PsiElement>()
+    val ILLEGAL_UNDERSCORE by error0<FirSourceElement, PsiElement>()
     val DESERIALIZATION_ERROR by error0<FirSourceElement, PsiElement>()
     val INFERENCE_ERROR by error0<FirSourceElement, PsiElement>()
     val TYPE_PARAMETER_AS_SUPERTYPE by error0<FirSourceElement, PsiElement>()

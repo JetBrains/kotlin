@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PROPERTY_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_RECEIVER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCORE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
@@ -53,6 +54,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(SYNTAX_ERROR, "Syntax error")
             map.put(UNRESOLVED_LABEL, "Unresolved label")
             map.put(ILLEGAL_CONST_EXPRESSION, "Illegal const expression")
+            map.put(ILLEGAL_UNDERSCORE, "Illegal underscore")
             map.put(DESERIALIZATION_ERROR, "Deserialization error")
             map.put(INFERENCE_ERROR, "Inference error")
             map.put(TYPE_PARAMETER_AS_SUPERTYPE, "Type parameter as supertype")
