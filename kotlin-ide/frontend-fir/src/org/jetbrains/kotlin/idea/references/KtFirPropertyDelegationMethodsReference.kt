@@ -23,7 +23,7 @@ class KtFirPropertyDelegationMethodsReference(
 ) : KtPropertyDelegationMethodsReference(element), KtFirReference {
     override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
         check(analysisSession is KtFirAnalysisSession)
-        val property = (expression.parent as? KtElement)?.getOrBuildFirSafe<FirProperty>() ?: return emptyList()
+        val property = (expression.parent as? KtElement)?.getOrBuildFirSafe<FirProperty>(analysisSession.firResolveState) ?: return emptyList()
         if (property.delegate == null) return emptyList()
         val getValueSymbol = (property.getter?.singleStatementOfType<FirReturnExpression>()?.result as? FirFunctionCall)?.getCalleeSymbol()
         val setValueSymbol = property.setter?.singleStatementOfType<FirFunctionCall>()?.getCalleeSymbol()

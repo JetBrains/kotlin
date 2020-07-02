@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
+import com.google.common.collect.MapMaker
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -31,15 +32,15 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeReference
 
-internal interface FirModuleResolveState {
-    val sessionProvider: FirProjectSessionProvider
+abstract class FirModuleResolveState {
+    internal abstract val sessionProvider: FirProjectSessionProvider
 
-    fun getSession(psi: KtElement): FirSession {
+    internal fun getSession(psi: KtElement): FirSession {
         val moduleInfo = psi.getModuleInfo()
         return getSession(psi.project, moduleInfo)
     }
 
-    fun getSession(project: Project, moduleInfo: IdeaModuleInfo): FirSession {
+    internal fun getSession(project: Project, moduleInfo: IdeaModuleInfo): FirSession {
         sessionProvider.getSession(moduleInfo)?.let { return it }
         val lock = when (moduleInfo) {
             is ModuleSourceInfo -> moduleInfo.module
@@ -58,20 +59,20 @@ internal interface FirModuleResolveState {
         }
     }
 
-    operator fun get(psi: KtElement): FirElement?
+    internal abstract operator fun get(psi: KtElement): FirElement?
 
-    fun getDiagnostics(psi: KtElement): List<Diagnostic>
+    internal abstract fun getDiagnostics(psi: KtElement): List<Diagnostic>
 
-    fun hasDiagnosticsForFile(file: KtFile): Boolean
+    internal abstract fun hasDiagnosticsForFile(file: KtFile): Boolean
 
-    fun record(psi: KtElement, fir: FirElement)
+    internal abstract fun record(psi: KtElement, fir: FirElement)
 
-    fun record(psi: KtElement, diagnostic: Diagnostic)
+    internal abstract fun record(psi: KtElement, diagnostic: Diagnostic)
 
-    fun setDiagnosticsForFile(file: KtFile, fir: FirFile, diagnostics: Iterable<FirDiagnostic<*>> = emptyList())
+    internal abstract fun setDiagnosticsForFile(file: KtFile, fir: FirFile, diagnostics: Iterable<FirDiagnostic<*>> = emptyList())
 }
 
-internal class FirModuleResolveStateImpl(override val sessionProvider: FirProjectSessionProvider) : FirModuleResolveState {
+internal class FirModuleResolveStateImpl(override val sessionProvider: FirProjectSessionProvider) : FirModuleResolveState() {
     private val cache = mutableMapOf<KtElement, FirElement>()
 
     private val diagnosticCache = mutableMapOf<KtElement, MutableList<Diagnostic>>()
