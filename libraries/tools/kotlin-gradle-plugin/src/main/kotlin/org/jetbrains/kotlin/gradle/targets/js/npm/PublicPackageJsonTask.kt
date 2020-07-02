@@ -10,7 +10,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
@@ -19,9 +19,12 @@ import javax.inject.Inject
 open class PublicPackageJsonTask
 @Inject
 constructor(
-    private val nodeJs: NodeJsRootExtension,
-    private val npmProject: NpmProject
+    compilation: KotlinJsCompilation
 ) : DefaultTask() {
+
+    private val npmProject = compilation.npmProject
+
+    private val nodeJs = npmProject.nodeJs
 
     private val compilationResolution
         get() = nodeJs.npmResolutionManager.requireInstalled()[project][npmProject.compilation]

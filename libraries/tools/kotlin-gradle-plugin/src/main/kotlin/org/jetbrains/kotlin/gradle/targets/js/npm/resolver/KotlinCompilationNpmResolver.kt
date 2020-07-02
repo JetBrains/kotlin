@@ -54,7 +54,7 @@ internal class KotlinCompilationNpmResolver(
     val publicPackageJsonTaskHolder: TaskProvider<PublicPackageJsonTask> =
         project.registerTask<PublicPackageJsonTask>(
             npmProject.publicPackageJsonTaskName,
-            listOf(nodeJs, npmProject)
+            listOf(compilation)
         ) {
             it.skipOnEmptyNpmDependencies = true
             it.dependsOn(nodeJs.npmInstallTaskProvider)
