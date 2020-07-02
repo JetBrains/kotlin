@@ -64,11 +64,6 @@ public class ParcelIrBoxTestGenerated extends AbstractParcelIrBoxTest {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/charSequence.kt");
     }
 
-    @TestMetadata("customParcelable.kt")
-    public void testCustomParcelable() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/customParcelable.kt");
-    }
-
     @TestMetadata("customParcelerScoping.kt")
     public void testCustomParcelerScoping() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/customParcelerScoping.kt");

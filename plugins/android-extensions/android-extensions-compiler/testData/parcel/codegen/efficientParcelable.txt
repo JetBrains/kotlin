@@ -1,7 +1,7 @@
 public final class test/Bar$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final test.Bar createFromParcel(android.os.Parcel in) {
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -26,18 +26,7 @@ public final class test/Bar$Creator : java/lang/Object, android/os/Parcelable$Cr
         LABEL (L4)
     }
 
-    public java.lang.Object createFromParcel(android.os.Parcel p0) {
-        LABEL (L0)
-        LINENUMBER (13)
-          ALOAD (0)
-          ALOAD (1)
-          INVOKEVIRTUAL (test/Bar$Creator, createFromParcel, (Landroid/os/Parcel;)Ltest/Bar;)
-          ARETURN
-    }
-
-    public final test.Bar[] newArray(int size)
-
-    public java.lang.Object[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class test/Bar : java/lang/Object, android/os/Parcelable {
@@ -89,7 +78,7 @@ public final class test/Bar : java/lang/Object, android/os/Parcelable {
 public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final test.Foo createFromParcel(android.os.Parcel in) {
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -106,18 +95,7 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
         LABEL (L1)
     }
 
-    public java.lang.Object createFromParcel(android.os.Parcel p0) {
-        LABEL (L0)
-        LINENUMBER (10)
-          ALOAD (0)
-          ALOAD (1)
-          INVOKEVIRTUAL (test/Foo$Creator, createFromParcel, (Landroid/os/Parcel;)Ltest/Foo;)
-          ARETURN
-    }
-
-    public final test.Foo[] newArray(int size)
-
-    public java.lang.Object[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class test/Foo : java/lang/Object, android/os/Parcelable {
