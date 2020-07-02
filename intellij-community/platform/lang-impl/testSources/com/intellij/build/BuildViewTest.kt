@@ -1,18 +1,23 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.build
 
-import com.intellij.build.events.MessageEvent.Kind.ERROR
-import com.intellij.build.events.MessageEvent.Kind.INFO
+import com.intellij.build.events.MessageEvent.Kind.*
 import com.intellij.build.progress.BuildProgressDescriptor
 import com.intellij.openapi.components.service
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.fixtures.BuildViewTestFixture
+import com.intellij.testFramework.runInEdtAndGet
+import com.intellij.util.SystemProperties
 import com.intellij.util.ThrowableRunnable
+import com.intellij.util.ui.tree.TreeUtil
+import org.assertj.core.api.Assertions
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import java.io.File
+import java.util.function.Function
 
 class BuildViewTest : LightPlatformTestCase() {
 
@@ -24,7 +29,6 @@ class BuildViewTest : LightPlatformTestCase() {
     buildViewTestFixture = BuildViewTestFixture(project)
     buildViewTestFixture.setUp()
   }
-
   @After
   override fun tearDown() {
     RunAll()
@@ -75,6 +79,85 @@ class BuildViewTest : LightPlatformTestCase() {
       "message1 descriptive text",
       false
     )
+  }
+
+  @Test
+  fun `test file messages presentation`() {
+    val title = "A build"
+    val tempDirectory = FileUtil.getTempDirectory() + "/project"
+    val buildDescriptor = DefaultBuildDescriptor(Object(), title, tempDirectory, System.currentTimeMillis())
+    val progressDescriptor = object : BuildProgressDescriptor {
+      override fun getBuildDescriptor(): BuildDescriptor = buildDescriptor
+      override fun getTitle(): String = title
+    }
+
+    // @formatter:off
+    BuildViewManager
+      .createBuildProgress(project)
+      .start(progressDescriptor)
+      .fileMessage("message 1", "message 1 descriptive text", INFO, FilePosition(File("aFile1.java"), 0, 0))
+      .fileMessage("message 1.1", "message 1.1 descriptive text", WARNING, FilePosition(File("aFile1.java"), 0, 0))
+
+      .fileMessage("message 2", "message 2 descriptive text", WARNING, FilePosition(File(tempDirectory, "project/aFile2.java"), 0, 0))
+      .fileMessage("message 2.1", "message 2.1 descriptive text", WARNING, FilePosition(File(tempDirectory), -1, -1))
+
+      .fileMessage("message 3", "message 3 descriptive text", WARNING, FilePosition(File(tempDirectory, "anotherDir1/aFile3.java"), 0, 0))
+      .fileMessage("message 3.1", "message 3.1 descriptive text", ERROR, FilePosition(File(tempDirectory, "anotherDir2/aFile3.java"), 0, 0))
+
+      .fileMessage("message 4", "message 4 descriptive text", INFO, FilePosition(File(SystemProperties.getUserHome(), "foo/aFile4.java"), 0, 0))
+      .finish()
+    // @formatter:on
+
+    buildViewTestFixture.assertBuildViewTreeEquals(
+      """
+      -
+       -finished
+        -aFile1.java
+         message 1
+         message 1.1
+        -aFile2.java
+         message 2
+        message 2.1
+        -aFile3.java
+         message 3
+        -aFile3.java
+         message 3.1
+        -aFile4.java
+         message 4""".trimIndent()
+    )
+
+    val buildView = project.service<BuildViewManager>().getBuildView(buildDescriptor.id)
+    val buildTreeConsoleView = buildView!!.getView(BuildTreeConsoleView::class.java.name, BuildTreeConsoleView::class.java)
+    val visitor = runInEdtAndGet {
+      val tree = buildTreeConsoleView!!.tree
+      return@runInEdtAndGet CollectingTreeVisitor().also {
+        TreeUtil.visitVisibleRows(tree, it)
+      }
+    }
+    Assertions.assertThat(visitor.userObjects)
+      .extracting(Function<Any?, String?> { node ->
+        val presentation = (node as ExecutionNode).presentation
+        if (presentation.coloredText.isEmpty()) {
+          presentation.presentableText
+        }
+        else {
+          presentation.coloredText.joinToString(separator = " =>") { it.text }
+        }
+      })
+      .containsOnlyOnce(
+        "aFile1.java =>  1 warning",
+        "message 1 => :1",
+        "message 1.1 => :1",
+        "aFile2.java => project 1 warning",
+        "message 2 => :1",
+        "message 2.1",
+        "aFile3.java => anotherDir1 1 warning",
+        "message 3 => :1",
+        "aFile3.java => anotherDir2 1 error",
+        "message 3.1 => :1",
+        "aFile4.java => ~/foo",
+        "message 4 => :1"
+      )
   }
 
   @Test

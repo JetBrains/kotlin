@@ -54,6 +54,7 @@ import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.EditSourceOnEnterKeyHandler;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.concurrency.Invoker;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.SmartHashSet;
@@ -68,6 +69,9 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -693,8 +697,12 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         parentsPath = myWorkingDir;
       }
 
-      relativePath = isEmpty(parentsPath) ? filePath : FileUtil.getRelativePath(parentsPath, filePath, '/');
-      parentNode = getOrCreateMessagesNode(messageEvent, filePath, parentNode, relativePath,
+      relativePath = isEmpty(parentsPath) ? filePath : getRelativePath(parentsPath, filePath);
+      Path path = Paths.get(relativePath);
+      String nodeName = path.getFileName().toString();
+      Path pathParent = path.getParent();
+      String pathHint = pathParent == null ? null : pathParent.toString();
+      parentNode = getOrCreateMessagesNode(messageEvent, filePath, parentNode, nodeName, pathHint,
                                            () -> {
                                              VirtualFile file = VfsUtil.findFileByIoFile(filePosition.getFile(), false);
                                              if (file != null) {
@@ -704,6 +712,15 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
                                            }, messageEvent.getNavigatable(myProject), nodesMap, myProject);
     }
     return parentNode;
+  }
+
+  private static String getRelativePath(@NotNull String basePath, @NotNull String filePath) {
+    String path = ObjectUtils.notNull(FileUtil.getRelativePath(basePath, filePath, '/'), filePath);
+    File userHomeDir = new File(SystemProperties.getUserHome());
+    if (path.startsWith("..") && FileUtil.isAncestor(userHomeDir, new File(filePath), true)) {
+      return FileUtil.getLocationRelativeToUserHome(filePath, false);
+    }
+    return path;
   }
 
   public void hideRootNode() {
@@ -779,6 +796,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
                                                          String nodeId,
                                                          ExecutionNode parentNode,
                                                          String nodeName,
+                                                         @Nullable String hint,
                                                          @Nullable Supplier<? extends Icon> iconProvider,
                                                          @Nullable Navigatable navigatable,
                                                          Map<Object, ExecutionNode> nodesMap,
@@ -787,6 +805,9 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     if (node == null) {
       node = new ExecutionNode(project, parentNode, false, this::isCorrectThread);
       node.setName(nodeName);
+      if (hint != null) {
+        node.setHint(hint);
+      }
       node.setStartTime(messageEvent.getEventTime());
       node.setEndTime(messageEvent.getEventTime());
       if (iconProvider != null) {
