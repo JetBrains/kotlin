@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.libraries.ui.OrderRoot
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.testFramework.EdtTestUtil
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.xdebugger.frame.XNamedValue
 import com.intellij.xdebugger.frame.XStackFrame
 import com.intellij.xdebugger.impl.frame.XDebuggerFramesList
@@ -163,8 +164,8 @@ abstract class KotlinDescriptorTestCaseWithStackFrames() : KotlinDescriptorTestC
         return params
     }
 
-    private fun addLibraries(artifacts: MutableList<OrderRoot>) =
-        EdtTestUtil.runInEdtAndWait {
+    private fun addLibraries(artifacts: MutableList<OrderRoot>) {
+        runInEdtAndWait {
             runWriteAction {
                 val model = ModuleRootManager.getInstance(myModule).modifiableModel
                 val customLibEditor = NewLibraryEditor().apply {
@@ -177,6 +178,7 @@ abstract class KotlinDescriptorTestCaseWithStackFrames() : KotlinDescriptorTestC
                 model.commit()
             }
         }
+    }
 
     private fun loadDependencies(
         description: JpsMavenRepositoryLibraryDescriptor
