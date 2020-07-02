@@ -653,6 +653,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         public void testTypeAliasWithNotNullBound() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasWithNotNullBound.kt");
         }
+
+        @TestMetadata("uselessMultipleBounds.kt")
+        public void testUselessMultipleBounds() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/uselessMultipleBounds.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfg")

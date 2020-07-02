@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerLiteralTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.scope
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -31,15 +33,14 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
             fir.scope(substitutorByMap(substitution), useSiteSession, scopeSession, skipPrivateMembers = false)
         }
         is ConeTypeParameterType -> {
-            // TODO: support LibraryTypeParameterSymbol or get rid of it
-            val fir = lookupTag.toSymbol().fir
-            FirTypeIntersectionScope.prepareIntersectionScope(
-                useSiteSession,
-                FirStandardOverrideChecker(useSiteSession),
-                fir.bounds.mapNotNullTo(mutableListOf()) {
-                    it.coneType.scope(useSiteSession, scopeSession)
-                }
-            )
+            val symbol = lookupTag.toSymbol()
+            scopeSession.getOrBuild(symbol, TYPE_PARAMETER_SCOPE_KEY) {
+                val intersectionType = ConeTypeIntersector.intersectTypes(
+                    useSiteSession.typeContext,
+                    symbol.fir.bounds.map { it.coneType }
+                )
+                intersectionType.scope(useSiteSession, scopeSession) ?: FirTypeScope.Empty
+            }
         }
         is ConeRawType -> lowerBound.scope(useSiteSession, scopeSession)
         is ConeFlexibleType -> lowerBound.scope(useSiteSession, scopeSession)
@@ -87,3 +88,5 @@ fun FirAnonymousObject.defaultType(): ConeClassLikeType {
         isNullable = false
     )
 }
+
+val TYPE_PARAMETER_SCOPE_KEY = scopeSessionKey<FirTypeParameterSymbol, FirTypeScope>()
