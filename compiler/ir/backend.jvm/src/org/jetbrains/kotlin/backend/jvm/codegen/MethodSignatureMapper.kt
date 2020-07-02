@@ -111,10 +111,17 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             return newName
         }
 
-        return if (function !is IrConstructor && function.visibility == Visibilities.INTERNAL && !function.isPublishedApi()) {
+        return if (function.shouldMangleAsInternal())
             KotlinTypeMapper.InternalNameMapper.mangleInternalName(newName, getModuleName(function))
-        } else newName
+        else
+            newName
     }
+
+    private fun IrFunction.shouldMangleAsInternal() =
+        this !is IrConstructor &&
+                origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
+                visibility == Visibilities.INTERNAL &&
+                !isPublishedApi()
 
     private fun getModuleName(function: IrFunction): String =
         (if (function is IrLazyFunctionBase)
