@@ -22,7 +22,7 @@ dependencies {
     testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":kotlin-scripting-dependencies"))
     testCompile(project(":kotlin-main-kts"))
-    testCompile(project(":compiler:cli-common"))
+    testCompile(project(":compiler:cli"))
 
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
@@ -43,7 +43,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
 }
 
 projectTest(parallel = true) {
-    dependsOn(":dist")
+    dependsOn(":kotlin-compiler:distKotlinc")
     workingDir = rootDir
 }
 
