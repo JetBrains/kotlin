@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.EdtTestUtil
+import com.intellij.util.ThrowableRunnable
 import com.intellij.xdebugger.XDebugSession
 import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -241,4 +242,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         return super.getData(dataId)
     }
 
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+        runTest { super.runTestRunnable(testRunnable) }
+    }
 }
