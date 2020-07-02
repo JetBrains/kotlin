@@ -48,8 +48,13 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean) {
                 it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
                         it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
                         it.isStaticInlineClassReplacement ||
-                        it.origin.isSynthetic ||
-                        it.isInlineClassFieldGetter -> null
+                        it.origin.isSynthetic -> null
+
+                it.isInlineClassFieldGetter ->
+                    if (it.hasMangledReturnType)
+                        createMethodReplacement(it)
+                    else
+                        null
 
                 // Mangle all functions in the body of an inline class
                 it.parent.safeAs<IrClass>()?.isInline == true ->
