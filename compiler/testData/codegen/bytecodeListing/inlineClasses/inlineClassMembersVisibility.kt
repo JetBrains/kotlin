@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 
 inline class Z(val x: Int) {
     constructor(x: Long) : this(x.toInt())

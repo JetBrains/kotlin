@@ -8,7 +8,7 @@ public final class Z {
     public static method constructor-impl(p0: long): int
     private static method constructor-impl(p0: short): int
     public method equals(p0: java.lang.Object): boolean
-    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int): boolean
     public final static method getInternalExtensionVal-impl$test_module(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
     public final static method getInternalExtensionVar-impl$test_module(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
@@ -38,6 +38,6 @@ public final class Z {
     public final static method setPublicExtensionVar-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, p2: int): void
     public final static method setPublicVar-impl(p0: int, p1: int): void
     public method toString(): java.lang.String
-    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
     public synthetic final method unbox-impl(): int
 }
