@@ -235,21 +235,26 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         val type = expression.elementType
         val text: String = expression.asText
         val sourceElement = expression.toFirSourceElement()
+
+        fun reportIncorrectConstant(kind: DiagnosticKind): FirErrorExpression {
+            return buildErrorExpression {
+                source = sourceElement
+                diagnostic = ConeSimpleDiagnostic("Incorrect constant expression: $text", kind)
+            }
+        }
+
         val convertedText: Any? = when (type) {
-            INTEGER_CONSTANT, FLOAT_CONSTANT -> parseNumericLiteral(text, type)
+            INTEGER_CONSTANT, FLOAT_CONSTANT -> when {
+                hasIllegalUnderscore(text, type) -> return reportIncorrectConstant(DiagnosticKind.IllegalUnderscore)
+                else -> parseNumericLiteral(text, type)
+            }
             BOOLEAN_CONSTANT -> parseBoolean(text)
             else -> null
         }
         return when (type) {
             INTEGER_CONSTANT -> {
                 val kind = when {
-                    convertedText !is Long -> return buildErrorExpression {
-                        source = sourceElement
-                        diagnostic = ConeSimpleDiagnostic(
-                            "Incorrect constant expression: $text",
-                            DiagnosticKind.IllegalConstExpression
-                        )
-                    }
+                    convertedText !is Long -> return reportIncorrectConstant(DiagnosticKind.IllegalConstExpression)
 
                     hasUnsignedLongSuffix(text) -> {
                         FirConstKind.UnsignedLong
