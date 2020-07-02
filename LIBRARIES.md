@@ -223,19 +223,22 @@ directory structure, with the following layout:
 
 ```yaml
   - foo/
-    - targets/
-      - $platform/
-        - kotlin/
-          - Kotlin compiled to LLVM bitcode.
-        - native/
-          - Bitcode files of additional native objects.
-      - $another_platform/
-        - There can be several platform specific kotlin and native pairs.
-    - linkdata/
-      - A set of ProtoBuf files with serialized linkage metadata.
-    - resources/
-      - General resources such as images. (Not used yet).
-    - manifest - A file in *java property* format describing the library.
+    - $component_name/
+      - ir/
+        - Seriaized Kotlin IR.
+      - targets/
+        - $platform/
+          - kotlin/
+            - Kotlin compiled to LLVM bitcode.
+          - native/
+            - Bitcode files of additional native objects.
+        - $another_platform/
+          - There can be several platform specific kotlin and native pairs.
+      - linkdata/
+        - A set of ProtoBuf files with serialized linkage metadata.
+      - resources/
+        - General resources such as images. (Not used yet).
+      - manifest - A file in *java property* format describing the library.
 ```
 
 An example layout can be found in `klib/stdlib` directory of your installation.
