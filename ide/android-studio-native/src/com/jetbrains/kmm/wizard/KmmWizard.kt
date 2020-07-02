@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.IOSSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.AndroidPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
@@ -25,9 +27,12 @@ import java.nio.file.Path
 class ProjectDescription(
     suggestedProjectName: String?,
     val projectDir: Path,
-    val androidModuleName: String,
     private val packageName: String,
-    val androidSdkPath: Path?
+    val androidSdkPath: Path?,
+    val androidModuleName: String,
+    val iosModuleName: String,
+    val sharedModuleName: String,
+    val generateTests: Boolean
 ) {
     val projectName = suggestedProjectName ?: "Application"
 
@@ -62,6 +67,8 @@ class KmmWizard(
             StructurePlugin::name.reference.setValue(description.projectName)
             StructurePlugin::projectPath.reference.setValue(description.projectDir)
 
+            MppModuleConfigurator.useTests = description.generateTests
+
             if (description.androidSdkPath != null) {
                 AndroidPlugin::androidSdkPath.reference.setValue(description.androidSdkPath)
             }
@@ -71,12 +78,14 @@ class KmmWizard(
             applyProjectTemplate(MultiplatformMobileApplicationProjectTemplate)
 
             KotlinPlugin::modules.reference.settingValue.forEach { module ->
-                if (module.configurator == AndroidSinglePlatformModuleConfigurator) {
-                    module.name = description.androidModuleName
+                when (module.configurator) {
+                    AndroidSinglePlatformModuleConfigurator -> module.name = description.androidModuleName
+                    IOSSinglePlatformModuleConfigurator -> module.name = description.iosModuleName
+                    MppModuleConfigurator -> module.name = description.sharedModuleName
                 }
             }
         }
 
-        super.apply(services, phases,onTaskExecuting)
+        super.apply(services, phases, onTaskExecuting)
     }
 }

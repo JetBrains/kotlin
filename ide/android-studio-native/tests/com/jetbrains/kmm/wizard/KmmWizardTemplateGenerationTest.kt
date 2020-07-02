@@ -59,9 +59,12 @@ class KmmWizardTemplateGenerationTest : AbstractNewWizardProjectImportTest() {
     private fun projectDescriptionFor(destination: File) = ProjectDescription(
         "TestApplication",
         destination.toPath(),
-        "app",
         "org.jetbrains",
-        androidSdkDir.toPath()
+        androidSdkDir.toPath(),
+        "app",
+        "iosApp",
+        "shared",
+        true
     )
 
     private fun generateLocalProperties(destination: VirtualFile) = runWriteAction {
