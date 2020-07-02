@@ -1955,6 +1955,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/ruby/intellij.rubymine.main.iml" filepath="$PROJECT_DIR$/intellij/ruby/intellij.rubymine.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/sass/intellij.sass.iml" filepath="$PROJECT_DIR$/intellij/plugins/sass/intellij.sass.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium/intellij.selenium.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium/intellij.selenium.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium-docker/intellij.selenium.docker.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium-docker/intellij.selenium.docker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium-jvm/intellij.selenium.jvm.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium-jvm/intellij.selenium.jvm.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium-python/intellij.selenium.python.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium-python/intellij.selenium.python.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium-shared/intellij.selenium.shared.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/selenium/selenium-shared/intellij.selenium.shared.iml" />
