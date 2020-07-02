@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.indexing.*
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
+import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_PATH
 import java.io.DataInput
 import java.io.DataOutput
@@ -21,6 +22,7 @@ class ScriptTemplatesClassRootsIndex :
 
     companion object {
         val KEY = ID.create<String, Void>(ScriptTemplatesClassRootsIndex::class.java.canonicalName)
+        const val VALUE = "MY_VALUE"
 
         private val suffix = SCRIPT_DEFINITION_MARKERS_PATH.removeSuffix("/")
     }
@@ -37,29 +39,26 @@ class ScriptTemplatesClassRootsIndex :
 
     override fun getVersion(): Int = 1
 
-    override fun indexDirectories(): Boolean = true
+    override fun indexDirectories(): Boolean = false
 
     override fun acceptInput(file: VirtualFile): Boolean {
-        return file.isDirectory && file.path.endsWith(suffix)
+        val parent = file.parent ?: return false
+        return parent.isDirectory
+                && parent.path.endsWith(suffix)
+                && file.path.endsWith(SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT)
     }
 
-    override fun save(out: DataOutput, value: String) {
-        IOUtil.writeUTF(out, value)
-    }
+    override fun save(out: DataOutput, value: String) = IOUtil.writeUTF(out, value)
 
-    override fun read(input: DataInput): String? {
-        return IOUtil.readUTF(input)
-    }
+    override fun read(input: DataInput): String? = IOUtil.readUTF(input)
 
-    override fun getHashCode(value: String): Int {
-        return value.hashCode()
-    }
+    override fun getHashCode(value: String): Int = value.hashCode()
 
     override fun isEqual(val1: String?, val2: String?): Boolean {
         return val1 == val2
     }
 
     override fun map(inputData: FileContent): Map<String?, Void?> {
-        return Collections.singletonMap(inputData.file.url, null)
+        return Collections.singletonMap(VALUE, null)
     }
 }

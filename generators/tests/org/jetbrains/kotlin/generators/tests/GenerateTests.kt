@@ -1041,6 +1041,10 @@ fun main(args: Array<String>) {
             testClass<AbstractScratchLineMarkersTest> {
                 model("scratch/lineMarker", testMethod = "doScratchTest", pattern = KT_OR_KTS)
             }
+
+            testClass<AbstractScriptTemplatesFromDependenciesTest> {
+                model("script/templatesFromDependencies", extension = null, recursive = false)
+            }
         }
 
         testGroup("idea/idea-maven/test", "idea/idea-maven/testData") {
