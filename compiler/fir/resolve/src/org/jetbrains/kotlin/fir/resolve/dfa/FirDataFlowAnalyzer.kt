@@ -1016,11 +1016,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     // ----------------------------------- Elvis -----------------------------------
 
-    fun exitElvisLhs(elvisCall: FirElvisCall) {
-        val (lhsExitNode, lhsIsNotNullNode, rhsEnterNode) = graphBuilder.exitElvisLhs(elvisCall)
+    fun exitElvisLhs(elvisExpression: FirElvisExpression) {
+        val (lhsExitNode, lhsIsNotNullNode, rhsEnterNode) = graphBuilder.exitElvisLhs(elvisExpression)
         lhsExitNode.mergeIncomingFlow()
         val flow = lhsExitNode.flow
-        val lhsVariable = variableStorage.getOrCreateVariable(flow, elvisCall.lhs)
+        val lhsVariable = variableStorage.getOrCreateVariable(flow, elvisExpression.lhs)
         rhsEnterNode.flow = logicSystem.approveStatementsInsideFlow(
             flow,
             lhsVariable eq null,

@@ -42,7 +42,7 @@ fun Candidate.resolveArgumentExpression(
     isDispatch: Boolean
 ) {
     when (argument) {
-        is FirFunctionCall, is FirWhenExpression, is FirTryExpression, is FirCheckNotNullCall, is FirElvisCall -> resolveSubCallArgument(
+        is FirFunctionCall, is FirWhenExpression, is FirTryExpression, is FirCheckNotNullCall, is FirElvisExpression -> resolveSubCallArgument(
             csBuilder,
             argument as FirResolvable,
             expectedType,

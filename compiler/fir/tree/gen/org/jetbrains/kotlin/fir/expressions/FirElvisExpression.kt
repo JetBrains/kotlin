@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirElvisCall : FirExpression(), FirResolvable {
+abstract class FirElvisExpression : FirExpression(), FirResolvable {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
@@ -23,17 +23,17 @@ abstract class FirElvisCall : FirExpression(), FirResolvable {
     abstract val lhs: FirExpression
     abstract val rhs: FirExpression
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElvisCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElvisExpression(this, data)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirElvisCall
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirElvisExpression
 
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirElvisCall
+    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirElvisExpression
 
-    abstract fun <D> transformLhs(transformer: FirTransformer<D>, data: D): FirElvisCall
+    abstract fun <D> transformLhs(transformer: FirTransformer<D>, data: D): FirElvisExpression
 
-    abstract fun <D> transformRhs(transformer: FirTransformer<D>, data: D): FirElvisCall
+    abstract fun <D> transformRhs(transformer: FirTransformer<D>, data: D): FirElvisExpression
 }

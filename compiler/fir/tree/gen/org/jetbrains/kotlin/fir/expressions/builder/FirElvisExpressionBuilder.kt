@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirElvisCall
+import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
-import org.jetbrains.kotlin.fir.expressions.impl.FirElvisCallImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirElvisExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -26,15 +26,15 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 @FirBuilderDsl
-class FirElvisCallBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
+class FirElvisExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     var calleeReference: FirReference = FirStubReference
     lateinit var lhs: FirExpression
     lateinit var rhs: FirExpression
 
-    override fun build(): FirElvisCall {
-        return FirElvisCallImpl(
+    override fun build(): FirElvisExpression {
+        return FirElvisExpressionImpl(
             source,
             annotations,
             calleeReference,
@@ -44,7 +44,7 @@ class FirElvisCallBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder 
     }
 
 
-    @Deprecated("Modification of 'typeRef' has no impact for FirElvisCallBuilder", level = DeprecationLevel.HIDDEN)
+    @Deprecated("Modification of 'typeRef' has no impact for FirElvisExpressionBuilder", level = DeprecationLevel.HIDDEN)
     override var typeRef: FirTypeRef
         get() = throw IllegalStateException()
         set(value) {
@@ -53,9 +53,9 @@ class FirElvisCallBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder 
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildElvisCall(init: FirElvisCallBuilder.() -> Unit): FirElvisCall {
+inline fun buildElvisExpression(init: FirElvisExpressionBuilder.() -> Unit): FirElvisExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirElvisCallBuilder().apply(init).build()
+    return FirElvisExpressionBuilder().apply(init).build()
 }

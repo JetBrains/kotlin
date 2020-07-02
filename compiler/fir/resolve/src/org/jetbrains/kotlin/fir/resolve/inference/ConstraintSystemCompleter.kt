@@ -294,7 +294,7 @@ fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, proc
             this.arguments.forEach { it.processAllContainingCallCandidates(processBlocks, processor) }
         }
 
-        is FirElvisCall -> {
+        is FirElvisExpression -> {
             processCandidateIfApplicable(processor, processBlocks)
             lhs.processAllContainingCallCandidates(processBlocks, processor)
             rhs.processAllContainingCallCandidates(processBlocks, processor)

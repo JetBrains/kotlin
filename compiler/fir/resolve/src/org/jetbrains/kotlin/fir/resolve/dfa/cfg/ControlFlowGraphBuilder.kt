@@ -91,7 +91,7 @@ class ControlFlowGraphBuilder {
     private val initBlockExitNodes: Stack<InitBlockExitNode> = stackOf()
 
     private val exitSafeCallNodes: Stack<ExitSafeCallNode> = stackOf()
-    private val exitElvisCallNodes: Stack<ElvisExitNode> = stackOf()
+    private val exitElvisExpressionNodes: Stack<ElvisExitNode> = stackOf()
 
     // ----------------------------------- API for node builders -----------------------------------
 
@@ -996,21 +996,21 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Elvis -----------------------------------
 
-    fun exitElvisLhs(elvisCall: FirElvisCall): Triple<ElvisLhsExitNode, ElvisLhsIsNotNullNode, ElvisRhsEnterNode> {
-        val exitNode = createElvisExitNode(elvisCall).also {
-            exitElvisCallNodes.push(it)
+    fun exitElvisLhs(elvisExpression: FirElvisExpression): Triple<ElvisLhsExitNode, ElvisLhsIsNotNullNode, ElvisRhsEnterNode> {
+        val exitNode = createElvisExitNode(elvisExpression).also {
+            exitElvisExpressionNodes.push(it)
         }
 
-        val lhsExitNode = createElvisLhsExitNode(elvisCall).also {
+        val lhsExitNode = createElvisLhsExitNode(elvisExpression).also {
             popAndAddEdge(it)
         }
 
-        val lhsIsNotNullNode = createElvisLhsIsNotNullNode(elvisCall).also {
+        val lhsIsNotNullNode = createElvisLhsIsNotNullNode(elvisExpression).also {
             addEdge(lhsExitNode, it)
             addEdge(it, exitNode)
         }
 
-        val rhsEnterNode = createElvisRhsEnterNode(elvisCall).also {
+        val rhsEnterNode = createElvisRhsEnterNode(elvisExpression).also {
             addEdge(lhsExitNode, it)
         }
         lastNodes.push(rhsEnterNode)
@@ -1018,7 +1018,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitElvis(): ElvisExitNode {
-        val exitNode = exitElvisCallNodes.pop()
+        val exitNode = exitElvisExpressionNodes.pop()
         addNewSimpleNode(exitNode)
         exitNode.updateDeadStatus()
         dropPostponedLambdasForNonDeterministicCalls()

@@ -562,21 +562,21 @@ class Fir2IrVisitor(
         }
     }
 
-    override fun visitElvisCall(elvisCall: FirElvisCall, data: Any?): IrElement {
+    override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: Any?): IrElement {
         val firLhsVariable = buildProperty {
-            source = elvisCall.source
+            source = elvisExpression.source
             session = this@Fir2IrVisitor.session
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = elvisCall.lhs.typeRef
+            returnTypeRef = elvisExpression.lhs.typeRef
             name = Name.special("<elvis>")
-            initializer = elvisCall.lhs
+            initializer = elvisExpression.lhs
             symbol = FirPropertySymbol(name)
             isVar = false
             isLocal = true
             status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
         }
         val irLhsVariable = firLhsVariable.accept(this, null) as IrVariable
-        return elvisCall.convertWithOffsets { startOffset, endOffset ->
+        return elvisExpression.convertWithOffsets { startOffset, endOffset ->
             fun irGetLhsValue(): IrGetValue =
                 IrGetValueImpl(startOffset, endOffset, irLhsVariable.type, irLhsVariable.symbol)
 
@@ -591,7 +591,7 @@ class Fir2IrVisitor(
                         irGetLhsValue(),
                         IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType)
                     ),
-                    convertToIrExpression(elvisCall.rhs)
+                    convertToIrExpression(elvisExpression.rhs)
                 ),
                 IrElseBranchImpl(
                     IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true),
@@ -609,7 +609,7 @@ class Fir2IrVisitor(
             generateWhen(
                 startOffset, endOffset, IrStatementOrigin.ELVIS,
                 irLhsVariable, irBranches,
-                elvisCall.typeRef.toIrType()
+                elvisExpression.typeRef.toIrType()
             )
         }
     }

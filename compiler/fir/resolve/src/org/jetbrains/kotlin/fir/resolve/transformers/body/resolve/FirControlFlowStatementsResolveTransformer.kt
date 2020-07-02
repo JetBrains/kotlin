@@ -209,16 +209,16 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
 
     // ------------------------------- Elvis -------------------------------
 
-    override fun transformElvisCall(elvisCall: FirElvisCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        if (elvisCall.calleeReference is FirResolvedNamedReference) return elvisCall.compose()
-        elvisCall.transformAnnotations(transformer, data)
-        elvisCall.transformLhs(transformer, ResolutionMode.ContextDependent)
-        dataFlowAnalyzer.exitElvisLhs(elvisCall)
-        elvisCall.transformRhs(transformer, ResolutionMode.ContextDependent)
+    override fun transformElvisExpression(elvisExpression: FirElvisExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        if (elvisExpression.calleeReference is FirResolvedNamedReference) return elvisExpression.compose()
+        elvisExpression.transformAnnotations(transformer, data)
+        elvisExpression.transformLhs(transformer, ResolutionMode.ContextDependent)
+        dataFlowAnalyzer.exitElvisLhs(elvisExpression)
+        elvisExpression.transformRhs(transformer, ResolutionMode.ContextDependent)
 
-        val result = syntheticCallGenerator.generateCalleeForElvisCall(elvisCall)?.let {
+        val result = syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression)?.let {
             callCompleter.completeCall(it, data.expectedType).result
-        } ?: elvisCall.also {
+        } ?: elvisExpression.also {
             it.resultType = buildErrorTypeRef {
                 diagnostic = ConeSimpleDiagnostic("Can't resolve ?: operator call", DiagnosticKind.InferenceError)
             }

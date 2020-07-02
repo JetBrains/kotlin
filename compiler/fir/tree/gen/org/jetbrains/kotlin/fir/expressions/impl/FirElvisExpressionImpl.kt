@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirElvisCall
+import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class FirElvisCallImpl(
+internal class FirElvisExpressionImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override var calleeReference: FirReference,
     override var lhs: FirExpression,
     override var rhs: FirExpression,
-) : FirElvisCall() {
+) : FirElvisExpression() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -36,7 +36,7 @@ internal class FirElvisCallImpl(
         rhs.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElvisCallImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
         typeRef = typeRef.transformSingle(transformer, data)
         transformAnnotations(transformer, data)
         transformCalleeReference(transformer, data)
@@ -45,22 +45,22 @@ internal class FirElvisCallImpl(
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirElvisCallImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirElvisCallImpl {
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
         calleeReference = calleeReference.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformLhs(transformer: FirTransformer<D>, data: D): FirElvisCallImpl {
+    override fun <D> transformLhs(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
         lhs = lhs.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformRhs(transformer: FirTransformer<D>, data: D): FirElvisCallImpl {
+    override fun <D> transformRhs(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
         rhs = rhs.transformSingle(transformer, data)
         return this
     }

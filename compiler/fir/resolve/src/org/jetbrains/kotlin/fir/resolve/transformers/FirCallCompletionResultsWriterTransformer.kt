@@ -435,8 +435,8 @@ class FirCallCompletionResultsWriterTransformer(
         return transformSyntheticCall(checkNotNullCall, data)
     }
 
-    override fun transformElvisCall(elvisCall: FirElvisCall, data: ExpectedArgumentType?): CompositeTransformResult<FirStatement> {
-        return transformSyntheticCall(elvisCall, data)
+    override fun transformElvisExpression(elvisExpression: FirElvisExpression, data: ExpectedArgumentType?): CompositeTransformResult<FirStatement> {
+        return transformSyntheticCall(elvisExpression, data)
     }
 
     private inline fun <reified D> transformSyntheticCall(

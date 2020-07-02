@@ -103,12 +103,12 @@ class FirSyntheticCallGenerator(
         return checkNotNullCall.transformCalleeReference(UpdateReference, reference)
     }
 
-    fun generateCalleeForElvisCall(elvisCall: FirElvisCall): FirElvisCall? {
-        if (elvisCall.calleeReference !is FirStubReference) return null
+    fun generateCalleeForElvisExpression(elvisExpression: FirElvisExpression): FirElvisExpression? {
+        if (elvisExpression.calleeReference !is FirStubReference) return null
 
         val argumentList = buildArgumentList {
-            arguments += elvisCall.lhs
-            arguments += elvisCall.rhs
+            arguments += elvisExpression.lhs
+            arguments += elvisExpression.rhs
         }
         val reference = generateCalleeReferenceWithCandidate(
             elvisFunction,
@@ -116,7 +116,7 @@ class FirSyntheticCallGenerator(
             SyntheticCallableId.ELVIS_NOT_NULL.callableName
         ) ?: return null
 
-        return elvisCall.transformCalleeReference(UpdateReference, reference)
+        return elvisExpression.transformCalleeReference(UpdateReference, reference)
     }
 
     fun resolveCallableReferenceWithSyntheticOuterCall(
