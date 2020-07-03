@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -25,6 +26,7 @@ internal class KtFirFunctionSymbol(
     fir: FirSimpleFunction,
     override val token: ValidityOwner,
     private val builder: KtSymbolByFirBuilder,
+    private val forcedOrigin: FirDeclarationOrigin? = null
 ) : KtFunctionSymbol(), KtFirSymbol<FirSimpleFunction> {
     override val fir: FirSimpleFunction by weakRef(fir)
     override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
@@ -41,6 +43,7 @@ internal class KtFirFunctionSymbol(
             builder.buildTypeParameterSymbol(typeParameter.symbol.fir)
         }
     }
+    override val origin: KtSymbolOrigin get() = withValidityAssertion { forcedOrigin?.asKtSymbolOrigin() ?: super.origin }
     override val isSuspend: Boolean get() = withValidityAssertion { fir.isSuspend }
     override val receiverType: KtType? by cached { fir.receiverTypeRef?.let(builder::buildKtType) }
     override val isOperator: Boolean get() = withValidityAssertion { fir.isOperator }
