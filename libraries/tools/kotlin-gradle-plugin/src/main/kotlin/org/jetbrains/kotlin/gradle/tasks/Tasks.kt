@@ -375,7 +375,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val isMultiplatform: Boolean = project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper }
 
     @get:Internal
-    internal val abstractKotlinCompileArgumentsContributor = AbstractKotlinCompileArgumentsContributor(thisTaskProvider)
+    internal val abstractKotlinCompileArgumentsContributor by project.provider { AbstractKotlinCompileArgumentsContributor(thisTaskProvider) }
 
     override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         abstractKotlinCompileArgumentsContributor.contributeArguments(
