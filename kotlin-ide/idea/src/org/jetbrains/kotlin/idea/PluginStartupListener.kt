@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.ide.ApplicationInitializedListener
 import com.intellij.openapi.application.PathMacros
-import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.utils.PathUtil.kotlinPathsForIdeaPlugin
 
 /**
@@ -18,8 +17,6 @@ import org.jetbrains.kotlin.utils.PathUtil.kotlinPathsForIdeaPlugin
 class PluginStartupListener : ApplicationInitializedListener {
 
     override fun componentsInitialized() {
-        if (isUnitTestMode()) return
-
         registerPathVariable()
     }
 
