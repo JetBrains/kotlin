@@ -79,10 +79,14 @@ public class DocRenderItem {
     if (existing == null) {
       if (itemsToSet.isEmpty()) return;
       editor.putUserData(OUR_ITEMS, items = new ArrayList<>());
+      if (DocRenderManager.isDocRenderingEnabled(editor)) {
+        collapseNewItems = true;
+      }
     }
     else {
       items = existing;
     }
+    boolean finalCollapseNewItems = collapseNewItems;
     keepScrollingPositionWhile(editor, () -> {
       List<Runnable> foldingTasks = new ArrayList<>();
       List<DocRenderItem> itemsToUpdateInlays = new ArrayList<>();
@@ -104,9 +108,9 @@ public class DocRenderItem {
       }
       Collection<DocRenderItem> newRenderItems = new ArrayList<>();
       for (DocRenderPassFactory.Item item : itemsToSet) {
-        DocRenderItem newItem = new DocRenderItem(editor, item.textRange, collapseNewItems ? null : item.textToRender);
+        DocRenderItem newItem = new DocRenderItem(editor, item.textRange, finalCollapseNewItems ? null : item.textToRender);
         newRenderItems.add(newItem);
-        if (collapseNewItems) {
+        if (finalCollapseNewItems) {
           updated |= newItem.toggle(foldingTasks);
           newItem.textToRender = item.textToRender;
           itemsToUpdateInlays.add(newItem);
