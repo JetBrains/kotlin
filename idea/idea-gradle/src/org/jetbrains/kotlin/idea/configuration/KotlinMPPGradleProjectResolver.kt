@@ -544,6 +544,16 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 }
                 ideModule.createChild(ProjectKeys.CONTENT_ROOT, ideContentRoot)
             }
+
+            val mppModelPureKotlinSourceFolders = mppModel.targets.flatMap { it.compilations }
+                .flatMap { it.kotlinTaskProperties.pureKotlinSourceFolders ?: emptyList() }
+                .map { it.absolutePath }
+
+            ideModule.pureKotlinSourceFolders =
+                if (ideModule.pureKotlinSourceFolders.isEmpty())
+                    mppModelPureKotlinSourceFolders
+                else
+                    mppModelPureKotlinSourceFolders + ideModule.pureKotlinSourceFolders
         }
 
         private data class CompilationWithDependencies(

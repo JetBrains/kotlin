@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.SourceKotlinRootType
 import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.idea.util.sourceRoot
@@ -95,6 +96,8 @@ private val kotlinSourceRootTypes: Set<JpsModuleSourceRootType<JavaSourceRootPro
 
 private fun Module.getNonGeneratedKotlinSourceRoots(): List<VirtualFile> {
     val result = mutableListOf<VirtualFile>()
+    val facetSettings = KotlinFacet.get(this)?.configuration?.settings
+
     val rootManager = ModuleRootManager.getInstance(this)
     for (contentEntry in rootManager.contentEntries) {
         val sourceFolders = contentEntry.getSourceFolders(kotlinSourceRootTypes)
@@ -102,7 +105,13 @@ private fun Module.getNonGeneratedKotlinSourceRoots(): List<VirtualFile> {
             if (sourceFolder.jpsElement.getProperties(kotlinSourceRootTypes)?.isForGeneratedSources == true) {
                 continue
             }
-            result.addIfNotNull(sourceFolder.file)
+            facetSettings?.pureKotlinSourceFolders?.also { pureKotlin ->
+                sourceFolder.file?.also {
+                    if (it.path in pureKotlin) {
+                        result += it
+                    }
+                }
+            } ?: result.addIfNotNull(sourceFolder.file)
         }
     }
     return result
