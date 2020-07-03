@@ -134,6 +134,10 @@ class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSyste
     val projectRoots = mutableSetOf<String>()
     val models = mutableListOf<KotlinDslScriptModel>()
     var failed = false
+
+    override fun toString(): String {
+        return "KotlinGradleDslSync(workingDir=$workingDir, gradleVersion=$gradleVersion, gradleHome=$gradleHome, javaHome=$javaHome, projectRoots=$projectRoots, failed=$failed)"
+    }
 }
 
 fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {

@@ -146,6 +146,8 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             if (oldRoot is Imported && oldRoot.data.models.isEmpty()) return
         }
 
+        scriptingDebugLog { "save gradle project info after import: $sync" }
+
         if (oldRoot is Legacy) {
             oldRoot.importing.set(updated)
             return
@@ -161,6 +163,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
                 return
             }
 
+            scriptingDebugLog { "save script models after import: ${sync.models}" }
 
             val newData = GradleBuildRootData(
                 sync.ts, sync.projectRoots, gradleHome, sync.javaHome, sync.models

@@ -36,7 +36,11 @@ class LastModifiedFiles(
     class SimultaneouslyChangedFiles(
         val ts: Long = Long.MIN_VALUE,
         val fileIds: MutableSet<String> = mutableSetOf()
-    )
+    ) {
+        override fun toString(): String {
+            return "SimultaneouslyChangedFiles(ts=$ts, fileIds=$fileIds)"
+        }
+    }
 
     @Synchronized
     fun fileChanged(ts: Long, fileId: String) {
@@ -57,6 +61,10 @@ class LastModifiedFiles(
     fun lastModifiedTimeStampExcept(fileId: String): Long = when {
         last.fileIds.size == 1 && last.fileIds.contains(fileId) -> previous.ts
         else -> last.ts
+    }
+
+    override fun toString(): String {
+        return "LastModifiedFiles(last=$last, previous=$previous)"
     }
 
     companion object {
