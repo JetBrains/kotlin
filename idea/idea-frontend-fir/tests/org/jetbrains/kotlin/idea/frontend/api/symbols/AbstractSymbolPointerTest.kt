@@ -10,7 +10,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -31,19 +33,21 @@ abstract class AbstractSymbolPointerTest : KotlinLightCodeInsightFixtureTestCase
         val ktFile = myFixture.configureByText(file.name, FileUtil.loadFile(file)) as KtFile
 
         val pointers = executeOnPooledThreadInReadAction {
-            val analysisSession = KtFirAnalysisSession(ktFile)
-            val declarationSymbols = ktFile.collectDescendantsOfType<KtDeclaration>().map { declaration ->
-                analysisSession.symbolProvider.getSymbol(declaration)
+            analyze(ktFile) {
+                val declarationSymbols = ktFile.collectDescendantsOfType<KtDeclaration>().map { declaration ->
+                    symbolProvider.getSymbol(declaration)
+                }
+                declarationSymbols.map { PointerWithPsi(it.createPointer(), it.psi!!) }
             }
-            declarationSymbols.map { PointerWithPsi(it.createPointer(), it.psi!!) }
         }
 
         // another read action
         executeOnPooledThreadInReadAction {
-            val analysisSession = KtFirAnalysisSession(ktFile)
-            pointers.forEach { (pointer, psi) ->
-                val restored = pointer.restoreSymbol(analysisSession) ?: error("Symbol $psi was not not restored correctly")
-                Assert.assertEquals(restored.psi!!, psi)
+            analyze(ktFile) {
+                pointers.forEach { (pointer, psi) ->
+                    val restored = pointer.restoreSymbol(this) ?: error("Symbol $psi was not not restored correctly")
+                    Assert.assertEquals(restored.psi!!, psi)
+                }
             }
         }
     }

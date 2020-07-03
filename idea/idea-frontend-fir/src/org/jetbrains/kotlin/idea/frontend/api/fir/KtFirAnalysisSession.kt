@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-class KtFirAnalysisSession(
+class KtFirAnalysisSession
+@Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
+constructor(
     private val element: KtElement
 ) : KtAnalysisSession(element.project) {
     internal val token get() = validityToken
