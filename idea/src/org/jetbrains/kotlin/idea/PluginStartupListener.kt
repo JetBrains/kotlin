@@ -10,6 +10,11 @@ import com.intellij.openapi.application.PathMacros
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.utils.PathUtil.kotlinPathsForIdeaPlugin
 
+/**
+ * Some actions have to be performed before loading and opening any project.
+ *
+ * E.g. path variables have to be registered in advance as modules could rely on some path variables.
+ */
 class PluginStartupListener : ApplicationInitializedListener {
 
     override fun componentsInitialized() {
