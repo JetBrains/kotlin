@@ -803,7 +803,6 @@ Finished executing task ':$taskName'|
 
             options.configurationCache.let {
                 add("-Dorg.gradle.unsafe.configuration-cache=$it")
-                add("-Dorg.gradle.unsafe.configuration-cache")
                 add("-Dorg.gradle.unsafe.configuration-cache-problems=fail")
             }
 
