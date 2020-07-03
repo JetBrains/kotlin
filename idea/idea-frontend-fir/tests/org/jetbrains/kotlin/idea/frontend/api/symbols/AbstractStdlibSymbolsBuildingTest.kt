@@ -9,6 +9,8 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyzeWithReadAction
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
@@ -35,9 +37,10 @@ abstract class AbstractStdlibSymbolsBuildingTest : KotlinLightCodeInsightFixture
         val symbolData = SymbolData.create(identifier)
 
         val renderedSymbols = executeOnPooledThreadInReadAction {
-            val analysisSession = KtFirAnalysisSession(fakeKtFile)
-            val symbols = symbolData.toSymbols(analysisSession)
-            symbols.map { DebugSymbolRenderer.render(it) }
+            analyze(fakeKtFile) {
+                val symbols = symbolData.toSymbols(this)
+                symbols.map { DebugSymbolRenderer.render(it) }
+            }
         }
 
         val actual = buildString {
@@ -49,8 +52,8 @@ abstract class AbstractStdlibSymbolsBuildingTest : KotlinLightCodeInsightFixture
             append(actualSymbolsData)
         }
         KotlinTestUtils.assertEqualsToFile(testDataFile, actual)
-
     }
+
 
     override fun getDefaultProjectDescriptor(): KotlinLightProjectDescriptor =
         KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
