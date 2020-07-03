@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,10 +14,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.hasBackingField
 import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.slicedMap.Slices
@@ -37,8 +41,25 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         if (!canBeSerializedInternally(descriptor, declaration, context.trace)) return
         if (declaration !is KtPureClassOrObject) return
         val props = buildSerializableProperties(descriptor, context.trace) ?: return
+        checkCorrectTransientAnnotationIsUsed(descriptor, props.serializableProperties, context.trace)
         checkTransients(declaration, context.trace)
         analyzePropertiesSerializers(context.trace, descriptor, props.serializableProperties)
+    }
+
+    private fun checkCorrectTransientAnnotationIsUsed(
+        descriptor: ClassDescriptor,
+        properties: List<SerializableProperty>,
+        trace: BindingTrace
+    ) {
+        if (descriptor.getSuperInterfaces().any { it.fqNameSafe.asString() == "java.io.Serializable" }) return // do not check
+        for (prop in properties) {
+            if (prop.transient) continue // correct annotation is used
+            val incorrectTransient = prop.descriptor.backingField?.annotations?.findAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)
+            if (incorrectTransient != null) {
+                val elementToReport = incorrectTransient.source.getPsi() ?: prop.descriptor.findPsi() ?: continue
+                trace.report(SerializationErrors.INCORRECT_TRANSIENT.on(elementToReport))
+            }
+        }
     }
 
     private fun canBeSerializedInternally(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace): Boolean {
