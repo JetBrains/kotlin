@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -23,11 +25,12 @@ abstract class AbstractSymbolsByPsiBuildingTest : KotlinLightCodeInsightFixtureT
         val ktFile = myFixture.configureByText(file.name, FileUtil.loadFile(file)) as KtFile
 
         val renderedSymbols = executeOnPooledThreadInReadAction {
-            val analysisSession = KtFirAnalysisSession(ktFile)
-            val declarationSymbols = ktFile.collectDescendantsOfType<KtDeclaration>().map { declaration ->
-                analysisSession.symbolProvider.getSymbol(declaration)
+            analyze(ktFile) {
+                val declarationSymbols = ktFile.collectDescendantsOfType<KtDeclaration>().map { declaration ->
+                    symbolProvider.getSymbol(declaration)
+                }
+                declarationSymbols.map(DebugSymbolRenderer::render)
             }
-            declarationSymbols.map(DebugSymbolRenderer::render)
         }
 
         val actual = buildString {

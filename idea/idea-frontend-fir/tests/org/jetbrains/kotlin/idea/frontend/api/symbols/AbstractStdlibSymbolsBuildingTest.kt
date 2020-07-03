@@ -35,9 +35,10 @@ abstract class AbstractStdlibSymbolsBuildingTest : KotlinLightCodeInsightFixture
         val symbolData = SymbolData.create(identifier)
 
         val renderedSymbols = executeOnPooledThreadInReadAction {
-            val analysisSession = KtFirAnalysisSession(fakeKtFile)
-            val symbols = symbolData.toSymbols(analysisSession)
-            symbols.map { DebugSymbolRenderer.render(it) }
+            analyze(fakeKtFile) {
+                val symbols = symbolData.toSymbols(this)
+                symbols.map { DebugSymbolRenderer.render(it) }
+            }
         }
 
         val actual = buildString {
@@ -49,6 +50,7 @@ abstract class AbstractStdlibSymbolsBuildingTest : KotlinLightCodeInsightFixture
             append(actualSymbolsData)
         }
         KotlinTestUtils.assertEqualsToFile(testDataFile, actual)
+    }
 
     }
 

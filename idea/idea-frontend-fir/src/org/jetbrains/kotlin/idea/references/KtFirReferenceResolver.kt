@@ -11,7 +11,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
+import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
 
 object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
     class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
@@ -22,8 +24,7 @@ object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
         if (ApplicationManager.getApplication().isDispatchThread) {
             throw ProcessCanceledException()
         }
-        val analysisSession = KtFirAnalysisSession(ref.expression)
-        val resolveToPsiElements = ref.getResolvedToPsi(analysisSession)
+        val resolveToPsiElements = analyze(ref.expression) { ref.getResolvedToPsi(this) }
         return resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()
     }
 }

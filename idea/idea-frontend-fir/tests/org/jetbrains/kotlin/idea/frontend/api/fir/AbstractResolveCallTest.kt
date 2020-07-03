@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.frontend.api.CallInfo
+import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
@@ -39,12 +40,13 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") KotlinLightCod
         }
 
         val actualText = executeOnPooledThreadInReadAction {
-            val analysisSession = KtFirAnalysisSession(file as KtFile)
-            val callInfos = elements.map { element ->
-                when (element) {
-                    is KtCallExpression -> analysisSession.resolveCall(element)
-                    is KtBinaryExpression -> analysisSession.resolveCall(element)
-                    else -> error("Selected should be either KtCallExpression or KtBinaryExpression but was $element")
+            val callInfos = analyze(file as KtFile) {
+                elements.map { element ->
+                    when (element) {
+                        is KtCallExpression -> resolveCall(element)
+                        is KtBinaryExpression -> resolveCall(element)
+                        else -> error("Selected should be either KtCallExpression or KtBinaryExpression but was $element")
+                    }
                 }
             }
 
