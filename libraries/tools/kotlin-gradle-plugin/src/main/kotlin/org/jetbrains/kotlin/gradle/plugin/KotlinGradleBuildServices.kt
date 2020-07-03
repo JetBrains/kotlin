@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.report.configureBuildReporter
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 
 
 //Support Gradle 6 and less. Move to
@@ -73,7 +73,7 @@ internal class KotlinGradleBuildServices private constructor(
 
             val gradle = project.gradle
             val services = KotlinGradleBuildServices(gradle)
-            if (isGradleVersionAtLeast(6, 1)) {
+            if (isConfigurationCacheAvailable(gradle)) {
                 listenerRegistryHolder.listenerRegistry!!.onTaskCompletion(kotlinGradleListenerProvider)
             } else {
                 gradle.addBuildListener(services)

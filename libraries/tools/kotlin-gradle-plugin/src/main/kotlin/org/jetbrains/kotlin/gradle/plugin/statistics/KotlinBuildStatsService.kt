@@ -14,7 +14,7 @@ import org.gradle.invocation.DefaultGradle
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.getLogger
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -108,7 +108,7 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
                             val kotlinBuildStatProvider = project.provider{ KotlinBuildStatListener(beanName) }
                             val newInstance = DefaultKotlinBuildStatsService(gradle, beanName)
 
-                            if (isGradleVersionAtLeast(6,1)) {
+                            if (isConfigurationCacheAvailable(gradle)) {
                                 listenerRegistryHolder.listenerRegistry!!.onTaskCompletion(kotlinBuildStatProvider)
                             }
 
@@ -117,7 +117,7 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
                             mbs.registerMBean(StandardMBean(newInstance, KotlinBuildStatsMXBean::class.java), beanName)
                         }
                     }
-                    if (!isGradleVersionAtLeast(6, 1)) {
+                    if (!isConfigurationCacheAvailable(gradle)) {
                         gradle.addBuildListener(instance)
                     }
                     instance

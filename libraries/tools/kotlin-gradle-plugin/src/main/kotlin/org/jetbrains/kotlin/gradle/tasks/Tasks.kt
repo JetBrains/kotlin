@@ -375,7 +375,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val isMultiplatform: Boolean = project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper }
 
     @get:Internal
-    internal val abstractKotlinCompileArgumentsContributor by project.provider { AbstractKotlinCompileArgumentsContributor(thisTaskProvider) }
+    internal val abstractKotlinCompileArgumentsContributor = AbstractKotlinCompileArgumentsContributor(thisTaskProvider)
 
     override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         abstractKotlinCompileArgumentsContributor.contributeArguments(
@@ -654,7 +654,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         }
 
     @get:Internal
-    private val absolutePathProvider = project.provider {project.projectDir.absolutePath}
+    private val absolutePathProvider = project.projectDir.absolutePath
 
     override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.KotlinOnly
@@ -679,7 +679,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         args.friendModules = friendDependencies.joinToString(File.pathSeparator)
 
         if (args.sourceMapBaseDirs == null && !args.sourceMapPrefix.isNullOrEmpty()) {
-            args.sourceMapBaseDirs = absolutePathProvider.get()
+            args.sourceMapBaseDirs = absolutePathProvider
         }
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
