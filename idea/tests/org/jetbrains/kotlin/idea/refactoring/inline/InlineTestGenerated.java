@@ -50,6 +50,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("idea/testData/refactoring/inline/function/ExtensionAndDispatchReceivers.kt");
         }
 
+        @TestMetadata("getOperator.kt")
+        public void testGetOperator() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/getOperator.kt");
+        }
+
         @TestMetadata("InStringTemplates.kt")
         public void testInStringTemplates() throws Exception {
             runTest("idea/testData/refactoring/inline/function/InStringTemplates.kt");
@@ -143,6 +148,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("Sequence.kt")
         public void testSequence() throws Exception {
             runTest("idea/testData/refactoring/inline/function/Sequence.kt");
+        }
+
+        @TestMetadata("setOperator.kt")
+        public void testSetOperator() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/setOperator.kt");
         }
 
         @TestMetadata("TypeArguments.kt")
