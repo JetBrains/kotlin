@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,7 +39,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Collection;
 
-@WithMutedInDatabaseRunTest
 public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightJavaCodeInsightFixtureTestCase {
     @NotNull
     @Override
@@ -97,10 +95,5 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightJav
 
     protected static VirtualFile getVirtualFile(@NotNull File file) {
         return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file);
-    }
-
-    @Override
-    protected void runTestRunnable(@NotNull ThrowableRunnable<Throwable> testRunnable) throws Throwable {
-        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTestRunnable(testRunnable));
     }
 }

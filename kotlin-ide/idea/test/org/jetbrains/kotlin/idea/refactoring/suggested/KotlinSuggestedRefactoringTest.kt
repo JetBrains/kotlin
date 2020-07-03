@@ -14,14 +14,12 @@ import com.intellij.refactoring.suggested.BaseSuggestedRefactoringTest
 import com.intellij.refactoring.suggested.SuggestedRefactoringExecution
 import com.intellij.refactoring.suggested.SuggestedRefactoringProviderImpl
 import com.intellij.refactoring.suggested._suggestedChangeSignatureNewParameterValuesForTests
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.test.runTest
 
 class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
     override val fileType: LanguageFileType
@@ -1573,10 +1571,6 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
             "usages",
             { myFixture.type(", p2: Int") }
         )
-    }
-
-    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-        runTest { super.runTestRunnable(testRunnable) }
     }
 
     private fun addImport(fqName: String) {

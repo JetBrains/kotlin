@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.RunnerFactoryWithMuteInDatabase
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
@@ -84,7 +83,6 @@ import java.util.zip.ZipFile
 
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 @RunWith(value = Parameterized::class)
-@Parameterized.UseParametersRunnerFactory(RunnerFactoryWithMuteInDatabase::class)
 abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
     protected var sdkCreationChecker : KotlinSdkCreationChecker? = null

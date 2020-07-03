@@ -1,7 +1,5 @@
 package org.jetbrains.kotlin.testGenerator.model
 
-import org.jetbrains.kotlin.test.MuteExtraSuffix
-
 interface TSuite {
     val abstractTestClass: Class<*>
     val generatedClassName: String
@@ -37,9 +35,4 @@ internal fun getDefaultSuiteTestClassName(clazz: Class<*>): String {
 
     require(simpleName.startsWith("Abstract")) { "Doesn't start with \"Abstract\": $simpleName" }
     return packageName + '.' + simpleName.substringAfter("Abstract") + "Generated"
-}
-
-fun MutableTSuite.muteExtraSuffix(suffix: String) {
-    annotations += TAnnotation<MuteExtraSuffix>(suffix)
-    imports += MuteExtraSuffix::class.java.name
 }

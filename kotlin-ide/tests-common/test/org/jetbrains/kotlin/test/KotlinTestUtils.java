@@ -633,23 +633,6 @@ public class KotlinTestUtils {
         runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIX), testCase, testDataFile);
     }
 
-    public static void runTest(@NotNull TestCase testCase, @NotNull Function0 test) {
-        //noinspection unchecked
-        MuteWithDatabaseKt.runTest(testCase, test);
-    }
-
-    public static void runTestWithThrowable(@NotNull TestCase testCase, @NotNull RunnableWithThrowable test) {
-        MuteWithDatabaseKt.runTest(testCase, () -> {
-            try {
-                test.run();
-            }
-            catch (Throwable throwable) {
-                throw new IllegalStateException(throwable);
-            }
-            return null;
-        });
-    }
-
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.
     // So only file paths passed to this parameter will be used in navigation actions, like "Navigate to testdata" and "Related Symbol..."
     public static void runTest(DoTest test, TestCase testCase, TargetBackend targetBackend, @TestDataFile String testDataFile) throws Exception {
@@ -676,38 +659,7 @@ public class KotlinTestUtils {
 
         String absoluteTestDataFilePath = new File(testRoot, testDataFilePath).getAbsolutePath();
 
-        if (!isRunTestOverridden(testCase)) {
-            Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
-                try {
-                    test.invoke(absoluteTestDataFilePath);
-                }
-                catch (Exception e) {
-                    throw new IllegalStateException(e);
-                }
-                return null;
-            });
-
-            if (wrapWithMuteInDatabase != null) {
-                wrapWithMuteInDatabase.invoke();
-                return;
-            }
-        }
-
-        DoTest wrappedTest = MuteWithFileKt.testWithMuteInFile(test, testCase);
-        wrappedTest.invoke(absoluteTestDataFilePath);
-    }
-
-    private static boolean isRunTestOverridden(TestCase testCase) {
-        Class<?> type = testCase.getClass();
-        while (type != null) {
-            for (Annotation annotation : type.getDeclaredAnnotations()) {
-                if (annotation.annotationType().equals(WithMutedInDatabaseRunTest.class)) {
-                    return true;
-                }
-            }
-            type = type.getSuperclass();
-        }
-        return false;
+        test.invoke(absoluteTestDataFilePath);
     }
 
     private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) throws Exception {

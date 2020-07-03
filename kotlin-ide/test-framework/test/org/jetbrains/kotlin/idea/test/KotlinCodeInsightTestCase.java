@@ -22,15 +22,12 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
 
 import static com.intellij.testFramework.RunAll.runAll;
-import static org.jetbrains.kotlin.test.MuteWithDatabaseKt.isIgnoredInDatabaseWithLog;
 
 /**
  * Please use KotlinLightCodeInsightFixtureTestCase as the base class for all new tests.
  */
-@WithMutedInDatabaseRunTest
 @Deprecated
 public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
     private Ref<Disposable> vfsDisposable;
@@ -47,10 +44,5 @@ public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
                 () -> super.tearDown(),
                 () -> KotlinTestUtils.disposeVfsRootAccess(vfsDisposable)
         );
-    }
-
-    @Override
-    protected void runTestRunnable(@NotNull ThrowableRunnable<Throwable> testRunnable) throws Throwable {
-        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTestRunnable(testRunnable));
     }
 }

@@ -15,12 +15,9 @@ import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.junit.internal.runners.JUnit38ClassRunner
-import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
-import org.jetbrains.kotlin.test.runTest
 import org.junit.runner.RunWith
 import kotlin.test.assertTrue
 
-@WithMutedInDatabaseRunTest
 @RunWith(JUnit38ClassRunner::class)
 class NavigateFromLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() {
     fun testJdkClass() {
@@ -37,22 +34,18 @@ class NavigateFromLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() 
 
     // This test is not exactly for navigation, but separating it to another class doesn't worth it.
     fun testLightClassForLibrarySource() {
-        runTest {
-            val navigationElement = navigationElementForReferenceInLibrarySource("usage.kt", "Foo")
-            assertTrue(navigationElement is KtClassOrObject, "Foo should navigate to JetClassOrObject")
-            val lightClass = navigationElement.toLightClass()
-            assertTrue(
-                lightClass is KtLightClassForDecompiledDeclaration,
-                "Light classes for decompiled declaration should be provided for library source"
-            )
-            assertEquals("Foo", lightClass.name)
-        }
+        val navigationElement = navigationElementForReferenceInLibrarySource("usage.kt", "Foo")
+        assertTrue(navigationElement is KtClassOrObject, "Foo should navigate to JetClassOrObject")
+        val lightClass = navigationElement.toLightClass()
+        assertTrue(
+            lightClass is KtLightClassForDecompiledDeclaration,
+            "Light classes for decompiled declaration should be provided for library source"
+        )
+        assertEquals("Foo", lightClass.name)
     }
 
     private fun checkNavigationFromLibrarySource(referenceText: String, targetFqName: String) {
-        runTest {
-            checkNavigationElement(navigationElementForReferenceInLibrarySource("usage.kt", referenceText), targetFqName)
-        }
+        checkNavigationElement(navigationElementForReferenceInLibrarySource("usage.kt", referenceText), targetFqName)
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {

@@ -22,8 +22,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.util.ThrowableRunnable
 import com.intellij.xdebugger.XDebugSession
-import org.jetbrains.idea.maven.aether.ArtifactKind
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
@@ -33,7 +31,7 @@ import org.jetbrains.kotlin.idea.debugger.test.util.KotlinOutputChecker
 import org.jetbrains.kotlin.idea.debugger.test.util.LogPropagator
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
@@ -45,7 +43,6 @@ internal const val TEST_LIBRARY_NAME = "TestLibrary"
 
 class TestFiles(val originalFile: File, val wholeFile: TestFile, files: List<TestFile>) : List<TestFile> by files
 
-@WithMutedInDatabaseRunTest
 abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     private lateinit var testAppDirectory: File
     private lateinit var sourcesOutputDirectory: File
@@ -244,9 +241,5 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         }
 
         return super.getData(dataId)
-    }
-
-    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-        runTest { super.runTestRunnable(testRunnable) }
     }
 }

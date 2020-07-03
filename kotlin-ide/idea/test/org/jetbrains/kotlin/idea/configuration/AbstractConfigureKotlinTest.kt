@@ -25,13 +25,10 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
-import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
-import org.jetbrains.kotlin.test.runTest
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
 
-@WithMutedInDatabaseRunTest
 abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     private var vfsDisposable: Ref<Disposable>? = null
 
@@ -133,10 +130,6 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     private fun assertNoFilesInDefaultPaths() {
         UsefulTestCase.assertDoesntExist(File(JAVA_CONFIGURATOR.getDefaultPathToJarFile(project)))
         UsefulTestCase.assertDoesntExist(File(JS_CONFIGURATOR.getDefaultPathToJarFile(project)))
-    }
-
-    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-        runTest { super.runTestRunnable(testRunnable) }
     }
 
     companion object {

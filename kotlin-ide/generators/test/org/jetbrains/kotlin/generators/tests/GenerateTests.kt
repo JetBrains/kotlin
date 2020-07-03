@@ -292,17 +292,14 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
 
         testClass<AbstractNavigateToLibrarySourceTest> {
-            muteExtraSuffix(".libsrc")
             model("decompiler/navigation/usercode")
         }
 
         testClass<AbstractNavigateJavaToLibrarySourceTest> {
-            muteExtraSuffix(".libsrc")
             model("decompiler/navigation/userJavaCode", pattern = "^(.+)\\.java$".toRegex())
         }
 
         testClass<AbstractNavigateToLibrarySourceTestWithJS> {
-            muteExtraSuffix(".libsrcjs")
             model("decompiler/navigation/usercode", testClassName = "UsercodeWithJSModule")
         }
 

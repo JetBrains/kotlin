@@ -53,14 +53,12 @@ import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@WithMutedInDatabaseRunTest
 public abstract class MavenImportingTestCase extends MavenTestCase {
     protected MavenProjectsTree myProjectsTree;
     protected MavenProjectsManager myProjectsManager;
@@ -102,11 +100,6 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
         finally {
             super.tearDown();
         }
-    }
-
-    @Override
-    protected void runTestRunnable(@NotNull ThrowableRunnable<Throwable> testRunnable) throws Throwable {
-        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTestRunnable(testRunnable));
     }
 
     protected void assertModules(String... expectedNames) {

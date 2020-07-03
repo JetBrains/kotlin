@@ -37,19 +37,15 @@ import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
-import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.ANNOTATION_OPTION
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.PLUGIN_ID
-import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
-import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
-import org.jetbrains.kotlin.test.runTest
 import org.junit.Assert.assertNotEquals
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import java.io.File
 
-@WithMutedInDatabaseRunTest
 @RunWith(JUnit38ClassRunner::class)
 open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
@@ -82,7 +78,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInProject()
     }
 
-    fun testLazyResolvers() = runTest {
+    fun testLazyResolvers() {
         val tracker = ResolverTracker()
 
         project.withServiceRegistered<ResolverForModuleComputationTracker, Unit>(tracker) {
@@ -117,7 +113,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         }
     }
 
-    fun testRecomputeResolversOnChange() = runTest {
+    fun testRecomputeResolversOnChange() {
         val tracker = ResolverTracker()
 
         project.withServiceRegistered<ResolverForModuleComputationTracker, Unit>(tracker) {

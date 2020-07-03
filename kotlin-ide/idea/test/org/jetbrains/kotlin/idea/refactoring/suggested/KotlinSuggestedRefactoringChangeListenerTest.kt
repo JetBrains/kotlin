@@ -10,14 +10,12 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.executeCommand
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.refactoring.suggested.BaseSuggestedRefactoringChangeListenerTest
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.test.runTest
 
 class KotlinSuggestedRefactoringChangeListenerTest : BaseSuggestedRefactoringChangeListenerTest() {
     override val fileType: FileType
@@ -385,10 +383,6 @@ class KotlinSuggestedRefactoringChangeListenerTest : BaseSuggestedRefactoringCha
             myFixture.type("new")
             commitAll()
         }
-    }
-
-    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-        runTest { super.runTestRunnable(testRunnable) }
     }
 
     private fun addImport(fqName: String) {

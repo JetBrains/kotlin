@@ -13,7 +13,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
 
 import java.io.File;
 
@@ -21,7 +20,6 @@ import static com.intellij.testFramework.RunAll.runAll;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getTestDataFileName;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getTestsRoot;
 
-@WithMutedInDatabaseRunTest
 abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     private Ref<Disposable> vfsDisposable;
 
@@ -57,10 +55,5 @@ abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     @Override
     protected @NotNull String getTestDataPath() {
         return getTestsRoot(getClass());
-    }
-
-    @Override
-    protected void runTestRunnable(@NotNull ThrowableRunnable<Throwable> testRunnable) throws Throwable {
-        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTestRunnable(testRunnable));
     }
 }

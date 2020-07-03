@@ -12,14 +12,12 @@ import com.intellij.openapi.command.executeCommand
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
+import com.intellij.refactoring.suggested.BaseSuggestedRefactoringChangeCollectorTest
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Parameter
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Signature
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import com.intellij.refactoring.suggested.BaseSuggestedRefactoringChangeCollectorTest
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.test.runTest
 
 class KotlinSuggestedRefactoringChangeCollectorTest : BaseSuggestedRefactoringChangeCollectorTest<KtNamedFunction>() {
     override val fileType: FileType
@@ -199,9 +197,5 @@ class KotlinSuggestedRefactoringChangeCollectorTest : BaseSuggestedRefactoringCh
             expectedOldSignature = "fun foo(p1: Int, p2: String, p3: Char)",
             expectedNewSignature = "fun foo(p1: Int (initialIndex = 0), p3New: Char (initialIndex = 2), p2: String (initialIndex = 1))"
         )
-    }
-
-    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-        runTest { super.runTestRunnable(testRunnable) }
     }
 }

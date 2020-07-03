@@ -16,19 +16,10 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.testFramework.TestApplicationManager
-import com.intellij.testFramework.replaceService
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
-import org.jetbrains.kotlin.jps.artifacts.JpsPluginTestArtifacts
-import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
-import org.jetbrains.kotlin.test.runTest
 
-@WithMutedInDatabaseRunTest
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     @Throws(Exception::class)
     override fun setUp() {
@@ -49,11 +40,5 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
 
     protected fun requireLibrary(library: KotlinJpsLibrary) = libraries.getOrPut(library.id) {
         library.create(myProject)
-    }
-
-    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
-        runTest {
-            super.runTestRunnable(testRunnable)
-        }
     }
 }
