@@ -148,8 +148,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     override fun isIdentifier(element: PsiElement?): Boolean = element != null && element.node.elementType == KtTokens.IDENTIFIER
 
     private fun ancestors(node: PsiElement?): List<PsiElement?> {
-        val family = mutableListOf<PsiElement?>(node)
-        repeat(5) { family.add(family.last()?.parent) }
+        val family = mutableListOf(node)
+        repeat(6) { family.add(family.last()?.parent) }
         return family.drop(1)
     }
 
@@ -242,7 +242,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             family[1] is KtValueArgument && family[2] is KtValueArgumentList -> true
             family[1] is KtBlockExpression && family[3] is KtDoWhileExpression -> true
             family[0] is KtNameReferenceExpression && family[1] is KtBlockExpression -> true
-            family[1] is KtUserType && family[4] is KtParameterList -> true
+            family[1] is KtUserType && family[4] is KtParameterList && family[5] !is KtNamedFunction -> true
             // Annotations
             family[1] is KtUserType && family[4] is KtAnnotationEntry -> true
             // Strings
