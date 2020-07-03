@@ -86,10 +86,10 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
                 return false // case with statement starting with '{' and call on the previous line
             }
 
-            return !isSemicolonAllowed(semicolon)
+            return !isSemicolonRequired(semicolon)
         }
 
-        private fun isSemicolonAllowed(semicolon: PsiElement): Boolean {
+        private fun isSemicolonRequired(semicolon: PsiElement): Boolean {
             if (isRequiredForCompanion(semicolon)) {
                 return true
             }
@@ -99,7 +99,7 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
 
             if (prevSibling.safeAs<KtNameReferenceExpression>()?.text in softModifierKeywords && nextSibling is KtDeclaration) {
                 // enum; class Foo
-                return false
+                return true
             }
 
             if (nextSibling is KtPrefixExpression && nextSibling.operationToken == KtTokens.EXCL) {
