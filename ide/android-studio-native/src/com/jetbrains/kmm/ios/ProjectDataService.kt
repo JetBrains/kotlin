@@ -5,6 +5,7 @@
 
 package com.jetbrains.kmm.ios
 
+import com.intellij.execution.RunManager
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider
@@ -31,8 +32,21 @@ class ProjectDataService : ProjectDataServiceBase() {
         modelsProvider: IdeModelsProvider
     ) {
         super.onSuccessImport(imported, projectData, project, modelsProvider)
-        readGradleProperty(project, KonanBundle.message("property.xcodeproj"))?.let {
-            getWorkspace(project).locateXCProject(it)
+        readGradleProperty(project, KonanBundle.message("property.xcodeproj"))?.let { path ->
+            val workspace = getWorkspace(project)
+            workspace.locateXCProject(path)
+            workspace.xcProjectFile?.projectName?.let { projectName ->
+                createDefaultAppleRunConfiguration(projectName, project)
+            }
+        }
+    }
+
+    private fun createDefaultAppleRunConfiguration(name: String, project: Project) {
+        val runManager = RunManager.getInstance(project)
+        if (runManager.findConfigurationByTypeAndName(AppleRunConfigurationType.ID, name) == null) {
+            runManager.addConfiguration(
+                runManager.createConfiguration(name, AppleRunConfigurationType::class.java)
+            )
         }
     }
 }

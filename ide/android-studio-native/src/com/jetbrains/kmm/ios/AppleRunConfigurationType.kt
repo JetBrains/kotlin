@@ -12,13 +12,17 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 
 class AppleRunConfigurationType : ConfigurationTypeBase(
-    "MobileRunConfiguration",
+    ID,
     "Mobile App",
     "Mobile Application",
     AllIcons.RunConfigurations.Application
 ) {
     init {
         addFactory(AppleConfigurationFactory(this))
+    }
+
+    companion object {
+        const val ID = "KmmRunConfiguration"
     }
 }
 
