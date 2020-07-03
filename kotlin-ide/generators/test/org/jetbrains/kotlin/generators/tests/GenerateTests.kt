@@ -900,8 +900,12 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("symbolsByPsi")
         }
 
-        testClass<AbstractStdlibSymbolsBuildingTest> {
-            model("stdLibSymbols", pattern = TXT)
+        testClass<AbstractSymbolsByFqNameBuildingTest> {
+            model("symbolsByFqName", extension = "txt")
+        }
+
+        testClass<AbstractMemberScopeByFqNameTest> {
+            model("memberScopeByFqName", extension = "txt")
         }
 
         testClass<AbstractSymbolPointerTest> {

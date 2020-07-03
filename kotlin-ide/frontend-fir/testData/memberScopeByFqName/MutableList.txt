@@ -1,0 +1,312 @@
+class: kotlin/collections/MutableList
+
+// SYMBOLS:
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.add
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: add
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(element)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.add
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: add
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Unit
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index), KtFirFunctionValueParameterSymbol(element)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.addAll
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: addAll
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index), KtFirFunctionValueParameterSymbol(elements)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.addAll
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: addAll
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.clear
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: clear
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.listIterator
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: listIterator
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/collections/MutableListIterator<E>
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.listIterator
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: listIterator
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/collections/MutableListIterator<E>
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.remove
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: remove
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(element)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.removeAll
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: removeAll
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.removeAt
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: removeAt
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: E
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.retainAll
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: retainAll
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.set
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: ABSTRACT
+  name: set
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: E
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index), KtFirFunctionValueParameterSymbol(element)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.subList
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: subList
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/collections/MutableList<E>
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(fromIndex), KtFirFunctionValueParameterSymbol(toIndex)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.contains
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: ABSTRACT
+  name: contains
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(element)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.containsAll
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: containsAll
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.get
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: ABSTRACT
+  name: get
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: E
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.indexOf
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: indexOf
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(element)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.List.isEmpty
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: isEmpty
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.iterator
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: ABSTRACT
+  name: iterator
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/collections/MutableIterator<E>
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.collections.MutableList.lastIndexOf
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: lastIndexOf
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(element)]
+
+KtFirPropertySymbol:
+  fqName: kotlin.collections.List.size
+  isExtension: false
+  isVal: true
+  modality: ABSTRACT
+  name: size
+  origin: LIBRARY
+  receiverType: kotlin/Int
+  symbolKind: MEMBER
+  type: kotlin/Int
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Any.equals
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: OPEN
+  name: equals
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Any.hashCode
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: hashCode
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Any.toString
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toString
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: []
