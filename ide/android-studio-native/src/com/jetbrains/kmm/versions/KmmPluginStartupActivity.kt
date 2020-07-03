@@ -12,6 +12,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.text.StringUtilRt
+import com.jetbrains.kmm.KMM_LOG
 import com.jetbrains.kmm.versions.KmmCompatibilityChecker.CompatibilityCheckResult.*
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.KotlinPluginVersion
@@ -22,9 +23,18 @@ class KmmPluginStartupActivity : StartupActivity.DumbAware {
     }
 }
 
-
 object KmmCompatibilityChecker {
     fun checkCompatibilityAgainstBigKotlin(project: Project) {
+        KMM_LOG.debug(
+            """
+                KmmCompatibilityChecker
+                Kotlin Plugin version: ${KotlinPluginUtil.getPluginVersion()}
+                Compiled against Kotlin: ${MobileMultiplatformPluginVersionsInfo.compiledAgainstKotlin}
+                KMM Plugin version: ${MobileMultiplatformPluginVersionsInfo.pluginVersion}
+            """.trimIndent()
+        )
+        if (MobileMultiplatformPluginVersionsInfo.isDevelopment()) return
+
         val actualKotlinPluginVersion = KotlinPluginVersion.parse(KotlinPluginUtil.getPluginVersion()) ?: return
         val compiledAgainstKotlinVersion = KotlinPluginVersion.parse(MobileMultiplatformPluginVersionsInfo.compiledAgainstKotlin) ?: return
 
