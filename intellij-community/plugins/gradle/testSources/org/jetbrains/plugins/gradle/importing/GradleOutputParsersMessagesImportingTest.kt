@@ -56,12 +56,12 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
       currentGradleVersion < GradleVersion.version("2.14") -> expectedExecutionTree =
         "-\n" +
         " -failed\n" +
-        "  -impl/build.gradle\n" +
+        "  -build.gradle\n" +
         "   Could not find method ghostConf() for arguments [project ':api'] on project ':impl'"
       else -> expectedExecutionTree =
         "-\n" +
         " -failed\n" +
-        "  -impl/build.gradle\n" +
+        "  -build.gradle\n" +
         "   Could not find method ghostConf() for arguments [project ':api'] on object of type org.gradle.api.internal.artifacts.dsl.dependencies.DefaultDependencyHandler"
     }
     assertSyncViewTreeEquals(expectedExecutionTree)
