@@ -76,6 +76,14 @@ class JvmMappedScope(
         declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
     }
 
+    override fun getCallableNames(): Set<Name> {
+        return declaredMemberScope.getCallableNames()
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return declaredMemberScope.getClassifierNames()
+    }
+
     companion object {
         data class Signatures(val whiteListSignaturesByName: Map<Name, Set<String>>, val constructorBlackList: Set<String>) {
             fun isEmpty() = whiteListSignaturesByName.isEmpty() && constructorBlackList.isEmpty()

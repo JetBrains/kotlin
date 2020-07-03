@@ -521,6 +521,14 @@ class FirClassSubstitutionScope(
             processor(constructor)
         }
     }
+
+    override fun getCallableNames(): Set<Name> {
+        return useSiteMemberScope.getCallableNames()
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return useSiteMemberScope.getClassifierNames()
+    }
 }
 
 // Unlike other cases, return types may be implicit, i.e. unresolved
