@@ -74,6 +74,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
@@ -91,6 +92,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderContext;
 import java.awt.image.renderable.RenderableImage;
 import java.awt.image.renderable.RenderableImageProducer;
+import java.io.IOException;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
@@ -1170,7 +1172,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
       private Image getImage() {
         if (!myImageLoaded) {
-          Image image = ImageLoader.loadFromUrl(imageUrl);
+          Image image = loadImageFromUrl();
           myImage = ImageUtil.toBufferedImage(image != null ?
                                               image :
                                               ((ImageIcon)UIManager.getLookAndFeelDefaults().get("html.missingImage")).getImage());
@@ -1178,6 +1180,26 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
         }
         return myImage;
       }
+
+      @Nullable
+      private Image loadImageFromUrl() {
+        Image image = ImageLoader.loadFromUrl(imageUrl);
+        if (image != null &&
+            image.getWidth(null) > 0 &&
+            image.getHeight(null) > 0) {
+          return image;
+        }
+        try {
+          BufferedImage direct = ImageIO.read(imageUrl);
+          if (direct != null) return direct;
+        }
+        catch (IOException e) {
+          //ignore
+        }
+
+        return image;
+      }
+
     }, null));
   }
 
