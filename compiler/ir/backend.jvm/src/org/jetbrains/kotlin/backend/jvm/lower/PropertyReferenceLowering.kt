@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companio
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.calculateOwnerKClass
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.Companion.kClassToJavaClass
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isInlineClassFieldGetter
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -119,7 +120,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     // private properties in multifile-part classes.
                     val needsDummySignature =
                         getter.owner.correspondingPropertySymbol?.owner?.needsAccessor(getter.owner) == false ||
-                                getter.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR && getter.owner.parentAsClass.isInline
+                                // Internal underlying vals of inline classes have no getter method
+                                getter.owner.isInlineClassFieldGetter && getter.owner.visibility == Visibilities.INTERNAL
 
                     putValueArgument(
                         0,
