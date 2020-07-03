@@ -311,7 +311,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
 
   @Override
   public String getParentGroup() {
-    return JavaModuleType.BUILD_TOOLS_GROUP;
+    return JavaModuleType.JAVA_GROUP;
   }
 
   @Override
