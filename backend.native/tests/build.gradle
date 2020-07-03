@@ -4113,7 +4113,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
                         }
 
                         extraOpts fr.bitcode ? "-Xembed-bitcode" : "-Xembed-bitcode-marker"
-                        extraOpts fr.isStatic ? "-Xstatic-framework" : ""
+                        if (fr.isStatic) extraOpts "-Xstatic-framework"
                         extraOpts fr.opts
                         extraOpts project.globalTestArgs
 
