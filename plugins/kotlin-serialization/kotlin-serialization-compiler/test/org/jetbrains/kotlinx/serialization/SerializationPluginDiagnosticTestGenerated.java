@@ -25,12 +25,24 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     }
 
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(
+                                                                            "plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null,
+                                                                    true);
     }
 
     @TestMetadata("DuplicateSerialName.kt")
     public void testDuplicateSerialName() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/DuplicateSerialName.kt");
+    }
+
+    @TestMetadata("IncorrectTransient.kt")
+    public void testIncorrectTransient() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/IncorrectTransient.kt");
+    }
+
+    @TestMetadata("IncorrectTransient2.kt")
+    public void testIncorrectTransient2() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/IncorrectTransient2.kt");
     }
 
     @TestMetadata("LazyRecursionBug.kt")
