@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
@@ -515,10 +514,14 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             is KtFunctionType, is KtCatchClause -> myMatchingVisitor.match(parameter.typeReference, other.typeReference)
             else -> matchTypeReferenceWithDeclaration(parameter.typeReference, other)
         }
+        val otherNameIdentifier = if (getHandler(parameter) is SubstitutionHandler
+            && parameter.nameIdentifier != null
+            && other.nameIdentifier == null
+        ) other else other.nameIdentifier
         myMatchingVisitor.result = typeMatched
                 && myMatchingVisitor.match(parameter.defaultValue, other.defaultValue)
                 && myMatchingVisitor.match(parameter.valOrVarKeyword, other.valOrVarKeyword)
-                && matchTextOrVariable(parameter.nameIdentifier, other.nameIdentifier)
+                && matchTextOrVariable(parameter.nameIdentifier, otherNameIdentifier)
                 && myMatchingVisitor.match(parameter.modifierList, other.modifierList)
                 && myMatchingVisitor.match(parameter.destructuringDeclaration, other.destructuringDeclaration)
 
