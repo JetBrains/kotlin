@@ -144,20 +144,17 @@ open class KotlinJsProjectExtension :
                 KotlinJsCompilerType.LEGACY -> legacyPreset
                     .also {
                         it.irPreset = null
-                        KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "legacy")
                     }
                     .createTarget("js")
                 KotlinJsCompilerType.IR -> irPreset
                     .also {
                         it.mixedMode = false
-                        KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "ir")
                     }
                     .createTarget("js")
                 KotlinJsCompilerType.BOTH -> legacyPreset
                     .also {
                         irPreset.mixedMode = true
                         it.irPreset = irPreset
-                        KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "both")
                     }
                     .createTarget(
                         lowerCamelCaseName(
