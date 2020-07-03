@@ -1,9 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.plugins.gradle.settings.GradleSettings
-import org.jetbrains.plugins.gradle.settings.GradleSystemSettings
 import org.junit.Test
 
 @Suppress("GrUnresolvedAccess")
@@ -50,7 +49,7 @@ class GradleJavaOutputParsersMessagesImportingTest : GradleOutputParsersMessages
         "  :api:classes\n" +
         "  :api:jar\n" +
         "  -:impl:compileJava\n" +
-        "   -impl/src/main/java/my/pack/App.java\n" +
+        "   -App.java\n" +
         "    uses or overrides a deprecated API.\n" +
         "  :impl:processResources\n" +
         "  :impl:classes"
@@ -63,7 +62,7 @@ class GradleJavaOutputParsersMessagesImportingTest : GradleOutputParsersMessages
         "  :api:jar\n" +
         "  :impl:compileJava\n" +
         "  :impl:processResources\n" +
-        "  -impl/src/main/java/my/pack/App.java\n" +
+        "  -App.java\n" +
         "   uses or overrides a deprecated API.\n" +
         "  :impl:classes"
     }
@@ -75,14 +74,14 @@ class GradleJavaOutputParsersMessagesImportingTest : GradleOutputParsersMessages
         "-\n" +
         " -failed\n" +
         "  -:brokenProject:compileJava\n" +
-        "   -brokenProject/src/main/java/my/pack/App2.java\n" +
+        "   -App2.java\n" +
         "    ';' expected\n" +
         "    invalid method declaration; return type required"
       else -> expectedExecutionTree =
         "-\n" +
         " -failed\n" +
         "  :brokenProject:compileJava\n" +
-        "  -brokenProject/src/main/java/my/pack/App2.java\n" +
+        "  -App2.java\n" +
         "   ';' expected\n" +
         "   invalid method declaration; return type required"
     }
