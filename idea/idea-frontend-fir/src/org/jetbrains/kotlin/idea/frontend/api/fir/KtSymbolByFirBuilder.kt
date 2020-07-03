@@ -11,7 +11,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
 
 /**
@@ -87,7 +87,10 @@ internal class KtSymbolByFirBuilder(
     fun buildFirConstructorParameter(fir: FirValueParameterImpl) =
         symbolsCache.cache(fir) { KtFirConstructorValueParameterSymbol(fir, token, this) }
 
-    fun buildFunctionSymbol(fir: FirSimpleFunction) = symbolsCache.cache(fir) { KtFirFunctionSymbol(fir, token, this) }
+    fun buildFunctionSymbol(fir: FirSimpleFunction, forcedOrigin: FirDeclarationOrigin? = null) = symbolsCache.cache(fir) {
+        KtFirFunctionSymbol(fir, token, this, forcedOrigin)
+    }
+
     fun buildConstructorSymbol(fir: FirConstructor) = symbolsCache.cache(fir) { KtFirConstructorSymbol(fir, token, this) }
     fun buildTypeParameterSymbol(fir: FirTypeParameter) = symbolsCache.cache(fir) { KtFirTypeParameterSymbol(fir, token) }
 
@@ -96,10 +99,10 @@ internal class KtSymbolByFirBuilder(
     fun buildFieldSymbol(fir: FirField) = symbolsCache.cache(fir) { KtFirJavaFieldSymbol(fir, token, this) }
     fun buildAnonymousFunctionSymbol(fir: FirAnonymousFunction) = symbolsCache.cache(fir) { KtFirAnonymousFunctionSymbol(fir, token, this) }
 
-    fun buildVariableSymbol(fir: FirProperty): KtVariableSymbol = symbolsCache.cache(fir) {
+    fun buildVariableSymbol(fir: FirProperty, forcedOrigin: FirDeclarationOrigin? = null): KtVariableSymbol = symbolsCache.cache(fir) {
         when {
             fir.isLocal -> KtFirLocalVariableSymbol(fir, token, this)
-            else -> KtFirPropertySymbol(fir, token, this)
+            else -> KtFirPropertySymbol(fir, token, this, forcedOrigin)
         }
     }
 
