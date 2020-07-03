@@ -43,11 +43,8 @@ constructor(
     private val realExternalDependencies: Collection<NpmDependency>
         get() = compilationResolution.externalNpmDependencies
 
-    @Input
-    var skipOnEmptyNpmDependencies: Boolean = false
-
     @get:OutputFile
-    var packageJson: File by property {
+    var packageJsonFile: File by property {
         project.buildDir
             .resolve("tmp")
             .resolve(npmProject.publicPackageJsonTaskName)
@@ -57,9 +54,6 @@ constructor(
     @TaskAction
     fun resolve() {
         packageJson(npmProject, realExternalDependencies).let { packageJson ->
-            if (skipOnEmptyNpmDependencies && packageJson.skipRequired()) {
-                return
-            }
 
             packageJson.apply {
                 listOf(
@@ -71,7 +65,7 @@ constructor(
 
             packageJson.devDependencies.clear()
 
-            packageJson.saveTo(this@PublicPackageJsonTask.packageJson)
+            packageJson.saveTo(this@PublicPackageJsonTask.packageJsonFile)
         }
     }
 
@@ -88,13 +82,6 @@ constructor(
             this[key] = version
         }
     }
-
-    private fun PackageJson.skipRequired() =
-        dependencies.isEmpty() &&
-                peerDependencies.isEmpty() &&
-                optionalDependencies.isEmpty() &&
-                optionalDependencies.isEmpty() &&
-                bundledDependencies.isEmpty()
 
     companion object {
         const val NAME = "publicPackageJson"
