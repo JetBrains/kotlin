@@ -94,7 +94,7 @@ future.consume {
   concurrent threads, if the worker mechanisms are insufficient for a particular task. Note, that object detachment
   may require explicit leaving function holding object references and then performing cyclic garbage collection.
   For example, code like:
-```$kotlin
+```kotlin
 val graph = DetachedObjectGraph {
     val map = mutableMapOf<String, String>()
     for (entry in map.entries) {
@@ -104,7 +104,7 @@ val graph = DetachedObjectGraph {
 }
 ```
   will not work as expected and will throw runtime exception, as there are uncollected cycles in the detached graph, while:
-```$kotlin
+```kotlin
 val graph = DetachedObjectGraph {
     {
      val map = mutableMapOf<String, String>()
