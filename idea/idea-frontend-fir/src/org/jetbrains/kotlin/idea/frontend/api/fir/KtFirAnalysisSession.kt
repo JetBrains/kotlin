@@ -46,9 +46,15 @@ constructor(
 
     internal val firSession get() = LowLevelFirApiFacade.getSessionFor(element, firResolveState)
 
+    private val typeCheckerContext = ConeTypeCheckerContext(
+        isErrorTypeEqualsToAnything = true,
+        isStubTypeEqualsToAnything = true,
+        firSession
+    )
+
     internal val firSymbolBuilder = KtSymbolByFirBuilder(
         firSession.firSymbolProvider,
-        ConeTypeCheckerContext(isErrorTypeEqualsToAnything = true, isStubTypeEqualsToAnything = true, firSession),
+        typeCheckerContext,
         element.project,
         validityToken
     )

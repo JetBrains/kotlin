@@ -17,7 +17,7 @@ internal interface KtFirSymbol<F : FirDeclaration> : KtSymbol, ValidityOwnerByVa
     override val origin: KtSymbolOrigin get() = withValidityAssertion { fir.origin.asKtSymbolOrigin() }
 }
 
-private fun FirDeclarationOrigin.asKtSymbolOrigin() = when (this) {
+internal fun FirDeclarationOrigin.asKtSymbolOrigin() = when (this) {
     FirDeclarationOrigin.Source -> KtSymbolOrigin.SOURCE
     FirDeclarationOrigin.Library -> KtSymbolOrigin.LIBRARY
     FirDeclarationOrigin.Java -> KtSymbolOrigin.JAVA
@@ -26,7 +26,7 @@ private fun FirDeclarationOrigin.asKtSymbolOrigin() = when (this) {
     FirDeclarationOrigin.FakeOverride -> throw InvalidFirDeclarationOriginForSymbol(this)
     FirDeclarationOrigin.ImportedFromObject -> throw InvalidFirDeclarationOriginForSymbol(this)
     FirDeclarationOrigin.IntersectionOverride -> throw InvalidFirDeclarationOriginForSymbol(this)
-    FirDeclarationOrigin.Enhancement -> throw InvalidFirDeclarationOriginForSymbol(this)
+    FirDeclarationOrigin.Enhancement -> KtSymbolOrigin.JAVA // TODO
     is FirDeclarationOrigin.Plugin -> throw InvalidFirDeclarationOriginForSymbol(this)
 }
 

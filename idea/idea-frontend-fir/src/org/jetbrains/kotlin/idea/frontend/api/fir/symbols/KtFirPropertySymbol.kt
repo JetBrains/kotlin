@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.idea.fir.findPsi
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -24,7 +26,8 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirPropertySymbol(
     fir: FirProperty,
     override val token: ValidityOwner,
-    private val builder: KtSymbolByFirBuilder
+    private val builder: KtSymbolByFirBuilder,
+    private val forcedOrigin: FirDeclarationOrigin?
 ) : KtPropertySymbol(), KtFirSymbol<FirProperty> {
     init {
         assert(!fir.isLocal)
@@ -32,6 +35,8 @@ internal class KtFirPropertySymbol(
 
     override val fir: FirProperty by weakRef(fir)
     override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
+
+    override val origin: KtSymbolOrigin get() = withValidityAssertion { forcedOrigin?.asKtSymbolOrigin() ?: super.origin }
 
     override val fqName: FqName get() = withValidityAssertion { fir.symbol.callableId.asFqNameForDebugInfo() }
     override val isVal: Boolean get() = withValidityAssertion { fir.isVal }
