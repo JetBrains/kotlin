@@ -60,12 +60,12 @@ private fun Task.getIsIncremental(): Boolean? {
     return null
 }
 
-private fun Task.getPureKotlinSourceRoots(sourceSet: String): List<File>? {
+private fun Task.getPureKotlinSourceRoots(sourceSet: String, classifier: String? = null): List<File>? {
     try {
         val kotlinExtensionClass = project.extensions.findByType(javaClass.classLoader.loadClass(kotlinProjectExtensionClass))
         val getKotlinMethod = javaClass.classLoader.loadClass(kotlinSourceSetClass).getMethod("getKotlin")
         val kotlinSourceSet = (kotlinExtensionClass?.javaClass?.getMethod("getSourceSets")?.invoke(kotlinExtensionClass)
-                as? FactoryNamedDomainObjectContainer<Any>)?.asMap?.get(sourceSet) ?: return null
+                as? FactoryNamedDomainObjectContainer<Any>)?.asMap?.get(compilationFullName(sourceSet, classifier)) ?: return null
         val javaSourceSet =
             (project.convention.getPlugin(JavaPluginConvention::class.java) as JavaPluginConvention).sourceSets.asMap[sourceSet]
         val pureJava = javaSourceSet?.java?.srcDirs
@@ -89,16 +89,16 @@ private fun Task.getKotlinPluginVersion(): String? {
     return null
 }
 
-fun KotlinTaskPropertiesBySourceSet.acknowledgeTask(compileTask: Task) {
+fun KotlinTaskPropertiesBySourceSet.acknowledgeTask(compileTask: Task, classifier: String?) {
     this[compileTask.getSourceSetName()] =
-        getKotlinTaskProperties(compileTask)
+        getKotlinTaskProperties(compileTask, classifier)
 }
 
-fun getKotlinTaskProperties(compileTask: Task): KotlinTaskPropertiesImpl {
+fun getKotlinTaskProperties(compileTask: Task, classifier: String?): KotlinTaskPropertiesImpl {
     return KotlinTaskPropertiesImpl(
         compileTask.getIsIncremental(),
         compileTask.getPackagePrefix(),
-        compileTask.getPureKotlinSourceRoots(compileTask.getSourceSetName()),
+        compileTask.getPureKotlinSourceRoots(compileTask.getSourceSetName(), classifier),
         compileTask.getKotlinPluginVersion()
     )
 }
