@@ -161,9 +161,8 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
         sourceFoldersToChange.computeIfAbsent(sourceFolder.module) { ArrayList() }.add(Pair(sourceFolderFile, sourceFolder))
         removeSourceFolder(sourceFolder.url)
       }
-
-      updateSourceFolders(sourceFoldersToChange)
     }
+    updateSourceFolders(sourceFoldersToChange)
   }
 
   private fun updateSourceFolders(sourceFoldersToChange: Map<Module, List<Pair<VirtualFile, SourceFolderModel>>>) {
