@@ -1,0 +1,795 @@
+class: kotlin/Int
+
+// SYMBOLS:
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.and
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: FINAL
+  name: and
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.compareTo
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: compareTo
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.compareTo
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: compareTo
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.compareTo
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: compareTo
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.compareTo
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: OPEN
+  name: compareTo
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.compareTo
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: compareTo
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.compareTo
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: compareTo
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.dec
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: dec
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.div
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: div
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.div
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: div
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Double
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.div
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: div
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Float
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.div
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: div
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.div
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: div
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Long
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.div
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: div
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.inc
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: inc
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.inv
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: FINAL
+  name: inv
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.minus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: minus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.minus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: minus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Double
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.minus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: minus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Float
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.minus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: minus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.minus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: minus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Long
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.minus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: minus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.or
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: FINAL
+  name: or
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.plus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: plus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.plus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: plus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Double
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.plus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: plus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Float
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.plus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: plus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.plus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: plus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Long
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.plus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: plus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.rangeTo
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: rangeTo
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/ranges/IntRange
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.rangeTo
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: rangeTo
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/ranges/IntRange
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.rangeTo
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: rangeTo
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/ranges/LongRange
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.rangeTo
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: rangeTo
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/ranges/IntRange
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.rem
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: rem
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.rem
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: rem
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Double
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.rem
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: rem
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Float
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.rem
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: rem
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.rem
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: rem
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Long
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.rem
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: rem
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.shl
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: FINAL
+  name: shl
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.shr
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: FINAL
+  name: shr
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.times
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: times
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.times
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: times
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Double
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.times
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: times
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Float
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.times
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: times
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.times
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: times
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Long
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.times
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: times
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.toByte
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toByte
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Byte
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.toChar
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toChar
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Char
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.toDouble
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toDouble
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Double
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.toFloat
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toFloat
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Float
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.toInt
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toInt
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.toLong
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toLong
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Long
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.toShort
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toShort
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Short
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.unaryMinus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: unaryMinus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.unaryPlus
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: FINAL
+  name: unaryPlus
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.ushr
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: FINAL
+  name: ushr
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Int.xor
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: FINAL
+  name: xor
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Any.equals
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: OPEN
+  name: equals
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(other)]
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Any.hashCode
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: hashCode
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  fqName: kotlin.Any.toString
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toString
+  origin: LIBRARY
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: []

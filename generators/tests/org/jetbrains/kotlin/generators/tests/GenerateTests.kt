@@ -90,7 +90,8 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolve
 import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractStdlibSymbolsBuildingTest
+import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractMemberScopeByFqNameTest
+import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByFqNameBuildingTest
 import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolPointerTest
 import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByPsiBuildingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
@@ -961,8 +962,12 @@ fun main(args: Array<String>) {
                 model("symbolsByPsi")
             }
 
-            testClass<AbstractStdlibSymbolsBuildingTest> {
-                model("stdLibSymbols", extension = "txt")
+            testClass<AbstractSymbolsByFqNameBuildingTest> {
+                model("symbolsByFqName", extension = "txt")
+            }
+
+            testClass<AbstractMemberScopeByFqNameTest> {
+                model("memberScopeByFqName", extension = "txt")
             }
 
             testClass<AbstractSymbolPointerTest> {
