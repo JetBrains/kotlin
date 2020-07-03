@@ -15,9 +15,9 @@ class ReadOnlyWeakRef<V : Any>(value: V, val validityOwner: ValidityOwner) {
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun getValue(thisRef: Any, property: KProperty<*>): V =
         weakRef.get() ?: if (validityOwner.isValid()) {
-            error("Cone type was garbage collected while analysis session is still valid")
+            error("Value of $property was garbage collected while analysis session is still valid")
         } else {
-            error("Accessing the invalid coneType")
+            error("Accessing the invalid value of $property")
         }
 }
 
