@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.idea.core.script.ucache.ScriptClassRootsBuilder
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsContributor
 import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
+import org.jetbrains.kotlin.idea.scripting.gradle.scriptingDebugLog
+import org.jetbrains.kotlin.idea.scripting.gradle.scriptingErrorLog
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -43,6 +45,7 @@ sealed class GradleBuildRoot(
         get() = LocalFileSystem.getInstance().findFileByPath(pathPrefix)
 
     fun saveLastModifiedFiles() {
+        scriptingDebugLog { "LasModifiedFiles saved: $lastModifiedFiles" }
         LastModifiedFiles.write(dir ?: return, lastModifiedFiles)
     }
 
