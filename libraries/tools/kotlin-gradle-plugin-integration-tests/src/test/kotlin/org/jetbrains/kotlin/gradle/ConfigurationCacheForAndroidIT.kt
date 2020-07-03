@@ -15,7 +15,7 @@ import kotlin.test.fail
 
 class ConfigurationCacheForAndroidIT : BaseGradleIT() {
     private val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v4_1_ALPHA_10
+        get() = AGPVersion.v4_1_0
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
