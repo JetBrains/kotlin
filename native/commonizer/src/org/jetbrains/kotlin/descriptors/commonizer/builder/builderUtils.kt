@@ -27,7 +27,6 @@ internal fun List<CirTypeParameter>.buildDescriptorsAndTypeParameterResolver(
     val ownTypeParameters = mutableListOf<TypeParameterDescriptor>()
 
     val typeParameterResolver = TypeParameterResolverImpl(
-        storageManager = targetComponents.storageManager,
         ownTypeParameters = ownTypeParameters,
         parent = parentTypeParameterResolver
     )
@@ -120,9 +119,8 @@ internal fun CirSimpleType.buildType(
             }
         }
         is CirClassifierId.TypeParameter -> {
-            val name = classifierId.name
-            typeParameterResolver.resolve(name)
-                ?: error("Type parameter $name not found in ${typeParameterResolver::class.java}, $typeParameterResolver for ${targetComponents.target}")
+            typeParameterResolver.resolve(classifierId.index)
+                ?: error("Type parameter $classifierId not found in ${typeParameterResolver::class.java}, $typeParameterResolver for ${targetComponents.target}")
         }
     }
 

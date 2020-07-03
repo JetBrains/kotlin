@@ -184,27 +184,36 @@ fun CirRootNode.createGlobalBuilderComponents(
 }
 
 interface TypeParameterResolver {
-    fun resolve(name: Name): TypeParameterDescriptor?
+    val parametersCount: Int
+    fun resolve(index: Int): TypeParameterDescriptor?
 
     companion object {
         val EMPTY = object : TypeParameterResolver {
-            override fun resolve(name: Name): TypeParameterDescriptor? = null
+            override val parametersCount get() = 0
+            override fun resolve(index: Int): TypeParameterDescriptor? = null
         }
     }
 }
 
 class TypeParameterResolverImpl(
-    storageManager: StorageManager,
-    ownTypeParameters: List<TypeParameterDescriptor>,
+    private val ownTypeParameters: List<TypeParameterDescriptor>,
     private val parent: TypeParameterResolver = TypeParameterResolver.EMPTY
 ) : TypeParameterResolver {
+    override val parametersCount: Int
+        get() = ownTypeParameters.size + parent.parametersCount
 
-    private val ownTypeParameters = storageManager.createLazyValue {
-        // memoize the first occurrence of descriptor with the same Name
-        ownTypeParameters.groupingBy { it.name }.reduce { _, accumulator, _ -> accumulator }
+    @Suppress("ConvertTwoComparisonsToRangeCheck")
+    override fun resolve(index: Int): TypeParameterDescriptor? {
+        val parentParametersCount = parent.parametersCount
+        if (index >= 0 && index < parentParametersCount)
+            return parent.resolve(index)
+
+        val localIndex = index - parentParametersCount
+        if (localIndex < ownTypeParameters.size)
+            return ownTypeParameters[localIndex]
+
+        error("Illegal type parameter index: $index. Should be between 0 and ${parametersCount - 1}")
     }
-
-    override fun resolve(name: Name) = ownTypeParameters()[name] ?: parent.resolve(name)
 }
 
 fun DeclarationDescriptor.getTypeParameterResolver(): TypeParameterResolver =

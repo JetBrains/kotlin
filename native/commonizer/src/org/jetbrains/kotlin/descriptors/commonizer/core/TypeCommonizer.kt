@@ -52,7 +52,7 @@ private fun areSimpleTypesEqual(cache: CirClassifiersCache, a: CirSimpleType, b:
         }
 
         if (aId is CirClassifierId.TypeParameter) {
-            if (bId !is CirClassifierId.TypeParameter || aId.name != bId.name) return false
+            if (bId !is CirClassifierId.TypeParameter || aId.index != bId.index) return false
         }
     }
 

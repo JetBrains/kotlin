@@ -1,15 +1,10 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifierId
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 
 @Suppress("MemberVisibilityCanBePrivate")
 object CirClassifierIdFactory {
@@ -19,12 +14,25 @@ object CirClassifierIdFactory {
         return when (source) {
             is ClassDescriptor -> createForClass(source.internedClassId)
             is TypeAliasDescriptor -> createForTypeAlias(source.internedClassId)
-            is TypeParameterDescriptor -> createForTypeParameter(source.name.intern())
+            is TypeParameterDescriptor -> createForTypeParameter(source.typeParameterIndex)
             else -> error("Unexpected classifier descriptor type: ${source::class.java}, $this")
         }
     }
 
     fun createForClass(classId: ClassId): CirClassifierId = interner.intern(CirClassifierId.Class(classId))
     fun createForTypeAlias(classId: ClassId): CirClassifierId = interner.intern(CirClassifierId.TypeAlias(classId))
-    fun createForTypeParameter(name: Name): CirClassifierId = interner.intern(CirClassifierId.TypeParameter(name))
+    fun createForTypeParameter(index: Int): CirClassifierId = interner.intern(CirClassifierId.TypeParameter(index))
 }
+
+private inline val TypeParameterDescriptor.typeParameterIndex: Int
+    get() {
+        var index = index
+        var parent = containingDeclaration
+
+        while ((parent as? ClassifierDescriptorWithTypeParameters)?.isInner != false) {
+            parent = parent.containingDeclaration as? ClassifierDescriptorWithTypeParameters ?: break
+            index += parent.declaredTypeParameters.size
+        }
+
+        return index
+    }
