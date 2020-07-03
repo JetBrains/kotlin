@@ -28,16 +28,16 @@ public class StdlibSymbolsBuildingTestGenerated extends AbstractStdlibSymbolsBui
 
     @TestMetadata("fileWalkDirectionEnum.txt")
     public void testFileWalkDirectionEnum() throws Exception {
-        runTest("testData/stdLibSymbols/fileWalkDirectionEnum.txt");
+        runTest("testData/symbolsByFqName/fileWalkDirectionEnum.txt");
     }
 
     @TestMetadata("iterator.txt")
     public void testIterator() throws Exception {
-        runTest("testData/stdLibSymbols/iterator.txt");
+        runTest("testData/symbolsByFqName/iterator.txt");
     }
 
     @TestMetadata("listOf.txt")
     public void testListOf() throws Exception {
-        runTest("testData/stdLibSymbols/listOf.txt");
+        runTest("testData/symbolsByFqName/listOf.txt");
     }
 }
