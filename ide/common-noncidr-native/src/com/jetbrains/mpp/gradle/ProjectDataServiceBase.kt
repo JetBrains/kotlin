@@ -11,7 +11,7 @@ import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
+import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.project.Project
 import com.intellij.util.execution.ParametersListUtil
@@ -24,20 +24,25 @@ import org.jetbrains.kotlin.idea.configuration.kotlinNativeHome
 
 abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetData, Void>() {
     override fun getTargetDataKey() = KotlinTargetData.KEY
+    protected abstract fun getWorkspace(project: Project): WorkspaceBase
+    protected abstract fun createBinaryConfiguration(project: Project, executable: KonanExecutable): BinaryRunConfigurationBase
 
-    protected abstract fun binaryConfiguration(project: Project, executable: KonanExecutable): BinaryRunConfigurationBase
-
-    protected abstract val configurationFactory: ConfigurationFactory
-
-    override fun postProcess(
-        toImport: Collection<DataNode<KotlinTargetData>>,
+    override fun onSuccessImport(
+        imported: MutableCollection<DataNode<KotlinTargetData>>,
         projectData: ProjectData?,
         project: Project,
-        modelsProvider: IdeModifiableModelsProvider
+        modelsProvider: IdeModelsProvider
     ) {
+        super.onSuccessImport(imported, projectData, project, modelsProvider)
+        updateProject(
+            project,
+            collectConfigurations(project, imported),
+            getWorkspace(project),
+            getKonanHome(imported)
+        )
     }
 
-    protected fun getKonanHome(nodes: Collection<DataNode<KotlinTargetData>>): String? {
+    private fun getKonanHome(nodes: Collection<DataNode<KotlinTargetData>>): String? {
         val moduleData = nodes.firstOrNull()?.parent as? DataNode<ModuleData> ?: return null
         return moduleData.kotlinNativeHome
     }
@@ -47,7 +52,7 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
         return id.substring(0, id.lastIndexOf(':') + 1)
     }
 
-    protected fun collectConfigurations(
+    private fun collectConfigurations(
         project: Project,
         targetNodes: Collection<DataNode<KotlinTargetData>>
     ): List<BinaryRunConfigurationBase> {
@@ -77,7 +82,7 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
 
         executionTargets.forEach { (executableBase, targets) ->
             val executable = KonanExecutable(executableBase, targets)
-            val configuration = binaryConfiguration(project, executable).apply {
+            val configuration = createBinaryConfiguration(project, executable).apply {
                 selectedTarget = targets.firstOrNull()
                 runConfigurations[executableBase]?.let {
                     workingDirectory = it.workingDirectory
@@ -92,24 +97,27 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
         return result
     }
 
-    protected fun updateProject(
+    private fun updateProject(
         project: Project,
         runConfigurations: List<BinaryRunConfigurationBase>,
         workspace: WorkspaceBase,
         konanHome: String?
     ) {
-        val runManager = RunManager.getInstance(project)
-
-        workspace.executables.clear()
         konanHome?.let {
             workspace.konanHome = it
             workspace.konanVersion = getKotlinNativeVersion(it)
         }
 
+        val runManager = RunManager.getInstance(project)
+
+        workspace.executables.clear()
         runConfigurations.sortedBy { it.name }.forEach { runConfiguration ->
             val executable = runConfiguration.executable ?: return@forEach
             workspace.executables.add(executable)
-            val ideConfiguration = runManager.createConfiguration(executable.base.name, configurationFactory)
+            val ideConfiguration = runManager.createConfiguration(
+                executable.base.name,
+                runConfiguration.factory as ConfigurationFactory
+            )
             (ideConfiguration.configuration as BinaryRunConfigurationBase).copyFrom(runConfiguration)
             updateConfiguration(runManager, ideConfiguration)
         }
