@@ -37,10 +37,13 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     @get:Internal
     internal lateinit var stubsDir: File
 
+    @get:Internal
+    internal val objects = project.objects
+
     @get:Classpath
     @get:InputFiles
     val kaptClasspath: FileCollection
-        get() = project.files(kaptClasspathConfigurations)
+        get() = objects.fileCollection().from(kaptClasspathConfigurations)
 
     @get:Classpath
     @get:InputFiles

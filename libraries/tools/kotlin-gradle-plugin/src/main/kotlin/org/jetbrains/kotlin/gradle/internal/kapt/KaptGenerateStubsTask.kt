@@ -50,7 +50,7 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     @get:Classpath
     @get:InputFiles
     val kaptClasspath: FileCollection
-        get() = project.files(kaptClasspathConfigurations)
+        get() = objects.fileCollection().from(kaptClasspathConfigurations)
 
     @get:Internal
     internal lateinit var kaptClasspathConfigurations: List<Configuration>
