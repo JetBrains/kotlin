@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/idea-frontend-fir/testData/symbolsByFqName")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class StdlibSymbolsBuildingTestGenerated extends AbstractStdlibSymbolsBuildingTest {
+public class SymbolsByFqNameBuildingTestGenerated extends AbstractSymbolsByFqNameBuildingTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }

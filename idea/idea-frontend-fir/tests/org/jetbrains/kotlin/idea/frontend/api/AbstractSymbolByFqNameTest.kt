@@ -3,27 +3,24 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.frontend.api.symbols
+package org.jetbrains.kotlin.idea.frontend.api
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.symbols.DebugSymbolRenderer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractStdlibSymbolsBuildingTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractSymbolByFqNameTest : KotlinLightCodeInsightFixtureTestCase() {
     protected fun doTest(path: String) {
         val fakeKtFile = myFixture.configureByText("file.kt", "fun a() {}") as KtFile
 
@@ -36,9 +33,12 @@ abstract class AbstractStdlibSymbolsBuildingTest : KotlinLightCodeInsightFixture
 
         val renderedSymbols = executeOnPooledThreadInReadAction {
             analyze(fakeKtFile) {
-                val symbols = symbolData.toSymbols(this)
+                val symbols = createSymbols(symbolData, this)
                 symbols.map { DebugSymbolRenderer.render(it) }
             }
+            val analysisSession = KtFirAnalysisSession(fakeKtFile)
+            val symbols = createSymbols(symbolData, analysisSession)
+            symbols.map { DebugSymbolRenderer.render(it) }
         }
 
         val actual = buildString {
@@ -52,7 +52,8 @@ abstract class AbstractStdlibSymbolsBuildingTest : KotlinLightCodeInsightFixture
         KotlinTestUtils.assertEqualsToFile(testDataFile, actual)
     }
 
-    }
+    protected abstract fun createSymbols(symbolData: SymbolData, analysisSession: KtAnalysisSession): List<KtSymbol>
+
 
     override fun getDefaultProjectDescriptor(): KotlinLightProjectDescriptor =
         KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
@@ -62,7 +63,7 @@ abstract class AbstractStdlibSymbolsBuildingTest : KotlinLightCodeInsightFixture
     }
 }
 
-private sealed class SymbolData {
+sealed class SymbolData {
     abstract fun toSymbols(analysisSession: KtAnalysisSession): List<KtSymbol>
 
     data class ClassData(val classId: ClassId) : SymbolData() {
@@ -95,3 +96,4 @@ private sealed class SymbolData {
         }
     }
 }
+
