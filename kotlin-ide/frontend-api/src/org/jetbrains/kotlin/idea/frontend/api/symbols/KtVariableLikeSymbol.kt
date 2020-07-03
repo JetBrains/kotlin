@@ -19,7 +19,7 @@ abstract class KtVariableSymbol : KtVariableLikeSymbol() {
     abstract val isVal: Boolean
 }
 
-abstract class KtFieldSymbol : KtVariableSymbol(), KtSymbolWithModality<KtCommonSymbolModality> {
+abstract class KtJavaFieldSymbol : KtVariableSymbol(), KtSymbolWithModality<KtCommonSymbolModality> {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
 }
 

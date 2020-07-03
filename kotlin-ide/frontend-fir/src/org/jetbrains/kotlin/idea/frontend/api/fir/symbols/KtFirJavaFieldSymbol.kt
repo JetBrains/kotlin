@@ -15,15 +15,15 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCommonSymbolModality
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFieldSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtJavaFieldSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirFieldSymbol(
+internal class KtFirJavaFieldSymbol(
     fir: FirField,
     override val token: ValidityOwner,
     private val builder: KtSymbolByFirBuilder
-) : KtFieldSymbol(), KtFirSymbol<FirField> {
+) : KtJavaFieldSymbol(), KtFirSymbol<FirField> {
     override val fir: FirField by weakRef(fir)
     override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
 
