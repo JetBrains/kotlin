@@ -429,7 +429,10 @@ class Fir2IrClassifierStorage(
         symbolTable.referenceClassIfAny(signature)?.let { irClassSymbol ->
             val irClass = irClassSymbol.owner
             classCache[firClass as FirRegularClass] = irClass
-            processClassHeader(firClass, irClass)
+            val mappedTypeParameters = firClass.typeParameters.filterIsInstance<FirTypeParameter>().zip(irClass.typeParameters)
+            for ((firTypeParameter, irTypeParameter) in mappedTypeParameters) {
+                typeParameterCache[firTypeParameter] = irTypeParameter
+            }
             declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
             return irClassSymbol
         }
