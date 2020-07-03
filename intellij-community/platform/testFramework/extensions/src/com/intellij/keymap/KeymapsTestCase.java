@@ -10,7 +10,7 @@ import java.util.Set;
 
 public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
   // @formatter:off
-  @NonNls @SuppressWarnings("HardCodedStringLiteral")
+  @NonNls
   protected static final Map<String, String[][]> DEFAULT_DUPLICATES = new HashMap<String, String[][]>(){{
     put("$default", new String[][] {
     { "ADD",                      "ExpandTreeNode", "Graph.ZoomIn"},
@@ -48,7 +48,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "control TAB",              "Switcher", "Diff.FocusOppositePane"},
     { "control EQUALS",           "ExpandAll", "ExpandExpandableComponent", "ExpandRegion"},
     { "control F5",               "Refresh", "Rerun"},
-    { "control C",                "$Copy", "org.jetbrains.r.console.RConsoleView.RInterruptAction"},
+    { "control C",                "$Copy", "Terminal.CopySelectedText", "org.jetbrains.r.console.RConsoleView.RInterruptAction"},
     { "control D",                "EditorDuplicate", "Diff.ShowDiff", "CompareTwoFiles", "SendEOF", "FileChooser.GotoDesktop", "org.jetbrains.r.console.RConsoleView.REofAction"},
     { "control E",                "RecentFiles", "SwitcherIterateItems", "SwitcherRecentEditedChangedToggleCheckBox", "Vcs.ShowMessageHistory"},
     { "control L",                "FindNext", "Vcs.Log.FocusTextFilter"},
@@ -61,6 +61,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "control U",                "GotoSuperMethod", "CommanderSwapPanels"},
     { "control UP",               "EditorScrollUp", "EditorLookupUp", "MethodOverloadSwitchUp", "SearchEverywhere.NavigateToPrevGroup", "JupyterSelectCellAboveAction"},
     { "control SUBTRACT",         "CollapseAll", "CollapseExpandableComponent", "CollapseRegion"},
+    { "control V",                "$Paste", "Terminal.Paste"},
     { "control alt A",            "ChangesView.AddUnversioned", "Diagram.DeselectAll"},
     { "control alt B",               "GotoImplementation", "org.jetbrains.r.rendering.chunk.RunChunksAboveAction"},
     { "control alt D",            "Console.TableResult.SetDefault", "UsageGrouping.DirectoryStructure"},
@@ -212,6 +213,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "control X,P",              "Diff.PrevChange", "PreviousTab"},
     { "control UP",               "EditorBackwardParagraph", "EditorLookupUp", "JupyterSelectCellAboveAction", "MethodOverloadSwitchUp", "SearchEverywhere.NavigateToPrevGroup"},
     { "control DOWN",             "EditorForwardParagraph", "EditorLookupDown", "JupyterSelectCellBelowAction", "MethodOverloadSwitchDown", "SearchEverywhere.NavigateToNextGroup"},
+    { "ctrl V",                   "EditorPageDown", "Terminal.Paste"},
     { "control alt A",            "MethodUp", "ChangesView.AddUnversioned", "Diagram.DeselectAll"},
     { "control alt E",            "Console.History.Browse", "MethodDown", "PerforceDirect.Edit", "ToggleFindInSelection"},
     { "control alt G",            "GotoDeclaration", "org.jetbrains.plugins.ruby.rails.actions.generators.GeneratorsPopupAction", "Mvc.RunTarget"},
@@ -260,6 +262,8 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     });
     put("Default for XWin", new String[][] {
     { "shift ctrl alt button1",   "EditorAddRectangularSelectionOnMouseDrag", "QuickEvaluateExpression"},
+    { "shift ctrl C",             "CopyPaths", "DatabaseView.CopyDdlAction", "Terminal.CopySelectedText"},
+    { "shift ctrl V",             "PasteMultiple", "Terminal.Paste"},
     });
     put("Default for GNOME", new String[][] {
     { "shift alt 1",              "SelectIn", "ProjectViewChangeView"},
@@ -396,6 +400,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "ctrl P",                   "FileChooser.TogglePathShowing", "GotoFile"},
     { "ctrl R",                   "FileStructurePopup", "org.jetbrains.plugins.ruby.rails.console.ReloadSources"},
     { "ctrl SUBTRACT",            "CollapseAll", "CollapseExpandableComponent", "EditorDecreaseFontSize"},
+    { "ctrl V",                   "EditorPasteSimple", "Terminal.Paste"},
     { "ctrl alt DOWN",            "Console.TableResult.NextPage", "EditorCloneCaretBelow"},
     { "ctrl alt UP",              "Console.TableResult.PreviousPage", "EditorCloneCaretAbove"},
     { "shift ENTER",              "CollapseExpandableComponent", "Console.TableResult.EditValueMaximized", "DatabaseView.PropertiesAction", "EditorSplitLine", "ExpandExpandableComponent", "NotebookRunCellSelectBelowAction", "OpenElementInNewWindow", "RConsoleNextLineAction"},
@@ -421,6 +426,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "meta R",                   "FileStructurePopup", "Refresh", "Rerun", "org.jetbrains.plugins.ruby.rails.console.ReloadSources"},
     { "meta SUBTRACT",            "CollapseAll", "CollapseExpandableComponent", "EditorDecreaseFontSize"},
     { "meta UP",                  "EditorTextStart", "SearchEverywhere.NavigateToPrevGroup"},
+    { "meta V",                   "EditorPasteSimple", "Terminal.Paste"},
     { "meta alt DOWN",            "Console.TableResult.NextPage", "GotoDeclaration"},
     { "meta alt G",               "DatabaseView.SqlGenerator", "FindWordAtCaret", "org.jetbrains.plugins.ruby.rails.actions.generators.GeneratorsPopupAction"},
     { "shift ENTER",              "CollapseExpandableComponent", "Console.TableResult.EditValueMaximized", "EditorSplitLine", "ExpandExpandableComponent", "NotebookRunCellSelectBelowAction", "OpenElementInNewWindow", "RConsoleNextLineAction"},
