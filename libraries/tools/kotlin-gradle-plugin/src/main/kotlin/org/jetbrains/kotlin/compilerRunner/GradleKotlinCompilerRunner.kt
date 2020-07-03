@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
-import org.jetbrains.kotlin.gradle.tasks.GradleCompileTask
+import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
@@ -52,16 +51,21 @@ const val COULD_NOT_CONNECT_TO_DAEMON_MESSAGE = "Could not connect to Kotlin com
 internal fun kotlinCompilerExecutionStrategy(): String =
     System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
 
-internal open class GradleCompilerRunner(protected val taskProvider: TaskProvider<out GradleCompileTask>) {
+/*
+Using real taskProvider cause "field 'taskProvider' from type 'org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner':
+value 'fixed(class org.jetbrains.kotlin.gradle.tasks.KotlinCompile_Decorated, task ':compileKotlin')'
+is not assignable to 'org.gradle.api.tasks.TaskProvider'" exception
+ */
+internal open class GradleCompilerRunner(protected val taskProvider: GradleCompileTaskProvider) {
 
-    internal val pathProvider = taskProvider.map { it.path }
-    internal val loggerProvider = taskProvider.map { it.logger }
-    internal val buildDirProvider = taskProvider.map { it.buildDir }
-    internal val projectDirProvider = taskProvider.map { it.projectDir }
-    internal val projectRootDirProvider = taskProvider.map { it.rootDir }
-    internal val sessionDirProvider = taskProvider.map { it.sessionsDir }
-    internal val projectNameProvider = taskProvider.map { it.projectName }
-    internal val incrementalModuleInfoProvider = taskProvider.map { it.buildModulesInfo }
+    internal val pathProvider = taskProvider.path
+    internal val loggerProvider = taskProvider.logger
+    internal val buildDirProvider = taskProvider.buildDir
+    internal val projectDirProvider = taskProvider.projectDir
+    internal val projectRootDirProvider = taskProvider.rootDir
+    internal val sessionDirProvider = taskProvider.sessionsDir
+    internal val projectNameProvider = taskProvider.projectName
+    internal val incrementalModuleInfoProvider = taskProvider.buildModulesInfo
 
     /**
      * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
@@ -116,7 +120,7 @@ internal open class GradleCompilerRunner(protected val taskProvider: TaskProvide
         environment: GradleCompilerEnvironment
     ) {
         if (compilerArgs.version) {
-            loggerProvider.get().lifecycle(
+            loggerProvider.lifecycle(
                 "Kotlin version " + loadCompilerVersion(environment.compilerClasspath) +
                         " (JRE " + System.getProperty("java.runtime.version") + ")"
             )
@@ -124,9 +128,16 @@ internal open class GradleCompilerRunner(protected val taskProvider: TaskProvide
         }
         val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
         val incrementalCompilationEnvironment = environment.incrementalCompilationEnvironment
-        val modulesInfo = incrementalCompilationEnvironment?.let { incrementalModuleInfoProvider.get() }
+        val modulesInfo = incrementalCompilationEnvironment?.let { incrementalModuleInfoProvider }
         val workArgs = GradleKotlinCompilerWorkArguments(
-            projectFiles = ProjectFilesForCompilation(loggerProvider.get(), projectDirProvider.get(), buildDirProvider.get(), projectNameProvider.get(), projectRootDirProvider.get(), sessionDirProvider.get()),
+            projectFiles = ProjectFilesForCompilation(
+                loggerProvider,
+                projectDirProvider,
+                buildDirProvider,
+                projectNameProvider,
+                projectRootDirProvider,
+                sessionDirProvider
+            ),
             compilerFullClasspath = environment.compilerFullClasspath,
             compilerClassName = compilerClassName,
             compilerArgs = argsArray,
@@ -134,12 +145,12 @@ internal open class GradleCompilerRunner(protected val taskProvider: TaskProvide
             incrementalCompilationEnvironment = incrementalCompilationEnvironment,
             incrementalModuleInfo = modulesInfo,
             outputFiles = environment.outputFiles.toList(),
-            taskPath = pathProvider.get(),
+            taskPath = pathProvider,
             buildReportMode = environment.buildReportMode,
             kotlinScriptExtensions = environment.kotlinScriptExtensions,
             allWarningsAsErrors = compilerArgs.allWarningsAsErrors
         )
-        TaskLoggers.put(pathProvider.get(), loggerProvider.get())
+        TaskLoggers.put(pathProvider, loggerProvider)
         runCompilerAsync(workArgs)
     }
 

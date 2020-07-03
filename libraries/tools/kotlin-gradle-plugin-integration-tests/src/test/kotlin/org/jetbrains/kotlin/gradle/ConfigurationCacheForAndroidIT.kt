@@ -21,7 +21,7 @@ class ConfigurationCacheForAndroidIT : BaseGradleIT() {
         super.defaultBuildOptions().copy(
             androidHome = KotlinTestUtils.findAndroidSdk(),
             androidGradlePluginVersion = androidGradlePluginVersion,
-            configurationCaching = true
+            configurationCache = true
         )
 
     override val defaultGradleVersion = GradleVersionRequired.AtLeast("6.6-milestone-2")
@@ -68,7 +68,7 @@ class ConfigurationCacheForAndroidIT : BaseGradleIT() {
     }
 
     private fun Project.instantExecutionOf(vararg tasks: String, check: CompiledProject.() -> Unit) =
-        build("-Dorg.gradle.unsafe.instant-execution=true", *tasks, check = check)
+        build("-Dorg.gradle.unsafe.configuration-cache=true", *tasks, check = check)
 
     /**
      * Copies all files from the directory containing the given [htmlReportFile] to a

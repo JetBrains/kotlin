@@ -20,7 +20,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -69,6 +69,9 @@ open class KaptGenerateStubsTask : KotlinCompile() {
             error("KaptGenerateStubsTask.useModuleDetection setter should not be called!")
         }
 
+    @get:Input
+    val verbose = (project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true)
+
     override fun source(vararg sources: Any): SourceTask {
         return super.source(sourceRootsContainer.add(sources))
     }
@@ -95,7 +98,7 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         val pluginOptionsWithKapt = pluginOptions.withWrappedKaptOptions(withApClasspath = kaptClasspath)
         args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()
 
-        args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
+        args.verbose = verbose
         args.classpathAsList = this.compileClasspath.filter { it.exists() }.toList()
         args.destinationAsFile = this.destinationDir
     }

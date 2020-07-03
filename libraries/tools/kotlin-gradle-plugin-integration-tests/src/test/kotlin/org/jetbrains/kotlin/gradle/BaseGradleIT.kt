@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.test.util.*
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assert
@@ -206,7 +205,7 @@ abstract class BaseGradleIT {
         val kaptOptions: KaptOptions? = null,
         val parallelTasksInProject: Boolean? = null,
         val jsCompilerType: KotlinJsCompilerType? = null,
-        val configurationCaching: Boolean = false
+        val configurationCache: Boolean = false
     )
 
     data class KaptOptions(
@@ -802,12 +801,10 @@ Finished executing task ':$taskName'|
                 add("-Pkotlin.js.compiler=$it")
             }
 
-            options.configurationCaching.let {
+            options.configurationCache.let {
                 add("-Dorg.gradle.unsafe.configuration-cache=$it")
                 add("-Dorg.gradle.unsafe.configuration-cache")
-                add("-Dorg.gradle.unsafe.configuration-cache-problems=warn")
-                add("--configuration-cache")
-                add("--configuration-cache-problems=fail")
+                add("-Dorg.gradle.unsafe.configuration-cache-problems=fail")
             }
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):

@@ -16,7 +16,6 @@ import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner.Companion.normalizeForFlagFile
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
@@ -24,35 +23,15 @@ import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
-import org.jetbrains.kotlin.gradle.tasks.GradleCompileTask
-import org.jetbrains.kotlin.gradle.tasks.thisTaskProvider
+import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.optionalProvider
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
-import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import java.io.File
 
-open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments>, GradleCompileTask {
+open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
-
-    @get:Internal
-    override val buildDir = project.buildDir
-
-    @get:Internal
-    override val projectDir: File = project.rootProject.projectDir
-
-    @get:Internal
-    override val rootDir: File = project.rootProject.rootDir
-
-    @get:Internal
-    override val sessionsDir: File = GradleCompilerRunner.sessionsDir(project)
-
-    @get:Internal
-    override val projectName: String = project.rootProject.name.normalizeForFlagFile()
-
-    @get:Internal
-    override val buildModulesInfo: IncrementalModuleInfo = GradleCompilerRunner.buildModulesInfo(project.gradle)
 
     @get:Classpath
     @get:InputFiles
@@ -65,6 +44,9 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     val pluginClasspath: FileCollection
         get() = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
 
+    @get:Internal
+    val taskProvider = GradleCompileTaskProvider(this)
+
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
     private val compileKotlinArgumentsContributor by project.provider {
@@ -72,8 +54,9 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     }
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        compileKotlinArgumentsContributor.contributeArguments(args, compilerArgumentsConfigurationFlags(
-            defaultsOnly,
+        compileKotlinArgumentsContributor.contributeArguments(
+            args, compilerArgumentsConfigurationFlags(
+                defaultsOnly,
             ignoreClasspathResolutionErrors
         ))
 
@@ -128,7 +111,7 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
             throw GradleException("Could not find tools.jar in system classpath, which is required for kapt to work")
         }
 
-        val compilerRunner = GradleCompilerRunner(thisTaskProvider)
+        val compilerRunner = GradleCompilerRunner(taskProvider)
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),
             commonSources = emptyList(),

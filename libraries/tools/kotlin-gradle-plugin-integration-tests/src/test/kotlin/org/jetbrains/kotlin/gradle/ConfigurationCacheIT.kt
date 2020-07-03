@@ -21,26 +21,26 @@ class ConfigurationCacheIT : BaseGradleIT() {
         super.defaultBuildOptions().copy(
             androidHome = KotlinTestUtils.findAndroidSdk(),
             androidGradlePluginVersion = androidGradlePluginVersion,
-            configurationCaching = true
+            configurationCache = true
         )
 
-    private val minimumGradleVersion = GradleVersionRequired.AtLeast("6.6-milestone-2")
+    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast("6.6-milestone-2")
 
     @Test
-    fun testSimpleKotlinJvmProject() = with(Project("kotlinProject", minimumGradleVersion)) {
-        testInstantExecutionOf(":compileKotlin")
+    fun testSimpleKotlinJvmProject() = with(Project("kotlinProject")) {
+        testConfigurationCacheOf(":compileKotlin")
     }
 
     @Test
-    fun testSimpleKotlinAndroidProject() = with(Project("android-dagger", minimumGradleVersion, "kapt2")) {
+    fun testSimpleKotlinAndroidProject() = with(Project("android-dagger", directoryPrefix = "kapt2")) {
         applyAndroid40Alpha4KotlinVersionWorkaround()
         projectDir.resolve("gradle.properties").appendText("\nkapt.incremental.apt=false")
-        testInstantExecutionOf(":app:compileDebugKotlin", ":app:kaptDebugKotlin", ":app:kaptGenerateStubsDebugKotlin")
+        testConfigurationCacheOf(":app:compileDebugKotlin", ":app:kaptDebugKotlin", ":app:kaptGenerateStubsDebugKotlin")
     }
 
     @Test
     fun testIncrementalKaptProject() = with(getIncrementalKaptProject()) {
-        testInstantExecutionOf(
+        testConfigurationCacheOf(
             ":compileKotlin",
             ":kaptKotlin",
             buildOptions = defaultBuildOptions().copy(
@@ -56,13 +56,13 @@ class ConfigurationCacheIT : BaseGradleIT() {
     }
 
     private fun getIncrementalKaptProject() =
-        Project("kaptIncrementalCompilationProject", minimumGradleVersion).apply {
+        Project("kaptIncrementalCompilationProject").apply {
             setupIncrementalAptProject("AGGREGATING")
         }
 
-    private fun Project.testInstantExecutionOf(vararg taskNames: String, buildOptions: BuildOptions = defaultBuildOptions()) {
+    private fun Project.testConfigurationCacheOf(vararg taskNames: String, buildOptions: BuildOptions = defaultBuildOptions()) {
         // First, run a build that serializes the tasks state for instant execution in further builds
-        instantExecutionOf(*taskNames, buildOptions = buildOptions) {
+        configurationCacheOf(*taskNames, buildOptions = buildOptions) {
             assertSuccessful()
             assertTasksExecuted(*taskNames)
             checkInstantExecutionSucceeded()
@@ -73,12 +73,12 @@ class ConfigurationCacheIT : BaseGradleIT() {
         }
 
         // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-        instantExecutionOf(*taskNames, buildOptions = buildOptions) {
+        configurationCacheOf(*taskNames, buildOptions = buildOptions) {
             assertSuccessful()
             assertTasksExecuted(*taskNames)
         }
 
-        instantExecutionOf(*taskNames, buildOptions = buildOptions) {
+        configurationCacheOf(*taskNames, buildOptions = buildOptions) {
             assertSuccessful()
             assertTasksUpToDate(*taskNames)
         }
@@ -90,12 +90,12 @@ class ConfigurationCacheIT : BaseGradleIT() {
         }
     }
 
-    private fun Project.instantExecutionOf(
+    private fun Project.configurationCacheOf(
         vararg tasks: String,
         buildOptions: BuildOptions = defaultBuildOptions(),
         check: CompiledProject.() -> Unit
     ) =
-        build("-Dorg.gradle.unsafe.instant-execution=true", *tasks, options = buildOptions, check = check)
+        build("-Dorg.gradle.unsafe.configuration-cache=true", *tasks, options = buildOptions, check = check)
 
     /**
      * Copies all files from the directory containing the given [htmlReportFile] to a
@@ -113,8 +113,8 @@ class ConfigurationCacheIT : BaseGradleIT() {
      * found while caching the task graph.
      */
     private fun Project.instantExecutionReportFile() = projectDir
-        .resolve(".instant-execution-state")
-        .findFileByName("instant-execution-report.html")
+        .resolve("configuration-cache")
+        .findFileByName("configuration-cache-report.html")
         ?.let { copyReportToTempDir(it) }
 
     private fun File.asClickableFileUrl(): String =
@@ -155,6 +155,8 @@ class ConfigurationCacheIT : BaseGradleIT() {
         //first run without cache
         project.build("assemble") {
             assertSuccessful()
+            assertContains("Calculating task graph as no configuration cache is available for tasks: assemble")
+
             assertTasksExecuted(
                 ":compileKotlin",
                 ":compileTestKotlin"
@@ -164,6 +166,9 @@ class ConfigurationCacheIT : BaseGradleIT() {
         //second run should use cache
         project.build("assemble") {
             assertSuccessful()
+
+            assertContains("Reusing configuration cache.")
+
             assertTasksExecuted(
                 ":compileKotlin",
                 ":compileTestKotlin"
@@ -178,6 +183,7 @@ class ConfigurationCacheIT : BaseGradleIT() {
 
         project.build("assemble") {
             assertSuccessful()
+            assertContains("Calculating task graph as no configuration cache is available for tasks: assemble")
 
             assertTasksExecuted(
                 ":compileKotlin2Js",

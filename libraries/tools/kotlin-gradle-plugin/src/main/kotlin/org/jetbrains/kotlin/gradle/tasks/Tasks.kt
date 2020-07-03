@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
+import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
@@ -118,54 +119,43 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
     protected abstract fun findKotlinCompilerClasspath(project: Project): List<File>
 }
 
-interface GradleCompileTask : Task {
-    @get:Internal
+public class GradleCompileTaskProvider {
+
+    constructor(task: Task) {
+        buildDir = task.project.buildDir
+        projectDir = task.project.rootProject.projectDir
+        rootDir = task.project.rootProject.rootDir
+        sessionsDir = GradleCompilerRunner.sessionsDir(task.project)
+        projectName = task.project.rootProject.name.normalizeForFlagFile()
+        buildModulesInfo = GradleCompilerRunner.buildModulesInfo(task.project.gradle)
+        path = task.path
+        logger = task.logger
+
+    }
+
+    val path: String
+    val logger: Logger
     val buildDir: File /*= project.buildDir*/
-
-    @get:Internal
     val projectDir: File /*= project.rootProject.projectDir*/
-
-    @get:Internal
     val rootDir: File /*= project.rootProject.rootDir*/
-
-    @get:Internal
     val sessionsDir: File/* = GradleCompilerRunner.sessionsDir(project)*/
-
-    @get:Internal
     val projectName: String /*= project.rootProject.name.normalizeForFlagFile()*/
-
-    @get:Internal
     val buildModulesInfo: IncrementalModuleInfo /*= GradleCompilerRunner.buildModulesInfo(project.gradle)*/
 }
 
-abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKotlinCompileTool<T>(), GradleCompileTask {
+abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKotlinCompileTool<T>() {
 
     init {
         cacheOnlyIfEnabledForKotlin()
     }
 
     @get:Internal
-    override val buildDir = project.buildDir
-
-    @get:Internal
-    override val projectDir: File = project.rootProject.projectDir
-
-    @get:Internal
-    override val rootDir: File = project.rootProject.rootDir
-
-    @get:Internal
-    override val sessionsDir: File = GradleCompilerRunner.sessionsDir(project)
-
-    @get:Internal
-    override val projectName: String = project.rootProject.name.normalizeForFlagFile()
-
-    @get:Internal
-    override val buildModulesInfo: IncrementalModuleInfo = GradleCompilerRunner.buildModulesInfo(project.gradle)
+    val gradleCompileTask: GradleCompileTaskProvider = GradleCompileTaskProvider(this)
 
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
     internal val taskBuildDirectory: File by project.provider {
-        File(File(buildDir, KOTLIN_BUILD_DIR_NAME), name)
+        File(File(gradleCompileTask.buildDir, KOTLIN_BUILD_DIR_NAME), name)
     }
 
     @get:Internal
@@ -314,7 +304,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:Internal
     internal val compilerRunner = compilerRunner()
 
-    internal open fun compilerRunner(): GradleCompilerRunner = GradleCompilerRunner(thisTaskProvider)
+    internal open fun compilerRunner(): GradleCompilerRunner = GradleCompilerRunner(GradleCompileTaskProvider(this))
 
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs) {
@@ -349,7 +339,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     }
 
     @get:Internal
-    private val projectDirProvider = project.provider { project.rootProject.projectDir }
+    private val projectDir = project.rootProject.projectDir
 
     private fun executeImpl(inputs: IncrementalTaskInputs) {
         // Check that the JDK tools are available in Gradle (fail-fast, instead of a fail during the compiler run):
@@ -358,7 +348,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         val sourceRoots = getSourceRoots()
         val allKotlinSources = sourceRoots.kotlinSourceFiles
 
-        logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(projectDirProvider.get())}" }
+        logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(projectDir)}" }
 
         if (skipCondition(inputs)) {
             // Skip running only if non-incremental run. Otherwise, we may need to do some cleanup.
@@ -540,21 +530,26 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 internal open class KotlinCompileWithWorkers @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : KotlinCompile() {
-    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(thisTaskProvider, workerExecutor)
+
+    @get:Internal
+    val compilerRunnerValue = GradleCompilerRunnerWithWorkers(GradleCompileTaskProvider(this), workerExecutor)
+
+    override fun compilerRunner() = compilerRunnerValue
 }
 
 @CacheableTask
 internal open class Kotlin2JsCompileWithWorkers @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : Kotlin2JsCompile() {
-    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(thisTaskProvider, workerExecutor)
+
+    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(GradleCompileTaskProvider(this), workerExecutor)
 }
 
 @CacheableTask
 internal open class KotlinCompileCommonWithWorkers @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : KotlinCompileCommon() {
-    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(thisTaskProvider, workerExecutor)
+    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(GradleCompileTaskProvider(this), workerExecutor)
 }
 
 @CacheableTask
