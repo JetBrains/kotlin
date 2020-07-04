@@ -8955,6 +8955,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("kotlinBrowserFullyQualifiedProperty.kt")
+        public void testKotlinBrowserFullyQualifiedProperty() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserFullyQualifiedProperty.kt");
+        }
+
         @TestMetadata("kotlinBrowserPropertyImport.kt")
         public void testKotlinBrowserPropertyImport() throws Exception {
             runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserPropertyImport.kt");
@@ -8963,6 +8968,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("kotlinBrowserStarImport.kt")
         public void testKotlinBrowserStarImport() throws Exception {
             runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserStarImport.kt");
+        }
+
+        @TestMetadata("kotlinDomAndBrowserImport.kt")
+        public void testKotlinDomAndBrowserImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinDomAndBrowserImport.kt");
         }
 
         @TestMetadata("kotlinDomPropertyImport.kt")
