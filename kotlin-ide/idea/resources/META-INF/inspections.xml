@@ -2529,6 +2529,14 @@
                      level="WARNING"
                      language="kotlin"
                      key="inspection.logger.initialized.with.foreign.class.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceWithIgnoreCaseEqualsInspection"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.replace.with.ignore.case.equals.display.name" bundle="messages.KotlinBundle"/>
   </extensions>
 
 </idea-plugin>
