@@ -641,6 +641,11 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
                 runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInCallByReferenceWithTypeArguments2.after.kt");
             }
 
+            @TestMetadata("EmptyArgumentInThisAsClassicFunction.after.kt")
+            public void testEmptyArgumentInThisAsClassicFunction() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInThisAsClassicFunction.after.kt");
+            }
+
             @TestMetadata("EmptyArgumentInThisAsConstructor.after.kt")
             public void testEmptyArgumentInThisAsConstructor() throws Exception {
                 runTest("idea/testData/indentationOnNewline/emptyParameters/EmptyArgumentInThisAsConstructor.after.kt");
