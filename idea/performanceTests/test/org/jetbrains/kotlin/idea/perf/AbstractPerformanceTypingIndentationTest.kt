@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.EditorTestUtil
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.testFramework.dispatchAllInvocationEvents
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -42,7 +45,6 @@ abstract class AbstractPerformanceTypingIndentationTest : KotlinLightCodeInsight
             performanceTest<Unit, Unit> {
                 name(testName)
                 stats(stats)
-                checkStability(false) // [VD] TODO: seems it could be some leakages here
                 warmUpIterations(20)
                 iterations(30)
                 setUp {
@@ -50,8 +52,10 @@ abstract class AbstractPerformanceTypingIndentationTest : KotlinLightCodeInsight
                 }
                 test {
                     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_ENTER)
+                    dispatchAllInvocationEvents()
                 }
                 tearDown {
+
                     val actualTextWithCaret = StringBuilder(editor.document.text).insert(
                         editor.caretModel.offset,
                         EditorTestUtil.CARET_TAG

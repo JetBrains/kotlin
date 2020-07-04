@@ -12,6 +12,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.testFramework.dispatchAllInvocationEvents
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -64,6 +65,8 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
 
                 fileEditorManager.setSelectedEditor(it.setUpValue!!.second.virtualFile, "")
                 myFixture.performEditorAction(IdeActions.ACTION_PASTE)
+
+                dispatchAllInvocationEvents()
             }
             tearDown {
                 assertEquals("private val value: String? = n", it.setUpValue!!.second.text)
@@ -98,6 +101,8 @@ abstract class AbstractPerformanceLiteralKotlinToKotlinCopyPasteTest : AbstractC
 
                 fileEditorManager.setSelectedEditor(it.setUpValue!![1].virtualFile, "")
                 myFixture.performEditorAction(IdeActions.ACTION_PASTE)
+
+                dispatchAllInvocationEvents()
             }
             tearDown {
                 KotlinTestUtils.assertEqualsToFile(expectedPath, it.setUpValue!![1].text)

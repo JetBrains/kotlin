@@ -524,6 +524,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     val fixture2 = setUpValue.first[1]
                     it.value = fixture1.performEditorAction(IdeActions.ACTION_COPY) &&
                             fixture2.performEditorAction(IdeActions.ACTION_PASTE)
+
+                    dispatchAllInvocationEvents()
                 }
             }
             tearDown {
