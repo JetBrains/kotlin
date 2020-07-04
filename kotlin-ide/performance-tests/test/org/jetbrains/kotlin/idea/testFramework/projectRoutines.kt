@@ -14,6 +14,7 @@ import com.intellij.lang.LanguageAnnotators
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -66,6 +67,7 @@ fun enableHints(enable: Boolean) =
 fun dispatchAllInvocationEvents() {
     runInEdtAndWait {
         UIUtil.dispatchAllInvocationEvents()
+        NonBlockingReadActionImpl.waitForAsyncTaskCompletion();
     }
 }
 
