@@ -7,13 +7,18 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ProperTextRange;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 public final class InjectedGeneralHighlightingPassFactory implements MainHighlightingPassFactory, TextEditorHighlightingPassFactoryRegistrar {
   @Override
   public void registerHighlightingPassFactory(@NotNull TextEditorHighlightingPassRegistrar registrar, @NotNull Project project) {
-    registrar.registerTextEditorHighlightingPass(this, null, new int[]{Pass.UPDATE_ALL}, false, -1);
+    boolean serialized = Registry.is("editor.injected.highlighting.serialization.allowed") &&
+      ((TextEditorHighlightingPassRegistrarImpl)registrar).isSerializeCodeInsightPasses();
+    int[] ghl = {Pass.UPDATE_ALL};
+    registrar.registerTextEditorHighlightingPass(this, serialized ? ghl : null,
+                                                 serialized ? null : ghl, false, -1);
   }
 
   @NotNull
