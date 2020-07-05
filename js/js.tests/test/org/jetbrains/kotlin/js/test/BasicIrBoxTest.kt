@@ -30,14 +30,12 @@ private val kotlinTestKLib = System.getProperty("kotlin.js.kotlin.test.path")
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-    pathToRootOutputDir: String = TEST_DATA_DIR_PATH,
     generateSourceMap: Boolean = false,
     generateNodeJsRunner: Boolean = false,
     targetBackend: TargetBackend = TargetBackend.JS_IR
 ) : BasicBoxTest(
     pathToTestDir,
     testGroupOutputDirPrefix,
-    pathToRootOutputDir = pathToRootOutputDir,
     typedArraysEnabled = true,
     generateSourceMap = generateSourceMap,
     generateNodeJsRunner = generateNodeJsRunner,

@@ -9,6 +9,5 @@ import org.jetbrains.kotlin.js.test.BasicBoxTest
 
 abstract class AbstractLegacyJsTypeScriptExportTest : BasicBoxTest(
     pathToTestDir = TEST_DATA_DIR_PATH + "typescript-export/",
-    testGroupOutputDirPrefix = "legacy-typescript-export/",
-    pathToRootOutputDir = TEST_DATA_DIR_PATH
+    testGroupOutputDirPrefix = "legacy-typescript-export/"
 )
