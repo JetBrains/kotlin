@@ -5,10 +5,10 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.impl.statistics.RunConfigurationTypeUsagesCollector;
 import com.intellij.internal.statistic.beans.MetricEvent;
 import com.intellij.internal.statistic.beans.MetricEventFactoryKt;
-import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.internal.statistic.eventLog.*;
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
-import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule;
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomValidationRule;
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.openapi.project.Project;
@@ -59,7 +59,7 @@ public class RunDashboardUsagesCollector extends ProjectUsagesCollector {
   }
 
 
-  public static class RunConfigurationTypeValidator extends CustomWhiteListRule {
+  public static class RunConfigurationTypeValidator extends CustomValidationRule {
     @Override
     public boolean acceptRuleId(@Nullable String ruleId) {
       return "run_config".equals(ruleId);

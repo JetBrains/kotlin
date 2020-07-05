@@ -6,7 +6,7 @@ import com.intellij.execution.impl.statistics.RunConfigurationTypeUsagesCollecto
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
-import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule;
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomValidationRule;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.ExtensionPoint;
 import com.intellij.openapi.extensions.Extensions;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class RunConfigurationValidatorTest extends LightPlatformTestCase {
 
-  private static void doTest(@NotNull ValidationResultType expected, @NotNull CustomWhiteListRule validator,
+  private static void doTest(@NotNull ValidationResultType expected, @NotNull CustomValidationRule validator,
                              @NotNull String data, @NotNull EventContext context) {
     final Disposable disposable = Disposer.newDisposable();
     try {

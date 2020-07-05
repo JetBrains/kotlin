@@ -10,7 +10,7 @@ import com.intellij.internal.statistic.beans.MetricEventFactoryKt;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
-import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule;
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomValidationRule;
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
@@ -184,7 +184,7 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
     }
   }
 
-  public static class InspectionToolValidator extends CustomWhiteListRule {
+  public static class InspectionToolValidator extends CustomValidationRule {
 
     @Override
     public boolean acceptRuleId(@Nullable String ruleId) {

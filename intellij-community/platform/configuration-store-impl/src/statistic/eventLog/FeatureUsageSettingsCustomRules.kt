@@ -5,9 +5,9 @@ import com.intellij.internal.statistic.eventLog.validator.ValidationResultType
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType.ACCEPTED
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType.REJECTED
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext
-import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhiteListRule
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomValidationRule
 
-class SettingsComponentNameValidator : CustomWhiteListRule() {
+class SettingsComponentNameValidator : CustomValidationRule() {
   override fun acceptRuleId(ruleId: String?): Boolean {
     return "component_name" == ruleId || "option_name" == ruleId
   }
@@ -24,7 +24,7 @@ class SettingsComponentNameValidator : CustomWhiteListRule() {
   }
 }
 
-class SettingsValueValidator : CustomWhiteListRule() {
+class SettingsValueValidator : CustomValidationRule() {
   override fun acceptRuleId(ruleId: String?): Boolean = "setting_value" == ruleId
 
   override fun doValidate(data: String, context: EventContext): ValidationResultType {
