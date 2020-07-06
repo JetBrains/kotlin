@@ -6,9 +6,10 @@ import java.io.FileWriter
 import java.io.OutputStreamWriter
 import java.net.URI
 import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.Instant
 import java.util.*
 import javax.xml.stream.XMLOutputFactory
-
 plugins {
     base
 }
@@ -188,8 +189,8 @@ val makeIde = if (androidStudioBuild != null) {
         customDepsOrg,
         customDepsRepoDir,
         if (androidStudioOs == "mac")
-            ::skipContentsDirectory 
-        else 
+            ::skipContentsDirectory
+        else
             ::skipToplevelDirectory
     )
 } else {

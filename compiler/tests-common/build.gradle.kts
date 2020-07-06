@@ -54,6 +54,12 @@ dependencies {
             )
         }
     }
+    Platform[202] {
+        testCompile(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
+    }
+    Platform[203].orHigher {
+        testCompile(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-2") }
+    }
     testCompile(intellijDep()) {
         includeJars(
             "jps-model",
