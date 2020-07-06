@@ -261,11 +261,17 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                                 methodInfo = specialBridge.methodInfo?.copy(argumentsToCheck = 0), // For potential argument boxing
                                 isFinal = false,
                             )
-                            // The part after ?: is needed for methods with default implementations in collection interfaces:
-                            // MutableMap.remove() and getOrDefault().
-                            val superTarget = overriddenFromClass.takeIf { !it.isFakeOverride } ?: specialBridge.overridden
-                            irClass.declarations.remove(irFunction)
-                            irClass.addSpecialBridge(superBridge, superTarget)
+                            // If the resulting bridge to a super member has the exact signature
+                            // of the bridgee, it is not actually needed.
+                            if (superBridge.signature == overriddenFromClass.jvmMethod) {
+                                specialBridge.overridden
+                            } else {
+                                // The part after ?: is needed for methods with default implementations in collection interfaces:
+                                // MutableMap.remove() and getOrDefault().
+                                val superTarget = overriddenFromClass.takeIf { !it.isFakeOverride } ?: specialBridge.overridden
+                                irClass.declarations.remove(irFunction)
+                                irClass.addSpecialBridge(superBridge, superTarget)
+                            }
                         }
                         else -> irFunction
                     }

@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public class A1 {
+    private final field size: int
+    public method <init>(): void
+    public method getSize(): int
+}
+
+@kotlin.Metadata
+public final class A2 {
+    public method <init>(): void
+    public method add(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
+    public method addAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public method clear(): void
+    public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public method isEmpty(): boolean
+    public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
+    public method remove(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
+    public bridge final method remove(p0: java.lang.Object): boolean
+    public method removeAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public method retainAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public bridge final method size(): int
+    public @org.jetbrains.annotations.NotNull method toArray(): java.lang.Object[]
+    public @org.jetbrains.annotations.NotNull method toArray(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): java.lang.Object[]
+}
