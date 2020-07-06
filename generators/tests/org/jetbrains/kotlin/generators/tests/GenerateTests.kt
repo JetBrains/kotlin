@@ -960,20 +960,20 @@ fun main(args: Array<String>) {
             }
         }
 
-    testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/testData") {
-        testClass<AbstractFirMultiModuleResolveTest> {
-            model("fir/multiModule", recursive = false, extension = null)
+        testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/testData") {
+            testClass<AbstractFirMultiModuleResolveTest> {
+                model("fir/multiModule", recursive = false, extension = null)
+            }
+
+            testClass<AbstractFirLazyResolveTest> {
+                model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
+            }
         }
 
-        testClass<AbstractFirLazyResolveTest> {
-            model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
-        }
-    }
-
-    testGroup("idea/idea-fir/tests", "idea/testData") {
-        testClass<AbstractFirHighlightingTest> {
-            model("highlighter")
-        }
+        testGroup("idea/idea-fir/tests", "idea/testData") {
+            testClass<AbstractFirHighlightingTest> {
+                model("highlighter")
+            }
 
             testClass<AbstractFirReferenceResolveTest> {
                 model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
@@ -985,9 +985,9 @@ fun main(args: Array<String>) {
                 model("checker/recovery")
                 model("checker/rendering")
                 model("checker/infos")
-            model("checker/diagnosticsMessage")
+                model("checker/diagnosticsMessage")
+            }
         }
-    }
 
         testGroup("idea/scripting-support/test", "idea/scripting-support/testData") {
             testClass<AbstractScratchRunActionTest> {
