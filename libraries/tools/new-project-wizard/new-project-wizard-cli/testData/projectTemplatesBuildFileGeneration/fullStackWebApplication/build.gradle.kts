@@ -17,6 +17,9 @@ repositories {
         url = uri("https://dl.bintray.com/kotlin/kotlin-dev")
     }
     maven {
+        url = uri("https://dl.bintray.com/kotlin/kotlinx")
+    }
+    maven {
         url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")
     }
 }
