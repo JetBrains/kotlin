@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.util.analyzeInlinedFunctions
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import java.io.File
@@ -41,8 +41,7 @@ class KotlinCompilerIde(
         }
 
         private fun getDefaultResolutionFacade(file: KtFile): ResolutionFacade? {
-            return KotlinCacheService.getInstance(file.project)
-                .getResolutionFacadeByFile(file, JvmPlatforms.unspecifiedJvmPlatform)
+            return file.getResolutionFacade()
         }
     }
 
