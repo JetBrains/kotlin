@@ -1,11 +1,9 @@
-// IGNORE_FIR
-
 class Foo {
-  fun invoke(vararg a: Any) {}
+  operator fun invoke(a: Any) {}
 }
 
 fun test(f: Foo) {
   f() { 1<caret>}
 }
 
-// REF: (in Foo).invoke(vararg Any)
+// REF: (in Foo).invoke(Any)
