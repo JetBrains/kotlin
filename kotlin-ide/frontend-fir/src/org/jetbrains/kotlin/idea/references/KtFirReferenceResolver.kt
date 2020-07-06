@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import org.jetbrains.kotlin.idea.frontend.api.analyze
-import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
+import org.jetbrains.kotlin.idea.util.getElementTextInContext
 
 object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
     class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
@@ -24,7 +24,17 @@ object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
         if (ApplicationManager.getApplication().isDispatchThread) {
             throw ProcessCanceledException()
         }
-        val resolveToPsiElements = analyze(ref.expression) { ref.getResolvedToPsi(this) }
+        val resolveToPsiElements = try {
+            analyze(ref.expression) { ref.getResolvedToPsi(this) }
+        } catch (e: Throwable) {
+            if (e is ControlFlowException) throw e
+            throw KtReferenceResolveException(ref, e)
+        }
         return resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()
     }
 }
+
+class KtReferenceResolveException(
+    reference: KtReference,
+    cause: Throwable
+) : RuntimeException("Reference is:\n${reference.element.getElementTextInContext()}", cause)
