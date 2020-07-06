@@ -530,7 +530,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = typeMatched
                 && myMatchingVisitor.match(parameter.defaultValue, other.defaultValue)
                 && myMatchingVisitor.match(parameter.valOrVarKeyword, other.valOrVarKeyword)
-                && matchTextOrVariable(parameter.nameIdentifier, otherNameIdentifier)
+                && (parameter.nameIdentifier == null || matchTextOrVariable(parameter.nameIdentifier, otherNameIdentifier))
                 && myMatchingVisitor.match(parameter.modifierList, other.modifierList)
                 && myMatchingVisitor.match(parameter.destructuringDeclaration, other.destructuringDeclaration)
 

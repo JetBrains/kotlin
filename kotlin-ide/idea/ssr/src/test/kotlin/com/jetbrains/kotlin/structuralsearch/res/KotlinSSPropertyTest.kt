@@ -43,4 +43,7 @@ class KotlinSSPropertyTest : KotlinSSResourceInspectionTest() {
         """, KotlinStructuralSearchProfile.PROPERTY_CONTEXT) }
 
     fun testFunctionType() { doTest("val '_ : ('_{2,2}) -> Unit") }
+
+    fun testFunctionTypeNamedParameter() { doTest("val '_ : ('_) -> '_") }
+
 }
