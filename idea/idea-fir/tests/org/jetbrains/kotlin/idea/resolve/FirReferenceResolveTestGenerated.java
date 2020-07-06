@@ -581,9 +581,19 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             runTest("idea/testData/resolve/references/invoke/lambdaAndParens.kt");
         }
 
+        @TestMetadata("lambdaAndParensIncorrectVararg.kt")
+        public void testLambdaAndParensIncorrectVararg() throws Exception {
+            runTest("idea/testData/resolve/references/invoke/lambdaAndParensIncorrectVararg.kt");
+        }
+
         @TestMetadata("lambdaNoPar.kt")
         public void testLambdaNoPar() throws Exception {
             runTest("idea/testData/resolve/references/invoke/lambdaNoPar.kt");
+        }
+
+        @TestMetadata("lambdaNoParIncorrectVararg.kt")
+        public void testLambdaNoParIncorrectVararg() throws Exception {
+            runTest("idea/testData/resolve/references/invoke/lambdaNoParIncorrectVararg.kt");
         }
 
         @TestMetadata("lambdaNoParLabel.kt")
@@ -591,9 +601,19 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             runTest("idea/testData/resolve/references/invoke/lambdaNoParLabel.kt");
         }
 
+        @TestMetadata("lambdaNoParLabelIncorrectVararg.kt")
+        public void testLambdaNoParLabelIncorrectVararg() throws Exception {
+            runTest("idea/testData/resolve/references/invoke/lambdaNoParLabelIncorrectVararg.kt");
+        }
+
         @TestMetadata("lambdaNoParRCurly.kt")
         public void testLambdaNoParRCurly() throws Exception {
             runTest("idea/testData/resolve/references/invoke/lambdaNoParRCurly.kt");
+        }
+
+        @TestMetadata("lambdaNoParRCurlyIncorrectVararg.kt")
+        public void testLambdaNoParRCurlyIncorrectVararg() throws Exception {
+            runTest("idea/testData/resolve/references/invoke/lambdaNoParRCurlyIncorrectVararg.kt");
         }
 
         @TestMetadata("noParams.kt")
@@ -609,6 +629,11 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
         @TestMetadata("nonemptyLambdaRPar.kt")
         public void testNonemptyLambdaRPar() throws Exception {
             runTest("idea/testData/resolve/references/invoke/nonemptyLambdaRPar.kt");
+        }
+
+        @TestMetadata("nonemptyLambdaRParIncorrectVararg.kt")
+        public void testNonemptyLambdaRParIncorrectVararg() throws Exception {
+            runTest("idea/testData/resolve/references/invoke/nonemptyLambdaRParIncorrectVararg.kt");
         }
 
         @TestMetadata("oneParam.kt")
