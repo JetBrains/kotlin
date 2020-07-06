@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -15,12 +16,19 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.psiUtil.toVisibility
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -184,4 +192,41 @@ fun CheckerContext.findClosestClassOrObject(): FirClass<*>? {
     }
 
     return null
+}
+
+/**
+ * Returns the list of functions that overridden by given
+ */
+fun FirSimpleFunction.overriddenFunctions(
+    containingClass: FirClass<*>,
+    context: CheckerContext
+): List<FirFunctionSymbol<*>> {
+    val firTypeScope = containingClass.unsubstitutedScope(
+        context.sessionHolder.session,
+        context.sessionHolder.scopeSession
+    ) as FirTypeScope
+
+    val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()
+    firTypeScope.processFunctionsByName(symbol.fir.name) { }
+    firTypeScope.processOverriddenFunctions(symbol) {
+        overriddenFunctions.add(it)
+        ProcessorAction.NEXT
+    }
+
+    return overriddenFunctions
+}
+
+/**
+ * Returns the visibility by given KtModifierList
+ */
+fun KtModifierList?.getVisibility() = this?.visibilityModifierType()?.toVisibility()
+
+/**
+ * Returns the modality of the class
+ */
+fun FirClass<*>.modality(): Modality? {
+    return when (this) {
+        is FirRegularClass -> modality
+        else -> Modality.FINAL
+    }
 }
