@@ -89,6 +89,11 @@ fun deserializeClassToSymbol(
             FirConstDeserializer(session, (containerSource as? KotlinJvmBinarySourceElement)?.binaryClass),
             containerSource
         )
+    if (status.isCompanion) {
+        parentContext?.let {
+            context.annotationDeserializer.inheritAnnotationInfo(it.annotationDeserializer)
+        }
+    }
     buildRegularClass {
         this.session = session
         origin = FirDeclarationOrigin.Library

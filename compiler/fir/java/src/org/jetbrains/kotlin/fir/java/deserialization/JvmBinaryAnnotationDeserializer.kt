@@ -30,10 +30,14 @@ class JvmBinaryAnnotationDeserializer(
     kotlinBinaryClass: KotlinJvmBinaryClass,
     byteContent: ByteArray?
 ) : AbstractAnnotationDeserializer(session) {
-    // TODO: In order to properly load annotations on fields inside a companion object,
-    //  we need binary classes for both the companion class and the enclosing class.
     private val annotationInfo by lazy(LazyThreadSafetyMode.PUBLICATION) {
         session.loadMemberAnnotations(kotlinBinaryClass, byteContent)
+    }
+
+    override fun inheritAnnotationInfo(parent: AbstractAnnotationDeserializer) {
+        if (parent is JvmBinaryAnnotationDeserializer) {
+            annotationInfo.memberAnnotations.putAll(parent.annotationInfo.memberAnnotations)
+        }
     }
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotationCall> {
@@ -244,7 +248,7 @@ class JvmBinaryAnnotationDeserializer(
 }
 
 // TODO: Rename this once property constants are recorded as well
-private data class MemberAnnotations(val memberAnnotations: Map<MemberSignature, MutableList<FirAnnotationCall>>)
+private data class MemberAnnotations(val memberAnnotations: MutableMap<MemberSignature, MutableList<FirAnnotationCall>>)
 
 // TODO: better to be in KotlinDeserializedJvmSymbolsProvider?
 private fun FirSession.loadMemberAnnotations(kotlinBinaryClass: KotlinJvmBinaryClass, byteContent: ByteArray?): MemberAnnotations {
