@@ -1414,24 +1414,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
     }
 
-    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ExtendedCheckers extends AbstractFirDiagnosticsWithLightTreeTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInExtendedCheckers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("RedundantVisibilityModifierChecker.kt")
-        public void testRedundantVisibilityModifierChecker() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierChecker.kt");
-        }
-    }
-
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/fromBuilder")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
