@@ -32,12 +32,11 @@ class ProjectDataService : ProjectDataServiceBase() {
         modelsProvider: IdeModelsProvider
     ) {
         super.onSuccessImport(imported, projectData, project, modelsProvider)
-        readGradleProperty(project, KonanBundle.message("property.xcodeproj"))?.let { path ->
-            val workspace = getWorkspace(project)
-            workspace.locateXCProject(path)
-            workspace.xcProjectFile?.projectName?.let { projectName ->
-                createDefaultAppleRunConfiguration(projectName, project)
-            }
+
+        val workspace = getWorkspace(project)
+        workspace.locateXCProject(readGradleProperty(project, KonanBundle.message("property.xcodeproj")))
+        workspace.xcProjectFile?.projectName?.let { projectName ->
+            createDefaultAppleRunConfiguration(projectName, project)
         }
     }
 

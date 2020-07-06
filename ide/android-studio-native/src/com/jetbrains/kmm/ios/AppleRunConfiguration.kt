@@ -13,11 +13,14 @@ import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.configurations.RuntimeConfigurationError
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.ide.actions.OpenFileAction
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.ui.ComponentUtil
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriverConfiguration
 import com.jetbrains.cidr.execution.testing.CidrLauncher
@@ -33,6 +36,8 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
     LocatableConfigurationBase<Element>(project, configurationFactory, name),
     MobileRunConfiguration {
     private val workspace = ProjectWorkspace.getInstance(project)
+
+    val iosBuildDirectory = "build/ios" // this directory is removed by Gradle clean command
 
     val xcProjectFile get() = workspace.xcProjectFile
     private val xcodeSchemeLock = ReentrantLock()
@@ -55,68 +60,87 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
             }
         }
 
-    fun xcodeSdk(target: ExecutionTarget): String {
-        return if (target is ApplePhysicalDevice) "iphoneos" else "iphonesimulator"
-    }
-
-    val iosBuildDirectory = "build/ios" // this directory is removed by Gradle clean command
+    fun xcodeSdk(target: ExecutionTarget): String =
+        if (target is ApplePhysicalDevice) "iphoneos" else "iphonesimulator"
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         AppleRunConfigurationEditor(project)
 
-    override fun getBeforeRunTasks(): MutableList<BeforeRunTask<*>> {
-        val result = mutableListOf<BeforeRunTask<*>>()
-        result.add(BuildIOSAppTask())
-        return result
-    }
-
-    private val openGradleProperties = Runnable {
-        val propertiesFile = LocalFileSystem.getInstance().findFileByIoFile(File(project.basePath, "gradle.properties"))
-
-        if (propertiesFile != null) {
-            OpenFileAction.openFile(propertiesFile, project)
-        }
-
-        val runConfigurationsSettingsWindow = (ComponentUtil.getActiveWindow() as? DialogWrapperDialog) ?: return@Runnable
-        runConfigurationsSettingsWindow.dialogWrapper.close(DialogWrapper.CANCEL_EXIT_CODE)
-    }
-
-    private fun reportXcFileError(message: String, quickFix: Runnable? = null) {
-        throw if (quickFix == null)
-            RuntimeConfigurationError(message)
-        else
-            RuntimeConfigurationError(message, quickFix)
-    }
+    override fun getBeforeRunTasks(): MutableList<BeforeRunTask<*>> =
+        mutableListOf(BuildIOSAppTask())
 
     override fun checkConfiguration() {
         val propertyKey = KonanBundle.message("property.xcodeproj")
+        val status = workspace.xcProjectStatus
 
-        when (val status = workspace.xcProjectStatus) {
-            is XcProjectStatus.Misconfiguration ->
-                reportXcFileError("Project is misconfigured: " + status.reason)
-            XcProjectStatus.NotLocated ->
-                reportXcFileError(
-                    "Please specify Xcode project location in $propertyKey property of gradle.properties",
-                    openGradleProperties
-                )
-            is XcProjectStatus.NotFound ->
-                reportXcFileError(
-                    "Please check $propertyKey property of gradle.properties: " + status.reason,
-                    openGradleProperties
-                )
+        when {
+            status is XcProjectStatus.Misconfiguration -> throwConfigurationError(
+                "Project is misconfigured: " + status.reason
+            )
+            status == XcProjectStatus.NotLocated -> throwConfigurationError(
+                "Please specify Xcode project location in $propertyKey property of gradle.properties",
+                Runnable {
+                    fixXcProjectPath()
+                    openGradlePropertiesFile()
+                    closeSettingsDialog()
+                }
+            )
+            status is XcProjectStatus.NotFound -> throwConfigurationError(
+                "Please check $propertyKey property of gradle.properties: " + status.reason,
+                Runnable {
+                    openGradlePropertiesFile()
+                    closeSettingsDialog()
+                }
+            )
+            xcProjectFile!!.schemes.isEmpty() -> throwConfigurationError(
+                "Please check specified Xcode project file: " + xcProjectFile!!.schemesStatus
+            )
+            xcodeScheme == null -> throwConfigurationError(
+                "Please select Xcode scheme"
+            )
+            xcodeScheme!! !in xcProjectFile!!.schemes -> throwConfigurationError(
+                "Selected scheme '$xcodeScheme' is not found in ${xcProjectFile!!.absolutePath}"
+            )
+        }
+    }
+
+    private fun throwConfigurationError(
+        message: String,
+        quickFix: Runnable? = null
+    ) {
+        throw RuntimeConfigurationError(message).apply {
+            this.quickFix = quickFix
+        }
+    }
+
+    private fun fixXcProjectPath() {
+        findNearestXcProject()?.let { xcFile ->
+            val propFile = File(project.basePath, "gradle.properties")
+            LocalFileSystem.getInstance().findFileByIoFile(propFile)?.let { vf ->
+                WriteCommandAction.runWriteCommandAction(project) {
+                    val text = VfsUtilCore.loadText(vf) + "\nxcodeproj=${xcFile.relativeTo(propFile.parentFile)}"
+                    VfsUtil.saveText(vf, text)
+                }
+            }
+        }
+    }
+
+    private fun findNearestXcProject(): File? =
+        File(project.basePath).walk().maxDepth(2).firstOrNull { f ->
+            f.extension == XcFileExtensions.project || f.extension == XcFileExtensions.workspace
         }
 
-        if (xcProjectFile!!.schemes.isEmpty()) {
-            throw RuntimeConfigurationError("Please check specified Xcode project file: " + xcProjectFile!!.schemesStatus)
+    private fun openGradlePropertiesFile() {
+        val propFile = File(project.basePath, "gradle.properties")
+        LocalFileSystem.getInstance().findFileByIoFile(propFile)?.let { vf ->
+            OpenFileAction.openFile(vf, project)
         }
+    }
 
-        if (xcodeScheme == null) {
-            throw RuntimeConfigurationError("Please select Xcode scheme")
-        }
-
-        if (xcodeScheme!! !in xcProjectFile!!.schemes) {
-            throw RuntimeConfigurationError("Selected scheme '$xcodeScheme' is not found in ${xcProjectFile!!.absolutePath}")
-        }
+    private fun closeSettingsDialog() {
+        (ComponentUtil.getActiveWindow() as? DialogWrapperDialog)
+            ?.dialogWrapper
+            ?.close(DialogWrapper.CANCEL_EXIT_CODE)
     }
 
     override fun canRunOn(target: ExecutionTarget): Boolean = target is Device

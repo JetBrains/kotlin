@@ -30,8 +30,14 @@ class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
     var xcProjectStatus: XcProjectStatus = XcProjectStatus.NotLocated
         private set
     var xcProjectFile: XcProjectFile? = null
+        private set
 
-    fun locateXCProject(path: String) {
+    fun locateXCProject(path: String?) {
+        if (path == null) {
+            xcProjectStatus = XcProjectStatus.NotLocated
+            return
+        }
+
         if (project.basePath == null) {
             xcProjectStatus = XcProjectStatus.Misconfiguration("project base path is absent")
             return
