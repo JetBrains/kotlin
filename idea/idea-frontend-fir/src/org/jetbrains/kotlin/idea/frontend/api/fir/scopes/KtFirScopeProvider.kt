@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
-import org.jetbrains.kotlin.idea.frontend.api.scopes.KtDeclaredMemberScope
-import org.jetbrains.kotlin.idea.frontend.api.scopes.KtMemberScope
-import org.jetbrains.kotlin.idea.frontend.api.scopes.KtPackageScope
-import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeProvider
+import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
@@ -51,5 +48,9 @@ internal class KtFirScopeProvider(
             check(packageSymbol is KtFirPackageSymbol)
             KtFirPackageScope(packageSymbol, token, builder, session)
         }
+    }
+
+    override fun getCompositeScope(subScopes: List<KtScope>): KtCompositeScope = withValidityAssertion {
+        KtFirCompositeScope(subScopes, token)
     }
 }

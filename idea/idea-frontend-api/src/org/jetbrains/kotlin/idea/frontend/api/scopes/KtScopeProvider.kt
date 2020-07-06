@@ -13,4 +13,5 @@ abstract class KtScopeProvider : ValidityOwner {
     abstract fun getMemberScope(classSymbol: KtClassOrObjectSymbol): KtMemberScope
     abstract fun getDeclaredMemberScope(classSymbol: KtClassOrObjectSymbol): KtDeclaredMemberScope
     abstract fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope
+    abstract fun getCompositeScope(subScopes: List<KtScope>): KtCompositeScope
 }
