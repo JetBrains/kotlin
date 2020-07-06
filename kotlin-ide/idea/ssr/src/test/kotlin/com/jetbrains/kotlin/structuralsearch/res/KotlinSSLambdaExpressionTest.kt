@@ -12,4 +12,6 @@ class KotlinSSLambdaExpressionTest : KotlinSSResourceInspectionTest() {
     fun testExplicitIt() { doTest("{ it -> '_Expr+ }") }
 
     fun testIdentity() { doTest("{ '_x -> '_x }") }
+
+    fun testAnnotated() { doTest("@Ann { println() }") }
 }

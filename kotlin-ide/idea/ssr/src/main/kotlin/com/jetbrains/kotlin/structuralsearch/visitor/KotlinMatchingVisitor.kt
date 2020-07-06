@@ -812,6 +812,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(annotationEntry.valueArgumentList, other.valueArgumentList)
     }
 
+    override fun visitAnnotatedExpression(expression: KtAnnotatedExpression) {
+        val other = getTreeElementDepar<KtAnnotatedExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.baseExpression, other.baseExpression)
+                && myMatchingVisitor.matchInAnyOrder(expression.annotationEntries, other.annotationEntries)
+    }
+
     override fun visitProperty(property: KtProperty) {
         val other = getTreeElementDepar<KtProperty>() ?: return
         myMatchingVisitor.result = matchTypeReferenceWithDeclaration(property.typeReference, other)
