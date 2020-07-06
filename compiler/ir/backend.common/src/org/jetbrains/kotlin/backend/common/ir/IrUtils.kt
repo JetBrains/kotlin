@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.builders.declarations.IrTypeParameterBuilder
@@ -190,9 +190,13 @@ fun IrTypeParameter.copyToWithoutSuperTypes(
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
-    dispatchReceiverParameter = from.dispatchReceiverParameter?.let {
-        IrValueParameterImpl(it.startOffset, it.endOffset, it.origin, it.descriptor, it.type, it.varargElementType).also {
-            it.parent = this
+    dispatchReceiverParameter = from.dispatchReceiverParameter?.run {
+        IrValueParameterImpl(
+            startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor), descriptor.name,
+            descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline,
+            descriptor.isNoinline
+        ).also { parameter ->
+            parameter.parent = this@copyReceiverParametersFrom
         }
     }
     extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)

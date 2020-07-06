@@ -886,10 +886,8 @@ open class SymbolTable(
         varargElementType: IrType? = null,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
             IrValueParameterImpl(
-                startOffset, endOffset, origin, descriptor,
-                name = nameProvider.nameForDeclaration(descriptor),
-                type = type, varargElementType = varargElementType,
-                symbol = it
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor),
+                descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline
             )
         }
     ): IrValueParameter =

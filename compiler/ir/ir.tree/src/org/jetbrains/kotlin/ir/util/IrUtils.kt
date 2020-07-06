@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -378,20 +377,6 @@ fun IrValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
     { current -> (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { it.owner.valueParameters[current.index] } ?: listOf() },
     { current -> current.defaultValue != null }
 )
-
-@ObsoleteDescriptorBasedAPI
-fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter {
-    assert(this.descriptor.type == newDescriptor.type)
-
-    return IrValueParameterImpl(
-        startOffset,
-        endOffset,
-        IrDeclarationOrigin.DEFINED,
-        newDescriptor,
-        type,
-        varargElementType
-    )
-}
 
 // In presence of `IrBlock`s, return the expression that actually serves as the value (the last one).
 tailrec fun IrExpression.removeBlocks(): IrExpression? = when (this) {

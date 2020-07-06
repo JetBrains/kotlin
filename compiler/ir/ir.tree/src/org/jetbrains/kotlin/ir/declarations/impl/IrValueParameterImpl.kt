@@ -17,19 +17,16 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.ValueParameterCarrier
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class IrValueParameterImpl(
     startOffset: Int,
@@ -46,25 +43,6 @@ class IrValueParameterImpl(
     IrDeclarationBase<ValueParameterCarrier>(startOffset, endOffset, origin),
     IrValueParameter,
     ValueParameterCarrier {
-
-    @ObsoleteDescriptorBasedAPI
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ParameterDescriptor,
-        type: IrType,
-        varargElementType: IrType?,
-        name: Name = descriptor.name,
-        symbol: IrValueParameterSymbol = IrValueParameterSymbolImpl(descriptor)
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        name,
-        index = descriptor.safeAs<ValueParameterDescriptor>()?.index ?: -1,
-        type = type, varargElementType = varargElementType,
-        isCrossinline = descriptor.safeAs<ValueParameterDescriptor>()?.isCrossinline ?: false,
-        isNoinline = descriptor.safeAs<ValueParameterDescriptor>()?.isNoinline ?: false
-    )
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ParameterDescriptor = symbol.descriptor

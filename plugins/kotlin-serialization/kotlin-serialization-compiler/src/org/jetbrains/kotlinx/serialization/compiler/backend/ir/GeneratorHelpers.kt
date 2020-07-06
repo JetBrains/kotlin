@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -377,14 +378,14 @@ interface IrBuilderExtension {
         overwriteValueParameters: Boolean = false,
         copyTypeParameters: Boolean = true
     ) {
-        fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
-            this@createParameterDeclarations.startOffset, this@createParameterDeclarations.endOffset,
-            SERIALIZABLE_PLUGIN_ORIGIN,
-            this,
-            type.toIrType(),
-            (this as? ValueParameterDescriptor)?.varargElementType?.toIrType()
-        ).also {
-            it.parent = this@createParameterDeclarations
+        val function = this
+        fun irValueParameter(descriptor: ParameterDescriptor): IrValueParameterImpl = with(descriptor) {
+            IrValueParameterImpl(
+                function.startOffset, function.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrValueParameterSymbolImpl(this),
+                name, indexOrMinusOne, type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline
+            ).also {
+                it.parent = function
+            }
         }
 
         if (copyTypeParameters) {
@@ -392,13 +393,13 @@ interface IrBuilderExtension {
             copyTypeParamsFromDescriptor()
         }
 
-        dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.irValueParameter()
-        extensionReceiverParameter = descriptor.extensionReceiverParameter?.irValueParameter()
+        dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { irValueParameter(it) }
+        extensionReceiverParameter = descriptor.extensionReceiverParameter?.let { irValueParameter(it) }
 
         if (!overwriteValueParameters)
             assert(valueParameters.isEmpty())
 
-        valueParameters = descriptor.valueParameters.map { it.irValueParameter() }
+        valueParameters = descriptor.valueParameters.map { irValueParameter(it) }
     }
 
     fun IrFunction.copyTypeParamsFromDescriptor() {
