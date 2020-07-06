@@ -88,7 +88,7 @@ class ReaderModeActionProvider(override val separator: Separator? = Separator.cr
         else {
           presentation.text = LangBundle.message("action.ReaderModeProvider.text")
           presentation.icon = EmptyIcon.ICON_16
-          presentation.hoveredIcon = IconUtil.colorize(AllIcons.Actions.Cancel, ACTIONS_GREY_COLOR_KEY.defaultColor)
+          presentation.hoveredIcon = IconUtil.colorize(AllIcons.Actions.Close, ACTIONS_GREY_COLOR_KEY.defaultColor)
           presentation.description = LangBundle.message("action.ReaderModeProvider.text.exit")
         }
       }
