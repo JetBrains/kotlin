@@ -14,6 +14,6 @@ fun takeWithFun(a: WithFun) {}
 
 fun test() {
     takeBase {}
-    takeWithoutFun({})
+    <!INAPPLICABLE_CANDIDATE!>takeWithoutFun<!>({})
     takeWithFun {}
 }

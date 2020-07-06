@@ -202,6 +202,7 @@ class FirSamResolverImpl(
 
     private fun resolveFunctionTypeIfSamInterface(firRegularClass: FirRegularClass): ConeKotlinType? {
         return resolvedFunctionType.getOrPut(firRegularClass) {
+            if (!firRegularClass.status.isFun) return@getOrPut NULL_STUB
             val abstractMethod = firRegularClass.getSingleAbstractMethodOrNull(firSession, scopeSession) ?: return@getOrPut NULL_STUB
             // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
 

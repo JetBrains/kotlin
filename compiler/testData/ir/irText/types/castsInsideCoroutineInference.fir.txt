@@ -92,29 +92,29 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                   TYPE_OP type=<root>.ChannelCoroutine<kotlin.Any> origin=CAST typeOperand=<root>.ChannelCoroutine<kotlin.Any>
                     CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<IrErrorType> origin=GET_PROPERTY
                       $this: GET_VAR '<this>: <root>.ProducerScope<kotlin.Any> declared in <root>.asFairChannel.<anonymous>' type=<root>.ProducerScope<IrErrorType> origin=null
-                CALL 'public abstract fun collect (collector: <root>.FlowCollector<T of <root>.Flow>): kotlin.Unit [suspend] declared in <root>.Flow' type=kotlin.Unit origin=null
-                  $this: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asFairChannel' type=<root>.Flow<*> origin=null
-                  collector: TYPE_OP type=<root>.FlowCollector<kotlin.Any?> origin=SAM_CONVERSION typeOperand=<root>.FlowCollector<kotlin.Any?>
-                    FUN_EXPR type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
-                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:kotlin.Any?) returnType:kotlin.Unit
-                        VALUE_PARAMETER name:value index:0 type:kotlin.Any?
-                        BLOCK_BODY
-                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Any?): kotlin.Unit declared in <root>.asFairChannel.<anonymous>'
-                            CALL 'public final fun sendFair (element: E of <root>.ChannelCoroutine): kotlin.Unit [suspend] declared in <root>.ChannelCoroutine' type=kotlin.Unit origin=null
-                              $this: GET_VAR 'val channel: <root>.ChannelCoroutine<kotlin.Any> [val] declared in <root>.asFairChannel.<anonymous>' type=<root>.ChannelCoroutine<kotlin.Any> origin=null
-                              element: BLOCK type=kotlin.Any origin=ELVIS
-                                VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
-                                  GET_VAR 'value: kotlin.Any? declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
-                                WHEN type=kotlin.Any origin=ELVIS
-                                  BRANCH
-                                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                                      arg0: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
-                                      arg1: CONST Null type=kotlin.Nothing? value=null
-                                    then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any' type=kotlin.Any origin=null
-                                  BRANCH
-                                    if: CONST Boolean type=kotlin.Boolean value=true
-                                    then: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                                      GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
+                CALL 'public final fun collect <T> (action: kotlin.coroutines.SuspendFunction1<T of <root>.collect, kotlin.Unit>): kotlin.Unit [inline,suspend] declared in <root>' type=kotlin.Unit origin=null
+                  <T>: kotlin.Any?
+                  $receiver: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asFairChannel' type=<root>.Flow<*> origin=null
+                  action: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:kotlin.Any?) returnType:kotlin.Unit [suspend]
+                      VALUE_PARAMETER name:value index:0 type:kotlin.Any?
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Any?): kotlin.Unit [suspend] declared in <root>.asFairChannel.<anonymous>'
+                          CALL 'public final fun sendFair (element: E of <root>.ChannelCoroutine): kotlin.Unit [suspend] declared in <root>.ChannelCoroutine' type=kotlin.Unit origin=null
+                            $this: GET_VAR 'val channel: <root>.ChannelCoroutine<kotlin.Any> [val] declared in <root>.asFairChannel.<anonymous>' type=<root>.ChannelCoroutine<kotlin.Any> origin=null
+                            element: BLOCK type=kotlin.Any origin=ELVIS
+                              VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
+                                GET_VAR 'value: kotlin.Any? declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
+                              WHEN type=kotlin.Any origin=ELVIS
+                                BRANCH
+                                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                                    arg0: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
+                                    arg1: CONST Null type=kotlin.Nothing? value=null
+                                  then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any' type=kotlin.Any origin=null
+                                BRANCH
+                                  if: CONST Boolean type=kotlin.Boolean value=true
+                                  then: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                                    GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
   FUN name:asChannel visibility:private modality:FINAL <> ($receiver:<root>.CoroutineScope, flow:<root>.Flow<*>) returnType:<root>.ReceiveChannel<kotlin.Any>
     $receiver: VALUE_PARAMETER name:<this> type:<root>.CoroutineScope
     VALUE_PARAMETER name:flow index:0 type:<root>.Flow<*>
@@ -127,30 +127,30 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScope<kotlin.Any>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:<this> type:<root>.ProducerScope<kotlin.Any>
               BLOCK_BODY
-                CALL 'public abstract fun collect (collector: <root>.FlowCollector<T of <root>.Flow>): kotlin.Unit [suspend] declared in <root>.Flow' type=kotlin.Unit origin=null
-                  $this: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asChannel' type=<root>.Flow<*> origin=null
-                  collector: TYPE_OP type=<root>.FlowCollector<kotlin.Any?> origin=SAM_CONVERSION typeOperand=<root>.FlowCollector<kotlin.Any?>
-                    FUN_EXPR type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
-                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:kotlin.Any?) returnType:kotlin.Unit
-                        VALUE_PARAMETER name:value index:0 type:kotlin.Any?
-                        BLOCK_BODY
-                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Any?): kotlin.Unit declared in <root>.asChannel.<anonymous>'
-                            CALL 'public abstract fun send (e: E of <root>.SendChannel): kotlin.Unit [suspend] declared in <root>.SendChannel' type=kotlin.Unit origin=null
-                              $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<IrErrorType> origin=GET_PROPERTY
-                                $this: GET_VAR '<this>: <root>.ProducerScope<kotlin.Any> declared in <root>.asChannel.<anonymous>' type=<root>.ProducerScope<IrErrorType> origin=null
-                              e: BLOCK type=kotlin.Any origin=ELVIS
-                                VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
-                                  GET_VAR 'value: kotlin.Any? declared in <root>.asChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
-                                WHEN type=kotlin.Any origin=ELVIS
-                                  BRANCH
-                                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                                      arg0: GET_VAR 'val tmp_1: kotlin.Any? [val] declared in <root>.asChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
-                                      arg1: CONST Null type=kotlin.Nothing? value=null
-                                    then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any' type=kotlin.Any origin=null
-                                  BRANCH
-                                    if: CONST Boolean type=kotlin.Boolean value=true
-                                    then: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                                      GET_VAR 'val tmp_1: kotlin.Any? [val] declared in <root>.asChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
+                CALL 'public final fun collect <T> (action: kotlin.coroutines.SuspendFunction1<T of <root>.collect, kotlin.Unit>): kotlin.Unit [inline,suspend] declared in <root>' type=kotlin.Unit origin=null
+                  <T>: kotlin.Any?
+                  $receiver: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asChannel' type=<root>.Flow<*> origin=null
+                  action: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:kotlin.Any?) returnType:kotlin.Unit [suspend]
+                      VALUE_PARAMETER name:value index:0 type:kotlin.Any?
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Any?): kotlin.Unit [suspend] declared in <root>.asChannel.<anonymous>'
+                          CALL 'public abstract fun send (e: E of <root>.SendChannel): kotlin.Unit [suspend] declared in <root>.SendChannel' type=kotlin.Unit origin=null
+                            $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<IrErrorType> origin=GET_PROPERTY
+                              $this: GET_VAR '<this>: <root>.ProducerScope<kotlin.Any> declared in <root>.asChannel.<anonymous>' type=<root>.ProducerScope<IrErrorType> origin=null
+                            e: BLOCK type=kotlin.Any origin=ELVIS
+                              VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
+                                GET_VAR 'value: kotlin.Any? declared in <root>.asChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
+                              WHEN type=kotlin.Any origin=ELVIS
+                                BRANCH
+                                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                                    arg0: GET_VAR 'val tmp_1: kotlin.Any? [val] declared in <root>.asChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
+                                    arg1: CONST Null type=kotlin.Nothing? value=null
+                                  then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any' type=kotlin.Any origin=null
+                                BRANCH
+                                  if: CONST Boolean type=kotlin.Boolean value=true
+                                  then: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                                    GET_VAR 'val tmp_1: kotlin.Any? [val] declared in <root>.asChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
   CLASS CLASS name:SafeCollector modality:FINAL visibility:public superTypes:[<root>.FlowCollector<T of <root>.SafeCollector>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SafeCollector<T of <root>.SafeCollector>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
