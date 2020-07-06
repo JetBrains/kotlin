@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -119,9 +118,7 @@ private class ObsoleteTopLevelFunctionUsageReporter(
                 val element = descriptor.psiElement
                 if (element !is KtSimpleNameExpression) return
 
-                element.mainReference.bindToFqName(FqName(fqName), KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
-
-                performDelayedRefactoringRequests(project)
+                element.mainReference.bindToFqName(FqName(fqName), KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING)
             }
         }
     }

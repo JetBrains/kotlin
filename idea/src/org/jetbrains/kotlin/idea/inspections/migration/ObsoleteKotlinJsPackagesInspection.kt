@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.serialization.findPackage
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -85,8 +84,6 @@ private object KotlinBrowserFullyQualifiedUsageReporter : ObsoleteCodeProblemRep
 
             val newQualifier = KtPsiFactory(oldQualifier).createExpression(KOTLINX_BROWSER_PACKAGE)
             oldQualifier.replace(newQualifier)
-
-            performDelayedRefactoringRequests(project)
         }
     }
 }
