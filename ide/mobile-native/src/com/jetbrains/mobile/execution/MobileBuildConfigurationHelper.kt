@@ -7,7 +7,9 @@ import com.jetbrains.cidr.execution.CidrBuildConfigurationHelper
 class MobileBuildConfigurationHelper(val project: Project) : CidrBuildConfigurationHelper<MobileBuildConfiguration, MobileBuildTarget>() {
     override fun allowEditBuildConfiguration(): Boolean = false
 
-    override fun getTargets(): List<MobileBuildTarget> = emptyList()
+    private val targets = listOf(MobileBuildTarget("iosApp", project.name, listOf(MobileBuildConfiguration())))
+
+    override fun getTargets(): List<MobileBuildTarget> = targets
 
     override fun findSimilarValidInTargets(
         buildTarget: MobileBuildTarget?,

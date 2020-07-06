@@ -27,6 +27,7 @@
 
     <configurationType implementation="com.jetbrains.mobile.execution.MobileAppRunConfigurationType"/>
     <configurationType implementation="com.jetbrains.mobile.execution.testing.MobileTestRunConfigurationType"/>
+    <runConfigurationProducer implementation="com.jetbrains.mobile.execution.testing.AppleXCTestRunConfigurationProducer"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.mobile.execution.MobileBeforeRunTaskProvider"/>
     <projectTaskRunner implementation="com.jetbrains.mobile.execution.MobileProjectTaskRunner" order="first, before gradle.mpp"/>
 
