@@ -8,15 +8,12 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.MinusculeMatcher;
-import com.intellij.psi.codeStyle.MinusculeMatcherWrapper;
 import com.intellij.psi.codeStyle.NameUtil;
-import com.intellij.psi.codeStyle.PreferStartMatchMatcherWrapper;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -83,8 +80,7 @@ public class RecentFilesSEContributor extends FileSearchEverywhereContributor {
                      .map(vf -> {
                        PsiFile f = psiManager.findFile(vf);
                        String name = vf.getName();
-                       MinusculeMatcher specialMatcher = createDegreeMatcher(matcher, pattern);
-                       return f == null ? null : new FoundItemDescriptor<Object>(f, specialMatcher.matchingDegree(name));
+                       return f == null ? null : new FoundItemDescriptor<Object>(f, matcher.matchingDegree(name));
                      })
                      .filter(file -> file != null)
                      .collect(Collectors.toList())
@@ -92,19 +88,6 @@ public class RecentFilesSEContributor extends FileSearchEverywhereContributor {
 
         ContainerUtil.process(res, consumer);
       }, progressIndicator);
-  }
-
-  private static MinusculeMatcher createDegreeMatcher(MinusculeMatcher delegateMatcher, String pattern) {
-    if (Registry.is("search.everywhere.recent.at.top")) {
-      return new MinusculeMatcherWrapper(NameUtil.buildMatcher("*" + pattern, NameUtil.MatchingCaseSensitivity.NONE)) {
-        @Override
-        public int matchingDegree(@NotNull String name) {
-          return super.matchingDegree(name) * 2 + PreferStartMatchMatcherWrapper.START_MATCH_WEIGHT;
-        }
-      };
-    }
-
-    return delegateMatcher;
   }
 
   private static MinusculeMatcher createMatcher(String searchString, boolean preferStartMatches) {
