@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="kotlinc.kotlin-stdlib-jdk8" type="repository">
-    <properties maven-id="org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20-dev-1232" />
+    <properties maven-id="org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.20-dev-1142" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.4.20-dev-1232/kotlin-stdlib-jdk8-1.4.20-dev-1232.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.4.20-dev-1232/kotlin-stdlib-1.4.20-dev-1232.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.4.20-dev-1232/kotlin-stdlib-common-1.4.20-dev-1232.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.4.20-dev-1142/kotlin-stdlib-jdk8-1.4.20-dev-1142.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.4.20-dev-1142/kotlin-stdlib-1.4.20-dev-1142.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.4.20-dev-1142/kotlin-stdlib-common-1.4.20-dev-1142.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.4.20-dev-1232/kotlin-stdlib-jdk7-1.4.20-dev-1232.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.4.20-dev-1142/kotlin-stdlib-jdk7-1.4.20-dev-1142.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.4.20-dev-1232/kotlin-stdlib-jdk8-1.4.20-dev-1232-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.4.20-dev-1232/kotlin-stdlib-1.4.20-dev-1232-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.4.20-dev-1232/kotlin-stdlib-common-1.4.20-dev-1232-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.4.20-dev-1142/kotlin-stdlib-jdk8-1.4.20-dev-1142-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.4.20-dev-1142/kotlin-stdlib-1.4.20-dev-1142-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.4.20-dev-1142/kotlin-stdlib-common-1.4.20-dev-1142-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.4.20-dev-1232/kotlin-stdlib-jdk7-1.4.20-dev-1232-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.4.20-dev-1142/kotlin-stdlib-jdk7-1.4.20-dev-1142-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
