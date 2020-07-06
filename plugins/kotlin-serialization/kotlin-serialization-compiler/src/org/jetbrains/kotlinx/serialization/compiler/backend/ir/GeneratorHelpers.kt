@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
@@ -259,16 +260,18 @@ interface IrBuilderExtension {
     }
 
     private fun generatePropertyBackingField(
-        propertyDescriptor: PropertyDescriptor,
+        descriptor: PropertyDescriptor,
         originProperty: IrProperty
     ): IrField {
-        val fieldSymbol = compilerContext.symbolTable.referenceField(propertyDescriptor)
-
+        val fieldSymbol = compilerContext.symbolTable.referenceField(descriptor)
         if (fieldSymbol.isBound) return fieldSymbol.owner
 
-        return originProperty.run {
+        return with(descriptor) {
             // TODO: type parameters
-            IrFieldImpl(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, propertyDescriptor, propertyDescriptor.type.toIrType(), symbol = fieldSymbol)
+            IrFieldImpl(
+                originProperty.startOffset, originProperty.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, fieldSymbol, name, type.toIrType(),
+                visibility, !isVar, isEffectivelyExternal(), dispatchReceiverParameter == null
+            )
         }
     }
 
