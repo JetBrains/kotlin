@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -899,6 +900,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && myMatchingVisitor.match(multiDeclarationEntry.modifierList, other.modifierList)
                 && multiDeclarationEntry.isVar == other.isVar
                 && matchTextOrVariable(multiDeclarationEntry.nameIdentifier, other.nameIdentifier)
+    }
+
+    override fun visitThrowExpression(expression: KtThrowExpression) {
+        val other = getTreeElementDepar<KtThrowExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.referenceExpression(), other.referenceExpression())
     }
 
     override fun visitComment(comment: PsiComment) {
