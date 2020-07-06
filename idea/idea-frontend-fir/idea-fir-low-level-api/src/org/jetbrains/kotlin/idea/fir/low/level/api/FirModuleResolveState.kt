@@ -152,23 +152,21 @@ internal class FirModuleResolveStateImpl(override val sessionProvider: FirProjec
 }
 
 class DuplicatedFirSourceElementsException(
-    private val existingFir: FirElement,
-    private val newFir: FirElement,
-    private val psi: KtElement
+    existingFir: FirElement,
+    newFir: FirElement,
+    psi: KtElement
 ) : IllegalStateException() {
-    override val message: String?
-        get() =
-            """|The PSI element should be used only once as a real PSI source of FirElement,
-               |the elements ${if (existingFir.source === newFir.source) "HAVE" else "DON'T HAVE"} the same instances of source elements 
-               |
-               |existing FIR element is $existingFir with text:
-               |${existingFir.render().trim()}
-               |
-               |new FIR element is $newFir with text:
-               | ${newFir.render().trim()}
-               |
-               |PSI element is $psi with text in context:
-               |${getElementInContext(psi)}""".trimMargin()
+    override val message: String? = """|The PSI element should be used only once as a real PSI source of FirElement,
+       |the elements ${if (existingFir.source === newFir.source) "HAVE" else "DON'T HAVE"} the same instances of source elements 
+       |
+       |existing FIR element is $existingFir with text:
+       |${existingFir.render().trim()}
+       |
+       |new FIR element is $newFir with text:
+       | ${newFir.render().trim()}
+       |
+       |PSI element is $psi with text in context:
+       |${getElementInContext(psi)}""".trimMargin()
 
     private fun getElementInContext(neededElement: KtElement): String {
         val context = neededElement.containingDeclarationForPseudocode ?: neededElement.containingKtFile
