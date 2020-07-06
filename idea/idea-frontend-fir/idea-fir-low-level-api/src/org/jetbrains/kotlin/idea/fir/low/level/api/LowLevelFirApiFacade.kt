@@ -15,6 +15,10 @@ object LowLevelFirApiFacade {
     fun getResolveStateFor(element: KtElement): FirModuleResolveState =
         element.firResolveState()
 
+    fun getResolveStateForCompletion(element: KtElement, mainState: FirModuleResolveStateImpl): FirModuleResolveStateForCompletion {
+        return FirModuleResolveStateForCompletion(mainState)
+    }
+
     fun getSessionFor(element: KtElement, resolveState: FirModuleResolveState): FirSession =
         resolveState.getSession(element)
 

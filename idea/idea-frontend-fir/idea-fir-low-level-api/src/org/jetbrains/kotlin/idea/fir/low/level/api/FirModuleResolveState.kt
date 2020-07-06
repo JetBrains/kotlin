@@ -60,7 +60,7 @@ abstract class FirModuleResolveState {
         }
     }
 
-    internal abstract operator fun get(psi: KtElement): FirElement?
+    internal abstract fun getCachedMapping(psi: KtElement): FirElement?
 
     internal abstract fun getDiagnostics(psi: KtElement): List<Diagnostic>
 
@@ -73,14 +73,34 @@ abstract class FirModuleResolveState {
     internal abstract fun setDiagnosticsForFile(file: KtFile, fir: FirFile, diagnostics: Iterable<FirDiagnostic<*>> = emptyList())
 }
 
-internal class FirModuleResolveStateImpl(override val sessionProvider: FirProjectSessionProvider) : FirModuleResolveState() {
+internal abstract class PsiToFirCache {
+    abstract operator fun get(psi: KtElement): FirElement?
+    abstract operator fun set(psi: KtElement, fir: FirElement)
+    abstract fun remove(psi: PsiElement)
+}
+
+internal class PsiToFirCacheImpl : PsiToFirCache() {
     private val cache = mutableMapOf<KtElement, FirElement>()
+
+    override fun get(psi: KtElement): FirElement? = cache[psi]
+
+    override fun set(psi: KtElement, fir: FirElement) {
+        cache[psi] = fir
+    }
+
+    override fun remove(psi: PsiElement) {
+        cache.remove(psi)
+    }
+}
+
+open class FirModuleResolveStateImpl(override val sessionProvider: FirProjectSessionProvider) : FirModuleResolveState() {
+    internal open val cache: PsiToFirCache = PsiToFirCacheImpl()
 
     private val diagnosticCache = mutableMapOf<KtElement, MutableList<Diagnostic>>()
 
     private val diagnosedFiles = mutableMapOf<KtFile, Long>()
 
-    override fun get(psi: KtElement): FirElement? = cache[psi]
+    override fun getCachedMapping(psi: KtElement): FirElement? = cache[psi]
 
     override fun getDiagnostics(psi: KtElement): List<Diagnostic> {
         return diagnosticCache[psi] ?: emptyList()

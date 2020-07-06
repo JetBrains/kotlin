@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -255,7 +254,7 @@ internal fun KtElement.getOrBuildFir(
         is KtPropertyDelegate -> this.expression ?: this
         else -> this
     }
-    return state[this] ?: run {
+    return state.getCachedMapping(this) ?: run {
         containerFir.accept(object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 (element.realPsi as? KtElement)?.let {
@@ -288,7 +287,7 @@ internal fun KtElement.getOrBuildFir(
         })
         var current: PsiElement? = psi
         while (current is KtElement) {
-            val mappedFir = state[current]
+            val mappedFir = state.getCachedMapping(current)
             if (mappedFir != null) {
                 if (current != this) {
                     state.record(current, mappedFir)
