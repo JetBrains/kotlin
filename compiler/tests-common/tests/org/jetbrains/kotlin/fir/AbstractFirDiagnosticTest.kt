@@ -276,7 +276,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     }
 
     private fun createCollector(session: FirSession): AbstractDiagnosticCollector {
-        return FirDiagnosticsCollector.create(session)
+        return FirDiagnosticsCollector.create(session, useExtendedCheckersIfNeeded())
     }
 
     private fun checkCfgDump(testDataFile: File, firFiles: List<FirFile>) {
@@ -359,4 +359,6 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         }
 
     }
+
+    internal open fun useExtendedCheckersIfNeeded() = false
 }

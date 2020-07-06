@@ -633,5 +633,11 @@ fun main(args: Array<String>) {
                 model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
             }
         }
+
+        testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
+            testClass<AbstractExtendedFirDiagnosticsTest> {
+                model("extendedCheckers", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+        }
     }
 }

@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.DescriptorWithRelation
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.DeclarationWithRelation
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
