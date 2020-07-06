@@ -33,7 +33,6 @@ interface ValidityOwnerByValidityToken : ValidityOwner {
 
 class ReadActionConfinementValidityToken(project: Project) : ValidityOwner {
     private val modificationTracker = KotlinModificationTrackerService.getInstance(project).modificationTracker
-    private val ownerThread = Thread.currentThread()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
 
@@ -41,7 +40,6 @@ class ReadActionConfinementValidityToken(project: Project) : ValidityOwner {
         val application = ApplicationManager.getApplication()
         if (application.isDispatchThread) return false
         if (!application.isReadAccessAllowed) return false
-        if (ownerThread != Thread.currentThread()) return false
         return onCreatedTimeStamp == modificationTracker.modificationCount
     }
 
@@ -49,9 +47,6 @@ class ReadActionConfinementValidityToken(project: Project) : ValidityOwner {
         val application = ApplicationManager.getApplication()
         if (application.isDispatchThread) return "Called in EDT thread"
         if (!application.isReadAccessAllowed) return "Called outside read action"
-        if (ownerThread != Thread.currentThread()) {
-            return "Called outside the thread was created in (was created in $ownerThread, but accessed in ${Thread.currentThread()}"
-        }
         if (onCreatedTimeStamp != modificationTracker.modificationCount) return "PSI has changed since creation"
         error("Getting invalidation reason for valid invalidatable")
     }
