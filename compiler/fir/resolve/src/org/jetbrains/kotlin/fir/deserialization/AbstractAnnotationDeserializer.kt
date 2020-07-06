@@ -42,6 +42,9 @@ abstract class AbstractAnnotationDeserializer(
 ) {
     protected val protocol = BuiltInSerializerProtocol
 
+    open fun inheritAnnotationInfo(parent: AbstractAnnotationDeserializer) {
+    }
+
     enum class CallableKind {
         PROPERTY,
         PROPERTY_GETTER,
