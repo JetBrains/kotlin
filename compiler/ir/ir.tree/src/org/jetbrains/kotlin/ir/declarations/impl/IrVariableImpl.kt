@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -53,33 +52,6 @@ class IrVariableImpl(
 
     override var annotations: List<IrConstructorCall> = emptyList()
     override val metadata: MetadataSource? get() = null
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptor,
-        type: IrType,
-        name: Name = descriptor.name,
-        symbol: IrVariableSymbol = IrVariableSymbolImpl(descriptor)
-    ) : this(
-        startOffset, endOffset, origin,
-        symbol, name, type,
-        isVar = descriptor.isVar,
-        isConst = descriptor.isConst,
-        isLateinit = descriptor.isLateInit
-    )
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptor,
-        type: IrType,
-        initializer: IrExpression?
-    ) : this(startOffset, endOffset, origin, descriptor, type) {
-        this.initializer = initializer
-    }
 
     init {
         symbol.bind(this)
