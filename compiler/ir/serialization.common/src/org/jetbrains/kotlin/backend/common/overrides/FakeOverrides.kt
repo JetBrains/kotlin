@@ -170,21 +170,8 @@ class FakeOverrideBuilder(
         }
     }
 
-    fun provideFakeOverrides(module: IrModuleFragment) {
-        module.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                buildFakeOverrideChainsForClass(declaration)
-                haveFakeOverrides.add(declaration)
-                super.visitClass(declaration)
-            }
-
-            override fun visitFunction(declaration: IrFunction) {
-                // Don't go for function local classes
-            }
-        })
+    fun provideFakeOverrides(klass: IrClass) {
+        buildFakeOverrideChainsForClass(klass)
+        haveFakeOverrides.add(klass)
     }
 }

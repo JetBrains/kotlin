@@ -110,7 +110,8 @@ abstract class IrFileDeserializer(
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     protected var deserializeBodies: Boolean,
-    private val deserializeFakeOverrides: Boolean
+    private val deserializeFakeOverrides: Boolean,
+    private val fakeOverrideQueue: MutableList<IrClass>
 ) {
 
     abstract fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, IdSignature>
@@ -1051,6 +1052,12 @@ abstract class IrFileDeserializer(
                 thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
 
                 (descriptor as? WrappedClassDescriptor)?.bind(this)
+
+                if (!deserializeFakeOverrides) {
+                    if (symbol.isPublicApi) {
+                        fakeOverrideQueue.add(this)
+                    }
+                }
             }
         }
 
