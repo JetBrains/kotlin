@@ -13656,6 +13656,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/removeEmptyClassBody/emptyInterface.kt");
         }
 
+        @TestMetadata("enumEntiryBody.kt")
+        public void testEnumEntiryBody() throws Exception {
+            runTest("idea/testData/intentions/removeEmptyClassBody/enumEntiryBody.kt");
+        }
+
         @TestMetadata("innerClass.kt")
         public void testInnerClass() throws Exception {
             runTest("idea/testData/intentions/removeEmptyClassBody/innerClass.kt");

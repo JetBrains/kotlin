@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 internal fun KtElement.deleteSemicolon() {
     if (this is KtEnumEntry) return
+    if (this is KtClassBody && parent is KtEnumEntry) return
 
     val sibling = PsiTreeUtil.skipSiblingsForward(this, PsiWhiteSpace::class.java, PsiComment::class.java)
     if (sibling == null || sibling.node.elementType != KtTokens.SEMICOLON) return
