@@ -326,6 +326,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtFunctionType>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(type.receiverTypeReference, other.receiverTypeReference)
                 && myMatchingVisitor.match(type.parameterList, other.parameterList)
+                && myMatchingVisitor.match(type.returnTypeReference, other.returnTypeReference)
     }
 
     override fun visitUserType(type: KtUserType) {

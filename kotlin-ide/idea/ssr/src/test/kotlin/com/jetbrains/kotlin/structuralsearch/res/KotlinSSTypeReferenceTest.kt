@@ -9,7 +9,7 @@ class KotlinSSTypeReferenceTest : KotlinSSResourceInspectionTest() {
 
     fun testFqType() { doTest("fun '_('_ : kotlin.Int) { '_* }") }
 
-    fun testFunctionType() { doTest("fun '_('_ : ('_) -> ('_)) { '_* }") }
+    fun testFunctionType() { doTest("fun '_('_ : ('_) -> '_) { '_* }") }
 
     fun testNullableType() { doTest("fun '_('_ : '_ ?) { '_* }") }
 }
