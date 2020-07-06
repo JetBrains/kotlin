@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
@@ -106,6 +107,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     protected val any = components.session.builtinTypes.anyType.type
     private val nullableNothing = components.session.builtinTypes.nullableNothingType.type
 
+    @PrivateForInline
+    var ignoreFunctionCalls: Boolean = false
+
     // ----------------------------------- Requests -----------------------------------
 
     fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): MutableList<ConeKotlinType>? {
@@ -131,6 +135,17 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     fun dropSubgraphFromCall(call: FirFunctionCall) {
         graphBuilder.dropSubgraphFromCall(call)
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withIgnoreFunctionCalls(block: () -> T): T {
+        val oldValue = ignoreFunctionCalls
+        ignoreFunctionCalls = true
+        return try {
+            block()
+        } finally {
+            ignoreFunctionCalls = oldValue
+        }
     }
 
     // ----------------------------------- Named function -----------------------------------
@@ -683,7 +698,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.enterCall()
     }
 
+    @OptIn(PrivateForInline::class)
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
+        if (ignoreFunctionCalls) {
+            graphBuilder.exitIgnoredCall(functionCall)
+            return
+        }
         val (functionCallNode, unionNode) = graphBuilder.exitFunctionCall(functionCall, callCompleted)
         unionNode?.let { unionFlowFromArguments(it) }
         functionCallNode.mergeIncomingFlow()

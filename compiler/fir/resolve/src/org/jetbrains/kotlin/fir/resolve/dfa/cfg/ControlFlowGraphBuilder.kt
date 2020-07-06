@@ -93,6 +93,25 @@ class ControlFlowGraphBuilder {
     private val exitSafeCallNodes: Stack<ExitSafeCallNode> = stackOf()
     private val exitElvisExpressionNodes: Stack<ElvisExitNode> = stackOf()
 
+    /*
+     * ignoredFunctionCalls is needed for resolve of += operator:
+     *   we have two different calls for resolve, but we left only one of them,
+     *   so we twice call `enterCall` and twice increase `levelCounter`, but
+     *   `exitFunctionCall` we call only once.
+     *
+     * So workflow looks like that:
+     *   Calls:
+     *     - a.plus(b) // (1)
+     *     - a.plusAssign(b) // (2)
+     *
+     * enterCall(a.plus(b)), increase counter
+     * exitIgnoredCall(a.plus(b)) // decrease counter
+     * enterCall(a.plusAssign(b)) // increase counter
+     * exitIgnoredCall(a.plusAssign(b)) // decrease counter
+     * exitFunctionCall(a.plus(b) | a.plusAssign(b)) // don't touch counter
+     */
+    private val ignoredFunctionCalls: MutableSet<FirFunctionCall> = mutableSetOf()
+
     // ----------------------------------- API for node builders -----------------------------------
 
     private var idCounter: Int = Random.nextInt()
@@ -818,8 +837,18 @@ class ControlFlowGraphBuilder {
         levelCounter++
     }
 
-    fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): Pair<FunctionCallNode, UnionFunctionCallArgumentsNode?> {
+    fun exitIgnoredCall(functionCall: FirFunctionCall) {
         levelCounter--
+        ignoredFunctionCalls += functionCall
+    }
+
+    fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): Pair<FunctionCallNode, UnionFunctionCallArgumentsNode?> {
+        val callWasIgnored = ignoredFunctionCalls.remove(functionCall)
+        if (!callWasIgnored) {
+            levelCounter--
+        } else {
+            ignoredFunctionCalls.clear()
+        }
         val returnsNothing = functionCall.resultType.isNothing
         val node = createFunctionCallNode(functionCall)
         val (kind, unionNode) = processUnionOfArguments(node, callCompleted)

@@ -716,6 +716,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         public void testIfElvisReturn() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/ifElvisReturn.kt");
         }
+
+        @TestMetadata("plusAssignWithLambdaInRhs.kt")
+        public void testPlusAssignWithLambdaInRhs() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/plusAssignWithLambdaInRhs.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k")

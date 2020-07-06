@@ -1,0 +1,16 @@
+FILE: plusAssignWithLambdaInRhs.kt
+    public final operator fun <T> R|kotlin/collections/MutableList<T>|.plusAssign(x: R|T|): R|kotlin/Unit| {
+    }
+    public final operator fun <T> R|kotlin/collections/List<T>|.plus(x: R|T|): R|kotlin/collections/List<T>| {
+        ^plus this@R|/plus|
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval list: R|kotlin/collections/MutableList<kotlin/Function1<kotlin/String, kotlin/String>>| = Null(null)!!
+        R|<local>/list|.R|/plusAssign|<R|(kotlin/String) -> kotlin/String|>(fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| {
+            ^ R|<local>/it|
+        }
+        )
+    }
+    public final fun <T> listOf(x: R|T|): R|kotlin/collections/List<T>| {
+        ^listOf Null(null)!!
+    }

@@ -1,0 +1,107 @@
+digraph plusAssignWithLambdaInRhs_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function plusAssign" style="filled" fillcolor=red];
+        subgraph cluster_1 {
+            color=blue
+            1 [label="Enter block"];
+            2 [label="Exit block"];
+        }
+        3 [label="Exit function plusAssign" style="filled" fillcolor=red];
+    }
+    0 -> {1};
+    1 -> {2};
+    2 -> {3};
+
+    subgraph cluster_2 {
+        color=red
+        4 [label="Enter function plus" style="filled" fillcolor=red];
+        subgraph cluster_3 {
+            color=blue
+            5 [label="Enter block"];
+            6 [label="Access variable this@R|/plus|"];
+            7 [label="Jump: ^plus this@R|/plus|"];
+            8 [label="Stub" style="filled" fillcolor=gray];
+            9 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        10 [label="Exit function plus" style="filled" fillcolor=red];
+    }
+    4 -> {5};
+    5 -> {6};
+    6 -> {7};
+    7 -> {10};
+    7 -> {8} [style=dotted];
+    8 -> {9} [style=dotted];
+    9 -> {10} [style=dotted];
+
+    subgraph cluster_4 {
+        color=red
+        11 [label="Enter function test" style="filled" fillcolor=red];
+        subgraph cluster_5 {
+            color=blue
+            12 [label="Enter block"];
+            13 [label="Const: Null(null)"];
+            14 [label="Check not null: Null(null)!!"];
+            15 [label="Variable declaration: lval list: R|kotlin/collections/MutableList<kotlin/Function1<kotlin/String, kotlin/String>>|"];
+            16 [label="Access variable R|<local>/list|"];
+            17 [label="Postponed enter to lambda"];
+            subgraph cluster_6 {
+                color=blue
+                22 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_7 {
+                    color=blue
+                    23 [label="Enter block"];
+                    24 [label="Access variable R|<local>/it|"];
+                    25 [label="Exit block"];
+                }
+                26 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            18 [label="Postponed exit from lambda"];
+            19 [label="Function call: R|<local>/list|.R|/plusAssign|<R|(kotlin/String) -> kotlin/String|>(...)"];
+            20 [label="Exit block"];
+        }
+        21 [label="Exit function test" style="filled" fillcolor=red];
+    }
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
+    14 -> {15};
+    15 -> {16};
+    16 -> {17};
+    17 -> {18 22};
+    18 -> {19};
+    19 -> {20};
+    20 -> {21};
+    22 -> {23};
+    23 -> {24};
+    24 -> {25};
+    25 -> {26};
+
+    subgraph cluster_8 {
+        color=red
+        27 [label="Enter function listOf" style="filled" fillcolor=red];
+        subgraph cluster_9 {
+            color=blue
+            28 [label="Enter block"];
+            29 [label="Const: Null(null)"];
+            30 [label="Check not null: Null(null)!!"];
+            31 [label="Jump: ^listOf Null(null)!!"];
+            32 [label="Stub" style="filled" fillcolor=gray];
+            33 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        34 [label="Exit function listOf" style="filled" fillcolor=red];
+    }
+    27 -> {28};
+    28 -> {29};
+    29 -> {30};
+    30 -> {31};
+    31 -> {34};
+    31 -> {32} [style=dotted];
+    32 -> {33} [style=dotted];
+    33 -> {34} [style=dotted];
+
+}
