@@ -110,14 +110,10 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         origin: IrDeclarationOrigin,
         descriptor: TypeAliasDescriptor,
         symbol: IrTypeAliasSymbol
-    ): IrTypeAlias {
-        val irAlias = IrTypeAliasImpl.fromSymbolDescriptor(
-            startOffset, endOffset, symbol, descriptor.expandedType.toIrType(), origin, descriptor
-        )
-
-        generateGlobalTypeParametersDeclarations(irAlias, descriptor.declaredTypeParameters)
-
-        return irAlias
+    ): IrTypeAlias = with(descriptor) {
+        IrTypeAliasImpl(startOffset, endOffset, symbol, name, visibility, expandedType.toIrType(), isActual, origin).also {
+            generateGlobalTypeParametersDeclarations(it, declaredTypeParameters)
+        }
     }
 
     protected fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement): IrValueParameter {

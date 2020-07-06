@@ -61,24 +61,4 @@ class IrTypeAliasImpl(
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
     }
-
-    companion object {
-        fun fromSymbolDescriptor(
-            startOffset: Int,
-            endOffset: Int,
-            symbol: IrTypeAliasSymbol,
-            expandedType: IrType,
-            origin: IrDeclarationOrigin,
-            descriptor: TypeAliasDescriptor
-        ) =
-            IrTypeAliasImpl(
-                startOffset, endOffset,
-                symbol,
-                descriptor.name,
-                descriptor.visibility,
-                expandedType,
-                descriptor.isActual,
-                origin
-            )
-    }
 }
