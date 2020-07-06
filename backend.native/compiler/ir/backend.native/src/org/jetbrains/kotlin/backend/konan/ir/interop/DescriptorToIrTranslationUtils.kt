@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -85,13 +86,14 @@ internal interface DescriptorToIrTranslationMixin {
 
     fun createConstructor(constructorDescriptor: ClassConstructorDescriptor): IrConstructor {
         val irConstructor = symbolTable.declareConstructor(constructorDescriptor) {
-            // TODO: [IrUninitializedType] is deprecated.
-            @Suppress("DEPRECATION")
-            IrConstructorImpl(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                it, IrUninitializedType, constructorDescriptor
-            )
+            with(constructorDescriptor) {
+                // TODO: [IrUninitializedType] is deprecated.
+                @Suppress("DEPRECATION")
+                IrConstructorImpl(
+                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, it, name, visibility,
+                    IrUninitializedType, isInline, isEffectivelyExternal(), isPrimary, isExpect
+                )
+            }
         }
         irConstructor.valueParameters += constructorDescriptor.valueParameters.map { valueParameterDescriptor ->
             symbolTable.declareValueParameter(
