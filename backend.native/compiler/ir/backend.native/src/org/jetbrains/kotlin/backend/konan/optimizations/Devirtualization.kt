@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
@@ -1343,15 +1344,14 @@ internal object Devirtualization {
 
         fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(value: IrExpression, tempName: String, type: IrType): IrVariable {
             val originalKotlinType = type.originalKotlinType ?: type.toKotlinType()
-            val descriptor = IrTemporaryVariableDescriptorImpl(
-                    scope.scopeOwner, Name.identifier(tempName), originalKotlinType, false)
+            val descriptor = IrTemporaryVariableDescriptorImpl(scope.scopeOwner, Name.identifier(tempName), originalKotlinType, false)
 
             val temporary = IrVariableImpl(
-                    value.startOffset, value.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                    descriptor,
-                    type,
-                    value
-            )
+                value.startOffset, value.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, IrVariableSymbolImpl(descriptor),
+                descriptor.name, type, isVar = false, isConst = false, isLateinit = false
+            ).apply {
+                this.initializer = value
+            }
 
             +temporary
             return temporary
