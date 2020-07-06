@@ -1,16 +1,15 @@
 @file:Suppress("PropertyName", "HasPlatformType", "UnstableApiUsage")
 
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.Closeable
 import java.io.OutputStreamWriter
 import java.net.URI
 import java.text.SimpleDateFormat
-import java.util.*
-import javax.xml.stream.XMLOutputFactory
-
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.time.Duration
 import java.time.Instant
+import java.util.*
+import javax.xml.stream.XMLOutputFactory
 
 plugins {
     base
@@ -180,6 +179,7 @@ val mergeSources by tasks.creating(Jar::class.java) {
     dependsOn(sources)
     isPreserveFileTimestamps = false
     isReproducibleFileOrder = true
+    isZip64 = true
     if (!kotlinBuildProperties.isTeamcityBuild) {
         from(provider { sources.map(::zipTree) })
     }
