@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.core.script.ucache
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -23,7 +23,6 @@ import com.intellij.psi.PsiManager
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptDependenciesClassFinder
-import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.debug
@@ -223,7 +222,7 @@ abstract class ScriptClassRootsUpdater(
     }
 
     private fun notifyRootsChanged() {
-        val doNotifyRootsChanged = Runnable {
+        runInEdt {
             runWriteAction {
                 if (project.isDisposed) return@runWriteAction
 
@@ -233,8 +232,6 @@ abstract class ScriptClassRootsUpdater(
                 ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
             }
         }
-
-        TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
     }
 
     private fun updateHighlighting(project: Project, filter: (VirtualFile) -> Boolean) {
