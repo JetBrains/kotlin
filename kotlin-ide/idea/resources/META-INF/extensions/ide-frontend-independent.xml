@@ -6,4 +6,16 @@
     <extensionPoint qualifiedName="org.jetbrains.kotlin.buildSystemTypeDetector"
                     interface="org.jetbrains.kotlin.idea.configuration.BuildSystemTypeDetector"/>
   </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="kotlin.formatter.allowTrailingCommaInAnyProject"
+                 description="Allow a trailing comma regardless of plugin version"
+                 defaultValue="false"
+                 restartRequired="false"/>
+    <registryKey key="kotlin.formatter.allowTrailingCommaOnCallSite"
+                 description="Allow a trailing comma on call-site"
+                 defaultValue="false"
+                 restartRequired="false"/>
+
+  </extensions>
 </idea-plugin>

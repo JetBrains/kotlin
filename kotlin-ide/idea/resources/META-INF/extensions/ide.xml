@@ -116,14 +116,6 @@
                      description="Add all transitive dependencies on MPP modules when Android project is imported"
                      defaultValue="true"
                      restartRequired="false"/>
-        <registryKey key="kotlin.formatter.allowTrailingCommaInAnyProject"
-                     description="Allow a trailing comma regardless of plugin version"
-                     defaultValue="false"
-                     restartRequired="false"/>
-        <registryKey key="kotlin.formatter.allowTrailingCommaOnCallSite"
-                     description="Allow a trailing comma on call-site"
-                     defaultValue="false"
-                     restartRequired="false"/>
 
         <registryKey key="kotlin.experimental.new.j2k"
                      description="Enable new Java to Kotlin converter"
