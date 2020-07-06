@@ -71,7 +71,7 @@ class SimpleJsClientTemplate : Template() {
     override fun Writer.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = withSettingsOf(module.originalModule) {
         buildList {
             +ArtifactBasedLibraryDependencyIR(
-                MavenArtifact(DefaultRepository.JCENTER, "org.jetbrains.kotlinx", "kotlinx-html-js"),
+                MavenArtifact(Repositories.KOTLINX, "org.jetbrains.kotlinx", "kotlinx-html-js"),
                 Versions.KOTLINX.KOTLINX_HTML(KotlinPlugin::version.propertyValue.version),
                 DependencyType.MAIN
             )
