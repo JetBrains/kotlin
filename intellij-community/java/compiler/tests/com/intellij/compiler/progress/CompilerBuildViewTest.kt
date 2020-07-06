@@ -117,7 +117,7 @@ class CompilerBuildViewTest : BaseCompilerTestCase() {
     buildViewTestFixture.assertBuildViewTreeEquals(
       "-\n" +
       " -build failed\n" +
-      "  -src/A.java\n" +
+      "  -A.java\n" +
       "   '{' expected\n" +
       "   reached end of file while parsing"
     )
@@ -126,7 +126,7 @@ class CompilerBuildViewTest : BaseCompilerTestCase() {
     buildViewTestFixture.assertBuildViewTreeEquals(
       "-\n" +
       " -rebuild failed\n" +
-      "  -src/A.java\n" +
+      "  -A.java\n" +
       "   '{' expected\n" +
       "   reached end of file while parsing"
     )
@@ -135,7 +135,7 @@ class CompilerBuildViewTest : BaseCompilerTestCase() {
     buildViewTestFixture.assertBuildViewTreeEquals(
       "-\n" +
       " -recompile failed\n" +
-      "  -src/A.java\n" +
+      "  -A.java\n" +
       "   '{' expected\n" +
       "   reached end of file while parsing"
     )
