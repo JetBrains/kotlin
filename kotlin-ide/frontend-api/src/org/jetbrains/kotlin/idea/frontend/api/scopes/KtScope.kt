@@ -22,6 +22,10 @@ interface KtScope : ValidityOwner {
     fun containsName(name: Name): Boolean
 }
 
+interface KtCompositeScope : KtScope {
+    val subScopes: List<KtScope>
+}
+
 interface KtMemberScope : KtScope {
     val owner: KtClassOrObjectSymbol
 }
