@@ -23,17 +23,15 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.picocontainer.MutablePicoContainer
 
 abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescriptorRendererTest() {
     override fun setUp() {
         super.setUp()
 
-        val pomModelImpl = PomModelImpl(project)
-        val treeAspect = TreeAspect(pomModelImpl)
-
         val mockProject = project as MockProject
-        createAndRegisterKotlinCodeBlockModificationListener(mockProject, pomModelImpl, treeAspect)
+        mockProject.registerService(TreeAspect::class.java, TreeAspect())
+        mockProject.registerService(PomModel::class.java, PomModelImpl(project))
+        mockProject.registerService(KotlinCodeBlockModificationListener::class.java, KotlinCodeBlockModificationListener(mockProject))
     }
 
     override fun tearDown() {

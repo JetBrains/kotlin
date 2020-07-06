@@ -82,6 +82,9 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+/**
+ * @author peter
+ */
 @SuppressWarnings("ALL")
 public abstract class KtUsefulTestCase extends TestCase {
     public static final boolean IS_UNDER_TEAMCITY = System.getenv("TEAMCITY_VERSION") != null;
@@ -1081,8 +1084,7 @@ public abstract class KtUsefulTestCase extends TestCase {
 
             if (shouldOccur) {
                 wasThrown = true;
-                final String errorMessage = exceptionCase.getAssertionErrorMessage();
-                assertEquals(errorMessage, exceptionCase.getExpectedExceptionClass(), cause.getClass());
+                assertInstanceOf(cause, exceptionCase.getExpectedExceptionClass());
                 if (expectedErrorMsgPart != null) {
                     assertTrue(cause.getMessage(), cause.getMessage().contains(expectedErrorMsgPart));
                 }
@@ -1103,7 +1105,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
         finally {
             if (shouldOccur && !wasThrown) {
-                fail(exceptionCase.getAssertionErrorMessage());
+                fail(exceptionCase.getExpectedExceptionClass().getName() + " must be thrown.");
             }
         }
     }
