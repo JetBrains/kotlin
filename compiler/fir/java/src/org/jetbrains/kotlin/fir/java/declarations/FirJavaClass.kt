@@ -143,6 +143,7 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
             isCompanion = false
             isData = false
             isInline = false
+            isFun = classKind == ClassKind.INTERFACE
         }
 
         return FirJavaClass(
