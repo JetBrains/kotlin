@@ -143,6 +143,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_sealedObject.kt");
     }
 
+    @TestMetadata("exhaustiveness_sealedSubClass.kt")
+    public void testExhaustiveness_sealedSubClass() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_sealedSubClass.kt");
+    }
+
     @TestMetadata("extension.kt")
     public void testExtension() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/extension.kt");
