@@ -232,9 +232,14 @@ interface IrBuilderExtension {
         assert(irPropertySymbol.isBound || declare)
 
         if (declare) {
-            IrPropertyImpl(propertyParent.startOffset, propertyParent.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, propertyDescriptor, irPropertySymbol).also {
-                it.parent = propertyParent
-                propertyParent.addMember(it)
+            with(propertyDescriptor) {
+                IrPropertyImpl(
+                    propertyParent.startOffset, propertyParent.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, irPropertySymbol,
+                    name, visibility, modality, isVar, isConst, isLateInit, isDelegated, isExternal
+                ).also {
+                    it.parent = propertyParent
+                    propertyParent.addMember(it)
+                }
             }
         }
         val irProperty = irPropertySymbol.owner
