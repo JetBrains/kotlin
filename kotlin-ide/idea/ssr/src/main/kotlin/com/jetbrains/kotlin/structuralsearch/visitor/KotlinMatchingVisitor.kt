@@ -349,7 +349,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitNullableType(nullableType: KtNullableType) {
         val other = getTreeElementDepar<KtNullableType>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchSons(nullableType, other)
+        myMatchingVisitor.result = myMatchingVisitor.match(nullableType.innerType, other.innerType)
     }
 
     override fun visitDynamicType(type: KtDynamicType) {
