@@ -66,4 +66,16 @@ class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
     fun testFunVarargParam() { doTest("fun '_(vararg '_)") }
     
     fun testFunNoinlineParam() { doTest("fun '_(noinline '_)") }
+
+    fun testFunEmptyBlock() { doTest("fun '_('_*) { '_{0,0} }") }
+
+    fun testFun2ExprBlock() { doTest("fun '_('_*) { '_{2,2} }") }
+
+    fun testFunBlockBodyExprAndVariable() { doTest(
+        """
+        fun '_('_*) {
+            println()
+            '_{0,1}
+        }
+        """) }
 }

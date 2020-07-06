@@ -646,15 +646,21 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtNamedFunction>() ?: return
         val funExpr = normalizeExpressionRet(function.bodyExpression)
         val othExpr = normalizeExpressionRet(other.bodyExpression)
+        val bodyMatched = when {
+            funExpr is KtNameReferenceExpression || funExpr is KtBlockExpression ->
+                myMatchingVisitor.match(function.bodyBlockExpression, other.bodyBlockExpression)
+            funExpr == null || othExpr == null ->
+                myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
+            else ->
+                myMatchingVisitor.match(funExpr, othExpr)
+        }
         myMatchingVisitor.result = myMatchingVisitor.match(function.modifierList, other.modifierList)
                 && matchTextOrVariable(function.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(function.typeParameterList, other.typeParameterList)
                 && matchTypeReferenceWithDeclaration(function.typeReference, other)
                 && myMatchingVisitor.match(function.valueParameterList, other.valueParameterList)
                 && myMatchingVisitor.match(function.receiverTypeReference, other.receiverTypeReference)
-                && if (funExpr == null || othExpr == null) { // both bodies are not single expression
-            myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
-        } else myMatchingVisitor.match(funExpr, othExpr)
+                && bodyMatched
         function.nameIdentifier?.let { nameIdentifier ->
             val handler = getHandler(nameIdentifier)
             if (myMatchingVisitor.result && handler is SubstitutionHandler) {
