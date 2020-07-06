@@ -792,6 +792,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtTypeAlias>() ?: return
         myMatchingVisitor.result = matchTextOrVariable(typeAlias.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(typeAlias.getTypeReference(), other.getTypeReference())
+                && myMatchingVisitor.matchInAnyOrder(typeAlias.annotationEntries, other.annotationEntries)
         val handler = getHandler(typeAlias.nameIdentifier!!)
         if (myMatchingVisitor.result && handler is SubstitutionHandler) {
             handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
