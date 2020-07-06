@@ -8,21 +8,25 @@ package com.jetbrains.kmm.ios
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationTypeBase
 import com.intellij.execution.configurations.RunConfiguration
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
+import com.intellij.ui.IconManager
 
 class AppleRunConfigurationType : ConfigurationTypeBase(
     ID,
     "Mobile App",
     "Mobile Application",
-    AllIcons.RunConfigurations.Application
+    ICON
 ) {
     init {
         addFactory(AppleConfigurationFactory(this))
     }
 
     companion object {
-        const val ID = "KmmRunConfiguration"
+        internal const val ID = "KmmRunConfiguration"
+        private val ICON = IconManager.getInstance().getIcon(
+            "/META-INF/appleRunConfigurationIcon.svg",
+            AppleRunConfigurationType::class.java
+        )
     }
 }
 
