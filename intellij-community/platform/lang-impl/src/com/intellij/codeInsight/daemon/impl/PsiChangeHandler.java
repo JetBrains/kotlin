@@ -23,7 +23,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.PsiDocumentManagerBase;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import com.intellij.psi.impl.PsiTreeChangeEventImpl;
@@ -64,7 +63,7 @@ final class PsiChangeHandler extends PsiTreeChangeAdapter {
 
         if (document.getUserData(UPDATE_ON_COMMIT_ENGAGED) == null) {
           document.putUserData(UPDATE_ON_COMMIT_ENGAGED, Boolean.TRUE);
-          PsiDocumentManagerBase.addRunOnCommit(document, () -> {
+          documentManager.addRunOnCommit(document, () -> {
             if (document.getUserData(UPDATE_ON_COMMIT_ENGAGED) != null) {
               updateChangesForDocument(document);
               document.putUserData(UPDATE_ON_COMMIT_ENGAGED, null);
