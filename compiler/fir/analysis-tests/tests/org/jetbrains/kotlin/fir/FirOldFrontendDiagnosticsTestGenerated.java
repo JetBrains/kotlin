@@ -10389,6 +10389,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inference/returningLambdaInSuspendContext.kt");
         }
 
+        @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
+        public void testSkipedUnresolvedInBuilderInferenceWithStubReceiverType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt");
+        }
+
         @TestMetadata("starApproximation.kt")
         public void testStarApproximation() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/starApproximation.kt");

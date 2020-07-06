@@ -90,8 +90,14 @@ internal class MemberScopeTowerLevel(
     private fun collectMembers(
         getMembers: ResolutionScope.(KotlinType?) -> Collection<CallableDescriptor>
     ): Collection<CandidateWithBoundDispatchReceiver> {
-        val result = ArrayList<CandidateWithBoundDispatchReceiver>(0)
         val receiverValue = dispatchReceiver.receiverValue
+
+        if (receiverValue.type is StubType) {
+            return arrayListOf()
+        }
+
+        val result = ArrayList<CandidateWithBoundDispatchReceiver>(0)
+
         receiverValue.type.memberScope.getMembers(receiverValue.type).mapTo(result) {
             createCandidateDescriptor(it, dispatchReceiver)
         }
