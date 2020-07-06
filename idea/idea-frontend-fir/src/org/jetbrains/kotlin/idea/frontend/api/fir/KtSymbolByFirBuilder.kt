@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
+import com.google.common.collect.MapMaker
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
@@ -41,6 +41,9 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 
+/**
+ * Maps FirElement to KtSymbol & ConeType to KtType, thread safe
+ */
 internal class KtSymbolByFirBuilder(
     firProvider: FirSymbolProvider,
     typeCheckerContext: ConeTypeCheckerContext,
@@ -149,8 +152,7 @@ internal class KtSymbolByFirBuilder(
 }
 
 private class BuilderCache<From, To> {
-    // the capacity & load factor values here are default ones which are used ing java.util.Map
-    private val cache = ContainerUtil.createWeakMap<From, To>(16, .75f, ContainerUtil.identityStrategy())
+    private val cache = MapMaker().weakKeys().makeMap<From, To>()
 
     inline fun <reified S : To> cache(key: From, calculation: () -> S): S =
         cache.getOrPut(key, calculation) as S
