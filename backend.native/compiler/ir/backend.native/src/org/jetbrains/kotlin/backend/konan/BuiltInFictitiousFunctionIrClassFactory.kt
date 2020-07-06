@@ -207,11 +207,10 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                             parent = functionClass
                             valueParameters += invokeFunctionDescriptor.valueParameters.map {
                                 IrValueParameterImpl(
-                                        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                                        invokeFunctionOrigin,
-                                        it,
-                                        functionClass.typeParameters[it.index].defaultType,
-                                        null
+                                        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, invokeFunctionOrigin,
+                                        IrValueParameterSymbolImpl(it), it.name, it.index,
+                                        functionClass.typeParameters[it.index].defaultType, null,
+                                        it.isCrossinline, it.isNoinline
                                 ).also { it.parent = this }
                             }
                             if (!isFakeOverride)
@@ -258,17 +257,18 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
     }
 
     private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter {
-        val symbol = IrValueParameterSymbolImpl(descriptor)
         val varargType = if (descriptor is ValueParameterDescriptor) descriptor.varargElementType else null
         return IrValueParameterImpl(
                 offset,
                 offset,
                 memberOrigin,
-                descriptor,
+                IrValueParameterSymbolImpl(descriptor),
+                descriptor.name,
+                descriptor.indexOrMinusOne,
                 toIrType(descriptor.type),
                 varargType?.let { toIrType(it) },
-                descriptor.name,
-                symbol
+                descriptor.isCrossinline,
+                descriptor.isNoinline
         ).also {
             it.parent = this
         }
