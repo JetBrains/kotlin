@@ -57,6 +57,15 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     private fun GlobalMatchingVisitor.matchInAnyOrder(elements: List<PsiElement?>, elements2: List<PsiElement?>) =
         matchInAnyOrder(elements.toTypedArray(), elements2.toTypedArray())
 
+    private fun GlobalMatchingVisitor.matchNormalized(
+        element: KtExpression?,
+        element2: KtExpression?,
+        returnExpr: Boolean = false
+    ): Boolean {
+        val (e1, e2) = normalizeExpressions(element, element2, returnExpr)
+        return match(e1, e2)
+    }
+
     private fun getHandler(element: PsiElement) = myMatchingVisitor.matchContext.pattern.getHandler(element)
 
     private fun matchTextOrVariable(el1: PsiElement?, el2: PsiElement?): Boolean {
@@ -642,25 +651,47 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         else -> expression
     }
 
+    private fun normalizeExpressions(
+        patternExpr: KtExpression?,
+        codeExpr: KtExpression?,
+        returnExpr: Boolean
+    ): Pair<KtExpression?, KtExpression?> {
+        val normalizedExpr = if (returnExpr) normalizeExpressionRet(patternExpr) else normalizeExpression(patternExpr)
+        val normalizedCodeExpr = if (returnExpr) normalizeExpressionRet(codeExpr) else normalizeExpression(codeExpr)
+
+        return when {
+            normalizedExpr is KtBlockExpression || normalizedCodeExpr is KtBlockExpression -> patternExpr to codeExpr
+            else -> normalizedExpr to normalizedCodeExpr
+        }
+    }
+
     override fun visitNamedFunction(function: KtNamedFunction) {
         val other = getTreeElementDepar<KtNamedFunction>() ?: return
-        val funExpr = normalizeExpressionRet(function.bodyExpression)
-        val othExpr = normalizeExpressionRet(other.bodyExpression)
-        val bodyMatched = when {
-            funExpr is KtNameReferenceExpression || funExpr is KtBlockExpression ->
-                myMatchingVisitor.match(function.bodyBlockExpression, other.bodyBlockExpression)
-            funExpr == null || othExpr == null ->
-                myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
-            else ->
-                myMatchingVisitor.match(funExpr, othExpr)
+        val (patternBody, codeBody) = normalizeExpressions(function.bodyBlockExpression, other.bodyBlockExpression, true)
+
+        val bodyHandler = patternBody?.let(::getHandler)
+        val bodyMatch = when {
+            patternBody is KtNameReferenceExpression && codeBody == null -> bodyHandler is SubstitutionHandler
+                        && bodyHandler.minOccurs <= 1 && bodyHandler.maxOccurs >= 1
+                        && myMatchingVisitor.match(patternBody, other.bodyExpression)
+            patternBody is KtNameReferenceExpression -> myMatchingVisitor.match(
+                function.bodyBlockExpression,
+                other.bodyBlockExpression
+            )
+            patternBody == null && codeBody == null -> myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
+            patternBody == null -> myMatchingVisitor.match(function.bodyExpression, codeBody)
+            codeBody == null -> myMatchingVisitor.match(patternBody, other.bodyExpression)
+            else -> myMatchingVisitor.match(function.bodyBlockExpression, other.bodyBlockExpression)
         }
+
         myMatchingVisitor.result = myMatchingVisitor.match(function.modifierList, other.modifierList)
                 && matchTextOrVariable(function.nameIdentifier, other.nameIdentifier)
                 && myMatchingVisitor.match(function.typeParameterList, other.typeParameterList)
                 && matchTypeReferenceWithDeclaration(function.typeReference, other)
                 && myMatchingVisitor.match(function.valueParameterList, other.valueParameterList)
                 && myMatchingVisitor.match(function.receiverTypeReference, other.receiverTypeReference)
-                && bodyMatched
+                && bodyMatch
+
         function.nameIdentifier?.let { nameIdentifier ->
             val handler = getHandler(nameIdentifier)
             if (myMatchingVisitor.result && handler is SubstitutionHandler) {
@@ -678,27 +709,27 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtIfExpression>() ?: return
         val elseBranch = normalizeExpression(expression.`else`)
         myMatchingVisitor.result = myMatchingVisitor.match(expression.condition, other.condition)
-                && myMatchingVisitor.match(normalizeExpression(expression.then), normalizeExpression(other.then))
-                && (elseBranch == null || myMatchingVisitor.match(elseBranch, normalizeExpression(other.`else`)))
+                && myMatchingVisitor.matchNormalized(expression.then, other.then)
+                && (elseBranch == null || myMatchingVisitor.matchNormalized(expression.`else`, other.`else`))
     }
 
     override fun visitForExpression(expression: KtForExpression) {
         val other = getTreeElementDepar<KtForExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.loopParameter, other.loopParameter)
                 && myMatchingVisitor.match(expression.loopRange, other.loopRange)
-                && myMatchingVisitor.match(normalizeExpression(expression.body), normalizeExpression(other.body))
+                && myMatchingVisitor.matchNormalized(expression.body, other.body)
     }
 
     override fun visitWhileExpression(expression: KtWhileExpression) {
         val other = getTreeElementDepar<KtWhileExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.condition, other.condition)
-                && myMatchingVisitor.match(normalizeExpression(expression.body), normalizeExpression(other.body))
+                && myMatchingVisitor.matchNormalized(expression.body, other.body)
     }
 
     override fun visitDoWhileExpression(expression: KtDoWhileExpression) {
         val other = getTreeElementDepar<KtDoWhileExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.condition, other.condition)
-                && myMatchingVisitor.match(normalizeExpression(expression.body), normalizeExpression(other.body))
+                && myMatchingVisitor.matchNormalized(expression.body, other.body)
     }
 
     override fun visitWhenConditionInRange(condition: KtWhenConditionInRange) {
@@ -800,7 +831,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val accessorBody = if (accessor.hasBlockBody()) accessor.bodyBlockExpression else accessor.bodyExpression
         val otherBody = if (other.hasBlockBody()) other.bodyBlockExpression else other.bodyExpression
         myMatchingVisitor.result = myMatchingVisitor.match(accessor.modifierList, other.modifierList)
-                && myMatchingVisitor.match(normalizeExpressionRet(accessorBody), normalizeExpressionRet(otherBody))
+                && myMatchingVisitor.matchNormalized(accessorBody, otherBody, true)
     }
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {

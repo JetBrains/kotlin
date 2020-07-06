@@ -39,4 +39,8 @@ class KotlinSSIfExpressionTest : KotlinSSResourceInspectionTest() {
             }""".trimMargin()
         )
     }
+
+    fun testIfThen1Expr() {
+        doTest("if ('_) { '_{1,1} }")
+    }
 }
