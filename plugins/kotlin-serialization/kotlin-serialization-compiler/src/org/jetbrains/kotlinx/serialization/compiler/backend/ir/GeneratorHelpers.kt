@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -407,7 +408,8 @@ interface IrBuilderExtension {
             IrTypeParameterImpl(
                 startOffset, endOffset,
                 SERIALIZABLE_PLUGIN_ORIGIN,
-                it
+                IrTypeParameterSymbolImpl(it),
+                it.name, it.index, it.isReified, it.variance
             ).also { typeParameter ->
                 typeParameter.parent = this
             }

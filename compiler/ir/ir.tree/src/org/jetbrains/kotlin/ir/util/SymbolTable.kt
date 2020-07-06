@@ -826,13 +826,17 @@ open class SymbolTable(
         return IrTypeParameterSymbolImpl(descriptor)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun declareGlobalTypeParameter(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = {
-            IrTypeParameterImpl(startOffset, endOffset, origin, descriptor, nameProvider.nameForDeclaration(descriptor), it)
+            IrTypeParameterImpl(
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor),
+                it.descriptor.index, it.descriptor.isReified, it.descriptor.variance
+            )
         }
     ): IrTypeParameter =
         globalTypeParameterSymbolTable.declare(
@@ -850,13 +854,17 @@ open class SymbolTable(
         return globalTypeParameterSymbolTable.declare(descriptor, { IrTypeParameterSymbolImpl(descriptor) }, typeParameterFactory)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun declareScopedTypeParameter(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = {
-            IrTypeParameterImpl(startOffset, endOffset, origin, descriptor, nameProvider.nameForDeclaration(descriptor), it)
+            IrTypeParameterImpl(
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor),
+                it.descriptor.index, it.descriptor.isReified, it.descriptor.variance
+            )
         }
     ): IrTypeParameter =
         scopedTypeParameterSymbolTable.declare(
