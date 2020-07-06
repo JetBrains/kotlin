@@ -100,6 +100,13 @@ ext.testLibraryDir = "${project.property("konan.home")}/klib/platform/${project.
 // Add executor to run tests depending on a target
 project.convention.plugins.executor = ExecutorServiceKt.create(project)
 
+
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs += "-Xskip-prerelease-check"
+    }
+}
+
 // Do not generate run tasks for konan built artifacts
 ext.konanNoRun = true
 
