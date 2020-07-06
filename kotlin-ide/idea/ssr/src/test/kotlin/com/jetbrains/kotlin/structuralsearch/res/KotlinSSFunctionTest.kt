@@ -78,4 +78,6 @@ class KotlinSSFunctionTest : KotlinSSResourceInspectionTest() {
             '_{0,1}
         }
         """) }
+
+    fun testFunTypeProjection() { doTest("fun '_('_ : A<out '_>)") }
 }

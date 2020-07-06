@@ -408,6 +408,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitTypeProjection(typeProjection: KtTypeProjection) {
         val other = getTreeElementDepar<KtTypeProjection>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(typeProjection.typeReference, other.typeReference)
+                && myMatchingVisitor.match(typeProjection.modifierList, other.modifierList)
     }
 
     override fun visitTypeArgumentList(typeArgumentList: KtTypeArgumentList) {
