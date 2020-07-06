@@ -281,14 +281,12 @@ interface IrBuilderExtension {
         assert(symbol.isBound || declare)
 
         if (declare) {
-            IrFunctionImpl(
-                fieldSymbol.owner.startOffset,
-                fieldSymbol.owner.endOffset,
-                SERIALIZABLE_PLUGIN_ORIGIN,
-                symbol,
-                descriptor.returnType!!.toIrType(),
-                descriptor
-            ).also { f ->
+            with(descriptor) {
+                IrFunctionImpl(
+                    fieldSymbol.owner.startOffset, fieldSymbol.owner.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol,
+                    name, visibility, modality, returnType!!.toIrType(), isInline, isExternal, isTailrec, isSuspend, isOperator, isExpect
+                )
+            }.also { f ->
                 generateOverriddenFunctionSymbols(f, compilerContext.symbolTable)
                 f.createParameterDeclarations(receiver = null)
                 f.returnType = descriptor.returnType!!.toIrType()
