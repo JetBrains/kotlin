@@ -28,6 +28,7 @@
 - [`KT-34902`](https://youtrack.jetbrains.com/issue/KT-34902) AnalyzerException: Argument 1: expected I, but found R for unsigned types in generic data class
 - [`KT-35075`](https://youtrack.jetbrains.com/issue/KT-35075) AssertionError: "No resolved call for ..." with conditional function references
 - [`KT-35468`](https://youtrack.jetbrains.com/issue/KT-35468) Overcome ambiguity between typealias kotlin.Throws and the aliased type kotlin.jvm.Throws
+- [`KT-35494`](https://youtrack.jetbrains.com/issue/KT-35494) NI: Multiple duplicate error diagnostics (in IDE popup) with NULL_FOR_NONNULL_TYPE
 - [`KT-35681`](https://youtrack.jetbrains.com/issue/KT-35681) Wrong common supertype between raw and integer literal type leads to unsound code
 - [`KT-35937`](https://youtrack.jetbrains.com/issue/KT-35937) Error "Declaration has several compatible actuals" on incremental build
 - [`KT-36013`](https://youtrack.jetbrains.com/issue/KT-36013) Functional interface conversion not happens on a value of functional type with smart cast to a relevant functional type
@@ -36,6 +37,7 @@
 - [`KT-36706`](https://youtrack.jetbrains.com/issue/KT-36706) Prohibit functional interface constructor references
 - [`KT-36969`](https://youtrack.jetbrains.com/issue/KT-36969) Generate @NotNull on instance parameters of Interface$DefaultImpls methods
 - [`KT-37058`](https://youtrack.jetbrains.com/issue/KT-37058) Incorrect overload resolution ambiguity on callable reference in a conditional expression with new inference
+- [`KT-37120`](https://youtrack.jetbrains.com/issue/KT-37120) [FIR] False UNRESOLVED_REFERENCE for public and protected member functions and properties which are declared in object inner class
 - [`KT-37149`](https://youtrack.jetbrains.com/issue/KT-37149) Conversion when generic specified by type argument of SAM type
 - [`KT-37249`](https://youtrack.jetbrains.com/issue/KT-37249) false TYPE_MISMATCH when When-expression branches have try-catch blocks
 - [`KT-37341`](https://youtrack.jetbrains.com/issue/KT-37341) NI: Type mismatch with combination of lambda and function reference
@@ -61,6 +63,7 @@
 - [`KT-38416`](https://youtrack.jetbrains.com/issue/KT-38416) FIR: infinite loop in BB coroutine test 'overrideDefaultArgument.kt'
 - [`KT-38432`](https://youtrack.jetbrains.com/issue/KT-38432) FIR: incorrect effective visibility in anonymous object
 - [`KT-38434`](https://youtrack.jetbrains.com/issue/KT-38434) Implement resolution of suspend-conversion on FE only, but give error if suspend conversion is called
+- [`KT-38437`](https://youtrack.jetbrains.com/issue/KT-38437) [FIR] String(CharArray) is resolved to java.lang.String constructor instead of kotlin.text.String pseudo-constructor
 - [`KT-38439`](https://youtrack.jetbrains.com/issue/KT-38439) NI: anonymous functions without receiver is allowed if there is an expected type with receiver
 - [`KT-38473`](https://youtrack.jetbrains.com/issue/KT-38473) FIR: ConeIntegerLiteralType in signature
 - [`KT-38537`](https://youtrack.jetbrains.com/issue/KT-38537) IllegalArgumentException: "marginPrefix must be non-blank string" with raw strings and space as margin prefix in trimMargin() call
@@ -83,10 +86,8 @@
 - [`KT-39671`](https://youtrack.jetbrains.com/issue/KT-39671) Couldn't inline method call 'expectBody'
 - [`KT-39816`](https://youtrack.jetbrains.com/issue/KT-39816) NI:ClassCastException and no IDE error with provideDelegate when DELEGATE_SPECIAL_FUNCTION_MISSING in OI
 - [`KT-32779`](https://youtrack.jetbrains.com/issue/KT-32779) `Rewrite at slice` in array access resolution in coroutine inference
-- [`KT-37120`](https://youtrack.jetbrains.com/issue/KT-37120) [FIR] False UNRESOLVED_REFERENCE for public and protected member functions and properties which are declared in object inner class
-- [`KT-38437`](https://youtrack.jetbrains.com/issue/KT-38437) [FIR] String(CharArray) is resolved to java.lang.String constructor instead of kotlin.text.String pseudo-constructor
-- [`KT-39229`](https://youtrack.jetbrains.com/issue/KT-39229) NI: resolution to wrong candidate (SAM-type against similar functional type)
 - [`KT-39387`](https://youtrack.jetbrains.com/issue/KT-39387) Can't build Kotlin project due to overload resolution ambiguity on flatMap calls
+- [`KT-39229`](https://youtrack.jetbrains.com/issue/KT-39229) NI: resolution to wrong candidate (SAM-type against similar functional type)
 
 ### Docs & Examples
 
@@ -184,14 +185,11 @@
 #### New Features
 
 - [`KT-34481`](https://youtrack.jetbrains.com/issue/KT-34481) *.gradle.kts: use Intellij IDEA Gradle project sync mechanics for updating script configuration
-- [`KT-34444`](https://youtrack.jetbrains.com/issue/KT-34444) *.gradle.kts: special storage of all scripts configuration on one file
-- [`KT-35153`](https://youtrack.jetbrains.com/issue/KT-35153) build.gradle.kts: scripts in removed subproject remain imported, but shouldn't
-- [`KT-35573`](https://youtrack.jetbrains.com/issue/KT-35573) Request for gradle build script configuration only after explicit click on notification
-- [`KT-38875`](https://youtrack.jetbrains.com/issue/KT-38875) Deadlock in ScriptClassRootsUpdater.checkInvalidSdks
 
 #### Performance Improvements
 
 - [`KT-34138`](https://youtrack.jetbrains.com/issue/KT-34138) Deadlock in `ScriptTemplatesFromDependenciesProvider`
+- [`KT-38875`](https://youtrack.jetbrains.com/issue/KT-38875) Deadlock in ScriptClassRootsUpdater.checkInvalidSdks
 
 #### Fixes
 
@@ -205,7 +203,6 @@
 - [`KT-37863`](https://youtrack.jetbrains.com/issue/KT-37863) Scanning dependencies for script definitions takes too long or indefinitely during Gradle import
 - [`KT-38296`](https://youtrack.jetbrains.com/issue/KT-38296) MISSING_DEPENDENCY_SUPERCLASS in the build.gradle.kts editor while Gradle runs Ok
 - [`KT-38541`](https://youtrack.jetbrains.com/issue/KT-38541) "Invalid file" exception in ScriptChangeListener.getAnalyzableKtFileForScript()
-- [`KT-38875`](https://youtrack.jetbrains.com/issue/KT-38875) Deadlock in ScriptClassRootsUpdater.checkInvalidSdks
 - [`KT-39104`](https://youtrack.jetbrains.com/issue/KT-39104) “Gradle Kotlin DSL script configuration is missing” after importing project in IJ201, Gradle 6.3
 - [`KT-39469`](https://youtrack.jetbrains.com/issue/KT-39469) Gradle version is not updated in script dependencies if the version of gradle was changed in gradle-wrapper.properties
 - [`KT-39771`](https://youtrack.jetbrains.com/issue/KT-39771) Freeze 30s from org.jetbrains.kotlin.scripting.resolve.ApiChangeDependencyResolverWrapper.resolve on loading script configuration with Gradle 5.6.4
@@ -342,18 +339,19 @@
 
 ### IDE. Wizards
 
+- [`KT-38673`](https://youtrack.jetbrains.com/issue/KT-38673) New Project Wizard: multiplatform templates are generated having unsupported Gradle version in a wrapper
 - [`KT-38810`](https://youtrack.jetbrains.com/issue/KT-38810) Incorrect order of build phases in Xcode project from new wizard
 - [`KT-38952`](https://youtrack.jetbrains.com/issue/KT-38952) Remove old new_project_wizards
 - [`KT-39503`](https://youtrack.jetbrains.com/issue/KT-39503) New Project wizard 1.4+: release kotlinx.html version is added to dependencies with milestone IDE plugin
 - [`KT-39700`](https://youtrack.jetbrains.com/issue/KT-39700) Wizard: group project templates on the first step by the project type
 - [`KT-39770`](https://youtrack.jetbrains.com/issue/KT-39770) CSS Support in Kotlin wizards
-- [`KT-39843`](https://youtrack.jetbrains.com/issue/KT-39843) Change imports in JS/browser wizard
-- [`KT-38673`](https://youtrack.jetbrains.com/issue/KT-38673) New Project Wizard: multiplatform templates are generated having unsupported Gradle version in a wrapper
 - [`KT-39826`](https://youtrack.jetbrains.com/issue/KT-39826) Fix Android app in New Template Wizard
+- [`KT-39843`](https://youtrack.jetbrains.com/issue/KT-39843) Change imports in JS/browser wizard
 
 ### JS. Tools
 
 - [`KT-32273`](https://youtrack.jetbrains.com/issue/KT-32273) Kotlin/JS console error on hot reload
+- [`KT-39498`](https://youtrack.jetbrains.com/issue/KT-39498) Update dukat version in toolchain near to release of 1.4-M3
 
 ### JavaScript
 
@@ -361,6 +359,7 @@
 - [`KT-35857`](https://youtrack.jetbrains.com/issue/KT-35857) Kotlin/JS CLI bundled to IDEA plugin can't compile using IR back-end out of the box
 - [`KT-36798`](https://youtrack.jetbrains.com/issue/KT-36798) KJS: prohibit using @JsExport on a non-top-level declaration
 - [`KT-37771`](https://youtrack.jetbrains.com/issue/KT-37771) KJS: Generated TypeScript does not recursively export base classes (can fail with generics)
+- [`KT-38113`](https://youtrack.jetbrains.com/issue/KT-38113) Review public API of JS stdlib for IR BE
 - [`KT-38765`](https://youtrack.jetbrains.com/issue/KT-38765) [JS / IR] AssertionError: class EventEmitter: Super class should be any: with nested class extending parent class
 - [`KT-38768`](https://youtrack.jetbrains.com/issue/KT-38768) KJS IR: generate ES2015 (aka ES6) classes
 
@@ -423,7 +422,6 @@
 
 ### Tools. CLI
 
-- [`KT-15661`](https://youtrack.jetbrains.com/issue/KT-15661) Metadata compiler friend paths support
 - [`KT-30211`](https://youtrack.jetbrains.com/issue/KT-30211) Support a way to pass arguments to the underlying JVM in kotlinc batch scripts on Windows
 - [`KT-30778`](https://youtrack.jetbrains.com/issue/KT-30778) kotlin-compiler.jar contains shaded but not relocated kotlinx.coroutines
 - [`KT-38070`](https://youtrack.jetbrains.com/issue/KT-38070) Compiler option to bypass prerelease metadata incompatibility error
@@ -445,9 +443,11 @@
 #### New Features
 
 - [`KT-30619`](https://youtrack.jetbrains.com/issue/KT-30619) Support NPM transitive dependencies in multi-platform JS target
+- [`KT-38286`](https://youtrack.jetbrains.com/issue/KT-38286) [Gradle, JS] Error handling on Webpack problems
 
 #### Fixes
 
+- [`KT-31669`](https://youtrack.jetbrains.com/issue/KT-31669) Gradle/JS: rise error when plugin loaded more than once
 - [`KT-32531`](https://youtrack.jetbrains.com/issue/KT-32531) [Gradle/JS] Add scoped NPM dependencies
 - [`KT-34832`](https://youtrack.jetbrains.com/issue/KT-34832) [Kotlin/JS] Failed build after webpack run (Karma not found)
 - [`KT-35194`](https://youtrack.jetbrains.com/issue/KT-35194) Kotlin/JS: browserRun fails with "address already in use" when trying to connect to local server
@@ -456,18 +456,15 @@
 - [`KT-36410`](https://youtrack.jetbrains.com/issue/KT-36410) JS: Collect stats about IR backend usage
 - [`KT-36451`](https://youtrack.jetbrains.com/issue/KT-36451) KJS Adding npm dependency breaks Webpack devserver reloading
 - [`KT-37258`](https://youtrack.jetbrains.com/issue/KT-37258) Kotlin/JS + Gradle: in continuous mode kotlinNpmInstall time to time outputs "ENOENT: no such file or directory" error
+- [`KT-38109`](https://youtrack.jetbrains.com/issue/KT-38109) [Gradle, JS] Error handling on Karma launcher problems
 - [`KT-38331`](https://youtrack.jetbrains.com/issue/KT-38331) Add an ability to control generating externals for npm deps individually
 - [`KT-38485`](https://youtrack.jetbrains.com/issue/KT-38485) [Gradle, JS] Unable to configure JS compiler with string
 - [`KT-38683`](https://youtrack.jetbrains.com/issue/KT-38683) Remove possibility to set NPM dependency without version
 - [`KT-38990`](https://youtrack.jetbrains.com/issue/KT-38990) Support multiple range versions for NPM dependencies
 - [`KT-38994`](https://youtrack.jetbrains.com/issue/KT-38994) Remove possibility to set NPM dependency with npm(org, name, version)
 - [`KT-39109`](https://youtrack.jetbrains.com/issue/KT-39109) ArithmeticException: "/ by zero" caused by kotlinNodeJsSetup task with enabled gradle caching on Windows
-- [`KT-39377`](https://youtrack.jetbrains.com/issue/KT-39377) Use standard source-map-loader instead of custom one
-- [`KT-31669`](https://youtrack.jetbrains.com/issue/KT-31669) Gradle/JS: rise error when plugin loaded more than once
-- [`KT-38109`](https://youtrack.jetbrains.com/issue/KT-38109) [Gradle, JS] Error handling on Karma launcher problems
-- [`KT-38286`](https://youtrack.jetbrains.com/issue/KT-38286) [Gradle, JS] Error handling on Webpack problems
 - [`KT-39210`](https://youtrack.jetbrains.com/issue/KT-39210) Kotlin/JS: with both JS and MPP modules in the same project Gradle configuration fails on `nodejs {}` and `browser {}`
-
+- [`KT-39377`](https://youtrack.jetbrains.com/issue/KT-39377) Use standard source-map-loader instead of custom one
 
 ### Tools. Gradle. Multiplatform
 
@@ -476,11 +473,11 @@
 
 ### Tools. Gradle. Native
 
+- [`KT-37514`](https://youtrack.jetbrains.com/issue/KT-37514) CocoaPods Gradle plugin: Support building from terminal projects for several platforms
+- [`KT-38440`](https://youtrack.jetbrains.com/issue/KT-38440) Make error message about missing Podfile path for cocoapods integration actionable for a user
 - [`KT-38991`](https://youtrack.jetbrains.com/issue/KT-38991) Gradle MPP plugin: Enable parallel in-process execution for K/N compiler
 - [`KT-39935`](https://youtrack.jetbrains.com/issue/KT-39935) Support overriding the `KotlinNativeCompile` task sources
 - [`KT-37512`](https://youtrack.jetbrains.com/issue/KT-37512) Cocoapods Gradle plugin: Improve error logging for external tools
-- [`KT-37514`](https://youtrack.jetbrains.com/issue/KT-37514) CocoaPods Gradle plugin: Support building from terminal projects for several platforms
-- [`KT-38440`](https://youtrack.jetbrains.com/issue/KT-38440) Make error message about missing Podfile path for cocoapods integration actionable for a user
 
 ### Tools. J2K
 
