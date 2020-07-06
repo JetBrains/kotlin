@@ -919,11 +919,14 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
-    testGroup("fir", testDataPath = "../idea/testData") {
+    testGroup("idea/idea-fir/tests", "idea") {
         testClass<AbstractFirHighlightingTest> {
-            model("highlighter")
+            model("testData/highlighter")
+            model("idea-fir/testData/highlighterFir", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
+    }
 
+    testGroup("idea/idea-fir/tests", "idea/testData") {
         testClass<AbstractFirReferenceResolveTest> {
             model("resolve/references", pattern = KT_WITHOUT_DOTS)
         }
