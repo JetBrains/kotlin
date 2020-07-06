@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.LibrarySourceInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -166,28 +167,10 @@ class DuplicatedFirSourceElementsException(
        | ${newFir.render().trim()}
        |
        |PSI element is $psi with text in context:
-       |${getElementInContext(psi)}""".trimMargin()
+       |${psi.getElementTextInContext()}""".trimMargin()
 
-    private fun getElementInContext(neededElement: KtElement): String {
-        val context = neededElement.containingDeclarationForPseudocode ?: neededElement.containingKtFile
-        val builder = StringBuilder()
-        context.accept(object : PsiElementVisitor() {
-            override fun visitElement(element: PsiElement) {
-                if (element === neededElement) builder.append("<$ELEMENT_TAG>")
-                if (element is LeafPsiElement) {
-                    builder.append(element.text)
-                } else {
-                    element.acceptChildren(this)
-                }
-                if (element === neededElement) builder.append("</$ELEMENT_TAG>")
-            }
-        })
-        return builder.toString().trimIndent().trim()
-    }
 
     companion object {
-        private const val ELEMENT_TAG = "ELEMENT"
-
         // The are some cases which are still generates FIR elements with duplicated source elements
         // Then such case is met, it's better to be fixed
         // but exception reporting can be easily disabled by setting this to false
