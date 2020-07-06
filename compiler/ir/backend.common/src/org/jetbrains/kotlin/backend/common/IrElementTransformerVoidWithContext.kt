@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -167,7 +167,7 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
     }
 
     final override fun visitField(declaration: IrField) {
-        @Suppress("DEPRECATION") val isDelegated = declaration.descriptor.isDelegated
+        val isDelegated = declaration.descriptor.isDelegated
         if (isDelegated) scopeStack.push(createScope(declaration))
         visitFieldNew(declaration)
         if (isDelegated) scopeStack.pop()

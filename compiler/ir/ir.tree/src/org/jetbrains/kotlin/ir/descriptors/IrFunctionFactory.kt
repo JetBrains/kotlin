@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.referenceClassifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal

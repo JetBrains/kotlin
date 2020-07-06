@@ -159,15 +159,14 @@ class DeclarationStubGenerator(
 
         val origin = computeOrigin(descriptor)
         return symbolTable.declareProperty(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original,
-            isDelegated = @Suppress("DEPRECATION") descriptor.isDelegated
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original, descriptor.isDelegated
         ) {
             IrLazyProperty(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
-                @Suppress("DEPRECATION") descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
+                descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
                 stubGenerator = this, typeTranslator = typeTranslator, bindingContext = bindingContext
             )

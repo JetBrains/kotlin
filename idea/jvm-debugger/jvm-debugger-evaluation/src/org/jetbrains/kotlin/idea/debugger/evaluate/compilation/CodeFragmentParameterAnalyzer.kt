@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
-import org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldPropertyDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory.Companion.FAKE_JAVA_CONTEXT_FUNCTION_NAME
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter.*
 import org.jetbrains.kotlin.idea.debugger.safeLocation
@@ -313,11 +312,8 @@ class CodeFragmentParameterAnalyzer(
                 val isLValue = unwrappedExpression?.let { isAssignmentLValue(it) } ?: false
 
                 parameters.getOrPut(target) {
-                    val type = target.type
-
-                    @Suppress("DEPRECATION")
                     val kind = if (target is LocalVariableDescriptor && target.isDelegated) Kind.DELEGATED else Kind.ORDINARY
-                    Smart(Dumb(kind, target.name.asString()), type, target, isLValue)
+                    Smart(Dumb(kind, target.name.asString()), target.type, target, isLValue)
                 }
             }
             else -> null

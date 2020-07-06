@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -1208,7 +1210,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return StackValue.sharedTypeForType(mapType(receiverParameter.type))
         }
 
-        if (descriptor is LocalVariableDescriptor && @Suppress("DEPRECATION") descriptor.isDelegated) {
+        if (descriptor is LocalVariableDescriptor && descriptor.isDelegated) {
             return null
         }
 

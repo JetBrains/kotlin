@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -191,7 +194,6 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 createBackingFieldLValue(ktExpr, descriptor.propertyDescriptor, receiverValue, origin)
             }
             is LocalVariableDescriptor ->
-                @Suppress("DEPRECATION")
                 if (descriptor.isDelegated)
                     DelegatedLocalPropertyLValue(
                         context,

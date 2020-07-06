@@ -648,7 +648,7 @@ open class SymbolTable(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
-        @Suppress("DEPRECATION") isDelegated: Boolean = descriptor.isDelegated,
+        isDelegated: Boolean = descriptor.isDelegated,
         propertyFactory: (IrPropertySymbol) -> IrProperty = { symbol ->
             IrPropertyImpl(
                 startOffset, endOffset, origin, symbol, isDelegated = isDelegated,

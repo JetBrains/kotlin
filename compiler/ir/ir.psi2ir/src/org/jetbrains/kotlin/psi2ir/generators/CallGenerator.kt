@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class CallGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -120,7 +120,6 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null
     ) =
-        @Suppress("DEPRECATION")
         if (descriptor is LocalVariableDescriptor && descriptor.isDelegated) {
             val getterDescriptor = descriptor.getter!!
             val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor.original)

@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.builtins.isKFunctionType
 import org.jetbrains.kotlin.builtins.isKSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
@@ -486,7 +489,6 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         }
     }
 
-    @Suppress("DEPRECATION")
     private fun getFieldForPropertyReference(originalProperty: PropertyDescriptor) =
         // NB this is a hack, we really don't know if an arbitrary property has a backing field or not
         when {
