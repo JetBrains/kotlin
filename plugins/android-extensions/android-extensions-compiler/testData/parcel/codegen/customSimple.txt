@@ -42,7 +42,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           GETSTATIC (Companion, LUser$Companion;)
           ALOAD (1)
-          INVOKEVIRTUAL (User$Companion, create, (Landroid/os/Parcel;)Ljava/lang/Object;)
+          INVOKEVIRTUAL (User$Companion, create, (Landroid/os/Parcel;)LUser;)
           ARETURN
         LABEL (L1)
     }

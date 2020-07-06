@@ -226,7 +226,7 @@ open class ParcelableCodegenExtension : ParcelableExtensionBase, ExpressionCodeg
 
                 v.getstatic(containerAsmType.internalName, companionFieldName, companionAsmType.descriptor)
                 v.load(1, PARCEL_TYPE)
-                v.invokevirtual(companionAsmType.internalName, "create", "(${PARCEL_TYPE.descriptor})Ljava/lang/Object;", false)
+                v.invokevirtual(companionAsmType.internalName, "create", "(${PARCEL_TYPE.descriptor})$containerAsmType", false)
             }
             else {
                 v.anew(containerAsmType)
@@ -367,8 +367,8 @@ open class ParcelableCodegenExtension : ParcelableExtensionBase, ExpressionCodeg
 
                     v.getstatic(containerAsmType.internalName, companionFieldName, companionAsmType.descriptor)
                     v.load(1, Type.INT_TYPE)
-                    v.invokevirtual(companionAsmType.internalName, "newArray", "(I)[Ljava/lang/Object;", false)
-                    v.areturn(Type.getType("[Ljava/lang/Object;"))
+                    v.invokevirtual(companionAsmType.internalName, "newArray", "(I)[$parcelableAsmType", false)
+                    v.areturn(Type.getType("[$parcelableAsmType"))
 
                     return@write
                 }
@@ -376,7 +376,7 @@ open class ParcelableCodegenExtension : ParcelableExtensionBase, ExpressionCodeg
 
             v.load(1, Type.INT_TYPE)
             v.newarray(parcelableAsmType)
-            v.areturn(Type.getType("[L$parcelableAsmType;"))
+            v.areturn(Type.getType("[$parcelableAsmType"))
         }
     }
 
