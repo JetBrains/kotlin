@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.referenceFunction
@@ -84,12 +85,12 @@ class ClassGenerator(
         val modality = getEffectiveModality(ktClassOrObject, classDescriptor)
 
         return context.symbolTable.declareClass(classDescriptor) {
-            IrClassImpl(
-                startOffset, endOffset, IrDeclarationOrigin.DEFINED, it,
-                classDescriptor,
-                context.symbolTable.nameProvider.nameForDeclaration(classDescriptor),
-                visibility = visibility, modality = modality,
-            ).apply { metadata = MetadataSource.Class(it.descriptor) }
+            createIrClassFromDescriptor(
+                startOffset, endOffset, IrDeclarationOrigin.DEFINED, it, classDescriptor,
+                context.symbolTable.nameProvider.nameForDeclaration(classDescriptor), visibility, modality
+            ).apply {
+                (this as IrClassImpl).metadata = MetadataSource.Class(it.descriptor)
+            }
         }.buildWithScope { irClass ->
             declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
 
