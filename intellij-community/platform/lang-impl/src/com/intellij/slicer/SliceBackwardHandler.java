@@ -75,6 +75,7 @@ class SliceBackwardHandler extends SliceHandler {
       }
 
       private @Nullable SliceValueFilter getFilter() throws SliceFilterParseException {
+        if (field == null) return null;
         String text = field.getText().trim();
         if (!text.isEmpty()) {
           return provider.parseFilter(element, text);
