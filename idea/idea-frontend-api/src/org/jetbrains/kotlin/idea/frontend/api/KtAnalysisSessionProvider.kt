@@ -14,7 +14,7 @@ abstract class KtAnalysisSessionProvider {
 }
 
 fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession =
-    service<KtAnalysisSessionProvider>().getAnalysisSessionFor(contextElement)
+    contextElement.project.service<KtAnalysisSessionProvider>().getAnalysisSessionFor(contextElement)
 
 inline fun <R> analyze(contextElement: KtElement, action: KtAnalysisSession.() -> R): R =
     getAnalysisSessionFor(contextElement).action()
