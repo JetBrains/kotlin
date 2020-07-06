@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import org.junit.Test
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.DataInputStream
+import java.io.DataOutputStream
 import kotlin.test.assertEquals
 
 class LastModifiedFilesTest {
@@ -148,5 +152,35 @@ class LastModifiedFilesTest {
 
         assertEquals(2, restored.lastModifiedTimeStampExcept("x"))
         assertEquals(2, restored.lastModifiedTimeStampExcept("y"))
+    }
+
+    @Test
+    fun testFileAttributes() {
+        val expected = LastModifiedFiles(
+            LastModifiedFiles.SimultaneouslyChangedFiles(System.currentTimeMillis(), mutableSetOf("C:file/sldkfjlsdkjf")),
+            LastModifiedFiles.SimultaneouslyChangedFiles(System.currentTimeMillis(), mutableSetOf("C:/file/foo/d/"))
+        )
+        checkFileAttributesSave(expected)
+    }
+
+    @Test
+    fun testFileAttributesNullable() {
+        val expected: LastModifiedFiles? = null
+        checkFileAttributesSave(expected)
+    }
+
+    @Test
+    fun testDefaultFileAttributes() {
+        val expected = LastModifiedFiles()
+        checkFileAttributesSave(expected)
+    }
+
+    private fun checkFileAttributesSave(expected: LastModifiedFiles?) {
+        val buffer = ByteArrayOutputStream()
+        LastModifiedFiles.writeLastModifiedFiles(DataOutputStream(buffer), expected)
+
+        val actual = LastModifiedFiles.readLastModifiedFiles(DataInputStream(ByteArrayInputStream(buffer.toByteArray())))
+
+        assertEquals(expected.toString(), actual.toString())
     }
 }

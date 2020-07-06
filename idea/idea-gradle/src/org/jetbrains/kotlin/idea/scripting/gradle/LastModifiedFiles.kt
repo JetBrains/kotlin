@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.core.util.writeNullable
 import org.jetbrains.kotlin.idea.core.util.writeStringList
 import java.io.DataInputStream
 import java.io.DataOutput
+import java.io.DataOutputStream
 
 /**
  * Optimized collection for storing last modified files with ability to
@@ -62,19 +63,38 @@ class LastModifiedFiles(
         private val fileAttribute = FileAttribute("last-modified-files", 1, false)
 
         fun read(buildRoot: VirtualFile): LastModifiedFiles? {
-            return fileAttribute.readAttribute(buildRoot)?.use {
-                it.readNullable {
-                    LastModifiedFiles(readSCF(it), readSCF(it))
+            try {
+                return fileAttribute.readAttribute(buildRoot)?.use {
+                    readLastModifiedFiles(it)
+                }
+            } catch (e: Exception) {
+                scriptingErrorLog("Cannot read data for buildRoot=$buildRoot from file attributes", e)
+                return null
+            }
+        }
+
+        internal fun readLastModifiedFiles(it: DataInputStream) = it.readNullable {
+            LastModifiedFiles(readSCF(it), readSCF(it))
+        }
+
+        fun write(buildRoot: VirtualFile, data: LastModifiedFiles?) {
+            try {
+                fileAttribute.writeAttribute(buildRoot).use {
+                    writeLastModifiedFiles(it, data)
+                }
+            } catch (e: Exception) {
+                scriptingErrorLog("Cannot store data=$data for buildRoot=$buildRoot to file attributes", e)
+
+                fileAttribute.writeAttribute(buildRoot).use {
+                    writeLastModifiedFiles(it, null)
                 }
             }
         }
 
-        fun write(buildRoot: VirtualFile, data: LastModifiedFiles?) {
-            fileAttribute.writeAttribute(buildRoot).use {
-                it.writeNullable(data) { data ->
-                    writeSCF(data.last)
-                    writeSCF(data.previous)
-                }
+        internal fun writeLastModifiedFiles(it: DataOutputStream, data: LastModifiedFiles?) {
+            it.writeNullable(data) { data ->
+                writeSCF(data.last)
+                writeSCF(data.previous)
             }
         }
 
