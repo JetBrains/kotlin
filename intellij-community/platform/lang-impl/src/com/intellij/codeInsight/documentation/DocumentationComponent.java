@@ -1191,7 +1191,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
         }
         try {
           BufferedImage direct = ImageIO.read(imageUrl);
-          if (direct != null) return direct;
+          if (direct != null) return ImageUtil.ensureHiDPI(direct, ScaleContext.create(myEditorPane));
         }
         catch (IOException e) {
           //ignore
