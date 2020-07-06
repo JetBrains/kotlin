@@ -17,10 +17,10 @@ import com.intellij.psi.impl.source.codeStyle.lineIndent.JavaLikeLangLineIndentP
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.text.CharArrayUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.formatter.lineIndent.KotlinLikeLangLineIndentProvider.KotlinElement.*
+import org.jetbrains.kotlin.idea.formatter.lineIndent.KotlinLangLineIndentProvider.KotlinElement.*
 import org.jetbrains.kotlin.lexer.KtTokens
 
-abstract class KotlinLikeLangLineIndentProvider : JavaLikeLangLineIndentProvider() {
+abstract class KotlinLangLineIndentProvider : JavaLikeLangLineIndentProvider() {
     abstract fun indentionSettings(project: Project): KotlinIndentationAdjuster
 
     override fun mapType(tokenType: IElementType): SemanticEditorPosition.SyntaxElement? = SYNTAX_MAP[tokenType]
