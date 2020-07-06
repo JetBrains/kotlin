@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -51,12 +50,8 @@ internal interface DescriptorToIrTranslationMixin {
      */
     fun createClass(descriptor: ClassDescriptor, builder: (IrClass) -> Unit): IrClass =
             symbolTable.declareClass(descriptor) {
-                IrClassImpl(
-                    startOffset = SYNTHETIC_OFFSET,
-                    endOffset = SYNTHETIC_OFFSET,
-                    origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                    symbol = it,
-                    descriptor = descriptor
+                createIrClassFromDescriptor(
+                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, it, descriptor
                 )
             }.also { irClass ->
                 symbolTable.withScope(descriptor) {

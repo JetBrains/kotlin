@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
@@ -198,8 +197,8 @@ internal class KonanIrLinker(
             val packageDescriptor = descriptor.containingDeclaration as PackageFragmentDescriptor
             val irFile = getIrFile(packageDescriptor)
 
-            val klass = symbolTable.declareClassFromLinker(descriptor, idSig) { s ->
-                IrClassImpl(offset, offset, FORWARD_DECLARATION_ORIGIN, s, descriptor)
+            val klass = symbolTable.declareClassFromLinker(descriptor, idSig) { symbol ->
+                createIrClassFromDescriptor(offset, offset, FORWARD_DECLARATION_ORIGIN, symbol, descriptor)
             }
 
             klass.parent = irFile
