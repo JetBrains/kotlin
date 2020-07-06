@@ -90,7 +90,7 @@ val compileGroovy: GroovyCompile by tasks
 
 // https://youtrack.jetbrains.com/issue/KT-37435
 compileKotlin.apply {
-    kotlinOptions.freeCompilerArgs += "-Xno-optimized-callable-references"
+    kotlinOptions.freeCompilerArgs += listOf("-Xno-optimized-callable-references", "-Xskip-prerelease-check")
 }
 
 // Add Kotlin classes to a classpath for the Groovy compiler
