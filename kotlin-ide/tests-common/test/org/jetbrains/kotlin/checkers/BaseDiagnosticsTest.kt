@@ -86,21 +86,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
     override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Directives): TestFile =
         TestFile(module, fileName, text, directives)
 
-
-    override fun doMultiFileTest(
-        wholeFile: File,
-        files: List<TestFile>
-    ) {
-        environment = createEnvironment(wholeFile, files)
-        //after environment initialization cause of `tearDown` logic, maybe it's obsolete
-        if (shouldSkipTest(wholeFile, files)) {
-            println("${wholeFile.name} test is skipped")
-            return
-        }
-        setupEnvironment(environment)
-        analyzeAndCheck(wholeFile, files)
-    }
-
     protected open fun shouldSkipTest(wholeFile: File, files: List<TestFile>): Boolean = false
 
     protected abstract fun analyzeAndCheck(testDataFile: File, files: List<TestFile>)

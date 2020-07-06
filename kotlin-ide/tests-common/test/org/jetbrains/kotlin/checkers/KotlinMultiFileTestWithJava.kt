@@ -4,17 +4,9 @@
  */
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.TestFiles.TestFileFactory
 import java.io.File
@@ -41,32 +33,6 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         return createTestFiles(file, expectedText, HashMap())
     }
 
-    protected fun createEnvironment(
-        file: File,
-        files: List<F>
-    ): KotlinCoreEnvironment {
-        val configuration = createConfiguration(
-            extractConfigurationKind(files),
-            getTestJdkKind(files),
-            getClasspath(file),
-            if (isJavaSourceRootNeeded()) listOf(javaFilesDir) else emptyList(),
-            files
-        )
-        if (isScriptingNeeded(file)) {
-            loadScriptingPlugin(configuration)
-        }
-        if (isKotlinSourceRootNeeded()) {
-            configuration.addKotlinSourceRoot(kotlinSourceRoot!!.path)
-        }
-
-        // Currently, we're testing IDE behavior when generating the .txt files for comparison, but this can be changed.
-        // The main difference is the fact that the new class file reading implementation doesn't load parameter names from JDK classes.
-        configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
-
-        updateConfiguration(configuration)
-        return createForTests(testRootDisposable, configuration, getEnvironmentConfigFiles())
-    }
-
     protected open fun isJavaSourceRootNeeded(): Boolean = true
 
     protected open fun setupEnvironment(
@@ -75,22 +41,6 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         files: List<BaseDiagnosticsTest.TestFile>
     ) {
         setupEnvironment(environment)
-    }
-
-    private fun getClasspath(file: File): List<File> {
-        val result: MutableList<File> = ArrayList()
-        result.add(KotlinArtifacts.jetbrainsAnnotations)
-        result.addAll(getExtraClasspath())
-        val fileText = file.readText(Charsets.UTF_8)
-        if (InTextDirectivesUtils.isDirectiveDefined(fileText, "STDLIB_JDK8")) {
-            result.add(KotlinArtifacts.kotlinStdlibJdk8)
-        }
-        if (DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage ||
-            fileText.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())
-        ) {
-            result.add(KotlinArtifacts.kotlinCoroutinesExperimentalCompat)
-        }
-        return result
     }
 
     protected open fun getExtraClasspath(): List<File> = emptyList()

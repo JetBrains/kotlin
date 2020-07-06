@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.tests.di.createContainerForTests
 import org.junit.Ignore
-import java.io.File
 import kotlin.test.assertEquals
 
 private data class DiagnosticData(
@@ -201,16 +200,6 @@ class CheckerTestUtilTest : KotlinTestWithEnvironment() {
                 diagnosedRanges[unresolvedReference.rangeIndex] = range
             }
         })
-    }
-
-    fun testAbstractJetDiagnosticsTest() {
-        val test = object : AbstractDiagnosticsTest() {
-            init {
-                setUp()
-            }
-        }
-
-        test.doTest(getTestDataPath() + File.separatorChar + "test_with_diagnostic.kt")
     }
 
     companion object {
