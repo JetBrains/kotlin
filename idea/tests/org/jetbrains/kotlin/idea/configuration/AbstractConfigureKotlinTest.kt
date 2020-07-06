@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,19 +17,18 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
-import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
-import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
 import org.jetbrains.kotlin.test.runTest
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
+import java.nio.file.Paths
 
 @WithMutedInDatabaseRunTest
 abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
@@ -112,7 +111,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         return File(projectFilePath).toPath()
     }
 
-    override fun doCreateProject(projectFile: Path): Project {
+    override fun doCreateAndOpenProject(projectFile: Path): Project {
         return loadProjectCompat(projectFile)
     }
 
@@ -135,8 +134,8 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         UsefulTestCase.assertDoesntExist(File(JS_CONFIGURATOR.getDefaultPathToJarFile(project)))
     }
 
-    override fun runTest() {
-        return runTest { super.runTest() }
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+        return runTest { super.runTestRunnable(testRunnable) }
     }
 
     companion object {
@@ -239,14 +238,14 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     private val pathToNonexistentRuntimeJar: String
         get() {
             val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.KOTLIN_JAVA_STDLIB_JAR
-            myFilesToDelete.add(File(pathToTempKotlinRuntimeJar))
+            myFilesToDelete.add(Paths.get(pathToTempKotlinRuntimeJar))
             return pathToTempKotlinRuntimeJar
         }
 
     private val pathToNonexistentJsJar: String
         get() {
             val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.JS_LIB_JAR_NAME
-            myFilesToDelete.add(File(pathToTempKotlinRuntimeJar))
+            myFilesToDelete.add(Paths.get(pathToTempKotlinRuntimeJar))
             return pathToTempKotlinRuntimeJar
         }
 

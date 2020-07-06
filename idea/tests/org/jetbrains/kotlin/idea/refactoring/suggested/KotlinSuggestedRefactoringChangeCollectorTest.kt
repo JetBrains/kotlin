@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,11 +12,12 @@ import com.intellij.openapi.command.executeCommand
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
+import com.intellij.refactoring.suggested.BaseSuggestedRefactoringChangeCollectorTest
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Parameter
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Signature
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import com.intellij.refactoring.suggested.BaseSuggestedRefactoringChangeCollectorTest
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.runTest
 
@@ -200,7 +201,7 @@ class KotlinSuggestedRefactoringChangeCollectorTest : BaseSuggestedRefactoringCh
         )
     }
 
-    override fun runTest() {
-        runTest { super.runTest() }
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+        runTest { super.runTestRunnable(testRunnable) }
     }
 }

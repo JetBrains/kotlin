@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,7 @@ import com.intellij.refactoring.suggested.BaseSuggestedRefactoringTest
 import com.intellij.refactoring.suggested.SuggestedRefactoringExecution
 import com.intellij.refactoring.suggested.SuggestedRefactoringProviderImpl
 import com.intellij.refactoring.suggested._suggestedChangeSignatureNewParameterValuesForTests
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
@@ -1574,8 +1575,8 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
         )
     }
 
-    override fun runTest() {
-        runTest { super.runTest() }
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+        runTest { super.runTestRunnable(testRunnable) }
     }
 
     private fun addImport(fqName: String) {

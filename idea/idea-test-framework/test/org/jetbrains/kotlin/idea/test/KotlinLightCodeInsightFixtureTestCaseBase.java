@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.TempFiles;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.util.ThrowableRunnable;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.Collection;
 
 @WithMutedInDatabaseRunTest
@@ -46,7 +48,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightCod
         return super.getFile();
     }
 
-    protected final Collection<File> myFilesToDelete = new THashSet<>();
+    protected final Collection<Path> myFilesToDelete = new THashSet<>();
     private final TempFiles myTempFiles = new TempFiles(myFilesToDelete);
 
     @Override
@@ -65,7 +67,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightCod
         File temp = FileUtil.createTempFile("copy", "." + ext);
         setContentOnDisk(temp, bom, content, charset);
 
-        myFilesToDelete.add(temp);
+        myFilesToDelete.add(temp.toPath());
         final VirtualFile file = getVirtualFile(temp);
         assert file != null : temp;
         return file;
@@ -87,9 +89,8 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightCod
     }
 
     @Override
-    protected void runTest() throws Throwable {
-        //noinspection Convert2MethodRef
-        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
+    protected void runTestRunnable(@NotNull ThrowableRunnable<Throwable> testRunnable) throws Throwable {
+        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTestRunnable(testRunnable));
     }
 
     protected boolean isFirPlugin() {
