@@ -811,6 +811,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.match(annotationEntry.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(annotationEntry.typeArgumentList, other.typeArgumentList)
                 && myMatchingVisitor.match(annotationEntry.valueArgumentList, other.valueArgumentList)
+                && myMatchingVisitor.match(annotationEntry.useSiteTarget, other.useSiteTarget)
     }
 
     override fun visitAnnotatedExpression(expression: KtAnnotatedExpression) {
