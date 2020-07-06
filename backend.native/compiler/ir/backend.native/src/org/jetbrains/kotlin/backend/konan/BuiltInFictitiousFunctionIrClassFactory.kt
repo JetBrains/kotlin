@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
+import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
+import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
@@ -136,16 +139,18 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
         descriptor: FunctionDescriptor,
         origin: IrDeclarationOrigin,
         returnType: IrType
-    ) = symbolTable?.declareSimpleFunction(descriptor) {
-        IrFunctionImpl(
-            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin,
-            it, returnType, descriptor
-        )
-    } ?: IrFunctionImpl(
-        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin,
-        descriptor,
-        returnType
-    )
+    ): IrSimpleFunction {
+        val functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction = {
+            with(descriptor) {
+                IrFunctionImpl(
+                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin, it, name, visibility, modality, returnType,
+                    isInline, isExternal, isTailrec, isSuspend, isOperator, isExpect
+                )
+            }
+        }
+        return symbolTable?.declareSimpleFunction(descriptor, functionFactory)
+            ?: functionFactory(IrSimpleFunctionSymbolImpl(descriptor))
+    }
 
     private val createClassLambda = { s: IrClassSymbol, d: ClassDescriptor ->
         IrClassImpl(offset, offset, DECLARATION_ORIGIN_FUNCTION_CLASS, s, d)
