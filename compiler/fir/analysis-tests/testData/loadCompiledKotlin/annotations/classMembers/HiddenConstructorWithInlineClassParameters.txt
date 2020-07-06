@@ -10,7 +10,7 @@ public sealed class Sealed : R|kotlin/Any| {
     @R|test/Ann|() private constructor(@R|test/Ann|() z: R|test/Z|): R|test/Sealed|
 
     public final class Derived : R|test/Sealed| {
-        public constructor(z: R|test/Z|): R|test/Sealed.Derived|
+        @R|test/Ann|() public constructor(z: R|test/Z|): R|test/Sealed.Derived|
 
     }
 
