@@ -30,6 +30,8 @@ class JvmBinaryAnnotationDeserializer(
     kotlinBinaryClass: KotlinJvmBinaryClass,
     byteContent: ByteArray?
 ) : AbstractAnnotationDeserializer(session) {
+    // TODO: In order to properly load annotations on fields inside a companion object,
+    //  we need binary classes for both the companion class and the enclosing class.
     private val annotationInfo by lazy(LazyThreadSafetyMode.PUBLICATION) {
         session.loadMemberAnnotations(kotlinBinaryClass, byteContent)
     }

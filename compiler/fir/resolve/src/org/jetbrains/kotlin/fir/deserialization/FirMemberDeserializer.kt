@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
-import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
@@ -55,6 +54,8 @@ class FirDeserializationContext(
         nameResolver: NameResolver = this.nameResolver,
         typeTable: TypeTable = this.typeTable,
         relativeClassName: FqName? = this.relativeClassName,
+        containerSource: DeserializedContainerSource? = this.containerSource,
+        annotationDeserializer: AbstractAnnotationDeserializer = this.annotationDeserializer,
         capturesTypeParameters: Boolean = true
     ): FirDeserializationContext = FirDeserializationContext(
         nameResolver, typeTable, versionRequirementTable, session, packageFqName, relativeClassName,

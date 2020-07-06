@@ -73,16 +73,19 @@ fun deserializeClassToSymbol(
         isInline = Flags.IS_INLINE_CLASS.get(classProto.flags)
     }
     val isSealed = modality == Modality.SEALED
+    val annotationDeserializer = defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
     val context =
         parentContext?.childContext(
             classProto.typeParameterList,
             nameResolver,
             TypeTable(classProto.typeTable),
             classId.relativeClassName,
+            containerSource,
+            annotationDeserializer,
             status.isInner
         ) ?: FirDeserializationContext.createForClass(
             classId, classProto, nameResolver, session,
-            defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session),
+            annotationDeserializer,
             FirConstDeserializer(session, (containerSource as? KotlinJvmBinarySourceElement)?.binaryClass),
             containerSource
         )
@@ -164,9 +167,6 @@ fun deserializeClassToSymbol(
             generateValueOfFunction(session, classId.packageFqName, classId.relativeClassName)
         }
 
-        if (isSealed) {
-
-        }
         addCloneForArrayIfNeeded(classId)
         addSerializableIfNeeded(classId)
     }.also {
