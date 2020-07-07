@@ -762,6 +762,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val other = getTreeElementDepar<KtWhenEntry>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(jetWhenEntry.conditions, other.conditions)
                 && myMatchingVisitor.match(jetWhenEntry.expression, other.expression)
+                && jetWhenEntry.isElse == other.isElse
     }
 
     override fun visitWhenExpression(expression: KtWhenExpression) {
