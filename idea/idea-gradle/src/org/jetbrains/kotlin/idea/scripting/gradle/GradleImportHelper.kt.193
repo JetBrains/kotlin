@@ -49,7 +49,9 @@ fun runPartialGradleImport(project: Project, root: GradleBuildRoot) {
     )
 }
 
+fun getMissingConfigurationsDescription() = KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.193.text")
 fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.label.import.project")
+fun getMissingConfigurationsHelp(): String? = null
 
 fun autoReloadScriptConfigurations(project: Project, root: GradleBuildRoot): Boolean {
     return ExternalSystemApiUtil

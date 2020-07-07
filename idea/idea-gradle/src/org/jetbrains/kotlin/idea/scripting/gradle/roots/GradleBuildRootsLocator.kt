@@ -69,7 +69,8 @@ abstract class GradleBuildRootsLocator {
         outsideAnything, // suggest link related gradle build or just say that there is no one
         wasNotImportedAfterCreation, // project not yet imported after this file was created
         notEvaluatedInLastImport, // all other scripts, suggest to sync or mark as standalone
-        standalone
+        standalone,
+        standaloneLegacy
     }
 
     /**
@@ -88,7 +89,10 @@ abstract class GradleBuildRootsLocator {
         val notificationKind: NotificationKind
             get() = when {
                 isImported -> NotificationKind.dontCare
-                standalone -> NotificationKind.standalone
+                standalone -> when (nearest) {
+                    is Legacy -> NotificationKind.standaloneLegacy
+                    else -> NotificationKind.standalone
+                }
                 nearest == null -> NotificationKind.outsideAnything
                 importing -> NotificationKind.dontCare
                 else -> when (nearest) {
