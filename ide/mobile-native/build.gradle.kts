@@ -1,10 +1,15 @@
+
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
+    id("com.github.jk1.tcdeps") version "1.2"
+    `java-test-fixtures`
 }
 
 val cidrVersion: String by rootProject.extra
+val isStandaloneBuild: Boolean by rootProject.extra
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val proprietaryRepositories: Project.() -> Unit by ultimateTools
@@ -14,27 +19,35 @@ val ijProductBranch: (String) -> Int by ultimateTools
 proprietaryRepositories()
 
 repositories {
+    teamcityServer {
+        setUrl("https://buildserver.labs.intellij.net")
+    }
+    if (!isStandaloneBuild) {
+        maven("https://jetbrains.bintray.com/markdown")
+    }
     maven("https://maven.google.com")
 }
 
 dependencies {
     addIdeaNativeModuleDeps(project)
-    compile(project(":kotlin-ultimate:ide:common-cidr-native"))
-    compile(project(":kotlin-ultimate:ide:common-cidr-swift-native"))
-    compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion") { isTransitive = false }
-    compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
-    compileOnly("com.jetbrains.intellij.cidr:cidr-xctest:$cidrVersion") { isTransitive = false }
-    compileOnly("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
-    compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion") { isTransitive = false }
+    implementation(project(":kotlin-ultimate:ide:common-cidr-native"))
+    implementation(project(":kotlin-ultimate:ide:common-cidr-swift-native"))
+    implementation("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion") { isTransitive = false }
+    implementation("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
+    implementation("com.jetbrains.intellij.cidr:cidr-xctest:$cidrVersion") { isTransitive = false }
+    implementation("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
+    implementation("com.jetbrains.intellij.swift:swift:$cidrVersion") { isTransitive = false }
     if (ijProductBranch(cidrVersion) >= 202) {
-        compileOnly("com.jetbrains.intellij.swift:swift-language:$cidrVersion") { isTransitive = false }
+        implementation("com.jetbrains.intellij.swift:swift-language:$cidrVersion") { isTransitive = false }
     }
     api(project(":kotlin-ultimate:ide:common-cidr-mobile")) { isTransitive = false }
-    compileOnly("com.jetbrains.intellij.android:android-kotlin-extensions-common:$cidrVersion") { isTransitive = false }
-    compile("com.android.tools.ddms:ddmlib:26.0.0") {
+    implementation("com.jetbrains.intellij.android:android-kotlin-extensions-common:$cidrVersion") { isTransitive = false }
+    implementation("com.android.tools.ddms:ddmlib:26.0.0") {
         exclude("com.google.guava", "guava")
     }
-    compile(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"))
+    implementation(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"))
+
+    testImplementation(testFixtures(project(":kotlin-ultimate:ide:common-cidr-swift-native")))
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {
@@ -44,4 +57,17 @@ the<JavaPluginConvention>().sourceSets["main"].apply {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-Xno-optimized-callable-references"
+}
+
+if (!isStandaloneBuild) {
+    the<JavaPluginConvention>().sourceSets["test"].apply {
+        java.setSrcDirs(listOf("test"))
+        resources.setSrcDirs(listOf("testResources"))
+    }
+
+    tasks.withType(Test::class.java).getByName("test") {
+        workingDir = rootDir
+    }
+
+    Unit
 }

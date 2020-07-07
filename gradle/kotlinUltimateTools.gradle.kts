@@ -79,7 +79,6 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
         val ideBranch = ijProductBranch(ideVersion)
         val javaModuleName = if (ideBranch >= 192) "java" else ideName
 
-        add("testImplementation", "kotlin.build:$javaModuleName:$ideVersion")
         add("implementation", "kotlin.build:$javaModuleName:$ideVersion") {
             javaApiArtifacts.forEach { jarName ->
                 artifact {
@@ -124,7 +123,6 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
             )
         }
 
-        add("testImplementation", "kotlin.build:$ideName:$ideVersion")
         add("implementation", "kotlin.build:$ideName:$ideVersion") {
             ijPlatformDependencies.forEach { jarName ->
                 artifact {

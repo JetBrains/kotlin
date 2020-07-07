@@ -1,0 +1,20 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <id>com.intellij.kotlin.mobile.test</id>
+  <name>Mobile test</name>
+  <vendor>JetBrains</vendor>
+
+  <xi:include href="/META-INF/CidrExtendedPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <xi:include href="/META-INF/CocoaPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/SwiftLangPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <module value="com.intellij.modules.mobile.ide"/>
+  <module value="com.intellij.modules.java-capable"/>
+
+  <project-components>
+    <component>
+      <interface-class>com.jetbrains.cidr.lang.workspace.OCWorkspace</interface-class>
+      <implementation-class>com.jetbrains.cidr.lang.workspace.OCWorkspaceImpl</implementation-class>
+    </component>
+  </project-components>
+</idea-plugin>

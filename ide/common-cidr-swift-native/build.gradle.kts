@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     id("com.github.jk1.tcdeps") version "1.2"
+    `java-test-fixtures`
 }
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
@@ -34,16 +35,16 @@ dependencies {
     compileOnly("com.esotericsoftware.kryo:kryo:2.24.0")
     compileOnly("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
 
-    testImplementation("com.jetbrains.intellij.swift:swift:$cidrVersion") {
+    testFixturesApi("com.jetbrains.intellij.swift:swift:$cidrVersion") {
         exclude("com.jetbrains.intellij.platform", "ide")
     }
-    testImplementation("com.jetbrains.intellij.c:c:$cidrVersion") {
+    testFixturesApi("com.jetbrains.intellij.c:c:$cidrVersion") {
         exclude("com.jetbrains.intellij.platform", "ide")
     }
 
     compileOnly(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
-    testRuntime(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
-    testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
+    testFixturesApi(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
+    testFixturesApi(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {
@@ -53,8 +54,8 @@ the<JavaPluginConvention>().sourceSets["main"].apply {
 
 if (!isStandaloneBuild) {
     dependencies {
-        testCompile(project(":idea", configuration = "tests-jar"))
-        testRuntime(project(":idea", configuration = "testRuntime"))
+        testFixturesApi(project(":idea", configuration = "tests-jar"))
+        testFixturesApi(project(":idea", configuration = "testRuntime"))
     }
 
     the<JavaPluginConvention>().sourceSets["test"].apply {
@@ -62,9 +63,16 @@ if (!isStandaloneBuild) {
         resources.setSrcDirs(listOf("testResources"))
     }
 
+    the<JavaPluginConvention>().sourceSets["testFixtures"].apply {
+        java.setSrcDirs(listOf("testFixtures"))
+    }
+
     tasks.withType(Test::class.java).getByName("test") {
-        dependsOn(":dist")
         workingDir = rootDir
+    }
+
+    tasks.withType(Jar::class.java).getByName("testFixturesJar") {
+        dependsOn(":dist")
     }
 }
 
