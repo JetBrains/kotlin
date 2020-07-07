@@ -37,8 +37,7 @@ private class TypeConverter(
             is ObjCIdType -> SwiftType.ANY
             is ObjCInstanceType -> selfType()
             is ObjCBlockPointerType -> functionType(type)
-            is ObjCMetaClassType ->
-                SwiftType.UNKNOWN //todo [medvedev]
+            is ObjCMetaClassType -> classType("AnyClass")
             is ObjCNullableReferenceType -> optionalType(convert(type.nonNullType))
             is ObjCPointerType ->
                 SwiftType.UNKNOWN //todo [medvedev]
