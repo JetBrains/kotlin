@@ -66,8 +66,7 @@ object CompletionFUSCollector {
             data[CompletionEventAttribute] = NotChosen
         }
 
-        // sending the data was turned of for 1.3.71+ as we sent enough in 1.3.70
-        // KotlinFUSLogger.log(FUSEventGroups.Editor, EventName, data)
+        KotlinFUSLogger.log(FUSEventGroups.Editor, EventName, data)
     }
 }
 
