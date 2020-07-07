@@ -58,7 +58,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C<A(1)>,<B()>,<B(2)>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 A(1, %composer, <>, 0b0110)
                 B(0, %composer, <>, 0, 0b0001)
@@ -91,7 +91,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Example(foo: Foo, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C:Test.kt")
               val %dirty = %changed
               val foo = foo
               if (%default and 0b0001 !== 0) {
@@ -113,7 +113,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C<Exampl...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 Example(Foo(0), %composer, <>, 0, 0b0001)
               } else {
@@ -141,7 +141,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C<A(0,>,<A(a>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 A(0, 1, 2, 0, 0, %composer, <>, 0b01111110, 0b00011000)
                 A(0, 0, 2, 0, 0, %composer, <>, 0b01100110, 0b00011010)
@@ -169,7 +169,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C:Test.kt")
               val %dirty = %changed
               val x = x
               if (%changed and 0b0110 === 0) {
@@ -213,7 +213,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun A(a: Int, b: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C:Test.kt")
               val %dirty = %changed
               val a = a
               val b = b
@@ -299,7 +299,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %changed1: Int, %changed2: Int, %default: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C:Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
@@ -640,7 +640,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C:Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
@@ -991,7 +991,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Foo?, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Foo?, %composer: Composer<*>?, %key: Int, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C:Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
@@ -1324,7 +1324,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               @ComposableContract(restartable = false)
               @Composable
               fun foo(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-                %composer.startReplaceableGroup(%key)
+                %composer.startReplaceableGroup(%key, "C:Test.kt")
                 val x = if (%default and 0b0001 !== 0) 0 else x
                 %composer.endReplaceableGroup()
               }
@@ -1333,7 +1333,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               @ComposableContract(restartable = false)
               @Composable
               fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
-                %composer.startReplaceableGroup(%key)
+                %composer.startReplaceableGroup(%key, "C<foo()>:Test.kt")
                 foo(0, %composer, <>, 0, 0b0001)
                 %composer.endReplaceableGroup()
               }
