@@ -64,6 +64,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             }
 
             val root = LightGradleBuildRoot(workingDir, gradleHome, javaHome)
+            with(contributor) {
+                if (root.isError()) return null
+            }
+
             val definitions = contributor.definitionsByRoots[root]
             if (definitions == null) {
                 scriptingInfoLog(
