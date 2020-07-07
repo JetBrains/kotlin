@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 object ComposeConfiguration {
     val LIVE_LITERALS_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable Live Literals code generation")
+    val SOURCE_INFORMATION_ENABLED_KEY =
+        CompilerConfigurationKey<Boolean>("Include source information in generated code")
 }
 
 class ComposeCommandLineProcessor : CommandLineProcessor {
@@ -44,10 +46,20 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
+        val SOURCE_INFORMATION_ENABLED_OPTION = CliOption(
+                "sourceInformation",
+                "<true|false>",
+                "Include source information in generated code",
+                required = false,
+                allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId = PLUGIN_ID
-    override val pluginOptions = listOf(LIVE_LITERALS_ENABLED_OPTION)
+    override val pluginOptions = listOf(
+            LIVE_LITERALS_ENABLED_OPTION,
+            SOURCE_INFORMATION_ENABLED_OPTION
+    )
 
     override fun processOption(
         option: AbstractCliOption,
@@ -56,6 +68,10 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
     ) = when (option) {
         LIVE_LITERALS_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,
+            value == "true"
+        )
+        SOURCE_INFORMATION_ENABLED_OPTION -> configuration.put(
+            ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
             value == "true"
         )
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
@@ -84,6 +100,10 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,
                 false
             )
+            val sourceInformationEnabled = configuration.get(
+                ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
+                false
+            )
             StorageComponentContainerContributor.registerExtension(
                 project,
                 ComposableCallChecker()
@@ -106,7 +126,8 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             )
             IrGenerationExtension.registerExtension(project,
                 ComposeIrGenerationExtension(
-                    liveLiteralsEnabled = liveLiteralsEnabled
+                    liveLiteralsEnabled = liveLiteralsEnabled,
+                    sourceInformationEnabled = sourceInformationEnabled
                 )
             )
         }

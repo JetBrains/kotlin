@@ -37,12 +37,7 @@ object ComposeFqNames {
     val Composable = ComposeUtils.composeFqName("Composable")
     val CurrentComposerIntrinsic = ComposeUtils.composeFqName("<get-currentComposer>")
     val ComposableContract = ComposeUtils.composeFqName("ComposableContract")
-    val composableLambda = FqName.fromSegments(listOf(
-        "androidx",
-        "compose",
-        "internal",
-        "composableLambda"
-    ))
+    val composableLambda = ComposeUtils.composeInternalFqName("composableLambda")
     val remember = ComposeUtils.composeFqName("remember")
     val key = ComposeUtils.composeFqName("key")
     val StableMarker = ComposeUtils.composeFqName("StableMarker")

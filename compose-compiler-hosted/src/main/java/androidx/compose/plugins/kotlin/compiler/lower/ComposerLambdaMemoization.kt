@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.builders.irBoolean
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
+import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -393,10 +394,20 @@ class ComposerLambdaMemoization(
             // tracked parameter
             putValueArgument(index++, irBuilder.irBoolean(expression.isTracked()))
 
+            if (declarationContext.composable) {
+                // sourceInformation parameter
+                putValueArgument(index++, irBuilder.irNull())
+            }
+
             // ComposableLambdaN requires the arity
             if (useComposableLambdaN) {
                 // arity parameter
                 putValueArgument(index++, irBuilder.irInt(argumentCount))
+            }
+            if (index >= valueArgumentsCount) {
+                error("function = ${
+                    function.name.asString()
+                }, count = $valueArgumentsCount, index = $index")
             }
 
             // block parameter

@@ -57,7 +57,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
         """
             val bar: Int
               get() {
-                %composer.startReplaceableGroup(%key)
+                %composer.startReplaceableGroup(%key, "C:Test.kt")
                 val tmp0 = 123
                 %composer.endReplaceableGroup()
                 return tmp0
@@ -65,7 +65,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<bar>:Test.kt")
               bar
               %composer.endReplaceableGroup()
             }
@@ -97,7 +97,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
               @ComposableContract(restartable = false)
               @Composable
               override fun bar(%composer: Composer<*>?, %key: Int, %changed: Int) {
-                %composer.startReplaceableGroup(%key)
+                %composer.startReplaceableGroup(%key, "C:Test.kt")
                 %composer.endReplaceableGroup()
               }
             }
@@ -129,18 +129,18 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Wat(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               %composer.endReplaceableGroup()
             }
             @ComposableContract(restartable = false)
             @Composable
             fun Foo(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<Wat()>,<goo()>,<baz()>:Test.kt")
               Wat(%composer, <>, 0)
               @ComposableContract(restartable = false)
               @Composable
               fun goo(%composer: Composer<*>?, %key: Int, %changed: Int) {
-                %composer.startReplaceableGroup(%key)
+                %composer.startReplaceableGroup(%key, "C<Wat()>:Test.kt")
                 Wat(%composer, <>, 0)
                 %composer.endReplaceableGroup()
               }
@@ -148,7 +148,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                 @ComposableContract(restartable = false)
                 @Composable
                 fun baz(%composer: Composer<*>?, %key: Int, %changed: Int) {
-                  %composer.startReplaceableGroup(%key)
+                  %composer.startReplaceableGroup(%key, "C<Wat()>:Test.kt")
                   Wat(%composer, <>, 0)
                   %composer.endReplaceableGroup()
                 }
@@ -231,7 +231,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<Exampl...>:Test.kt")
               Example(%composer, <>, 0)
               %composer.endReplaceableGroup()
             }
@@ -253,15 +253,17 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Example(children: Function3<Composer<*>, Int, Int, Unit>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<childr...>:Test.kt")
               children(%composer, <>, 0b0110 and %changed)
               %composer.endReplaceableGroup()
             }
             @ComposableContract(restartable = false)
             @Composable
             fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<Exampl...>:Test.kt")
               Example({ %composer: Composer<*>?, %key: Int, %changed: Int ->
+                %composer.startReplaceableGroup(<>, "C:Test.kt")
+                %composer.endReplaceableGroup()
                 if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                   Unit
                 } else {
@@ -284,7 +286,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
         """
             val myProperty: Function0<Unit>
               get() {
-                %composer.startReplaceableGroup(%key)
+                %composer.startReplaceableGroup(%key, "C:Test.kt")
                 val tmp0 = {
                 }
                 %composer.endReplaceableGroup()

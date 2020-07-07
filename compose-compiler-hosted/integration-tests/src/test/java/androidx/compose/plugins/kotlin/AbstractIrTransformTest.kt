@@ -52,8 +52,14 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 
+@Suppress("LeakingThis")
 abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
-    val extension = ComposeIrGenerationExtension()
+    open val liveLiteralsEnabled get() = false
+    open val sourceInformationEnabled get() = true
+    private val extension = ComposeIrGenerationExtension(
+        liveLiteralsEnabled,
+        sourceInformationEnabled
+    )
     override fun postProcessingStep(
         module: IrModuleFragment,
         generatorContext: GeneratorContext,
@@ -101,6 +107,7 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             sourceFile("Extra.kt", extra.replace('%', '$'))
         )
         val irModule = generateIrModuleWithJvmResolve(files)
+        val keySet = mutableListOf<Int>()
         val actualTransformed = irModule
             .files[0]
             .dumpSrc()
@@ -111,7 +118,30 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
                     "(%composer\\.start(Restart|Movable|Replaceable)Group\\()([-\\d]+)"
                 )
             ) {
-                "${it.groupValues[1]}<>"
+                val key = it.groupValues[3].toInt()
+                if (key in keySet) {
+                    "${it.groupValues[1]}<!DUPLICATE KEY: $key!>"
+                } else {
+                    keySet.add(key)
+                    "${it.groupValues[1]}<>"
+                }
+            }
+            // replace source information with source it references
+            .replace(
+                Regex("(%composer\\.start(Restart|Movable|Replaceable)Group\\" +
+                        "([^\"\\n]*)\"(.*)\"\\)")
+            ) {
+                "${it.groupValues[1]}\"${
+                    generateSourceInfo(it.groupValues[3], source)
+                }\")"
+            }
+            .replace(
+                    Regex("(composableLambda[N]?\\" +
+                            "([^\"\\n]*)\"(.*)\"\\)")
+            ) {
+                "${it.groupValues[1]}\"${
+                generateSourceInfo(it.groupValues[2], source)
+                }\")"
             }
             // replace source keys for joinKey calls
             .replace(
@@ -147,6 +177,7 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             }
             .trimIndent()
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
+
         if (dumpTree) {
             println(irModule.dump())
         }
@@ -156,6 +187,93 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
                 .trimTrailingWhitespacesAndAddNewlineAtEOF(),
             actualTransformed
         )
+    }
+
+    private fun MatchResult.isNumber() = groupValues[1].isNotEmpty()
+    private fun MatchResult.number() = groupValues[1].toInt()
+    private val MatchResult.text get() = groupValues[0]
+    private fun MatchResult.isChar(c: String) = text == c
+    private fun MatchResult.isFileName() = groupValues[4].isNotEmpty()
+
+    private fun generateSourceInfo(sourceInfo: String, source: String): String {
+        val r = Regex("(\\d+)|([,])|([*])|([:])|C|L|@")
+        var current = 0
+        var currentResult = r.find(sourceInfo, current)
+        var result = ""
+
+        fun next(): MatchResult? {
+            currentResult?.let {
+                current = it.range.last + 1
+                currentResult = it.next()
+            }
+            return currentResult
+        }
+
+        // A location has the format: [<line-number>]['@' <offset> ['L' <length>]]
+        // where the named productions are numbers
+        fun parseLocation(): String? {
+            var mr = currentResult
+            if (mr != null && mr.isNumber()) {
+                // line number, we ignore the value in during testing.
+                mr = next()
+            }
+            if (mr != null && mr.isChar("@")) {
+                // Offset
+                mr = next()
+                if (mr == null || !mr.isNumber()) {
+                    return null
+                }
+                val offset = mr.number()
+                mr = next()
+                var ellipsis = ""
+                val maxFragment = 6
+                val rawLength = if (mr != null && mr.isChar("L")) {
+                    mr = next()
+                    if (mr == null || !mr.isNumber()) {
+                        return null
+                    }
+                    mr.number().also { next() }
+                } else {
+                    maxFragment
+                }
+                val eol = source.indexOf('\n', offset).let {
+                    if (it < 0) source.length else it
+                }
+                val space = source.indexOf(' ', offset).let {
+                    if (it < 0) source.length else it
+                }
+                val maxEnd = offset + maxFragment
+                if (eol > maxEnd && space > maxEnd) ellipsis = "..."
+                val length = minOf(maxEnd, minOf(offset + rawLength, space, eol)) - offset
+                return "<${source.substring(offset, offset + length)}$ellipsis>"
+            }
+            return null
+        }
+
+        while (currentResult != null) {
+            val mr = currentResult!!
+            if (mr.range.start != current) {
+                return "invalid source info at $current: '$sourceInfo'"
+            }
+            when {
+                mr.isNumber() || mr.isChar("@") -> {
+                    val fragment = parseLocation()
+                        ?: return "invalid source info at $current: '$sourceInfo'"
+                    result += fragment
+                }
+                mr.isFileName() -> {
+                    return result + ":" + sourceInfo.substring(mr.range.last + 1)
+                }
+                else -> {
+                    result += mr.text
+                    next()
+                }
+            }
+            require(mr != currentResult) { "regex didn't advance" }
+        }
+        if (current != sourceInfo.length)
+            return "invalid source info at $current: '$sourceInfo'"
+        return result
     }
 
     protected fun generateIrModuleWithJvmResolve(files: List<KtFile>): IrModuleFragment {

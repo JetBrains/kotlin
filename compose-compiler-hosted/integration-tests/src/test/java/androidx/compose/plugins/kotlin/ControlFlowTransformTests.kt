@@ -18,35 +18,7 @@ package androidx.compose.plugins.kotlin
 
 import org.junit.Test
 
-class ControlFlowTransformTests : ComposeIrTransformTest() {
-    private fun controlFlow(
-        source: String,
-        expectedTransformed: String,
-        dumpTree: Boolean = false
-    ) = verifyComposeIrTransform(
-        """
-            import androidx.compose.Composable
-            import androidx.compose.key
-            import androidx.compose.ComposableContract
-
-            $source
-        """.trimIndent(),
-        expectedTransformed,
-        """
-            import androidx.compose.Composable
-
-            @Composable fun A() {}
-            @Composable fun B(): Boolean { return true }
-            @Composable fun R(): Int { return 10 }
-            @Composable fun P(x: Int) { }
-            @Composable fun Int.A() { }
-            @Composable fun L(): List<Int> { return listOf(1, 2, 3) }
-            fun NA() { }
-            fun NB(): Boolean { return true }
-            fun NR(): Int { return 10 }
-        """.trimIndent(),
-        dumpTree
-    )
+class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
 
     @Test
     fun testIfNonComposable(): Unit = controlFlow(
@@ -63,7 +35,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               if (x > 0) {
                 NA()
               }
@@ -89,9 +61,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
+                %composer.startReplaceableGroup(<>, "<A()>")
                 A(%composer, <>, 0)
                 %composer.endReplaceableGroup()
               } else {
@@ -112,9 +84,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                 // groups executed. This means we put a group around the "then" and the
                 // "else" blocks
                 if (x > 0) {
-                    A()
+                    A(a)
                 } else {
-                    A()
+                    A(b)
                 }
             }
         """,
@@ -122,14 +94,14 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                A(%composer, <>, 0)
+                %composer.startReplaceableGroup(<>, "<A(a)>")
+                A(a, %composer, <>, 0)
                 %composer.endReplaceableGroup()
               } else {
-                %composer.startReplaceableGroup(<>)
-                A(%composer, <>, 0)
+                %composer.startReplaceableGroup(<>, "<A(b)>")
+                A(b, %composer, <>, 0)
                 %composer.endReplaceableGroup()
               }
               %composer.endReplaceableGroup()
@@ -156,7 +128,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<B()>:Test.kt")
               if (B(%composer, <>, 0)) {
                 NA()
               } else {
@@ -175,11 +147,11 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                 // Since the condition in the else-if is conditionally executed, it means we have
                 // dynamic execution and we can't statically guarantee the number of groups. As a
                 // result, we generate a group around the if statement in addition to a group around
-                // each of the conditions with composable calls in them. Note that no group is 
+                // each of the conditions with composable calls in them. Note that no group is
                 // needed around the else condition
-                if (B()) {
+                if (B(a)) {
                     NA()
-                } else if (B()) {
+                } else if (B(b)) {
                     NA()
                 } else {
                     NA()
@@ -190,14 +162,14 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              if (%composer.startReplaceableGroup(<>)
-              val tmp0_group = B(%composer, <>, 0)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
+              if (%composer.startReplaceableGroup(<>, "<B(a)>")
+              val tmp0_group = B(a, %composer, <>, 0)
               %composer.endReplaceableGroup()
               tmp0_group) {
                 NA()
-              } else if (%composer.startReplaceableGroup(<>)
-              val tmp1_group = B(%composer, <>, 0)
+              } else if (%composer.startReplaceableGroup(<>, "<B(b)>")
+              val tmp1_group = B(b, %composer, <>, 0)
               %composer.endReplaceableGroup()
               tmp1_group) {
                 NA()
@@ -226,7 +198,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               val tmp0_subject = x
               when {
                 tmp0_subject == 0 -> {
@@ -253,9 +225,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                 // number of groups, so no group around the when is needed, just groups around the
                 // result blocks.
                 when (x) {
-                    0 -> A()
-                    1 -> A()
-                    else -> A()
+                    0 -> A(a)
+                    1 -> A(b)
+                    else -> A(c)
                 }
             }
         """,
@@ -263,22 +235,22 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               val tmp0_subject = x
               when {
                 tmp0_subject == 0 -> {
-                  %composer.startReplaceableGroup(<>)
-                  A(%composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<A(a)>")
+                  A(a, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                 }
                 tmp0_subject == 0b0001 -> {
-                  %composer.startReplaceableGroup(<>)
-                  A(%composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<A(b)>")
+                  A(b, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                 }
                 else -> {
-                  %composer.startReplaceableGroup(<>)
-                  A(%composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<A(c)>")
+                  A(c, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                 }
               }
@@ -296,9 +268,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                 // of the expression is now being used, we need to generate temporary variables to
                 // capture the result but still do the execution of the expression inside of groups.
                 val y = when (x) {
-                    0 -> R()
-                    1 -> R()
-                    else -> R()
+                    0 -> R(a)
+                    1 -> R(b)
+                    else -> R(c)
                 }
             }
         """,
@@ -306,24 +278,24 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               val y = val tmp0_subject = x
               when {
                 tmp0_subject == 0 -> {
-                  %composer.startReplaceableGroup(<>)
-                  val tmp0_group = R(%composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<R(a)>")
+                  val tmp0_group = R(a, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                   tmp0_group
                 }
                 tmp0_subject == 0b0001 -> {
-                  %composer.startReplaceableGroup(<>)
-                  val tmp1_group = R(%composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<R(b)>")
+                  val tmp1_group = R(b, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                   tmp1_group
                 }
                 else -> {
-                  %composer.startReplaceableGroup(<>)
-                  val tmp2_group = R(%composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<R(c)>")
+                  val tmp2_group = R(c, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                   tmp2_group
                 }
@@ -342,9 +314,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                 // statically guaranteed number of groups at execution, so no wrapping group is
                 // needed.
                 when {
-                    x < 0 -> A()
-                    x > 30 -> A()
-                    else -> A()
+                    x < 0 -> A(a)
+                    x > 30 -> A(b)
+                    else -> A(c)
                 }
             }
         """,
@@ -352,21 +324,21 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               when {
                 x < 0 -> {
-                  %composer.startReplaceableGroup(<>)
-                  A(%composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<A(a)>")
+                  A(a, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                 }
                 x > 30 -> {
-                  %composer.startReplaceableGroup(<>)
-                  A(%composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<A(b)>")
+                  A(b, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                 }
                 else -> {
-                  %composer.startReplaceableGroup(<>)
-                  A(%composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<A(c)>")
+                  A(c, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                 }
               }
@@ -384,9 +356,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                 // statically guaranteed number of groups at execution, so no wrapping group is
                 // needed.
                 when {
-                    x < 0 -> A()
+                    x < 0 -> A(a)
                     x > 30 -> NA()
-                    else -> A()
+                    else -> A(b)
                 }
             }
         """,
@@ -394,11 +366,11 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               when {
                 x < 0 -> {
-                  %composer.startReplaceableGroup(<>)
-                  A(%composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<A(a)>")
+                  A(a, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                 }
                 x > 30 -> {
@@ -407,8 +379,8 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                   NA()
                 }
                 else -> {
-                  %composer.startReplaceableGroup(<>)
-                  A(%composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<A(b)>")
+                  A(b, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                 }
               }
@@ -427,8 +399,8 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                 // execution. as a result, we must wrap the when clause with a group. Since there
                 // are no other composable calls, the function body group will suffice.
                 when {
-                    x == R() -> NA()
-                    x > R() -> NA()
+                    x == R(a) -> NA()
+                    x > R(b) -> NA()
                     else -> NA()
                 }
             }
@@ -437,16 +409,16 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               when {
-                %composer.startReplaceableGroup(<>)
-                val tmp0_group = x == R(%composer, 0b01110111010101111000001000010110, 0)
+                %composer.startReplaceableGroup(<>, "<R(a)>")
+                val tmp0_group = x == R(a, %composer, 0b01110111010101111000001000010110, 0)
                 %composer.endReplaceableGroup()
                 tmp0_group -> {
                   NA()
                 }
-                %composer.startReplaceableGroup(<>)
-                val tmp1_group = x > R(%composer, <>, 0)
+                %composer.startReplaceableGroup(<>, "<R(b)>")
+                val tmp1_group = x > R(b, %composer, <>, 0)
                 %composer.endReplaceableGroup()
                 tmp1_group -> {
                   NA()
@@ -469,8 +441,8 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                 // are conditionally executed, we can't statically know the number of groups during
                 // execution. as a result, we must wrap the when clause with a group.
                 when {
-                    x == R() -> NA()
-                    x > R() -> NA()
+                    x == R(a) -> NA()
+                    x > R(b) -> NA()
                     else -> NA()
                 }
                 A()
@@ -480,17 +452,17 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
               %composer.startReplaceableGroup(<>)
               when {
-                %composer.startReplaceableGroup(<>)
-                val tmp0_group = x == R(%composer, 0b01110111010101111000000110111110, 0)
+                %composer.startReplaceableGroup(<>, "<R(a)>")
+                val tmp0_group = x == R(a, %composer, 0b01110111010101111000000110111110, 0)
                 %composer.endReplaceableGroup()
                 tmp0_group -> {
                   NA()
                 }
-                %composer.startReplaceableGroup(<>)
-                val tmp1_group = x > R(%composer, <>, 0)
+                %composer.startReplaceableGroup(<>, "<R(b)>")
+                val tmp1_group = x > R(b, %composer, <>, 0)
                 %composer.endReplaceableGroup()
                 tmp1_group -> {
                   NA()
@@ -520,7 +492,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int?, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               val tmp0_safe_receiver = x
               when {
                 tmp0_safe_receiver == null -> {
@@ -529,7 +501,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                   null
                 }
                 else -> {
-                  %composer.startReplaceableGroup(<>)
+                  %composer.startReplaceableGroup(<>, "<A()>")
                   tmp0_safe_receiver.A(%composer, <>, 0b0110 and %changed)
                   %composer.endReplaceableGroup()
                 }
@@ -553,11 +525,11 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int?, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               val y = val tmp0_elvis_lhs = x
               when {
                 tmp0_elvis_lhs == null -> {
-                  %composer.startReplaceableGroup(<>)
+                  %composer.startReplaceableGroup(<>, "<R()>")
                   val tmp0_group = R(%composer, <>, 0)
                   %composer.endReplaceableGroup()
                   tmp0_group
@@ -590,7 +562,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: List<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<P(i)>:Test.kt")
               val tmp0_iterator = items.iterator()
               while (tmp0_iterator.hasNext()) {
                 val i = tmp0_iterator.next()
@@ -618,8 +590,8 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: List<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              %composer.startReplaceableGroup(<>)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
+              %composer.startReplaceableGroup(<>, "*<P(i)>")
               val tmp0_iterator = items.iterator()
               while (tmp0_iterator.hasNext()) {
                 val i = tmp0_iterator.next()
@@ -648,7 +620,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<L()>:Test.kt")
               val tmp0_iterator = L(%composer, <>, 0).iterator()
               while (tmp0_iterator.hasNext()) {
                 val i = tmp0_iterator.next()
@@ -678,7 +650,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: MutableList<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<P(item...>:Test.kt")
               while (items.isNotEmpty()) {
                 val item = items.removeAt(items.size - 1)
                 P(item, %composer, <>, 0)
@@ -707,8 +679,8 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: MutableList<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              %composer.startReplaceableGroup(<>)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
+              %composer.startReplaceableGroup(<>, "*<P(item...>")
               while (items.isNotEmpty()) {
                 val item = items.removeAt(items.size - 1)
                 P(item, %composer, <>, 0)
@@ -737,7 +709,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<B()>:Test.kt")
               while (B(%composer, <>, 0)) {
                 print("hello world")
               }
@@ -763,8 +735,8 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              %composer.startReplaceableGroup(<>)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
+              %composer.startReplaceableGroup(<>, "*<B()>")
               while (B(%composer, <>, 0)) {
                 print("hello world")
               }
@@ -792,7 +764,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<B()>,<A()>:Test.kt")
               while (B(%composer, <>, 0)) {
                 A(%composer, <>, 0)
               }
@@ -810,22 +782,22 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                 // composable calls in them. We must generate a group around the while statement
                 // overall.
                 while (B()) {
-                    A()
+                    A(a)
                 }
-                A()
+                A(b)
             }
         """,
         """
             @ComposableContract(restartable = false)
             @Composable
             fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              %composer.startReplaceableGroup(<>)
+              %composer.startReplaceableGroup(%key, "C<A(b)>:Test.kt")
+              %composer.startReplaceableGroup(<>, "*<B()>,<A(a)>")
               while (B(%composer, <>, 0)) {
-                A(%composer, <>, 0)
+                A(a, %composer, <>, 0)
               }
               %composer.endReplaceableGroup()
-              A(%composer, <>, 0)
+              A(b, %composer, <>, 0)
               %composer.endReplaceableGroup()
             }
         """
@@ -848,9 +820,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
+                %composer.startReplaceableGroup(<>, "<A()>")
                 A(%composer, <>, 0)
                 %composer.endReplaceableGroup()
                 %composer.endReplaceableGroup()
@@ -881,7 +853,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
               if (x > 0) {
                 %composer.endReplaceableGroup()
                 return
@@ -908,9 +880,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int): Int {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
+                %composer.startReplaceableGroup(<>, "<A()>")
                 A(%composer, <>, 0)
                 val tmp1_return = 1
                 %composer.endReplaceableGroup()
@@ -943,7 +915,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int): Int {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
               if (x > 0) {
                 val tmp1_return = 1
                 %composer.endReplaceableGroup()
@@ -972,7 +944,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(%composer: Composer<*>?, %key: Int, %changed: Int): Int {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<A()>,<R()>:Test.kt")
               A(%composer, <>, 0)
               val tmp0 = R(%composer, <>, 0)
               %composer.endReplaceableGroup()
@@ -996,9 +968,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int): Int {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<R()>:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
+                %composer.startReplaceableGroup(<>, "<R()>")
                 val tmp1_return = R(%composer, <>, 0)
                 %composer.endReplaceableGroup()
                 %composer.endReplaceableGroup()
@@ -1021,14 +993,17 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             fun Example(items: Iterator<Int>) {
                 while (items.hasNext()) {
                     val i = items.next()
+                    val j = i
+                    val k = i
+                    val l = i
                     P(i)
                     if (i == 0) {
-                        P(i)
+                        P(j)
                         return
                     } else {
-                        P(i)
+                        P(k)
                     }
-                    P(i)
+                    P(l)
                 }
             }
         """,
@@ -1036,22 +1011,25 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<P(i)>,<P(l)>:Test.kt")
               while (items.hasNext()) {
                 val i = items.next()
+                val j = i
+                val k = i
+                val l = i
                 P(i, %composer, <>, 0)
                 if (i == 0) {
-                  %composer.startReplaceableGroup(<>)
-                  P(i, %composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<P(j)>")
+                  P(j, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                   %composer.endReplaceableGroup()
                   return
                 } else {
-                  %composer.startReplaceableGroup(<>)
-                  P(i, %composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<P(k)>")
+                  P(k, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                 }
-                P(i, %composer, <>, 0)
+                P(l, %composer, <>, 0)
               }
               %composer.endReplaceableGroup()
             }
@@ -1065,38 +1043,44 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             fun Example(items: Iterator<Int>) {
                 while (items.hasNext()) {
                     val i = items.next()
+                    val j = i
+                    val k = i
+                    val l = i
                     P(i)
                     if (i == 0) {
-                        P(i)
+                        P(j)
                         return
                     } else {
-                        P(i)
+                        P(k)
                     }
-                    P(i)
+                    P(l)
                 }
             }
         """,
         """
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C*<P(i)>,<P(l)>:Test.kt")
               while (items.hasNext()) {
                 val i = items.next()
+                val j = i
+                val k = i
+                val l = i
                 P(i, %composer, <>, 0)
                 if (i == 0) {
-                  %composer.startReplaceableGroup(<>)
-                  P(i, %composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<P(j)>")
+                  P(j, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                   %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
                     Example(items, %composer, %key, %changed or 0b0001)
                   }
                   return
                 } else {
-                  %composer.startReplaceableGroup(<>)
-                  P(i, %composer, <>, 0)
+                  %composer.startReplaceableGroup(<>, "<P(k)>")
+                  P(k, %composer, <>, 0)
                   %composer.endReplaceableGroup()
                 }
-                P(i, %composer, <>, 0)
+                P(l, %composer, <>, 0)
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
                 Example(items, %composer, %key, %changed or 0b0001)
@@ -1123,7 +1107,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<P(i)>:Test.kt")
               while (items.hasNext()) {
                 val i = items.next()
                 if (i == 0) {
@@ -1154,7 +1138,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<P(i)>:Test.kt")
               while (items.hasNext()) {
                 val i = items.next()
                 P(i, %composer, <>, 0)
@@ -1175,11 +1159,12 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                 // a group around while is needed here, but the function body group will suffice
                 while (items.hasNext()) {
                     val i = items.next()
+                    val j = i
                     P(i)
                     if (i == 0) {
                         break
                     }
-                    P(i)
+                    P(j)
                 }
             }
         """,
@@ -1187,14 +1172,15 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<P(i)>,<P(j)>:Test.kt")
               while (items.hasNext()) {
                 val i = items.next()
+                val j = i
                 P(i, %composer, <>, 0)
                 if (i == 0) {
                   break
                 }
-                P(i, %composer, <>, 0)
+                P(j, %composer, <>, 0)
               }
               %composer.endReplaceableGroup()
             }
@@ -1222,8 +1208,8 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              %composer.startReplaceableGroup(<>)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
+              %composer.startReplaceableGroup(<>, "*<P(i)>,<P(i)>")
               while (items.hasNext()) {
                 val i = items.next()
                 P(i, %composer, <>, 0)
@@ -1257,7 +1243,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<P(i)>:Test.kt")
               while (items.hasNext()) {
                 val i = items.next()
                 if (i == 0) {
@@ -1289,7 +1275,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<P(i)>:Test.kt")
               while (items.hasNext()) {
                 val i = items.next()
                 P(i, %composer, <>, 0)
@@ -1322,7 +1308,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<P(i)>,<P(i)>:Test.kt")
               while (items.hasNext()) {
                 val i = items.next()
                 P(i, %composer, <>, 0)
@@ -1354,7 +1340,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<A()>:Test.kt")
               while (a.hasNext()) {
                 val x = a.next()
                 if (x > 100) {
@@ -1390,10 +1376,10 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<A()>:Test.kt")
               a@while (a.hasNext()) {
                 val x = a.next()
-                %composer.startReplaceableGroup(<>)
+                %composer.startReplaceableGroup(<>, "*<A()>")
                 b@while (b.hasNext()) {
                   val y = b.next()
                   if (y == x) {
@@ -1441,13 +1427,13 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<A()>:Test.kt")
               a@while (a.hasNext()) {
                 val x = a.next()
                 if (x == 0) {
                   break
                 }
-                %composer.startReplaceableGroup(<>)
+                %composer.startReplaceableGroup(<>, "*<A()>")
                 b@while (b.hasNext()) {
                   val y = b.next()
                   if (y == 0) {
@@ -1490,10 +1476,10 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              %composer.startReplaceableGroup(<>)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
+              %composer.startReplaceableGroup(<>, "*<A()>")
               a@while (a.hasNext()) {
-                %composer.startReplaceableGroup(<>)
+                %composer.startReplaceableGroup(<>, "*<A()>")
                 b@while (b.hasNext()) {
                   A(%composer, <>, 0)
                 }
@@ -1524,10 +1510,10 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                %composer.startReplaceableGroup(<>)
+                %composer.startReplaceableGroup(<>, "<A()>")
+                %composer.startReplaceableGroup(<>, "*<A()>")
                 while (x > 0) {
                   A(%composer, <>, 0)
                 }
@@ -1560,9 +1546,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
+                %composer.startReplaceableGroup(<>, "<A()>,*<A()>")
                 A(%composer, <>, 0)
                 while (x > 0) {
                   A(%composer, <>, 0)
@@ -1593,9 +1579,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
+                %composer.startReplaceableGroup(<>, "*<A()>")
                 while (x > 0) {
                   A(%composer, <>, 0)
                 }
@@ -1625,9 +1611,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               while (x > 0) {
-                %composer.startMovableGroup(<>, x)
+                %composer.startMovableGroup(<>, x, "<A()>")
                 A(%composer, <>, 0)
                 %composer.endMovableGroup()
               }
@@ -1643,10 +1629,10 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             fun Example(x: Int) {
                 while (x > 0) {
                     key(x) {
-                        A()
+                        A(a)
                     }
                     key(x+1) {
-                        A()
+                        A(b)
                     }
                 }
             }
@@ -1655,13 +1641,13 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               while (x > 0) {
-                %composer.startMovableGroup(<>, x)
-                A(%composer, <>, 0)
+                %composer.startMovableGroup(<>, x, "<A(a)>")
+                A(a, %composer, <>, 0)
                 %composer.endMovableGroup()
-                %composer.startMovableGroup(<>, x + 1)
-                A(%composer, <>, 0)
+                %composer.startMovableGroup(<>, x + 1, "<A(b)>")
+                A(b, %composer, <>, 0)
                 %composer.endMovableGroup()
               }
               %composer.endReplaceableGroup()
@@ -1676,9 +1662,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             fun Example(x: Int) {
                 while (x > 0) {
                     key(x) {
-                        A()
+                        A(a)
                     }
-                    A()
+                    A(b)
                 }
             }
         """,
@@ -1686,12 +1672,12 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<A(b)>:Test.kt")
               while (x > 0) {
-                %composer.startMovableGroup(<>, x)
-                A(%composer, <>, 0)
+                %composer.startMovableGroup(<>, x, "<A(a)>")
+                A(a, %composer, <>, 0)
                 %composer.endMovableGroup()
-                A(%composer, <>, 0)
+                A(b, %composer, <>, 0)
               }
               %composer.endReplaceableGroup()
             }
@@ -1704,9 +1690,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false) @Composable
             fun Example(x: Int) {
                 while (x > 0) {
-                    A()
+                    A(a)
                     key(x) {
-                        A()
+                        A(b)
                     }
                 }
             }
@@ -1715,11 +1701,11 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<A(a)>:Test.kt")
               while (x > 0) {
-                A(%composer, <>, 0)
-                %composer.startMovableGroup(<>, x)
-                A(%composer, <>, 0)
+                A(a, %composer, <>, 0)
+                %composer.startMovableGroup(<>, x, "<A(b)>")
+                A(b, %composer, <>, 0)
                 %composer.endMovableGroup()
               }
               %composer.endReplaceableGroup()
@@ -1733,11 +1719,11 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false) @Composable
             fun Example(x: Int) {
                 while (x > 0) {
-                    A()
+                    A(a)
                     key(x) {
-                        A()
+                        A(b)
                     }
-                    A()
+                    A(c)
                 }
             }
         """,
@@ -1745,13 +1731,13 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<A(a)>,<A(c)>:Test.kt")
               while (x > 0) {
-                A(%composer, <>, 0)
-                %composer.startMovableGroup(<>, x)
-                A(%composer, <>, 0)
+                A(a, %composer, <>, 0)
+                %composer.startMovableGroup(<>, x, "<A(b)>")
+                A(b, %composer, <>, 0)
                 %composer.endMovableGroup()
-                A(%composer, <>, 0)
+                A(c, %composer, <>, 0)
               }
               %composer.endReplaceableGroup()
             }
@@ -1772,8 +1758,8 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              %composer.startMovableGroup(<>, x)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
+              %composer.startMovableGroup(<>, x, "<A()>")
               A(%composer, <>, 0)
               %composer.endMovableGroup()
               %composer.endReplaceableGroup()
@@ -1787,20 +1773,20 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false) @Composable
             fun Example(x: Int) {
                 key(x) {
-                    A()
+                    A(a)
                 }
-                A()
+                A(b)
             }
         """,
         """
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              %composer.startMovableGroup(<>, x)
-              A(%composer, <>, 0)
+              %composer.startReplaceableGroup(%key, "C<A(b)>:Test.kt")
+              %composer.startMovableGroup(<>, x, "<A(a)>")
+              A(a, %composer, <>, 0)
               %composer.endMovableGroup()
-              A(%composer, <>, 0)
+              A(b, %composer, <>, 0)
               %composer.endReplaceableGroup()
             }
         """
@@ -1811,9 +1797,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
         """
             @ComposableContract(restartable = false) @Composable
             fun Example(x: Int) {
-                A()
+                A(a)
                 key(x) {
-                    A()
+                    A(b)
                 }
             }
         """,
@@ -1821,10 +1807,10 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              A(%composer, <>, 0)
-              %composer.startMovableGroup(<>, x)
-              A(%composer, <>, 0)
+              %composer.startReplaceableGroup(%key, "C<A(a)>:Test.kt")
+              A(a, %composer, <>, 0)
+              %composer.startMovableGroup(<>, x, "<A(b)>")
+              A(b, %composer, <>, 0)
               %composer.endMovableGroup()
               %composer.endReplaceableGroup()
             }
@@ -1847,10 +1833,10 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               if (x > 0) {
                 %composer.startReplaceableGroup(<>)
-                %composer.startMovableGroup(<>, x)
+                %composer.startMovableGroup(<>, x, "<A()>")
                 A(%composer, <>, 0)
                 %composer.endMovableGroup()
                 %composer.endReplaceableGroup()
@@ -1870,9 +1856,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             fun Example(x: Int) {
                 if (x > 0) {
                     key(x) {
-                        A()
+                        A(a)
                     }
-                    A()
+                    A(b)
                 }
             }
         """,
@@ -1880,13 +1866,13 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                %composer.startMovableGroup(<>, x)
-                A(%composer, <>, 0)
+                %composer.startReplaceableGroup(<>, "<A(b)>")
+                %composer.startMovableGroup(<>, x, "<A(a)>")
+                A(a, %composer, <>, 0)
                 %composer.endMovableGroup()
-                A(%composer, <>, 0)
+                A(b, %composer, <>, 0)
                 %composer.endReplaceableGroup()
               } else {
                 %composer.startReplaceableGroup(<>)
@@ -1903,9 +1889,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false) @Composable
             fun Example(x: Int) {
                 if (x > 0) {
-                    A()
+                    A(a)
                     key(x) {
-                        A()
+                        A(b)
                     }
                 }
             }
@@ -1914,12 +1900,12 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               if (x > 0) {
-                %composer.startReplaceableGroup(<>)
-                A(%composer, <>, 0)
-                %composer.startMovableGroup(<>, x)
-                A(%composer, <>, 0)
+                %composer.startReplaceableGroup(<>, "<A(a)>")
+                A(a, %composer, <>, 0)
+                %composer.startMovableGroup(<>, x, "<A(b)>")
+                A(b, %composer, <>, 0)
                 %composer.endMovableGroup()
                 %composer.endReplaceableGroup()
               } else {
@@ -1945,8 +1931,8 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(a: Int, b: Int, c: Int, d: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              %composer.startMovableGroup(<>, %composer.joinKey(%composer.joinKey(%composer.joinKey(a, b), c), d))
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
+              %composer.startMovableGroup(<>, %composer.joinKey(%composer.joinKey(%composer.joinKey(a, b), c), d), "<A()>")
               A(%composer, <>, 0)
               %composer.endMovableGroup()
               %composer.endReplaceableGroup()
@@ -1970,9 +1956,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C*<R()>:Test.kt")
               while (x > 0) {
-                %composer.startMovableGroup(<>, R(%composer, <>, 0))
+                %composer.startMovableGroup(<>, R(%composer, <>, 0), "<A()>")
                 A(%composer, <>, 0)
                 %composer.endMovableGroup()
               }
@@ -1994,9 +1980,9 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<P(y)>:Test.kt")
               val y =
-              %composer.startMovableGroup(<>, x)
+              %composer.startMovableGroup(<>, x, "<R()>")
               val tmp0 = R(%composer, <>, 0)
               %composer.endMovableGroup()
               tmp0
@@ -2022,14 +2008,14 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int): Int {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               val tmp0 = if (x > 0) {
                 %composer.startReplaceableGroup(<>)
                 val tmp4_group =
-                val tmp3_group = if (%composer.startReplaceableGroup(<>)
+                val tmp3_group = if (%composer.startReplaceableGroup(<>, "<B()>")
                 val tmp1_group = B(%composer, <>, 0)
                 %composer.endReplaceableGroup()
-                tmp1_group) 1 else if (%composer.startReplaceableGroup(<>)
+                tmp1_group) 1 else if (%composer.startReplaceableGroup(<>, "<B()>")
                 val tmp2_group = B(%composer, <>, 0)
                 %composer.endReplaceableGroup()
                 tmp2_group) 2 else 3
@@ -2096,8 +2082,8 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun Simple(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              %composer.startReplaceableGroup(<>)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
+              %composer.startReplaceableGroup(<>, "<A()>")
               run {
                 A(%composer, <>, 0)
               }
@@ -2108,8 +2094,8 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun WithReturn(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
-              %composer.startReplaceableGroup(<>)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
+              %composer.startReplaceableGroup(<>, "<A()>")
               run {
                 A(%composer, <>, 0)
                 %composer.endReplaceableGroup()
@@ -2123,7 +2109,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun NoCalls(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
               run {
                 println("hello world")
               }
@@ -2133,7 +2119,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             @ComposableContract(restartable = false)
             @Composable
             fun NoCallsAfter(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
               run {
                 A(%composer, <>, 0)
               }
@@ -2149,17 +2135,17 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
             fun Example(x: Int?) {
               x?.let {
                 if (it > 0) {
-                  A()
+                  A(a)
                 }
-                A()
+                A(b)
               }
-              A()
+              A(c)
             }
         """,
         """
             @Composable
             fun Example(x: Int?, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C<A(c)>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -2173,22 +2159,22 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
                     null
                   }
                   else -> {
-                    %composer.startReplaceableGroup(<>)
+                    %composer.startReplaceableGroup(<>, "<A(b)>")
                     tmp0_safe_receiver.let { it: Int ->
                       if (it > 0) {
-                        %composer.startReplaceableGroup(<>)
-                        A(%composer, <>, 0)
+                        %composer.startReplaceableGroup(<>, "<A(a)>")
+                        A(a, %composer, <>, 0)
                         %composer.endReplaceableGroup()
                       } else {
                         %composer.startReplaceableGroup(<>)
                         %composer.endReplaceableGroup()
                       }
-                      A(%composer, <>, 0)
+                      A(b, %composer, <>, 0)
                     }
                     %composer.endReplaceableGroup()
                   }
                 }
-                A(%composer, <>, 0)
+                A(c, %composer, <>, 0)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -2216,7 +2202,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Example(x: Int?, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(%key, "C<A()>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -2253,7 +2239,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun <T> provided(value: T, %composer: Composer<*>?, %key: Int, %changed: Int): State<T> {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C:Test.kt")
               val tmp0 = state(null, {
                 val tmp0_return = value
                 tmp0_return
@@ -2283,7 +2269,7 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int): Int {
-              %composer.startReplaceableGroup(%key)
+              %composer.startReplaceableGroup(%key, "C<A()>:Test.kt")
               val tmp0 =
               val tmp1_group = x.let { it: Int ->
                 A(%composer, <>, 0)
@@ -2293,6 +2279,72 @@ class ControlFlowTransformTests : ComposeIrTransformTest() {
               tmp1_group
               %composer.endReplaceableGroup()
               return tmp0
+            }
+        """
+    )
+
+    @Test
+    fun testCallingAWrapperComposable(): Unit = controlFlow(
+        """
+            @Composable
+            fun Test() {
+              W {
+                A()
+              }
+            }
+        """,
+        """
+            @Composable
+            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startRestartGroup(%key, "C<W>:Test.kt")
+              if (%changed !== 0 || !%composer.skipping) {
+                W(composableLambda(%composer, <>, true, "C<A()>:Test.kt") { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    A(%composer, <>, 0)
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                }, %composer, <>, 0b0110)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
+                Test(%composer, %key, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testCallingAnInlineWrapperComposable(): Unit = controlFlow(
+        """
+            @Composable
+            fun Test() {
+              IW {
+                A()
+              }
+            }
+        """,
+        """
+            @Composable
+            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startRestartGroup(%key, "C<IW>:Test.kt")
+              if (%changed !== 0 || !%composer.skipping) {
+                IW({ %composer: Composer<*>?, %key: Int, %changed: Int ->
+                  %composer.startReplaceableGroup(<>, "C<A()>:Test.kt")
+                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    A(%composer, <>, 0)
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endReplaceableGroup()
+                }, %composer, <>, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
+                Test(%composer, %key, %changed or 0b0001)
+              }
             }
         """
     )

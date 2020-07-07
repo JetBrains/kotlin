@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
 class ComposeIrGenerationExtension(
-    private val liveLiteralsEnabled: Boolean = false
+    private val liveLiteralsEnabled: Boolean = false,
+    private val sourceInformationEnabled: Boolean = true
 ) : IrGenerationExtension {
     override fun generate(
         moduleFragment: IrModuleFragment,
@@ -75,7 +76,8 @@ class ComposeIrGenerationExtension(
         ComposableFunctionBodyTransformer(
             pluginContext,
             symbolRemapper,
-            bindingTrace
+            bindingTrace,
+            sourceInformationEnabled
         ).lower(moduleFragment)
 
         generateSymbols(pluginContext)
