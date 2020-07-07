@@ -21,7 +21,8 @@ abstract class FirAbstractStarImportingScope(
     lookupInFir: Boolean = true
 ) : FirAbstractImportingScope(session, scopeSession, lookupInFir) {
 
-    protected abstract val starImports: List<FirResolvedImport>
+    // TODO try to hide this
+    abstract val starImports: List<FirResolvedImport>
 
     private val absentClassifierNames = mutableSetOf<Name>()
 
