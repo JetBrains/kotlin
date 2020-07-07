@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.idea.fir
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
@@ -59,3 +62,14 @@ fun FirFunctionCall.getCalleeSymbol(): FirBasedSymbol<*>? =
 
 fun FirReference.getResolvedSymbolOfNameReference(): FirBasedSymbol<*>? =
     (this as? FirResolvedNamedReference)?.resolvedSymbol
+
+inline fun <reified D> D.unrollFakeOverrides(): D where D : FirDeclaration, D : FirSymbolOwner<D> {
+    val symbol = symbol
+    if (symbol !is PossiblyFirFakeOverrideSymbol<*, *>) return this
+    if (!symbol.isFakeOverride) return this
+    var current: FirBasedSymbol<*>? = symbol.overriddenSymbol
+    while (current is PossiblyFirFakeOverrideSymbol<*, *> && current.isFakeOverride) {
+        current = current.overriddenSymbol
+    }
+    return current?.fir as D
+}
