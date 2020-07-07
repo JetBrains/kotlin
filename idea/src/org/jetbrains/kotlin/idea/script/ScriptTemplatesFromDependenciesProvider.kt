@@ -78,6 +78,7 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
         }
     }
 
+    @Volatile
     private var _definitions: List<ScriptDefinition>? = null
     private val definitionsLock = ReentrantLock()
 
