@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractCodeInsightActionT
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateHashCodeAndEqualsActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateTestSupportMethodActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateToStringActionTest
+import org.jetbrains.kotlin.idea.codeInsight.hints.AbstractKotlinLambdasHintsProvider
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveLeftRightTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveStatementTest
 import org.jetbrains.kotlin.idea.codeInsight.postfix.AbstractPostfixTemplateProviderTest
@@ -877,6 +878,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractKotlinCodeVisionProviderTest> {
                 model("codeInsight/codeVision")
+            }
+
+            testClass<AbstractKotlinLambdasHintsProvider> {
+                model("codeInsight/hints/lambda")
             }
 
             testClass<AbstractScriptConfigurationHighlightingTest> {
