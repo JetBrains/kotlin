@@ -74,6 +74,8 @@ class LoadScriptDefinitionsStartupActivity : StartupActivity {
 
 class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinitionProvider() {
     private var definitionsBySource = mutableMapOf<ScriptDefinitionsSource, List<ScriptDefinition>>()
+
+    @Volatile
     private var definitions: List<ScriptDefinition>? = null
 
     private val failedContributorsHashes = HashSet<Int>()
@@ -119,21 +121,26 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
     override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? = findDefinition(File(fileName).toScriptSource())?.legacyDefinition
 
-    fun reloadDefinitionsBy(source: ScriptDefinitionsSource) = lock.write {
+    fun reloadDefinitionsBy(source: ScriptDefinitionsSource) {
         if (definitions == null) return // not loaded yet
 
-        if (source !in definitionsBySource) error("Unknown script definition source: $source")
+        lock.write {
+            if (source !in definitionsBySource) error("Unknown script definition source: $source")
+        }
 
-        definitionsBySource[source] = source.safeGetDefinitions()
+        val safeGetDefinitions = source.safeGetDefinitions()
+        lock.write {
+            definitionsBySource[source] = safeGetDefinitions
 
-        definitions = definitionsBySource.values.flattenTo(mutableListOf())
+            definitions = definitionsBySource.values.flattenTo(mutableListOf())
 
-        updateDefinitions()
+            updateDefinitions()
+        }
     }
 
     override val currentDefinitions
         get() =
-            (definitions ?: kotlin.run {
+            (definitions ?: run {
                 reloadScriptDefinitions()
                 definitions!!
             }).asSequence().filter { KotlinScriptingSettings.getInstance(project).isScriptDefinitionEnabled(it) }
@@ -147,45 +154,46 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         return fromNewEp.dropLast(1) + fromDeprecatedEP + fromNewEp.last()
     }
 
-    fun reloadScriptDefinitionsIfNeeded() = lock.write {
-        if (definitions == null) {
-            loadScriptDefinitions()
-        }
+    fun reloadScriptDefinitionsIfNeeded() {
+        definitions ?: loadScriptDefinitions()
     }
 
-    fun reloadScriptDefinitions() = lock.write {
-        loadScriptDefinitions()
-    }
+    fun reloadScriptDefinitions() = loadScriptDefinitions()
 
     private fun loadScriptDefinitions() {
-        for (source in getSources()) {
-            val definitions = source.safeGetDefinitions()
-            definitionsBySource[source] = definitions
+        val newDefinitionsBySource = getSources().map { it to it.safeGetDefinitions() }.toMap()
+
+        lock.write {
+            definitionsBySource.putAll(newDefinitionsBySource)
+            definitions = definitionsBySource.values.flattenTo(mutableListOf())
+
+            updateDefinitions()
         }
-
-        definitions = definitionsBySource.values.flattenTo(mutableListOf())
-
-        updateDefinitions()
     }
 
-    fun reorderScriptDefinitions() = lock.write {
+    fun reorderScriptDefinitions() {
         definitions?.forEach {
-            it.order = KotlinScriptingSettings.getInstance(project).getScriptDefinitionOrder(it)
+            val order = KotlinScriptingSettings.getInstance(project).getScriptDefinitionOrder(it)
+            lock.write {
+                it.order = order
+            }
         }
-        definitions = definitions?.sortedBy { it.order }
+        lock.write {
+            definitions = definitions?.sortedBy { it.order }
 
-        updateDefinitions()
+            updateDefinitions()
+        }
     }
 
-    fun getAllDefinitions(): List<ScriptDefinition> {
-        return definitions ?: kotlin.run {
-            reloadScriptDefinitions()
-            definitions!!
-        }
+    fun getAllDefinitions(): List<ScriptDefinition> = definitions ?: run {
+        reloadScriptDefinitions()
+        definitions!!
     }
 
     fun isReady(): Boolean {
-        return definitions != null && definitionsBySource.keys.all { source ->
+        if (definitions == null) return false
+        val keys = lock.write { definitionsBySource.keys }
+        return keys.all { source ->
             // TODO: implement another API for readiness checking
             (source as? ScriptDefinitionContributor)?.isReady() != false
         }
