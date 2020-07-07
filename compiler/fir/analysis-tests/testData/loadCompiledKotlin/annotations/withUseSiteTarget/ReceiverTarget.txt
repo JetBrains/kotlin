@@ -1,10 +1,10 @@
 public final class A : R|kotlin/Any| {
-    public final fun R|kotlin/String|.myLength(@R|test/Ann|() q: R|kotlin/String|): R|kotlin/Int|
+    @R|test/Ann|() public final fun R|kotlin/String|.myLength(@R|test/Ann|() q: R|kotlin/String|): R|kotlin/Int|
 
-    public final val R|kotlin/String|.myLength2: R|kotlin/Int|
+    @R|test/Ann|() public final val R|kotlin/String|.myLength2: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public final var R|kotlin/String|.myLength3: R|kotlin/Int|
+    @R|test/Ann|() public final var R|kotlin/String|.myLength3: R|kotlin/Int|
         public get(): R|kotlin/Int|
         public set(v: R|kotlin/Int|): R|kotlin/Unit|
 
