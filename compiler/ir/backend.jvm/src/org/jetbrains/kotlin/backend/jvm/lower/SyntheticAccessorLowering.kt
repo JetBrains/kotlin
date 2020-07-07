@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -219,7 +218,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
                         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR)
 
-    private fun handleHiddenConstructor(declaration: IrConstructor): IrConstructorImpl {
+    private fun handleHiddenConstructor(declaration: IrConstructor): IrConstructor {
         require(declaration.isOrShouldBeHidden, declaration::render)
         return context.hiddenConstructors.getOrPut(declaration) {
             declaration.makeConstructorAccessor(JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR).also { accessor ->
@@ -254,7 +253,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun IrConstructor.makeConstructorAccessor(
         originForConstructorAccessor: IrDeclarationOrigin =
             JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
-    ): IrConstructorImpl {
+    ): IrConstructor {
         val source = this
 
         return buildConstructor {

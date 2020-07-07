@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForInlining
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -184,7 +183,7 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean) {
         function: IrFunction,
         replacementOrigin: IrDeclarationOrigin,
         noFakeOverride: Boolean = false,
-        body: IrFunctionImpl.() -> Unit
+        body: IrFunction.() -> Unit
     ) = buildFunWithDescriptorForInlining(function.descriptor) {
         updateFrom(function)
         if (function is IrConstructor) {

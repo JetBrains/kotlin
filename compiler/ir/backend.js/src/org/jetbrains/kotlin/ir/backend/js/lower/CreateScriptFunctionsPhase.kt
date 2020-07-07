@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -89,7 +88,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
         return (irScript.statements.lastOrNull() as? IrExpression)?.type ?: context.irBuiltIns.unitType
     }
 
-    private fun createFunction(irScript: IrScript, name: String, returnType: IrType): IrFunctionImpl {
+    private fun createFunction(irScript: IrScript, name: String, returnType: IrType): IrSimpleFunction {
         val (startOffset, endOffset) = getFunctionBodyOffsets(irScript)
         val descriptor = WrappedSimpleFunctionDescriptor()
 

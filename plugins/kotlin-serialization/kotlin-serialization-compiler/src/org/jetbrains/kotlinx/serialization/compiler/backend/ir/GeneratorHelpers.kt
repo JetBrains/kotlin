@@ -381,7 +381,7 @@ interface IrBuilderExtension {
         copyTypeParameters: Boolean = true
     ) {
         val function = this
-        fun irValueParameter(descriptor: ParameterDescriptor): IrValueParameterImpl = with(descriptor) {
+        fun irValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
             IrValueParameterImpl(
                 function.startOffset, function.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrValueParameterSymbolImpl(this),
                 name, indexOrMinusOne, type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline

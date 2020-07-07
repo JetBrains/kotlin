@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.interpreter.stack.Stack
 import org.jetbrains.kotlin.ir.interpreter.state.Primitive
 import org.jetbrains.kotlin.ir.interpreter.state.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -30,7 +31,7 @@ open class ExecutionResult(val returnLabel: ReturnLabel, private val owner: IrEl
     fun getNextLabel(irElement: IrElement, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         return when (returnLabel) {
             ReturnLabel.RETURN -> when (irElement) {
-                is IrCall, is IrReturnableBlock, is IrFunctionImpl, is IrLazyFunction -> if (owner == irElement) Next else this
+                is IrCall, is IrReturnableBlock, is IrSimpleFunction -> if (owner == irElement) Next else this
                 else -> this
             }
             ReturnLabel.BREAK_WHEN -> when (irElement) {
