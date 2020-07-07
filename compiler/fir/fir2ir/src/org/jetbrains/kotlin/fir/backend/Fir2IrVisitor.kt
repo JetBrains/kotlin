@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -94,7 +93,7 @@ class Fir2IrVisitor(
                 it.accept(this@Fir2IrVisitor, data) as? IrConstructorCall
             }
 
-            (this as IrFileImpl).metadata = FirMetadataSource.File(file, components.session)
+            metadata = FirMetadataSource.File(file, components.session)
         }
     }
 

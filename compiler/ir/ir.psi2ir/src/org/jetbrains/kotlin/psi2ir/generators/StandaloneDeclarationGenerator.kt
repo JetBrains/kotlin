@@ -79,7 +79,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         val irClass = createIrClassFromDescriptor(startOffset, endOffset, origin, symbol, descriptor)
 
         symbolTable.withScope(irClass) {
-            (irClass as IrClassImpl).metadata = MetadataSource.Class(descriptor)
+            irClass.metadata = MetadataSource.Class(descriptor)
 
             generateGlobalTypeParametersDeclarations(irClass, descriptor.declaredTypeParameters)
             irClass.superTypes = descriptor.typeConstructor.supertypes.map {

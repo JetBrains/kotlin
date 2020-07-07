@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrFunction :
-    IrDeclarationWithName, IrDeclarationWithVisibility, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent, IrReturnTarget {
+    IrDeclarationWithName, IrDeclarationWithVisibility, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent, IrReturnTarget,
+    IrMetadataSourceOwner {
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
@@ -42,8 +43,6 @@ interface IrFunction :
     var valueParameters: List<IrValueParameter>
 
     var body: IrBody?
-
-    override var metadata: MetadataSource?
 }
 
 @ObsoleteDescriptorBasedAPI

@@ -20,11 +20,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 
-interface IrProperty :
-    IrDeclarationWithName,
-    IrDeclarationWithVisibility,
-    IrOverridableMember,
-    IrSymbolOwner {
+interface IrProperty : IrDeclarationWithName, IrDeclarationWithVisibility, IrOverridableMember, IrSymbolOwner, IrMetadataSourceOwner {
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor

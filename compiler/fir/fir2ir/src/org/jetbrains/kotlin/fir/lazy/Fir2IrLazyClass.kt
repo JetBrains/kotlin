@@ -170,6 +170,10 @@ class Fir2IrLazyClass(
         result
     }
 
+    override var metadata: MetadataSource?
+        get() = null
+        set(_) = error("We should never need to store metadata of external declarations.")
+
     private fun FirNamedFunctionSymbol.isAbstractMethodOfAny(): Boolean {
         val fir = fir
         if (fir.modality != Modality.ABSTRACT) return false

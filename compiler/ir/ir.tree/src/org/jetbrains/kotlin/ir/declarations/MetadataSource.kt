@@ -16,17 +16,16 @@ interface MetadataSource {
             get() = descriptor.name
     }
 
-    open class Class(descriptor: ClassDescriptor) : DescriptorBased<ClassDescriptor>(descriptor)
+    class Class(descriptor: ClassDescriptor) : DescriptorBased<ClassDescriptor>(descriptor)
 
     open class File(val descriptors: List<DeclarationDescriptor>) : MetadataSource {
         override val name: Name?
             get() = null
     }
 
-    open class Function(descriptor: FunctionDescriptor) : DescriptorBased<FunctionDescriptor>(descriptor)
+    class Function(descriptor: FunctionDescriptor) : DescriptorBased<FunctionDescriptor>(descriptor)
 
-    open class Property(descriptor: PropertyDescriptor) : DescriptorBased<PropertyDescriptor>(descriptor)
+    class Property(descriptor: PropertyDescriptor) : DescriptorBased<PropertyDescriptor>(descriptor)
 
-    open class LocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) :
-        DescriptorBased<VariableDescriptorWithAccessors>(descriptor)
+    class LocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) : DescriptorBased<VariableDescriptorWithAccessors>(descriptor)
 }

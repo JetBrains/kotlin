@@ -31,10 +31,10 @@ interface IrSymbolOwner : IrElement {
 }
 
 interface IrMetadataSourceOwner : IrElement {
-    val metadata: MetadataSource?
+    var metadata: MetadataSource?
 }
 
-interface IrDeclaration : IrStatement, IrMutableAnnotationContainer, IrMetadataSourceOwner {
+interface IrDeclaration : IrStatement, IrMutableAnnotationContainer {
     @ObsoleteDescriptorBasedAPI
     val descriptor: DeclarationDescriptor
 

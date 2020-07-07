@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
@@ -89,7 +88,7 @@ class ClassGenerator(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED, it, classDescriptor,
                 context.symbolTable.nameProvider.nameForDeclaration(classDescriptor), visibility, modality
             ).apply {
-                (this as IrClassImpl).metadata = MetadataSource.Class(it.descriptor)
+                metadata = MetadataSource.Class(it.descriptor)
             }
         }.buildWithScope { irClass ->
             declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)

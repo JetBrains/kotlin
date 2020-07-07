@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrLocalDelegatedProperty :
     IrDeclarationWithName,
-    IrSymbolOwner {
+    IrSymbolOwner,
+    IrMetadataSourceOwner {
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: VariableDescriptorWithAccessors
@@ -35,6 +36,4 @@ interface IrLocalDelegatedProperty :
     var delegate: IrVariable
     var getter: IrFunction
     var setter: IrFunction?
-
-    override val metadata: MetadataSource.LocalDelegatedProperty?
 }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrClass :
     IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithName, IrDeclarationWithVisibility,
-    IrDeclarationContainer, IrTypeParametersContainer, IrAttributeContainer {
+    IrDeclarationContainer, IrTypeParametersContainer, IrAttributeContainer, IrMetadataSourceOwner {
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor

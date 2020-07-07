@@ -56,9 +56,6 @@ abstract class IrLazyDeclarationBase(
         descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationConstructorCall).toMutableList()
     }
 
-    override val metadata: MetadataSource?
-        get() = null
-
     private fun createLazyParent(): IrDeclarationParent? {
         val currentDescriptor = descriptor
 

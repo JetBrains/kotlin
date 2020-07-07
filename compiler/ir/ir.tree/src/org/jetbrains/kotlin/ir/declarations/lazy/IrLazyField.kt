@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
@@ -65,6 +66,10 @@ class IrLazyField(
     override var correspondingPropertySymbol: IrPropertySymbol? by lazyVar {
         stubGenerator.generatePropertyStub(descriptor).symbol
     }
+
+    override var metadata: MetadataSource?
+        get() = null
+        set(_) = error("We should never need to store metadata of external declarations.")
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitField(this, data)
