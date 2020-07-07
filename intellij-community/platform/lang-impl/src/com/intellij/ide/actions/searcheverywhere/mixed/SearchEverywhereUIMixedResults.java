@@ -185,9 +185,18 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
     };
 
     Comparator<SearchEverywhereFoundElementInfo> recentFilesComparator = (element1, element2) -> {
-      return element1.getContributor() instanceof RecentFilesSEContributor
-             ? element2.getContributor() instanceof RecentFilesSEContributor ? Integer.compare(element1.getPriority(), element2.getPriority()) : 1
-             : element2.getContributor() instanceof RecentFilesSEContributor ? -1 : 0;
+      boolean firstIsRecent = element1.getContributor() instanceof RecentFilesSEContributor;
+      boolean secondIsRecent = element2.getContributor() instanceof RecentFilesSEContributor;
+
+      if (firstIsRecent && secondIsRecent) {
+        return Integer.compare(element1.getPriority(), element2.getPriority());
+      }
+
+      if (!firstIsRecent && !secondIsRecent) {
+        return 0;
+      }
+
+      return firstIsRecent ? 1 : -1;
     };
 
     Comparator<SearchEverywhereFoundElementInfo> comparator = commandsComparator;
