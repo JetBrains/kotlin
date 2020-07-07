@@ -14111,6 +14111,16 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/j+k/types/arrayList.kt");
             }
 
+            @TestMetadata("notNullTypeParameterWithKotlinNullable.kt")
+            public void testNotNullTypeParameterWithKotlinNullable() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinNullable.kt");
+            }
+
+            @TestMetadata("notNullTypeParameterWithKotlinNullableWarnings.kt")
+            public void testNotNullTypeParameterWithKotlinNullableWarnings() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinNullableWarnings.kt");
+            }
+
             @TestMetadata("returnCollection.kt")
             public void testReturnCollection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/types/returnCollection.kt");

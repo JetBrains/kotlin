@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.cfg.WhenChecker
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -35,15 +36,30 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 class JavaNullabilityChecker : AdditionalTypeChecker {
 
-    override fun checkType(expression: KtExpression, expressionType: KotlinType, expressionTypeWithSmartCast: KotlinType, c: ResolutionContext<*>) {
+    override fun checkType(
+        expression: KtExpression,
+        expressionType: KotlinType,
+        expressionTypeWithSmartCast: KotlinType,
+        c: ResolutionContext<*>
+    ) {
+        val dataFlowValue by lazy(LazyThreadSafetyMode.NONE) {
+            c.dataFlowValueFactory.createDataFlowValue(expression, expressionType, c)
+        }
+
+        if (isWrongTypeParameterNullabilityForSubtyping(expressionType, c) { dataFlowValue }) {
+            c.trace.report(ErrorsJvm.NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER.on(expression, c.expectedType, expressionType))
+        }
+
         doCheckType(
             expressionType,
             c.expectedType,
-            { c.dataFlowValueFactory.createDataFlowValue(expression, expressionType, c) },
+            { dataFlowValue },
             c.dataFlowInfo
         ) { expectedType, actualType ->
             c.trace.report(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(expression, expectedType, actualType))
@@ -102,6 +118,45 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
                 }
         }
     }
+
+    private fun isWrongTypeParameterNullabilityForSubtyping(
+        expressionType: KotlinType,
+        c: ResolutionContext<*>,
+        dataFlowValueForWholeExpression: () -> DataFlowValue
+    ): Boolean {
+        if (c.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated)) return false
+        if (TypeUtils.noExpectedType(c.expectedType)) return false
+
+        var metWrongNullabilityInsideArguments = false
+
+        val typeContext: AbstractTypeCheckerContext = object : ClassicTypeCheckerContext(errorTypeEqualsToAnything = true) {
+            private var expectsTypeArgument = false
+            override fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
+
+                if (isNullableTypeAgainstNotNullTypeParameter(subType as KotlinType, superType as KotlinType)) {
+                    // data flow value is only checked for top-level types
+                    if (expectsTypeArgument || c.dataFlowInfo.getStableNullability(dataFlowValueForWholeExpression()) != Nullability.NOT_NULL) {
+                        metWrongNullabilityInsideArguments = true
+                        return false
+                    }
+                }
+
+                if (!expectsTypeArgument) {
+                    expectsTypeArgument = true
+                }
+                return true
+            }
+        }
+
+        AbstractTypeChecker.isSubtypeOf(typeContext, expressionType, c.expectedType)
+
+        return metWrongNullabilityInsideArguments
+    }
+
+    private fun isNullableTypeAgainstNotNullTypeParameter(
+        subType: KotlinType,
+        superType: KotlinType
+    ) = superType is NotNullTypeVariable && subType.isNullable()
 
     override fun checkReceiver(
         receiverParameter: ReceiverParameterDescriptor,

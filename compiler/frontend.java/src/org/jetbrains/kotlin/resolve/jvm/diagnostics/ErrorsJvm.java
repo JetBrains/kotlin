@@ -121,6 +121,9 @@ public interface ErrorsJvm {
     DiagnosticFactory2<KtElement, KotlinType, KotlinType> NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
             = DiagnosticFactory2.create(WARNING);
 
+    DiagnosticFactory2<KtElement, KotlinType, KotlinType> NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER
+            = DiagnosticFactory2.create(WARNING);
+
     DiagnosticFactory1<KtElement, KotlinType> RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
             = DiagnosticFactory1.create(WARNING);
 

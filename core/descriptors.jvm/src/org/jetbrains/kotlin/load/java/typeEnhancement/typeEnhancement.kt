@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.lazy.JavaResolverSettings
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.MUTABLE
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.READ_ONLY
@@ -51,7 +52,7 @@ enum class TypeComponentPosition {
     INFLEXIBLE
 }
 
-class JavaTypeEnhancement {
+class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings) {
 
     private open class Result(open val type: KotlinType, val subtreeSize: Int, val wereChanges: Boolean) {
         val typeIfChanged: KotlinType? get() = type.takeIf { wereChanges }
@@ -144,12 +145,18 @@ class JavaTypeEnhancement {
             enhancedNullability
         )
 
-        val enhancement = if (effectiveQualifiers.isNotNullTypeParameter) NotNullTypeParameter(enhancedType) else enhancedType
+        val enhancement = if (effectiveQualifiers.isNotNullTypeParameter) notNullTypeParameter(enhancedType) else enhancedType
         val nullabilityForWarning = enhancedNullabilityAnnotations != null && effectiveQualifiers.isNullabilityQualifierForWarning
         val result = if (nullabilityForWarning) wrapEnhancement(enhancement) else enhancement
 
         return SimpleResult(result as SimpleType, subtreeSize, wereChanges = true)
     }
+
+    private fun notNullTypeParameter(enhancedType: SimpleType) =
+        if (javaResolverSettings.correctNullabilityForNotNullTypeParameter)
+            enhancedType.makeSimpleTypeDefinitelyNotNullOrNotNull(useCorrectedNullabilityForTypeParameters = true)
+        else
+            NotNullTypeParameter(enhancedType)
 }
 
 private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
