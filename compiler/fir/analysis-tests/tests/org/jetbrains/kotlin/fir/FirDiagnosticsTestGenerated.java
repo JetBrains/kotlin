@@ -901,6 +901,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/notASupertype.kt");
         }
 
+        @TestMetadata("projectionsOnNonClassTypeArguments.kt")
+        public void testProjectionsOnNonClassTypeArguments() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/projectionsOnNonClassTypeArguments.kt");
+        }
+
         @TestMetadata("qualifiedSupertypeExtendedByOtherSupertype.kt")
         public void testQualifiedSupertypeExtendedByOtherSupertype() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/qualifiedSupertypeExtendedByOtherSupertype.kt");
