@@ -119,7 +119,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
         }
     }
 
-    private fun createTypeParameter(descriptor: TypeParameterDescriptor) =
+    private fun createTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameter =
             symbolTable?.declareGlobalTypeParameter(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, DECLARATION_ORIGIN_FUNCTION_CLASS,
                     descriptor

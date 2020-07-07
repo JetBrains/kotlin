@@ -106,7 +106,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
             return loweredEnumConstructor
         }
 
-        private fun lowerEnumConstructor(constructor: IrConstructor): IrConstructorImpl {
+        private fun lowerEnumConstructor(constructor: IrConstructor): IrConstructor {
             val startOffset = constructor.startOffset
             val endOffset = constructor.endOffset
             val loweredConstructor = WrappedClassConstructorDescriptor(
@@ -133,7 +133,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                 }
             }
 
-            fun createSynthesizedValueParameter(index: Int, name: String, type: IrType) =
+            fun createSynthesizedValueParameter(index: Int, name: String, type: IrType): IrValueParameter =
                     WrappedValueParameterDescriptor().let {
                         IrValueParameterImpl(
                                 startOffset, endOffset,

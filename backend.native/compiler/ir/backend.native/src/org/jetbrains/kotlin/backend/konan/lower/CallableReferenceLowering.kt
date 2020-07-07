@@ -8,13 +8,16 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.*
-import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -156,7 +159,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
             typeParam.symbol to functionReference.getTypeArgument(typeParam.index)!!
         }
 
-        private val functionReferenceClass = WrappedClassDescriptor().let {
+        private val functionReferenceClass: IrClass = WrappedClassDescriptor().let {
             IrClassImpl(
                     startOffset,endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
@@ -251,7 +254,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
             return BuiltFunctionReference(functionReferenceClass, constructor)
         }
 
-        private fun buildConstructor() = WrappedClassConstructorDescriptor().let {
+        private fun buildConstructor(): IrConstructor = WrappedClassConstructorDescriptor().let {
             IrConstructorImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
@@ -304,7 +307,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
         private val IrFunction.fullName: String
             get() = parent.fqNameForIrSerialization.child(Name.identifier(functionName)).asString()
 
-        private fun buildInvokeMethod(superFunction: IrSimpleFunction) = WrappedSimpleFunctionDescriptor().let {
+        private fun buildInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction = WrappedSimpleFunctionDescriptor().let {
             IrFunctionImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
