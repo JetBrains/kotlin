@@ -48,4 +48,8 @@ class FirCompositeScope(private val scopes: Iterable<FirScope>) : FirScope() {
     override fun getCallableNames(): Set<Name> {
         return scopes.flatMapTo(mutableSetOf()) { it.getCallableNames() }
     }
+
+    override fun getClassifierNames(): Set<Name> {
+        return scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
+    }
 }
