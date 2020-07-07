@@ -211,6 +211,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             // $x$::y
             family[0] is KtNameReferenceExpression && family[1] is KtCallableReferenceExpression
                     && family[0]?.nextSibling.elementType == KtTokens.COLONCOLON -> true
+            // when ($x$)
+            family[0] is KtNameReferenceExpression && family[1] is KtWhenExpression -> true
             else -> false
         }
     }

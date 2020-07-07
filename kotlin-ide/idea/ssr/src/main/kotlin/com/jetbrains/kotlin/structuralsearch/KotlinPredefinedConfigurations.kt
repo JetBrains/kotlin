@@ -157,7 +157,7 @@ object KotlinPredefinedConfigurations {
         searchTemplate(
             KSSRBundle.message("predefined.configuration.when"),
             """
-                when ('_Argument) {
+                when ('_Argument?) {
                   '_Condition -> '_Expression
                 }
             """.trimIndent(),
