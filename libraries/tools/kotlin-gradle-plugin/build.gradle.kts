@@ -191,6 +191,11 @@ pluginBundle {
         display = "Kotlin Android Extensions plugin"
     )
     create(
+        name = "kotlinParcelizePlugin",
+        id = "org.jetbrains.kotlin.plugin.parcelize",
+        display = "Kotlin Parcelize plugin"
+    )
+    create(
         name = "kotlinKaptPlugin",
         id = "org.jetbrains.kotlin.kapt",
         display = "Kotlin Kapt plugin"
