@@ -66,11 +66,11 @@ class GradleScriptNotificationProvider(private val project: Project) :
                 if (actions == null) null
                 else {
                     object : EditorNotificationPanel() {
-                        val contextHelp = KotlinIdeaGradleBundle.message("notification.oldGradle.firstLoad.info")
+                        val contextHelp = KotlinIdeaGradleBundle.message("notification.gradle.legacy.firstLoad.info")
 
                         init {
                             if (actions.isFirstLoad) {
-                                text(KotlinIdeaGradleBundle.message("notification.oldGradle.firstLoad"))
+                                text(KotlinIdeaGradleBundle.message("notification.gradle.legacy.firstLoad"))
                                 toolTipText = contextHelp
                             } else {
                                 text(KotlinIdeaCoreBundle.message("notification.text.script.configuration.has.been.changed"))
@@ -92,12 +92,13 @@ class GradleScriptNotificationProvider(private val project: Project) :
                 }
             }
             legacyOutside -> EditorNotificationPanel().apply {
-                text("Out of project script")
+                text(KotlinIdeaGradleBundle.message("notification.gradle.legacy.outsideProject"))
                 createActionLabel(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.addAsStandaloneAction")) {
                     rootsManager.updateStandaloneScripts {
                         addStandaloneScript(file.path)
                     }
                 }
+                contextHelp(KotlinIdeaGradleBundle.message("notification.gradle.legacy.outsideProject.addToStandaloneHelp"))
             }
             outsideAnything -> EditorNotificationPanel().apply {
                 text(KotlinIdeaGradleBundle.message("notification.outsideAnything.text"))
@@ -106,12 +107,16 @@ class GradleScriptNotificationProvider(private val project: Project) :
                 }
             }
             wasNotImportedAfterCreation -> EditorNotificationPanel().apply {
-                text(KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.text"))
+                text(getMissingConfigurationsDescription())
                 createActionLabel(getMissingConfigurationActionText()) {
                     val root = scriptUnderRoot.nearest
                     if (root != null) {
                         runPartialGradleImport(project, root)
                     }
+                }
+                val help = getMissingConfigurationsHelp()
+                if (help != null) {
+                    contextHelp(help)
                 }
             }
             notEvaluatedInLastImport -> EditorNotificationPanel().apply {
@@ -128,7 +133,7 @@ class GradleScriptNotificationProvider(private val project: Project) :
 
                 contextHelp(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.info"))
             }
-            standalone -> EditorNotificationPanel().apply {
+            standalone, standaloneLegacy -> EditorNotificationPanel().apply {
                 val actions = standaloneScriptActions[file]
                 if (actions != null) {
                     text(
@@ -153,7 +158,12 @@ class GradleScriptNotificationProvider(private val project: Project) :
                         removeStandaloneScript(file.path)
                     }
                 }
-                contextHelp(KotlinIdeaGradleBundle.message("notification.standalone.info"))
+
+                if (scriptUnderRoot.notificationKind == standaloneLegacy) {
+                    contextHelp(KotlinIdeaGradleBundle.message("notification.gradle.legacy.standalone.info"))
+                } else {
+                    contextHelp(KotlinIdeaGradleBundle.message("notification.standalone.info"))
+                }
             }
         }
     }
