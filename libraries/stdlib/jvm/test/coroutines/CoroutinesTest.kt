@@ -39,11 +39,17 @@ class DispatcherSwitcher(
     private val contextDispatcher: TestDispatcher,
     private val resumeDispatcher: TestDispatcher
 ) {
-    suspend fun run(): Int = suspendCoroutine { cont ->
-        contextDispatcher.assertThread()
-        resumeDispatcher.executor.execute {
-            resumeDispatcher.assertThread()
-            cont.resume(42)
+    suspend fun run(): Int {
+        val sideEffect: Int
+        val runResult = suspendCoroutine<Int> { cont ->
+            contextDispatcher.assertThread()
+            resumeDispatcher.executor.execute {
+                resumeDispatcher.assertThread()
+                cont.resume(42)
+            }
+            sideEffect = 21
         }
+        assertEquals(21, sideEffect)
+        return runResult
     }
 }
