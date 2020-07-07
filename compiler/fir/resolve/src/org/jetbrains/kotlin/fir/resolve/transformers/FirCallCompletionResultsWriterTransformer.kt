@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -331,7 +332,7 @@ class FirCallCompletionResultsWriterTransformer(
     private fun computeTypeArguments(
         access: FirQualifiedAccess,
         candidate: Candidate
-    ): List<FirTypeProjectionWithVariance> {
+    ): List<FirTypeProjection> {
         return computeTypeArgumentTypes(candidate)
             .mapIndexed { index, type ->
                 when (val argument = access.typeArguments.getOrNull(index)) {
@@ -341,6 +342,11 @@ class FirCallCompletionResultsWriterTransformer(
                             source = argument.source
                             this.typeRef = typeRef.withReplacedConeType(type)
                             variance = argument.variance
+                        }
+                    }
+                    is FirStarProjection -> {
+                        buildStarProjection {
+                            source = argument.source
                         }
                     }
                     else -> {
