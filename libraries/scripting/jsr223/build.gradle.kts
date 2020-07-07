@@ -3,8 +3,6 @@ plugins {
     kotlin("jvm")
 }
 
-jvmTarget = "1.6"
-
 publish()
 
 dependencies {
