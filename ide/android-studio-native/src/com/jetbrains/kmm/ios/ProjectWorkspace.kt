@@ -33,8 +33,12 @@ class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
         private set
 
     fun locateXCProject(path: String?) {
+        //set defaults
+        xcProjectStatus = XcProjectStatus.NotLocated
+        xcProjectFile = null
+
         if (path == null) {
-            xcProjectStatus = XcProjectStatus.NotLocated
+            //just set defaults and return
             return
         }
 
