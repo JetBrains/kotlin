@@ -94,7 +94,9 @@ class KotlinGradleFUSLogger : StartupActivity, DumbAware, Runnable {
                 BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN,
                 BooleanMetrics.ENABLED_COMPILER_PLUGIN_NO_ARG,
                 BooleanMetrics.ENABLED_COMPILER_PLUGIN_JPA_SUPPORT,
-                BooleanMetrics.ENABLED_COMPILER_PLUGIN_SAM_WITH_RECEIVER
+                BooleanMetrics.ENABLED_COMPILER_PLUGIN_SAM_WITH_RECEIVER,
+                BooleanMetrics.JVM_COMPILER_IR_MODE,
+                StringMetrics.JVM_DEFAULTS
             )
 
             container.log(
@@ -153,7 +155,8 @@ class KotlinGradleFUSLogger : StartupActivity, DumbAware, Runnable {
                 NumericalMetrics.GRADLE_BUILD_DURATION,
                 NumericalMetrics.GRADLE_EXECUTION_DURATION,
                 NumericalMetrics.NUMBER_OF_SUBPROJECTS,
-                NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD
+                NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD,
+                NumericalMetrics.STATISTICS_COLLECT_METRICS_OVERHEAD
             )
 
             val finishTime = container.getMetric(NumericalMetrics.BUILD_FINISH_TIME)?.getValue()
