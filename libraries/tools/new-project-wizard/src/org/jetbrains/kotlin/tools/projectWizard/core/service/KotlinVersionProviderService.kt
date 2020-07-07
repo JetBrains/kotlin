@@ -43,6 +43,7 @@ abstract class KotlinVersionProviderService : WizardService {
 
     private fun getKotlinVersionKind(version: Version) = when {
         "eap" in version.toString().toLowerCase() -> KotlinVersionKind.EAP
+        "rc" in version.toString().toLowerCase() -> KotlinVersionKind.EAP
         "dev" in version.toString().toLowerCase() -> KotlinVersionKind.DEV
         "m" in version.toString().toLowerCase() -> KotlinVersionKind.M
         else -> KotlinVersionKind.STABLE
