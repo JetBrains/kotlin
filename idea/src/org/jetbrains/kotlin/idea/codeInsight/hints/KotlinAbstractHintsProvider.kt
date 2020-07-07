@@ -23,6 +23,20 @@ abstract class KotlinAbstractHintsProvider<T : Any> : InlayHintsProvider<T> {
 
     abstract fun isElementSupported(resolved: HintType?, settings: T): Boolean
 
+    /**
+     * By default [PresentationAndSettings] go directly to the [sink] and later are handled by the outer infrastructure.
+     * The thing is that for lambdas this approach doesn't work: user shouldn't be able to place the caret behind a hint.
+     * Therefore [KotlinLambdasHintsProvider] provides its own "crutch" implementation.
+     */
+    protected open fun handlePresentations(
+        presentations: List<PresentationAndSettings>,
+        editor: Editor,
+        sink: InlayHintsSink
+    ) {
+        presentations.forEach { p ->
+            sink.addInlineElement(p.offset, p.relatesToPrecedingText, p.presentation)
+        }
+    }
 
     override fun getCollectorFor(file: PsiFile, editor: Editor, settings: T, sink: InlayHintsSink): InlayHintsCollector? {
         return object : FactoryInlayHintsCollector(editor) {
@@ -30,13 +44,13 @@ abstract class KotlinAbstractHintsProvider<T : Any> : InlayHintsProvider<T> {
                 val resolved = HintType.resolve(element) ?: return true
                 if (!isElementSupported(resolved, settings)) return true
 
-                resolved.provideHints(element)
-                    .mapNotNull { info -> convert(info, editor.project) }
-                    .forEach { triple -> sink.addInlineElement(triple.first, triple.second, triple.third) }
+                val presentations = resolved.provideHints(element).mapNotNull { info -> convert(info, editor.project) }
+                if (presentations.isNotEmpty())
+                    handlePresentations(presentations, editor, sink)
                 return true
             }
 
-            fun convert(inlayInfo: InlayInfo, project: Project?): Triple<Int, Boolean, InlayPresentation>? {
+            fun convert(inlayInfo: InlayInfo, project: Project?): PresentationAndSettings? {
                 val inlayText = getInlayPresentation(inlayInfo.text)
                 val presentation = factory.roundWithBackground(factory.smallText(inlayText))
 
@@ -51,7 +65,7 @@ abstract class KotlinAbstractHintsProvider<T : Any> : InlayHintsProvider<T> {
                         }, left = 1
                     )
 
-                return Triple(inlayInfo.offset, inlayInfo.relatesToPrecedingText, finalPresentation)
+                return PresentationAndSettings(finalPresentation, inlayInfo.offset, inlayInfo.relatesToPrecedingText)
             }
 
             fun getInlayPresentation(inlayText: String): String =
@@ -62,4 +76,6 @@ abstract class KotlinAbstractHintsProvider<T : Any> : InlayHintsProvider<T> {
                 }
         }
     }
+
+    data class PresentationAndSettings(val presentation: InlayPresentation, val offset: Int, val relatesToPrecedingText: Boolean)
 }
