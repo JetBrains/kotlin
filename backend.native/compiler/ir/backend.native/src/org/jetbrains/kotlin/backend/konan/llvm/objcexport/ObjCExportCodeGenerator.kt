@@ -600,16 +600,13 @@ private fun ObjCExportCodeGenerator.generateContinuationToCompletionConverter(
     }
 }
 
-private const val maxConvertorsInCache = 33
+private val ObjCExportBlockCodeGenerator.mappedFunctionNClasses get() =
+    context.ir.symbols.functionIrClassFactory.builtFunctionNClasses
+        .filter { it.irClass.descriptor.isMappedFunctionClass() }
 
 private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
     require(context.producedLlvmModuleContainsStdlib)
-    var count = context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.size
-    // TODO: ugly hack to avoid huge unneeded adaptors linked into every binary, needs rework.
-    if (context.config.produce.isCache) {
-        count = count.coerceAtMost(maxConvertorsInCache)
-    }
-    context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.take(count).forEach { functionClass ->
+    mappedFunctionNClasses.forEach { functionClass ->
         val converter = kotlinFunctionToBlockConverter(BlockPointerBridge(functionClass.arity, returnsVoid = false))
 
         val writableTypeInfoValue = buildWritableTypeInfoValue(converter = constPointer(converter))
@@ -619,22 +616,15 @@ private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
 
 private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
     require(context.producedLlvmModuleContainsStdlib)
-    val functionClassesByArity =
-            context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.associateBy { it.arity }
+    val functionClassesByArity = mappedFunctionNClasses.associateBy { it.arity }
 
-    var count = ((functionClassesByArity.keys.maxOrNull() ?: -1) + 1)
-    // TODO: ugly hack to avoid huge unneeded adaptors linked into every binary, needs rework.
-    if (context.config.produce.isCache) {
-        count = count.coerceAtMost(maxConvertorsInCache)
-    }
-    val converters = (0 until count).map { arity ->
-        val functionClass = functionClassesByArity[arity]
-        if (functionClass != null) {
-            val bridge = BlockPointerBridge(numberOfParameters = functionClass.arity, returnsVoid = false)
+    val arityLimit = (functionClassesByArity.keys.maxOrNull() ?: -1) + 1
+
+    val converters = (0 until arityLimit).map { arity ->
+        functionClassesByArity[arity]?.let {
+            val bridge = BlockPointerBridge(numberOfParameters = arity, returnsVoid = false)
             constPointer(blockToKotlinFunctionConverter(bridge))
-        } else {
-            NullPointer(objCToKotlinFunctionType)
-        }
+        } ?: NullPointer(objCToKotlinFunctionType)
     }
 
     val ptr = staticData.placeGlobalArray(
@@ -645,7 +635,7 @@ private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
 
     // Note: defining globals declared in runtime.
     staticData.placeGlobal("Kotlin_ObjCExport_blockToFunctionConverters", ptr, isExported = true)
-    staticData.placeGlobal("Kotlin_ObjCExport_blockToFunctionConverters_size", Int32(count), isExported = true)
+    staticData.placeGlobal("Kotlin_ObjCExport_blockToFunctionConverters_size", Int32(arityLimit), isExported = true)
 }
 
 private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {

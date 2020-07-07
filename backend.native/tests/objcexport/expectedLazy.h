@@ -308,6 +308,17 @@ __attribute__((swift_name("CoroutinesKt")))
 + (void)throwCancellationExceptionWithCompletionHandler:(void (^)(KtKotlinUnit * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("throwCancellationException(completionHandler:)")));
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("FunctionalTypesKt")))
+@interface KtFunctionalTypesKt : KtBase
++ (void)callDynType2List:(NSArray<id _Nullable (^)(id _Nullable, id _Nullable)> *)list param:(id _Nullable)param __attribute__((swift_name("callDynType2(list:param:)")));
++ (void)callStaticType2Fct:(id _Nullable (^)(id _Nullable, id _Nullable))fct param:(id _Nullable)param __attribute__((swift_name("callStaticType2(fct:param:)")));
++ (void)callDynType32List:(NSArray<id _Nullable (^)(id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable)> *)list param:(id _Nullable)param __attribute__((swift_name("callDynType32(list:param:)")));
++ (void)callStaticType32Fct:(id _Nullable (^)(id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable))fct param:(id _Nullable)param __attribute__((swift_name("callStaticType32(fct:param:)")));
++ (void)callDynType33List:(NSArray<id<KtKotlinFunction33>> *)list param:(id _Nullable)param __attribute__((swift_name("callDynType33(list:param:)")));
++ (void)callStaticType33Fct:(id _Nullable (^)(id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable, id _Nullable))fct param:(id _Nullable)param __attribute__((swift_name("callStaticType33(fct:param:)")));
+@end;
+
 __attribute__((swift_name("GH4002ArgumentBase")))
 @interface KtGH4002ArgumentBase : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));

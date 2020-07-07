@@ -15,6 +15,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
+internal fun ClassDescriptor.isMappedFunctionClass() =
+        this.getFunctionalClassKind() == FunctionClassDescriptor.Kind.Function &&
+                // Type parameters include return type.
+                declaredTypeParameters.size - 1 < CustomTypeMappers.functionTypeMappersArityLimit
+
 internal interface CustomTypeMapper {
     val mappedClassId: ClassId
     fun mapType(mappedSuperType: KotlinType, translator: ObjCExportTranslatorImpl, objCExportScope: ObjCExportScope): ObjCNonNullReferenceType
@@ -50,6 +55,8 @@ internal object CustomTypeMappers {
         result.associateBy { it.mappedClassId }
     }
 
+    internal val functionTypeMappersArityLimit = 33 // not including, i.e. [0..33)
+
     fun hasMapper(descriptor: ClassDescriptor): Boolean {
         // Should be equivalent to `getMapper(descriptor) != null`.
         if (descriptor.classId in predefined) return true
@@ -71,9 +78,6 @@ internal object CustomTypeMappers {
 
         return null
     }
-
-    private fun ClassDescriptor.isMappedFunctionClass() =
-            this.getFunctionalClassKind() == FunctionClassDescriptor.Kind.Function
 
     /**
      * Types to be "hidden" during mapping, i.e. represented as `id`.

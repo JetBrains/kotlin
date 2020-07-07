@@ -108,10 +108,13 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
     val builtClasses get() = builtClassesMap.values
 
-    val builtFunctionNClasses get() =
-        builtClassesMap.values
-                .filter { it ->  (it.descriptor as FunctionClassDescriptor).functionKind == FunctionClassDescriptor.Kind.Function }
-                .map { FunctionalInterface(it, (it.descriptor as FunctionClassDescriptor).arity) }
+    val builtFunctionNClasses get() = builtClassesMap.values.mapNotNull {
+        with(it.descriptor as FunctionClassDescriptor) {
+            if (functionKind == FunctionClassDescriptor.Kind.Function)
+                FunctionalInterface(it, arity)
+            else null
+        }
+    }
 
     private fun createTypeParameter(descriptor: TypeParameterDescriptor) =
             symbolTable?.declareGlobalTypeParameter(
