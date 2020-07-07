@@ -320,6 +320,10 @@ include ":compiler:fir:cones",
 
 include ":idea:idea-frontend-fir:idea-fir-low-level-api"
 
+include ":plugins:parcelize:parcelize-compiler",
+        ":plugins:parcelize:parcelize-runtime",
+        ":kotlin-parcelize-compiler"
+
 include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide",
@@ -476,6 +480,7 @@ project(':kotlin-jps-plugin').projectDir = "$rootDir/prepare/jps-plugin" as File
 project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-android/idea-android-output-parser" as File
 project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
 project(':kotlin-android-extensions').projectDir = "$rootDir/prepare/android-extensions-compiler-gradle" as File
+project(':kotlin-parcelize-compiler').projectDir = "$rootDir/prepare/parcelize-compiler-gradle" as File
 project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-runtime" as File
 project(':plugins:android-extensions-ide').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen/allopen-cli" as File

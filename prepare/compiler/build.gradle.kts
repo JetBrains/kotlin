@@ -112,6 +112,8 @@ val distLibraryProjects = listOfNotNull(
 val distCompilerPluginProjects = listOf(
     ":kotlin-allopen-compiler-plugin",
     ":kotlin-android-extensions-runtime",
+    ":plugins:parcelize:parcelize-compiler",
+    ":plugins:parcelize:parcelize-runtime",
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
     ":kotlinx-serialization-compiler-plugin"
