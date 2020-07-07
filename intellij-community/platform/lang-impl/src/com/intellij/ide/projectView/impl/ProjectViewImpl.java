@@ -871,7 +871,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       ex.addFocusChangeListener(new FocusChangeListener() {
         @Override
         public void focusGained(@NotNull Editor editor) {
-          if (Registry.is("ide.autoscroll.from.source.on.focus.gained") && isAutoscrollFromSource(getCurrentViewId())) {
+          if (isAutoscrollFromSourceAllowedHere()) {
             FileEditorManager manager = myProject.isDisposed() ? null : FileEditorManager.getInstance(myProject);
             if (manager != null) {
               JComponent component = editor.getComponent();
@@ -883,6 +883,14 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
               }
             }
           }
+        }
+
+        private boolean isAutoscrollFromSourceAllowedHere() {
+          if (!Registry.is("ide.autoscroll.from.source.on.focus.gained")) return false;
+          if (!isAutoscrollFromSource(getCurrentViewId())) return false;
+          AbstractProjectViewPane pane = getCurrentProjectViewPane();
+          JTree tree = pane == null ? null : pane.getTree();
+          return tree != null && tree.isShowing();
         }
       }, myProject);
     }
