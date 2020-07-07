@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.facet.FacetManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
@@ -179,7 +180,9 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             assertEquals(2, tracker.moduleResolversComputed.size)
 
             tracker.moduleResolversComputed.clear()
-            (PsiModificationTracker.SERVICE.getInstance(myProject) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
+            ApplicationManager.getApplication().runWriteAction {
+                (PsiModificationTracker.SERVICE.getInstance(myProject) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
+            }
             checkHighlightingInProject { project.allKotlinFiles().filter { "m2" in it.name } }
             assertEquals(0, tracker.sdkResolversComputed.size)
             assertEquals(2, tracker.moduleResolversComputed.size)

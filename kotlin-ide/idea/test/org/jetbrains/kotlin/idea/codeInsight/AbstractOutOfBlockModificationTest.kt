@@ -78,7 +78,7 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
     }
 
     private fun checkOOBWithDescriptorsResolve(expectedOutOfBlock: Boolean) {
-        ApplicationManager.getApplication().runReadAction {
+        ApplicationManager.getApplication().runWriteAction {
             (PsiManager.getInstance(myFixture.project).modificationTracker as PsiModificationTrackerImpl)
                 .incOutOfCodeBlockModificationCounter()
         }
