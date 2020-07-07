@@ -530,7 +530,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     override fun transformGetClassCall(getClassCall: FirGetClassCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        val transformedGetClassCall = transformExpression(getClassCall, data).single as FirGetClassCall
+        val arg = getClassCall.argument
+        val dataWithExpectedType = if (arg is FirConstExpression<*>) {
+            withExpectedType(arg.typeRef.resolvedTypeFromPrototype(arg.kind.expectedConeType()))
+        } else {
+            data
+        }
+        val transformedGetClassCall = transformExpression(getClassCall, dataWithExpectedType).single as FirGetClassCall
 
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {
             is FirResolvedQualifier -> {
@@ -569,17 +575,12 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return transformedGetClassCall.compose()
     }
 
-    override fun <T> transformConstExpression(
-        constExpression: FirConstExpression<T>,
-        data: ResolutionMode,
-    ): CompositeTransformResult<FirStatement> {
-        constExpression.annotations.forEach { it.accept(this, data) }
+    private fun FirConstKind<*>.expectedConeType(): ConeKotlinType {
         fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
             val symbol = symbolProvider.getClassLikeSymbolByFqName(classId) ?: return ConeClassErrorType("Missing stdlib class: $classId")
             return symbol.toLookupTag().constructClassType(emptyArray(), isNullable)
         }
-
-        val type = when (val kind = constExpression.kind) {
+        return when (this) {
             FirConstKind.Null -> session.builtinTypes.nullableNothingType.type
             FirConstKind.Boolean -> session.builtinTypes.booleanType.type
             FirConstKind.Char -> constructLiteralType(StandardClassIds.Char)
@@ -591,6 +592,23 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             FirConstKind.Float -> constructLiteralType(StandardClassIds.Float)
             FirConstKind.Double -> constructLiteralType(StandardClassIds.Double)
 
+            FirConstKind.UnsignedByte -> constructLiteralType(StandardClassIds.UByte)
+            FirConstKind.UnsignedShort -> constructLiteralType(StandardClassIds.UShort)
+            FirConstKind.UnsignedInt -> constructLiteralType(StandardClassIds.UInt)
+            FirConstKind.UnsignedLong -> constructLiteralType(StandardClassIds.ULong)
+
+            FirConstKind.IntegerLiteral -> constructLiteralType(StandardClassIds.Int)
+            FirConstKind.UnsignedIntegerLiteral -> constructLiteralType(StandardClassIds.UInt)
+        }
+    }
+
+    override fun <T> transformConstExpression(
+        constExpression: FirConstExpression<T>,
+        data: ResolutionMode,
+    ): CompositeTransformResult<FirStatement> {
+        constExpression.annotations.forEach { it.accept(this, data) }
+
+        val type = when (val kind = constExpression.kind) {
             FirConstKind.IntegerLiteral, FirConstKind.UnsignedIntegerLiteral -> {
                 val integerLiteralType =
                     ConeIntegerLiteralTypeImpl(constExpression.value as Long, isUnsigned = kind == FirConstKind.UnsignedIntegerLiteral)
@@ -615,11 +633,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     integerLiteralType
                 }
             }
-
-            FirConstKind.UnsignedByte -> constructLiteralType(StandardClassIds.UByte)
-            FirConstKind.UnsignedShort -> constructLiteralType(StandardClassIds.UShort)
-            FirConstKind.UnsignedInt -> constructLiteralType(StandardClassIds.UInt)
-            FirConstKind.UnsignedLong -> constructLiteralType(StandardClassIds.ULong)
+            else -> kind.expectedConeType()
         }
 
         dataFlowAnalyzer.exitConstExpresion(constExpression as FirConstExpression<*>)
