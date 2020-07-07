@@ -307,8 +307,6 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
         fun createFakeOverrideProperty(descriptor: PropertyDescriptor): IrProperty {
             val propertyDeclare = { s: IrPropertySymbol ->
-                @Suppress("DEPRECATION")
-                /* TODO: [PropertyDescriptor::isDelegated] is deprecated. */
                 IrPropertyImpl(
                         startOffset = offset,
                         endOffset = offset,
