@@ -3,6 +3,7 @@ package com.intellij.ide.actions.newclass;
 
 import com.intellij.ide.ui.newItemPopup.NewItemWithTemplatesPopupPanel;
 import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.fields.ExtendableTextComponent;
 import com.intellij.ui.scale.JBUIScale;
@@ -48,19 +49,16 @@ public class CreateWithTemplatesDialogPanel extends NewItemWithTemplatesPopupPan
   }
 
   private void selectTemplate(@Nullable String selectedItem) {
-    if (selectedItem == null) {
-      myTemplatesList.setSelectedIndex(0);
-      return;
-    }
-
     ListModel<Trinity<String, Icon, String>> model = myTemplatesList.getModel();
     for (int i = 0; i < model.getSize(); i++) {
       String templateID = model.getElementAt(i).getThird();
-      if (selectedItem.equals(templateID)) {
+      if (StringUtil.equals(selectedItem, templateID)) {
         myTemplatesList.setSelectedIndex(i);
         return;
       }
     }
+
+    myTemplatesList.setSelectedIndex(0);
   }
 
   private static class TemplateListCellRenderer implements ListCellRenderer<Trinity<String, Icon, String>> {
