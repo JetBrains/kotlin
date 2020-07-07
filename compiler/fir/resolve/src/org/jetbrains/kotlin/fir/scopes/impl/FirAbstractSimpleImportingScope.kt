@@ -21,7 +21,8 @@ abstract class FirAbstractSimpleImportingScope(
     scopeSession: ScopeSession
 ) : FirAbstractImportingScope(session, scopeSession, lookupInFir = true) {
 
-    protected abstract val simpleImports: Map<Name, List<FirResolvedImport>>
+    // TODO try to hide this
+    abstract val simpleImports: Map<Name, List<FirResolvedImport>>
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         val imports = simpleImports[name] ?: return
