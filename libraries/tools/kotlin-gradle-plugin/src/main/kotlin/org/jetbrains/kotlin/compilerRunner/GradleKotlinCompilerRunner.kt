@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.lang.ref.WeakReference
 
@@ -113,11 +114,16 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             compilerArgs.version = false
         }
         val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
+
+        // compilerArgs arguments may have some attributes which are overrided by freeCompilerArguments.
+        // Here we perform the work which is repeated in compiler in order to obtain correct values. This extra work could be avoided when
+        // compiler would report metrics by itself via JMX
         KotlinBuildStatsService.applyIfInitialised {
             if (compilerArgs is K2JVMCompilerArguments) {
                 val args = K2JVMCompilerArguments()
                 parseCommandLineArguments(argsArray.toList(), args)
                 KotlinBuildStatsService.getInstance()?.report(BooleanMetrics.JVM_COMPILER_IR_MODE, args.useIR)
+                KotlinBuildStatsService.getInstance()?.report(StringMetrics.JVM_DEFAULTS, args.jvmDefault)
             }
         }
 
