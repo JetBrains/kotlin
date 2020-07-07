@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.types.IrType
@@ -167,7 +166,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 val equalsFunction = createSyntheticIrFunction(
                     equalsName,
                     components.irBuiltIns.booleanType,
-                ) { createSyntheticIrParameter(it, Name.identifier("other"), components.irBuiltIns.anyNType) }
+                    otherParameterNeeded = true
+                )
                 irDataClassMembersGenerator.generateEqualsMethod(equalsFunction, properties)
                 irClass.declarations.add(equalsFunction)
             }
@@ -213,11 +213,38 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
         private fun createSyntheticIrFunction(
             name: Name,
             returnType: IrType,
-            valueParameterBuilder: (IrFunction) -> IrValueParameter? = { null }
+            otherParameterNeeded: Boolean = false
         ): IrFunction {
-            val functionDescriptor = WrappedSimpleFunctionDescriptor()
             val thisReceiverDescriptor = WrappedValueParameterDescriptor()
-            return components.symbolTable.declareSimpleFunction(functionDescriptor) { symbol ->
+            val firFunction = buildSimpleFunction {
+                origin = FirDeclarationOrigin.Synthetic
+                this.name = name
+                this.symbol = FirNamedFunctionSymbol(CallableId(classId, name))
+                this.status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
+                this.session = components.session
+                this.returnTypeRef = when (returnType) {
+                    components.irBuiltIns.booleanType -> FirImplicitBooleanTypeRef(null)
+                    components.irBuiltIns.intType -> FirImplicitIntTypeRef(null)
+                    components.irBuiltIns.stringType -> FirImplicitStringTypeRef(null)
+                    else -> error("Unexpected synthetic data class function return type: $returnType")
+                }
+                if (otherParameterNeeded) {
+                    this.valueParameters.add(
+                        buildValueParameter {
+                            this.name = Name.identifier("other")
+                            origin = FirDeclarationOrigin.Synthetic
+                            this.session = components.session
+                            this.returnTypeRef = FirImplicitNullableAnyTypeRef(null)
+                            this.symbol = FirVariableSymbol(this.name)
+                            isCrossinline = false
+                            isNoinline = false
+                            isVararg = false
+                        }
+                    )
+                }
+            }
+            val signature = components.signatureComposer.composeSignature(firFunction)
+            return components.declarationStorage.declareIrSimpleFunction(signature, null) { symbol ->
                 IrFunctionImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
@@ -235,44 +262,18 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                     isFakeOverride = false,
                     isOperator = false
                 ).apply {
-                    val irValueParameter = valueParameterBuilder(this)?.let {
-                        this.valueParameters = listOf(it)
-                        it
+                    if (otherParameterNeeded) {
+                        val irValueParameter = createSyntheticIrParameter(
+                            this, firFunction.valueParameters.first().name, components.irBuiltIns.anyNType
+                        )
+                        this.valueParameters = listOf(irValueParameter)
                     }
                     metadata = FirMetadataSource.Function(
-                        buildSimpleFunction {
-                            origin = FirDeclarationOrigin.Synthetic
-                            this.name = name
-                            this.symbol = FirNamedFunctionSymbol(CallableId(classId.packageFqName, classId.relativeClassName, name))
-                            this.status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
-                            this.session = components.session
-                            this.returnTypeRef = when (returnType) {
-                                components.irBuiltIns.booleanType -> FirImplicitBooleanTypeRef(null)
-                                components.irBuiltIns.intType -> FirImplicitIntTypeRef(null)
-                                components.irBuiltIns.stringType -> FirImplicitStringTypeRef(null)
-                                else -> error("Unexpected synthetic data class function return type: $returnType")
-                            }
-                            if (irValueParameter != null) {
-                                this.valueParameters.add(
-                                    buildValueParameter {
-                                        this.name = irValueParameter.name
-                                        origin = FirDeclarationOrigin.Synthetic
-                                        this.session = components.session
-                                        this.returnTypeRef = FirImplicitNullableAnyTypeRef(null)
-                                        this.symbol = FirVariableSymbol(irValueParameter.name)
-                                        isCrossinline = false
-                                        isNoinline = false
-                                        isVararg = false
-                                    }
-                                )
-                            }
-                        }
+                        firFunction
                     )
-
                 }
             }.apply {
                 parent = irClass
-                functionDescriptor.bind(this)
                 dispatchReceiverParameter = generateDispatchReceiverParameter(this, thisReceiverDescriptor)
                 components.irBuiltIns.anyClass.descriptor.unsubstitutedMemberScope
                     .getContributedFunctions(this.name, NoLookupLocation.FROM_BACKEND)

@@ -349,7 +349,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun declareIrSimpleFunction(
+    internal fun declareIrSimpleFunction(
         signature: IdSignature?,
         containerSource: DeserializedContainerSource?,
         factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
