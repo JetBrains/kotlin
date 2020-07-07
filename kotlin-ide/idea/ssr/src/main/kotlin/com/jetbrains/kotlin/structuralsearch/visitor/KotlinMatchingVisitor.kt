@@ -760,9 +760,15 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
         val other = getTreeElementDepar<KtWhenEntry>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchInAnyOrder(jetWhenEntry.conditions, other.conditions)
+
+        // $x$ -> $y$ should match else branches
+        val bypassElseTest = jetWhenEntry.firstChild is KtWhenConditionWithExpression
+                && jetWhenEntry.firstChild.children.size == 1
+                && jetWhenEntry.firstChild.firstChild is KtNameReferenceExpression
+
+        myMatchingVisitor.result = (bypassElseTest && other.isElse || myMatchingVisitor.matchInAnyOrder(jetWhenEntry.conditions, other.conditions))
                 && myMatchingVisitor.match(jetWhenEntry.expression, other.expression)
-                && jetWhenEntry.isElse == other.isElse
+                && (bypassElseTest || jetWhenEntry.isElse == other.isElse)
     }
 
     override fun visitWhenExpression(expression: KtWhenExpression) {

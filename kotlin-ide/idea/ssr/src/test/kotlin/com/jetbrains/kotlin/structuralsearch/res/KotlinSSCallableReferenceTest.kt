@@ -10,6 +10,4 @@ class KotlinSSCallableReferenceTest : KotlinSSResourceInspectionTest() {
     fun testExtensionFun() { doTest("List<Int>::'_") }
 
     fun testPropertyReference() { doTest("::'_.name") }
-
-    fun testNoQualifier() { doTest("'_{0,0}::'_") }
 }

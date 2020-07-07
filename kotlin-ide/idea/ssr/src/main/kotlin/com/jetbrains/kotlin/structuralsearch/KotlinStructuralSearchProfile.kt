@@ -204,15 +204,13 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     private fun isApplicableMinCount(variableNode: PsiElement): Boolean {
         val family = ancestors(variableNode)
         return when {
-            // var field = $x$
             family[0] is KtNameReferenceExpression && family[1] is KtProperty -> true
-            // $x$.fun()
             family[0] is KtNameReferenceExpression && family[1] is KtDotQualifiedExpression -> true
-            // $x$::y
             family[0] is KtNameReferenceExpression && family[1] is KtCallableReferenceExpression
                     && family[0]?.nextSibling.elementType == KtTokens.COLONCOLON -> true
-            // when ($x$)
             family[0] is KtNameReferenceExpression && family[1] is KtWhenExpression -> true
+            family[0] is KtNameReferenceExpression && family[2] is KtTypeReference
+                    && family[3] is KtNamedFunction -> true
             else -> false
         }
     }
@@ -224,9 +222,9 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         val family = ancestors(variableNode)
         return when {
             family[0] is KtDestructuringDeclarationEntry -> true
+            family[0] is KtNameReferenceExpression && family[1] is KtWhenConditionWithExpression -> true
             else -> false
         }
-        return false
     }
 
     /**

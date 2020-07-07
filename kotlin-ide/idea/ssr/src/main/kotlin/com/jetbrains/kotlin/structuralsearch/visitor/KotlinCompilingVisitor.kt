@@ -276,6 +276,20 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
+        super.visitWhenEntry(jetWhenEntry)
+        val condition = jetWhenEntry.firstChild.firstChild
+        if (condition is KtNameReferenceExpression) {
+            val handler = getHandler(condition)
+            if (handler !is SubstitutionHandler) return
+
+            setHandler(jetWhenEntry, SubstitutionHandler(handler.name, false, handler.minOccurs, handler.maxOccurs, false))
+            condition.parent.resetCountFilter()
+            condition.resetCountFilter()
+            condition.firstChild.resetCountFilter()
+        }
+    }
+
     private fun visitKDoc(kDoc: KDoc) {
         getHandler(kDoc).setFilter { it is KDoc }
     }
