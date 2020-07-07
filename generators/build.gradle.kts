@@ -58,6 +58,7 @@ dependencies {
     testCompile(projectTests(":plugins:android-extensions-compiler"))
     testCompile(projectTests(":plugins:android-extensions-ide"))
     testCompile(projectTests(":plugins:parcelize:parcelize-compiler"))
+    testCompile(projectTests(":plugins:parcelize:parcelize-ide"))
     testCompile(projectTests(":kotlin-annotation-processing"))
     testCompile(projectTests(":kotlin-annotation-processing-cli"))
     testCompile(projectTests(":kotlin-allopen-compiler-plugin"))
