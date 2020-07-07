@@ -160,6 +160,18 @@ class JvmBinaryAnnotationDeserializer(
         return findJvmBinaryClassAndLoadMemberAnnotations(containerSource, paramSignature)
     }
 
+    override fun loadExtensionReceiverParameterAnnotations(
+        containerSource: DeserializedContainerSource?,
+        callableProto: MessageLite,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        kind: CallableKind
+    ): List<FirAnnotationCall> {
+        val methodSignature = getCallableSignature(callableProto, nameResolver, typeTable, kind) ?: return emptyList()
+        val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, 0)
+        return findJvmBinaryClassAndLoadMemberAnnotations(containerSource, paramSignature)
+    }
+
     private fun computeJvmParameterIndexShift(classProto: ProtoBuf.Class?, message: MessageLite): Int {
         return when (message) {
             is ProtoBuf.Function -> if (message.hasReceiver()) 1 else 0
