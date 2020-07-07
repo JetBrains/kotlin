@@ -13,8 +13,8 @@ import com.intellij.ui.IconManager
 
 class AppleRunConfigurationType : ConfigurationTypeBase(
     ID,
-    "Mobile App",
-    "Mobile Application",
+    "iOS App",
+    "Kotlin multiplatform mobile iOS application",
     ICON
 ) {
     init {
