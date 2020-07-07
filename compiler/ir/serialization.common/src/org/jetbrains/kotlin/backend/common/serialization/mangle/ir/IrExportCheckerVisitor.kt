@@ -45,6 +45,7 @@ abstract class IrExportCheckerVisitor : IrElementVisitor<Boolean, Nothing?>, Kot
     override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) = false
     override fun visitVariable(declaration: IrVariable, data: Nothing?) = false
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?) = false
+    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): Boolean = false
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?) = false
 

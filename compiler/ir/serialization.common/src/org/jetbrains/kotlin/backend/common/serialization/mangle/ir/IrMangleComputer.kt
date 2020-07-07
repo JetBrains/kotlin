@@ -177,6 +177,7 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
                 if (type.hasQuestionMark) tBuilder.appendSignature(MangleConstant.Q_MARK)
             }
             is IrDynamicType -> tBuilder.appendSignature(MangleConstant.DYNAMIC_MARK)
+            is IrErrorType -> tBuilder.appendSignature(MangleConstant.ERROR_MARK)
             else -> error("Unexpected type $type")
         }
     }
@@ -185,6 +186,10 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
     override fun visitScript(declaration: IrScript, data: Boolean) {
         declaration.parent.accept(this, data)
+    }
+
+    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Boolean) {
+        declaration.mangleSimpleDeclaration(MangleConstant.ERROR_DECLARATION)
     }
 
     override fun visitClass(declaration: IrClass, data: Boolean) {
