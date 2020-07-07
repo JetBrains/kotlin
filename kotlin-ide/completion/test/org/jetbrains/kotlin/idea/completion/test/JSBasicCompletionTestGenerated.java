@@ -2146,6 +2146,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/classFieldsAndFunctionsFromInnerClassExplicitReceiver.kt");
             }
 
+            @TestMetadata("defaultKotlinImports.kt")
+            public void testDefaultKotlinImports() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/defaultKotlinImports.kt");
+            }
+
             @TestMetadata("explicitReceiverCompletion.kt")
             public void testExplicitReceiverCompletion() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/explicitReceiverCompletion.kt");
@@ -2176,6 +2181,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/implicitReceiverFromExtensionMethod.kt");
             }
 
+            @TestMetadata("insideFunctionWithParameters.kt")
+            public void testInsideFunctionWithParameters() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/insideFunctionWithParameters.kt");
+            }
+
             @TestMetadata("localVariablesAndFunctions.kt")
             public void testLocalVariablesAndFunctions() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/localVariablesAndFunctions.kt");
@@ -2186,9 +2196,19 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/localVariablesAndFunctionsFromNestedScope.kt");
             }
 
+            @TestMetadata("nullableCompletion.kt")
+            public void testNullableCompletion() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/nullableCompletion.kt");
+            }
+
             @TestMetadata("smartCast.kt")
             public void testSmartCast() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/smartCast.kt");
+            }
+
+            @TestMetadata("stringCompletion.kt")
+            public void testStringCompletion() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/stringCompletion.kt");
             }
 
             @TestMetadata("topLevelVariablesAndFunctions.kt")
