@@ -129,6 +129,8 @@ import org.jetbrains.kotlin.jps.incremental.AbstractJvmProtoComparisonTest
 import org.jetbrains.kotlin.nj2k.inference.common.AbstractCommonConstraintCollectorTest
 import org.jetbrains.kotlin.nj2k.inference.mutability.AbstractMutabilityInferenceTest
 import org.jetbrains.kotlin.nj2k.inference.nullability.AbstractNullabilityInferenceTest
+import org.jetbrains.kotlin.pacelize.ide.test.AbstractParcelizeCheckerTest
+import org.jetbrains.kotlin.pacelize.ide.test.AbstractParcelizeQuickFixTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
 import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
 import org.jetbrains.kotlin.idea.navigationToolbar.AbstractKotlinNavBarTest
@@ -1077,6 +1079,16 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
+    testGroup("plugins/parcelize/parcelize-ide/tests", "plugins/parcelize/parcelize-ide/testData") {
+        testClass<AbstractParcelizeQuickFixTest> {
+            model("quickfix", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
+        }
+
+        testClass<AbstractParcelizeCheckerTest> {
+            model("checker", extension = "kt")
+        }
+    }
+
     testGroup("completion") {
         testClass<AbstractCompiledKotlinInJavaCompletionTest> {
             model("injava", pattern = JAVA, isRecursive = false)
@@ -1092,10 +1104,6 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractBasicCompletionWeigherTest> {
             model("weighers/basic", pattern = KT_OR_KTS_WITHOUT_DOTS)
-        }
-
-        testClass<AbstractSmartCompletionWeigherTest> {
-            model("weighers/smart", pattern = KT_WITHOUT_DOTS)
         }
 
         testClass<AbstractJSBasicCompletionTest> {

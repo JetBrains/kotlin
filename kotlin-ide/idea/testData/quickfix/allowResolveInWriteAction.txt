@@ -77,3 +77,4 @@ org.jetbrains.kotlin.idea.quickfix.SpecifyTypeExplicitlyFix
 org.jetbrains.kotlin.idea.quickfix.SuperClassNotInitialized$AddParenthesisFix
 org.jetbrains.kotlin.idea.quickfix.WrapWithSafeLetCallFix
 com.intellij.spring.model.highlighting.autowire.SpringUastInjectionPointsAutowiringInspection$AddSpringBeanQualifierFix
+org.jetbrains.kotlin.parcelize.ide.quickfixes.ParcelMigrateToParcelizeQuickFix

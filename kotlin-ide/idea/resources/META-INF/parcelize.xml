@@ -1,0 +1,16 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <expressionCodegenExtension implementation="org.jetbrains.kotlin.parcelize.ide.IdeParcelizeCodegenExtension"/>
+    <irGenerationExtension implementation="org.jetbrains.kotlin.parcelize.ParcelizeIrGeneratorExtension"/>
+    <syntheticResolveExtension implementation="org.jetbrains.kotlin.parcelize.ide.IdeParcelizeResolveExtension"/>
+    <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.parcelize.ParcelizeClinitClassBuilderInterceptorExtension"/>
+    <storageComponentContainerContributor implementation="org.jetbrains.kotlin.parcelize.ParcelizeDeclarationCheckerComponentContainerContributor"/>
+
+    <ultraLightClassModifierExtension implementation="org.jetbrains.kotlin.parcelize.ide.ParcelizeUltraLightClassModifierExtension"/>
+    <quickFixContributor implementation="org.jetbrains.kotlin.parcelize.ide.quickfixes.ParcelizeQuickFixContributor"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+    <projectResolve implementation="org.jetbrains.kotlin.parcelize.ide.ParcelizeProjectResolverExtension" order="last"/>
+  </extensions>
+</idea-plugin>
