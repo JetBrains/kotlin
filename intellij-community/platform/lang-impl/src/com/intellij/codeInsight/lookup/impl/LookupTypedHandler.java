@@ -32,6 +32,8 @@ import com.intellij.psi.util.PsiUtilBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.intellij.codeWithMe.ClientIdKt.isForeignClientOnServer;
+
 public class LookupTypedHandler extends TypedActionHandlerBase {
   private static final Logger LOG = Logger.getInstance(LookupTypedHandler.class);
 
@@ -44,7 +46,7 @@ public class LookupTypedHandler extends TypedActionHandlerBase {
     final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     PsiFile file = project == null ? null : PsiUtilBase.getPsiFileInEditor(originalEditor, project);
 
-    if (file == null) {
+    if (file == null || isForeignClientOnServer()) {
       if (myOriginalHandler != null){
         myOriginalHandler.execute(originalEditor, charTyped, dataContext);
       }

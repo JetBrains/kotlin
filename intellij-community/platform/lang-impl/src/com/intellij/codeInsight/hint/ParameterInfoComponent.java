@@ -40,6 +40,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.intellij.codeWithMe.ClientIdKt.isForeignClientOnServer;
+
 public class ParameterInfoComponent extends JPanel {
   private Object[] myObjects;
   private int myCurrentParameterIndex;
@@ -98,7 +100,9 @@ public class ParameterInfoComponent extends JPanel {
     super(new BorderLayout());
     myRequestFocus = requestFocus;
 
-    if (!ApplicationManager.getApplication().isUnitTestMode() && !ApplicationManager.getApplication().isHeadlessEnvironment()) {
+    if (!ApplicationManager.getApplication().isUnitTestMode()
+        && !ApplicationManager.getApplication().isHeadlessEnvironment()
+        && !isForeignClientOnServer()) { //don't access ui for the foreign cwm clientIds
       JComponent editorComponent = editor.getComponent();
       JLayeredPane layeredPane = editorComponent.getRootPane().getLayeredPane();
       myWidthLimit = layeredPane.getWidth();
