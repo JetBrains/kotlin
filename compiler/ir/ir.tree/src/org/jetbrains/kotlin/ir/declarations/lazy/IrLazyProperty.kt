@@ -27,7 +27,7 @@ class IrLazyProperty(
     override val symbol: IrPropertySymbol,
     override val descriptor: PropertyDescriptor,
     override val name: Name,
-    override val visibility: Visibility,
+    override var visibility: Visibility,
     override val modality: Modality,
     override val isVar: Boolean,
     override val isConst: Boolean,

@@ -72,8 +72,11 @@ class Fir2IrLazySimpleFunction(
     override val name: Name
         get() = fir.name
 
-    override val visibility: Visibility
+    override var visibility: Visibility
         get() = fir.visibility
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     override val modality: Modality
         get() = fir.modality!!

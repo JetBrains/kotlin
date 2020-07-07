@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -27,8 +30,6 @@ interface IrClass :
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor
-
-    override var visibility: Visibility
 
     val kind: ClassKind
     var modality: Modality
@@ -54,16 +55,3 @@ fun IrClass.addMember(member: IrDeclaration) {
 fun IrClass.addAll(members: List<IrDeclaration>) {
     declarations.addAll(members)
 }
-
-fun IrClass.getInstanceInitializerMembers() =
-    declarations.filter {
-        when (it) {
-            is IrAnonymousInitializer ->
-                true
-            is IrProperty ->
-                it.backingField?.initializer != null
-            is IrField ->
-                it.initializer != null
-            else -> false
-        }
-    }
