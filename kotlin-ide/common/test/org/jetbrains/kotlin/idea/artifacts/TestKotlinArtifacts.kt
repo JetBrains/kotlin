@@ -215,7 +215,7 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     }
 
     override val kotlinCompiler: File by lazy {
-        findLibrary(MAVEN_REPOSITORY, "org_jetbrains_kotlin_kotlin_compiler.xml", "org.jetbrains.kotlin", "kotlin-compiler")
+        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_compiler.xml", "org.jetbrains.kotlin", "kotlin-compiler-for-ide")
     }
 
     override val trove4j: File by lazy {
@@ -223,7 +223,7 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     }
 
     override val kotlinDaemon: File by lazy {
-        findLibrary(MAVEN_REPOSITORY, "org_jetbrains_kotlin_kotlin_daemon_1_3_61.xml", "org.jetbrains.kotlin", "kotlin-daemon")
+        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_daemon.xml", "org.jetbrains.kotlin", "kotlin-daemon")
     }
 
     override val kotlinScriptingCompiler: File by lazy {

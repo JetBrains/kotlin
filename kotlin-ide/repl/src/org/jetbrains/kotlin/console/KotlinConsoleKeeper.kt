@@ -7,15 +7,17 @@ package org.jetbrains.kotlin.console
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinClassPath
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.JavaParametersBuilder
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.subplatformsOfType
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
@@ -43,6 +45,8 @@ class KotlinConsoleKeeper(val project: Project) {
     }
 
     companion object {
+        private val LOG = Logger.getInstance("#org.jetbrains.kotlin.console")
+
         @JvmStatic
         fun getInstance(project: Project) = ServiceManager.getService(project, KotlinConsoleKeeper::class.java)
 
@@ -56,9 +60,15 @@ class KotlinConsoleKeeper(val project: Project) {
             javaParameters.vmParametersList.add("-Dkotlin.repl.ideMode=true")
 
             javaParameters.classPath.apply {
-                val kotlinPaths = PathUtil.kotlinPathsForIdeaPlugin
-                addAll(kotlinPaths.compilerClasspath.map { it.absolutePath })
-                add(kotlinPaths.compilerPath.absolutePath)
+                val artifacts = KotlinArtifacts.getInstance()
+                val computeClassPath = KotlinClassPath.CompilerWithScripting.computeClassPath(artifacts)
+                addAll(computeClassPath.map {
+                    val absolutePath = it.absolutePath
+                    if (!it.exists()) {
+                        LOG.warn("Compiler dependency classpath $absolutePath does not exist")
+                    }
+                    absolutePath
+                })
             }
 
             if (module != null) {
@@ -75,6 +85,8 @@ class KotlinConsoleKeeper(val project: Project) {
                     javaParameters.programParametersList.add(it.description)
                 }
             }
+
+            javaParameters.programParametersList.add("-no-stdlib")
 
             return javaParameters.toCommandLine()
         }

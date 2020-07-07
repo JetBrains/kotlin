@@ -102,11 +102,6 @@
       <option name="url" value="https://cache-redirector.jetbrains.com/clojars.org/repo" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="905ce807-c0fe-49c0-822b-33d31d6616e4" />
-      <option name="name" value="905ce807-c0fe-49c0-822b-33d31d6616e4" />
-      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/space" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="9806f76a-efa6-41d4-b0b2-8085ceedaa45" />
       <option name="name" value="9806f76a-efa6-41d4-b0b2-8085ceedaa45" />
       <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/space" />
@@ -115,6 +110,11 @@
       <option name="id" value="caeb020e-2153-45d1-b752-f56d66968d08" />
       <option name="name" value="caeb020e-2153-45d1-b752-f56d66968d08" />
       <option name="url" value="https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-ide-plugin-dependencies" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="550d8dde-346b-4007-864a-5305c03fcf0d" />
+      <option name="name" value="550d8dde-346b-4007-864a-5305c03fcf0d" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-dev" />
     </remote-repository>
   </component>
 </project>
