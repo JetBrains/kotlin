@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.ui.ComponentUtil
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriverConfiguration
 import com.jetbrains.cidr.execution.testing.CidrLauncher
+import com.jetbrains.kmm.ios.XcFileExtensions.isXcFile
 import com.jetbrains.konan.KonanBundle
 import com.jetbrains.konan.WorkspaceXML
 import com.jetbrains.mobile.execution.*
@@ -126,9 +127,7 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
     }
 
     private fun findNearestXcProject(): File? =
-        File(project.basePath).walk().maxDepth(2).firstOrNull { f ->
-            f.extension == XcFileExtensions.project || f.extension == XcFileExtensions.workspace
-        }
+        File(project.basePath).walk().maxDepth(2).firstOrNull { it.isXcFile() }
 
     private fun openGradlePropertiesFile() {
         val propFile = File(project.basePath, "gradle.properties")

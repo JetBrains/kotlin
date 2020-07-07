@@ -11,7 +11,11 @@ import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.openapi.util.Key
 import com.intellij.util.concurrency.AppExecutorUtil
-import kotlinx.coroutines.*
+import com.jetbrains.kmm.ios.XcFileExtensions.isXcFile
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -96,20 +100,17 @@ class XcProjectFile(
         private val DISPATCHER = AppExecutorUtil.createBoundedApplicationPoolExecutor(javaClass.simpleName, 1).asCoroutineDispatcher()
 
         fun findXcProjectFile(location: File): XcProjectFile? {
-            val candidates = mutableListOf<File>()
+            if (location.isXcFile()) return XcProjectFile(location)
 
-            if (location.isFile) {
-                candidates.add(location)
-            } else if (location.isDirectory) {
-                for (file in (location.listFiles() ?: emptyArray())) {
-                    when (file.extension) {
-                        XcFileExtensions.workspace -> candidates.add(0, file) // workspaces are preferable
-                        XcFileExtensions.project -> candidates.add(file)
-                    }
-                }
-            }
+            val candidates = location.walk()
+                .maxDepth(1)
+                .filter { it.isXcFile() }
+                .toList()
 
-            return candidates.firstOrNull()?.let { XcProjectFile(it) }
+            val file = candidates.firstOrNull { it.extension == XcFileExtensions.workspace } // workspaces are preferable
+                ?: candidates.firstOrNull()
+
+            return file?.let { XcProjectFile(it) }
         }
     }
 }
@@ -117,4 +118,7 @@ class XcProjectFile(
 internal object XcFileExtensions {
     const val project = "xcodeproj"
     const val workspace = "xcworkspace"
+
+    internal fun File.isXcFile(): Boolean =
+        extension == workspace || extension == project
 }
