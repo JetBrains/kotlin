@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -2353,7 +2354,18 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     // Create object { i32, void ()*, i8* } { i32 1, void ()* @ctorFunction, i8* null }
 
     fun createGlobalCtor(ctorFunction: LLVMValueRef): ConstPointer {
-        val priority = kImmInt32One
+        val priority = if (context.config.target.family == Family.MINGW) {
+            // Workaround MinGW bug. Using this value makes the compiler generate
+            // '.ctors' section instead of '.ctors.XXXXX', which can't be recognized by ld
+            // when string table is too long.
+            // More details: https://youtrack.jetbrains.com/issue/KT-39548
+            Int32(65535).llvm
+            // Note: this difference in priorities doesn't actually make initializers
+            // platform-dependent, because handling priorities for initializers
+            // from different object files is platform-dependent anyway.
+        } else {
+            kImmInt32One
+        }
         val data     = kNullInt8Ptr
         val argList  = cValuesOf(priority, ctorFunction, data)
         val ctorItem = LLVMConstNamedStruct(kCtorType, argList, 3)!!
