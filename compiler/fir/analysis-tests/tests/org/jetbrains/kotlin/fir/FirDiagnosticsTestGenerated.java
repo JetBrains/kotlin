@@ -1989,6 +1989,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/kt37327.kt");
         }
 
+        @TestMetadata("kt39000.kt")
+        public void testKt39000() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/kt39000.kt");
+        }
+
         @TestMetadata("multipleCasts.kt")
         public void testMultipleCasts() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/multipleCasts.kt");

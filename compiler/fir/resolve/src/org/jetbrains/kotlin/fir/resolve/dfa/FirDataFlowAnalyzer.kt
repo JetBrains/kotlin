@@ -411,6 +411,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             leftIsNullable -> processEqNull(node, leftOperand, operation.invert())
             rightIsNullable -> processEqNull(node, rightOperand, operation.invert())
         }
+
+        if (operation == FirOperation.IDENTITY || operation == FirOperation.NOT_IDENTITY) {
+            processIdentity(node, leftOperand, rightOperand, operation)
+        }
     }
 
     private fun processEqNull(node: OperatorCallNode, operand: FirExpression, operation: FirOperation) {
@@ -441,6 +445,28 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 //            flow.addImplication((expressionVariable eq !isEq) implies (operandVariable typeEq nullableNothing))
 //            flow.addImplication((expressionVariable notEq !isEq) implies (operandVariable typeNotEq nullableNothing))
         }
+        node.flow = flow
+    }
+
+    private fun processIdentity(node: OperatorCallNode, leftOperand: FirExpression, rightOperand: FirExpression, operation: FirOperation) {
+        val flow = node.flow
+        val expressionVariable = variableStorage.getOrCreateVariable(node.previousFlow, node.fir)
+        val leftOperandVariable = variableStorage.getOrCreateVariable(node.previousFlow, leftOperand)
+        val rightOperandVariable = variableStorage.getOrCreateVariable(node.previousFlow, rightOperand)
+        val leftOperandType = leftOperand.coneType
+        val rightOperandType = rightOperand.coneType
+        val isEq = operation.isEq()
+
+        if (leftOperandVariable.isReal()) {
+            flow.addImplication((expressionVariable eq isEq) implies (leftOperandVariable typeEq rightOperandType))
+            flow.addImplication((expressionVariable notEq isEq) implies (leftOperandVariable typeNotEq rightOperandType))
+        }
+
+        if (rightOperandVariable.isReal()) {
+            flow.addImplication((expressionVariable eq isEq) implies (rightOperandVariable typeEq leftOperandType))
+            flow.addImplication((expressionVariable notEq isEq) implies (rightOperandVariable typeNotEq leftOperandType))
+        }
+
         node.flow = flow
     }
 
