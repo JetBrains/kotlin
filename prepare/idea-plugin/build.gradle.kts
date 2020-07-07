@@ -138,6 +138,7 @@ val libraryProjects = listOf(
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
     ":plugins:android-extensions-compiler",
+    ":plugins:parcelize:parcelize-compiler",
     ":kotlinx-serialization-compiler-plugin",
     ":idea:ide-common"
 )
@@ -199,6 +200,7 @@ dependencies {
     gradleToolingModel(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":plugins:kapt3-idea")) { isTransitive = false }
     gradleToolingModel(project(":plugins:android-extensions-ide")) { isTransitive = false }
+    gradleToolingModel(project(":plugins:parcelize:parcelize-ide")) { isTransitive = false }
     gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":allopen-ide-plugin")) { isTransitive = false }
 

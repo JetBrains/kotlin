@@ -321,6 +321,7 @@ include ":compiler:fir:cones",
 include ":idea:idea-frontend-fir:idea-fir-low-level-api"
 
 include ":plugins:parcelize:parcelize-compiler",
+        ":plugins:parcelize:parcelize-ide",
         ":plugins:parcelize:parcelize-runtime",
         ":kotlin-parcelize-compiler"
 
