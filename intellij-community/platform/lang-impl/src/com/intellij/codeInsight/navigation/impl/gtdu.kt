@@ -18,7 +18,7 @@ internal interface GTDUActionData {
 
   fun ctrlMouseInfo(): CtrlMouseInfo
 
-  fun result(): GTDUActionResult
+  fun result(): GTDUActionResult?
 }
 
 /**
@@ -63,5 +63,12 @@ internal fun GTDActionData.toGTDUActionData(): GTDUActionData? {
 
 private class ShowUsagesGTDUActionData(private val targetData: TargetData) : GTDUActionData {
   override fun ctrlMouseInfo(): CtrlMouseInfo = targetData.ctrlMouseInfo()
-  override fun result(): GTDUActionResult = GTDUActionResult.SU(targetData.targets)
+  override fun result(): GTDUActionResult? = targetData.targets.let { targets ->
+    if (targets.isEmpty()) {
+      null
+    }
+    else {
+      GTDUActionResult.SU(targets)
+    }
+  }
 }
