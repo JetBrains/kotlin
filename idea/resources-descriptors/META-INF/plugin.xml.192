@@ -79,9 +79,6 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
         <implementation-class>org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Factory</implementation-class>
       </component>
       <component>
-        <implementation-class>org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsPass$Companion$Factory</implementation-class>
-      </component>
-      <component>
         <implementation-class>org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory</implementation-class>
         <skipForDefaultProject/>
       </component>
