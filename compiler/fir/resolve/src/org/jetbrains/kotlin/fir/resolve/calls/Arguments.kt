@@ -308,7 +308,8 @@ internal fun Candidate.resolveArgument(
 
 private fun Candidate.prepareExpectedType(session: FirSession, argument: FirExpression, parameter: FirValueParameter?): ConeKotlinType? {
     if (parameter == null) return null
-    if (parameter.returnTypeRef is FirILTTypeRefPlaceHolder) return argument.resultType.coneType
+    if (parameter.returnTypeRef is FirILTTypeRefPlaceHolder && argument.resultType is FirResolvedTypeRef)
+        return argument.resultType.coneType
     val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
     val expectedType = getExpectedTypeWithSAMConversion(session, argument, basicExpectedType) ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
