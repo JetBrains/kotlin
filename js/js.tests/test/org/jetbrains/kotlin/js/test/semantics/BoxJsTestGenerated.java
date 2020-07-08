@@ -1173,6 +1173,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/delegation/delegationExtensionPropertyDelegated.kt");
         }
 
+        @TestMetadata("delegationToExternaInterface.kt")
+        public void testDelegationToExternaInterface() throws Exception {
+            runTest("js/js.translator/testData/box/delegation/delegationToExternaInterface.kt");
+        }
+
         @TestMetadata("jsNamePropertyDelegation.kt")
         public void testJsNamePropertyDelegation() throws Exception {
             runTest("js/js.translator/testData/box/delegation/jsNamePropertyDelegation.kt");
