@@ -58,11 +58,20 @@ dependencies {
     testImplementation(intellijPluginDep("gradle"))
 
     testImplementation(projectTests(":idea"))
+    testImplementation(projectTests(":idea:idea-gradle"))
     testImplementation(projectTests(":idea:idea-test-framework"))
     testImplementation(projectTests(":idea:idea-new-project-wizard"))
     testImplementation(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
 
     testRuntimeOnly(toolsJar())
+    testRuntimeOnly(project(":allopen-ide-plugin"))
+    testRuntimeOnly(project(":kotlin-gradle-statistics"))
+    testRuntimeOnly(project(":kotlin-scripting-idea"))
+    testRuntimeOnly(project(":kotlinx-serialization-ide-plugin"))
+    testRuntimeOnly(project(":noarg-ide-plugin"))
+    testRuntimeOnly(project(":plugins:kapt3-idea"))
+    testRuntimeOnly(project(":plugins:annotation-based-compiler-plugins-ide-support"))
+    testRuntimeOnly(project(":sam-with-receiver-ide-plugin"))
 }
 
 
