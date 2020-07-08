@@ -11,7 +11,10 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import org.jetbrains.kotlin.fir.FirRenderer
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
@@ -20,7 +23,12 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
@@ -159,3 +167,63 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
     }
 }
 
+/**
+ * Copy pasted from compiler test source root [org.jetbrains.kotlin.fir.java.JavaClassRenderingKt#renderJavaClass].
+ * We don't want to depend on any compiler test module. So this copy-paster is a temp workaround
+ */
+private fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: FirSession) {
+    val memberScope = javaClass.buildUseSiteMemberScope(session, ScopeSession())
+
+    val staticScope = javaClass.scopeProvider.getStaticScope(javaClass, session, ScopeSession())
+
+    if (memberScope == null && staticScope == null) {
+        javaClass.accept(renderer, null)
+    } else {
+        renderer.visitMemberDeclaration(javaClass)
+        renderer.renderSupertypes(javaClass)
+        renderer.renderInBraces {
+            val renderedDeclarations = mutableListOf<FirDeclaration>()
+            for (declaration in javaClass.declarations) {
+                if (declaration in renderedDeclarations) continue
+
+                val scopeToUse =
+                    if (declaration is FirCallableMemberDeclaration<*> && declaration.status.isStatic)
+                        staticScope
+                    else
+                        memberScope
+
+                when (declaration) {
+                    is FirJavaConstructor -> scopeToUse!!.processDeclaredConstructors { symbol ->
+                        val enhanced = symbol.fir
+                        if (enhanced !in renderedDeclarations) {
+                            enhanced.accept(renderer, null)
+                            renderer.newLine()
+                            renderedDeclarations += enhanced
+                        }
+                    }
+                    is FirJavaMethod -> scopeToUse!!.processFunctionsByName(declaration.name) { symbol ->
+                        val enhanced = symbol.fir
+                        if (enhanced !in renderedDeclarations) {
+                            enhanced.accept(renderer, null)
+                            renderer.newLine()
+                            renderedDeclarations += enhanced
+                        }
+                    }
+                    is FirJavaField -> scopeToUse!!.processPropertiesByName(declaration.name) { symbol ->
+                        val enhanced = symbol.fir
+                        if (enhanced !in renderedDeclarations) {
+                            enhanced.accept(renderer, null)
+                            renderer.newLine()
+                            renderedDeclarations += enhanced
+                        }
+                    }
+                    else -> {
+                        declaration.accept(renderer, null)
+                        renderer.newLine()
+                        renderedDeclarations += declaration
+                    }
+                }
+            }
+        }
+    }
+}
