@@ -54,11 +54,11 @@ internal class DelegatedMemberGenerator(
 
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.
     fun generate(irField: IrField, subClass: IrClass) {
-        val superClass = (irField.type as IrSimpleTypeImpl)?.classOrNull?.owner ?: return
+        val superClass = (irField.type as IrSimpleTypeImpl).classOrNull?.owner ?: return
         val superClassId = superClass.classId ?: return
-        superClass.declarations?.filter {
+        superClass.declarations.filter {
             it.isDelegatable() && !subClass.declarations.any { decl -> isOverriding(irBuiltIns, decl, it) }
-        }?.forEach {
+        }.forEach {
             if (it is IrSimpleFunction) {
                 val firFunction = declarationStorage.findOverriddenFirFunction(it, superClassId) ?: return
                 val function = generateDelegatedFunction(subClass, irField, it, firFunction)
@@ -87,7 +87,7 @@ internal class DelegatedMemberGenerator(
     private fun IrSimpleFunction.hasDefaultImplementation(): Boolean {
         var realFunction: IrSimpleFunction? = this
         while (realFunction != null && realFunction.isFakeOverride) {
-            realFunction = realFunction.overriddenSymbols?.firstOrNull()?.owner
+            realFunction = realFunction.overriddenSymbols.firstOrNull()?.owner
         }
         return realFunction != null
                 && (realFunction.modality != Modality.ABSTRACT && realFunction.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
@@ -125,7 +125,7 @@ internal class DelegatedMemberGenerator(
                 descriptor.bind(this)
                 declarationStorage.enterScope(this)
                 this.parent = subClass
-                overriddenSymbols += superFunction.symbol
+                overriddenSymbols = listOf(superFunction.symbol)
                 dispatchReceiverParameter = declareThisReceiverParameter(symbolTable, subClass.defaultType, origin)
                 // TODO: type parameters from superFunctions and type substitution when super interface types are generic
                 superFunction.valueParameters.forEach { valueParameter ->
