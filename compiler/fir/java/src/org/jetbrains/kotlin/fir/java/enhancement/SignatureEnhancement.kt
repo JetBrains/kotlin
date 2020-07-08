@@ -98,7 +98,6 @@ class FirSignatureEnhancement(
                     isVar = firElement.isVar
                     isStatic = firElement.isStatic
                     annotations += firElement.annotations
-                    this.isEnumEntry = isEnumEntry
                 }
                 return symbol
             }

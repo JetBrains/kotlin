@@ -212,7 +212,6 @@ class JavaSymbolProvider(
                                 returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
                                 isVar = !javaField.isFinal
                                 isStatic = javaField.isStatic
-                                isEnumEntry = javaField.isEnumEntry
                                 addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
                             }
                         }
