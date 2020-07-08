@@ -74,9 +74,9 @@ private const val mutesPackageName = "org.jetbrains.kotlin.test.mutes"
 // FIX ME WHEN BUNCH as36 REMOVED
 internal enum class Scope(val id: String?, val localDBPath: File, val isBuildType: Boolean) {
     COMMON(System.getProperty("$mutesPackageName.tests.project.id"), File("$databaseDir/mute-common.csv"), false),
-    IJ193(System.getProperty("$mutesPackageName.193"), File("$databaseDir/mute-platform.csv"), true),
+    IJ201(System.getProperty("$mutesPackageName.201"), File("$databaseDir/mute-platform.csv"), true),
+    IJ193(System.getProperty("$mutesPackageName.193"), File("$databaseDir/mute-platform.csv.193"), true),
     IJ192(System.getProperty("$mutesPackageName.192"), File("$databaseDir/mute-platform.csv.192"), true),
-    IJ201(System.getProperty("$mutesPackageName.201"), File("$databaseDir/mute-platform.csv.201"), true),
     AS36(System.getProperty("$mutesPackageName.as36"), File("$databaseDir/mute-platform.csv.as36"), true),
     AS40(System.getProperty("$mutesPackageName.as40"), File("$databaseDir/mute-platform.csv.as40"), true);
 }
