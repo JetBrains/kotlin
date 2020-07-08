@@ -184,7 +184,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Dplugin.path=${ideaPluginDir.absolutePath}"
         )
 
-        if (Platform[201].orHigher()) {
+        if (Platform[201].orHigher() && !isIntellijUltimateSdkAvailable()) {
             jvmArgs("-Didea.platform.prefix=Idea")
         }
 
