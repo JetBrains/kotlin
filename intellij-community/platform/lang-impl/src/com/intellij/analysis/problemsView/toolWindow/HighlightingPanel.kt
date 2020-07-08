@@ -47,11 +47,12 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
 
   override fun getToolWindowIcon(count: Int): Icon? {
     if (Experiments.getInstance().isFeatureEnabled("problems.view.project.errors.enabled")) return null
-    val problem = (treeModel.root as? HighlightingFileRoot)?.getChildren()?.any {
+    val root = treeModel.root as? HighlightingFileRoot ?: return Toolwindows.ToolWindowProblemsEmpty
+    val problem = root.getChildren(root.file).any {
       val severity = (it as? ProblemNode)?.severity
       severity != null && severity >= HighlightSeverity.ERROR.myVal
     }
-    return if (problem == true) Toolwindows.ToolWindowProblems else Toolwindows.ToolWindowProblemsEmpty
+    return if (problem) Toolwindows.ToolWindowProblems else Toolwindows.ToolWindowProblemsEmpty
   }
 
   override fun selectionChangedTo(selected: Boolean) {
