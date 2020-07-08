@@ -124,7 +124,7 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
       .filterMap(myActionManager::getAction)
       .transform(action -> {
         ActionWrapper wrapper = wrapAnAction(action, context);
-        Integer degree = calcElementWeight(action, matcher);
+        Integer degree = matcher.matchingDegree(pattern);
         return new MatchedValue(wrapper, pattern, degree == null ? 0 : degree.intValue()) {
           @NotNull
           @Override
