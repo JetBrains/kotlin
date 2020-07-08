@@ -24,7 +24,7 @@ class CirPackageNode(
     val classes: MutableMap<Name, CirClassNode> = THashMap()
     val typeAliases: MutableMap<Name, CirTypeAliasNode> = THashMap()
 
-    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T) =
+    override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T) =
         visitor.visitPackageNode(this, data)
 
     override fun toString() = CirNode.toString(this)

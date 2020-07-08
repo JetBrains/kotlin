@@ -13,7 +13,7 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
     val targetDeclarations: CommonizedGroup<T>
     val commonDeclaration: NullableLazyValue<R>
 
-    fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R
+    fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T): R
 
     companion object {
         inline val CirNode<*, *>.indexOfCommon: Int
