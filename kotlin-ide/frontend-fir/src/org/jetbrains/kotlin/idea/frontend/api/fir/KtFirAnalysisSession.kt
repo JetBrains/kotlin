@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirScopeProvider
@@ -38,11 +40,12 @@ import org.jetbrains.kotlin.psi.*
 class KtFirAnalysisSession
 @Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
 constructor(
-    private val element: KtElement
+    private val element: KtElement,
+    resolveState: FirModuleResolveState
 ) : KtAnalysisSession(element.project) {
     internal val token get() = validityToken
 
-    internal val firResolveState = LowLevelFirApiFacade.getResolveStateFor(element)
+    internal val firResolveState = resolveState
 
     internal val firSession get() = LowLevelFirApiFacade.getSessionFor(element, firResolveState)
 
@@ -67,7 +70,7 @@ constructor(
             firSymbolBuilder
         )
 
-    override val scopeProvider: KtScopeProvider = KtFirScopeProvider(token, firSymbolBuilder, firSession)
+    override val scopeProvider: KtScopeProvider = KtFirScopeProvider(token, firSymbolBuilder, firSession, firResolveState)
 
     init {
         assertIsValid()
@@ -127,6 +130,13 @@ constructor(
     override fun resolveCall(call: KtBinaryExpression): CallInfo? = withValidityAssertion {
         val firCall = call.getOrBuildFirSafe<FirFunctionCall>(firResolveState) ?: return null
         resolveCall(firCall, call)
+    }
+
+    override fun analyzeInContext(): KtAnalysisSession {
+        return KtFirAnalysisSession(
+            element,
+            LowLevelFirApiFacade.getResolveStateForCompletion(element, firResolveState as FirModuleResolveStateImpl)
+        )
     }
 
     override fun resolveCall(call: KtCallExpression): CallInfo? = withValidityAssertion {

@@ -11,6 +11,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.psi.KtElement
@@ -28,6 +29,6 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
     @Suppress("DEPRECATION")
     override fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession =
         analysisSessionByModuleInfoCache.value.getOrPut(contextElement.getModuleInfo()) {
-            KtFirAnalysisSession(contextElement)
+            KtFirAnalysisSession(contextElement, LowLevelFirApiFacade.getResolveStateFor(contextElement))
         }
 }
