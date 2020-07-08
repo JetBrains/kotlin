@@ -1605,6 +1605,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/micronaut/micronaut-core/intellij.micronaut.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/micronaut/micronaut-core/intellij.micronaut.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-api/intellij.microservices.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-api/intellij.microservices.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-config/intellij.microservices.config.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-config/intellij.microservices.config.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-test-utils/intellij.microservices.test.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-test-utils/intellij.microservices.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-uast/intellij.microservices.uast.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-uast/intellij.microservices.uast.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-ui/intellij.microservices.ui.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-ui/intellij.microservices.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/intellij.mobile.ide.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/intellij.mobile.ide.iml" />
