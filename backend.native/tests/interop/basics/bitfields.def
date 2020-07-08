@@ -15,6 +15,7 @@ struct __attribute__((packed)) S {
     int x5 : 5;
     long long x6 : 63;
     enum E x7: 2;
+    _Bool x8 : 1;
 };
 
 static long long getX1(struct S* s) { return s->x1; }
@@ -24,3 +25,4 @@ static unsigned int getX4(struct S* s) { return s->x4; }
 static int getX5(struct S* s) { return s->x5; }
 static long long getX6(struct S* s) { return s->x6; }
 static enum E getX7(struct S* s) { return s->x7; }
+static _Bool getX8(struct S* s) { return s->x8; }

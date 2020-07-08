@@ -34,6 +34,10 @@ fun main() {
         assertEquals(arr[0], 51)
         assertEquals(arr[1], 19)
 
+        assertEquals(true, b)
+        b = false
+        assertEquals(false, b)
+
         // Check that subtyping via Nothing-returning functions does not break compiler.
         assertFailsWith<NotImplementedError> {
             ui = TODO()
@@ -41,6 +45,7 @@ fun main() {
             next = TODO()
             e = TODO()
             nonStrict = TODO()
+            b = TODO()
         }
     }
     memScoped {

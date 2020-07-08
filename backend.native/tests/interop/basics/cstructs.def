@@ -19,6 +19,7 @@ struct Complex {
     enum E e;
     enum NonStrict nonStrict;
     int arr[2];
+    _Bool b;
 };
 
 struct __attribute__((packed)) Packed {
@@ -33,7 +34,8 @@ struct Complex produceComplex() {
 		    .next = 0,
 		    .e = R,
 		    .nonStrict = K,
-		    .arr = {-51, -19}
+		    .arr = {-51, -19},
+		    .b = 1
     };
     return complex;
 };
