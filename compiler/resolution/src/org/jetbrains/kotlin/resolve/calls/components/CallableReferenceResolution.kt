@@ -213,7 +213,7 @@ class CallableReferencesCandidateFactory(
         )
 
         if (needCompatibilityResolveForCallableReference(callableReferenceAdaptation, candidateDescriptor)) {
-            diagnostics.add(LowerPriorityToPreserveCompatibility)
+            markCandidateForCompatibilityResolve(diagnostics)
         }
 
         if (callableReferenceAdaptation != null &&

@@ -261,7 +261,7 @@ internal object CompatibilityOfTypeVariableAsIntersectionTypePart : ResolutionPa
 
             // See TypeBoundsImpl.computeValues(). It returns several values for such situation which means an error in OI
             if (callComponents.statelessCallbacks.isOldIntersectionIsEmpty(constraints.map { it.type }.cast())) {
-                addDiagnostic(LowerPriorityToPreserveCompatibility)
+                markCandidateForCompatibilityResolve()
                 return
             }
         }

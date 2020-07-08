@@ -1926,6 +1926,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/callableReference/noAmbiguityWhenAllReferencesAreInapplicable.kt");
             }
 
+            @TestMetadata("noCompatibilityResolveWithProressiveModeForNI.kt")
+            public void testNoCompatibilityResolveWithProressiveModeForNI() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/noCompatibilityResolveWithProressiveModeForNI.kt");
+            }
+
             @TestMetadata("noExceptionOnRedCodeWithArrayLikeCall.kt")
             public void testNoExceptionOnRedCodeWithArrayLikeCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/noExceptionOnRedCodeWithArrayLikeCall.kt");
