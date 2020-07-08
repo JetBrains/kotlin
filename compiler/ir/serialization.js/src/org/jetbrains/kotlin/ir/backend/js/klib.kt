@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
@@ -106,6 +107,7 @@ fun generateKLib(
     nopack: Boolean
 ) {
     val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
+    val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
 
     val icData: List<KotlinFileSerializedData>
     val serializedIrFiles: List<SerializedIrFile>?
@@ -140,7 +142,7 @@ fun generateKLib(
     val depsDescriptors =
         ModulesStructure(project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies)
 
-    val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory)
+    val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
     val irBuiltIns = psi2IrContext.irBuiltIns
     val functionFactory = IrFunctionFactory(irBuiltIns, psi2IrContext.symbolTable)
     irBuiltIns.functionFactory = functionFactory
@@ -222,10 +224,11 @@ fun loadIr(
 ): IrModuleInfo {
     val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
     val deserializeFakeOverrides = configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
+    val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
 
     when (mainModule) {
         is MainModule.SourceFiles -> {
-            val psi2IrContext: GeneratorContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory)
+            val psi2IrContext: GeneratorContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
             val irBuiltIns = psi2IrContext.irBuiltIns
             val symbolTable = psi2IrContext.symbolTable
             val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
@@ -294,9 +297,9 @@ fun loadIr(
     }
 }
 
-private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure, irFactory: IrFactory): GeneratorContext {
-    val (bindingContext, moduleDescriptor) = depsDescriptors.runAnalysis()
-    val psi2Ir = Psi2IrTranslator(depsDescriptors.compilerConfiguration.languageVersionSettings, Psi2IrConfiguration())
+private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure, irFactory: IrFactory, errorIgnorancePolicy: ErrorTolerancePolicy): GeneratorContext {
+    val (bindingContext, moduleDescriptor) = depsDescriptors.runAnalysis(errorIgnorancePolicy)
+    val psi2Ir = Psi2IrTranslator(depsDescriptors.compilerConfiguration.languageVersionSettings, Psi2IrConfiguration(errorIgnorancePolicy.allowErrors))
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
     return psi2Ir.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
 }
@@ -380,7 +383,7 @@ private class ModulesStructure(
 
     val builtInsDep = allDependencies.getFullList().find { it.isBuiltIns }
 
-    fun runAnalysis(): JsAnalysisResult {
+    fun runAnalysis(errorPolicy: ErrorTolerancePolicy): JsAnalysisResult {
         require(mainModule is MainModule.SourceFiles)
         val files = mainModule.files
 
@@ -403,10 +406,11 @@ private class ModulesStructure(
             /** can throw [IncrementalNextRoundException] */
             compareMetadataAndGoToNextICRoundIfNeeded(analysisResult, compilerConfiguration, files)
         }
-        if (analyzer.hasErrors() || analysisResult !is JsAnalysisResult)
+
+        if (!errorPolicy.allowErrors && analyzer.hasErrors() || analysisResult !is JsAnalysisResult)
             throw JsIrCompilationError
 
-        TopDownAnalyzerFacadeForJSIR.checkForErrors(files, analysisResult.bindingContext)
+        TopDownAnalyzerFacadeForJSIR.checkForErrors(files, analysisResult.bindingContext, errorPolicy)
 
         return analysisResult
     }
