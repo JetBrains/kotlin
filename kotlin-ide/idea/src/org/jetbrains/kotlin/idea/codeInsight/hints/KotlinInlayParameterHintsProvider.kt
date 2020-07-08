@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 @Suppress("UnstableApiUsage")
 class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
 
-    override fun getSupportedOptions(): List<Option> = listOf(HintType.PARAMETER_HINT.option)
-
     override fun getDefaultBlackList(): Set<String> =
         setOf(
             "*listOf", "*setOf", "*arrayOf", "*ListOf", "*SetOf", "*ArrayOf", "*assert*(*)", "*mapOf", "*MapOf",
@@ -64,10 +62,6 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
             return HintInfo.MethodInfo(fqName, paramNames)
         }
         return null
-    }
-
-    override fun getMainCheckboxText(): String {
-        return KotlinBundle.message("hints.settings.common.items")
     }
 }
 
