@@ -79,7 +79,8 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
             val typeContext = completionContext.session.typeContext
 
             if (explicitReceiverScope != null) {
-                yieldAll(explicitReceiverScope.collectCallableSymbols(packageIndexHelper))
+                val nonExtensionMembers = explicitReceiverScope.collectCallableSymbols(packageIndexHelper).filter { !it.isExtension }
+                yieldAll(nonExtensionMembers)
 
                 val allApplicableExtensions = allNonExplicitScopes
                     .flatMap { it.collectCallableSymbols(packageIndexHelper) }
