@@ -106,8 +106,8 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
         ReadAction
             .nonBlocking<List<VirtualFile>> {
                 FileBasedIndex.getInstance().getContainingFiles(
-                    ScriptTemplatesClassRootsIndex.KEY,
-                    ScriptTemplatesClassRootsIndex.VALUE,
+                    ScriptTemplatesClassRootsIndex.NAME,
+                    Unit,
                     GlobalSearchScope.allScope(project)
                 ).filterNotNull()
             }
