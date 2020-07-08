@@ -18,6 +18,16 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.*
 
 object CirTypeFactory {
+    object StandardTypes {
+        val ANY: CirClassType = createClassType(
+            classId = ANY_CID,
+            outerType = null,
+            visibility = DescriptorVisibilities.PUBLIC,
+            arguments = emptyList(),
+            isMarkedNullable = false
+        )
+    }
+
     private val classTypeInterner = Interner<CirClassType>()
     private val typeAliasTypeInterner = Interner<CirTypeAliasType>()
     private val typeParameterTypeInterner = Interner<CirTypeParameterType>()

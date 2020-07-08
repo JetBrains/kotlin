@@ -16,6 +16,14 @@ import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
 internal val DEPRECATED_ANNOTATION_FQN: FqName = FqName(Deprecated::class.java.name).intern()
 internal val DEPRECATED_ANNOTATION_CID: ClassId = internedClassId(DEPRECATED_ANNOTATION_FQN)
 
+internal val ANY_CID: ClassId = internedClassId(StandardNames.FqNames.any.toSafe().intern())
+private val NOTHING_CID: ClassId = internedClassId(StandardNames.FqNames.nothing.toSafe().intern())
+
+internal val SPECIAL_CLASS_WITHOUT_SUPERTYPES_CIDS = listOf(
+    ANY_CID,
+    NOTHING_CID
+)
+
 private val STANDARD_KOTLIN_PACKAGES = listOf(
     StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString(),
     "kotlinx"
