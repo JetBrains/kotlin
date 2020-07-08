@@ -17,11 +17,10 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 @Suppress("UnstableApiUsage")
-enum class HintType(private val showDesc: String, val doNotShowDesc: String, defaultEnabled: Boolean) {
+enum class HintType(private val showDesc: String, defaultEnabled: Boolean) {
 
     PROPERTY_HINT(
         KotlinBundle.message("hints.settings.types.property"),
-        KotlinBundle.message("hints.title.property.type.disabled"),
         false
     ) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
@@ -33,7 +32,6 @@ enum class HintType(private val showDesc: String, val doNotShowDesc: String, def
 
     LOCAL_VARIABLE_HINT(
         KotlinBundle.message("hints.settings.types.variable"),
-        KotlinBundle.message("hints.title.locals.type.disabled"),
         false
     ) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
@@ -48,7 +46,6 @@ enum class HintType(private val showDesc: String, val doNotShowDesc: String, def
 
     FUNCTION_HINT(
         KotlinBundle.message("hints.settings.types.return"),
-        KotlinBundle.message("hints.title.function.type.disabled"),
         false
     ) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
@@ -66,7 +63,6 @@ enum class HintType(private val showDesc: String, val doNotShowDesc: String, def
 
     PARAMETER_TYPE_HINT(
         KotlinBundle.message("hints.settings.types.parameter"),
-        KotlinBundle.message("hints.title.parameter.type.disabled"),
         false
     ) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
@@ -83,7 +79,6 @@ enum class HintType(private val showDesc: String, val doNotShowDesc: String, def
 
     PARAMETER_HINT(
         KotlinBundle.message("hints.title.argument.name.enabled"),
-        KotlinBundle.message("hints.title.argument.name.disabled"),
         true
     ) {
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
@@ -96,7 +91,6 @@ enum class HintType(private val showDesc: String, val doNotShowDesc: String, def
 
     LAMBDA_RETURN_EXPRESSION(
         KotlinBundle.message("hints.settings.lambda.return"),
-        KotlinBundle.message("hints.title.return.expression.disabled"),
         true
     ) {
         override fun isApplicable(elem: PsiElement) =
@@ -110,7 +104,6 @@ enum class HintType(private val showDesc: String, val doNotShowDesc: String, def
 
     LAMBDA_IMPLICIT_PARAMETER_RECEIVER(
         KotlinBundle.message("hints.settings.lambda.receivers.parameters"),
-        KotlinBundle.message("hints.title.implicit.parameters.disabled"),
         true
     ) {
         override fun isApplicable(elem: PsiElement) = elem is KtFunctionLiteral
@@ -125,7 +118,6 @@ enum class HintType(private val showDesc: String, val doNotShowDesc: String, def
 
     SUSPENDING_CALL(
         KotlinBundle.message("hints.settings.suspending"),
-        KotlinBundle.message("hints.title.suspend.calls.disabled"),
         false
     ) {
         override fun isApplicable(elem: PsiElement) = elem.isNameReferenceInCall() && ApplicationManager.getApplication().isInternal
