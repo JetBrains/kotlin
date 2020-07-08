@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.application.options.codeStyle;
 
@@ -18,7 +18,7 @@ import com.intellij.openapi.options.ex.Settings;
 import com.intellij.psi.codeStyle.CodeStyleScheme;
 import com.intellij.psi.codeStyle.CodeStyleSchemes;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.ui.components.labels.SwingActionLink;
+import com.intellij.ui.components.ActionLink;
 import com.intellij.util.concurrency.EdtExecutorService;
 import com.intellij.util.ui.JBDimension;
 import com.intellij.util.ui.JBUI;
@@ -143,7 +143,7 @@ public class CodeStyleMainPanel extends JPanel implements TabbedLanguageCodeStyl
 
   @NotNull
   private JComponent createLinkComponent() {
-    JLabel link = new SwingActionLink(mySetFromAction);
+    ActionLink link = new ActionLink(mySetFromAction);
     link.setVerticalAlignment(SwingConstants.BOTTOM);
 
     Box linkBox = new Box(BoxLayout.Y_AXIS);

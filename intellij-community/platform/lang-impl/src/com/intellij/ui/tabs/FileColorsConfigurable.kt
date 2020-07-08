@@ -23,7 +23,7 @@ import com.intellij.ui.ColorChooser.chooseColor
 import com.intellij.ui.ColorUtil.toHex
 import com.intellij.ui.FileColorManager
 import com.intellij.ui.ToolbarDecorator.createDecorator
-import com.intellij.ui.components.labels.LinkLabel
+import com.intellij.ui.components.ActionLink
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.ui.table.JBTable
@@ -105,7 +105,7 @@ class FileColorsConfigurable(project: Project) : SearchableConfigurable, NoScrol
     val south = JPanel(VerticalLayout(5))
     south.border = Borders.emptyTop(5)
     south.add(VerticalLayout.TOP, JLabel(message("settings.file.colors.description")))
-    south.add(VerticalLayout.TOP, LinkLabel.create(message("settings.file.colors.manage.scopes")) {
+    south.add(VerticalLayout.TOP, ActionLink(message("settings.file.colors.manage.scopes")) {
       EditScopesDialog.showDialog(manager.project, null, true)
     })
 
