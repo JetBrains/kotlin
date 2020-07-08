@@ -154,6 +154,7 @@ import org.jetbrains.kotlin.testGenerator.model.Patterns.KT_OR_KTS
 import org.jetbrains.kotlin.testGenerator.model.Patterns.KT_OR_KTS_WITHOUT_DOTS
 import org.jetbrains.kotlin.testGenerator.model.Patterns.KT_WITHOUT_DOTS
 import org.jetbrains.kotlin.testGenerator.model.Patterns.TEST
+import org.jetbrains.kotlin.testGenerator.model.Patterns.TXT
 import org.jetbrains.kotlin.testGenerator.model.Patterns.WS_KTS
 import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractProjectTemplateBuildFileGenerationTest
 import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractYamlBuildFileGenerationTest
@@ -829,17 +830,17 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         testClass<AbstractScriptConfigurationInsertImportOnPasteTest> {
             model(
                 "script/definition/imports",
-                testMethod = "doTestCopy",
+                testMethodName = "doTestCopy",
                 testClassName = "Copy",
-                extension = null,
-                recursive = false
+                pattern = DIRECTORY,
+                isRecursive = false
             )
             model(
                 "script/definition/imports",
-                testMethod = "doTestCut",
+                testMethodName = "doTestCut",
                 testClassName = "Cut",
-                extension = null,
-                recursive = false
+                pattern = DIRECTORY,
+                isRecursive = false
             )
         }
 
@@ -886,11 +887,11 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
 
         testClass<AbstractStdlibSymbolsBuildingTest> {
-            model("stdLibSymbols", extension = "txt")
+            model("stdLibSymbols", pattern = TXT)
         }
 
         testClass<AbstractSymbolPointerTest> {
-            model("symbolPointer", extension = "kt")
+            model("symbolPointer", pattern = KT)
         }
     }
 

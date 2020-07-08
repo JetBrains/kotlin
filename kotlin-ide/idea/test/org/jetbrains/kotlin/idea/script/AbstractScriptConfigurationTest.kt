@@ -61,15 +61,9 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         const val templatesSettings = "// TEMPLATES: "
     }
 
-    protected fun testDataFile(fileName: String): File = File(testDataPath, fileName)
-
-    protected fun testDataFile(): File = testDataFile(fileName())
-
     protected fun testPath(fileName: String = fileName()): String = testDataFile(fileName).toString()
 
     protected fun testPath(): String = testPath(fileName())
-
-    protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
     override fun getTestDataPath(): String {
         return this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()

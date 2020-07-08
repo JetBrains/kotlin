@@ -42,7 +42,7 @@ abstract class AbstractScriptConfigurationInsertImportOnPasteTest : AbstractScri
         val testFileText = FileUtil.loadFile(testFile, true)
         val noErrorsDump = InTextDirectivesUtils.isDirectiveDefined(testFileText, NO_ERRORS_DUMP_DIRECTIVE)
 
-        val scriptFile = configureScriptFile(testDataFile.path)
+        val scriptFile = configureScriptFile(File(testDataFile.path))
         if (!noErrorsDump) {
             val sourceFile = scriptFile.toKtFile()
             val dumpTextWithErrors = sourceFile.dumpTextWithErrors()

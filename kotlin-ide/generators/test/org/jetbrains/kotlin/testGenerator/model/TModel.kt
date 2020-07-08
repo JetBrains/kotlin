@@ -24,6 +24,7 @@ object Patterns {
 
     val TEST: Regex = forExtension("test")
     val KT: Regex = forExtension("kt")
+    val TXT: Regex = forExtension("txt")
     val KTS: Regex = forExtension("kts")
     val JAVA: Regex = forExtension("java")
     val WS_KTS: Regex = forExtension("ws.kts")
