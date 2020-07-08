@@ -82,11 +82,16 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
+    private fun MemberBuilder.deprecatedNonNullArrayFunction() {
+        deprecate("Use Kotlin compiler 1.4 to avoid deprecation warning.")
+        annotation("""@DeprecatedSinceKotlin(hiddenSince = "1.4")""")
+    }
+
     val f_contentEquals = fn("contentEquals(other: SELF)") {
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
-        annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+        deprecatedNonNullArrayFunction()
         infix(true)
         doc {
             """
@@ -247,7 +252,7 @@ object ArrayOps : TemplateGroupBase() {
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
-        annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+        deprecatedNonNullArrayFunction()
         doc {
             """
             Returns a string representation of the contents of the specified array as if it is [List].
@@ -369,7 +374,7 @@ object ArrayOps : TemplateGroupBase() {
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
-        annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+        deprecatedNonNullArrayFunction()
         doc {
             "Returns a hash code based on the contents of this array as if it is [List]."
         }
