@@ -2846,6 +2846,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/defaultParametersDontBox.kt");
         }
 
+        @TestMetadata("delegatedPropertyMangling.kt")
+        public void testDelegatedPropertyMangling() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/delegatedPropertyMangling.kt");
+        }
+
         @TestMetadata("equalsDoesNotBox.kt")
         public void testEqualsDoesNotBox() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/equalsDoesNotBox.kt");
