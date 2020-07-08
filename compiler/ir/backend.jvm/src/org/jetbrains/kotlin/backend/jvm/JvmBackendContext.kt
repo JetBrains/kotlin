@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.createFakeContinuation
-import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.lower.CollectionStubComputer
@@ -69,7 +68,7 @@ class JvmBackendContext(
     val methodSignatureMapper = MethodSignatureMapper(this)
 
     internal val innerClassesSupport = JvmInnerClassesSupport()
-    internal val declarationFactory = JvmDeclarationFactory(this, methodSignatureMapper, state.languageVersionSettings)
+    internal val cachedDeclarations = JvmCachedDeclarations(this, methodSignatureMapper, state.languageVersionSettings)
 
     override val mapping: Mapping = DefaultMapping()
 

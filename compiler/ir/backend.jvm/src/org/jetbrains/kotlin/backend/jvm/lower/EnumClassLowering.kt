@@ -79,7 +79,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
         }
 
         private fun buildEnumEntryField(enumEntry: IrEnumEntry): IrField =
-            context.declarationFactory.getFieldForEnumEntry(enumEntry).apply {
+            context.cachedDeclarations.getFieldForEnumEntry(enumEntry).apply {
                 initializer = IrExpressionBodyImpl(enumEntry.initializerExpression!!.expression.patchDeclarationParents(this))
                 annotations += enumEntry.annotations
             }

@@ -348,7 +348,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun IrBlockBodyBuilder.callInvokeSuspend(invokeSuspend: IrSimpleFunction, lambda: IrExpression): IrExpression {
         // SingletonReferencesLowering has finished a while ago, so `irUnit()` won't work anymore.
         val unitClass = context.irBuiltIns.unitClass
-        val unitField = this@AddContinuationLowering.context.declarationFactory.getFieldForObjectInstance(unitClass.owner)
+        val unitField = this@AddContinuationLowering.context.cachedDeclarations.getFieldForObjectInstance(unitClass.owner)
         return irCallOp(invokeSuspend.symbol, invokeSuspend.returnType, lambda, irGetField(null, unitField))
     }
 

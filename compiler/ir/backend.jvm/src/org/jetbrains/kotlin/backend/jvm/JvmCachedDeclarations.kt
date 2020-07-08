@@ -3,14 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.descriptors
+package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createStaticFunctionWithReceivers
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
@@ -33,7 +31,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
-class JvmDeclarationFactory(
+class JvmCachedDeclarations(
     private val context: JvmBackendContext,
     private val methodSignatureMapper: MethodSignatureMapper,
     private val languageVersionSettings: LanguageVersionSettings
@@ -125,7 +123,7 @@ class JvmDeclarationFactory(
                     oldParent
                 annotations += oldField.annotations
                 initializer = oldField.initializer
-                    ?.replaceThisByStaticReference(this@JvmDeclarationFactory, oldParent, oldParent.thisReceiver!!)
+                    ?.replaceThisByStaticReference(this@JvmCachedDeclarations, oldParent, oldParent.thisReceiver!!)
                     ?.patchDeclarationParents(this) as IrExpressionBody?
                 origin = if (irProperty.parentAsClass.isCompanion) JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD else origin
             }
@@ -174,8 +172,8 @@ class JvmDeclarationFactory(
                 if (it.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY &&
                     !it.annotations.hasAnnotation(DeprecationResolver.JAVA_DEPRECATED)
                 ) {
-                    this@JvmDeclarationFactory.context.createIrBuilder(it.symbol).run {
-                        it.annotations += irCall(this@JvmDeclarationFactory.context.ir.symbols.javaLangDeprecatedConstructor)
+                    this@JvmCachedDeclarations.context.createIrBuilder(it.symbol).run {
+                        it.annotations += irCall(this@JvmCachedDeclarations.context.ir.symbols.javaLangDeprecatedConstructor)
                     }
                 }
             }
