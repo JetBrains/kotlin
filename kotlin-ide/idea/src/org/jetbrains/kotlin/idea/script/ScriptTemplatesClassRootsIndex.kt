@@ -13,52 +13,43 @@ import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_EXTE
 import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_PATH
 import java.io.DataInput
 import java.io.DataOutput
-import java.util.*
+
+object UnitKey : KeyDescriptor<Unit> {
+    override fun getHashCode(value: Unit) = 0
+    override fun isEqual(val1: Unit, val2: Unit) = true
+    override fun save(out: DataOutput, value: Unit?) = Unit
+    override fun read(`in`: DataInput) = Unit
+}
+
+abstract class FileListIndex :
+    ScalarIndexExtension<Unit>(),
+    DataIndexer<Unit, Void, FileContent> {
+
+    override fun getIndexer() = this
+    override fun getKeyDescriptor() = UnitKey
+    override fun dependsOnFileContent() = false
+    override fun map(inputData: FileContent) = mapOf(Unit to null)
+}
 
 class ScriptTemplatesClassRootsIndex :
-    ScalarIndexExtension<String>(),
-    FileBasedIndex.InputFilter, KeyDescriptor<String>,
-    DataIndexer<String, Void, FileContent> {
+    FileListIndex(),
+    FileBasedIndex.InputFilter {
 
     companion object {
-        val KEY = ID.create<String, Void>(ScriptTemplatesClassRootsIndex::class.java.canonicalName)
+        val NAME = ID.create<Unit, Void>(ScriptTemplatesClassRootsIndex::class.java.canonicalName)
         const val VALUE = "MY_VALUE"
-
         private val suffix = SCRIPT_DEFINITION_MARKERS_PATH.removeSuffix("/")
     }
 
-    override fun getName(): ID<String, Void> = KEY
-
-    override fun getIndexer(): DataIndexer<String, Void, FileContent> = this
-
-    override fun getKeyDescriptor(): KeyDescriptor<String> = this
-
-    override fun getInputFilter(): FileBasedIndex.InputFilter = this
-
-    override fun dependsOnFileContent() = false
-
-    override fun getVersion(): Int = 2
-
+    override fun getName() = NAME
+    override fun getVersion(): Int = 3
     override fun indexDirectories(): Boolean = false
+    override fun getInputFilter(): FileBasedIndex.InputFilter = this
 
     override fun acceptInput(file: VirtualFile): Boolean {
         val parent = file.parent ?: return false
         return parent.isDirectory
                 && parent.path.endsWith(suffix)
                 && file.path.endsWith(SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT)
-    }
-
-    override fun save(out: DataOutput, value: String) = IOUtil.writeUTF(out, value)
-
-    override fun read(input: DataInput): String? = IOUtil.readUTF(input)
-
-    override fun getHashCode(value: String): Int = value.hashCode()
-
-    override fun isEqual(val1: String?, val2: String?): Boolean {
-        return val1 == val2
-    }
-
-    override fun map(inputData: FileContent): Map<String?, Void?> {
-        return Collections.singletonMap(VALUE, null)
     }
 }
