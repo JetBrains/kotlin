@@ -5,13 +5,10 @@ class A {
 
 fun A.run(action: A.() -> Unit) {}
 
-fun test(a: A) {
+fun test() {
+    val a = A()
     a.run {
-
         <caret>
-
-        // remove this
-        Unit
     }
 }
 

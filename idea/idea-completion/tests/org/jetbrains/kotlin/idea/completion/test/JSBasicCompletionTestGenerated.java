@@ -2227,6 +2227,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/basic/common/primitiveCompletion"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("classExtensionFunctionExplicitReceiver.kt")
+            public void testClassExtensionFunctionExplicitReceiver() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/classExtensionFunctionExplicitReceiver.kt");
+            }
+
             @TestMetadata("classFieldsAndFunctions.kt")
             public void testClassFieldsAndFunctions() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/classFieldsAndFunctions.kt");
