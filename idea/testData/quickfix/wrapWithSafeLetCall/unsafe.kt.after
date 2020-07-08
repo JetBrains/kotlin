@@ -1,0 +1,7 @@
+// "Wrap with '?.let { ... }' call" "true"
+// WITH_RUNTIME
+fun foo(s: String) {}
+
+fun bar(s: String?) {
+    s?.let { foo(it.substring(1)) }
+}
