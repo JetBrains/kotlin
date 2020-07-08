@@ -375,20 +375,20 @@ private val localClassExtractionPhase = makeBodyLoweringPhase(
 )
 
 private val innerClassesLoweringPhase = makeDeclarationTransformerPhase(
-    ::InnerClassesLowering,
+    { context -> InnerClassesLowering(context, context.innerClassesSupport) },
     name = "InnerClassesLowering",
     description = "Capture outer this reference to inner class"
 )
 
 private val innerClassesMemberBodyLoweringPhase = makeBodyLoweringPhase(
-    ::InnerClassesMemberBodyLowering,
+    { context -> InnerClassesMemberBodyLowering(context, context.innerClassesSupport) },
     name = "InnerClassesMemberBody",
     description = "Replace `this` with 'outer this' field references",
     prerequisite = setOf(innerClassesLoweringPhase)
 )
 
 private val innerClassConstructorCallsLoweringPhase = makeBodyLoweringPhase(
-    ::InnerClassConstructorCallsLowering,
+    { context -> InnerClassConstructorCallsLowering(context, context.innerClassesSupport) },
     name = "InnerClassConstructorCallsLowering",
     description = "Replace inner class constructor invocation"
 )

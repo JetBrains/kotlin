@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.js.JsDeclarationFactory
+import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -52,7 +52,7 @@ class WasmBackendContext(
 
     override val mapping = JsMapping()
 
-    override val declarationFactory = JsDeclarationFactory(mapping)
+    val innerClassesSupport = JsInnerClassesSupport(mapping)
 
     val objectToGetInstanceFunction = mutableMapOf<IrClassSymbol, IrSimpleFunction>()
     override val internalPackageFqn = FqName("kotlin.wasm")
@@ -100,6 +100,3 @@ class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSym
     override val signature: IdSignature
         get() = error("Operation is unsupported")
 }
-
-
-

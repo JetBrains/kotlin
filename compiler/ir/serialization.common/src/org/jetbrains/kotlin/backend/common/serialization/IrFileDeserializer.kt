@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.overrides.PlatformFakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.peek
@@ -1363,7 +1363,7 @@ abstract class IrFileDeserializer(
         }
 
     private val allKnownDeclarationOrigins =
-        IrDeclarationOrigin::class.nestedClasses.toList() + DeclarationFactory.FIELD_FOR_OUTER_THIS::class
+        IrDeclarationOrigin::class.nestedClasses.toList() + InnerClassesSupport.FIELD_FOR_OUTER_THIS::class
 
     private val declarationOriginIndex =
         allKnownDeclarationOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }

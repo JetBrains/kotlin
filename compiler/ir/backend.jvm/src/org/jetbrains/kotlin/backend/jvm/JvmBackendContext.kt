@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.lower.CollectionStubComputer
+import org.jetbrains.kotlin.backend.jvm.lower.JvmInnerClassesSupport
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.MemoizedInlineClassReplacements
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -67,8 +68,8 @@ class JvmBackendContext(
     val typeMapper = IrTypeMapper(this)
     val methodSignatureMapper = MethodSignatureMapper(this)
 
-    override val declarationFactory: JvmDeclarationFactory =
-        JvmDeclarationFactory(this, methodSignatureMapper, state.languageVersionSettings)
+    internal val innerClassesSupport = JvmInnerClassesSupport()
+    internal val declarationFactory = JvmDeclarationFactory(this, methodSignatureMapper, state.languageVersionSettings)
 
     override val mapping: Mapping = DefaultMapping()
 

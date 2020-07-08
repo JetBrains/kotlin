@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.js
+package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.getOrPut
-import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.name.Name
 
-class JsDeclarationFactory(mapping: JsMapping) : DeclarationFactory {
+class JsInnerClassesSupport(mapping: JsMapping) : InnerClassesSupport {
     private val outerThisFieldSymbols = mapping.outerThisFieldSymbols
     private val innerClassConstructors = mapping.innerClassConstructors
     private val originalInnerClassPrimaryConstructorByClass = mapping.originalInnerClassPrimaryConstructorByClass
@@ -36,7 +36,7 @@ class JsDeclarationFactory(mapping: JsMapping) : DeclarationFactory {
                     ?: throw AssertionError("No containing class for inner class ${innerClass.dump()}")
 
                 buildField {
-                    origin = DeclarationFactory.FIELD_FOR_OUTER_THIS
+                    origin = InnerClassesSupport.FIELD_FOR_OUTER_THIS
                     name = Name.identifier("\$this")
                     type = outerClass.defaultType
                     visibility = Visibilities.PROTECTED

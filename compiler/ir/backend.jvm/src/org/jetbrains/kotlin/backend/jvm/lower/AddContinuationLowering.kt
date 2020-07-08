@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -427,7 +428,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     addField {
                         name = Name.identifier("this$0")
                         type = it.type
-                        origin = DeclarationFactory.FIELD_FOR_OUTER_THIS
+                        origin = InnerClassesSupport.FIELD_FOR_OUTER_THIS
                         visibility = JavaVisibilities.PACKAGE_VISIBILITY
                         isFinal = true
                     }

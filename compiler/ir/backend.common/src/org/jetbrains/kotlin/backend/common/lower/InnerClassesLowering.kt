@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irSetField
@@ -23,24 +22,30 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class InnerClassesLowering(val context: BackendContext) : DeclarationTransformer {
+interface InnerClassesSupport {
+    object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS", isSynthetic = true)
 
+    fun getOuterThisField(innerClass: IrClass): IrField
+    fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructor
+    fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor?
+}
+
+class InnerClassesLowering(val context: BackendContext, private val innerClassesSupport: InnerClassesSupport) : DeclarationTransformer {
     override fun lower(irFile: IrFile) {
         runPostfix(true).toFileLoweringPass().lower(irFile)
     }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-
         if (declaration is IrClass && declaration.isInner) {
             stageController.unrestrictDeclarationListsAccess {
-                declaration.declarations += context.declarationFactory.getOuterThisField(declaration)
+                declaration.declarations += innerClassesSupport.getOuterThisField(declaration)
             }
         } else if (declaration is IrConstructor) {
             val irClass = declaration.parentAsClass
             if (!irClass.isInner) return null
 
             val newConstructor = lowerConstructor(declaration)
-            val oldConstructorParameterToNew = context.primaryConstructorParameterMap(declaration)
+            val oldConstructorParameterToNew = innerClassesSupport.primaryConstructorParameterMap(declaration)
             for ((oldParam, newParam) in oldConstructorParameterToNew.entries) {
                 newParam.defaultValue = oldParam.defaultValue?.let { oldDefault ->
                     IrExpressionBodyImpl(oldDefault.startOffset, oldDefault.endOffset) {
@@ -56,11 +61,11 @@ class InnerClassesLowering(val context: BackendContext) : DeclarationTransformer
     }
 
     private fun lowerConstructor(irConstructor: IrConstructor): IrConstructor {
-        val loweredConstructor = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(irConstructor)
+        val loweredConstructor = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(irConstructor)
         val outerThisParameter = loweredConstructor.valueParameters[0]
 
         val irClass = irConstructor.parentAsClass
-        val parentThisField = context.declarationFactory.getOuterThisField(irClass)
+        val parentThisField = innerClassesSupport.getOuterThisField(irClass)
 
         val blockBody = irConstructor.body as? IrBlockBody ?: throw AssertionError("Unexpected constructor body: ${irConstructor.body}")
 
@@ -79,7 +84,7 @@ class InnerClassesLowering(val context: BackendContext) : DeclarationTransformer
             }
             patchDeclarationParents(loweredConstructor)
 
-            val oldConstructorParameterToNew = context.primaryConstructorParameterMap(irConstructor)
+            val oldConstructorParameterToNew = innerClassesSupport.primaryConstructorParameterMap(irConstructor)
             transformChildrenVoid(VariableRemapper(oldConstructorParameterToNew))
         }
 
@@ -88,10 +93,10 @@ class InnerClassesLowering(val context: BackendContext) : DeclarationTransformer
 
 }
 
-private fun BackendContext.primaryConstructorParameterMap(originalConstructor: IrConstructor): Map<IrValueParameter, IrValueParameter> {
+private fun InnerClassesSupport.primaryConstructorParameterMap(originalConstructor: IrConstructor): Map<IrValueParameter, IrValueParameter> {
     val oldConstructorParameterToNew = HashMap<IrValueParameter, IrValueParameter>()
 
-    val loweredConstructor = declarationFactory.getInnerClassConstructorWithOuterThisParameter(originalConstructor)
+    val loweredConstructor = getInnerClassConstructorWithOuterThisParameter(originalConstructor)
 
     originalConstructor.valueParameters.forEach { old ->
         oldConstructorParameterToNew[old] = loweredConstructor.valueParameters[old.index + 1]
@@ -101,7 +106,7 @@ private fun BackendContext.primaryConstructorParameterMap(originalConstructor: I
 }
 
 
-class InnerClassesMemberBodyLowering(val context: BackendContext) : BodyLoweringPass {
+class InnerClassesMemberBodyLowering(val context: BackendContext, private val innerClassesSupport: InnerClassesSupport) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, true)
     }
@@ -123,9 +128,9 @@ class InnerClassesMemberBodyLowering(val context: BackendContext) : BodyLowering
         if (!irClass.isInner) return
 
         if (container is IrField || container is IrAnonymousInitializer || container is IrValueParameter) {
-            val primaryConstructor = context.declarationFactory.getInnerClassOriginalPrimaryConstructorOrNull(irClass)
+            val primaryConstructor = innerClassesSupport.getInnerClassOriginalPrimaryConstructorOrNull(irClass)
             if (primaryConstructor != null) {
-                val oldConstructorParameterToNew = context.primaryConstructorParameterMap(primaryConstructor)
+                val oldConstructorParameterToNew = innerClassesSupport.primaryConstructorParameterMap(primaryConstructor)
                 irBody.transformChildrenVoid(VariableRemapper(oldConstructorParameterToNew))
             }
         }
@@ -133,7 +138,7 @@ class InnerClassesMemberBodyLowering(val context: BackendContext) : BodyLowering
         irBody.fixThisReference(irClass, container)
     }
 
-    fun IrBody.fixThisReference(irClass: IrClass, container: IrDeclaration) {
+    private fun IrBody.fixThisReference(irClass: IrClass, container: IrDeclaration) {
         val enclosingFunction: IrDeclaration? = run {
             var current: IrDeclaration? = container
             while (current != null && current !is IrFunction) {
@@ -171,7 +176,7 @@ class InnerClassesMemberBodyLowering(val context: BackendContext) : BodyLowering
                         // an attempt to access the field. Good thing we have a local variable as well.
                         IrGetValueImpl(startOffset, endOffset, function.valueParameters[0].symbol, origin)
                     } else {
-                        val outerThisField = context.declarationFactory.getOuterThisField(innerClass)
+                        val outerThisField = innerClassesSupport.getOuterThisField(innerClass)
                         IrGetFieldImpl(startOffset, endOffset, outerThisField.symbol, outerThisField.type, irThis, origin)
                     }
                     innerClass = innerClass.parentAsClass
@@ -182,13 +187,7 @@ class InnerClassesMemberBodyLowering(val context: BackendContext) : BodyLowering
     }
 }
 
-val innerClassConstructorCallsPhase = makeIrFilePhase(
-    ::InnerClassConstructorCallsLowering,
-    name = "InnerClassConstructorCalls",
-    description = "Handle constructor calls for inner classes"
-)
-
-class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLoweringPass {
+class InnerClassConstructorCallsLowering(val context: BackendContext, val innerClassesSupport: InnerClassesSupport) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
@@ -199,7 +198,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                 val parent = callee.owner.parentAsClass
                 if (!parent.isInner) return expression
 
-                val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(callee.owner)
+                val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(callee.owner)
                 val classTypeParametersCount = expression.typeArgumentsCount - expression.constructorTypeArgumentsCount
                 val newCall = IrConstructorCallImpl.fromSymbolOwner(
                     expression.startOffset, expression.endOffset, expression.type, newCallee.symbol, classTypeParametersCount, expression.origin
@@ -221,7 +220,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                 val classConstructor = expression.symbol.owner
                 if (!classConstructor.parentAsClass.isInner) return expression
 
-                val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(classConstructor)
+                val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(classConstructor)
                 val newCall = IrDelegatingConstructorCallImpl(
                     expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, newCallee.symbol,
                     typeArgumentsCount = expression.typeArgumentsCount,
@@ -243,10 +242,10 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                 val parent = callee.owner.parent as? IrClass ?: return expression
                 if (!parent.isInner) return expression
 
-                val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(callee.owner)
+                val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(callee.owner)
                 val newReflectionTarget = expression.reflectionTarget?.let { reflectionTarget ->
                     if (reflectionTarget is IrConstructorSymbol) {
-                        context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(reflectionTarget.owner)
+                        innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(reflectionTarget.owner)
                     } else {
                         null
                     }
@@ -282,4 +281,3 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
         })
     }
 }
-

@@ -190,17 +190,23 @@ private val interfacePhase = makeIrFilePhase(
 )
 
 private val innerClassesPhase = makeIrFilePhase(
-    ::InnerClassesLowering,
+    { context -> InnerClassesLowering(context, context.innerClassesSupport) },
     name = "InnerClasses",
     description = "Add 'outer this' fields to inner classes",
     prerequisite = setOf(localDeclarationsPhase)
 )
 
 private val innerClassesMemberBodyPhase = makeIrFilePhase(
-    ::InnerClassesMemberBodyLowering,
+    { context -> InnerClassesMemberBodyLowering(context, context.innerClassesSupport) },
     name = "InnerClassesMemberBody",
     description = "Replace `this` with 'outer this' field references",
     prerequisite = setOf(innerClassesPhase)
+)
+
+private val innerClassConstructorCallsPhase = makeIrFilePhase<JvmBackendContext>(
+    { context -> InnerClassConstructorCallsLowering(context, context.innerClassesSupport) },
+    name = "InnerClassConstructorCalls",
+    description = "Handle constructor calls for inner classes"
 )
 
 private val staticInitializersPhase = makeIrFilePhase(
