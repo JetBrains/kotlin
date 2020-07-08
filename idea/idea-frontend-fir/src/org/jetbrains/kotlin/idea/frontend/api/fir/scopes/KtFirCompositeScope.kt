@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.idea.frontend.api.ValidityOwnerByValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
@@ -45,7 +46,7 @@ class KtFirCompositeScope(
         }
     }
 
-    override fun getCallableSymbols(): Sequence<KtSymbol> = withValidityAssertion {
+    override fun getCallableSymbols(): Sequence<KtCallableSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getCallableSymbols()) }
         }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import org.jetbrains.kotlin.name.FqName
 
-sealed class KtFunctionLikeSymbol : KtTypedSymbol, KtSymbolWithKind {
+sealed class KtFunctionLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtSymbolWithKind {
     abstract val valueParameters: List<KtParameterSymbol>
 }
 

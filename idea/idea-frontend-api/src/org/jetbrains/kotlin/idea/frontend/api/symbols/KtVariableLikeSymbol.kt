@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import org.jetbrains.kotlin.name.FqName
 
-abstract class KtVariableLikeSymbol : KtTypedSymbol, KtNamedSymbol, KtSymbolWithKind
+abstract class KtVariableLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtNamedSymbol, KtSymbolWithKind
 
 abstract class KtEnumEntrySymbol : KtVariableLikeSymbol() {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER

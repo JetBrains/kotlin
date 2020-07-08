@@ -16,7 +16,7 @@ interface KtScope : ValidityOwner {
 
 
     fun getAllSymbols(): Sequence<KtSymbol>
-    fun getCallableSymbols(): Sequence<KtSymbol>
+    fun getCallableSymbols(): Sequence<KtCallableSymbol>
     fun getClassClassLikeSymbols(): Sequence<KtClassLikeSymbol>
 
     fun containsName(name: Name): Boolean
