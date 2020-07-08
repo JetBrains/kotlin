@@ -300,7 +300,8 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
         this.origin = origin
     }
 
-fun IrTypeParameterBuilder.build(): IrTypeParameter {
+@PublishedApi
+internal fun IrTypeParameterBuilder.buildTypeParameter(parent: IrDeclarationParent): IrTypeParameter {
     val wrappedDescriptor = WrappedTypeParameterDescriptor()
     return IrTypeParameterImpl(
         startOffset, endOffset, origin,
@@ -309,8 +310,15 @@ fun IrTypeParameterBuilder.build(): IrTypeParameter {
     ).also {
         wrappedDescriptor.bind(it)
         it.superTypes.addAll(superTypes)
+        it.parent = parent
     }
 }
+
+inline fun buildTypeParameter(parent: IrDeclarationParent, builder: IrTypeParameterBuilder.() -> Unit): IrTypeParameter =
+    IrTypeParameterBuilder().run {
+        builder()
+        buildTypeParameter(parent)
+    }
 
 inline fun IrTypeParametersContainer.addTypeParameter(builder: IrTypeParameterBuilder.() -> Unit): IrTypeParameter =
     IrTypeParameterBuilder().run {
@@ -318,9 +326,8 @@ inline fun IrTypeParametersContainer.addTypeParameter(builder: IrTypeParameterBu
         if (index == UNDEFINED_PARAMETER_INDEX) {
             index = typeParameters.size
         }
-        build().also { typeParameter ->
+        buildTypeParameter(this@addTypeParameter).also { typeParameter ->
             typeParameters += typeParameter
-            typeParameter.parent = this@addTypeParameter
         }
     }
 

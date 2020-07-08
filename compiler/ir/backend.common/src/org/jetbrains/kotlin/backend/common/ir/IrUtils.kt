@@ -16,13 +16,11 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
-import org.jetbrains.kotlin.ir.builders.declarations.IrTypeParameterBuilder
-import org.jetbrains.kotlin.ir.builders.declarations.build
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -31,7 +29,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -175,18 +172,15 @@ fun IrValueParameter.copyTo(
     }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrTypeParameter.copyToWithoutSuperTypes(
     target: IrTypeParametersContainer,
     index: Int = this.index,
     origin: IrDeclarationOrigin = this.origin
-): IrTypeParameter {
-    val descriptor = WrappedTypeParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
-    val symbol = IrTypeParameterSymbolImpl(descriptor)
-    return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, index, isReified, variance).also { copied ->
-        descriptor.bind(copied)
-        copied.parent = target
-    }
+): IrTypeParameter = buildTypeParameter(target) {
+    updateFrom(this@copyToWithoutSuperTypes)
+    this.name = this@copyToWithoutSuperTypes.name
+    this.origin = origin
+    this.index = index
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -637,15 +631,10 @@ private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
             contextType.name.asString()
         }
 
-        val newTypeParameter = IrTypeParameterBuilder().run {
+        newParameters.add(buildTypeParameter(this) {
             updateFrom(contextType)
             name = Name.identifier(newName)
-            build()
-        }.also {
-            it.parent = this
-        }
-
-        newParameters.add(newTypeParameter)
+        })
     }
 
     typeParameters = typeParameters + newParameters
