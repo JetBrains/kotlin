@@ -13,8 +13,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -28,6 +26,12 @@ import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.idea.fir.getFirOfClosestParent
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPossibleExtensionSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.isExtension
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex
@@ -35,12 +39,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 
 class KotlinFirCompletionContributor : CompletionContributor() {
     init {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(), KotlinFirCompletionProvider)
+//        extend(CompletionType.BASIC, PlatformPatterns.psiElement(), KotlinFirCompletionProvider)
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(), KotlinHighLevelApiContributor)
     }
 }
 
@@ -108,6 +114,62 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         }
     }
 
+}
+
+private object KotlinHighLevelApiContributor : CompletionProvider<CompletionParameters>() {
+
+    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+        val originalFile = parameters.originalFile as? KtFile ?: return
+
+        val reference = (parameters.position.parent as? KtSimpleNameExpression)?.mainReference ?: return
+        val nameExpression = reference.expression.takeIf { it !is KtLabelReferenceExpression } ?: return
+
+        val possibleReceiver = nameExpression.getQualifiedExpressionForSelector()?.receiverExpression
+
+        val originalSession = getAnalysisSessionFor(originalFile)
+        val sessionForCompletion = originalSession.analyzeInContext()
+        val scopeProvider = sessionForCompletion.scopeProvider
+
+        val (implicitScopes, implicitReceivers) = scopeProvider.getScopeContextForPosition(originalFile, nameExpression)
+
+        val typeOfPossibleReceiver = possibleReceiver?.let { sessionForCompletion.getKtExpressionType(it) }
+        val possibleReceiverScope = typeOfPossibleReceiver?.let { sessionForCompletion.scopeProvider.getScopeForType(it) }
+
+        fun addToCompletion(symbol: KtCallableSymbol) {
+            if (symbol !is KtNamedSymbol) return
+            result.addElement(LookupElementBuilder.create(symbol.name.asString()))
+        }
+
+        if (possibleReceiverScope != null) {
+            val nonExtensionMembers = possibleReceiverScope
+                .getCallableSymbols()
+                .filterNot { it.isExtension }
+                .toList()
+
+            val extensionNonMembers = implicitScopes
+                .getCallableSymbols()
+                .filter { it.isExtension && it.canBeCalledWith(listOf(typeOfPossibleReceiver)) }
+                .toList()
+
+            nonExtensionMembers.forEach(::addToCompletion)
+            extensionNonMembers.forEach(::addToCompletion)
+        } else {
+            val extensionNonMembers = implicitScopes
+                .getCallableSymbols()
+                .filter { !it.isExtension || it.canBeCalledWith(implicitReceivers) }
+
+            extensionNonMembers.forEach(::addToCompletion)
+        }
+
+        return
+    }
+}
+
+private fun KtCallableSymbol.canBeCalledWith(implicitReceivers: List<KtType>): Boolean {
+    require(this is KtPossibleExtensionSymbol && this.isExtension) { "This function should be called only on extensions!" }
+
+    val requiredReceiverType = receiverType ?: error("Receiver type should be present")
+    return implicitReceivers.any { it.isSubTypeOf(requiredReceiverType) }
 }
 
 private val FirCallableSymbol<*>.isExtension get() = fir.receiverTypeRef != null
