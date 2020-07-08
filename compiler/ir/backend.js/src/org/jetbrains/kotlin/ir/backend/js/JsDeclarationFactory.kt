@@ -9,28 +9,24 @@ import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.name.Name
 
 class JsDeclarationFactory(mapping: JsMapping) : DeclarationFactory {
-    private val singletonFieldDescriptors = mapping.singletonFieldDescriptors
     private val outerThisFieldSymbols = mapping.outerThisFieldSymbols
     private val innerClassConstructors = mapping.innerClassConstructors
     private val originalInnerClassPrimaryConstructorByClass = mapping.originalInnerClassPrimaryConstructorByClass
-
-    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField = TODO()
 
     override fun getOuterThisField(innerClass: IrClass): IrField =
         if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
@@ -39,28 +35,18 @@ class JsDeclarationFactory(mapping: JsMapping) : DeclarationFactory {
                 val outerClass = innerClass.parent as? IrClass
                     ?: throw AssertionError("No containing class for inner class ${innerClass.dump()}")
 
-
-                val name = Name.identifier("\$this")
-                val fieldType = outerClass.defaultType
-                val visibility = Visibilities.PROTECTED
-
-                createPropertyWithBackingField(name, visibility, innerClass, fieldType, DeclarationFactory.FIELD_FOR_OUTER_THIS)
+                buildField {
+                    origin = DeclarationFactory.FIELD_FOR_OUTER_THIS
+                    name = Name.identifier("\$this")
+                    type = outerClass.defaultType
+                    visibility = Visibilities.PROTECTED
+                    isFinal = true
+                    isExternal = false
+                    isStatic = false
+                }.also {
+                    it.parent = innerClass
+                }
             }
-        }
-
-    private fun createPropertyWithBackingField(
-        name: Name, visibility: Visibility, parent: IrClass, fieldType: IrType, origin: IrDeclarationOrigin
-    ): IrField =
-        buildField {
-            this.origin = origin
-            this.name = name
-            this.type = fieldType
-            this.visibility = visibility
-            this.isFinal = true
-            this.isExternal = false
-            this.isStatic = false
-        }.also {
-            it.parent = parent
         }
 
     override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructor {
@@ -107,18 +93,5 @@ class JsDeclarationFactory(mapping: JsMapping) : DeclarationFactory {
         newConstructor.valueParameters += newValueParameters
 
         return newConstructor
-    }
-
-    override fun getFieldForObjectInstance(singleton: IrClass): IrField =
-        singletonFieldDescriptors.getOrPut(singleton) {
-            createObjectInstanceFieldDescriptor(singleton, JsIrBuilder.SYNTHESIZED_DECLARATION)
-        }
-
-    private fun createObjectInstanceFieldDescriptor(singleton: IrClass, origin: IrDeclarationOrigin): IrField {
-        assert(singleton.kind == ClassKind.OBJECT) { "Should be an object: $singleton" }
-
-        val name = Name.identifier("INSTANCE")
-
-        return createPropertyWithBackingField(name, Visibilities.PUBLIC, singleton, singleton.defaultType, origin)
     }
 }

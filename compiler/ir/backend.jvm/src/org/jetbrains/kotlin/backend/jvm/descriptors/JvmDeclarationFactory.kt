@@ -47,7 +47,7 @@ class JvmDeclarationFactory(
     private val defaultImplsClasses = HashMap<IrClass, IrClass>()
     private val defaultImplsRedirections = HashMap<IrSimpleFunction, IrSimpleFunction>()
 
-    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
+    fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
         singletonFieldDeclarations.getOrPut(enumEntry) {
             buildField {
                 setSourceRange(enumEntry)
@@ -114,7 +114,7 @@ class JvmDeclarationFactory(
             metadata = oldConstructor.metadata
         }
 
-    override fun getFieldForObjectInstance(singleton: IrClass): IrField =
+    fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDeclarations.getOrPut(singleton) {
             val originalVisibility = singleton.visibility
             val isNotMappedCompanion = singleton.isCompanion && !isMappedIntrinsicCompanionObject(singleton.descriptor)
