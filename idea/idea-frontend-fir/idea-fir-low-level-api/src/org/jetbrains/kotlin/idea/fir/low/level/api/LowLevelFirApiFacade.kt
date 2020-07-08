@@ -9,10 +9,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -36,7 +36,7 @@ object LowLevelFirApiFacade {
 
     class FirCompletionContext internal constructor(
         val session: FirSession,
-        private val towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>,
+        private val towerDataContextForStatement: Map<FirStatement, FirTowerDataContext>,
         private val state: FirModuleResolveState,
     ) {
         fun getTowerDataContext(element: KtElement): FirTowerDataContext {
@@ -46,6 +46,12 @@ object LowLevelFirApiFacade {
 
                 if (mappedFir is FirStatement) {
                     towerDataContextForStatement[mappedFir]?.let { return it }
+                    for ((key, value) in towerDataContextForStatement) {
+                        // TODO Rework that
+                        if (key.psi == mappedFir.psi) {
+                            return value
+                        }
+                    }
                 }
                 current = current.parent
             }
