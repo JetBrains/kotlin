@@ -11,19 +11,17 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -183,23 +181,18 @@ object JsIrBuilder {
         isConst: Boolean = false,
         isLateinit: Boolean = false,
         initializer: IrExpression? = null
-    ): IrVariable {
-        val descriptor = WrappedVariableDescriptor()
-        return IrVariableImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            SYNTHESIZED_DECLARATION,
-            IrVariableSymbolImpl(descriptor),
-            Name.identifier(name),
-            type,
-            isVar,
-            isConst,
-            isLateinit
-        ).also {
-            descriptor.bind(it)
-            it.initializer = initializer
-            if (parent != null) it.parent = parent
-        }
+    ): IrVariable = buildVariable(
+        parent,
+        UNDEFINED_OFFSET,
+        UNDEFINED_OFFSET,
+        SYNTHESIZED_DECLARATION,
+        Name.identifier(name),
+        type,
+        isVar,
+        isConst,
+        isLateinit,
+    ).also {
+        it.initializer = initializer
     }
 
     fun buildBreak(type: IrType, loop: IrLoop) = IrBreakImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, loop)

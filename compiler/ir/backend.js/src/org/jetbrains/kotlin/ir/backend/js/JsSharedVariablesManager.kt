@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 
 class JsSharedVariablesManager(context: JsIrBackendContext) : SharedVariablesManager {
 
@@ -44,20 +45,14 @@ class JsSharedVariablesManager(context: JsIrBackendContext) : SharedVariablesMan
                 putValueArgument(0, initializer)
             }
 
-        val descriptor = WrappedVariableDescriptor()
-        return IrVariableImpl(
+        return buildVariable(
+            originalDeclaration.parent,
             originalDeclaration.startOffset,
             originalDeclaration.endOffset,
             originalDeclaration.origin,
-            IrVariableSymbolImpl(descriptor),
             originalDeclaration.name,
-            dynamicType,
-            isVar = false,
-            isConst = false,
-            isLateinit = false
+            dynamicType
         ).also {
-            descriptor.bind(it)
-            it.parent = originalDeclaration.parent
             it.initializer = irCall
         }
     }

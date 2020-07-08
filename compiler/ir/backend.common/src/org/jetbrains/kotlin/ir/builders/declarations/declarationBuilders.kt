@@ -337,3 +337,27 @@ fun IrTypeParametersContainer.addTypeParameter(name: String, upperBound: IrType,
         this.variance = variance
         this.superTypes.add(upperBound)
     }
+
+fun buildVariable(
+    parent: IrDeclarationParent?,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    type: IrType,
+    isVar: Boolean = false,
+    isConst: Boolean = false,
+    isLateinit: Boolean = false,
+): IrVariable {
+    val wrappedDescriptor = WrappedVariableDescriptor()
+    return IrVariableImpl(
+        startOffset, endOffset, origin,
+        IrVariableSymbolImpl(wrappedDescriptor),
+        name, type, isVar, isConst, isLateinit
+    ).also {
+        wrappedDescriptor.bind(it)
+        if (parent != null) {
+            it.parent = parent
+        }
+    }
+}
