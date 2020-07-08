@@ -31,16 +31,15 @@ class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDes
         return this
     }
 
-    private val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
-
-    private fun IrFunction.defaultArgumentFactory(descriptor: ValueParameterDescriptor): IrExpressionBody? {
+    private fun IrFunction.defaultArgumentFactory(parameter: IrValueParameter): IrExpressionBody? {
+        val descriptor = parameter.descriptor as ValueParameterDescriptor
         if (!descriptor.declaresDefaultValue()) return null
 
         val description = "Default Argument Value stub for ${descriptor.name}|${descriptor.index}"
-        return IrExpressionBodyImpl(IrErrorExpressionImpl(startOffset, endOffset, errorType, description))
+        return IrExpressionBodyImpl(IrErrorExpressionImpl(startOffset, endOffset, parameter.type, description))
     }
 
-    private val defaultFactoryReference: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody? = { defaultArgumentFactory(it) }
+    private val defaultFactoryReference: IrFunction.(IrValueParameter) -> IrExpressionBody? = { defaultArgumentFactory(it) }
 
     override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: IrDeclarationContainer?) {
         error("Unexpected declaration descriptor $descriptor")

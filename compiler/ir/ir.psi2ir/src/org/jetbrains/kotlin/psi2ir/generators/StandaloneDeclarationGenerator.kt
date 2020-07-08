@@ -133,7 +133,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
     protected fun generateValueParameterDeclarations(
         irFunction: IrFunction,
         functionDescriptor: FunctionDescriptor,
-        defaultArgumentFactory: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody?
+        defaultArgumentFactory: IrFunction.(IrValueParameter) -> IrExpressionBody?
     ) {
 
         // TODO: KtElements
@@ -150,14 +150,14 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         irFunction.valueParameters = functionDescriptor.valueParameters.map { valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
             declareParameter(valueParameterDescriptor, ktParameter, irFunction).also {
-                it.defaultValue = irFunction.defaultArgumentFactory(valueParameterDescriptor)
+                it.defaultValue = irFunction.defaultArgumentFactory(it)
             }
         }
     }
 
     fun generateConstructor(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassConstructorDescriptor, symbol: IrConstructorSymbol,
-        defaultArgumentFactory: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody? = { null }
+        defaultArgumentFactory: IrFunction.(IrValueParameter) -> IrExpressionBody? = { null }
     ): IrConstructor {
         val irConstructor = IrConstructorImpl(startOffset, endOffset, origin, symbol, IrUninitializedType, descriptor)
         irConstructor.metadata = MetadataSource.Function(descriptor)
@@ -178,7 +178,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
 
     fun generateSimpleFunction(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: FunctionDescriptor, symbol: IrSimpleFunctionSymbol,
-        defaultArgumentFactory: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody? = { null }
+        defaultArgumentFactory: IrFunction.(IrValueParameter) -> IrExpressionBody? = { null }
     ): IrSimpleFunction {
         val irFunction = IrFunctionImpl(startOffset, endOffset, origin, symbol, IrUninitializedType, descriptor)
         irFunction.metadata = MetadataSource.Function(descriptor)
