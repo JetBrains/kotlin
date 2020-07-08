@@ -118,7 +118,7 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
 
     @TestMetadata("InClassPropertyInitializer2.kt")
     public void testInClassPropertyInitializer2() throws Exception {
-        runTest("idea/testData/codeInsight/outOfBlock/InClassPropertyInitializer2.kt");
+        runTest("testData/codeInsight/outOfBlock/InClassPropertyInitializer2.kt");
     }
 
     @TestMetadata("InClassPropertyInitializerWithoutInference.kt")

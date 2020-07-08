@@ -41,7 +41,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
 
         @TestMetadata("getOperator.kt")
         public void testGetOperator() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/getOperator.kt");
+            runTest("testData/refactoring/inline/function/getOperator.kt");
         }
 
         @TestMetadata("InStringTemplates.kt")
@@ -51,17 +51,17 @@ public class InlineTestGenerated extends AbstractInlineTest {
 
         @TestMetadata("Kt19459.kt")
         public void testKt19459() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/Kt19459.kt");
+            runTest("testData/refactoring/inline/function/Kt19459.kt");
         }
 
         @TestMetadata("Kt30131.kt")
         public void testKt30131() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/Kt30131.kt");
+            runTest("testData/refactoring/inline/function/Kt30131.kt");
         }
 
         @TestMetadata("Kt39818.kt")
         public void testKt39818() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/Kt39818.kt");
+            runTest("testData/refactoring/inline/function/Kt39818.kt");
         }
 
         @TestMetadata("LocalCapturing.kt")
@@ -81,17 +81,17 @@ public class InlineTestGenerated extends AbstractInlineTest {
 
         @TestMetadata("NullableUnitReturnType.kt")
         public void testNullableUnitReturnType() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/NullableUnitReturnType.kt");
+            runTest("testData/refactoring/inline/function/NullableUnitReturnType.kt");
         }
 
         @TestMetadata("NullableUnitReturnType2.kt")
         public void testNullableUnitReturnType2() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/NullableUnitReturnType2.kt");
+            runTest("testData/refactoring/inline/function/NullableUnitReturnType2.kt");
         }
 
         @TestMetadata("NullableUnitReturnType3.kt")
         public void testNullableUnitReturnType3() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/NullableUnitReturnType3.kt");
+            runTest("testData/refactoring/inline/function/NullableUnitReturnType3.kt");
         }
 
         @TestMetadata("OuterClassReceiver.kt")
@@ -111,22 +111,22 @@ public class InlineTestGenerated extends AbstractInlineTest {
 
         @TestMetadata("ReferenceToCompanionInsideLambda.kt")
         public void testReferenceToCompanionInsideLambda() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/ReferenceToCompanionInsideLambda.kt");
+            runTest("testData/refactoring/inline/function/ReferenceToCompanionInsideLambda.kt");
         }
 
         @TestMetadata("ReferenceToCompanionInsideLambda2.kt")
         public void testReferenceToCompanionInsideLambda2() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/ReferenceToCompanionInsideLambda2.kt");
+            runTest("testData/refactoring/inline/function/ReferenceToCompanionInsideLambda2.kt");
         }
 
         @TestMetadata("ReferenceToReceiverInsideLambda.kt")
         public void testReferenceToReceiverInsideLambda() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/ReferenceToReceiverInsideLambda.kt");
+            runTest("testData/refactoring/inline/function/ReferenceToReceiverInsideLambda.kt");
         }
 
         @TestMetadata("ReferenceToReceiverInsideLambdaWithExplicitThis.kt")
         public void testReferenceToReceiverInsideLambdaWithExplicitThis() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/ReferenceToReceiverInsideLambdaWithExplicitThis.kt");
+            runTest("testData/refactoring/inline/function/ReferenceToReceiverInsideLambdaWithExplicitThis.kt");
         }
 
         @TestMetadata("ReturnNotInTheEnd.kt")
@@ -141,7 +141,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
 
         @TestMetadata("setOperator.kt")
         public void testSetOperator() throws Exception {
-            runTest("idea/testData/refactoring/inline/function/setOperator.kt");
+            runTest("testData/refactoring/inline/function/setOperator.kt");
         }
 
         @TestMetadata("TypeArguments.kt")
@@ -157,6 +157,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("UnitReturnType2.kt")
         public void testUnitReturnType2() throws Exception {
             runTest("testData/refactoring/inline/function/UnitReturnType2.kt");
+        }
+
+        @TestMetadata("UnitReturnType3.kt")
+        public void testUnitReturnType3() throws Exception {
+            runTest("testData/refactoring/inline/function/UnitReturnType3.kt");
+        }
+
+        @TestMetadata("UnitReturnType4.kt")
+        public void testUnitReturnType4() throws Exception {
+            runTest("testData/refactoring/inline/function/UnitReturnType4.kt");
         }
 
         @RunWith(JUnit3RunnerWithInners.class)
@@ -223,7 +233,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
 
             @TestMetadata("GenericTypeArgument.kt")
             public void testGenericTypeArgument() throws Exception {
-                runTest("idea/testData/refactoring/inline/function/expressionBody/GenericTypeArgument.kt");
+                runTest("testData/refactoring/inline/function/expressionBody/GenericTypeArgument.kt");
             }
 
             @TestMetadata("Lambda.kt")
@@ -429,32 +439,32 @@ public class InlineTestGenerated extends AbstractInlineTest {
 
             @TestMetadata("GenericTypeArgument.kt")
             public void testGenericTypeArgument() throws Exception {
-                runTest("idea/testData/refactoring/inline/function/returnAtEnd/GenericTypeArgument.kt");
+                runTest("testData/refactoring/inline/function/returnAtEnd/GenericTypeArgument.kt");
             }
 
             @TestMetadata("GenericTypeArgument2.kt")
             public void testGenericTypeArgument2() throws Exception {
-                runTest("idea/testData/refactoring/inline/function/returnAtEnd/GenericTypeArgument2.kt");
+                runTest("testData/refactoring/inline/function/returnAtEnd/GenericTypeArgument2.kt");
             }
 
             @TestMetadata("ImplicitGenericTypeInReturn.kt")
             public void testImplicitGenericTypeInReturn() throws Exception {
-                runTest("idea/testData/refactoring/inline/function/returnAtEnd/ImplicitGenericTypeInReturn.kt");
+                runTest("testData/refactoring/inline/function/returnAtEnd/ImplicitGenericTypeInReturn.kt");
             }
 
             @TestMetadata("ImplicitGenericTypeInReturnWithInvalidStatementBefore.kt")
             public void testImplicitGenericTypeInReturnWithInvalidStatementBefore() throws Exception {
-                runTest("idea/testData/refactoring/inline/function/returnAtEnd/ImplicitGenericTypeInReturnWithInvalidStatementBefore.kt");
+                runTest("testData/refactoring/inline/function/returnAtEnd/ImplicitGenericTypeInReturnWithInvalidStatementBefore.kt");
             }
 
             @TestMetadata("ImplicitGenericTypeInReturnWithOtherStatementBefore.kt")
             public void testImplicitGenericTypeInReturnWithOtherStatementBefore() throws Exception {
-                runTest("idea/testData/refactoring/inline/function/returnAtEnd/ImplicitGenericTypeInReturnWithOtherStatementBefore.kt");
+                runTest("testData/refactoring/inline/function/returnAtEnd/ImplicitGenericTypeInReturnWithOtherStatementBefore.kt");
             }
 
             @TestMetadata("ImplicitUnitGenericTypeInReturn.kt")
             public void testImplicitUnitGenericTypeInReturn() throws Exception {
-                runTest("idea/testData/refactoring/inline/function/returnAtEnd/ImplicitUnitGenericTypeInReturn.kt");
+                runTest("testData/refactoring/inline/function/returnAtEnd/ImplicitUnitGenericTypeInReturn.kt");
             }
 
             @TestMetadata("InnerFunction.kt")
@@ -469,7 +479,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
 
             @TestMetadata("Kt26705.kt")
             public void testKt26705() throws Exception {
-                runTest("idea/testData/refactoring/inline/function/returnAtEnd/Kt26705.kt");
+                runTest("testData/refactoring/inline/function/returnAtEnd/Kt26705.kt");
             }
 
             @TestMetadata("MultipleStatements.kt")

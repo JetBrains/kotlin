@@ -158,7 +158,7 @@ public class QuickDocProviderTestGenerated extends AbstractQuickDocProviderTest 
 
     @TestMetadata("OnEmptySecondaryConstructor.kt")
     public void testOnEmptySecondaryConstructor() throws Exception {
-        runTest("idea/testData/editor/quickDoc/OnEmptySecondaryConstructor.kt");
+        runTest("testData/editor/quickDoc/OnEmptySecondaryConstructor.kt");
     }
 
     @TestMetadata("OnEnumClassReference.kt")

@@ -68,12 +68,12 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
 
         @TestMetadata("ConflictWithUnresolvedName.kt")
         public void testConflictWithUnresolvedName() throws Exception {
-            runTest("idea/testData/editor/optimizeImports/common/ConflictWithUnresolvedName.kt");
+            runTest("testData/editor/optimizeImports/common/ConflictWithUnresolvedName.kt");
         }
 
         @TestMetadata("ConflictWithUnresolvedName2.kt")
         public void testConflictWithUnresolvedName2() throws Exception {
-            runTest("idea/testData/editor/optimizeImports/common/ConflictWithUnresolvedName2.kt");
+            runTest("testData/editor/optimizeImports/common/ConflictWithUnresolvedName2.kt");
         }
 
         @TestMetadata("CurrentPackage.kt")
@@ -128,7 +128,7 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
 
         @TestMetadata("IteratorFunction2.kt")
         public void testIteratorFunction2() throws Exception {
-            runTest("idea/testData/editor/optimizeImports/common/IteratorFunction2.kt");
+            runTest("testData/editor/optimizeImports/common/IteratorFunction2.kt");
         }
 
         @TestMetadata("KT11640.kt")
@@ -168,7 +168,7 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
 
         @TestMetadata("Kt32409.kt")
         public void testKt32409() throws Exception {
-            runTest("idea/testData/editor/optimizeImports/common/Kt32409.kt");
+            runTest("testData/editor/optimizeImports/common/Kt32409.kt");
         }
 
         @TestMetadata("MemberImports.kt")
@@ -213,7 +213,7 @@ public class JsOptimizeImportsTestGenerated extends AbstractJsOptimizeImportsTes
 
         @TestMetadata("UnresolvedImport2.kt")
         public void testUnresolvedImport2() throws Exception {
-            runTest("idea/testData/editor/optimizeImports/common/UnresolvedImport2.kt");
+            runTest("testData/editor/optimizeImports/common/UnresolvedImport2.kt");
         }
 
         @TestMetadata("WithAlias.kt")

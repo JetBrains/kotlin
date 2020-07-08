@@ -509,7 +509,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
         @TestMetadata("innerClassesFromSupertypes")
         public void testInnerClassesFromSupertypes() throws Exception {
-            runTest("jps-plugin/testData/incremental/pureKotlin/innerClassesFromSupertypes/");
+            runTest("testData/incremental/pureKotlin/innerClassesFromSupertypes/");
         }
 
         @TestMetadata("internalClassChanged")
@@ -1100,6 +1100,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
                 runTest("testData/incremental/withJava/other/defaultValueInConstructorAdded/");
             }
 
+            @TestMetadata("inlineFunctionWithJvmNameInClass")
+            public void testInlineFunctionWithJvmNameInClass() throws Exception {
+                runTest("testData/incremental/withJava/other/inlineFunctionWithJvmNameInClass/");
+            }
+
             @TestMetadata("inlineTopLevelFunctionWithJvmName")
             public void testInlineTopLevelFunctionWithJvmName() throws Exception {
                 runTest("testData/incremental/withJava/other/inlineTopLevelFunctionWithJvmName/");
@@ -1410,6 +1415,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
         @TestMetadata("inferredTypeChanged")
         public void testInferredTypeChanged() throws Exception {
             runTest("testData/incremental/classHierarchyAffected/inferredTypeChanged/");
+        }
+
+        @TestMetadata("interfaceAnyMethods")
+        public void testInterfaceAnyMethods() throws Exception {
+            runTest("testData/incremental/classHierarchyAffected/interfaceAnyMethods/");
         }
 
         @TestMetadata("lambdaParameterAffected")

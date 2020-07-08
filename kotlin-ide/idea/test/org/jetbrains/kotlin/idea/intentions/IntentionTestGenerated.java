@@ -4566,22 +4566,22 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("defaultArgument2.kt")
         public void testDefaultArgument2() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToReference/defaultArgument2.kt");
+            runTest("testData/intentions/convertLambdaToReference/defaultArgument2.kt");
         }
 
         @TestMetadata("defaultArgument3.kt")
         public void testDefaultArgument3() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToReference/defaultArgument3.kt");
+            runTest("testData/intentions/convertLambdaToReference/defaultArgument3.kt");
         }
 
         @TestMetadata("defaultArgument4.kt")
         public void testDefaultArgument4() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToReference/defaultArgument4.kt");
+            runTest("testData/intentions/convertLambdaToReference/defaultArgument4.kt");
         }
 
         @TestMetadata("defaultArgument5.kt")
         public void testDefaultArgument5() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToReference/defaultArgument5.kt");
+            runTest("testData/intentions/convertLambdaToReference/defaultArgument5.kt");
         }
 
         @TestMetadata("defaultBeforeLambda.kt")
@@ -4671,17 +4671,17 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("generic2.kt")
         public void testGeneric2() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToReference/generic2.kt");
+            runTest("testData/intentions/convertLambdaToReference/generic2.kt");
         }
 
         @TestMetadata("generic3.kt")
         public void testGeneric3() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToReference/generic3.kt");
+            runTest("testData/intentions/convertLambdaToReference/generic3.kt");
         }
 
         @TestMetadata("generic4.kt")
         public void testGeneric4() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToReference/generic4.kt");
+            runTest("testData/intentions/convertLambdaToReference/generic4.kt");
         }
 
         @TestMetadata("globalProperty.kt")
@@ -4836,7 +4836,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("suspendFunctionParameter3.kt")
         public void testSuspendFunctionParameter3() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToReference/suspendFunctionParameter3.kt");
+            runTest("testData/intentions/convertLambdaToReference/suspendFunctionParameter3.kt");
         }
 
         @TestMetadata("syntheticProperty.kt")
@@ -4911,7 +4911,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("unit2.kt")
         public void testUnit2() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToReference/unit2.kt");
+            runTest("testData/intentions/convertLambdaToReference/unit2.kt");
         }
 
         @TestMetadata("unwrap.kt")
@@ -6046,17 +6046,17 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("referencedFunctionWithDefaultArugment.kt")
         public void testReferencedFunctionWithDefaultArugment() throws Exception {
-            runTest("idea/testData/intentions/convertReferenceToLambda/referencedFunctionWithDefaultArugment.kt");
+            runTest("testData/intentions/convertReferenceToLambda/referencedFunctionWithDefaultArugment.kt");
         }
 
         @TestMetadata("referencedFunctionWithDefaultArugment2.kt")
         public void testReferencedFunctionWithDefaultArugment2() throws Exception {
-            runTest("idea/testData/intentions/convertReferenceToLambda/referencedFunctionWithDefaultArugment2.kt");
+            runTest("testData/intentions/convertReferenceToLambda/referencedFunctionWithDefaultArugment2.kt");
         }
 
         @TestMetadata("referencedFunctionWithDefaultArugment3.kt")
         public void testReferencedFunctionWithDefaultArugment3() throws Exception {
-            runTest("idea/testData/intentions/convertReferenceToLambda/referencedFunctionWithDefaultArugment3.kt");
+            runTest("testData/intentions/convertReferenceToLambda/referencedFunctionWithDefaultArugment3.kt");
         }
 
         @TestMetadata("simple.kt")
@@ -6428,7 +6428,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("overrideWithPlatformType.kt")
         public void testOverrideWithPlatformType() throws Exception {
-            runTest("idea/testData/intentions/convertToBlockBody/overrideWithPlatformType.kt");
+            runTest("testData/intentions/convertToBlockBody/overrideWithPlatformType.kt");
         }
 
         @TestMetadata("setter.kt")
@@ -13741,6 +13741,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("applicable_InIf.kt")
+        public void testApplicable_InIf() throws Exception {
+            runTest("testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_InIf.kt");
+        }
+
+        @TestMetadata("applicable_InIfElse.kt")
+        public void testApplicable_InIfElse() throws Exception {
+            runTest("testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_InIfElse.kt");
+        }
+
         @TestMetadata("applicable_cursofOverParamInInnerLiteral.kt")
         public void testApplicable_cursofOverParamInInnerLiteral() throws Exception {
             runTest("testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_cursofOverParamInInnerLiteral.kt");
@@ -13768,7 +13778,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("applicable_inWhenEntry.kt")
         public void testApplicable_inWhenEntry() throws Exception {
-            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_inWhenEntry.kt");
+            runTest("testData/intentions/replaceExplicitFunctionLiteralParamWithIt/applicable_inWhenEntry.kt");
         }
 
         @TestMetadata("applicable_nestedLiteralsNoUseInside.kt")
@@ -13783,12 +13793,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("notApplicable_InIf.kt")
         public void testNotApplicable_InIf() throws Exception {
-            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_InIf.kt");
+            runTest("testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_InIf.kt");
         }
 
         @TestMetadata("notApplicable_InIfElse.kt")
         public void testNotApplicable_InIfElse() throws Exception {
-            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_InIfElse.kt");
+            runTest("testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_InIfElse.kt");
         }
 
         @TestMetadata("notApplicable_alreadyUsesImplicitIt.kt")
@@ -13808,7 +13818,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("notApplicable_inWhenEntry.kt")
         public void testNotApplicable_inWhenEntry() throws Exception {
-            runTest("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_inWhenEntry.kt");
+            runTest("testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_inWhenEntry.kt");
         }
 
         @TestMetadata("notApplicable_itFromOuterLambda.kt")

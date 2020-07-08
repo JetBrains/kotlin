@@ -516,17 +516,17 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("expectAnnotation.kt")
         public void testExpectAnnotation() throws Exception {
-            runTest("idea/testData/quickfix/addDefaultConstructor/expectAnnotation.kt");
+            runTest("testData/quickfix/addDefaultConstructor/expectAnnotation.kt");
         }
 
         @TestMetadata("expectAnnotation2.kt")
         public void testExpectAnnotation2() throws Exception {
-            runTest("idea/testData/quickfix/addDefaultConstructor/expectAnnotation2.kt");
+            runTest("testData/quickfix/addDefaultConstructor/expectAnnotation2.kt");
         }
 
         @TestMetadata("expectAnnotation3.kt")
         public void testExpectAnnotation3() throws Exception {
-            runTest("idea/testData/quickfix/addDefaultConstructor/expectAnnotation3.kt");
+            runTest("testData/quickfix/addDefaultConstructor/expectAnnotation3.kt");
         }
 
         @TestMetadata("expectInterface.kt")
@@ -537,6 +537,34 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("interface.kt")
         public void testInterface() throws Exception {
             runTest("testData/quickfix/addDefaultConstructor/interface.kt");
+        }
+    }
+
+    @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/quickfix/addEqEqTrue")
+    public static class AddEqEqTrue extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("notBoolean.kt")
+        public void testNotBoolean() throws Exception {
+            runTest("testData/quickfix/addEqEqTrue/notBoolean.kt");
+        }
+
+        @TestMetadata("notBoolean2.kt")
+        public void testNotBoolean2() throws Exception {
+            runTest("testData/quickfix/addEqEqTrue/notBoolean2.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("testData/quickfix/addEqEqTrue/simple.kt");
+        }
+
+        @TestMetadata("simple2.kt")
+        public void testSimple2() throws Exception {
+            runTest("testData/quickfix/addEqEqTrue/simple2.kt");
         }
     }
 
@@ -5646,7 +5674,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("deprecatedSinceKotlinAndReplaceWith.kt")
         public void testDeprecatedSinceKotlinAndReplaceWith() throws Exception {
-            runTest("idea/testData/quickfix/deprecatedSymbolUsage/deprecatedSinceKotlinAndReplaceWith.kt");
+            runTest("testData/quickfix/deprecatedSymbolUsage/deprecatedSinceKotlinAndReplaceWith.kt");
         }
 
         @TestMetadata("deprecationLevel.kt")
@@ -5872,6 +5900,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("usageInDerivedClassGeneric.kt")
         public void testUsageInDerivedClassGeneric() throws Exception {
             runTest("testData/quickfix/deprecatedSymbolUsage/usageInDerivedClassGeneric.kt");
+        }
+
+        @TestMetadata("withInnerFunction.kt")
+        public void testWithInnerFunction() throws Exception {
+            runTest("testData/quickfix/deprecatedSymbolUsage/withInnerFunction.kt");
         }
 
         @RunWith(JUnit3RunnerWithInners.class)
@@ -6314,6 +6347,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
+            @TestMetadata("get.kt")
+            public void testGet() throws Exception {
+                runTest("testData/quickfix/deprecatedSymbolUsage/operatorCalls/get.kt");
+            }
+
             @TestMetadata("in.kt")
             public void testIn() throws Exception {
                 runTest("testData/quickfix/deprecatedSymbolUsage/operatorCalls/in.kt");
@@ -6326,7 +6364,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
             @TestMetadata("set.kt")
             public void testSet() throws Exception {
-                runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/set.kt");
+                runTest("testData/quickfix/deprecatedSymbolUsage/operatorCalls/set.kt");
             }
         }
 

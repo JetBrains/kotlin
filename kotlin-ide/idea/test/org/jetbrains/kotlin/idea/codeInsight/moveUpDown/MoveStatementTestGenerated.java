@@ -1298,7 +1298,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
 
         @TestMetadata("callArgsWithComment1.kt")
         public void testCallArgsWithComment1() throws Exception {
-            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgsWithComment1.kt");
+            runTest("testData/codeInsight/moveUpDown/parametersAndArguments/callArgsWithComment1.kt");
         }
 
         @TestMetadata("classParams1.kt")
@@ -1343,22 +1343,22 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
 
         @TestMetadata("classParamsWithComment1.kt")
         public void testClassParamsWithComment1() throws Exception {
-            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment1.kt");
+            runTest("testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment1.kt");
         }
 
         @TestMetadata("classParamsWithComment2.kt")
         public void testClassParamsWithComment2() throws Exception {
-            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment2.kt");
+            runTest("testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment2.kt");
         }
 
         @TestMetadata("classParamsWithComment3.kt")
         public void testClassParamsWithComment3() throws Exception {
-            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment3.kt");
+            runTest("testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment3.kt");
         }
 
         @TestMetadata("classParamsWithComment4.kt")
         public void testClassParamsWithComment4() throws Exception {
-            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment4.kt");
+            runTest("testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment4.kt");
         }
 
         @TestMetadata("funParams1.kt")

@@ -173,6 +173,16 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("testData/quickfix/autoImports/extensionFunctionImportImplicitReceiver.before.Main.kt");
         }
 
+        @TestMetadata("extensionPreferDeprecatedSinceApplicable.test")
+        public void testExtensionPreferDeprecatedSinceApplicable() throws Exception {
+            runTest("testData/quickfix/autoImports/extensionPreferDeprecatedSinceApplicable.test");
+        }
+
+        @TestMetadata("extensionPreferDeprecatedSinceNotApplicable.test")
+        public void testExtensionPreferDeprecatedSinceNotApplicable() throws Exception {
+            runTest("testData/quickfix/autoImports/extensionPreferDeprecatedSinceNotApplicable.test");
+        }
+
         @TestMetadata("extensionPropertyImport.before.Main.kt")
         public void testExtensionPropertyImport() throws Exception {
             runTest("testData/quickfix/autoImports/extensionPropertyImport.before.Main.kt");

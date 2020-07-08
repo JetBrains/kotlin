@@ -105,7 +105,7 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
 
         @TestMetadata("nestedClass")
         public void testNestedClass() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/nestedClass/");
+            runTest("testData/script/definition/highlighting/nestedClass/");
         }
 
         @TestMetadata("noResolver")

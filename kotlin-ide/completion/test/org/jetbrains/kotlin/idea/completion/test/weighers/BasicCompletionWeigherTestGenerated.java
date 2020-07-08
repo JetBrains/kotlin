@@ -58,7 +58,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
 
     @TestMetadata("DeprecatedSinceKotlinFun.kt")
     public void testDeprecatedSinceKotlinFun() throws Exception {
-        runTest("idea/idea-completion/testData/weighers/basic/DeprecatedSinceKotlinFun.kt");
+        runTest("testData/weighers/basic/DeprecatedSinceKotlinFun.kt");
     }
 
     @TestMetadata("DslCallWithExpectedType.kt")

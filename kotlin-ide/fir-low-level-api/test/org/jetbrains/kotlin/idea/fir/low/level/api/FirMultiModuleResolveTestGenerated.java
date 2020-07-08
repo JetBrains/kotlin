@@ -22,7 +22,5 @@ import org.junit.runner.RunWith;
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("../idea/testData/fir/multiModule")
 public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleResolveTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-    }
+
 }

@@ -4772,6 +4772,29 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/inspectionsLocal/incompleteDestructuringInspection")
+    public static class IncompleteDestructuringInspection extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("testData/inspectionsLocal/incompleteDestructuringInspection/basic.kt");
+        }
+
+        @TestMetadata("negative.kt")
+        public void testNegative() throws Exception {
+            runTest("testData/inspectionsLocal/incompleteDestructuringInspection/negative.kt");
+        }
+
+        @TestMetadata("underscore.kt")
+        public void testUnderscore() throws Exception {
+            runTest("testData/inspectionsLocal/incompleteDestructuringInspection/underscore.kt");
+        }
+    }
+
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/javaCollectionsStaticMethod")
     public static class JavaCollectionsStaticMethod extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
@@ -8115,22 +8138,22 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
         @TestMetadata("notRedundant4.kt")
         public void testNotRedundant4() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/notRedundant4.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/notRedundant4.kt");
         }
 
         @TestMetadata("notRedundant5.kt")
         public void testNotRedundant5() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/notRedundant5.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/notRedundant5.kt");
         }
 
         @TestMetadata("notRedundant6.kt")
         public void testNotRedundant6() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/notRedundant6.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/notRedundant6.kt");
         }
 
         @TestMetadata("notRedundant7.kt")
         public void testNotRedundant7() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/notRedundant7.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/notRedundant7.kt");
         }
 
         @TestMetadata("redundant1.kt")
@@ -8165,27 +8188,27 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
         @TestMetadata("unitReturnType.kt")
         public void testUnitReturnType() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/unitReturnType.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/unitReturnType.kt");
         }
 
         @TestMetadata("unitReturnType2.kt")
         public void testUnitReturnType2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/unitReturnType2.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/unitReturnType2.kt");
         }
 
         @TestMetadata("unitReturnType3.kt")
         public void testUnitReturnType3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/unitReturnType3.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/unitReturnType3.kt");
         }
 
         @TestMetadata("unitReturnType4.kt")
         public void testUnitReturnType4() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/unitReturnType4.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/unitReturnType4.kt");
         }
 
         @TestMetadata("unitReturnType5.kt")
         public void testUnitReturnType5() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/unitReturnType5.kt");
+            runTest("testData/inspectionsLocal/redundantUnitExpression/unitReturnType5.kt");
         }
     }
 
@@ -8883,12 +8906,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
         @TestMetadata("notApplicableSameNameVariable.kt")
         public void testNotApplicableSameNameVariable() throws Exception {
-            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableSameNameVariable.kt");
+            runTest("testData/inspectionsLocal/removeRedundantQualifierName/notApplicableSameNameVariable.kt");
         }
 
         @TestMetadata("notApplicableSameNameVariable2.kt")
         public void testNotApplicableSameNameVariable2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableSameNameVariable2.kt");
+            runTest("testData/inspectionsLocal/removeRedundantQualifierName/notApplicableSameNameVariable2.kt");
         }
 
         @TestMetadata("notApplicableThis.kt")
@@ -9011,17 +9034,17 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
         @TestMetadata("intArrayOfWithoutArguments.kt")
         public void testIntArrayOfWithoutArguments() throws Exception {
-            runTest("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOfWithoutArguments.kt");
+            runTest("testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOfWithoutArguments.kt");
         }
 
         @TestMetadata("intArrayOfWithoutArguments2.kt")
         public void testIntArrayOfWithoutArguments2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOfWithoutArguments2.kt");
+            runTest("testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOfWithoutArguments2.kt");
         }
 
         @TestMetadata("intArrayOfWithoutArguments3.kt")
         public void testIntArrayOfWithoutArguments3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOfWithoutArguments3.kt");
+            runTest("testData/inspectionsLocal/removeRedundantSpreadOperator/intArrayOfWithoutArguments3.kt");
         }
 
         @TestMetadata("literal.kt")
