@@ -62,8 +62,8 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation 'io.ktor:ktor-server-netty:1.2.6'
-                implementation 'io.ktor:ktor-html-builder:1.2.6'
+                implementation 'io.ktor:ktor-server-netty:1.3.2-KOTLIN_VERSION'
+                implementation 'io.ktor:ktor-html-builder:1.3.2-KOTLIN_VERSION'
                 implementation 'org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.1-KOTLIN_VERSION'
             }
         }
