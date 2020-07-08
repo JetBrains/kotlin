@@ -27,6 +27,9 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/resources-en" type="java-resource" />
     </content>
+    <content url="file://$MODULE_DIR$/../resources-descriptors">
+      <sourceFolder url="file://$MODULE_DIR$/../resources-descriptors" type="java-resource" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
