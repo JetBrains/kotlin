@@ -66,4 +66,22 @@ class KotlinReferencesTypeHintsProvider : KotlinAbstractHintsProvider<KotlinRefe
             else -> false
         }
     }
+
+    override val previewText: String? = """
+        val property = listOf(1, 2, 3).filter { num -> num % 2 == 0 }
+        
+        fun someFun(arg: Int) = print(arg)
+        
+        fun anotherFun(a: Int = 10, b: Int = 5): Int {
+            val variable = a + b
+            return variable * 2
+        }
+
+        fun yetAnotherFun() {
+            Stream.of(1, 2, 3)
+                .map { i -> i + 12 }
+                .filter { i -> i % 2 == 0 }
+                .collect(Collectors.toList())
+        }
+    """.trimIndent()
 }
