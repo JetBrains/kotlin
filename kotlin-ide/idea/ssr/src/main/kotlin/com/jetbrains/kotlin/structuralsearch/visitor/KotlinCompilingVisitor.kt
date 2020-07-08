@@ -232,6 +232,17 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         specifier.typeReference?.typeElement?.resetCountFilter()
     }
 
+    override fun visitTypeProjection(typeProjection: KtTypeProjection) {
+        super.visitTypeProjection(typeProjection)
+        val handler = getHandler(typeProjection)
+        if (handler is SubstitutionHandler) {
+            typeProjection.typeReference?.resetCountFilter()
+            typeProjection.typeReference?.typeElement?.resetCountFilter()
+            typeProjection.typeReference?.typeElement?.firstChild?.resetCountFilter()
+            typeProjection.typeReference?.typeElement?.firstChild?.firstChild?.resetCountFilter()
+        }
+    }
+
     override fun visitModifierList(list: KtModifierList) {
         super.visitModifierList(list)
         list.setAbsenceOfMatchHandlerIfApplicable(true)
@@ -250,6 +261,11 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     override fun visitTypeParameterList(list: KtTypeParameterList) {
         super.visitTypeParameterList(list)
         list.setAbsenceOfMatchHandlerIfApplicable()
+    }
+
+    override fun visitTypeArgumentList(typeArgumentList: KtTypeArgumentList) {
+        super.visitTypeArgumentList(typeArgumentList)
+        typeArgumentList.setAbsenceOfMatchHandlerIfApplicable()
     }
 
     override fun visitClassBody(classBody: KtClassBody) {
