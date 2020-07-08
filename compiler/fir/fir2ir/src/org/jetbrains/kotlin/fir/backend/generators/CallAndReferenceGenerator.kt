@@ -475,10 +475,6 @@ class CallAndReferenceGenerator(
     private fun FirQualifiedAccess.findIrReceiver(explicitReceiverExpression: IrExpression?, isDispatch: Boolean): IrExpression? {
         val firReceiver = if (isDispatch) dispatchReceiver else extensionReceiver
         if (firReceiver == explicitReceiver) {
-            // TODO: remove after fix of KT-35730 (temporary hack to prevent receiver duplication)
-            if (!isDispatch && dispatchReceiver is FirNoReceiverExpression) {
-                return visitor.convertToIrExpression(firReceiver)
-            }
             return explicitReceiverExpression
         }
         if (firReceiver is FirResolvedQualifier) {
