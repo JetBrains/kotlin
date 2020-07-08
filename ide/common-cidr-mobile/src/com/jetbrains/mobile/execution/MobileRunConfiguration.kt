@@ -1,5 +1,6 @@
 package com.jetbrains.mobile.execution
 
+import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.RunConfiguration
@@ -12,8 +13,11 @@ import java.io.File
 interface MobileRunConfiguration : RunConfiguration {
     fun getProductBundle(environment: ExecutionEnvironment): File
 
+    fun getExecutionTarget(environment: ExecutionEnvironment): ExecutionTarget =
+        environment.executionTarget
+
     override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState =
-        when (val device = environment.executionTarget) {
+        when (val device = getExecutionTarget(environment)) {
             is AppleDevice -> createAppleState(environment, executor, device)
             else -> createOtherState(environment)
         }
@@ -24,8 +28,10 @@ interface MobileRunConfiguration : RunConfiguration {
         }
     }
 
-    fun createOtherState(environment: ExecutionEnvironment): CommandLineState
+    fun createOtherState(environment: ExecutionEnvironment): CommandLineState {
+        throw IllegalStateException()
+    }
 
     fun createLauncher(environment: ExecutionEnvironment): CidrLauncher =
-        AppleLauncher(this, environment, environment.executionTarget as AppleDevice)
+        AppleLauncher(this, environment, getExecutionTarget(environment) as AppleDevice)
 }

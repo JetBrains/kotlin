@@ -12,15 +12,18 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.GridBag
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.mobile.execution.AppleDevice
+import com.jetbrains.mobile.execution.DeviceService
+import org.jetbrains.kotlin.idea.facet.selectedItemTyped
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import javax.swing.JComponent
 import javax.swing.JPanel
 
 class AppleRunConfigurationEditor(
     private val project: Project
 ) : SettingsEditor<AppleRunConfiguration>() {
     private val schemeCombo = ComboBox<String>()
+    private val targetCombo = ComboBox<AppleDeviceItem>()
 
     private val gridBag = GridBag()
         .setDefaultFill(GridBagConstraints.BOTH)
@@ -30,19 +33,24 @@ class AppleRunConfigurationEditor(
         .setDefaultInsets(1, JBUI.insetsBottom(UIUtil.DEFAULT_VGAP))
 
     override fun resetEditorFrom(configuration: AppleRunConfiguration) {
-        schemeCombo.removeAllItems()
-
-        val xcProjectFile = configuration.xcProjectFile ?: return
-
-        for (scheme in xcProjectFile.schemes) {
-            schemeCombo.addItem(scheme)
+        with(schemeCombo) {
+            removeAllItems()
+            configuration.xcProjectFile?.schemes?.forEach { addItem(it) }
+            selectedItem = configuration.xcodeScheme
         }
 
-        schemeCombo.selectedItem = configuration.xcodeScheme
+        with(targetCombo) {
+            removeAllItems()
+            DeviceService.getInstance(project).getAppleDevices()
+                .map { AppleDeviceItem(it) }
+                .forEach { addItem(it) }
+            selectedItem = AppleDeviceItem(configuration.executionTarget)
+        }
     }
 
     override fun applyEditorTo(configuration: AppleRunConfiguration) {
-        configuration.xcodeScheme = schemeCombo.selectedItem as? String
+        configuration.xcodeScheme = schemeCombo.selectedItemTyped
+        targetCombo.selectedItemTyped?.device?.let { configuration.executionTarget = it }
     }
 
     override fun createEditor() = JPanel(GridBagLayout()).apply {
@@ -51,5 +59,17 @@ class AppleRunConfigurationEditor(
 
         add(schemeLabel, gridBag.nextLine().next())
         add(schemeCombo, gridBag.next().coverLine())
+
+        val targetLabel = JBLabel("Execution target:")
+        targetLabel.labelFor = targetCombo
+
+        add(targetLabel, gridBag.nextLine().next())
+        add(targetCombo, gridBag.next().coverLine())
     }
+}
+
+private data class AppleDeviceItem(
+    val device: AppleDevice
+) {
+    override fun toString() = device.displayName
 }

@@ -27,7 +27,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.wm.ToolWindowManager
-import com.jetbrains.kmm.KMM_LOG
 import com.jetbrains.cidr.execution.CidrBuildConfiguration
 import com.jetbrains.cidr.execution.ExecutionResult
 import com.jetbrains.cidr.execution.build.CidrBuild
@@ -35,6 +34,7 @@ import com.jetbrains.cidr.execution.build.CidrBuild.startProcess
 import com.jetbrains.cidr.execution.build.CidrBuildId
 import com.jetbrains.cidr.execution.build.CidrBuildResult
 import com.jetbrains.cidr.execution.build.CidrBuildTaskType
+import com.jetbrains.kmm.KMM_LOG
 import java.io.File
 
 
@@ -64,6 +64,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
         val workDirectory = configuration.project.basePath ?: return false
         val xcProjectFile = configuration.xcProjectFile ?: return false
         val xcodeScheme = configuration.xcodeScheme ?: return false
+        val xcodeSdk = configuration.xcodeSdk
 
         KMM_LOG.debug("executeTask: preparing build")
         val buildContext = CidrBuild.BuildContext(
@@ -79,7 +80,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
             xcProjectFile,
             xcodeScheme,
             FileUtil.join(workDirectory, configuration.iosBuildDirectory),
-            configuration.xcodeSdk(environment.executionTarget)
+            xcodeSdk
         )
 
         buildContext.processHandler.addProcessListener(

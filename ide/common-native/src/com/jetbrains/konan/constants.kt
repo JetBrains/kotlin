@@ -39,8 +39,6 @@ object WorkspaceXML {
         const val attributeDirectory = "WORKING_DIR"
         const val attributeParameters = "PROGRAM_PARAMS"
         const val attributePassParent = "PASS_PARENT_ENVS_2"
-
-        const val attributeXcodeScheme = "XCODE_SCHEME"
     }
 
     object XCProject {

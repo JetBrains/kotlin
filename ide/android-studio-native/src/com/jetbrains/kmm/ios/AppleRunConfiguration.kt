@@ -6,8 +6,6 @@
 package com.jetbrains.kmm.ios
 
 import com.intellij.execution.BeforeRunTask
-import com.intellij.execution.ExecutionTarget
-import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.LocatableConfigurationBase
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.configurations.RuntimeConfigurationError
@@ -22,47 +20,40 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.ui.ComponentUtil
-import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriverConfiguration
 import com.jetbrains.cidr.execution.testing.CidrLauncher
 import com.jetbrains.kmm.ios.XcFileExtensions.isXcFile
 import com.jetbrains.konan.KonanBundle
-import com.jetbrains.konan.WorkspaceXML
 import com.jetbrains.mobile.execution.*
 import org.jdom.Element
 import java.io.File
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigurationFactory, name: String) :
     LocatableConfigurationBase<Element>(project, configurationFactory, name),
     MobileRunConfiguration {
     private val workspace = ProjectWorkspace.getInstance(project)
+    private val projectPath: String
+        get() = project.basePath ?: throw RuntimeConfigurationError("Can't work with project without base path.")
 
     val iosBuildDirectory = "build/ios" // this directory is removed by Gradle clean command
 
+    var executionTarget: AppleDevice =
+        DeviceService.getInstance(project).getAppleDevices().first()
+
+    val xcodeSdk: String
+        get() = if (executionTarget is ApplePhysicalDevice) "iphoneos" else "iphonesimulator"
+
     val xcProjectFile get() = workspace.xcProjectFile
-    private val xcodeSchemeLock = ReentrantLock()
+
     var xcodeScheme: String? = null
-        get() = xcodeSchemeLock.withLock {
+        get() {
             if (field == null) {
-                // initially we pick scheme with the name of the project or first one
-                val schemes = xcProjectFile?.schemes ?: emptyList()
-                field = if (xcProjectFile?.projectName in schemes) {
-                    xcProjectFile?.projectName
-                } else {
-                    schemes.firstOrNull()
+                field = xcProjectFile?.schemes?.let { schemes ->
+                    // initially we pick scheme with the name of the project or first one
+                    schemes.firstOrNull { it == xcProjectFile?.projectName } ?: schemes.firstOrNull()
                 }
             }
             return field
         }
-        set(value) = xcodeSchemeLock.withLock {
-            if (value != null) {
-                field = value
-            }
-        }
-
-    fun xcodeSdk(target: ExecutionTarget): String =
-        if (target is ApplePhysicalDevice) "iphoneos" else "iphonesimulator"
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         AppleRunConfigurationEditor(project)
@@ -116,7 +107,7 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
 
     private fun fixXcProjectPath() {
         findNearestXcProject()?.let { xcFile ->
-            val propFile = File(project.basePath, "gradle.properties")
+            val propFile = File(projectPath, "gradle.properties")
             LocalFileSystem.getInstance().findFileByIoFile(propFile)?.let { vf ->
                 WriteCommandAction.runWriteCommandAction(project) {
                     val text = VfsUtilCore.loadText(vf) + "\nxcodeproj=${xcFile.relativeTo(propFile.parentFile)}"
@@ -127,10 +118,10 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
     }
 
     private fun findNearestXcProject(): File? =
-        File(project.basePath).walk().maxDepth(2).firstOrNull { it.isXcFile() }
+        File(projectPath).walk().maxDepth(2).firstOrNull { it.isXcFile() }
 
     private fun openGradlePropertiesFile() {
-        val propFile = File(project.basePath, "gradle.properties")
+        val propFile = File(projectPath, "gradle.properties")
         LocalFileSystem.getInstance().findFileByIoFile(propFile)?.let { vf ->
             OpenFileAction.openFile(vf, project)
         }
@@ -142,33 +133,37 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
             ?.close(DialogWrapper.CANCEL_EXIT_CODE)
     }
 
-    override fun canRunOn(target: ExecutionTarget): Boolean = target is Device
-
     override fun getProductBundle(environment: ExecutionEnvironment): File {
-        val buildType = if (environment.executionTarget is ApplePhysicalDevice) "Debug-iphoneos" else "Debug-iphonesimulator"
-        if (project.basePath == null) throw RuntimeConfigurationError("Can't run ${this::class.simpleName} on project without base path.")
-        return File(project.basePath).resolve(iosBuildDirectory).resolve("$buildType/$xcodeScheme.app")
+        val buildType = if (executionTarget is ApplePhysicalDevice) "Debug-iphoneos" else "Debug-iphonesimulator"
+        return File(projectPath).resolve(iosBuildDirectory).resolve("$buildType/$xcodeScheme.app")
     }
 
-    override fun createOtherState(environment: ExecutionEnvironment): CommandLineState {
-        throw IllegalStateException()
-    }
+    override fun getExecutionTarget(environment: ExecutionEnvironment) = executionTarget
 
     override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher =
-        object : AppleLauncher<AppleRunConfiguration>(this, environment, environment.executionTarget as AppleDevice) {
-            override fun createDebuggerDriverConfiguration(): DebuggerDriverConfiguration =
-                AppleLLDBDriverConfiguration()
+        object : AppleLauncher<AppleRunConfiguration>(this, environment, executionTarget) {
+            override fun createDebuggerDriverConfiguration() = AppleLLDBDriverConfiguration()
         }
 
     override fun readExternal(element: Element) {
         super<LocatableConfigurationBase>.readExternal(element)
-        xcodeScheme = element.getAttributeValue(WorkspaceXML.RunConfiguration.attributeXcodeScheme)
+        xcodeScheme = element.getAttributeValue(attributeXcodeScheme)
+
+        element.getAttributeValue(attributeExecutionTargetId)?.let { deviceId ->
+            DeviceService.getInstance(project).getAppleDevices()
+                .firstOrNull { it.id == deviceId }
+                ?.let { executionTarget = it }
+        }
     }
 
     override fun writeExternal(element: Element) {
         super<LocatableConfigurationBase>.writeExternal(element)
-        if (xcodeScheme != null) {
-            element.setAttribute(WorkspaceXML.RunConfiguration.attributeXcodeScheme, xcodeScheme)
-        }
+        xcodeScheme?.let { element.setAttribute(attributeXcodeScheme, it) }
+        element.setAttribute(attributeExecutionTargetId, executionTarget.id)
+    }
+
+    companion object {
+        private const val attributeXcodeScheme = "XCODE_SCHEME"
+        private const val attributeExecutionTargetId = "EXEC_TARGET_ID"
     }
 }

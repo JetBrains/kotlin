@@ -6,7 +6,6 @@
 package com.jetbrains.mobile.execution
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.configurations.SimpleProgramParameters
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.jetbrains.cidr.execution.CidrCommandLineConfigurator
 import com.jetbrains.cidr.execution.CidrProgramParameters
@@ -23,7 +22,7 @@ open class AppleInstaller(
     appBundle: File
 ) : OCInstaller(environment, appBundle, appBundle, false) {
     override fun doInstall(): GeneralCommandLine {
-        val device = myEnvironment.executionTarget as AppleDevice
+        val device = configuration.getExecutionTarget(myEnvironment) as AppleDevice
         val commandLine = device.install(bundle, project)
 
         val params = CidrProgramParameters().also {

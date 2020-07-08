@@ -7,9 +7,10 @@ import com.jetbrains.cidr.execution.deviceSupport.AMDeviceManager
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorsRegistry
 
 open class DeviceService(protected val project: Project) {
-    open fun getAll(): List<Device> = getAppleDevices() + getAppleSimulators()
+    open fun getAll(): List<Device> = getAppleDevices()
+    fun getAppleDevices(): List<AppleDevice> = getApplePhysicalDevices() + getAppleSimulators()
 
-    protected fun getAppleDevices(): List<ApplePhysicalDevice> =
+    protected fun getApplePhysicalDevices(): List<ApplePhysicalDevice> =
         AMDeviceManager.getInstance().devices
             .filter { it.deviceType.isIOS }
             .map(::ApplePhysicalDevice)
