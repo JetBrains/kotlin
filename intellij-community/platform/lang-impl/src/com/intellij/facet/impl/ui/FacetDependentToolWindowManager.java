@@ -37,10 +37,12 @@ final class FacetDependentToolWindowManager implements RegisterToolWindowTaskPro
         }
       }
     }
+
+    projectOpened(project);
     return result;
   }
 
-  public void projectOpened(@NotNull Project project) {
+  private static void projectOpened(@NotNull Project project) {
     ProjectWideFacetListenersRegistry.getInstance(project).registerListener(new ProjectWideFacetAdapter<Facet>() {
       @Override
       public void facetAdded(@NotNull Facet facet) {
