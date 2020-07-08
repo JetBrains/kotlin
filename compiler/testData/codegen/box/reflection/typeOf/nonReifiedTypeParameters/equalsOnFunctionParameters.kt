@@ -1,7 +1,7 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// IGNORE_BACKEND: JS, JS_IR, NATIVE
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: NATIVE
 // WITH_REFLECT
+// KJS_WITH_FULL_RUNTIME
 
 package test
 
@@ -22,6 +22,10 @@ fun box(): String {
     assertEquals(createX<Any>(), createX<Any>())
     assertEquals(createX<Any>().hashCode(), createX<Any>().hashCode())
 
-    assertNotEquals(createX<Any>(), createOtherX<Any>())
+    if (!isJS) {
+        assertNotEquals(createX<Any>(), createOtherX<Any>())
+    }
     return "OK"
 }
+
+val isJS = 1 as Any is Double

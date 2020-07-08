@@ -1,7 +1,7 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// IGNORE_BACKEND: JS, JS_IR, NATIVE
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: NATIVE
 // WITH_REFLECT
+// KJS_WITH_FULL_RUNTIME
 
 package test
 
@@ -16,7 +16,14 @@ fun <X> test() = typeOf<Container<X>>()
 fun box(): String {
     val type = test<Any>()
     val x = type.arguments.single().type!!.classifier as KTypeParameter
-    assertEquals("kotlin.Any?", x.upperBounds.joinToString())
+
+    val expected = className("kotlin", "Any?")
+    assertEquals(expected, x.upperBounds.joinToString())
 
     return "OK"
+}
+
+fun className(qualifier: String, name: String): String {
+    val isJS = 1 as Any is Double
+    return if (isJS) name else "$qualifier.$name"
 }

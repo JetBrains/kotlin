@@ -1122,10 +1122,5 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         public void testReflectionApi() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/reflection/reflectionApi.kt");
         }
-
-        @TestMetadata("typeOfWithNonReifiedParameter.kt")
-        public void testTypeOfWithNonReifiedParameter() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJsStdLib/reflection/typeOfWithNonReifiedParameter.kt");
-        }
     }
 }
