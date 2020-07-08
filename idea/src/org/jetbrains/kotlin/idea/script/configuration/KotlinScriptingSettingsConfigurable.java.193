@@ -50,7 +50,6 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
                         .createPanel()
         );
 
-        table.setVisibleRowCount(15);
         return root;
     }
 
