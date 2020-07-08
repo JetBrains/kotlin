@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 object Versions {
     val KOTLIN = version("1.4-M1") // used as fallback version
     val GRADLE = version("6.3")
-    val KTOR = version("1.2.6")
+    val KTOR: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.3.2-$kotlinVersion") }
 
     object ANDROID {
         val ANDROIDX_CORE_KTX = version("1.2.0")
