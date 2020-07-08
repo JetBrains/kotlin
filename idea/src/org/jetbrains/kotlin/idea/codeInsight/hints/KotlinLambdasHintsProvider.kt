@@ -83,4 +83,17 @@ class KotlinLambdasHintsProvider : KotlinAbstractHintsProvider<KotlinLambdasHint
     }
 
     override fun createSettings(): Settings = Settings()
+
+    override val previewText: String? = """
+        val lambda = { i: Int ->
+            i + 10
+            i + 20
+        }
+
+        fun someFun() {    
+            GlobalScope.launch {
+                // someSuspendingFun()
+            }
+        }
+    """.trimIndent()
 }
