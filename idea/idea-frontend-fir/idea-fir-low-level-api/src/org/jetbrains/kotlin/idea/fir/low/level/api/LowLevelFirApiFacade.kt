@@ -63,9 +63,9 @@ object LowLevelFirApiFacade {
     fun buildCompletionContextForFunction(
         firFile: FirFile,
         element: KtNamedFunction,
+        state: FirModuleResolveState,
         phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
     ): FirCompletionContext {
-        val state = element.firResolveState()
         val firIdeProvider = firFile.session.firIdeProvider
         val builtFunction = firIdeProvider.buildFunctionWithBody(element)
         val towerDataContextForStatement = mutableMapOf<FirStatement, FirTowerDataContext>()

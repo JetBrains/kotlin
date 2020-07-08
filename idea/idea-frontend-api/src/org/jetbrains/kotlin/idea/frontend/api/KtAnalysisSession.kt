@@ -35,4 +35,6 @@ abstract class KtAnalysisSession(project: Project) : ValidityOwner {
 
     abstract fun resolveCall(call: KtCallExpression): CallInfo?
     abstract fun resolveCall(call: KtBinaryExpression): CallInfo?
+
+    abstract fun analyzeInContext(): KtAnalysisSession
 }
