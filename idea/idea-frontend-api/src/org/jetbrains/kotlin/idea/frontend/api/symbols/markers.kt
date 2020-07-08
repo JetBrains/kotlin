@@ -29,6 +29,9 @@ interface KtPossibleExtensionSymbol {
     val receiverType: KtType?
 }
 
+val KtCallableSymbol.isExtension: Boolean
+    get() = (this as? KtPossibleExtensionSymbol)?.isExtension == true
+
 interface KtSymbolWithTypeParameters {
     val typeParameters: List<KtTypeParameterSymbol>
 }
