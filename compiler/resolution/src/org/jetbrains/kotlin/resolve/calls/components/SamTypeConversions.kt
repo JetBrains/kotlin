@@ -91,7 +91,7 @@ object SamTypeConversions : ParameterTypeConversion {
         )
 
         if (needCompatibilityResolveForSAM(candidate, expectedParameterType)) {
-            candidate.addDiagnostic(LowerPriorityToPreserveCompatibility)
+            candidate.markCandidateForCompatibilityResolve()
         }
 
         val samDescriptor = originalExpectedType.constructor.declarationDescriptor

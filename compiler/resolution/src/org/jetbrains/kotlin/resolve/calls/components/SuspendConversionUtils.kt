@@ -52,7 +52,7 @@ object SuspendTypeConversions : ParameterTypeConversion {
 
         candidate.resolvedCall.registerArgumentWithSuspendConversion(argument, nonSuspendParameterType)
 
-        candidate.addDiagnostic(LowerPriorityToPreserveCompatibility)
+        candidate.markCandidateForCompatibilityResolve()
 
         return nonSuspendParameterType
     }
