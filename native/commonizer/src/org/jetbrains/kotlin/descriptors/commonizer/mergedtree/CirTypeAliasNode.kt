@@ -15,7 +15,7 @@ class CirTypeAliasNode(
     override val targetDeclarations: CommonizedGroup<CirTypeAlias>,
     override val commonDeclaration: NullableLazyValue<CirClassifier>,
     override val classId: ClassId
-) : CirNodeWithClassId<CirTypeAlias, CirClassifier> {
+) : CirNodeWithClassId<CirTypeAlias, CirClassifier>, CirNodeWithLiftingUp<CirTypeAlias, CirClassifier> {
 
     override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T): R =
         visitor.visitTypeAliasNode(this, data)

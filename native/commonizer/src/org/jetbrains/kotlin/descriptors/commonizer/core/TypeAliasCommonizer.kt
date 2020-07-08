@@ -93,7 +93,7 @@ private class TypeAliasLiftingUpCommonizer(classifiers: CirKnownClassifiers) : A
             typeParameters = typeParameters.result,
             visibility = visibility.result,
             underlyingType = underlyingType,
-            expandedType = computeCommonizedExpandedType(underlyingType)
+            expandedType = computeExpandedType(underlyingType)
         )
     }
 
@@ -108,13 +108,6 @@ private class TypeAliasLiftingUpCommonizer(classifiers: CirKnownClassifiers) : A
         typeParameters.commonizeWith(next.typeParameters)
                 && underlyingType.commonizeWith(next.underlyingType)
                 && visibility.commonizeWith(next)
-
-    private tailrec fun computeCommonizedExpandedType(underlyingType: CirClassOrTypeAliasType): CirClassType {
-        return when (underlyingType) {
-            is CirClassType -> underlyingType
-            is CirTypeAliasType -> computeCommonizedExpandedType(underlyingType.underlyingType)
-        }
-    }
 }
 
 private class TypeAliasExpectClassCommonizer : AbstractStandardCommonizer<CirTypeAlias, CirClass>() {

@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapNotNull
 import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
+import org.jetbrains.kotlin.name.ClassId
 
 internal class CommonizationVisitor(
     private val classifiers: CirKnownClassifiers,
@@ -97,7 +99,7 @@ internal class CommonizationVisitor(
             }
 
             // find out common (and commonized) supertypes
-            commonClass.commonizeSupertypes(node.collectCommonSupertypes())
+            commonClass.commonizeSupertypes(node.classId, node.collectCommonSupertypes())
         }
     }
 
@@ -110,7 +112,7 @@ internal class CommonizationVisitor(
 
         if (commonClassifier is CirClass) {
             // find out common (and commonized) supertypes
-            commonClassifier.commonizeSupertypes(node.collectCommonSupertypes())
+            commonClassifier.commonizeSupertypes(node.classId, node.collectCommonSupertypes())
         }
     }
 
@@ -142,10 +144,13 @@ internal class CommonizationVisitor(
         return supertypesMap
     }
 
-    private fun CirClass.commonizeSupertypes(supertypesMap: Map<CirType, CommonizedGroup<CirType>>?) {
+    private fun CirClass.commonizeSupertypes(
+        classId: ClassId,
+        supertypesMap: Map<CirType, CommonizedGroup<CirType>>?
+    ) {
         setSupertypes(
             if (supertypesMap.isNullOrEmpty())
-                emptyList()
+                if (classId in SPECIAL_CLASS_WITHOUT_SUPERTYPES_CIDS) emptyList() else listOf(CirTypeFactory.StandardTypes.ANY)
             else
                 supertypesMap.values.compactMapNotNull { supertypesGroup -> commonize(supertypesGroup, TypeCommonizer(classifiers)) }
         )
