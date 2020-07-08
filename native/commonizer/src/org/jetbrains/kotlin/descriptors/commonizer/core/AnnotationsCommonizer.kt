@@ -165,8 +165,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
             visibility = Visibilities.PUBLIC,
             arguments = emptyList(),
             isMarkedNullable = false,
-            isDefinitelyNotNullType = false,
-            signature = classId.asString()
+            isDefinitelyNotNullType = false
         )
 
         private fun CirAnnotation.getDeprecationMessage(): String? = constantValueArguments.getString(PROPERTY_NAME_MESSAGE)
