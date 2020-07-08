@@ -55,7 +55,11 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
 
         val parentFunction = nameExpression.getNonStrictParentOfType<KtNamedFunction>() ?: return
 
-        val completionContext = LowLevelFirApiFacade.buildCompletionContextForFunction(originalFileFir, parentFunction)
+        val completionContext = LowLevelFirApiFacade.buildCompletionContextForFunction(
+            originalFileFir,
+            parentFunction,
+            LowLevelFirApiFacade.getResolveStateFor(originalFile)
+        )
 
         val element = nameExpression.getFirOfClosestParent() as? FirQualifiedAccessExpression ?: return
         val towerDataContext = completionContext.getTowerDataContext(nameExpression)

@@ -8,10 +8,19 @@ package org.jetbrains.kotlin.idea.frontend.api.scopes
 import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 
 abstract class KtScopeProvider : ValidityOwner {
     abstract fun getMemberScope(classSymbol: KtClassOrObjectSymbol): KtMemberScope
     abstract fun getDeclaredMemberScope(classSymbol: KtClassOrObjectSymbol): KtDeclaredMemberScope
     abstract fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope
     abstract fun getCompositeScope(subScopes: List<KtScope>): KtCompositeScope
+
+    abstract fun getScopeForType(type: KtType): KtScope?
+
+    abstract fun getScopeContextForPosition(originalFile: KtFile, positionInFakeFile: KtElement): KtScopeContext
 }
+
+data class KtScopeContext(val scopes: KtCompositeScope, val implicitReceiversTypes: List<KtType>)

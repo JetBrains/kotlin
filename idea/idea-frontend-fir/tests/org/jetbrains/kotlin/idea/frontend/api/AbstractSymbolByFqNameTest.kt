@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
@@ -36,7 +37,7 @@ abstract class AbstractSymbolByFqNameTest : KotlinLightCodeInsightFixtureTestCas
                 val symbols = createSymbols(symbolData, this)
                 symbols.map { DebugSymbolRenderer.render(it) }
             }
-            val analysisSession = KtFirAnalysisSession(fakeKtFile)
+            val analysisSession = KtFirAnalysisSession(fakeKtFile, LowLevelFirApiFacade.getResolveStateFor(fakeKtFile))
             val symbols = createSymbols(symbolData, analysisSession)
             symbols.map { DebugSymbolRenderer.render(it) }
         }
