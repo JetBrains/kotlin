@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicOperatorExpressionImpl
 
 
 open class NativeGetterSetterTransformer(val context: JsIrBackendContext) : CallsTransformer {
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
         val callee = call.symbol.owner
 
         return when {

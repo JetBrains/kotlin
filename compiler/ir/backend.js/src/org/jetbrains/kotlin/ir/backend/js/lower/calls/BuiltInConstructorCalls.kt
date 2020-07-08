@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.irConstructorCall
 class BuiltInConstructorCalls(val context: JsIrBackendContext) : CallsTransformer {
     val intrinsics = context.intrinsics
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression =
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression =
         if (call is IrConstructorCall) {
             // Do not transform Delegation calls
             when (call.symbol) {

@@ -74,7 +74,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
         }
     }
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
         val function = call.symbol.owner
         function.dispatchReceiverParameter?.also {
             val key = SimpleMemberKey(it.type, function.name)
