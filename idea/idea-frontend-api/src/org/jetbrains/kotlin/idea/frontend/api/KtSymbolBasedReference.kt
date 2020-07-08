@@ -19,6 +19,6 @@ fun KtReference.resolveToSymbols(analysisSession: KtAnalysisSession): Collection
 }
 
 fun KtSimpleReference<*>.resolveToSymbol(analysisSession: KtAnalysisSession): KtSymbol? {
-    check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference" }
+    check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference but was ${this::class}" }
     return resolveToSymbols(analysisSession).singleOrNull()
 }
