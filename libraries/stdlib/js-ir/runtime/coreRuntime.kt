@@ -117,5 +117,10 @@ internal external class JsObject {
     }
 }
 
+// Note: once some error-compilation design happened consider to distinguish a special exception for error-code.
+internal fun errorCode(description: String): Nothing {
+    throw IllegalStateException(description)
+}
+
 internal fun <T, R> boxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")
 internal fun <T, R> unboxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")
