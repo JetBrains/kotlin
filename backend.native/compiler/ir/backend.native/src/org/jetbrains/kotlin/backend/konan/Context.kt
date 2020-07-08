@@ -192,9 +192,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     lateinit var environment: KotlinCoreEnvironment
     lateinit var bindingContext: BindingContext
 
-    override val declarationFactory
-        get() = TODO("not implemented")
-
     lateinit var moduleDescriptor: ModuleDescriptor
 
     lateinit var objCExport: ObjCExport
