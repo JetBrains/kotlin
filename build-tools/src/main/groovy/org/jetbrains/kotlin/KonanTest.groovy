@@ -220,6 +220,10 @@ class RunExternalTestGroup extends JavaExec {
                 line.split(" ").toList().forEach { flags.add("-Xopt-in=$it") }
             }
         }
+        def expectActualLinker = findLinesWithPrefixesRemoved(text, "// EXPECT_ACTUAL_LINKER")
+        if (expectActualLinker.size() != 0) {
+            flags.add("-Xexpect-actual-linker")
+        }
     }
 
     static String markMutableObjects(String text) {
