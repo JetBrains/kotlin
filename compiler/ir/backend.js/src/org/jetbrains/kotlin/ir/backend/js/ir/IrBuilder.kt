@@ -10,13 +10,23 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
-import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -49,25 +59,13 @@ object JsIrBuilder {
 
     fun buildThrow(type: IrType, value: IrExpression) = IrThrowImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, value)
 
-    fun buildValueParameter(name: String = "tmp", index: Int, type: IrType) = buildValueParameter(Name.identifier(name), index, type)
-
-    fun buildValueParameter(name: Name, index: Int, type: IrType, origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION): IrValueParameter {
-        val descriptor = WrappedValueParameterDescriptor()
-        return IrValueParameterImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            origin,
-            IrValueParameterSymbolImpl(descriptor),
-            name,
-            index,
-            type,
-            null,
-            isCrossinline = false,
-            isNoinline = false
-        ).also {
-            descriptor.bind(it)
+    fun buildValueParameter(parent: IrDeclarationParent, name: String, index: Int, type: IrType): IrValueParameter =
+        buildValueParameter(parent) {
+            this.origin = SYNTHESIZED_DECLARATION
+            this.name = Name.identifier(name)
+            this.index = index
+            this.type = type
         }
-    }
 
     fun buildTypeParameter(name: Name, index: Int, isReified: Boolean, variance: Variance = Variance.INVARIANT): IrTypeParameter {
         val descriptor = WrappedTypeParameterDescriptor()

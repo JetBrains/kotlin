@@ -137,8 +137,8 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
         ).apply {
             loweredConstructorDescriptor.bind(this)
             parent = enumClass
-            valueParameters += JsIrBuilder.buildValueParameter("name", 0, context.irBuiltIns.stringType).also { it.parent = this }
-            valueParameters += JsIrBuilder.buildValueParameter("ordinal", 1, context.irBuiltIns.intType).also { it.parent = this }
+            valueParameters += JsIrBuilder.buildValueParameter(this, "name", 0, context.irBuiltIns.stringType)
+            valueParameters += JsIrBuilder.buildValueParameter(this, "ordinal", 1, context.irBuiltIns.intType)
             copyParameterDeclarationsFrom(enumConstructor)
 
             val newConstructor = this

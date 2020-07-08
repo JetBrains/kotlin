@@ -176,7 +176,7 @@ private fun buildInitDeclaration(constructor: IrConstructor, irClass: IrClass): 
         it.copyTypeParametersFrom(constructor.parentAsClass)
 
         it.valueParameters = constructor.valueParameters.map { p -> p.copyTo(it) }
-        it.valueParameters += JsIrBuilder.buildValueParameter("\$this", constructor.valueParameters.size, type).apply { parent = it }
+        it.valueParameters += JsIrBuilder.buildValueParameter(it, "\$this", constructor.valueParameters.size, type)
     }
 }
 

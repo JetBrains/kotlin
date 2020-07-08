@@ -9,17 +9,14 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
@@ -71,22 +68,11 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
         staticFunction.typeParameters += function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
 
         staticFunction.extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(staticFunction)
-        val thisDesc = WrappedValueParameterDescriptor()
-        val thisSymbol = IrValueParameterSymbolImpl(thisDesc)
-        staticFunction.valueParameters += IrValueParameterImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            STATIC_THIS_PARAMETER,
-            thisSymbol,
-            Name.identifier("\$this"),
-            0,
-            function.dispatchReceiverParameter!!.type,
-            null,
-            isCrossinline = false,
-            isNoinline = false
-        ).also {
-            thisDesc.bind(it)
-            it.parent = staticFunction
+        staticFunction.valueParameters += buildValueParameter(staticFunction) {
+            origin = STATIC_THIS_PARAMETER
+            name = Name.identifier("\$this")
+            index = 0
+            type = function.dispatchReceiverParameter!!.type
         }
 
         function.correspondingStatic = staticFunction

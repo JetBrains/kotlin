@@ -23,21 +23,19 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -129,20 +127,11 @@ class JvmDeclarationFactory(
             returnType = oldConstructor.returnType
             copyTypeParametersFrom(oldConstructor)
 
-            val outerThisType = oldConstructor.parentAsClass.parentAsClass.defaultType
-            val outerThisDescriptor = WrappedValueParameterDescriptor()
-            val outerThisValueParameter = IrValueParameterImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS,
-                IrValueParameterSymbolImpl(outerThisDescriptor),
-                Name.identifier(AsmUtil.CAPTURED_THIS_FIELD),
-                0,
-                type = outerThisType,
-                varargElementType = null,
-                isCrossinline = false,
-                isNoinline = false
-            ).also {
-                outerThisDescriptor.bind(it)
-                it.parent = this
+            val outerThisValueParameter = buildValueParameter(this) {
+                origin = JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS
+                name = Name.identifier(AsmUtil.CAPTURED_THIS_FIELD)
+                index = 0
+                type = oldConstructor.parentAsClass.parentAsClass.defaultType
             }
             valueParameters = listOf(outerThisValueParameter) + oldConstructor.valueParameters.map { it.copyTo(this, index = it.index + 1) }
             metadata = oldConstructor.metadata

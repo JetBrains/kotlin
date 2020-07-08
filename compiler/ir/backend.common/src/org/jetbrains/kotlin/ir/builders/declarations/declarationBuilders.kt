@@ -218,21 +218,23 @@ inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): I
         constructor.parent = this@addConstructor
     }
 
-fun IrValueParameterBuilder.build(): IrValueParameter {
-    val wrappedDescriptor = WrappedValueParameterDescriptor()
+@PublishedApi
+internal fun IrValueParameterBuilder.buildValueParameter(parent: IrDeclarationParent): IrValueParameter {
+    val wrappedDescriptor = WrappedValueParameterDescriptor(wrappedDescriptorAnnotations)
     return IrValueParameterImpl(
         startOffset, endOffset, origin,
         IrValueParameterSymbolImpl(wrappedDescriptor),
         name, index, type, varargElementType, isCrossInline, isNoinline
     ).also {
         wrappedDescriptor.bind(it)
+        it.parent = parent
     }
 }
 
-inline fun buildValueParameter(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
+inline fun buildValueParameter(parent: IrDeclarationParent, builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
         builder()
-        build()
+        buildValueParameter(parent)
     }
 
 inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
@@ -241,9 +243,8 @@ inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> U
         if (index == UNDEFINED_PARAMETER_INDEX) {
             index = valueParameters.size
         }
-        build().also { valueParameter ->
+        buildValueParameter(this@addValueParameter).also { valueParameter ->
             valueParameters += valueParameter
-            valueParameter.parent = this@addValueParameter
         }
     }
 
@@ -259,9 +260,8 @@ inline fun IrSimpleFunction.addDispatchReceiver(builder: IrValueParameterBuilder
         builder()
         index = -1
         name = "this".synthesizedName
-        build().also { receiver ->
+        buildValueParameter(this@addDispatchReceiver).also { receiver ->
             dispatchReceiverParameter = receiver
-            receiver.parent = this@addDispatchReceiver
         }
     }
 
@@ -270,9 +270,8 @@ inline fun IrSimpleFunction.addExtensionReceiver(builder: IrValueParameterBuilde
         builder()
         index = -1
         name = "receiver".synthesizedName
-        build().also { receiver ->
+        buildValueParameter(this@addExtensionReceiver).also { receiver ->
             extensionReceiverParameter = receiver
-            receiver.parent = this@addExtensionReceiver
         }
     }
 

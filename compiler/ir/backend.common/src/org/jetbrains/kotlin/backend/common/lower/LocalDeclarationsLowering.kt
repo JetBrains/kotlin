@@ -12,20 +12,19 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
@@ -662,23 +660,19 @@ class LocalDeclarationsLowering(
         ) = ArrayList<IrValueParameter>(capturedValues.size + oldDeclaration.valueParameters.size).apply {
             val generatedNames = mutableSetOf<Name>()
             capturedValues.mapIndexedTo(this) { i, capturedValue ->
-                val parameterDescriptor = WrappedValueParameterDescriptor()
                 val p = capturedValue.owner
-                IrValueParameterImpl(
-                    p.startOffset,
-                    p.endOffset,
-                    if (p.descriptor is ReceiverParameterDescriptor && newDeclaration is IrConstructor)
-                        BOUND_RECEIVER_PARAMETER else BOUND_VALUE_PARAMETER,
-                    IrValueParameterSymbolImpl(parameterDescriptor),
-                    suggestNameForCapturedValue(p, generatedNames),
-                    i,
-                    localFunctionContext.remapType(p.type),
-                    null,
-                    isCrossinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isCrossinline == true,
+                buildValueParameter(newDeclaration) {
+                    startOffset = p.startOffset
+                    endOffset = p.endOffset
+                    origin =
+                        if (p.descriptor is ReceiverParameterDescriptor && newDeclaration is IrConstructor) BOUND_RECEIVER_PARAMETER
+                        else BOUND_VALUE_PARAMETER
+                    name = suggestNameForCapturedValue(p, generatedNames)
+                    index = i
+                    type = localFunctionContext.remapType(p.type)
+                    isCrossInline = (capturedValue as? IrValueParameterSymbol)?.owner?.isCrossinline == true
                     isNoinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isNoinline == true
-                ).also {
-                    parameterDescriptor.bind(it)
-                    it.parent = newDeclaration
+                }.also {
                     newParameterToCaptured[it] = capturedValue
                 }
             }

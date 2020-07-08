@@ -121,8 +121,7 @@ class JsDeclarationFactory(mapping: JsMapping) : DeclarationFactory {
 
         newConstructor.copyTypeParametersFrom(oldConstructor)
 
-        val outerThisValueParameter =
-            JsIrBuilder.buildValueParameter(Namer.OUTER_NAME, 0, outerThisType).also { it.parent = newConstructor }
+        val outerThisValueParameter = JsIrBuilder.buildValueParameter(newConstructor, Namer.OUTER_NAME, 0, outerThisType)
 
         val newValueParameters = mutableListOf(outerThisValueParameter)
 

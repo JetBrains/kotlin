@@ -61,18 +61,14 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
 
             val boundArguments = listOfNotNull(reference.dispatchReceiver, reference.extensionReceiver)
 
-            val valueParameters = ArrayList<IrValueParameter>(boundArguments.size)
-            factoryDeclaration.valueParameters = valueParameters
-
-            for ((i, arg) in boundArguments.withIndex()) {
-                val vp = buildValueParameter {
+            val valueParameters = boundArguments.mapIndexed { i, arg ->
+                buildValueParameter(factoryDeclaration) {
                     type = arg.type
                     index = i
                     name = Name.identifier("\$b$i")
                 }
-                vp.parent = factoryDeclaration
-                valueParameters.add(vp)
             }
+            factoryDeclaration.valueParameters = valueParameters
 
             // TODO: type parameters
 
