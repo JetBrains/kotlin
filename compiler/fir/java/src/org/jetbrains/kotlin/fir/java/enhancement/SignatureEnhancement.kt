@@ -69,21 +69,22 @@ class FirSignatureEnhancement(
         name: Name
     ): FirVariableSymbol<*> {
         when (val firElement = original.fir) {
-            is FirField -> {
+            is FirEnumEntry -> {
                 if (firElement.returnTypeRef !is FirJavaTypeRef) return original
                 val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firElement.annotations)
-                val isEnumEntry = (firElement as? FirJavaField)?.isEnumEntry ?: false
-
-                val predefinedInfo = if (isEnumEntry) {
+                val predefinedInfo =
                     PredefinedFunctionEnhancementInfo(
                         TypeEnhancementInfo(0 to JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, false)),
                         emptyList()
                     )
-                } else {
-                    null
-                }
 
                 val newReturnTypeRef = enhanceReturnType(firElement, emptyList(), memberContext, predefinedInfo)
+                return firElement.symbol.apply { this.fir.replaceReturnTypeRef(newReturnTypeRef) }
+            }
+            is FirField -> {
+                if (firElement.returnTypeRef !is FirJavaTypeRef) return original
+                val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firElement.annotations)
+                val newReturnTypeRef = enhanceReturnType(firElement, emptyList(), memberContext, null)
 
                 val symbol = FirFieldSymbol(original.callableId)
                 buildJavaField {

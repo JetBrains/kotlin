@@ -342,7 +342,6 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry) {
-        enumEntry.annotations.renderAnnotations()
         visitCallableDeclaration(enumEntry)
         enumEntry.initializer?.let {
             print(" = ")

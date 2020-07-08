@@ -11,16 +11,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
-import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
-import org.jetbrains.kotlin.fir.generateValueOfFunction
-import org.jetbrains.kotlin.fir.generateValuesFunction
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProvider
@@ -30,7 +24,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.lazyNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -191,22 +184,39 @@ class JavaSymbolProvider(
                     for (javaField in javaClass.fields) {
                         val fieldName = javaField.name
                         val fieldId = CallableId(classId.packageFqName, classId.relativeClassName, fieldName)
-                        val fieldSymbol = FirFieldSymbol(fieldId)
                         val returnType = javaField.type
-                        val firJavaField = buildJavaField {
-                            source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-                            session = this@JavaSymbolProvider.session
-                            symbol = fieldSymbol
-                            name = fieldName
-                            visibility = javaField.visibility
-                            modality = javaField.modality
-                            returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
-                            isVar = !javaField.isFinal
-                            isStatic = javaField.isStatic
-                            isEnumEntry = javaField.isEnumEntry
-                            addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
+                        val firJavaDeclaration = when {
+                            javaField.isEnumEntry -> buildEnumEntry {
+                                source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
+                                session = this@JavaSymbolProvider.session
+                                symbol = FirVariableSymbol(fieldId)
+                                name = fieldName
+                                status = FirDeclarationStatusImpl(javaField.visibility, javaField.modality).apply {
+                                    isStatic = javaField.isStatic
+                                    isExpect = false
+                                    isActual = false
+                                    isOverride = false
+                                }
+                                returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
+                                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                                origin = FirDeclarationOrigin.Java
+                                addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
+                            }
+                            else -> buildJavaField {
+                                source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
+                                session = this@JavaSymbolProvider.session
+                                symbol = FirFieldSymbol(fieldId)
+                                name = fieldName
+                                visibility = javaField.visibility
+                                modality = javaField.modality
+                                returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
+                                isVar = !javaField.isFinal
+                                isStatic = javaField.isStatic
+                                isEnumEntry = javaField.isEnumEntry
+                                addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
+                            }
                         }
-                        declarations += firJavaField
+                        declarations += firJavaDeclaration
                     }
                     for (javaMethod in javaClass.methods) {
                         val methodName = javaMethod.name

@@ -1,10 +1,7 @@
 public final enum class AnnotatedEnumEntry : R|kotlin/Enum<ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>!>| {
-    @R|test/AnnotatedEnumEntry.Anno|(String(a)) public final static field E1: R|test/AnnotatedEnumEntry|
-
-    @R|test/AnnotatedEnumEntry.Anno|(String(b)) @R|test/AnnotatedEnumEntry.Anno2|() public final static field E2: R|test/AnnotatedEnumEntry|
-
-    public final static field E3: R|test/AnnotatedEnumEntry|
-
+    @R|test/AnnotatedEnumEntry.Anno|(String(a)) public final static enum entry E1: R|test/AnnotatedEnumEntry|
+    @R|test/AnnotatedEnumEntry.Anno|(String(b)) @R|test/AnnotatedEnumEntry.Anno2|() public final static enum entry E2: R|test/AnnotatedEnumEntry|
+    public final static enum entry E3: R|test/AnnotatedEnumEntry|
     public final static fun values(): R|kotlin/Array<test/AnnotatedEnumEntry>| {
     }
 

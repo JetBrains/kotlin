@@ -133,6 +133,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_enum.kt");
     }
 
+    @TestMetadata("exhaustiveness_enumJava.kt")
+    public void testExhaustiveness_enumJava() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_enumJava.kt");
+    }
+
     @TestMetadata("exhaustiveness_sealedClass.kt")
     public void testExhaustiveness_sealedClass() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_sealedClass.kt");
