@@ -37,7 +37,7 @@ class ScriptTemplatesClassRootsIndex :
 
     override fun dependsOnFileContent() = false
 
-    override fun getVersion(): Int = 1
+    override fun getVersion(): Int = 2
 
     override fun indexDirectories(): Boolean = false
 
