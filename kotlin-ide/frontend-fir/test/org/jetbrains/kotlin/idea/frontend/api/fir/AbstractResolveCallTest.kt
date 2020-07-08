@@ -29,7 +29,7 @@ import kotlin.reflect.jvm.javaGetter
 
 
 abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") KotlinLightCodeInsightTestCase() {
-    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory() + "/"
+    override fun getTestDataPath(): String = ""
 
     protected fun doTest(path: String) {
         addExternalTestFiles(path)
