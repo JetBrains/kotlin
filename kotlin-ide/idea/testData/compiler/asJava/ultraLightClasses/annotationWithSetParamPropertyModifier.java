@@ -6,10 +6,10 @@ public final class TestClass /* TestClass*/ {
   private int hello;
 
   @null()
-  public  TestClass(int);
+  public  TestClass(int);//  .ctor(int)
 
-  public final int getHello();
+  public final int getHello();//  getHello()
 
-  public final void setHello(@Anno() int);
+  public final void setHello(@Anno() int);//  setHello(int)
 
 }

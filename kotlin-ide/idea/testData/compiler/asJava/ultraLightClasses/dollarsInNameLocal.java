@@ -1,14 +1,14 @@
 public final class Foo /* c.b.a.Foo*/ {
   @null()
-  public  Foo();
+  public  Foo();//  .ctor()
 
-  public final void bar();
+  public final void bar();//  bar()
 
 }
 
 public static final class A$B /* null*/ {
   @null()
-  public  A$B();
+  public  A$B();//  .ctor()
 
   class $$$$$$$ ...
 
@@ -18,13 +18,13 @@ public static final class A$B /* null*/ {
 
 public final class C$D /* null*/ {
   @null()
-  public  C$D();
+  public  C$D();//  .ctor()
 
 }
 
 public final class $$$$$$$ /* null*/ {
   @null()
-  public  $$$$$$$();
+  public  $$$$$$$();//  .ctor()
 
   class G$G$ ...
 
@@ -32,6 +32,6 @@ public final class $$$$$$$ /* null*/ {
 
 public final class G$G$ /* null*/ {
   @null()
-  public  G$G$();
+  public  G$G$();//  .ctor()
 
 }
