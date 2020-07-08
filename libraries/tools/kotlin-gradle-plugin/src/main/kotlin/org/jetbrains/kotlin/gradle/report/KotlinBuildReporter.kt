@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,8 +40,11 @@ internal fun configureBuildReporter(gradle: Gradle, log: Logger) {
     val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
 
     val perfReportFile = perfLogDir.resolve("${gradle.rootProject.name}-build-$ts.txt")
-    val reporter = KotlinBuildReporter(gradle, perfReportFile)
-    gradle.addBuildListener(reporter)
+
+    if (!isConfigurationCacheAvailable(gradle)) {
+        val reporter = KotlinBuildReporter(gradle, perfReportFile)
+        gradle.addBuildListener(reporter)
+    }
 
     val buildReportMode = if (properties.buildReportVerbose) BuildReportMode.VERBOSE else BuildReportMode.SIMPLE
 

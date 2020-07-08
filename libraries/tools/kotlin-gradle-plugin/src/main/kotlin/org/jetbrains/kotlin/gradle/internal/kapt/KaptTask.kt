@@ -28,7 +28,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
         outputs.cacheIf(reason) { useBuildCache }
     }
 
-    override fun localStateDirectories(): FileCollection = project.files()
+    override fun localStateDirectories(): FileCollection = objects.fileCollection()
 
     @get:Internal
     @field:Transient

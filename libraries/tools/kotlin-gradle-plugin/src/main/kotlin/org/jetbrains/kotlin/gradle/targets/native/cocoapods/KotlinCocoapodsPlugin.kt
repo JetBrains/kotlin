@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.cocoapods
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -20,14 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.DefFileTask
-import org.jetbrains.kotlin.gradle.tasks.DummyFrameworkTask
-import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
-import org.jetbrains.kotlin.gradle.tasks.PodspecTask
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildSettingsProperties
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildTask
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodInstallTask
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodSetupBuildTask
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
