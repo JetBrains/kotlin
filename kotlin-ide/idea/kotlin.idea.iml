@@ -110,5 +110,6 @@
     <orderEntry type="module" module-name="intellij.statsCollector" />
     <orderEntry type="module" module-name="intellij.copyright" />
     <orderEntry type="module" module-name="intellij.properties.psi" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.live-templates" />
   </component>
 </module>

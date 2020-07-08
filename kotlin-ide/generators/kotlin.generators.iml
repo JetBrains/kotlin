@@ -44,5 +44,7 @@
     <orderEntry type="module" module-name="kotlin.performance-tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.platform.jps.build" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.fir.frontend-fir" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.fir.fir-low-level-api" scope="TEST" />
   </component>
 </module>
