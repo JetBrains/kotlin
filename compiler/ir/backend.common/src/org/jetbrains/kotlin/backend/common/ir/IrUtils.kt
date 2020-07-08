@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.builders.declarations.IrTypeParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.build
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -411,21 +412,7 @@ fun Scope.createTemporaryVariableWithWrappedDescriptor(
 }
 
 fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
-    val thisReceiverDescriptor = WrappedReceiverParameterDescriptor()
-    thisReceiver = IrValueParameterImpl(
-        startOffset, endOffset,
-        IrDeclarationOrigin.INSTANCE_RECEIVER,
-        IrValueParameterSymbolImpl(thisReceiverDescriptor),
-        Name.special("<this>"),
-        index = -1,
-        type = symbol.typeWithParameters(typeParameters),
-        varargElementType = null,
-        isCrossinline = false,
-        isNoinline = false
-    ).also { valueParameter ->
-        thisReceiverDescriptor.bind(valueParameter)
-        valueParameter.parent = this
-    }
+    thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.INSTANCE_RECEIVER, symbol.typeWithParameters(typeParameters))
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -446,23 +433,7 @@ fun IrClass.simpleFunctions() = declarations.flatMap {
 
 fun IrClass.createParameterDeclarations() {
     assert(thisReceiver == null)
-
-    thisReceiver = WrappedReceiverParameterDescriptor().let {
-        IrValueParameterImpl(
-            startOffset, endOffset,
-            IrDeclarationOrigin.INSTANCE_RECEIVER,
-            IrValueParameterSymbolImpl(it),
-            Name.special("<this>"),
-            0,
-            symbol.typeWithParameters(typeParameters),
-            null,
-            false,
-            false
-        ).apply {
-            it.bind(this)
-            parent = this@createParameterDeclarations
-        }
-    }
+    thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.INSTANCE_RECEIVER, symbol.typeWithParameters(typeParameters))
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)

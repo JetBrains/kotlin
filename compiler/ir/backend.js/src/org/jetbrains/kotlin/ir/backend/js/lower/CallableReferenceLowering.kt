@@ -17,11 +17,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -148,14 +145,6 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             }
         }
 
-        private fun IrClass.createDispatchReceiver(): IrValueParameter {
-            val vpDescriptor = WrappedReceiverParameterDescriptor()
-            val vpSymbol = IrValueParameterSymbolImpl(vpDescriptor)
-            val declaration = IrValueParameterImpl(startOffset, endOffset, origin, vpSymbol, THIS_NAME, -1, defaultType, null, false, false)
-            vpDescriptor.bind(declaration)
-            return declaration
-        }
-
         private fun createConstructor(clazz: IrClass): IrConstructor {
             return clazz.addConstructor {
                 origin = GENERATED_MEMBER_IN_CALLABLE_REFERENCE
@@ -209,7 +198,8 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 isOperator = superMethod.isOperator
             }.apply {
                 overriddenSymbols = listOf(superMethod.symbol)
-                dispatchReceiverParameter = clazz.createDispatchReceiver().also { it.parent = this }
+                dispatchReceiverParameter = buildReceiverParameter(this, clazz.origin, clazz.defaultType, startOffset, endOffset)
+
                 if (isLambda) createLambdaInvokeMethod() else createFunctionReferenceInvokeMethod()
             }
         }

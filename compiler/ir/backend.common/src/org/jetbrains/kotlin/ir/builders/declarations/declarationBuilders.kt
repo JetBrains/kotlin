@@ -218,6 +218,25 @@ inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): I
         constructor.parent = this@addConstructor
     }
 
+private val RECEIVER_PARAMETER_NAME = Name.special("<this>")
+
+fun buildReceiverParameter(
+    parent: IrDeclarationParent,
+    origin: IrDeclarationOrigin,
+    type: IrType,
+    startOffset: Int = parent.startOffset,
+    endOffset: Int = parent.endOffset
+): IrValueParameter = WrappedReceiverParameterDescriptor().let { wrappedDescriptor ->
+    IrValueParameterImpl(
+        startOffset, endOffset, origin,
+        IrValueParameterSymbolImpl(wrappedDescriptor),
+        RECEIVER_PARAMETER_NAME, -1, type, null, isCrossinline = false, isNoinline = false
+    ).also {
+        wrappedDescriptor.bind(it)
+        it.parent = parent
+    }
+}
+
 @PublishedApi
 internal fun IrValueParameterBuilder.buildValueParameter(parent: IrDeclarationParent): IrValueParameter {
     val wrappedDescriptor = WrappedValueParameterDescriptor(wrappedDescriptorAnnotations)
