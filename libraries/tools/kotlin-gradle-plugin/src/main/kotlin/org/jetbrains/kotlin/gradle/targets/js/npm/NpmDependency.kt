@@ -142,7 +142,7 @@ internal fun onlyNameNpmDependency(
     throw IllegalArgumentException("NPM dependency '$name' doesn't have version. Please, set version explicitly.")
 }
 
-internal fun String.isFileVersion() =
+fun String.isFileVersion() =
     startsWith(FILE_VERSION_PREFIX)
 
 internal fun fileVersion(directory: File): String =

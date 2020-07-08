@@ -9,10 +9,7 @@ import com.google.gson.Gson
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
-import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
-import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
@@ -678,5 +675,37 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
         }
     }
 
+    @Test
+    fun testUpdatingPackageJsonOnDependenciesClash() = with(Project("kotlin-js-dependencies-clash")) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
+        fun assertFileVersion(
+            packageJson: PackageJson,
+            dependency: String
+        ) {
+            val version = packageJson.dependencies[dependency]!!
+            assertTrue("${packageJson.name} must have $dependency with file version, but $version found") {
+                version.isFileVersion()
+            }
+        }
+
+        build("packageJson", "rootPackageJson", "kotlinNpmInstall") {
+            assertSuccessful()
+
+            fun getPackageJson(subProject: String) =
+                fileInWorkingDir("build/js/packages/kotlin-js-dependencies-clash-$subProject")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let {
+                        Gson().fromJson(it.readText(), PackageJson::class.java)
+                    }
+
+            val basePackageJson = getPackageJson("base")
+            val libPackageJson = getPackageJson("lib")
+
+            val dependency = "kotlinx-coroutines-core"
+            assertFileVersion(basePackageJson, dependency)
+            assertFileVersion(libPackageJson, dependency)
+        }
+    }
 }
