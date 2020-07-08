@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.runAnything
 
+import com.intellij.execution.Executor
 import com.intellij.ide.actions.runAnything.activity.RunAnythingCommandProvider
 import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider
 import com.intellij.ide.actions.runAnything.activity.RunAnythingRecentProjectProvider
@@ -12,7 +13,6 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.terminal.TerminalShellCommandHandler
-import com.intellij.terminal.TerminalExecutorAction
 
 class RunAnythingTerminalBridge : TerminalShellCommandHandler, TerminalFusAwareHandler {
   override fun matches(project: Project, workingDirectory: String?, localSession: Boolean, command: String): Boolean {
@@ -22,8 +22,8 @@ class RunAnythingTerminalBridge : TerminalShellCommandHandler, TerminalFusAwareH
       .any { provider -> provider.findMatchingValue(dataContext, command) != null }
   }
 
-  override fun execute(project: Project, workingDirectory: String?, localSession: Boolean, command: String, executorAction: TerminalExecutorAction): Boolean {
-    val dataContext = createDataContext(project, localSession, workingDirectory, executorAction)
+  override fun execute(project: Project, workingDirectory: String?, localSession: Boolean, command: String, executor: Executor?): Boolean {
+    val dataContext = createDataContext(project, localSession, workingDirectory, executor)
     return RunAnythingProvider.EP_NAME.extensionList
       .filter { checkForCLI(it) }
       .any { provider ->
@@ -32,7 +32,7 @@ class RunAnythingTerminalBridge : TerminalShellCommandHandler, TerminalFusAwareH
   }
 
   companion object {
-    private fun createDataContext(project: Project, localSession: Boolean, workingDirectory: String?, action: TerminalExecutorAction? = null): DataContext {
+    private fun createDataContext(project: Project, localSession: Boolean, workingDirectory: String?, executor: Executor? = null): DataContext {
       return SimpleDataContext.getSimpleContext(
         mutableMapOf<String, Any?>()
           .also {
@@ -43,7 +43,7 @@ class RunAnythingTerminalBridge : TerminalShellCommandHandler, TerminalFusAwareH
               it[CommonDataKeys.VIRTUAL_FILE.name] = virtualFile
               it[RunAnythingProvider.EXECUTING_CONTEXT.name] = RunAnythingContext.RecentDirectoryContext(virtualFile.path)
             }
-            it[RunAnythingAction.EXECUTOR_KEY.name] = action?.executor
+            it[RunAnythingAction.EXECUTOR_KEY.name] = executor
           }, null)
     }
 
