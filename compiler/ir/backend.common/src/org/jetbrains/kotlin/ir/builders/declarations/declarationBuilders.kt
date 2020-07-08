@@ -19,14 +19,14 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.Variance
 
-fun IrClassBuilder.buildClass(): IrClass {
+@PublishedApi
+internal fun IrClassBuilder.buildClass(): IrClass {
     val wrappedDescriptor = WrappedClassDescriptor()
     return IrClassImpl(
         startOffset, endOffset, origin,
         IrClassSymbolImpl(wrappedDescriptor),
         name, kind, visibility, modality,
-        isCompanion = isCompanion, isInner = isInner, isData = isData, isExternal = isExternal,
-        isInline = isInline, isExpect = isExpect, isFun = isFun
+        isCompanion, isInner, isData, isExternal, isInline, isExpect, isFun
     ).also {
         wrappedDescriptor.bind(it)
     }
@@ -37,7 +37,6 @@ inline fun buildClass(builder: IrClassBuilder.() -> Unit) =
         builder()
         buildClass()
     }
-
 
 fun IrFieldBuilder.buildField(): IrField {
     val wrappedDescriptor = WrappedFieldDescriptor()

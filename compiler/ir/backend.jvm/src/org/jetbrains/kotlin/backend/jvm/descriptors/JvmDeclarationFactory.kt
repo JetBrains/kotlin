@@ -17,20 +17,13 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCom
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -245,17 +238,12 @@ class JvmDeclarationFactory(
 
     fun getDefaultImplsClass(interfaceClass: IrClass): IrClass =
         defaultImplsClasses.getOrPut(interfaceClass) {
-            val descriptor = WrappedClassDescriptor()
-            IrClassImpl(
-                interfaceClass.startOffset, interfaceClass.endOffset,
-                JvmLoweredDeclarationOrigin.DEFAULT_IMPLS,
-                IrClassSymbolImpl(descriptor),
-                Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME),
-                ClassKind.CLASS,
-                Visibilities.PUBLIC,
-                Modality.FINAL
-            ).apply {
-                descriptor.bind(this)
+            buildClass {
+                startOffset = interfaceClass.startOffset
+                endOffset = interfaceClass.endOffset
+                origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
+                name = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
+            }.apply {
                 parent = interfaceClass
                 createImplicitParameterDeclarationWithWrappedDescriptor()
             }

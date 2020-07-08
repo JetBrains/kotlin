@@ -8,24 +8,21 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -224,17 +221,14 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             else buildNewCoroutineClass(function)
         }
 
-        private fun buildNewCoroutineClass(function: IrSimpleFunction): IrClass = WrappedClassDescriptor().let { d ->
-            IrClassImpl(
-                startOffset, endOffset,
-                DECLARATION_ORIGIN_COROUTINE_IMPL,
-                IrClassSymbolImpl(d),
-                nameForCoroutineClass(function),
-                ClassKind.CLASS,
-                function.visibility,
-                Modality.FINAL
-            ).apply {
-                d.bind(this)
+        private fun buildNewCoroutineClass(function: IrSimpleFunction): IrClass =
+            buildClass {
+                startOffset = function.startOffset
+                endOffset = function.endOffset
+                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+                name = nameForCoroutineClass(function)
+                visibility = function.visibility
+            }.apply {
                 parent = function.parent
                 createParameterDeclarations()
                 typeParameters = function.typeParameters.map { typeParam ->
@@ -242,7 +236,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     typeParam.copyToWithoutSuperTypes(this).apply { superTypes += typeParam.superTypes }
                 }
             }
-        }
 
         private fun buildConstructor(): IrConstructor {
             if (isSuspendLambda) {

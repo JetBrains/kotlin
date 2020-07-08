@@ -7,24 +7,21 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.*
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -271,31 +268,25 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     )
 
     private inner class CoroutineBuilder(val irFunction: IrFunction, val functionReference: IrFunctionReference?) {
-
-        private val startOffset = irFunction.startOffset
-        private val endOffset = irFunction.endOffset
         private val functionParameters = irFunction.explicitParameters
         private val boundFunctionParameters = functionReference?.getArgumentsWithIr()?.map { it.first }
         private val unboundFunctionParameters = boundFunctionParameters?.let { functionParameters - it }
 
-        private val coroutineClass: IrClass = WrappedClassDescriptor().let { d ->
-            IrClassImpl(
-                startOffset, endOffset,
-                DECLARATION_ORIGIN_COROUTINE_IMPL,
-                IrClassSymbolImpl(d),
-                nameForCoroutineClass(irFunction),
-                ClassKind.CLASS,
-                irFunction.visibility,
-                Modality.FINAL
-            ).apply {
-                d.bind(this)
+        private val coroutineClass: IrClass =
+            buildClass {
+                startOffset = irFunction.startOffset
+                endOffset = irFunction.endOffset
+                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+                name = nameForCoroutineClass(irFunction)
+                visibility = irFunction.visibility
+            }.apply {
                 parent = irFunction.parent
                 createParameterDeclarations()
                 typeParameters = irFunction.typeParameters.map { typeParam ->
                     typeParam.copyToWithoutSuperTypes(this).apply { superTypes += typeParam.superTypes }
                 }
             }
-        }
+
         private val coroutineClassThis = coroutineClass.thisReceiver!!
 
         private val continuationType = continuationClassSymbol.typeWith(irFunction.returnType)
