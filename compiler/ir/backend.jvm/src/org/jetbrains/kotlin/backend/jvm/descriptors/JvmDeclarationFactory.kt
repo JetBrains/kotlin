@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -27,12 +28,9 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -103,22 +101,11 @@ class JvmDeclarationFactory(
         return originalInnerClassPrimaryConstructorByClass[innerClass]
     }
 
-    private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor {
-        val newDescriptor = WrappedClassConstructorDescriptor(oldConstructor.descriptor.annotations)
-        return IrConstructorImpl(
-            oldConstructor.startOffset,
-            oldConstructor.endOffset,
-            oldConstructor.origin,
-            IrConstructorSymbolImpl(newDescriptor),
-            oldConstructor.name,
-            oldConstructor.visibility,
-            oldConstructor.returnType,
-            isInline = oldConstructor.isInline,
-            isExternal = oldConstructor.isExternal,
-            isPrimary = oldConstructor.isPrimary,
-            isExpect = oldConstructor.isExpect
-        ).apply {
-            newDescriptor.bind(this)
+    private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor =
+        buildConstructor(oldConstructor.descriptor) {
+            updateFrom(oldConstructor)
+            returnType = oldConstructor.returnType
+        }.apply {
             annotations = oldConstructor.annotations.map { it.deepCopyWithSymbols(this) }
             parent = oldConstructor.parent
             returnType = oldConstructor.returnType
@@ -133,7 +120,6 @@ class JvmDeclarationFactory(
             valueParameters = listOf(outerThisValueParameter) + oldConstructor.valueParameters.map { it.copyTo(this, index = it.index + 1) }
             metadata = oldConstructor.metadata
         }
-    }
 
     override fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDeclarations.getOrPut(singleton) {

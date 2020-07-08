@@ -14,12 +14,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.allTypeParameters
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
@@ -119,20 +117,12 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
     private fun generateWrapperHeader(oldFunction: IrFunction, numDefaultParametersToExpect: Int): IrFunction {
         val res = when (oldFunction) {
             is IrConstructor -> {
-                val descriptor = WrappedClassConstructorDescriptor(oldFunction.descriptor.annotations)
-                IrConstructorImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
-                    IrConstructorSymbolImpl(descriptor),
-                    oldFunction.name,
-                    oldFunction.visibility,
-                    returnType = oldFunction.returnType,
-                    isInline = oldFunction.isInline,
-                    isExternal = false,
-                    isPrimary = false,
-                    isExpect = false
-                ).apply {
-                    descriptor.bind(this)
+                buildConstructor(oldFunction.descriptor) {
+                    origin = JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
+                    name = oldFunction.name
+                    visibility = oldFunction.visibility
+                    returnType = oldFunction.returnType
+                    isInline = oldFunction.isInline
                 }
             }
             is IrSimpleFunction -> buildFun(oldFunction.descriptor) {

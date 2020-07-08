@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -378,20 +376,15 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             )
         }
 
-        fun buildConstructor(): IrConstructor = WrappedClassConstructorDescriptor().let { d ->
-            IrConstructorImpl(
-                startOffset, endOffset,
-                DECLARATION_ORIGIN_COROUTINE_IMPL,
-                IrConstructorSymbolImpl(d),
-                coroutineBaseClassConstructor.name,
-                irFunction.visibility,
-                coroutineClass.defaultType,
-                isInline = false,
-                isExternal = false,
-                isPrimary = true,
-                isExpect = false
-            ).apply {
-                d.bind(this)
+        fun buildConstructor(): IrConstructor =
+            buildConstructor {
+                startOffset = irFunction.startOffset
+                endOffset = irFunction.endOffset
+                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+                visibility = irFunction.visibility
+                returnType = coroutineClass.defaultType
+                isPrimary = true
+            }.apply {
                 parent = coroutineClass
                 coroutineClass.declarations += this
                 coroutineConstructors += this
@@ -422,22 +415,15 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     }
                 }
             }
-        }
 
-        private fun buildFactoryConstructor(boundParams: List<IrValueParameter>) = WrappedClassConstructorDescriptor().let { d ->
-            IrConstructorImpl(
-                startOffset, endOffset,
-                DECLARATION_ORIGIN_COROUTINE_IMPL,
-                IrConstructorSymbolImpl(d),
-                coroutineBaseClassConstructor.name,
-                irFunction.visibility,
-                coroutineClass.defaultType,
-                isInline = false,
-                isExternal = false,
-                isPrimary = false,
-                isExpect = false
-            ).apply {
-                d.bind(this)
+        private fun buildFactoryConstructor(boundParams: List<IrValueParameter>): IrConstructor =
+            buildConstructor {
+                startOffset = irFunction.startOffset
+                endOffset = irFunction.endOffset
+                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+                visibility = irFunction.visibility
+                returnType = coroutineClass.defaultType
+            }.apply {
                 parent = coroutineClass
                 coroutineClass.declarations += this
                 coroutineConstructors += this
@@ -464,7 +450,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     }
                 }
             }
-        }
 
         private fun buildCreateMethod(
             unboundArgs: List<IrValueParameter>,

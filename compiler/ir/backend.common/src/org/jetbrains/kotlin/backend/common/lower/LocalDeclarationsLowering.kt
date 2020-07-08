@@ -17,19 +17,17 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -43,7 +41,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import java.util.*
 
 interface LocalNameProvider {
     fun localName(declaration: IrDeclarationWithName): String =
@@ -693,22 +690,11 @@ class LocalDeclarationsLowering(
             val localClassContext = localClasses[oldDeclaration.parent]!!
             val capturedValues = localClassContext.closure.capturedValues
 
-            val newDescriptor = WrappedClassConstructorDescriptor(oldDeclaration.descriptor.annotations, oldDeclaration.descriptor.source)
-            val newSymbol = IrConstructorSymbolImpl(newDescriptor)
-
-            val loweredConstructorVisibility =
-                visibilityPolicy.forConstructor(oldDeclaration, constructorContext.inInlineFunctionScope)
-
-            val newDeclaration = IrConstructorImpl(
-                oldDeclaration.startOffset, oldDeclaration.endOffset, oldDeclaration.origin,
-                newSymbol, oldDeclaration.name, loweredConstructorVisibility, oldDeclaration.returnType,
-                isInline = oldDeclaration.isInline,
-                isExternal = oldDeclaration.isExternal,
-                isPrimary = oldDeclaration.isPrimary,
-                isExpect = oldDeclaration.isExpect
-            )
-
-            newDescriptor.bind(newDeclaration)
+            val newDeclaration = buildConstructor(oldDeclaration.descriptor) {
+                updateFrom(oldDeclaration)
+                visibility = visibilityPolicy.forConstructor(oldDeclaration, constructorContext.inInlineFunctionScope)
+                returnType = oldDeclaration.returnType
+            }
 
             constructorContext.transformedDeclaration = newDeclaration
 

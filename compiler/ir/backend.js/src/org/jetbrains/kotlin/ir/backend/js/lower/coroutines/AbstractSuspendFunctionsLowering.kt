@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -253,49 +251,43 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 }
             }
 
-            return WrappedClassConstructorDescriptor().let { d ->
-                IrConstructorImpl(
-                    startOffset, endOffset,
-                    DECLARATION_ORIGIN_COROUTINE_IMPL,
-                    IrConstructorSymbolImpl(d),
-                    coroutineBaseClassConstructor.name,
-                    function.visibility,
-                    coroutineClass.defaultType,
-                    isInline = false,
-                    isExternal = false,
-                    isPrimary = true,
-                    isExpect = false
-                ).apply {
-                    d.bind(this)
-                    parent = coroutineClass
-                    coroutineClass.addChild(this)
+            return buildConstructor {
+                startOffset = function.startOffset
+                endOffset = function.endOffset
+                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+                name = coroutineBaseClassConstructor.name
+                visibility = function.visibility
+                returnType = coroutineClass.defaultType
+                isPrimary = true
+            }.apply {
+                parent = coroutineClass
+                coroutineClass.addChild(this)
 
-                    valueParameters = functionParameters.mapIndexed { index, parameter ->
-                        parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index, defaultValue = null)
+                valueParameters = functionParameters.mapIndexed { index, parameter ->
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index, defaultValue = null)
+                }
+                val continuationParameter = coroutineBaseClassConstructor.valueParameters[0]
+                valueParameters += continuationParameter.copyTo(
+                    this, DECLARATION_ORIGIN_COROUTINE_IMPL,
+                    index = valueParameters.size,
+                    type = continuationType,
+                    defaultValue = null
+                )
+
+                val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
+                body = irBuilder.irBlockBody {
+                    val completionParameter = valueParameters.last()
+                    +irDelegatingConstructorCall(coroutineBaseClassConstructor).apply {
+                        putValueArgument(0, irGet(completionParameter))
                     }
-                    val continuationParameter = coroutineBaseClassConstructor.valueParameters[0]
-                    valueParameters += continuationParameter.copyTo(
-                        this, DECLARATION_ORIGIN_COROUTINE_IMPL,
-                        index = valueParameters.size,
-                        type = continuationType,
-                        defaultValue = null
-                    )
+                    +IrInstanceInitializerCallImpl(startOffset, endOffset, coroutineClass.symbol, context.irBuiltIns.unitType)
 
-                    val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
-                    body = irBuilder.irBlockBody {
-                        val completionParameter = valueParameters.last()
-                        +irDelegatingConstructorCall(coroutineBaseClassConstructor).apply {
-                            putValueArgument(0, irGet(completionParameter))
-                        }
-                        +IrInstanceInitializerCallImpl(startOffset, endOffset, coroutineClass.symbol, context.irBuiltIns.unitType)
-
-                        functionParameters.forEachIndexed { index, parameter ->
-                            +irSetField(
-                                irGet(coroutineClassThis),
-                                argumentToPropertiesMap.getValue(parameter),
-                                irGet(valueParameters[index])
-                            )
-                        }
+                    functionParameters.forEachIndexed { index, parameter ->
+                        +irSetField(
+                            irGet(coroutineClassThis),
+                            argumentToPropertiesMap.getValue(parameter),
+                            irGet(valueParameters[index])
+                        )
                     }
                 }
             }

@@ -14,13 +14,12 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.*
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -39,7 +37,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import java.io.StringWriter
-
 
 fun ir2string(ir: IrElement?): String = ir?.render() ?: ""
 
@@ -55,20 +52,16 @@ fun IrClass.addSimpleDelegatingConstructor(
     irBuiltIns: IrBuiltIns,
     isPrimary: Boolean = false,
     origin: IrDeclarationOrigin? = null
-) = WrappedClassConstructorDescriptor().let { descriptor ->
-    IrConstructorImpl(
-        startOffset, endOffset,
-        origin ?: this.origin,
-        IrConstructorSymbolImpl(descriptor),
-        superConstructor.name,
-        superConstructor.visibility,
-        defaultType,
-        isInline = false,
-        isExternal = false,
-        isPrimary = isPrimary,
-        isExpect = false
-    ).also { constructor ->
-        descriptor.bind(constructor)
+): IrConstructor =
+    buildConstructor {
+        val klass = this@addSimpleDelegatingConstructor
+        this.startOffset = klass.startOffset
+        this.endOffset = klass.endOffset
+        this.origin = origin ?: klass.origin
+        this.visibility = superConstructor.visibility
+        this.returnType = klass.defaultType
+        this.isPrimary = isPrimary
+    }.also { constructor ->
         constructor.parent = this
         declarations += constructor
 
@@ -92,7 +85,6 @@ fun IrClass.addSimpleDelegatingConstructor(
             )
         )
     }
-}
 
 val IrCall.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true
 val IrFunctionReference.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true

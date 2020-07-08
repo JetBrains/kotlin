@@ -17,12 +17,10 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -99,23 +97,10 @@ class JsDeclarationFactory(mapping: JsMapping) : DeclarationFactory {
         val irClass = oldConstructor.parent as IrClass
         val outerThisType = (irClass.parent as IrClass).defaultType
 
-        val descriptor = WrappedClassConstructorDescriptor(oldConstructor.descriptor.annotations, oldConstructor.descriptor.source)
-        val symbol = IrConstructorSymbolImpl(descriptor)
-
-        val newConstructor = IrConstructorImpl(
-            oldConstructor.startOffset,
-            oldConstructor.endOffset,
-            oldConstructor.origin,
-            symbol,
-            oldConstructor.name,
-            oldConstructor.visibility,
-            oldConstructor.returnType,
-            isInline = oldConstructor.isInline,
-            isExternal = oldConstructor.isExternal,
-            isPrimary = oldConstructor.isPrimary,
-            isExpect = oldConstructor.isExpect
-        ).also {
-            descriptor.bind(it)
+        val newConstructor = buildConstructor(oldConstructor.descriptor) {
+            updateFrom(oldConstructor)
+            returnType = oldConstructor.returnType
+        }.also {
             it.parent = oldConstructor.parent
         }
 

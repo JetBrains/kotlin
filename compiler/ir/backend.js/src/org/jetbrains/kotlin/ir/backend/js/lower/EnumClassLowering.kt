@@ -22,15 +22,16 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsArrayLiteral
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -119,23 +120,10 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
     }
 
     private fun transformEnumConstructor(enumConstructor: IrConstructor, enumClass: IrClass): IrConstructor {
-        val loweredConstructorDescriptor = WrappedClassConstructorDescriptor()
-        val loweredConstructorSymbol = IrConstructorSymbolImpl(loweredConstructorDescriptor)
-
-        return IrConstructorImpl(
-            enumConstructor.startOffset,
-            enumConstructor.endOffset,
-            enumConstructor.origin,
-            loweredConstructorSymbol,
-            enumConstructor.name,
-            enumConstructor.visibility,
-            enumConstructor.returnType,
-            isInline = enumConstructor.isInline,
-            isExternal = enumConstructor.isExternal,
-            isPrimary = enumConstructor.isPrimary,
-            isExpect = enumConstructor.isExpect
-        ).apply {
-            loweredConstructorDescriptor.bind(this)
+        return buildConstructor {
+            updateFrom(enumConstructor)
+            returnType = enumConstructor.returnType
+        }.apply {
             parent = enumClass
             valueParameters += JsIrBuilder.buildValueParameter(this, "name", 0, context.irBuiltIns.stringType)
             valueParameters += JsIrBuilder.buildValueParameter(this, "ordinal", 1, context.irBuiltIns.intType)
