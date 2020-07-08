@@ -10,19 +10,17 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -105,21 +103,16 @@ private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElement
 
     override fun visitField(declaration: IrField): IrStatement {
         val newName = newNames[declaration] ?: return super.visitField(declaration)
-
-        val descriptor = WrappedFieldDescriptor()
-        val symbol = IrFieldSymbolImpl(descriptor)
-        return IrFieldImpl(
-            declaration.startOffset, declaration.endOffset, declaration.origin, symbol, newName,
-            declaration.type, declaration.visibility, declaration.isFinal, declaration.isExternal, declaration.isStatic,
-        ).also {
-            descriptor.bind(it)
+        return buildField {
+            updateFrom(declaration)
+            name = newName
+        }.also {
             it.parent = declaration.parent
             it.initializer = declaration.initializer
                 ?.transform(this, null)
                 ?.patchDeclarationParents(it)
-            it.metadata = declaration.metadata
 
-            newSymbols[declaration] = symbol
+            newSymbols[declaration] = it.symbol
         }
     }
 }

@@ -14,15 +14,13 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -618,21 +616,16 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     }
 
     fun IrClass.addField(name: Name, type: IrType, isMutable: Boolean): IrField {
-        val descriptor = WrappedFieldDescriptor()
-        val symbol = IrFieldSymbolImpl(descriptor)
-        return IrFieldImpl(
-            startOffset,
-            endOffset,
-            DECLARATION_ORIGIN_COROUTINE_IMPL,
-            symbol,
-            name,
-            type,
-            Visibilities.PRIVATE,
-            isFinal = !isMutable,
-            isExternal = false,
-            isStatic = false
-        ).also {
-            descriptor.bind(it)
+        val klass = this
+        return buildField {
+            this.startOffset = klass.startOffset
+            this.endOffset = klass.endOffset
+            this.origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+            this.name = name
+            this.type = type
+            this.visibility = Visibilities.PRIVATE
+            this.isFinal = !isMutable
+        }.also {
             it.parent = this
             addChild(it)
         }

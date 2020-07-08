@@ -72,7 +72,8 @@ fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: Visibi
 fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: Visibility = Visibilities.PRIVATE): IrField =
     addField(Name.identifier(fieldName), fieldType, fieldVisibility)
 
-fun IrPropertyBuilder.buildProperty(originalDescriptor: PropertyDescriptor? = null): IrProperty {
+@PublishedApi
+internal fun IrPropertyBuilder.buildProperty(originalDescriptor: PropertyDescriptor? = null): IrProperty {
     val wrappedDescriptor = when (originalDescriptor) {
         is DescriptorWithContainerSource -> WrappedPropertyDescriptorWithContainerSource(originalDescriptor.containerSource)
         else -> WrappedPropertyDescriptor()
@@ -81,8 +82,7 @@ fun IrPropertyBuilder.buildProperty(originalDescriptor: PropertyDescriptor? = nu
         startOffset, endOffset, origin,
         IrPropertySymbolImpl(wrappedDescriptor),
         name, visibility, modality,
-        isVar = isVar, isConst = isConst, isLateinit = isLateinit, isDelegated = isDelegated, isExpect = isExpect, isExternal = isExternal,
-        isFakeOverride = isFakeOverride
+        isVar, isConst, isLateinit, isDelegated, isExternal, isExpect, isFakeOverride
     ).also {
         wrappedDescriptor.bind(it)
     }

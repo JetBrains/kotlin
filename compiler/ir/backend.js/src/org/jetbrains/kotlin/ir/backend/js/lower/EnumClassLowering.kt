@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -25,14 +24,11 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
@@ -64,24 +60,24 @@ class EnumUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
         return JsIrBuilder.buildCall(intrinsic, context.irBuiltIns.anyType, listOf(irClass.defaultType))
     }
 
-    private fun createFieldForEntry(entry: IrEnumEntry, irClass: IrClass): IrField {
-        val descriptor = WrappedFieldDescriptor()
-        val symbol = IrFieldSymbolImpl(descriptor)
-        return entry.run {
-            IrFieldImpl(
-                startOffset, endOffset, origin, symbol, name, irClass.defaultType, Visibilities.PUBLIC,
-                isFinal = false, isExternal = true, isStatic = true
-            ).also {
-                descriptor.bind(it)
-                it.parent = irClass
+    private fun createFieldForEntry(entry: IrEnumEntry, irClass: IrClass): IrField =
+        buildField {
+            startOffset = entry.startOffset
+            endOffset = entry.endOffset
+            origin = entry.origin
+            name = entry.name
+            type = irClass.defaultType
+            isFinal = false
+            isExternal = true
+            isStatic = true
+        }.also {
+            it.parent = irClass
 
-                // TODO need a way to emerge local declarations from BodyLoweringPass
-                stageController.unrestrictDeclarationListsAccess {
-                    irClass.declarations += it
-                }
+            // TODO need a way to emerge local declarations from BodyLoweringPass
+            stageController.unrestrictDeclarationListsAccess {
+                irClass.declarations += it
             }
         }
-    }
 
     private fun lowerEnumEntry(enumEntry: IrEnumEntry, klass: IrClass) =
         enumEntry.getInstanceFun!!.run { JsIrBuilder.buildCall(symbol) }
