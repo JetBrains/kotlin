@@ -39,7 +39,7 @@ class AnnotationsCommonizer : AbstractStandardCommonizer<List<CirAnnotation>, Li
 
     override fun doCommonizeWith(next: List<CirAnnotation>): Boolean {
         val nextDeprecatedAnnotation = next.firstOrNull { annotation ->
-            (annotation.type.classifierId as? CirClassifierId.ClassOrTypeAlias)?.classId == DEPRECATED_ANNOTATION_CID
+            (annotation.type.classifierId as? CirClassifierId.Class)?.classId == DEPRECATED_ANNOTATION_CID
         } ?: return true
 
         val deprecatedAnnotationCommonizer = deprecatedAnnotationCommonizer
