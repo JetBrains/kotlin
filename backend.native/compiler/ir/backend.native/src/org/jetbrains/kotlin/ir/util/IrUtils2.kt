@@ -401,3 +401,6 @@ fun IrFunction.isTypeOfIntrinsic(): Boolean =
         this.name.asString() == "typeOf" &&
                 this.valueParameters.isEmpty() &&
                 (this.parent as? IrPackageFragment)?.fqName == KOTLIN_REFLECT_FQ_NAME
+
+fun IrBuilderWithScope.irByte(value: Byte) =
+        IrConstImpl.byte(startOffset, endOffset, context.irBuiltIns.byteType, value)

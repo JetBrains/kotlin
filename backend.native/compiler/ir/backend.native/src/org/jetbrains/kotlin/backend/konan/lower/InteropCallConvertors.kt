@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
+import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.cgen.isCEnumType
 import org.jetbrains.kotlin.backend.konan.cgen.isVector
@@ -20,9 +21,11 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.isPropertyAccessor
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -68,6 +71,8 @@ private class InteropCallContext(
             || classOrNull == symbols.mutableList
             || classOrNull == symbols.set
             || classOrNull == symbols.map
+
+    val irBuiltIns: IrBuiltIns = builder.context.irBuiltIns
 }
 
 private inline fun <T> generateInteropCall(
@@ -137,10 +142,13 @@ private fun InteropCallContext.writeValueToMemory(
 
 private fun InteropCallContext.determineInMemoryType(type: IrType): IrType {
     val classifier = type.classOrNull!!
-    return if (classifier in symbols.unsignedIntegerClasses) {
-        symbols.unsignedToSignedOfSameBitWidth.getValue(classifier).owner.defaultType
-    } else {
-        type
+    return when (classifier) {
+        in symbols.unsignedIntegerClasses -> {
+            symbols.unsignedToSignedOfSameBitWidth.getValue(classifier).owner.defaultType
+        }
+        // Assuming that _Bool is stored as single byte.
+        irBuiltIns.booleanClass -> symbols.byte.defaultType
+        else -> type
     }
 }
 
@@ -152,17 +160,58 @@ private fun InteropCallContext.castPrimitiveIfNeeded(
     val sourceClass = fromType.classOrNull!!
     val targetClass = toType.classOrNull!!
     return if (sourceClass != targetClass) {
-        val conversion = symbols.integerConversions.getValue(sourceClass to targetClass)
-        builder.irCall(conversion.owner).apply {
-            if (conversion.owner.dispatchReceiverParameter != null) {
-                dispatchReceiver = value
-            } else {
-                extensionReceiver = value
+        when {
+            targetClass == irBuiltIns.booleanClass -> castToBoolean(sourceClass, value)
+            sourceClass == irBuiltIns.booleanClass -> castFromBoolean(targetClass, value)
+            else -> {
+                val conversion = symbols.integerConversions.getValue(sourceClass to targetClass)
+                builder.irCall(conversion.owner).apply {
+                    if (conversion.owner.dispatchReceiverParameter != null) {
+                        dispatchReceiver = value
+                    } else {
+                        extensionReceiver = value
+                    }
+                }
             }
         }
     } else {
         value
     }
+}
+
+/**
+ * Perform (value != 0)
+ */
+private fun InteropCallContext.castToBoolean(sourceClass: IrClassSymbol, value: IrExpression): IrExpression {
+    val (primitiveBinaryType, immZero) = when (sourceClass) {
+        // Case of regular struct field.
+        symbols.byte -> PrimitiveBinaryType.BYTE to builder.irByte(0)
+        // Case of bitfield.
+        symbols.long -> PrimitiveBinaryType.LONG to builder.irLong(0)
+        else -> error("Unsupported cast to boolean from ${sourceClass.owner.name}")
+    }
+    val areEqualByValuesBytes = symbols.areEqualByValue.getValue(primitiveBinaryType)
+    val compareToZero = builder.irCall(areEqualByValuesBytes).apply {
+        putValueArgument(0, value)
+        putValueArgument(1, immZero)
+    }
+    return builder.irCall(irBuiltIns.booleanNotSymbol).apply {
+        dispatchReceiver = compareToZero
+    }
+}
+
+/**
+ * Perform if (value) 1 else 0
+ */
+private fun InteropCallContext.castFromBoolean(targetClass: IrClassSymbol, value: IrExpression): IrExpression {
+    val (thenPart, elsePart) = when (targetClass) {
+        // Case of regular struct field.
+        symbols.byte -> builder.irByte(1) to builder.irByte(0)
+        // Case of bitfield.
+        symbols.long -> builder.irLong(1) to builder.irLong(0)
+        else -> error("Unsupported cast from boolean to ${targetClass.owner.name}")
+    }
+    return builder.irIfThenElse(targetClass.defaultType, value, thenPart, elsePart)
 }
 
 private fun InteropCallContext.convertEnumToIntegral(enumValue: IrExpression, targetEnumType: IrType): IrExpression {
