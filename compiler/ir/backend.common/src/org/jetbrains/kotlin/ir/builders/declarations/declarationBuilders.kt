@@ -105,7 +105,7 @@ inline fun IrProperty.addGetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
     IrFunctionBuilder().run {
         name = Name.special("<get-${this@addGetter.name}>")
         builder()
-        buildFun().also { getter ->
+        buildFunction().also { getter ->
             this@addGetter.getter = getter
             getter.correspondingPropertySymbol = this@addGetter.symbol
             getter.parent = this@addGetter.parent
@@ -116,13 +116,16 @@ inline fun IrProperty.addSetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
     IrFunctionBuilder().run {
         name = Name.special("<set-${this@addSetter.name}>")
         builder()
-        buildFun().also { setter ->
+        buildFunction().also { setter ->
             this@addSetter.setter = setter
             setter.parent = this@addSetter.parent
         }
     }
 
-fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): IrSimpleFunction {
+@PublishedApi
+internal fun IrFunctionBuilder.buildFunction(originalDescriptor: FunctionDescriptor? = null): IrSimpleFunction {
+    // Inlining relies on descriptors for external declarations. When replacing a potentially external function (e.g. in an IrCall),
+    // we have to ensure that we keep information from the original descriptor so as not to break inlining.
     val wrappedDescriptor = when (originalDescriptor) {
         is DescriptorWithContainerSource -> WrappedFunctionDescriptorWithContainerSource(originalDescriptor.containerSource)
         is PropertyGetterDescriptor -> WrappedPropertyGetterDescriptor(originalDescriptor.annotations, originalDescriptor.source)
@@ -134,8 +137,7 @@ fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): 
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(wrappedDescriptor),
         name, visibility, modality, returnType,
-        isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-        isFakeOverride = isFakeOverride, isOperator = isOperator
+        isInline, isExternal, isTailrec, isSuspend, isOperator, isExpect, isFakeOverride
     ).also {
         wrappedDescriptor.bind(it)
     }
@@ -154,27 +156,14 @@ fun IrFunctionBuilder.buildConstructor(): IrConstructor {
     }
 }
 
-/**
- * Inlining relies on descriptors for external declarations. When replacing a
- * potentially external function (e.g. in an IrCall) we have to ensure that we keep
- * information from the original descriptor so as not to break inlining.
- */
-inline fun buildFunWithDescriptorForInlining(
-    originalDescriptor: FunctionDescriptor, builder: IrFunctionBuilder.() -> Unit
-): IrSimpleFunction =
+inline fun buildFun(originalDescriptor: FunctionDescriptor? = null, builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
     IrFunctionBuilder().run {
         builder()
-        buildFun(originalDescriptor)
-    }
-
-inline fun buildFun(builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
-    IrFunctionBuilder().run {
-        builder()
-        buildFun()
+        buildFunction(originalDescriptor)
     }
 
 inline fun IrDeclarationContainer.addFunction(builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
-    buildFun(builder).also { function ->
+    buildFun(null, builder).also { function ->
         declarations.add(function)
         function.parent = this@addFunction
     }

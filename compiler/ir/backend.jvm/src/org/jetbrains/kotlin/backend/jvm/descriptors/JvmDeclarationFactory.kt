@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
-import org.jetbrains.kotlin.backend.common.DescriptorsToIrRemapper
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -21,21 +20,19 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -282,30 +279,25 @@ class JvmDeclarationFactory(
         defaultImplsRedirections.getOrPut(fakeOverride) {
             assert(fakeOverride.isFakeOverride)
             val irClass = fakeOverride.parentAsClass
-            val descriptor = DescriptorsToIrRemapper.remapDeclaredSimpleFunction(fakeOverride.descriptor)
-            with(fakeOverride) {
-                IrFunctionImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
-                    IrSimpleFunctionSymbolImpl(descriptor),
-                    name, visibility, modality, returnType,
-                    isInline = isInline,
-                    isExternal = false,
-                    isTailrec = false,
-                    isSuspend = isSuspend,
-                    isExpect = false,
-                    isFakeOverride = false,
-                    isOperator = isOperator
-                ).apply {
-                    descriptor.bind(this)
-                    parent = irClass
-                    overriddenSymbols = fakeOverride.overriddenSymbols
-                    copyParameterDeclarationsFrom(fakeOverride)
-                    annotations = fakeOverride.annotations
-                    copyCorrespondingPropertyFrom(fakeOverride)
-                }
+            buildFun(fakeOverride.descriptor) {
+                origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
+                name = fakeOverride.name
+                visibility = fakeOverride.visibility
+                modality = fakeOverride.modality
+                returnType = fakeOverride.returnType
+                isInline = fakeOverride.isInline
+                isExternal = false
+                isTailrec = false
+                isSuspend = fakeOverride.isSuspend
+                isOperator = fakeOverride.isOperator
+                isExpect = false
+                isFakeOverride = false
+            }.apply {
+                parent = irClass
+                overriddenSymbols = fakeOverride.overriddenSymbols
+                copyParameterDeclarationsFrom(fakeOverride)
+                annotations = fakeOverride.annotations
+                copyCorrespondingPropertyFrom(fakeOverride)
             }
-
-
         }
-
 }

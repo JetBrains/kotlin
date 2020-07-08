@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
@@ -486,25 +487,20 @@ fun IrClass.addFakeOverridesViaIncorrectHeuristic(implementedMembers: List<IrSim
 
     fun createFakeOverride(overriddenFunctions: List<IrSimpleFunction>) =
         overriddenFunctions.first().let { irFunction ->
-            val descriptor = WrappedSimpleFunctionDescriptor()
-            IrFunctionImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                IrDeclarationOrigin.FAKE_OVERRIDE,
-                IrSimpleFunctionSymbolImpl(descriptor),
-                irFunction.name,
-                Visibilities.PUBLIC,
-                irFunction.modality,
-                irFunction.returnType,
-                isInline = irFunction.isInline,
-                isExternal = irFunction.isExternal,
-                isTailrec = irFunction.isTailrec,
-                isSuspend = irFunction.isSuspend,
-                isExpect = irFunction.isExpect,
-                isFakeOverride = true,
+            buildFun {
+                origin = IrDeclarationOrigin.FAKE_OVERRIDE
+                name = irFunction.name
+                visibility = Visibilities.PUBLIC
+                modality = irFunction.modality
+                returnType = irFunction.returnType
+                isInline = irFunction.isInline
+                isExternal = irFunction.isExternal
+                isTailrec = irFunction.isTailrec
+                isSuspend = irFunction.isSuspend
                 isOperator = irFunction.isOperator
-            ).apply {
-                descriptor.bind(this)
+                isExpect = irFunction.isExpect
+                isFakeOverride = true
+            }.apply {
                 parent = this@addFakeOverridesViaIncorrectHeuristic
                 overriddenSymbols = overriddenFunctions.map { it.symbol }
                 copyParameterDeclarationsFrom(irFunction)

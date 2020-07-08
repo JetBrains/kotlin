@@ -14,14 +14,12 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.allTypeParameters
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
@@ -137,29 +135,16 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                     descriptor.bind(this)
                 }
             }
-            is IrSimpleFunction -> {
-                val descriptor = WrappedSimpleFunctionDescriptor(oldFunction.descriptor.annotations)
-                val modality =
+            is IrSimpleFunction -> buildFun(oldFunction.descriptor) {
+                origin = JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
+                name = oldFunction.name
+                visibility = oldFunction.visibility
+                modality =
                     if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) Modality.FINAL
                     else oldFunction.modality
-                IrFunctionImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
-                    IrSimpleFunctionSymbolImpl(descriptor),
-                    oldFunction.name,
-                    oldFunction.visibility,
-                    modality,
-                    returnType = oldFunction.returnType,
-                    isInline = oldFunction.isInline,
-                    isExternal = false,
-                    isTailrec = false,
-                    isSuspend = oldFunction.isSuspend,
-                    isExpect = false,
-                    isFakeOverride = false,
-                    isOperator = false,
-                ).apply {
-                    descriptor.bind(this)
-                }
+                returnType = oldFunction.returnType
+                isInline = oldFunction.isInline
+                isSuspend = oldFunction.isSuspend
             }
             else -> error("Unknown kind of IrFunction: $oldFunction")
         }

@@ -14,15 +14,14 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -30,14 +29,15 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val context: C) : BodyLoweringPass {
@@ -302,128 +302,111 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
 
         private fun buildInvokeSuspendMethod(stateMachineFunction: IrSimpleFunction): IrSimpleFunction {
-            val smFunction = WrappedSimpleFunctionDescriptor().let { d ->
-                IrFunctionImpl(
-                    startOffset, endOffset,
-                    DECLARATION_ORIGIN_COROUTINE_IMPL,
-                    IrSimpleFunctionSymbolImpl(d),
-                    stateMachineFunction.name,
-                    stateMachineFunction.visibility,
-                    Modality.FINAL,
-                    context.irBuiltIns.anyNType,
-                    isInline = stateMachineFunction.isInline,
-                    isExternal = stateMachineFunction.isExternal,
-                    isTailrec = stateMachineFunction.isTailrec,
-                    isSuspend = stateMachineFunction.isSuspend,
-                    isExpect = stateMachineFunction.isExpect,
-                    isFakeOverride = false,
-                    isOperator = false
-                ).apply {
-                    d.bind(this)
-                    parent = coroutineClass
-                    coroutineClass.addChild(this)
+            val smFunction = buildFun {
+                startOffset = function.startOffset
+                endOffset = function.endOffset
+                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+                name = stateMachineFunction.name
+                visibility = stateMachineFunction.visibility
+                modality = Modality.FINAL
+                returnType = context.irBuiltIns.anyNType
+                isInline = stateMachineFunction.isInline
+                isExternal = stateMachineFunction.isExternal
+                isTailrec = stateMachineFunction.isTailrec
+                isSuspend = stateMachineFunction.isSuspend
+                isOperator = false
+                isExpect = stateMachineFunction.isExpect
+                isFakeOverride = false
+            }.apply {
+                parent = coroutineClass
+                coroutineClass.addChild(this)
 
-                    typeParameters = stateMachineFunction.typeParameters.map { parameter ->
-                        parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
-                            .apply { superTypes += parameter.superTypes }
-                    }
-
-                    valueParameters = stateMachineFunction.valueParameters.mapIndexed { index, parameter ->
-                        parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
-                    }
-
-                    this.createDispatchReceiverParameter()
-
-                    overriddenSymbols = listOf(stateMachineFunction.symbol)
+                typeParameters = stateMachineFunction.typeParameters.map { parameter ->
+                    parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
+                        .apply { superTypes += parameter.superTypes }
                 }
+
+                valueParameters = stateMachineFunction.valueParameters.mapIndexed { index, parameter ->
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
+                }
+
+                this.createDispatchReceiverParameter()
+
+                overriddenSymbols = listOf(stateMachineFunction.symbol)
             }
 
             buildStateMachine(smFunction, function, argumentToPropertiesMap)
             return smFunction
         }
 
-        private fun buildCreateMethod(superCreateFunction: IrSimpleFunction?, constructor: IrConstructor): IrSimpleFunction {
-            // val i = $lambdaN(this.f1, this.f2, ..., this.fn, continuation) // bound
-            // i.s1 = p1 // unbound
-            // ...
-            // i.sn = pn
-            // return i
-            val createFunction = WrappedSimpleFunctionDescriptor().let { d ->
-                IrFunctionImpl(
-                    startOffset, endOffset,
-                    DECLARATION_ORIGIN_COROUTINE_IMPL,
-                    IrSimpleFunctionSymbolImpl(d),
-                    Name.identifier("create"),
-                    Visibilities.PROTECTED,
-                    Modality.FINAL,
-                    coroutineClass.defaultType,
-                    isInline = false,
-                    isExternal = false,
-                    isTailrec = false,
-                    isSuspend = false,
-                    isExpect = false,
-                    isFakeOverride = false,
-                    isOperator = false
-                ).apply {
-                    d.bind(this)
-                    parent = coroutineClass
-                    coroutineClass.addChild(this)
+        // val i = $lambdaN(this.f1, this.f2, ..., this.fn, continuation) // bound
+        // i.s1 = p1 // unbound
+        // ...
+        // i.sn = pn
+        // return i
+        private fun buildCreateMethod(superCreateFunction: IrSimpleFunction?, constructor: IrConstructor): IrSimpleFunction =
+            buildFun {
+                startOffset = function.startOffset
+                endOffset = function.endOffset
+                origin = DECLARATION_ORIGIN_COROUTINE_IMPL
+                name = Name.identifier("create")
+                visibility = Visibilities.PROTECTED
+                returnType = coroutineClass.defaultType
+            }.apply {
+                parent = coroutineClass
+                coroutineClass.addChild(this)
 
-                    typeParameters = function.typeParameters.map { parameter ->
-                        parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
-                            .apply { superTypes += parameter.superTypes }
-                    }
+                typeParameters = function.typeParameters.map { parameter ->
+                    parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
+                        .apply { superTypes += parameter.superTypes }
+                }
 
-                    val unboundArgs = function.valueParameters
+                val unboundArgs = function.valueParameters
 
-                    val createValueParameters = (unboundArgs + create1CompletionParameter).mapIndexed { index, parameter ->
-                        parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
-                    }
+                val createValueParameters = (unboundArgs + create1CompletionParameter).mapIndexed { index, parameter ->
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
+                }
 
-                    valueParameters = createValueParameters
+                valueParameters = createValueParameters
 
-                    this.createDispatchReceiverParameter()
+                this.createDispatchReceiverParameter()
 
-                    superCreateFunction?.let {
-                        overriddenSymbols = ArrayList<IrSimpleFunctionSymbol>(it.overriddenSymbols.size + 1).apply {
-                            addAll(it.overriddenSymbols)
-                            add(it.symbol)
-                        }
-                    }
-
-                    val thisReceiver = this.dispatchReceiverParameter!!
-
-                    val boundFields =
-                        context.mapping.capturedFields[coroutineClass] ?: error("No captured values for class ${coroutineClass.render()}")
-
-                    val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
-                    body = irBuilder.irBlockBody(startOffset, endOffset) {
-                        val instanceCreate = irCall(constructor).apply {
-                            var unboundIndex = 0
-                            for (f in boundFields) {
-                                putValueArgument(unboundIndex++, irGetField(irGet(thisReceiver), f))
-                            }
-                            putValueArgument(unboundIndex++, irGet(createValueParameters.last()))
-                            assert(unboundIndex == constructor.valueParameters.size) {
-                                "Not all arguments of <create> are used"
-                            }
-                        }
-                        val instanceVal = scope.createTmpVariable(instanceCreate, "i")
-                        +instanceVal
-
-                        assert(createValueParameters.size - 1 == argumentToPropertiesMap.size)
-
-                        for ((p, f) in createValueParameters.zip(argumentToPropertiesMap.values)) {
-                            +irSetField(irGet(instanceVal), f, irGet(p))
-                        }
-
-                        +irReturn(irGet(instanceVal))
+                superCreateFunction?.let {
+                    overriddenSymbols = ArrayList<IrSimpleFunctionSymbol>(it.overriddenSymbols.size + 1).apply {
+                        addAll(it.overriddenSymbols)
+                        add(it.symbol)
                     }
                 }
-            }
 
-            return createFunction
-        }
+                val thisReceiver = this.dispatchReceiverParameter!!
+
+                val boundFields =
+                    context.mapping.capturedFields[coroutineClass] ?: error("No captured values for class ${coroutineClass.render()}")
+
+                val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
+                body = irBuilder.irBlockBody(startOffset, endOffset) {
+                    val instanceCreate = irCall(constructor).apply {
+                        var unboundIndex = 0
+                        for (f in boundFields) {
+                            putValueArgument(unboundIndex++, irGetField(irGet(thisReceiver), f))
+                        }
+                        putValueArgument(unboundIndex++, irGet(createValueParameters.last()))
+                        assert(unboundIndex == constructor.valueParameters.size) {
+                            "Not all arguments of <create> are used"
+                        }
+                    }
+                    val instanceVal = scope.createTmpVariable(instanceCreate, "i")
+                    +instanceVal
+
+                    assert(createValueParameters.size - 1 == argumentToPropertiesMap.size)
+
+                    for ((p, f) in createValueParameters.zip(argumentToPropertiesMap.values)) {
+                        +irSetField(irGet(instanceVal), f, irGet(p))
+                    }
+
+                    +irReturn(irGet(instanceVal))
+                }
+            }
 
         private fun transformInvokeMethod(createFunction: IrSimpleFunction, stateMachineFunction: IrSimpleFunction) {
             val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)

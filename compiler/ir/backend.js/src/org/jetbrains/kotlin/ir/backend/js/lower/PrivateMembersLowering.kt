@@ -10,13 +10,11 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
@@ -48,21 +46,13 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
         if (function.visibility != Visibilities.PRIVATE || function.dispatchReceiverParameter == null) return null
 
-        val descriptor = WrappedSimpleFunctionDescriptor()
-        val symbol = IrSimpleFunctionSymbolImpl(descriptor)
-        val staticFunction = function.run {
-            IrFunctionImpl(
-                startOffset, endOffset, origin,
-                symbol, name, visibility, modality,
-                returnType,
-                isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-                isFakeOverride = isFakeOverride,
-                isOperator = isOperator
-            ).also {
-                descriptor.bind(it)
-                it.parent = parent
-                it.correspondingPropertySymbol = correspondingPropertySymbol
-            }
+        val staticFunction = buildFun {
+            updateFrom(function)
+            name = function.name
+            returnType = function.returnType
+        }.also {
+            it.parent = function.parent
+            it.correspondingPropertySymbol = function.correspondingPropertySymbol
         }
 
         staticFunction.typeParameters += function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
