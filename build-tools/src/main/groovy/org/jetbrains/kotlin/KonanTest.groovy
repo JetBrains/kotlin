@@ -505,13 +505,14 @@ fun runTest() {
                     List<TestModule> orderedModules = DFS.INSTANCE.topologicalOrder(modules.values()) { module ->
                         module.dependencies.collect { modules[it] }.findAll { it != null }
                     }
-                    def libsFlags = []
+                    Set<String> libs = new HashSet<String>()
                     orderedModules.reverse().each { module ->
                         if (!module.isDefaultModule()) {
                             def klibModulePath = "${executablePath()}.${module.name}.klib"
-                            libsFlags += module.linkDependencies(executablePath())
+                            libs.addAll(module.dependencies)
                             runCompiler(compileList.findAll { it.module == module }.collect { it.path },
-                                    klibModulePath, flags + ["-p", "library"] + libsFlags)
+                                    klibModulePath, flags + ["-p", "library"] +
+                                    libs.collectMany { ["-l", "${executablePath()}.${it}.klib"] }.toList())
                         }
                     }
 
@@ -519,9 +520,10 @@ fun runTest() {
                         it.module.isDefaultModule() || it.module == TestModule.support
                     }
                     compileMain.forEach { f ->
-                        libsFlags.addAll(f.module.linkDependencies(executablePath()))
+                        libs.addAll(f.module.dependencies)
                     }
-                    if (!compileMain.empty) runCompiler(compileMain.collect { it.path }, executablePath(), flags + libsFlags)
+                    if (!compileMain.empty) runCompiler(compileMain.collect { it.path }, executablePath(),
+                            flags + libs.collectMany { ["-l", "${executablePath()}.${it}.klib"] }.toList())
                 }
             } catch (Exception ex) {
                 project.logger.quiet("ERROR: Compilation failed for test suite: $name with exception", ex)
