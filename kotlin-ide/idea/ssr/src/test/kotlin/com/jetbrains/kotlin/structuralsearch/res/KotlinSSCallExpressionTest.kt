@@ -27,10 +27,6 @@ class KotlinSSCallExpressionTest : KotlinSSResourceInspectionTest() {
 
     fun testFunArgCallVarRef() { doTest("'_('_)") }
 
-    fun testFunArgCallCountFilter() { doTest("listOf('_+)") }
-
-    fun testFunArgCallBoundedCountFilter() { doTest("listOf('_{4,4})") }
-
     fun testFunCall() { doTest("'_()") }
 
     fun testFunExtensionCall() { doTest("0.a()") }

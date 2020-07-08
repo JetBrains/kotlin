@@ -237,16 +237,16 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             // Containers (lists, bodies, ...)
             family[1] is KtClassBody -> true
             family[0] is KtParameter && family[1] is KtParameterList -> true
+            family[0] is KtTypeParameter && family[1] is KtTypeParameterList -> true
             family[2] is KtTypeParameter && family[3] is KtTypeParameterList -> true
+            family[1] is KtUserType && family[4] is KtParameterList && family[5] !is KtNamedFunction -> true
             family[1] is KtUserType && family[4] is KtSuperTypeList -> true
             family[1] is KtValueArgument && family[2] is KtValueArgumentList -> true
             family[1] is KtBlockExpression && family[3] is KtDoWhileExpression -> true
             family[0] is KtNameReferenceExpression && family[1] is KtBlockExpression -> true
-            family[1] is KtUserType && family[4] is KtParameterList && family[5] !is KtNamedFunction -> true
             // Annotations
             family[1] is KtUserType && family[4] is KtAnnotationEntry -> true
             // Strings
-            family[1] is KtStringTemplateExpression -> true
             family[1] is KtSimpleNameStringTemplateEntry -> true
             // Default: count filter not applicable
             else -> false

@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
-import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi2ir.deparenthesize
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import java.util.regex.Pattern
 
 class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisitor) : KotlinRecursiveElementVisitor() {
@@ -236,44 +234,37 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitModifierList(list: KtModifierList) {
         super.visitModifierList(list)
-        if (list.allChildren.all { it.allowsAbsenceOfMatch }) {
-            setHandler(list, absenceOfMatchHandler(list))
-        }
+        list.setAbsenceOfMatchHandlerIfApplicable(true)
     }
 
     override fun visitParameterList(list: KtParameterList) {
         super.visitParameterList(list)
-        if (list.children.all { it.allowsAbsenceOfMatch }) {
-            setHandler(list, absenceOfMatchHandler(list))
-        }
+        list.setAbsenceOfMatchHandlerIfApplicable()
     }
 
     override fun visitValueArgumentList(list: KtValueArgumentList) {
         super.visitValueArgumentList(list)
-        if (list.children.all { it.allowsAbsenceOfMatch }) {
-            setHandler(list, absenceOfMatchHandler(list))
-        }
+        list.setAbsenceOfMatchHandlerIfApplicable()
+    }
+
+    override fun visitTypeParameterList(list: KtTypeParameterList) {
+        super.visitTypeParameterList(list)
+        list.setAbsenceOfMatchHandlerIfApplicable()
     }
 
     override fun visitClassBody(classBody: KtClassBody) {
         super.visitClassBody(classBody)
-        if (classBody.children.all { it.allowsAbsenceOfMatch }) {
-            setHandler(classBody, absenceOfMatchHandler(classBody))
-        }
+        classBody.setAbsenceOfMatchHandlerIfApplicable()
     }
 
     override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
         super.visitPrimaryConstructor(constructor)
-        if (constructor.children.all { it.allowsAbsenceOfMatch }) {
-            setHandler(constructor, absenceOfMatchHandler(constructor))
-        }
+        constructor.setAbsenceOfMatchHandlerIfApplicable()
     }
 
     override fun visitSuperTypeList(list: KtSuperTypeList) {
         super.visitSuperTypeList(list)
-        if (list.children.all { it.allowsAbsenceOfMatch }) {
-            setHandler(list, absenceOfMatchHandler(list))
-        }
+        list.setAbsenceOfMatchHandlerIfApplicable()
     }
 
     override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
@@ -298,6 +289,14 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         getHandler(link).setFilter { it is KDocLink }
     }
 
+    private fun PsiElement.setAbsenceOfMatchHandlerIfApplicable(considerAllChildren: Boolean = false) {
+        val childrenAllowAbsenceOfMatch =
+            if (considerAllChildren) this.allChildren.all { it.allowsAbsenceOfMatch }
+            else this.children.all { it.allowsAbsenceOfMatch }
+        if (childrenAllowAbsenceOfMatch)
+            setHandler(this, absenceOfMatchHandler(this))
+    }
+
     private fun absenceOfMatchHandler(element: PsiElement): SubstitutionHandler =
         SubstitutionHandler("${element.hashCode()}_optional", false, 0, 1, false)
 
@@ -316,7 +315,6 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
             setHandler(this, newHandler)
         }
     }
-
 
     companion object {
 

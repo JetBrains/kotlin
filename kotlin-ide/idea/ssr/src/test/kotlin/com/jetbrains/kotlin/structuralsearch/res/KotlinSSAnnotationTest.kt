@@ -9,8 +9,6 @@ class KotlinSSAnnotationTest : KotlinSSResourceInspectionTest() {
 
     fun testClassAnnotation() { doTest("@A class '_") }
 
-    fun testClassAnnotations() { doTest("@'_Annotation{0,2} class '_Name") }
-
     fun testClass2Annotations() { doTest("@'_Annotation{2,100} class '_Name") }
 
     fun testFunAnnotation() { doTest("@A fun '_() { println(0) }") }
