@@ -19503,6 +19503,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt31758_compat.kt");
                 }
 
+                @TestMetadata("kt37692.kt")
+                public void testKt37692() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt37692.kt");
+                }
+
                 @TestMetadata("numberOfDefaults.kt")
                 public void testNumberOfDefaults() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/numberOfDefaults.kt");

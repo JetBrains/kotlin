@@ -1,0 +1,20 @@
+package
+
+public fun checkFunctions(/*0*/ exp1: Foo<kotlin.Int?>, /*1*/ exp2: Foo<kotlin.Int>): kotlin.Unit
+public infix fun </*0*/ T : kotlin.Comparable<T>, /*1*/ S : T?> Bar<in S>.test(/*0*/ other: Bar<in S>): kotlin.Unit
+public infix fun </*0*/ T : kotlin.Comparable<T>, /*1*/ S : T?> Bar<in S>.test(/*0*/ t: T): kotlin.Unit
+
+public abstract class Bar</*0*/ T> {
+    public constructor Bar</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo</*0*/ T> : Bar<T>, kotlin.Comparable<Foo<*>> {
+    public constructor Foo</*0*/ T>()
+    public open override /*1*/ fun compareTo(/*0*/ other: Foo<*>): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
