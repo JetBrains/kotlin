@@ -2,9 +2,10 @@
 
 package org.jetbrains.dokka
 
-import com.google.gson.Gson
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.json.Json
 import java.io.File
-import java.io.Serializable
 import java.net.URL
 
 object DokkaDefaults {
@@ -24,6 +25,9 @@ object DokkaDefaults {
     const val noJdkLink: Boolean = false
     val analysisPlatform: Platform = Platform.DEFAULT
     const val suppress: Boolean = false
+
+    const val displayName = "JVM"
+    const val sourceSetName = "main"
 }
 
 enum class Platform(val key: String) {
@@ -47,21 +51,19 @@ enum class Platform(val key: String) {
     }
 }
 
+@Serializable
 data class DokkaSourceSetID(
     val moduleName: String,
     val sourceSetName: String
-) : Serializable {
+) {
     override fun toString(): String {
         return "$moduleName/$sourceSetName"
     }
 }
 
+@OptIn(UnstableDefault::class)
 fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl {
-    return Gson().fromJson(json, DokkaConfigurationImpl::class.java)
-}
-
-fun DokkaConfiguration.toJson(): String {
-    return Gson().toJson(this)
+    return Json.parse(DokkaConfigurationImpl.serializer(), json)
 }
 
 interface DokkaConfiguration {
