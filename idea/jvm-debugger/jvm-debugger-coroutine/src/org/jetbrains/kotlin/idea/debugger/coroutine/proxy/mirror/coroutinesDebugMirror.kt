@@ -141,7 +141,7 @@ class CoroutineInfo private constructor(
                 debugProbesImplMirror.enhanceStackTraceWithThreadDump(context, value, lastObservedStackTrace)
             else emptyList()
         val lastObservedThread = threadValue(value, lastObservedThreadField)
-        val lastObservedFrame = threadValue(value, lastObservedFrameField)
+        val lastObservedFrame = objectValue(value, lastObservedFrameField)
         return MirrorOfCoroutineInfo(
             value,
             coroutineContext,
