@@ -9,6 +9,7 @@ import kotlinx.cinterop.COpaquePointer
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.Frozen
 import kotlin.native.internal.NoReorderFields
+import kotlin.native.internal.Escapes
 
 /**
  *   Theory of operations:
@@ -53,6 +54,7 @@ internal abstract class WeakReferenceImpl {
 
 // Get a counter from non-null object.
 @SymbolName("Konan_getWeakReferenceImpl")
+@Escapes(0b01) // referent escapes.
 external internal fun getWeakReferenceImpl(referent: Any): WeakReferenceImpl
 
 // Create a counter object.

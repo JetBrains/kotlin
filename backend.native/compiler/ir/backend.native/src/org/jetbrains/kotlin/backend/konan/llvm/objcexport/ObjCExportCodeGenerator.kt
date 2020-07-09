@@ -857,7 +857,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             val coroutineSuspended = callFromBridge(
                     codegen.llvmFunction(context.ir.symbols.objCExportGetCoroutineSuspended.owner),
                     emptyList(),
-                    Lifetime.LOCAL
+                    Lifetime.STACK
             )
             ifThen(icmpNe(targetResult!!, coroutineSuspended)) {
                 // Callee haven't suspended, so it isn't going to call the completion. Call it here:

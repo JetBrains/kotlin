@@ -34,6 +34,9 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 internal sealed class SlotType {
+    // An object is statically allocated on stack.
+    object STACK : SlotType()
+
     // Frame local arena slot can be used.
     object ARENA : SlotType()
 
@@ -58,6 +61,12 @@ internal sealed class SlotType {
 
 // Lifetimes class of reference, computed by escape analysis.
 internal sealed class Lifetime(val slotType: SlotType) {
+    object STACK : Lifetime(SlotType.STACK) {
+        override fun toString(): String {
+            return "STACK"
+        }
+    }
+
     // If reference is frame-local (only obtained from some call and never leaves).
     object LOCAL : Lifetime(SlotType.ARENA) {
         override fun toString(): String {
@@ -66,7 +75,7 @@ internal sealed class Lifetime(val slotType: SlotType) {
     }
 
     // If reference is only returned.
-    object RETURN_VALUE : Lifetime(SlotType.RETURN) {
+    object RETURN_VALUE : Lifetime(SlotType.ANONYMOUS) {
         override fun toString(): String {
             return "RETURN_VALUE"
         }
@@ -492,8 +501,11 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val initInstanceFunction = importModelSpecificRtFunction("InitInstance")
     val initSharedInstanceFunction = importModelSpecificRtFunction("InitSharedInstance")
     val updateHeapRefFunction = importModelSpecificRtFunction("UpdateHeapRef")
+    val releaseHeapRefFunction = importModelSpecificRtFunction("ReleaseHeapRef")
     val updateStackRefFunction = importModelSpecificRtFunction("UpdateStackRef")
     val updateReturnRefFunction = importModelSpecificRtFunction("UpdateReturnRef")
+    val zeroHeapRefFunction = importRtFunction("ZeroHeapRef")
+    val zeroArrayRefsFunction = importRtFunction("ZeroArrayRefs")
     val enterFrameFunction = importModelSpecificRtFunction("EnterFrame")
     val leaveFrameFunction = importModelSpecificRtFunction("LeaveFrame")
     val lookupOpenMethodFunction = importRtFunction("LookupOpenMethod")

@@ -6,6 +6,7 @@ package kotlin.native
 
 import kotlin.native.concurrent.isFrozen
 import kotlin.native.concurrent.InvalidMutabilityException
+import kotlin.native.internal.Escapes
 
 /**
  * Initializes Kotlin runtime for the current thread, if not inited already.
@@ -51,6 +52,7 @@ public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): Report
 }
 
 @SymbolName("Kotlin_setUnhandledExceptionHook")
+@Escapes(0b01) // <hook> escapes
 external private fun setUnhandledExceptionHook0(hook: ReportUnhandledExceptionHook): ReportUnhandledExceptionHook?
 
 /**

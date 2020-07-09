@@ -3252,6 +3252,13 @@ void UpdateReturnRefRelaxed(ObjHeader** returnSlot, const ObjHeader* value) {
   updateReturnRef<false>(returnSlot, value);
 }
 
+void ZeroArrayRefs(ArrayHeader* array) {
+  for (uint32_t index = 0; index < array->count_; ++index) {
+    ObjHeader** location = ArrayAddressOfElementAt(array, index);
+    zeroHeapRef(location);
+  }
+}
+
 void UpdateHeapRefIfNull(ObjHeader** location, const ObjHeader* object) {
   updateHeapRefIfNull(location, object);
 }
@@ -3426,6 +3433,7 @@ void FreezeSubgraph(ObjHeader* root) {
 // This function is called from field mutators to check if object's header is frozen.
 // If object is frozen or permanent, an exception is thrown.
 void MutationCheck(ObjHeader* obj) {
+  if (obj->local()) return;
   auto* container = obj->container();
   if (container == nullptr || container->frozen())
     ThrowInvalidMutabilityException(obj);

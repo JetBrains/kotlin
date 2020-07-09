@@ -129,10 +129,15 @@ internal val dcePhase = makeKonanModuleOpPhase(
                     context, context.moduleDFG!!,
                     externalModulesDFG,
                     context.devirtualizationAnalysisResult!!,
-                    true
+                    // For DCE we don't wanna miss any potentially reachable function.
+                    nonDevirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE
             ).build()
 
             val referencedFunctions = mutableSetOf<IrFunction>()
+            callGraph.rootExternalFunctions.forEach {
+                if (!it.isGlobalInitializer)
+                    referencedFunctions.add(it.irFunction ?: error("No IR for: $it"))
+            }
             for (node in callGraph.directEdges.values) {
                 if (!node.symbol.isGlobalInitializer)
                     referencedFunctions.add(node.symbol.irFunction ?: error("No IR for: ${node.symbol}"))
@@ -200,22 +205,23 @@ internal val dcePhase = makeKonanModuleOpPhase(
 )
 
 internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
-        // Disabled by default !!!!
         name = "EscapeAnalysis",
         description = "Escape analysis",
         prerequisite = setOf(buildDFGPhase, devirtualizationPhase),
         op = { context, _ ->
-            context.externalModulesDFG?.let { externalModulesDFG ->
-                val callGraph = CallGraphBuilder(
-                        context, context.moduleDFG!!,
-                        externalModulesDFG,
-                        context.devirtualizationAnalysisResult!!,
-                        false
-                ).build()
-                EscapeAnalysis.computeLifetimes(
-                        context, context.moduleDFG!!, externalModulesDFG, callGraph, context.lifetimes
-                )
-            }
+            val entryPoint = context.ir.symbols.entryPoint?.owner
+            val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
+            val callGraph = CallGraphBuilder(
+                    context, context.moduleDFG!!,
+                    externalModulesDFG,
+                    context.devirtualizationAnalysisResult!!,
+                    // Can't tolerate any non-devirtualized call site for a library.
+                    // TODO: What about private virtual functions?
+                    nonDevirtualizedCallSitesUnfoldFactor = if (entryPoint == null) 0 else 5
+            ).build()
+            EscapeAnalysis.computeLifetimes(
+                    context, context.moduleDFG!!, externalModulesDFG, callGraph, context.lifetimes
+            )
         }
 )
 

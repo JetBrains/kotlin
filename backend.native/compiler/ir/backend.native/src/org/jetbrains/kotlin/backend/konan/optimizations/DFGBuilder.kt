@@ -63,7 +63,7 @@ private class VariableValues {
     }
 
     fun add(variable: IrVariable, element: IrExpression) =
-            elementData[variable]!!.values.add(element)
+            elementData[variable]?.values?.add(element)
 
     private fun add(variable: IrVariable, elements: Set<IrExpression>) =
             elementData[variable]?.values?.addAll(elements)
@@ -736,7 +736,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                 createUninitializedInstanceSymbol ->
                                     DataFlowIR.Node.AllocInstance(symbolTable.mapClassReferenceType(
                                             value.getTypeArgument(0)!!.getClass()!!
-                                    ))
+                                    ), value)
 
                                 reinterpret -> getNode(value.extensionReceiver!!).value
 

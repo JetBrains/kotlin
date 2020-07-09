@@ -90,6 +90,7 @@ internal annotation class FixmeConcurrency
 @Retention(AnnotationRetention.BINARY)
 internal annotation class Escapes(val who: Int)
 
+// Decyphering of binary values can be found in EscapeAnalysis.kt
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class PointsTo(vararg val onWhom: Int)

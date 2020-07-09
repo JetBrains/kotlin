@@ -251,7 +251,7 @@ internal object DataFlowIR {
 
         class Singleton(val type: Type, val constructor: FunctionSymbol?) : Node()
 
-        class AllocInstance(val type: Type) : Node()
+        class AllocInstance(val type: Type, val irCallSite: IrCall?) : Node()
 
         class FunctionReference(val symbol: FunctionSymbol, val type: Type, val returnType: Type) : Node()
 
@@ -647,10 +647,15 @@ internal object DataFlowIR {
                             && !irClass.isNonGeneratedAnnotation()
                             && (it.isOverridableOrOverrides || bridgeTarget != null || function.isSpecial || !irClass.isFinal())
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
-                    if (it.isExported())
+                    val frozen = it is IrConstructor && irClass!!.annotations.findAnnotation(KonanFqNames.frozen) != null
+                    val functionSymbol = if (it.isExported())
                         FunctionSymbol.Public(name.localHash.value, module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
                     else
                         FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
+                    if (frozen) {
+                        functionSymbol.escapes = 0b1 // Assume instances of frozen classes escape.
+                    }
+                    functionSymbol
                 }
             }
             functionMap[it] = symbol

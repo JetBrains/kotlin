@@ -134,6 +134,8 @@ internal interface CodeContext {
 
     fun genThrow(exception: LLVMValueRef)
 
+    val stackLocalsManager: StackLocalsManager
+
     /**
      * Declares the variable.
      * @return index of declared variable.
@@ -218,6 +220,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         override val exceptionHandler: ExceptionHandler
             get() = currentCodeContext.exceptionHandler
 
+        override val stackLocalsManager: StackLocalsManager
+            get() = currentCodeContext.stackLocalsManager
+
         override fun evaluateCall(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, superClass: IrClass?) =
                 evaluateSimpleFunctionCall(function, args, resultLifetime, superClass)
 
@@ -247,6 +252,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         override val exceptionHandler get() = unsupported()
 
         override fun genThrow(exception: LLVMValueRef) = unsupported()
+
+        override val stackLocalsManager: StackLocalsManager get() = unsupported()
 
         override fun genDeclareVariable(variable: IrVariable, value: LLVMValueRef?, variableLocation: VariableDebugLocation?) = unsupported(variable)
 
@@ -529,6 +536,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             else
                 super.genContinue(destination)
         }
+
+        override val stackLocalsManager: StackLocalsManager =
+            object : StackLocalsManager by functionGenerationContext.stackLocalsManager { }
     }
 
     //-------------------------------------------------------------------------//
@@ -667,6 +677,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             )
             functionGenerationContext.unreachable()
         }
+
+        override val stackLocalsManager get() = functionGenerationContext.stackLocalsManager
 
         override fun functionScope(): CodeContext = this
 
@@ -2178,7 +2190,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
                 constructedClass.isObjCClass() -> error("Call should've been lowered: ${callee.dump()}")
 
-                else -> functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee))
+                else -> functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee),
+                        currentCodeContext.stackLocalsManager)
             }
             evaluateSimpleFunctionCall(callee.symbol.owner,
                     listOf(thisValue) + args, Lifetime.IRRELEVANT /* constructor doesn't return anything */)
