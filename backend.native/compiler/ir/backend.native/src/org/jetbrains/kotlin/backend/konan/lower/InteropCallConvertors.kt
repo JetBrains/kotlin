@@ -97,13 +97,13 @@ private fun InteropCallContext.findMemoryAccessFunction(isRead: Boolean, valueTy
                 .findAnnotation(RuntimeNames.typedIntrinsicAnnotation)
                 ?.getAnnotationStringValue()
         annotationArgument == requiredType.name
-    }.first {
+    }.firstOrNull {
         if (isRead) {
             it.returnType.classOrNull == valueType.classOrNull
         } else {
             it.valueParameters.last().type.classOrNull == valueType.classOrNull
         }
-    }
+    } ?: error("No memory access function for ${valueType.classOrNull?.owner?.name}")
 }
 
 private fun InteropCallContext.readValueFromMemory(
@@ -164,7 +164,8 @@ private fun InteropCallContext.castPrimitiveIfNeeded(
             targetClass == irBuiltIns.booleanClass -> castToBoolean(sourceClass, value)
             sourceClass == irBuiltIns.booleanClass -> castFromBoolean(targetClass, value)
             else -> {
-                val conversion = symbols.integerConversions.getValue(sourceClass to targetClass)
+                val conversion = symbols.integerConversions[sourceClass to targetClass]
+                        ?: error("There is no conversion from ${sourceClass.owner.name} to ${targetClass.owner.name}")
                 builder.irCall(conversion.owner).apply {
                     if (conversion.owner.dispatchReceiverParameter != null) {
                         dispatchReceiver = value
