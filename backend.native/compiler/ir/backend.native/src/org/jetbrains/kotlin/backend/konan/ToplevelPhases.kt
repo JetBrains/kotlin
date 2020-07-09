@@ -458,8 +458,6 @@ internal val bitcodePhase = NamedCompilerPhase(
         description = "LLVM Bitcode generation",
         lower = contextLLVMSetupPhase then
                 buildDFGPhase then
-                serializeDFGPhase then
-                deserializeDFGPhase then
                 devirtualizationPhase then
                 dcePhase then
                 createLLVMDeclarationsPhase then
@@ -524,9 +522,7 @@ internal fun PhaseConfig.disableUnless(phase: AnyNamedPhase, condition: Boolean)
 internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
     with(config.configuration) {
         disable(compileTimeEvaluatePhase)
-        disable(deserializeDFGPhase)
         disable(escapeAnalysisPhase)
-        disable(serializeDFGPhase)
 
         // Don't serialize anything to a final executable.
         disableUnless(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)

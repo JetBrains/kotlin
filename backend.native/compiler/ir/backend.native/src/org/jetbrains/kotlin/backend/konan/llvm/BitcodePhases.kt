@@ -98,18 +98,6 @@ internal val buildDFGPhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val deserializeDFGPhase = makeKonanModuleOpPhase(
-        name = "DeserializeDFG",
-        description = "Data flow graph deserializing",
-        op = { context, _ ->
-            context.externalModulesDFG = DFGSerializer.deserialize(
-                    context,
-                    context.moduleDFG!!.symbolTable.privateTypeIndex,
-                    context.moduleDFG!!.symbolTable.privateFunIndex
-            )
-        }
-)
-
 internal val devirtualizationPhase = makeKonanModuleOpPhase(
         name = "Devirtualization",
         description = "Devirtualization",
@@ -215,7 +203,7 @@ internal val escapeAnalysisPhase = makeKonanModuleOpPhase(
         // Disabled by default !!!!
         name = "EscapeAnalysis",
         description = "Escape analysis",
-        prerequisite = setOf(buildDFGPhase, deserializeDFGPhase), // TODO: Requires devirtualization.
+        prerequisite = setOf(buildDFGPhase, devirtualizationPhase),
         op = { context, _ ->
             context.externalModulesDFG?.let { externalModulesDFG ->
                 val callGraph = CallGraphBuilder(
@@ -237,15 +225,6 @@ internal val localEscapeAnalysisPhase = makeKonanModuleOpPhase(
         prerequisite = setOf(buildDFGPhase, devirtualizationPhase),
         op = { context, _ ->
             LocalEscapeAnalysis.computeLifetimes(context, context.moduleDFG!!, context.lifetimes)
-        }
-)
-
-internal val serializeDFGPhase = makeKonanModuleOpPhase(
-        name = "SerializeDFG",
-        description = "Data flow graph serializing",
-        prerequisite = setOf(buildDFGPhase), // TODO: Requires escape analysis.
-        op = { context, _ ->
-            DFGSerializer.serialize(context, context.moduleDFG!!)
         }
 )
 

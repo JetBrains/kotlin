@@ -36,6 +36,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+internal class ExternalModulesDFG(val allTypes: List<DataFlowIR.Type.Declared>,
+                                  val publicTypes: Map<Long, DataFlowIR.Type.Public>,
+                                  val publicFunctions: Map<Long, DataFlowIR.FunctionSymbol.Public>,
+                                  val functionDFGs: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>)
+
 private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimpleFunction)?.let {
     it.allOverriddenFunctions.atMostOne { it.parent == this }
 }
