@@ -80,7 +80,7 @@ public class GradleProjectTaskRunner extends ProjectTaskRunner {
                                                                           "def effectiveTasks = []\n" +
                                                                           "gradle.taskGraph.addTaskExecutionListener(new TaskExecutionAdapter() {\n" +
                                                                           "    void afterExecute(Task task, TaskState state) {\n" +
-                                                                          "        if (state.didWork && task.outputs.hasOutput) {\n" +
+                                                                          "        if ((state.didWork || (state.skipped && state.skipMessage == 'FROM-CACHE')) && task.outputs.hasOutput) {\n" +
                                                                           "            effectiveTasks.add(task)\n" +
                                                                           "        }\n" +
                                                                           "    }\n" +
