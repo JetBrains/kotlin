@@ -196,7 +196,8 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass
         }
 
     private fun createKTypeParameter(typeParameter: IrTypeParameter, visitedTypeParams: MutableSet<IrTypeParameter>): IrExpression {
-        if (typeParameter in visitedTypeParams) return buildCall(context.intrinsics.getStarKTypeProjection!!)
+        // See KT-40173
+        if (typeParameter in visitedTypeParams) TODO("Non-reified type parameters with recursive bounds are not supported yet")
 
         visitedTypeParams.add(typeParameter)
 
