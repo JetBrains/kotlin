@@ -64,6 +64,7 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide"))
     testRuntime(project(":kotlin-gradle-statistics"))
     // TODO: the order of the plugins matters here, consider avoiding order-dependency
     testRuntime(intellijPluginDep("junit"))

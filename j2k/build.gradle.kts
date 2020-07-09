@@ -44,6 +44,7 @@ dependencies {
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide"))
     testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))

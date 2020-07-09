@@ -38,6 +38,7 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide"))
 }
 
 sourceSets {
