@@ -127,7 +127,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                             withLocalScopeCleanup {
                                 addLocalScope(context.getPrimaryConstructorParametersScope())
                                 property.transformChildrenWithoutAccessors(returnTypeRef)
-                                property.transformInitializer(integerLiteralTypeApproximator, null)
+                                property.transformInitializer(integerLiteralTypeApproximator, property.returnTypeRef.coneTypeSafe())
                             }
                             if (property.initializer != null) {
                                 storeVariableReturnType(property)

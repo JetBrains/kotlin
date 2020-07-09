@@ -54,7 +54,24 @@ class IntegerLiteralTypeApproximationTransformer(
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ConeKotlinType?): CompositeTransformResult<FirStatement> {
-        val operator = functionCall.toResolvedCallableSymbol()?.fir as? FirIntegerOperator ?: return functionCall.compose()
+        val operator = functionCall.toResolvedCallableSymbol()?.fir as? FirIntegerOperator
+        if (operator == null) {
+            if (functionCall is FirIntegerOperatorCall) {
+                // functionCall _was_ a named call whose candidate symbol was an integer operator, but has been transformed to an integer
+                // operator call (by [IntegerOperatorsTypeUpdater]). So, technically, this _was_ a call that this transformer was looking
+                // for, i.e., a call with ILT, but in a resolved form already. Here we just adapt to the expected type if any.
+                //
+                // Note that such inequality can happen to the resolved call, since the call completer doesn't complete the call with the
+                // given, expected type: see [FirCallCompleter#completeCall]. One reason _not_ to propagate the expected type to the call
+                // completing transformation is to handle integer overflow naturally. E.g., if a property with Long, a bigger type, is
+                // intentionally set with an integer operator that overflows, knowing the expected type will hide the overflow. Rather, we
+                // have a second chance here to sort of wrap such overflowed integer with type conversion, like `n.toLong()`.
+                data?.let {
+                    functionCall.resultType = functionCall.resultType.resolvedTypeFromPrototype(it)
+                }
+            }
+            return functionCall.compose()
+        }
         functionCall.transformChildren(this, data)
         val argumentType = functionCall.arguments.firstOrNull()?.resultType?.coneTypeUnsafe<ConeClassLikeType>()
         val receiverClassId = functionCall.dispatchReceiver.typeRef.coneTypeUnsafe<ConeClassLikeType>().lookupTag.classId
