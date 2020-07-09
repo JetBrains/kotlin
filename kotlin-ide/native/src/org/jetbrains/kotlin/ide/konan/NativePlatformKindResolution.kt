@@ -153,6 +153,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
 class NativeKlibLibraryInfo(project: Project, library: Library, libraryRoot: String) :
     AbstractKlibLibraryInfo(project, library, libraryRoot) {
 
+    // If you're changing this, please take a look at ideaModelDependencies as well
     val isStdlib: Boolean get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
 
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
