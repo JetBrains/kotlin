@@ -1,5 +1,5 @@
 package continuation
-// ATTACH_LIBRARY: maven(org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6)-javaagent
+// ATTACH_LIBRARY: maven(org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8)-javaagent
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
