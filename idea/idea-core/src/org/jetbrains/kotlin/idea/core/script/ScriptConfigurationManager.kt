@@ -108,6 +108,9 @@ interface ScriptConfigurationManager {
     fun getAllScriptDependenciesSources(): List<VirtualFile>
 
     companion object {
+        fun getAlreadyInitializedInstance(project: Project): ScriptConfigurationManager? =
+            ServiceManager.getServiceIfCreated(project, ScriptConfigurationManager::class.java)
+
         @JvmStatic
         fun getInstance(project: Project): ScriptConfigurationManager =
             ServiceManager.getService(project, ScriptConfigurationManager::class.java)

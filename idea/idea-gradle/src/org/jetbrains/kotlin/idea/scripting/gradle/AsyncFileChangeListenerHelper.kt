@@ -33,9 +33,10 @@ fun addVfsListener(
             }
 
             override fun apply() {
+                val fileChangesProcessor = watcher.fileChangesProcessor
                 changedFiles.forEach {
                     LocalFileSystem.getInstance().findFileByPath(it)?.let { f ->
-                        watcher.fileChanged(f.path, f.timeStamp)
+                        fileChangesProcessor(f.path, f.timeStamp)
                     }
                 }
             }
