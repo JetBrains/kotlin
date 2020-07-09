@@ -14,8 +14,7 @@ data class CirSimpleTypeImpl(
     override val classifierId: CirClassifierId,
     override val visibility: Visibility, // visibility of the classifier descriptor
     override val arguments: List<CirTypeProjection>,
-    override val isMarkedNullable: Boolean,
-    override val isDefinitelyNotNullType: Boolean
+    override val isMarkedNullable: Boolean
 ) : CirSimpleType() {
     // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
     private var cachedHashCode = 0
@@ -24,7 +23,6 @@ data class CirSimpleTypeImpl(
         .appendHashCode(visibility)
         .appendHashCode(arguments)
         .appendHashCode(isMarkedNullable)
-        .appendHashCode(isDefinitelyNotNullType)
 
     override fun hashCode(): Int {
         var currentHashCode = cachedHashCode
@@ -42,7 +40,6 @@ data class CirSimpleTypeImpl(
                     && classifierId == other.classifierId
                     && visibility == other.visibility
                     && arguments == other.arguments
-                    && isDefinitelyNotNullType == other.isDefinitelyNotNullType
         }
         else -> false
     }

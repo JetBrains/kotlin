@@ -39,8 +39,7 @@ object CirTypeFactory {
                     type = create(projection.type)
                 )
             },
-            isMarkedNullable = abbreviation.isMarkedNullable,
-            isDefinitelyNotNullType = abbreviation.isDefinitelyNotNullType
+            isMarkedNullable = abbreviation.isMarkedNullable
         )
     }
 
@@ -48,16 +47,14 @@ object CirTypeFactory {
         classifierId: CirClassifierId,
         visibility: Visibility,
         arguments: List<CirTypeProjection>,
-        isMarkedNullable: Boolean,
-        isDefinitelyNotNullType: Boolean
+        isMarkedNullable: Boolean
     ): CirSimpleType {
         return interner.intern(
             CirSimpleTypeImpl(
                 classifierId = classifierId,
                 visibility = visibility,
                 arguments = arguments,
-                isMarkedNullable = isMarkedNullable,
-                isDefinitelyNotNullType = isDefinitelyNotNullType
+                isMarkedNullable = isMarkedNullable
             )
         )
     }

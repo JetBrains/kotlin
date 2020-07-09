@@ -132,15 +132,10 @@ internal fun CirSimpleType.buildType(
         kotlinTypeRefiner = null
     )
 
-    val computedType = if (classifier is TypeAliasDescriptor)
+    return if (classifier is TypeAliasDescriptor)
         classifier.underlyingType.withAbbreviation(simpleType)
     else
         simpleType
-
-    return if (isDefinitelyNotNullType)
-        computedType.makeSimpleTypeDefinitelyNotNullOrNotNull()
-    else
-        computedType
 }
 
 internal fun findClassOrTypeAlias(
