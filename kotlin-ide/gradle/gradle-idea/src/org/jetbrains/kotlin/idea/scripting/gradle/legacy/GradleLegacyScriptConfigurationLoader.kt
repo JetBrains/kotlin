@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
  * TODO(gradle6): remove
  */
 class GradleLegacyScriptConfigurationLoader(project: Project) : DefaultScriptConfigurationLoader(project) {
-    private val buildRootsManager = GradleBuildRootsManager.getInstance(project)
+    private val buildRootsManager
+        get() = GradleBuildRootsManager.getInstance(project)
 
     override fun interceptBackgroundLoading(file: VirtualFile, isFirstLoad: Boolean, doLoad: () -> Unit): Boolean {
         if (!isGradleKotlinScript(file)) return false

@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
     // todo(gradle6): remove
     private val legacy = GradleLegacyScriptListener(project)
-    private val buildRootsManager = GradleBuildRootsManager.getInstance(project)
+
+    private val buildRootsManager
+        get() = GradleBuildRootsManager.getInstance(project)
 
     init {
         // listen changes using VFS events, including gradle-configuration related files
@@ -27,8 +29,17 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
         VirtualFileManager.getInstance().addAsyncFileListener(listener, KotlinPluginDisposable.getInstance(project))
     }
 
+    // cache buildRootsManager service for hot path under vfs changes listener
+    val fileChangesProcessor: (filePath: String, ts: Long) -> Unit
+        get() {
+            val buildRootsManager = buildRootsManager
+            return { filePath, ts ->
+                buildRootsManager.fileChanged(filePath, ts)
+            }
+        }
+
     fun fileChanged(filePath: String, ts: Long) =
-        buildRootsManager.fileChanged(filePath, ts)
+        fileChangesProcessor(filePath, ts)
 
     override fun isApplicable(vFile: VirtualFile) =
         // todo(gradle6): replace with `isCustomScriptingSupport(vFile)`
@@ -73,9 +84,11 @@ private class GradleScriptFileChangeListener(
     }
 
     override fun apply() {
+        val fileChangesProcessor = watcher.fileChangesProcessor
         changedFiles.forEach {
             LocalFileSystem.getInstance().findFileByPath(it)?.let { f ->
                 watcher.fileChanged(f.path, f.timeStamp)
+                fileChangesProcessor(f.path, f.timeStamp)
             }
         }
     }

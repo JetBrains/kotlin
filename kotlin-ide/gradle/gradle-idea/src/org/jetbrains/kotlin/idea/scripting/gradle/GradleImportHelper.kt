@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelResolver
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import org.jetbrains.plugins.gradle.service.project.GradlePartialResolverPolicy
@@ -104,10 +105,14 @@ class LoadConfigurationAction : AnAction(
 
     private fun getNotificationVisibility(editor: Editor): Boolean {
         if (!scriptConfigurationsNeedToBeUpdatedBalloon) return false
-
         if (DiffUtil.isDiffEditor(editor)) return false
 
         val project = editor.project ?: return false
+
+        // prevent services initializtion
+        // (all services actually initialized under the ScriptDefinitionProvider during startup activity)
+        if (ScriptDefinitionProvider.getServiceIfCreated(project) == null) return false
+
         val file = getKotlinScriptFile(editor) ?: return false
 
         if (autoReloadScriptConfigurations(project, file)) {
