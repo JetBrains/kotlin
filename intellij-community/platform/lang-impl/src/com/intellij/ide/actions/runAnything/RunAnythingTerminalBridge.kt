@@ -22,7 +22,7 @@ class RunAnythingTerminalBridge : TerminalShellCommandHandler, TerminalFusAwareH
       .any { provider -> provider.findMatchingValue(dataContext, command) != null }
   }
 
-  override fun execute(project: Project, workingDirectory: String?, localSession: Boolean, command: String, executor: Executor?): Boolean {
+  override fun execute(project: Project, workingDirectory: String?, localSession: Boolean, command: String, executor: Executor): Boolean {
     val dataContext = createDataContext(project, localSession, workingDirectory, executor)
     return RunAnythingProvider.EP_NAME.extensionList
       .filter { checkForCLI(it) }
