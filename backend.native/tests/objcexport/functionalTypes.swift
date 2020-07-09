@@ -32,11 +32,89 @@ private func test1() {
     FunctionalTypesKt.callDynType33(list: [ Foo33() ], param: "from swift")
 }
 
+private func test2() throws {
+    try assertEquals(actual: FunctionalTypesKt.getDynTypeLambda2().value("one", nil) as? String, expected: "one")
+    try assertEquals(actual: FunctionalTypesKt.getStaticLambda2()("two", nil) as? String, expected: "two")
+
+    try assertEquals(actual: FunctionalTypesKt.getDynTypeRef2().value("three", nil) as? String, expected: "three")
+    try assertEquals(actual: FunctionalTypesKt.getStaticRef2()("four", nil) as? String, expected: "four")
+
+    // 32 params is mapped as regular; calling result as block is OK
+    try assertEquals(
+        actual: FunctionalTypesKt.getDynType32().value(
+            "five",
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil
+        ) as? String,
+        expected: "five"
+    )
+
+    try assertEquals(
+        actual: FunctionalTypesKt.getStaticType32()(
+            "six",
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil
+        ) as? String,
+        expected: "six"
+    )
+
+    // 33 params requires explicit invocation of KotlinFunction33.invoke
+    try assertEquals(
+        actual: FunctionalTypesKt.getDynTypeRef33().value.invoke(
+            p1: "seven",
+            p2: nil, p3: nil, p4: nil, p5: nil, p6: nil, p7: nil, p8: nil, p9: nil,
+            p10: nil, p11: nil, p12: nil, p13: nil, p14: nil, p15: nil, p16: nil, p17: nil,
+            p18: nil, p19: nil, p20: nil, p21: nil, p22: nil, p23: nil, p24: nil, p25: nil,
+            p26: nil, p27: nil, p28: nil, p29: nil, p30: nil, p31: nil, p32: nil, p33: nil
+        ) as? String,
+        expected: "seven"
+    )
+
+    // static conversion is ok though.
+    try assertEquals(
+        actual: FunctionalTypesKt.getStaticTypeRef33()(
+            "eight",
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil, nil
+        ) as? String,
+        expected: "eight"
+    )
+
+    try assertEquals(
+        actual: FunctionalTypesKt.getDynTypeLambda33().value.invoke(
+            p1: "nine",
+            p2: nil, p3: nil, p4: nil, p5: nil, p6: nil, p7: nil, p8: nil, p9: nil,
+            p10: nil, p11: nil, p12: nil, p13: nil, p14: nil, p15: nil, p16: nil, p17: nil,
+            p18: nil, p19: nil, p20: nil, p21: nil, p22: nil, p23: nil, p24: nil, p25: nil,
+            p26: nil, p27: nil, p28: nil, p29: nil, p30: nil, p31: nil, p32: nil, p33: nil
+        ) as? String,
+        expected: "nine"
+    )
+
+    try assertEquals(
+        actual: FunctionalTypesKt.getStaticTypeLambda33()(
+            "ten",
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil, nil,
+            nil, nil, nil, nil, nil, nil, nil, nil
+        ) as? String,
+        expected: "ten"
+    )
+}
+
 class FunctionalTypesTests : SimpleTestProvider {
     override init() {
         super.init()
 
         test("Test1", test1)
+        test("Test2", test2)
     }
 }
 
