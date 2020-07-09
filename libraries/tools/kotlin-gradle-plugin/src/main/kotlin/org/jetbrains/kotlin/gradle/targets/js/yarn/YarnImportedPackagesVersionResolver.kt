@@ -33,11 +33,15 @@ class YarnImportedPackagesVersionResolver(
         resolve(externalModules, false)
         resolve(internalCompositeModules, true)
 
-        if (resolvedVersion.isNotEmpty()) {
-            npmProjects.forEach {
-                updatePackageJson(it.packageJson, it.npmProject.packageJsonFile)
-            }
+        npmProjects.forEach {
+            writePackageJson(
+                packageJson = it.packageJson,
+                path = it.npmProject.packageJsonFile,
+                forceWrite = true
+            )
+        }
 
+        if (resolvedVersion.isNotEmpty()) {
             updatePackages(externalModules)
             updatePackages(internalCompositeModules)
         }
@@ -74,16 +78,21 @@ class YarnImportedPackagesVersionResolver(
                 Gson().fromJson<PackageJson>(it, PackageJson::class.java)
             }
 
-            updatePackageJson(packageJson, packageJsonFile)
+            writePackageJson(
+                packageJson = packageJson,
+                path = packageJsonFile,
+                forceWrite = false
+            )
         }
     }
 
-    private fun updatePackageJson(
+    private fun writePackageJson(
         packageJson: PackageJson,
-        path: File
+        path: File,
+        forceWrite: Boolean
     ) {
         val updates = listOf(packageJson.dependencies, packageJson.devDependencies).map { updateVersionsMap(it) }
-        if (updates.any { it }) {
+        if (forceWrite || updates.any { it }) {
             packageJson.saveTo(path)
         }
     }
