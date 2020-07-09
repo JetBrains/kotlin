@@ -322,6 +322,20 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
         run(setupDefaultImportsCompletionRun)
     }
 
+    @Test
+    fun testImportCompletion() = test {
+        run {
+            code = """
+                import kotl
+            """.trimIndent()
+            cursor = 11
+            expect {
+                completions.mode = ComparisonType.INCLUDES
+                addCompletion("kotlin", "kotlin", "package kotlin", "package")
+            }
+        }
+    }
+
     @Ignore("Should be fixed by KT-39314")
     @Test
     fun ignore_testDefaultImportsNotFirst() = test {
