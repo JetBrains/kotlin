@@ -2162,7 +2162,6 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/jvm-debugger/util/kotlin.jvm-debugger.util.iml" filepath="$PROJECT_DIR$/kotlin/jvm-debugger/util/kotlin.jvm-debugger.util.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin.kotlin-ide.iml" filepath="$PROJECT_DIR$/kotlin.kotlin-ide.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/line-indent-provider/kotlin.line-indent-provider.iml" filepath="$PROJECT_DIR$/kotlin/line-indent-provider/kotlin.line-indent-provider.iml" />
-      <module fileurl="file://$PROJECT_DIR$/kotlin/live-templates/kotlin.live-templates.iml" filepath="$PROJECT_DIR$/kotlin/live-templates/kotlin.live-templates.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/maven/kotlin.maven.iml" filepath="$PROJECT_DIR$/kotlin/maven/kotlin.maven.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/native/kotlin.native.iml" filepath="$PROJECT_DIR$/kotlin/native/kotlin.native.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/performance-tests/kotlin.performance-tests.iml" filepath="$PROJECT_DIR$/kotlin/performance-tests/kotlin.performance-tests.iml" />

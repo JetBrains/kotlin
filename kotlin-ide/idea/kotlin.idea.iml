@@ -27,6 +27,10 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/resources-en" type="java-resource" />
     </content>
+    <content url="file://$MODULE_DIR$/../live-templates">
+      <sourceFolder url="file://$MODULE_DIR$/../live-templates/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../live-templates/test" isTestSource="true" />
+    </content>
     <content url="file://$MODULE_DIR$/../resources-descriptors">
       <sourceFolder url="file://$MODULE_DIR$/../resources-descriptors" type="java-resource" />
     </content>
@@ -113,6 +117,5 @@
     <orderEntry type="module" module-name="intellij.statsCollector" />
     <orderEntry type="module" module-name="intellij.copyright" />
     <orderEntry type="module" module-name="intellij.properties.psi" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.live-templates" />
   </component>
 </module>
