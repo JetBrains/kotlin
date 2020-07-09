@@ -16,6 +16,9 @@ import org.junit.runners.Parameterized
 import java.io.File
 import java.util.*
 
+const val mppImportTestMinVersionForMaster = "6.0+"
+const val legacyMppImportTestMinVersionForMaster = "5.3+"
+
 abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTestCase() {
     @Rule
     @JvmField
@@ -53,16 +56,16 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
         )
 
         private fun readPluginVersion() =
-            File("libraries/tools/kotlin-gradle-plugin/build/libs").listFiles()?.map { it.name }?.firstOrNull { it.contains("-original.jar") }?.replace(
-                "kotlin-gradle-plugin-",
-                ""
-            )?.replace("-original.jar", "") ?: "1.4.255-SNAPSHOT"
+            File("libraries/tools/kotlin-gradle-plugin/build/libs").listFiles()?.map { it.name }
+                ?.firstOrNull { it.contains("-original.jar") }?.replace(
+                    "kotlin-gradle-plugin-",
+                    ""
+                )?.replace("-original.jar", "") ?: "1.4.255-SNAPSHOT"
 
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: Gradle-{0}, KotlinGradlePlugin-{1}")
         fun data(): Collection<Array<Any>> {
-            //TODO(auskov): remove extending list of gradle versions when tested version are advanced
-            return (AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS + arrayOf("6.5")).flatMap { gradleVersion ->
+            return (AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS).flatMap { gradleVersion ->
                 KOTLIN_GRADLE_PLUGIN_VERSIONS.map { kotlinVersion ->
                     arrayOf<Any>(
                         gradleVersion[0],
@@ -74,9 +77,13 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
     }
 
     fun repositories(useKts: Boolean): String {
-        val customRepositories = arrayOf("https://dl.bintray.com/kotlin/kotlin-dev", "http://dl.bintray.com/kotlin/kotlin-eap")
+        val customRepositories = arrayOf(
+            "https://dl.bintray.com/kotlin/kotlin-dev",
+            "http://dl.bintray.com/kotlin/kotlin-eap"
+        )
         val customMavenRepositories = customRepositories.map { if (useKts) "maven(\"$it\")" else "maven { url '$it' } " }.joinToString("\n")
         return """
+            mavenCentral()
             mavenLocal()
             google()
             jcenter()
