@@ -19,23 +19,14 @@ import com.jetbrains.mpp.KonanExecutable
 import com.jetbrains.mpp.WorkspaceBase
 import com.jetbrains.kmm.ios.AppleLLDBDriverConfiguration
 import com.jetbrains.kmm.ios.ProjectWorkspace
+import com.jetbrains.mpp.BinaryRunConfigurationSettingsEditorBase
 import java.awt.GridBagLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class BinaryRunConfigurationSettingsEditor(val project: Project) : SettingsEditor<BinaryRunConfiguration>()
+class BinaryRunConfigurationSettingsEditor(val project: Project) : BinaryRunConfigurationSettingsEditorBase<BinaryRunConfiguration>()
 {
-    override fun resetEditorFrom(s: BinaryRunConfiguration) {
-        TODO("Not yet implemented")
-    }
-
-    override fun createEditor(): JComponent {
-        return JPanel(GridBagLayout())
-    }
-
-    override fun applyEditorTo(s: BinaryRunConfiguration) {
-        TODO("Not yet implemented")
-    }
+    override fun getWorkspace() = ProjectWorkspace.getInstance(project)
 }
 
 class BinaryRunConfiguration(
