@@ -65,10 +65,6 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     protected fun testPath(): String = testPath(fileName())
 
-    override fun getTestDataPath(): String {
-        return this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
-    }
-
     override fun setUpModule() {
         // do not create default module
     }
