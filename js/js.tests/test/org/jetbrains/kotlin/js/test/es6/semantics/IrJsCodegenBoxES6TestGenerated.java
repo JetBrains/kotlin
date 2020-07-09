@@ -1323,6 +1323,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/builderInference/lackOfNullCheckOnNullableInsideBuild.kt");
         }
 
+        @TestMetadata("substituteStubTypeIntoCR.kt")
+        public void testSubstituteStubTypeIntoCR() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/substituteStubTypeIntoCR.kt");
+        }
+
         @TestMetadata("substituteStubTypeIntolambdaParameterDescriptor.kt")
         public void testSubstituteStubTypeIntolambdaParameterDescriptor() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/substituteStubTypeIntolambdaParameterDescriptor.kt");
