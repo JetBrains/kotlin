@@ -10,20 +10,19 @@ import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.FileEditorManagerTestCase
-import com.intellij.testFramework.MapDataContext
-import com.intellij.testFramework.PsiTestUtil
-import com.intellij.testFramework.TestActionEvent
+import com.intellij.testFramework.*
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
@@ -42,8 +41,10 @@ import org.junit.Assert
 import java.io.File
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.test.runAll
+import org.jetbrains.kotlin.jps.artifacts.JpsPluginTestArtifacts
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.TestMetadataUtil
+import java.util.concurrent.TimeUnit
 
 abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
@@ -116,7 +117,11 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             compileJavaFiles(javaFiles, options)
         }
 
-        KotlinCompilerStandalone(listOf(baseDir), target = outputDir).compile()
+        KotlinCompilerStandalone(
+            listOf(baseDir),
+            target = outputDir,
+            classpath = listOf(KotlinArtifacts.getInstance().kotlinScriptRuntime)
+        ).compile()
 
         PsiTestUtil.setCompilerOutputPath(myFixture.module, outputDir.path, false)
 
@@ -318,8 +323,17 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         }
     }
 
+    private var orignalKotlinArtifacts: KotlinArtifacts? = null
+
     override fun setUp() {
         super.setUp()
+
+        orignalKotlinArtifacts = KotlinArtifacts.getInstance()
+        ApplicationManager.getApplication().replaceService(
+            KotlinArtifacts::class.java,
+            JpsPluginTestArtifacts.getInstance(),
+            testRootDisposable
+        )
 
         vfsDisposable = allowProjectRootAccess(this)
 
@@ -328,6 +342,11 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
     override fun tearDown() = runAll(
         ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+        ThrowableRunnable { ApplicationManager.getApplication().replaceService(
+            KotlinArtifacts::class.java,
+            orignalKotlinArtifacts ?: TestKotlinArtifacts,
+            testRootDisposable
+        ) },
         ThrowableRunnable {
             for (scratchFile in scratchFiles) {
                 runWriteAction { scratchFile.delete(this) }
@@ -337,7 +356,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     )
 
     companion object {
-        private const val TIME_OUT = 60000 // 1 min
+        private val TIME_OUT = TimeUnit.MINUTES.toMillis(1)
 
         private val INSTANCE_WITH_KOTLIN_TEST = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
