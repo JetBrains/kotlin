@@ -12,6 +12,6 @@ class A {
 
 // EXIST: aa
 // EXIST: aaa
-// ESIST: test
+// EXIST: test
 // ABSENT: extFun
 // ABSENT: extVal
