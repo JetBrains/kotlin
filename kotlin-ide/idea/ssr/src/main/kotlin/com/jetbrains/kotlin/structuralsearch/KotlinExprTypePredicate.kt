@@ -19,42 +19,37 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 
 class KotlinExprTypePredicate(
     private val searchedTypeNames: List<String>,
-    private val withinHierachy: Boolean,
+    private val withinHierarchy: Boolean,
     private val ignoreCase: Boolean
 ) : MatchPredicate() {
     override fun match(matchedNode: PsiElement, start: Int, end: Int, context: MatchContext): Boolean {
         val node = StructuralSearchUtil.getParentIfIdentifier(matchedNode)
-        return when (node) {
+        val type = when (node) {
             is KtDeclaration -> node.type()
             is KtExpression -> node.resolveType()
             else -> throw IllegalStateException("Kotlin matching element should either be an expression or a statement.")
-        }?.let { resolvedType ->
-            val project = node.project
-            val scope = project.allScope()
-            val subTypes = if(withinHierachy) {
-                searchedTypeNames.map { searchName ->
-                    KotlinSuperClassIndex.getInstance().get(searchName, project, scope).map {
-                        (it.descriptor as ClassDescriptor).toSimpleType()
-                    }
-                }.flatten().toMutableSet()
-            } else mutableSetOf()
-            searchedTypeNames.forEach { searchName ->
-                subTypes.addAll(
-                    if(searchName.contains(".")) {
-                        KotlinFullClassNameIndex.getInstance().get(searchName, project, scope).map {
-                            (it.descriptor as ClassDescriptor).toSimpleType()
-                        }
-                    } else {
-                        KotlinClassShortNameIndex.getInstance().get(searchName, project, scope).map {
-                            (it.descriptor as ClassDescriptor).toSimpleType()
-                        }
-                    }
-                )
-            }
-            subTypes.any { searchType ->
-                "${resolvedType.fqName?.shortName()}".equals("${searchType.fqName?.shortName()}", ignoreCase)
-                        || "${resolvedType.fqName}".equals("${searchType.fqName}", ignoreCase)
-            }
-        } ?: false
+        } ?: return false
+
+        val project = node.project
+        val scope = project.allScope()
+        val subTypes = if (withinHierarchy) {
+            searchedTypeNames.map { searchName ->
+                KotlinSuperClassIndex.getInstance().get(searchName, project, scope).map {
+                    (it.descriptor as ClassDescriptor).toSimpleType()
+                }
+            }.flatten().toMutableSet()
+        } else mutableSetOf()
+
+        searchedTypeNames.forEach { searchName ->
+            val index =
+                if (searchName.contains(".")) KotlinFullClassNameIndex.getInstance()
+                else KotlinClassShortNameIndex.getInstance()
+
+            subTypes.addAll(index.get(searchName, project, scope).map {
+                (it.descriptor as ClassDescriptor).toSimpleType()
+            })
+        }
+
+        return subTypes.any { searchType -> "${type.fqName}".equals("${searchType.fqName}", ignoreCase) }
     }
 }

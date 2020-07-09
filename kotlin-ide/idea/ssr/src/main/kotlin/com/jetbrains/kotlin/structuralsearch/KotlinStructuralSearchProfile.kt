@@ -263,7 +263,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         if (!StringUtil.isEmptyOrSpaces(constraint!!.expressionTypes)) {
             val predicate = KotlinExprTypePredicate(
                 searchedTypeNames = constraint.expressionTypes.split("|"),
-                withinHierachy = constraint.isExprTypeWithinHierarchy,
+                withinHierarchy = constraint.isExprTypeWithinHierarchy,
                 ignoreCase = !options.isCaseSensitiveMatch
             )
             result.add(if (constraint.isInvertExprType) NotPredicate(predicate) else predicate)
