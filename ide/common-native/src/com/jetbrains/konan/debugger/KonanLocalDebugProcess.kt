@@ -3,30 +3,18 @@ package com.jetbrains.konan.debugger
 import com.intellij.execution.filters.ConsoleFilterProvider
 import com.intellij.execution.filters.TextConsoleBuilder
 import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.ProjectScope
 import com.intellij.util.PathUtil
 import com.intellij.xdebugger.XDebugSession
-import com.intellij.xdebugger.breakpoints.XBreakpointHandler
 import com.intellij.xdebugger.frame.XExecutionStack
 import com.jetbrains.cidr.execution.RunParameters
 import com.jetbrains.cidr.execution.debugger.CidrLocalDebugProcess
 import com.jetbrains.cidr.execution.debugger.CidrSuspensionCause
 import com.jetbrains.cidr.execution.debugger.backend.LLFrame
 import com.jetbrains.cidr.execution.debugger.backend.LLThread
-import com.jetbrains.cidr.execution.debugger.breakpoints.CidrBreakpointHandler
 
-fun addKotlinHandler(cidrHandlers: Array<XBreakpointHandler<*>>, project: Project): Array<XBreakpointHandler<*>> {
-    val handlers = mutableListOf(*cidrHandlers)
-
-    cidrHandlers.firstOrNull { it is CidrBreakpointHandler }?.let {
-        handlers.add(KonanBreakpointHandler(it as CidrBreakpointHandler, project))
-    }
-
-    return handlers.toTypedArray()
-}
 
 open class KonanLocalDebugProcess(
     parameters: RunParameters,
