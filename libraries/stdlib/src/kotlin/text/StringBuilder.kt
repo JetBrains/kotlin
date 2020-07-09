@@ -90,8 +90,9 @@ expect class StringBuilder : Appendable, CharSequence {
      *
      * The capacity is the maximum length this string builder can have before an allocation occurs.
      */
-    @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
+    @SinceKotlin("1.3")
+//    @ExperimentalStdlibApi
+    @Deprecated("Obtaining StringBuilder capacity is not supported in JS and common code.", level = DeprecationLevel.ERROR)
     fun capacity(): Int
 
     /**
