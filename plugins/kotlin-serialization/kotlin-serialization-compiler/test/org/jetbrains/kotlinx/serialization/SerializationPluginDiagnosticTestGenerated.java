@@ -25,9 +25,7 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     }
 
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(
-                                                                            "plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null,
-                                                                    true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("DuplicateSerialName.kt")
