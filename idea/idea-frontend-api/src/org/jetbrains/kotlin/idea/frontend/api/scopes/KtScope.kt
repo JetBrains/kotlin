@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
 interface KtScope : ValidityOwner {
+    // TODO check that names are accessible
+    // maybe return some kind of lazy set
     fun getAllNames(): Set<Name>
     fun getCallableNames(): Set<Name>
     fun getClassLikeSymbolNames(): Set<Name>

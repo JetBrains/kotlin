@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
@@ -35,6 +38,7 @@ import java.util.*
 internal class KtFirScopeProvider(
     override val token: ValidityOwner,
     private val builder: KtSymbolByFirBuilder,
+    private val project: Project,
     session: FirSession,
     val firResolveState: FirModuleResolveState
 ) : KtScopeProvider(), ValidityOwnerByValidityToken {
@@ -96,15 +100,27 @@ internal class KtFirScopeProvider(
         val nonLocalScopes = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope }
         val firLocalScopes = towerDataContext.localScopes
 
-        val allKtScopes = (implicitReceiverScopes + nonLocalScopes + firLocalScopes).map { convertToKtScope(it) }
+        @OptIn(ExperimentalStdlibApi::class)
+        val allKtScopes = buildList {
+            implicitReceiverScopes.mapTo(this, ::convertToKtScope)
+            nonLocalScopes.mapTo(this, ::convertToKtScope)
+            firLocalScopes.mapTo(this, ::convertToKtScope)
+        }
 
         KtScopeContext(getCompositeScope(allKtScopes), implicitReceiversTypes)
     }
 
-    private fun convertToKtScope(firScope: FirScope): KtScope = KtFirDelegatingScopeImpl(firScope, builder, token)
+    private fun convertToKtScope(firScope: FirScope): KtScope = when (firScope) {
+        is FirAbstractSimpleImportingScope -> KtFirNonStarImportingScope(firScope, builder, token)
+        is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, builder, project, token)
+        else -> {
+            // todo create concrete KtScope here instead of a generic one
+            KtFirDelegatingScopeImpl(firScope, builder, token)
+        }
+    }
 }
 
 private class KtFirDelegatingScopeImpl(firScope: FirScope, builder: KtSymbolByFirBuilder, override val token: ValidityOwner) :
     KtFirDelegatingScope(builder), ValidityOwnerByValidityToken {
-    override val firScope: FirScope by weakRef(firScope)
+    override val firScope: FirScope = firScope
 }
