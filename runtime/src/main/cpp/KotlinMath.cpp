@@ -156,8 +156,10 @@ KDouble Kotlin_math_abs(KDouble x) { return fabs(x); }
 // extensions
 
 KDouble Kotlin_math_Double_pow(KDouble thiz, KDouble x) {
-    if (isinf(x) && (thiz == 1.0 || thiz == -1.0)) return NAN; // Kotlin corner case
-    return pow(thiz, x);
+  // Kotlin corner cases
+  if (x == 0.0 || x == -0.0) return 1.0;
+  if (isinf(x) && (thiz == 1.0 || thiz == -1.0)) return NAN;
+  return pow(thiz, x);
 }
 
 KDouble Kotlin_math_Double_IEEErem(KDouble thiz, KDouble divisor) { return remainder(thiz, divisor); }
@@ -229,8 +231,10 @@ KFloat Kotlin_math_absf(KFloat x) { return fabsf(x); }
 // extensions
 
 KFloat Kotlin_math_Float_pow(KFloat thiz, KFloat x) {
-    if (isinf(x) && (thiz == 1.0 || thiz == -1.0)) return NAN; // Kotlin corner case
-    return powf(thiz, x);
+  // Kotlin corner cases
+  if (x == 0.0 || x == -0.0) return 1.0;
+  if (isinf(x) && (thiz == 1.0 || thiz == -1.0)) return NAN;
+  return powf(thiz, x);
 }
 
 KFloat Kotlin_math_Float_IEEErem(KFloat thiz, KFloat divisor) { return remainderf(thiz, divisor); }
