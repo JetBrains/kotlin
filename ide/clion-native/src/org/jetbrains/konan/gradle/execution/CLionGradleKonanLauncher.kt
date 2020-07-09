@@ -135,7 +135,7 @@ class CLionGradleKonanLauncher(
         myExtensionsManager.patchCommandLineState(myConfiguration, runnerSettings, environment, projectBaseDir, state, runnerId, context)
         val backendFilterProvider = CidrDebugConsoleFilterProvider(environment, projectBaseDir)
         val parameters = getDebugParameters(environment, cl)
-        val process = KonanLocalDebugProcess(parameters, session, state.consoleBuilder, backendFilterProvider)
+        val process = KonanLocalDebugProcess(parameters, session, state.consoleBuilder, backendFilterProvider, true)
         configProcessHandler(process.processHandler, process.isDetachDefault, true, project)
         myExtensionsManager.attachExtensionsToProcess(myConfiguration,
                                                       process.processHandler,

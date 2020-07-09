@@ -8,7 +8,6 @@ import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.ProjectScope
 import com.intellij.util.PathUtil
 import com.intellij.xdebugger.XDebugSession
-import com.intellij.xdebugger.breakpoints.XBreakpointHandler
 import com.intellij.xdebugger.frame.XExecutionStack
 import com.jetbrains.cidr.execution.RunParameters
 import com.jetbrains.cidr.execution.debugger.CidrLocalDebugProcess
@@ -21,8 +20,7 @@ open class KonanLocalDebugProcess(
     parameters: RunParameters,
     session: XDebugSession,
     consoleBuilder: TextConsoleBuilder,
-    backendFilterProvider: ConsoleFilterProvider,
-    private val useInCLion: Boolean = false
+    backendFilterProvider: ConsoleFilterProvider
 ) : CidrLocalDebugProcess(parameters, session, consoleBuilder, backendFilterProvider) {
     private val sourcesIndex = HashMap<String, VirtualFile?>()
 
@@ -37,8 +35,7 @@ open class KonanLocalDebugProcess(
         return KonanExecutionStack(thread, frame, cause, this)
     }
 
-    override fun getBreakpointHandlers(): Array<XBreakpointHandler<*>> =
-        if (useInCLion) super.getBreakpointHandlers() else addKotlinHandler(super.getBreakpointHandlers(), session.project)
+    override fun getBreakpointHandlers() = addKotlinHandler(super.getBreakpointHandlers(), session.project)
 
     fun resolveFile(originalFullName: String): VirtualFile? {
         synchronized(sourcesIndex) {
