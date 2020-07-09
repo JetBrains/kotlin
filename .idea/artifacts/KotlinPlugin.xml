@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="ArtifactManager">
   <artifact name="KotlinPlugin">
     <output-path>$PROJECT_DIR$/out/artifacts/KotlinPlugin</output-path>
