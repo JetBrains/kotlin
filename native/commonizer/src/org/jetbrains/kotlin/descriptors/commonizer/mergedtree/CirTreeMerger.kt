@@ -71,11 +71,11 @@ class CirTreeMerger(
             targetProvider.builtInsProvider
         )
 
-        val moduleDescriptors: Collection<ModuleDescriptor> = targetProvider.modulesProvider.loadModules()
+        val moduleDescriptors: Map<String, ModuleDescriptor> = targetProvider.modulesProvider.loadModules()
         val modules: MutableMap<Name, CirModuleNode> = rootNode.modules
 
-        moduleDescriptors.forEach { moduleDescriptor ->
-            if (moduleDescriptor.name.asString().removeSurrounding("<", ">") in commonModuleNames)
+        moduleDescriptors.forEach { (name, moduleDescriptor) ->
+            if (name in commonModuleNames)
                 processModule(modules, targetIndex, moduleDescriptor)
         }
     }
