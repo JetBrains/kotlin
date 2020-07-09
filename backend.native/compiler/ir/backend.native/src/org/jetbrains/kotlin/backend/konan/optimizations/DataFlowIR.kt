@@ -266,17 +266,31 @@ internal object DataFlowIR {
         class Variable(values: List<Edge>, val type: Type, val kind: VariableKind) : Node() {
             val values = mutableListOf<Edge>().also { it += values }
         }
+
+        class Scope(val depth: Int, nodes: List<Node>) : Node() {
+            val nodes = mutableSetOf<Node>().also { it += nodes }
+        }
     }
 
-    class FunctionBody(val nodes: List<Node>, val returns: Node.Variable, val throws: Node.Variable)
+    // Note: scopes form a tree.
+    class FunctionBody(val rootScope: Node.Scope, val allScopes: List<Node.Scope>,
+                       val returns: Node.Variable, val throws: Node.Variable) {
+        inline fun forEachNonScopeNode(block: (Node) -> Unit) {
+            for (scope in allScopes)
+                for (node in scope.nodes)
+                    if (node !is Node.Scope)
+                        block(node)
+        }
+    }
 
     class Function(val symbol: FunctionSymbol, val body: FunctionBody) {
 
         fun debugOutput() {
             println("FUNCTION $symbol")
             println("Params: ${symbol.parameters.contentToString()}")
-            val ids = body.nodes.withIndex().associateBy({ it.value }, { it.index })
-            body.nodes.forEach {
+            val nodes = listOf(body.rootScope) + body.allScopes.flatMap { it.nodes }
+            val ids = nodes.withIndex().associateBy({ it.value }, { it.index })
+            nodes.forEach {
                 println("    NODE #${ids[it]!!}")
                 printNode(it, ids)
             }
@@ -438,6 +452,15 @@ internal object DataFlowIR {
                                 appendLine(" CASTED TO ${it.castToType}")
                         }
                     }
+                }
+
+                is Node.Scope -> {
+                    val result = StringBuilder()
+                    result.appendLine("       SCOPE ${node.depth}")
+                    node.nodes.forEach {
+                        result.appendLine("            SUBNODE #${ids[it]!!}")
+                    }
+                    result.toString()
                 }
 
                 else -> {

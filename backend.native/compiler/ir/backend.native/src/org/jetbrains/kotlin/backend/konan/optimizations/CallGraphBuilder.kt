@@ -107,7 +107,7 @@ internal class CallGraphBuilder(val context: Context,
     private val arraySet = symbols.arraySet[symbols.array]!!.owner
 
     private inline fun DataFlowIR.FunctionBody.forEachCallSite(block: (DataFlowIR.Node.Call) -> Unit) =
-            nodes.forEach { node ->
+            forEachNonScopeNode { node ->
                 when (node) {
                     is DataFlowIR.Node.Call -> block(node)
 

@@ -319,11 +319,15 @@ internal object Devirtualization {
                         }
                 }
             }
-            var cur: Node = source
-            do {
-                println("    #${cur.id}")
-                cur = prev[cur]!!
-            } while (cur != node)
+            try {
+                var cur: Node = source
+                do {
+                    println("    #${cur.id}")
+                    cur = prev[cur]!!
+                } while (cur != node)
+            } catch (t: Throwable) {
+                println("Unable to print path")
+            }
         }
 
         private inner class Condensation(val multiNodes: IntArray, val topologicalOrder: IntArray) {
@@ -600,8 +604,8 @@ internal object Devirtualization {
             val nothing = symbolTable.classMap[context.ir.symbols.nothing.owner]
             for (function in functions.values) {
                 if (!constraintGraph.functions.containsKey(function.symbol)) continue
-                for (node in function.body.nodes) {
-                    val virtualCall = node as? DataFlowIR.Node.VirtualCall ?: continue
+                function.body.forEachNonScopeNode { node ->
+                    val virtualCall = node as? DataFlowIR.Node.VirtualCall ?: return@forEachNonScopeNode
                     assert(nodesMap[virtualCall] != null) { "Node for virtual call $virtualCall has not been built" }
                     val receiverNode = constraintGraph.virtualCallSiteReceivers[virtualCall]
                             ?: error("virtualCallSiteReceivers were not built for virtual call $virtualCall")
@@ -615,7 +619,7 @@ internal object Devirtualization {
                             printPathToType(reversedEdges, receiverNode, VIRTUAL_TYPE_ID)
                         }
 
-                        continue
+                        return@forEachNonScopeNode
                     }
 
                     DEBUG_OUTPUT(0) {
@@ -780,13 +784,17 @@ internal object Devirtualization {
             private val preliminaryNumberOfNodes =
                     allTypes.size + // A possible source node for each type.
                             functions.size * 2 + // <returns> and <throws> nodes for each function.
-                            functions.values.sumBy { it.body.nodes.size } + // A node for each DataFlowIR.Node.
+                            functions.values.sumBy {
+                                it.body.allScopes.sumBy { it.nodes.size } // A node for each DataFlowIR.Node.
+                            } +
                             functions.values
                                     .sumBy { function ->
-                                        function.body.nodes.count { node ->
-                                            // A cast if types are different.
-                                            node is DataFlowIR.Node.Call
-                                                    && node.returnType.resolved() != node.callee.returnParameter.type.resolved()
+                                        function.body.allScopes.sumBy {
+                                            it.nodes.count { node ->
+                                                // A cast if types are different.
+                                                node is DataFlowIR.Node.Call
+                                                        && node.returnType.resolved() != node.callee.returnParameter.type.resolved()
+                                            }
                                         }
                                     }
 
@@ -903,17 +911,17 @@ internal object Devirtualization {
                     val body = function.body
                     val functionConstraintGraph = constraintGraph.functions[symbol]!!
 
-                    body.nodes.forEach { dfgNodeToConstraintNode(functionConstraintGraph, it) }
+                    body.forEachNonScopeNode { dfgNodeToConstraintNode(functionConstraintGraph, it) }
                     addEdge(functionNodesMap[body.returns]!!, functionConstraintGraph.returns)
                     addEdge(functionNodesMap[body.throws]!!, functionConstraintGraph.throws)
 
                     DEBUG_OUTPUT(0) {
                         println("CONSTRAINT GRAPH FOR $symbol")
-                        val ids = function.body.nodes.asSequence().withIndex().associateBy({ it.value }, { it.index })
-                        for (node in function.body.nodes) {
+                        val ids = function.body.allScopes.flatMap { it.nodes }.withIndex().associateBy({ it.value }, { it.index })
+                        function.body.forEachNonScopeNode { node ->
                             println("FT NODE #${ids[node]}")
                             DataFlowIR.Function.printNode(node, ids)
-                            val constraintNode = functionNodesMap[node] ?: variables[node] ?: break
+                            val constraintNode = functionNodesMap[node] ?: variables[node] ?: return@forEachNonScopeNode
                             println("       CG NODE #${constraintNode.id}: ${constraintNode.toString(allTypes)}")
                             println()
                         }

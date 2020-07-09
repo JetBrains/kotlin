@@ -99,7 +99,8 @@ internal object EscapeAnalysis {
             return callGraph.nodes.associateBy({ it.symbol }) {
                 val function = functions[it.symbol]!!
                 val body = function.body
-                val nodesRoles = body.nodes.associate { it to Roles() }
+                val nodesRoles = mutableMapOf<DataFlowIR.Node, Roles>()
+                body.forEachNonScopeNode { nodesRoles[it] = Roles() }
 
                 fun assignRole(node: DataFlowIR.Node, role: Role, infoEntry: RoleInfoEntry?) {
                     nodesRoles[node]!!.add(role, infoEntry)
@@ -107,7 +108,7 @@ internal object EscapeAnalysis {
 
                 body.returns.values.forEach { assignRole(it.node, Role.RETURN_VALUE, null /* TODO */) }
                 body.throws.values.forEach  { assignRole(it.node, Role.THROW_VALUE,  null /* TODO */) }
-                for (node in body.nodes) {
+                body.forEachNonScopeNode { node ->
                     when (node) {
                         is DataFlowIR.Node.FieldWrite -> {
                             val receiver = node.receiver
@@ -467,7 +468,12 @@ internal object EscapeAnalysis {
             val functionAnalysisResult = intraproceduralAnalysisResult[functionSymbol]!!
             val nodes = mutableMapOf<DataFlowIR.Node, PointsToGraphNode>()
 
-            val ids = if (DEBUG > 0) functionAnalysisResult.function.body.nodes.withIndex().associateBy({ it.value }, { it.index }) else null
+            val ids = if (DEBUG > 0)
+                (listOf(functionAnalysisResult.function.body.rootScope)
+                        + functionAnalysisResult.function.body.allScopes.flatMap { it.nodes }
+                        )
+                        .withIndex().associateBy({ it.value }, { it.index })
+            else null
 
             fun lifetimeOf(node: DataFlowIR.Node) = nodes[node]!!.let {
                 when (it.kind) {
@@ -563,7 +569,7 @@ internal object EscapeAnalysis {
 
             fun print_digraph() {
                 println("digraph {")
-                val ids = ids ?: functionAnalysisResult.function.body.nodes.withIndex().associateBy({ it.value }, { it.index })
+                val ids = ids!!
                 nodes.forEach { t, u ->
                     u.edges.forEach {
                         println("    ${ids[t]} -> ${ids[it]};")
@@ -630,7 +636,9 @@ internal object EscapeAnalysis {
             }
 
             fun buildClosure(): FunctionEscapeAnalysisResult {
-                val parameters = functionAnalysisResult.function.body.nodes.filterIsInstance<DataFlowIR.Node.Parameter>()
+                // Parameters are declared in the root scope.
+                val parameters = functionAnalysisResult.function.body.rootScope.nodes
+                        .filterIsInstance<DataFlowIR.Node.Parameter>()
                 val reachabilities = mutableListOf<IntArray>()
 
                 DEBUG_OUTPUT(0) {

@@ -168,7 +168,7 @@ internal object LocalEscapeAnalysis {
         }
 
         fun analyze(lifetimes: MutableMap<IrElement, Lifetime>) {
-            function.body.nodes.forEach { node ->
+            function.body.forEachNonScopeNode { node ->
                 evaluateEscapeState(node)
             }
             function.body.returns.escapeState = EscapeState.ARG_ESCAPE
