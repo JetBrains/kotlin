@@ -1,3 +1,9 @@
+pluginManagement {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+}
+
 rootProject.name = 'mppLibrary'
 
 enableFeaturePreview('GRADLE_METADATA')

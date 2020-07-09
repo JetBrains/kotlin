@@ -9,20 +9,18 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
 import com.intellij.util.text.VersionComparatorUtil
+import com.intellij.openapi.roots.impl.ModulesOrderEnumerator
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.idea.util.sourceRoots
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 import java.io.File
 
 class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
-    override fun isApplicableTest(): Boolean {
-        val isOldGradlePlugin = gradleKotlinPluginVersion != MINIMAL_SUPPORTED_VERSION
-                && VersionComparatorUtil.compare(gradleKotlinPluginVersion, "1.3.40") < 0
-
-        return !isOldGradlePlugin && VersionComparatorUtil.compare(gradleVersion, "4.0") >= 0
-    }
 
     @Test
+    @PluginTargetVersions(pluginVersion = "1.3.40+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testKaptPaths() {
         configureByFiles()
         importProject()
@@ -75,6 +73,7 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
     }
 
     @Test
+    @PluginTargetVersions(pluginVersion = "1.3.40+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testRuntimeClasspath() {
         configureByFiles()
 

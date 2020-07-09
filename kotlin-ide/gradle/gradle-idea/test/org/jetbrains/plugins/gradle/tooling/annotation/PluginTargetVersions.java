@@ -12,9 +12,9 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface PluginTargetVersions {
 
-    String gradleVersion() default "";
+    String gradleVersion() default "4.0+";
 
-    String pluginVersion() default "";
+    String pluginVersion() default "1.3.0+";
 
     String gradleVersionForLatestPlugin() default "";
 }
