@@ -51,7 +51,16 @@ class SuspendCoroutineStackFrameItem(
     val stackTraceElement: StackTraceElement,
     location: Location,
     spilledVariables: List<XNamedValue> = emptyList()
-) : CoroutineStackFrameItem(location, spilledVariables)
+) : CoroutineStackFrameItem(location, spilledVariables) {
+    override fun createFrame(debugProcess: DebugProcessImpl): XStackFrame? {
+        return debugProcess.invokeInManagerThread {
+            val frame = debugProcess.findFirstFrame() ?: return@invokeInManagerThread null
+            val locationFrame = LocationStackFrameProxyImpl(location, frame)
+            val position = location.findPosition(debugProcess.project)
+            CoroutineStackFrame(locationFrame, position, spilledVariables, includeFrameVariables = false)
+        }
+    }
+}
 
 
 /**

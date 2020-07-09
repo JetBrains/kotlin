@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 
 import com.intellij.xdebugger.frame.XNamedValue
+import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineNameIdState
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CreationCoroutineStackFrameItem
@@ -32,11 +33,7 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
     private fun mapToCoroutineInfoData(mirror: MirrorOfCoroutineInfo): CoroutineInfoData? {
         val coroutineNameIdState = CoroutineNameIdState.instance(mirror)
         val stackTrace = mirror.enhancedStackTrace?.mapNotNull { it.stackTraceElement() } ?: emptyList()
-        val variables: List<XNamedValue> = mirror.lastObservedFrame?.let {
-            val spilledVariables = debugMetadata?.baseContinuationImpl?.mirror(it, executionContext)
-            spilledVariables?.spilledValues(executionContext)
-        } ?: emptyList()
-        val stackFrames = findStackFrames(stackTrace, variables)
+        val stackFrames = findStackFrames(stackTrace, mirror.lastObservedFrame)
         return CoroutineInfoData(
             coroutineNameIdState,
             stackFrames.restoredStackFrames,
@@ -57,14 +54,24 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
 
     private fun findStackFrames(
         frames: List<StackTraceElement>,
-        variables: List<XNamedValue>
+        lastObservedFrame: ObjectReference?
     ): CoroutineStackFrames {
         val index = frames.indexOfFirst { it.isCreationSeparatorFrame() }
         val restoredStackTraceElements = if (index >= 0)
             frames.take(index)
         else
             frames
+
+        var observedFrame = lastObservedFrame
         val restoredStackFrames = restoredStackTraceElements.map {
+            val variables: List<XNamedValue> = observedFrame?.let {
+                val spilledVariables = debugMetadata?.baseContinuationImpl?.mirror(it, executionContext)
+                if (spilledVariables != null) {
+                    observedFrame = spilledVariables.nextContinuation
+                    spilledVariables.spilledValues(executionContext)
+                } else
+                    null
+            } ?: emptyList()
             SuspendCoroutineStackFrameItem(it, locationCache.createLocation(it), variables)
         }
         val creationStackFrames = frames.subList(index + 1, frames.size).mapIndexed { ix, it ->
