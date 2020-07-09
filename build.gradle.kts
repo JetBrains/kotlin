@@ -905,7 +905,6 @@ tasks {
                 ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-dist-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide:publish",
