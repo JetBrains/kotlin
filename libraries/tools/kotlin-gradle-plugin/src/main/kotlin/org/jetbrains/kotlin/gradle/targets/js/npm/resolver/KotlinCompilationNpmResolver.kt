@@ -352,7 +352,7 @@ internal class KotlinCompilationNpmResolver(
             }
 
             if (!skipWriting) {
-                packageJson.saveTo(npmProject.packageJsonFile)
+                packageJson.saveTo(npmProject.packageCandidateJsonFile)
             }
 
             return KotlinCompilationNpmResolution(

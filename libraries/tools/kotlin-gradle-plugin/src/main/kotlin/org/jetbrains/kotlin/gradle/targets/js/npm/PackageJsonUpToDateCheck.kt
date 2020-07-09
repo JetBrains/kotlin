@@ -24,7 +24,7 @@ class PackageJsonUpToDateCheck(val npmProject: NpmProject) {
         if (packageJsonHashFile.exists()) packageJsonHashFile.readText() else null
     }
 
-    private val packageJsonFile = npmProject.packageJsonFile
+    private val packageJsonFile = npmProject.packageCandidateJsonFile
 
     private val hash by lazy {
         val hasher = (project as ProjectInternal).services.get(FileHasher::class.java)

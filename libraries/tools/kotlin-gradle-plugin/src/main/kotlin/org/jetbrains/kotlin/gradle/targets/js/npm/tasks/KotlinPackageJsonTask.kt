@@ -47,7 +47,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
 
     @get:OutputFile
     val packageJson: File
-        get() = compilationResolver.npmProject.packageJsonFile
+        get() = compilationResolver.npmProject.packageCandidateJsonFile
 
     @TaskAction
     fun resolve() {
