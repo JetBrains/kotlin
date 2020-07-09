@@ -34,7 +34,7 @@ class AppleXCTestLauncher(configuration: MobileTestRunConfiguration, environment
                 override fun getDevice(): AMDevice = (appleDevice as ApplePhysicalDevice).raw
                 override fun getSimulator(): SimulatorRuntime = (appleDevice as AppleSimulator).raw.runtime
 
-                override fun getProductModuleName(): String? = null // TODO
+                override fun getProductModuleName(): String? = testBundle.nameWithoutExtension
             }
         }
     }
