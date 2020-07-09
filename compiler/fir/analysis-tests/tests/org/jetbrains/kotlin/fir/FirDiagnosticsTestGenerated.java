@@ -946,6 +946,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeOfAnnotationMember.kt");
         }
 
+        @TestMetadata("upperBoundViolated.kt")
+        public void testUpperBoundViolated() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/upperBoundViolated.kt");
+        }
+
         @TestMetadata("valOnAnnotationParameter.kt")
         public void testValOnAnnotationParameter() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/valOnAnnotationParameter.kt");
