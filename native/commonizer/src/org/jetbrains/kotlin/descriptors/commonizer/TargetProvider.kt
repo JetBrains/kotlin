@@ -31,5 +31,5 @@ interface ModulesProvider {
     class ModuleInfo(val name: String, val originalLocation: File)
 
     fun loadModuleInfos(): Map<String, ModuleInfo>
-    fun loadModules(): Collection<ModuleDescriptor>
+    fun loadModules(): Map<String, ModuleDescriptor>
 }
