@@ -44,14 +44,14 @@ class CoroutineFrameBuilder {
 
                     val coroutineFrameLists = build(preflightStackFrame, suspendContext)
                     coroutineStackFrameList.addAll(coroutineFrameLists.frames)
-                    return CoroutineFrameItemLists(coroutineStackFrameList, coroutineFrameLists.creationFrames)
+                    return CoroutineFrameItemLists(coroutineStackFrameList, coroutine.creationStackTrace)
                 } else {
                     buildRealStackFrameItem(runningStackFrameProxy)?.let {
                         coroutineStackFrameList.add(it)
                     }
                 }
             }
-            return CoroutineFrameItemLists(coroutineStackFrameList, emptyList())
+            return CoroutineFrameItemLists(coroutineStackFrameList, coroutine.creationStackTrace)
         }
 
         /**
