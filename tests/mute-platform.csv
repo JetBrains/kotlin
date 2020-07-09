@@ -191,3 +191,4 @@ org.jetbrains.kotlin.idea.refactoring.pullUp.PullUpTestGenerated.K2K.testAcciden
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testKotlin_moveTopLevelDeclarations_moveFunctionToPackage_MoveFunctionToPackage, fail on TeamCity but works well locally,, FLAKY
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesOnly, Generated entries reordered,, FLAKY
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesAndMembers, Enum reorder,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateClass.DelegationSpecifier.testCreateSuperClassFromSuperTypeEntry3, Unprocessed,,
