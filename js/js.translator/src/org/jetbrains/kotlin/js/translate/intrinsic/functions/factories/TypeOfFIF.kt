@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
+import org.jetbrains.kotlin.js.backend.ast.metadata.kTypeWithRecursion
 import org.jetbrains.kotlin.js.backend.ast.metadata.specialFunction
 import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -146,7 +147,11 @@ private class KTypeConstructor(private val context: TranslationContext) {
             )
         }
 
-        if (typeParameter in visitedTypeParams) return callHelperFunction(Namer.GET_START_KTYPE_PROJECTION)
+        if (typeParameter in visitedTypeParams) {
+            return callHelperFunction(Namer.GET_START_KTYPE_PROJECTION).also {
+                it.kTypeWithRecursion = true
+            }
+        }
 
         visitedTypeParams.add(typeParameter)
 
