@@ -15,10 +15,16 @@
       <action id="ExternalSystem.OpenConfig"
               class="com.intellij.openapi.externalSystem.action.OpenExternalConfigAction"
               use-shortcut-of="EditSource"/>
-      <action id="ExternalSystem.ShowSettings"
-              class="com.intellij.openapi.externalSystem.action.ShowExternalSystemSettingsAction"
-              icon="AllIcons.General.Settings">
+      <action id="ExternalSystem.ShowCommonSettings"
+              class="com.intellij.openapi.externalSystem.action.ShowCommonExternalSystemSettingsAction">
       </action>
+      <action id="ExternalSystem.ShowSettings"
+              class="com.intellij.openapi.externalSystem.action.ShowExternalSystemSettingsAction">
+      </action>
+      <group id="ExternalSystem.ShowSettingsGroup" popup="true" icon="AllIcons.General.Settings">
+        <reference id="ExternalSystem.ShowCommonSettings"/>
+        <reference id="ExternalSystem.ShowSettings"/>
+      </group>
       <group id="ExternalSystem.ToggleAutoReload"
              class="com.intellij.openapi.externalSystem.autoimport.ToggleAutoReloadActionGroup">
         <action id="ExternalSystem.ToggleAutoReload.All"
@@ -146,7 +152,7 @@
       <separator/>
       <reference ref="ExternalSystemView.ActionsToolbar.RightPanel"/>
       <separator/>
-      <reference id="ExternalSystem.ShowSettings"/>
+      <reference id="ExternalSystem.ShowSettingsGroup"/>
     </group>
 
     <group id="ExternalSystemView.TaskMenu" popup="true" class="com.intellij.openapi.externalSystem.action.task.ExternalSystemTaskMenu">
