@@ -84,7 +84,9 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     private val scriptDefinitionsCacheLock = ReentrantLock()
     private val scriptDefinitionsCache = SLRUMap<String, ScriptDefinition>(10, 10)
 
-    val configurations = (ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager)
+    // cache service as it's getter is on the hot path
+    // it is safe, since both services are in same plugin
+    val configurations = ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager
 
     override fun findDefinition(script: SourceCode): ScriptDefinition? {
         val locationId = script.locationId ?: return null
