@@ -44,6 +44,7 @@ constructor(
     resolveState: FirModuleResolveState
 ) : KtAnalysisSession(element.project) {
     internal val token get() = validityToken
+    private val project = element.project
 
     internal val firResolveState = resolveState
 
@@ -58,7 +59,7 @@ constructor(
     internal val firSymbolBuilder = KtSymbolByFirBuilder(
         firSession.firSymbolProvider,
         typeCheckerContext,
-        element.project,
+        project,
         validityToken
     )
 
@@ -70,7 +71,7 @@ constructor(
             firSymbolBuilder
         )
 
-    override val scopeProvider: KtScopeProvider = KtFirScopeProvider(token, firSymbolBuilder, firSession, firResolveState)
+    override val scopeProvider: KtScopeProvider = KtFirScopeProvider(token, firSymbolBuilder, project, firSession, firResolveState)
 
     init {
         assertIsValid()

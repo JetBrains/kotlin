@@ -29,7 +29,7 @@ internal abstract class KtFirDelegatingScope(private val builder: KtSymbolByFirB
 
     override fun getAllNames(): Set<Name> = withValidityAssertion {
         if (allNamesCached == null) {
-            allNamesCached = firScope.getCallableNames() + firScope.getClassifierNames()
+            allNamesCached = getCallableNames() + getClassLikeSymbolNames()
         }
         allNamesCached!!
     }
@@ -51,7 +51,7 @@ internal abstract class KtFirDelegatingScope(private val builder: KtSymbolByFirB
 
     override fun getCallableSymbols(): Sequence<KtCallableSymbol> = withValidityAssertion {
         sequence {
-            firScope.getCallableNames().forEach { name ->
+            getCallableNames().forEach { name ->
                 val callables = mutableListOf<KtCallableSymbol>()
                 firScope.processFunctionsByName(name) { firSymbol ->
                     (firSymbol.fir as? FirSimpleFunction)?.let { fir ->
@@ -74,7 +74,7 @@ internal abstract class KtFirDelegatingScope(private val builder: KtSymbolByFirB
 
     override fun getClassClassLikeSymbols(): Sequence<KtClassLikeSymbol> = withValidityAssertion {
         sequence {
-            firScope.getClassifierNames().forEach { name ->
+            getClassLikeSymbolNames().forEach { name ->
                 val classLikeSymbols = mutableListOf<KtClassLikeSymbol>()
                 firScope.processClassifiersByName(name) { firSymbol ->
                     (firSymbol.fir as? FirClassLikeDeclaration<*>)?.let {

@@ -200,7 +200,8 @@ private fun FirScope.collectCallableSymbols(packageIndexHelper: PackageIndexHelp
     return allCallableSymbols
 }
 
-private class PackageIndexHelper(private val project: Project) {
+class PackageIndexHelper(private val project: Project) {
+    //todo use more concrete scope
     private val searchScope = GlobalSearchScope.allScope(project)
 
     private val functionByPackageIndex = KotlinTopLevelFunctionByPackageIndex.getInstance()
@@ -210,9 +211,10 @@ private class PackageIndexHelper(private val project: Project) {
         return getTopLevelCallables(packageFqName).mapTo(mutableSetOf()) { it.nameAsSafeName }
     }
 
-    private fun getTopLevelCallables(packageFqName: FqName): Sequence<KtCallableDeclaration> = sequence {
-        yieldAll(functionByPackageIndex.get(packageFqName.asString(), project, searchScope))
-        yieldAll(propertyByPackageIndex.get(packageFqName.asString(), project, searchScope))
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun getTopLevelCallables(packageFqName: FqName): List<KtCallableDeclaration> = buildList {
+        addAll(functionByPackageIndex.get(packageFqName.asString(), project, searchScope))
+        addAll(propertyByPackageIndex.get(packageFqName.asString(), project, searchScope))
     }
 }
 
