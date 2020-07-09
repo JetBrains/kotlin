@@ -215,7 +215,7 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     }
 
     override val kotlinCompiler: File by lazy {
-        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_compiler.xml", "org.jetbrains.kotlin", "kotlin-compiler-for-ide")
+        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_compiler_standalone.xml", "org.jetbrains.kotlin", "kotlin-compiler")
     }
 
     override val trove4j: File by lazy {

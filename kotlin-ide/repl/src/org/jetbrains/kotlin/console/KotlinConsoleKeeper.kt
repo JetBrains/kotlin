@@ -59,10 +59,10 @@ class KotlinConsoleKeeper(val project: Project) {
             javaParameters.charset = null
             javaParameters.vmParametersList.add("-Dkotlin.repl.ideMode=true")
 
+            val kotlinArtifacts = KotlinArtifacts.getInstance()
             javaParameters.classPath.apply {
-                val artifacts = KotlinArtifacts.getInstance()
-                val computeClassPath = KotlinClassPath.CompilerWithScripting.computeClassPath(artifacts)
-                addAll(computeClassPath.map {
+                val classPath = KotlinClassPath.CompilerWithScripting.computeClassPath(kotlinArtifacts)
+                addAll(classPath.map {
                     val absolutePath = it.absolutePath
                     if (!it.exists()) {
                         LOG.warn("Compiler dependency classpath $absolutePath does not exist")
@@ -86,7 +86,12 @@ class KotlinConsoleKeeper(val project: Project) {
                 }
             }
 
-            javaParameters.programParametersList.add("-no-stdlib")
+            javaParameters.programParametersList.add("-kotlin-home")
+            javaParameters.programParametersList.add(kotlinArtifacts.kotlincDirectory.also {
+                check(it.exists()) {
+                    "Kotlinc directory does not exist"
+                }
+            }.absolutePath)
 
             return javaParameters.toCommandLine()
         }

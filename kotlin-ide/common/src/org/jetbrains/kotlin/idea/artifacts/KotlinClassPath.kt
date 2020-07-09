@@ -21,7 +21,8 @@ enum class KotlinClassPath(private val jarGetters: List<(KotlinArtifacts) -> Fil
         KotlinArtifacts::kotlinScriptingCompiler,
         KotlinArtifacts::kotlinScriptingCompilerImpl,
         KotlinArtifacts::kotlinScriptingCommon,
-        KotlinArtifacts::kotlinScriptingJvm
+        KotlinArtifacts::kotlinScriptingJvm,
+        KotlinArtifacts::jetbrainsAnnotations
     ),
     MainKts(
         KotlinArtifacts::kotlinMainKts,

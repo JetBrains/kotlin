@@ -23,6 +23,7 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinClassPath
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
@@ -41,7 +42,6 @@ import org.junit.Assert
 import java.io.File
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
 import org.jetbrains.kotlin.idea.test.runAll
-import org.jetbrains.kotlin.jps.artifacts.JpsPluginTestArtifacts
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.TestMetadataUtil
 import java.util.concurrent.TimeUnit
@@ -117,10 +117,11 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             compileJavaFiles(javaFiles, options)
         }
 
+        val kotlinArtifacts = KotlinArtifacts.getInstance()
         KotlinCompilerStandalone(
             listOf(baseDir),
             target = outputDir,
-            classpath = listOf(KotlinArtifacts.getInstance().kotlinScriptRuntime)
+            classpath = listOf(kotlinArtifacts.kotlinScriptRuntime, kotlinArtifacts.jetbrainsAnnotations)
         ).compile()
 
         PsiTestUtil.setCompilerOutputPath(myFixture.module, outputDir.path, false)
@@ -323,17 +324,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         }
     }
 
-    private var orignalKotlinArtifacts: KotlinArtifacts? = null
-
     override fun setUp() {
         super.setUp()
-
-        orignalKotlinArtifacts = KotlinArtifacts.getInstance()
-        ApplicationManager.getApplication().replaceService(
-            KotlinArtifacts::class.java,
-            JpsPluginTestArtifacts.getInstance(),
-            testRootDisposable
-        )
 
         vfsDisposable = allowProjectRootAccess(this)
 
@@ -342,11 +334,6 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
     override fun tearDown() = runAll(
         ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
-        ThrowableRunnable { ApplicationManager.getApplication().replaceService(
-            KotlinArtifacts::class.java,
-            orignalKotlinArtifacts ?: TestKotlinArtifacts,
-            testRootDisposable
-        ) },
         ThrowableRunnable {
             for (scratchFile in scratchFiles) {
                 runWriteAction { scratchFile.delete(this) }
