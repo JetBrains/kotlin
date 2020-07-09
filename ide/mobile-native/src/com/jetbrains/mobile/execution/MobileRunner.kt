@@ -15,7 +15,6 @@ class MobileRunner : CidrRunner() {
 
     override fun canRun(executorId: String, profile: RunProfile): Boolean =
         super.canRun(executorId, profile) &&
-                profile is MobileRunConfigurationBase &&
                 (executorId == DefaultRunExecutor.EXECUTOR_ID || executorId == DefaultDebugExecutor.EXECUTOR_ID)
 
     override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {

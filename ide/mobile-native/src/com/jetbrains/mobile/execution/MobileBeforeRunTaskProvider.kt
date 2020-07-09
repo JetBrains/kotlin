@@ -3,6 +3,7 @@ package com.jetbrains.mobile.execution
 import com.intellij.execution.BeforeRunTask
 import com.intellij.execution.BeforeRunTaskProvider
 import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.execution.configurations.WrappingRunConfiguration
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.DataContext
@@ -26,10 +27,13 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
 
     override fun executeTask(
         context: DataContext,
-        configuration: RunConfiguration,
+        runConfiguration: RunConfiguration,
         environment: ExecutionEnvironment,
         task: Task
     ): Boolean {
+        val configuration = (runConfiguration as? WrappingRunConfiguration<*>)?.peer
+            ?: runConfiguration
+
         if (configuration !is MobileRunConfigurationBase) return false
         val device = environment.executionTarget as? Device ?: return false
 
