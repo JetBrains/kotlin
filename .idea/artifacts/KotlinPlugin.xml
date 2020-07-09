@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <component name="ArtifactManager">
   <artifact name="KotlinPlugin">
     <output-path>$PROJECT_DIR$/out/artifacts/KotlinPlugin</output-path>
@@ -103,9 +102,6 @@
         <element id="archive" name="kotlin-common.jar">
           <element id="module-output" name="kotlin.common" />
         </element>
-        <element id="archive" name="kotlin-completion.jar">
-          <element id="module-output" name="kotlin.completion" />
-        </element>
         <element id="archive" name="kotlin-core.jar">
           <element id="module-output" name="kotlin.core" />
         </element>
@@ -164,6 +160,9 @@
         </element>
         <element id="archive" name="kotlin-compiler-for-ide.jar">
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4.20-dev-1817/kotlin-compiler-for-ide-1.4.20-dev-1817.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-frontend-independent.jar">
+          <element id="module-output" name="kotlin.fir.frontend-independent" />
         </element>
       </element>
     </root>
