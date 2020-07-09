@@ -17,7 +17,6 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
      * In Kotlin/JS implementation of StringBuilder the initial capacity has no effect on the further performance of operations.
      */
     actual constructor(capacity: Int) : this() {
-        this.asDynamic()._capacity = capacity
     }
 
     /** Constructs a string builder that contains the same characters as the specified [content] char sequence. */
@@ -135,9 +134,10 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
      *
      * In Kotlin/JS implementation of StringBuilder the value returned from this method may not indicate the actual size of the backing storage.
      */
-    @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    actual fun capacity(): Int = if (this.asDynamic()._capacity !== undefined) maxOf(this.asDynamic()._capacity, length) else length
+    @SinceKotlin("1.3")
+//    @ExperimentalStdlibApi
+    @Deprecated("Obtaining StringBuilder capacity is not supported in JS and common code.", level = DeprecationLevel.ERROR)
+    actual fun capacity(): Int = length
 
     /**
      * Ensures that the capacity of this string builder is at least equal to the specified [minimumCapacity].
@@ -151,9 +151,6 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
     @SinceKotlin("1.4")
     @WasExperimental(ExperimentalStdlibApi::class)
     actual fun ensureCapacity(minimumCapacity: Int) {
-        if (minimumCapacity > capacity()) {
-            this.asDynamic()._capacity = minimumCapacity
-        }
     }
 
     /**
@@ -367,9 +364,6 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
     @SinceKotlin("1.4")
     @WasExperimental(ExperimentalStdlibApi::class)
     actual fun trimToSize() {
-        if (this.asDynamic()._capacity !== undefined) {
-            this.asDynamic()._capacity = length
-        }
     }
 
     override fun toString(): String = string
