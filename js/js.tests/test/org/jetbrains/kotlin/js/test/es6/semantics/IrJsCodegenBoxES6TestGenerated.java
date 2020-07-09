@@ -1077,6 +1077,16 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/bridges/genericProperty.kt");
         }
 
+        @TestMetadata("jsName.kt")
+        public void testJsName() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/jsName.kt");
+        }
+
+        @TestMetadata("jsNative.kt")
+        public void testJsNative() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/jsNative.kt");
+        }
+
         @TestMetadata("kt12416.kt")
         public void testKt12416() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/kt12416.kt");
@@ -15739,6 +15749,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/primitiveTypes/conversions.kt");
         }
 
+        @TestMetadata("crossTypeEquals.kt")
+        public void testCrossTypeEquals() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/crossTypeEquals.kt");
+        }
+
         @TestMetadata("ea35963.kt")
         public void testEa35963() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/ea35963.kt");
@@ -22296,6 +22311,46 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
 
                 public void testAllFilesPresentInJs() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+                }
+
+                @TestMetadata("classes.kt")
+                public void testClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/js/classes.kt");
+                }
+
+                @TestMetadata("inlineClasses.kt")
+                public void testInlineClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/js/inlineClasses.kt");
+                }
+
+                @TestMetadata("kType.kt")
+                public void testKType() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/js/kType.kt");
+                }
+
+                @TestMetadata("manyTypeArguments.kt")
+                public void testManyTypeArguments() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/js/manyTypeArguments.kt");
+                }
+
+                @TestMetadata("multipleLayers.kt")
+                public void testMultipleLayers() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/js/multipleLayers.kt");
+                }
+
+                @TestMetadata("multipleModules.kt")
+                public void testMultipleModules() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/js/multipleModules.kt");
+                }
+
+                @TestMetadata("typeOfCapturedStar.kt")
+                public void testTypeOfCapturedStar() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/js/typeOfCapturedStar.kt");
+                }
+
+                @TestMetadata("typeOfReifiedUnit.kt")
+                public void testTypeOfReifiedUnit() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/js/typeOfReifiedUnit.kt");
                 }
             }
 
