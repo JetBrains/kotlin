@@ -58,6 +58,8 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
 
     override fun afterPass(pass: Int) {
         createReport()
+        require(totalModules > 0) { "No modules were analyzed" }
+        require(okModules > 0) { "All of $totalModules is failed" }
     }
 
     private fun createReport() {
