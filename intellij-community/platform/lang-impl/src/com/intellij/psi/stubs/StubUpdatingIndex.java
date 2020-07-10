@@ -465,15 +465,7 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
     @Override
     public void setIndexedStateForFile(int fileId, @NotNull IndexedFile file) {
       super.setIndexedStateForFile(fileId, file);
-
-      if (myCompositeBinaryBuilderMap != null) {
-        try {
-          myCompositeBinaryBuilderMap.persistState(fileId, file.getFile());
-        }
-        catch (IOException e) {
-          LOG.error(e);
-        }
-      }
+      setBinaryBuilderConfiguration(fileId, file);
     }
 
     @Override
@@ -484,6 +476,22 @@ public final class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<
       } catch (IOException e) {
         LOG.error(e);
         return false;
+      }
+    }
+
+    @Override
+    protected void setIndexConfigurationUpToDate(int fileId, @NotNull IndexedFile file) {
+      setBinaryBuilderConfiguration(fileId, file);
+    }
+
+    private void setBinaryBuilderConfiguration(int fileId, @NotNull IndexedFile file) {
+      if (myCompositeBinaryBuilderMap != null) {
+        try {
+          myCompositeBinaryBuilderMap.persistState(fileId, file.getFile());
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
       }
     }
   }
