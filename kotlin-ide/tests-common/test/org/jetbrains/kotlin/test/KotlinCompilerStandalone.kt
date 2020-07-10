@@ -58,7 +58,10 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
 
         @JvmStatic
         fun defaultTargetJar(): File {
-            return File.createTempFile("kt-lib", ".jar").also { it.deleteOnExit() }.canonicalFile
+            return File.createTempFile("kt-lib", ".jar")
+                // TODO: [VD][to be fixed by Yan] as it affects test runs - jar is deleted while file reference is in use
+                //.also { it.deleteOnExit() }
+                .canonicalFile
         }
     }
 

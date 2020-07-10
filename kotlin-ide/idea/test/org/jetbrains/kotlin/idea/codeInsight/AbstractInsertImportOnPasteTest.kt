@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
@@ -58,7 +59,9 @@ abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() {
 
         configureTargetFile(testFileName.replace(".kt", ".to.kt"))
         performNotWriteEditorAction(IdeActions.ACTION_PASTE)
+
         UIUtil.dispatchAllInvocationEvents()
+        NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
 
         if (InTextDirectivesUtils.isDirectiveDefined(testFileText, TODO_INVESTIGATE_DIRECTIVE)) {
             println("File $testFile has $TODO_INVESTIGATE_DIRECTIVE")
