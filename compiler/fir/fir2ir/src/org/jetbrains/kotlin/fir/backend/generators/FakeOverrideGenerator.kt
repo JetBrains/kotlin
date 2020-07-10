@@ -88,7 +88,8 @@ class FakeOverrideGenerator(
                         // That's why we must check parent during caching...
                         val irFunction = declarationStorage.getCachedIrFunction(originalFunction)?.takeIf { it.parent == this }
                             ?: declarationStorage.createIrFunction(
-                                originalFunction, irParent = this,
+                                originalFunction,
+                                irParent = this,
                                 thisReceiverOwner = declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,
                                 origin = origin
                             )
@@ -111,7 +112,8 @@ class FakeOverrideGenerator(
 
                         classifierStorage.preCacheTypeParameters(originalFunction)
                         val irFunction = declarationStorage.createIrFunction(
-                            fakeOverrideFunction, irParent = this,
+                            fakeOverrideFunction,
+                            irParent = this,
                             thisReceiverOwner = declarationStorage.findIrParent(originalFunction) as? IrClass,
                             origin = origin
                         )
@@ -136,7 +138,7 @@ class FakeOverrideGenerator(
                     ) {
                         // Substitution case
                         // NB: see comment above about substituted function' parent
-                        val irProperty = declarationStorage.getCachedIrProperty(originalProperty)?.takeIf { it.parent == this}
+                        val irProperty = declarationStorage.getCachedIrProperty(originalProperty)?.takeIf { it.parent == this }
                             ?: declarationStorage.createIrProperty(
                                 originalProperty, irParent = this,
                                 thisReceiverOwner = declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,

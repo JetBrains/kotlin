@@ -22,6 +22,8 @@ FILE fqName:<root> fileName:/expectClassInherited.kt
     CONSTRUCTOR visibility:public <> (i:kotlin.Int) returnType:<root>.B [primary,expect]
       VALUE_PARAMETER name:i index:0 type:kotlin.Int
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Unit [expect]
+      overridden:
+        public abstract fun foo (): kotlin.Unit declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.B
     FUN name:bar visibility:public modality:OPEN <> ($this:<root>.B, s:kotlin.String) returnType:kotlin.Unit [expect]
       $this: VALUE_PARAMETER name:<this> type:<root>.B

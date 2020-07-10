@@ -75,7 +75,7 @@ class Fir2IrConverter(
     fun processFileAndClassMembers(file: FirFile) {
         val irFile = declarationStorage.getIrFile(file)
         for (declaration in file.declarations) {
-            val irDeclaration = processMemberDeclaration(declaration, irFile) ?: continue
+            val irDeclaration = processMemberDeclaration(declaration, null, irFile) ?: continue
             irFile.declarations += irDeclaration
         }
     }
@@ -92,7 +92,7 @@ class Fir2IrConverter(
                 registerClassAndNestedClasses(declaration, irClass)
                 processClassAndNestedClassHeaders(declaration)
             }
-            val irDeclaration = processMemberDeclaration(declaration, irClass) ?: continue
+            val irDeclaration = processMemberDeclaration(declaration, anonymousObject, irClass) ?: continue
             irClass.declarations += irDeclaration
         }
         return irClass
@@ -113,7 +113,7 @@ class Fir2IrConverter(
             irClass.declarations += declarationStorage.createIrConstructor(it, irClass)
         }
         for (declaration in sortBySynthetic(regularClass.declarations)) {
-            val irDeclaration = processMemberDeclaration(declaration, irClass) ?: continue
+            val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
             irClass.declarations += irDeclaration
         }
         return irClass
@@ -138,7 +138,11 @@ class Fir2IrConverter(
         }
     }
 
-    private fun processMemberDeclaration(declaration: FirDeclaration, parent: IrDeclarationParent): IrDeclaration? {
+    private fun processMemberDeclaration(
+        declaration: FirDeclaration,
+        containingClass: FirClass<*>?,
+        parent: IrDeclarationParent
+    ): IrDeclaration? {
         return when (declaration) {
             is FirRegularClass -> {
                 processClassMembers(declaration)

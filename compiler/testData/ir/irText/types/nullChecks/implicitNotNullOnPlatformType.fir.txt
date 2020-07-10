@@ -26,6 +26,8 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
         RETURN type=kotlin.Nothing from='public final fun contains (element: kotlin.String): kotlin.Boolean declared in <root>.MySet'
           CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
     FUN name:containsAll visibility:public modality:FINAL <> ($this:<root>.MySet, elements:kotlin.collections.Collection<kotlin.String>) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun containsAll (elements: kotlin.collections.Collection<E of kotlin.collections.Set>): kotlin.Boolean declared in kotlin.collections.Set
       $this: VALUE_PARAMETER name:<this> type:<root>.MySet
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<kotlin.String>
       BLOCK_BODY
