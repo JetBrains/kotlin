@@ -93,7 +93,8 @@ constructor(
     @Nested
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
         library = baseConventions?.archivesBaseName,
-        libraryTarget = KotlinWebpackOutput.Target.UMD
+        libraryTarget = KotlinWebpackOutput.Target.UMD,
+        globalObject = "this"
     )
 
     @get:Internal
