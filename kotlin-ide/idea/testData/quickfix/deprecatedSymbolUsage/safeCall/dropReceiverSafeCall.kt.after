@@ -8,7 +8,5 @@ class X {
 fun newFun(){}
 
 fun foo(x: X) {
-    <caret>if (x != null) {
-        newFun()
-    }
+    <caret>newFun()
 }

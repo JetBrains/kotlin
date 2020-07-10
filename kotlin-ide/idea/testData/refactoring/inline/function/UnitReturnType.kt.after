@@ -11,10 +11,8 @@ class C {
             println(4)
         }
 
-        if (other != null) {
-            println(5)
-            println(6)
-        }
+        println(5)
+        println(6)
     }
 
     fun h() {

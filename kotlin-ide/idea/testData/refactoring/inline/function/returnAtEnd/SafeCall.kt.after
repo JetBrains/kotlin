@@ -16,4 +16,14 @@ fun f(s: String?) {
         println(4)
         it.hashCode() * 4
     }
+
+    val s3 = s?.substring(1)
+    if (s3 != null) {
+        println(2)
+        s3.hashCode() * 2
+    }
+    if (s3 != null) {
+        println(3)
+        s3.hashCode() * 3
+    }
 }

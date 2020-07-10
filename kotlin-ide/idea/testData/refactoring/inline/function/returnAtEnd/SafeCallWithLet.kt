@@ -1,5 +1,7 @@
 fun String.<caret>f(p: Int): Int {
+    p.let { println(it) }
     println(p)
+    println(p.let { 1 + it })
     return hashCode() * p
 }
 
@@ -11,5 +13,7 @@ fun f(s: String?) {
 
     val s3 = s?.substring(1)
     s3?.f(2)
-    s3?.f(3)
+    s3?.f(3)?.let { println(it) }
+
+    ""?.f(42)
 }

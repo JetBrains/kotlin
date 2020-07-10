@@ -1,0 +1,46 @@
+fun f(s: String?) {
+    if (s != null) {
+        1.let { println(it) }
+        println(1)
+        println(1.let { 1 + it })
+        s.hashCode() * 1
+    }
+    val substring = s?.substring(1)
+    if (substring != null) {
+        2.let { println(it) }
+        println(2)
+        println(2.let { 1 + it })
+        substring.hashCode() * 2
+    }
+    val s1 = s?.let { s ->
+        3.let { println(it) }
+        println(3)
+        println(3.let { 1 + it })
+        s.hashCode() * 3
+    }
+    val s2 = s?.substring(1)?.let { substring ->
+        4.let { println(it) }
+        println(4)
+        println(4.let { 1 + it })
+        substring.hashCode() * 4
+    }
+
+    val s3 = s?.substring(1)
+    if (s3 != null) {
+        2.let { println(it) }
+        println(2)
+        println(2.let { 1 + it })
+        s3.hashCode() * 2
+    }
+    s3?.let { s3 ->
+        3.let { println(it) }
+        println(3)
+        println(3.let { 1 + it })
+        s3.hashCode() * 3
+    }?.let { println(it) }
+
+    42.let { println(it) }
+    println(42)
+    println(42.let { 1 + it })
+    "".hashCode() * 42
+}

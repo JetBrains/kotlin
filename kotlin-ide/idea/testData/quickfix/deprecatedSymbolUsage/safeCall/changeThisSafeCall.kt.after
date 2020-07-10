@@ -1,4 +1,5 @@
 // "Replace with 's.newFun(this)'" "true"
+// WITH_RUNTIME
 
 class X {
     @Deprecated("", ReplaceWith("s.newFun(this)"))
@@ -8,7 +9,5 @@ class X {
 fun String.newFun(x: X): String = this
 
 fun foo(x: X?) {
-    <caret>if (x != null) {
-        "a".newFun(x)
-    }
+    x?.<caret>let { "a".newFun(it) }
 }

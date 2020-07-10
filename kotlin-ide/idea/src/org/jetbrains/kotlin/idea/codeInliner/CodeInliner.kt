@@ -108,7 +108,7 @@ class CodeInliner<TCallElement : KtElement>(
 
         val lexicalScope = callElement.parent.getResolutionScope(bindingContext)
 
-        if (elementToBeReplaced is KtSafeQualifiedExpression) {
+        if (elementToBeReplaced is KtSafeQualifiedExpression && receiverType?.isMarkedNullable != false) {
             wrapCodeForSafeCall(receiver!!, receiverType, elementToBeReplaced)
         } else if (callElement is KtBinaryExpression && callElement.operationToken == KtTokens.IDENTIFIER) {
             keepInfixFormIfPossible()
@@ -296,7 +296,7 @@ class CodeInliner<TCallElement : KtElement>(
             }
         }
 
-        if (expressionToBeReplaced.isUsedAsExpression(bindingContext)) {
+        if (codeToInline.statementsBefore.isEmpty() || expressionToBeReplaced.isUsedAsExpression(bindingContext)) {
             val thisReplaced = codeToInline.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
             codeToInline.introduceValue(receiver, receiverType, thisReplaced, expressionToBeReplaced, safeCall = true)
         } else {

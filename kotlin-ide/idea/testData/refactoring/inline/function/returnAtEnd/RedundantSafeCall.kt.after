@@ -1,0 +1,10 @@
+class C {
+
+    fun g(other: C) {
+        println(5)
+        println(6)
+        C()
+        println(2)
+        println(3)
+    }
+}

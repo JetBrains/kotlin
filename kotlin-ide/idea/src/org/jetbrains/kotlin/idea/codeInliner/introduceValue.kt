@@ -81,10 +81,9 @@ internal fun MutableCodeToInline.introduceValue(
             val declaration = psiFactory.createDeclarationByPattern<KtVariableDeclaration>("val $0 = $1", name, value)
             statementsBefore.add(0, declaration)
 
-            val explicitType = valueType?.takeIf {
+            valueType?.takeIf {
                 variableNeedsExplicitType(value, valueType, expressionToBeReplaced, resolutionScope, bindingContext)
-            }
-            if (explicitType != null) {
+            }?.let { explicitType ->
                 addPostInsertionAction(declaration) { it.setType(explicitType) }
             }
 
@@ -99,7 +98,11 @@ internal fun MutableCodeToInline.introduceValue(
 
         mainExpression = psiFactory.buildExpression {
             appendExpression(value)
-            appendFixedText("?.let{")
+            if (valueType?.isMarkedNullable != false) {
+                appendFixedText("?")
+            }
+
+            appendFixedText(".let {")
 
             if (!useIt) {
                 appendName(name)
@@ -136,7 +139,7 @@ private fun variableNeedsExplicitType(
 
 private fun collectNameUsages(scope: MutableCodeToInline, name: String): List<KtSimpleNameExpression> {
     return scope.expressions.flatMap { expression ->
-        expression.collectDescendantsOfType<KtSimpleNameExpression> { it.getReceiverExpression() == null && it.getReferencedName() == name }
+        expression.collectDescendantsOfType { it.getReceiverExpression() == null && it.getReferencedName() == name }
     }
 }
 
