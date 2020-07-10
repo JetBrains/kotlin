@@ -133,7 +133,7 @@ internal fun CirSimpleType.buildType(
     )
 
     val computedType = if (classifier is TypeAliasDescriptor)
-        classifier.underlyingType.withAbbreviation(simpleType)
+        classifier.underlyingType.makeNullableAsSpecified(simpleType.isMarkedNullable).withAbbreviation(simpleType)
     else
         simpleType
 
