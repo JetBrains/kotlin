@@ -22,10 +22,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.components.ActionLink;
 import com.intellij.ui.components.JBLabel;
-import com.intellij.ui.components.labels.DropDownLink;
-import com.intellij.ui.components.labels.LinkLabel;
-import com.intellij.ui.components.labels.LinkListener;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
@@ -281,7 +279,11 @@ public final class LiveTemplateSettingsEditor extends JPanel {
 
   private JPanel createShortContextPanel() {
     JLabel ctxLabel = new JBLabel();
-    LinkLabel<Object> change = new DropDownLink<>("Change", () -> {});
+    ActionLink change = new ActionLink();
+    change.setText("Change");
+    change.setIcon(AllIcons.General.LinkDropTriangle);
+    change.setIconTextGap(JBUIScale.scale(1));
+    change.setHorizontalTextPosition(SwingConstants.LEADING);
 
     final Runnable updateLabel = () -> {
       myExpandByCombo.setEnabled(isExpandableFromEditor());
@@ -329,9 +331,7 @@ public final class LiveTemplateSettingsEditor extends JPanel {
       myTemplateOptionsPanel.add(createTemplateOptionsPanel());
     };
 
-    change.setListener(new LinkListener<Object>() {
-      @Override
-      public void linkSelected(LinkLabel<Object> aSource, Object aLinkData) {
+    change.addActionListener(event -> {
         if (disposeContextPopup()) return;
         Pair<JPanel, CheckboxTree> pair = createPopupContextPanel(updateLabel, myContext);
         final JPanel content = pair.first;
@@ -349,8 +349,7 @@ public final class LiveTemplateSettingsEditor extends JPanel {
             myLastSize = content.getSize();
           }
         });
-      }
-    }, null);
+    });
 
     updateLabel.run();
     return new FormBuilder().addLabeledComponent(ctxLabel, change).getPanel();
