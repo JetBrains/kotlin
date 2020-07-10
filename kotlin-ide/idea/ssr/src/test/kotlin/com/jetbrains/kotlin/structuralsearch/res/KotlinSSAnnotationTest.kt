@@ -16,4 +16,8 @@ class KotlinSSAnnotationTest : KotlinSSResourceInspectionTest() {
     fun testClassAnnotationArgs() { doTest("@A(0) class '_()") }
 
     fun testUseSiteTarget() { doTest("class '_(@get:'_ val '_ : '_)") }
+
+    fun testAnnotatedExpression() { doTest("@'_{0,1} { println() }") }
+
+    fun testAnnotatedExpressionZero() { doTest("fun '_() = @'_{0,0} { println() }") }
 }

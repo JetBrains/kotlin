@@ -676,8 +676,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val bodyHandler = patternBody?.let(::getHandler)
         val bodyMatch = when {
             patternBody is KtNameReferenceExpression && codeBody == null -> bodyHandler is SubstitutionHandler
-                        && bodyHandler.minOccurs <= 1 && bodyHandler.maxOccurs >= 1
-                        && myMatchingVisitor.match(patternBody, other.bodyExpression)
+                    && bodyHandler.minOccurs <= 1 && bodyHandler.maxOccurs >= 1
+                    && myMatchingVisitor.match(patternBody, other.bodyExpression)
             patternBody is KtNameReferenceExpression -> myMatchingVisitor.match(
                 function.bodyBlockExpression,
                 other.bodyBlockExpression
@@ -766,9 +766,10 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 && jetWhenEntry.firstChild.children.size == 1
                 && jetWhenEntry.firstChild.firstChild is KtNameReferenceExpression
 
-        myMatchingVisitor.result = (bypassElseTest && other.isElse || myMatchingVisitor.matchInAnyOrder(jetWhenEntry.conditions, other.conditions))
-                && myMatchingVisitor.match(jetWhenEntry.expression, other.expression)
-                && (bypassElseTest || jetWhenEntry.isElse == other.isElse)
+        myMatchingVisitor.result =
+            (bypassElseTest && other.isElse || myMatchingVisitor.matchInAnyOrder(jetWhenEntry.conditions, other.conditions))
+                    && myMatchingVisitor.match(jetWhenEntry.expression, other.expression)
+                    && (bypassElseTest || jetWhenEntry.isElse == other.isElse)
     }
 
     override fun visitWhenExpression(expression: KtWhenExpression) {
@@ -822,9 +823,20 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     }
 
     override fun visitAnnotatedExpression(expression: KtAnnotatedExpression) {
-        val other = getTreeElementDepar<KtAnnotatedExpression>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.match(expression.baseExpression, other.baseExpression)
-                && myMatchingVisitor.matchInAnyOrder(expression.annotationEntries, other.annotationEntries)
+        when (val other = myMatchingVisitor.element) {
+            is KtAnnotatedExpression -> myMatchingVisitor.result =
+                if (expression.annotationEntries.all
+                    { val handler = getHandler(it) ; handler is SubstitutionHandler && handler.maxOccurs == 0 }
+                    && other.annotationEntries.any()
+                ) false
+                else myMatchingVisitor.match(expression.baseExpression, other.baseExpression)
+                        && myMatchingVisitor.matchInAnyOrder(expression.annotationEntries, other.annotationEntries)
+            else -> {
+                myMatchingVisitor.result = if (expression.annotationEntries.all
+                    { val handler = getHandler(it) ; handler is SubstitutionHandler && handler.minOccurs == 0 }
+                ) myMatchingVisitor.match(expression.baseExpression, other) else false
+            }
+        }
     }
 
     override fun visitProperty(property: KtProperty) {
