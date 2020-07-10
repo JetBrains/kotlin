@@ -166,7 +166,7 @@ class DocRenderer implements EditorCustomElementRenderer {
     group.add(new CopySelection());
     group.addSeparator();
     group.add(myItem.createToggleAction());
-    group.add(new ToggleRenderAllDocs());
+    group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_TOGGLE_RENDERED_DOC_FOR_ALL));
     group.add(new DocRenderItem.ChangeFontSize());
     return group;
   }

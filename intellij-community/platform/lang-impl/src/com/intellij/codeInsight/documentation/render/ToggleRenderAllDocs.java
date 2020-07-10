@@ -10,12 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class ToggleRenderAllDocs extends ToggleAction implements DumbAware {
 
-  public ToggleRenderAllDocs() {
-    super(ActionsBundle.message("action.ToggleRenderedDocPresentationForAll.text"),
-          ActionsBundle.message("action.ToggleRenderedDocPresentationForAll.description"),
-          null);
-  }
-
   @Override
   public boolean isSelected(@NotNull AnActionEvent e) {
     return EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled();
