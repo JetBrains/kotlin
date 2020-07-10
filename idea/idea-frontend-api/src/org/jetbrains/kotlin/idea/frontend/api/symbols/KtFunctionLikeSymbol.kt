@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 sealed class KtFunctionLikeSymbol : KtTypedSymbol, KtSymbolWithKind {
@@ -32,6 +33,7 @@ abstract class KtConstructorSymbol : KtFunctionLikeSymbol() {
     abstract override val valueParameters: List<KtConstructorParameterSymbol>
     abstract val isPrimary: Boolean
     abstract val owner: KtClassOrObjectSymbol
+    abstract val ownerClassId: ClassId
 
     abstract override fun createPointer(): KtSymbolPointer<KtConstructorSymbol>
 }
