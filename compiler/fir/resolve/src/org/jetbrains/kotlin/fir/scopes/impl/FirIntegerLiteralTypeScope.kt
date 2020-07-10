@@ -96,9 +96,9 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
     }
 
-    override fun processOverriddenFunctions(
+    override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
     ): ProcessorAction = ProcessorAction.NEXT
 }
 

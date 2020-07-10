@@ -64,12 +64,18 @@ class FirClassSubstitutionScope(
         return super.processFunctionsByName(name, processor)
     }
 
-    override fun processOverriddenFunctions(
+    override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
     ): ProcessorAction {
         val unwrapped = functionSymbol.overriddenSymbol as FirFunctionSymbol<*>? ?: functionSymbol
-        return useSiteMemberScope.processOverriddenFunctions(unwrapped, processor)
+        val overriddenDepth = if (unwrapped != functionSymbol) 1 else 0
+        if (!processor(unwrapped, overriddenDepth)) {
+            return ProcessorAction.STOP
+        }
+        return useSiteMemberScope.processOverriddenFunctionsWithDepth(unwrapped) { symbol, depth ->
+            processor(symbol, depth + overriddenDepth)
+        }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

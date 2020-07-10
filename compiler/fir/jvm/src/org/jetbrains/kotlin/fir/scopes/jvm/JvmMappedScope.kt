@@ -42,9 +42,9 @@ class JvmMappedScope(
     // JvmMappedScope is basically used as declaration scope but it's being wrapped into substitution scopes where
     // a use-site (FirOverrideAwareScope) is expected
     // So, we put here a stub implementation
-    override fun processOverriddenFunctions(
+    override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
     ) = ProcessorAction.NONE
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {

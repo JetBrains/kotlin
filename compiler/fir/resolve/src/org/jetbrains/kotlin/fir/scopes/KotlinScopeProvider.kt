@@ -93,7 +93,7 @@ data class ConeSubstitutionScopeKey(
     val classId: ClassId?, val isFromExpectClass: Boolean, val substitutor: ConeSubstitutor
 ) : ScopeSessionKey<FirClass<*>, FirClassSubstitutionScope>()
 
-fun FirClass<*>.unsubstitutedScope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
+fun FirClass<*>.unsubstitutedScope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope {
     return scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession)
 }
 

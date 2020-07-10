@@ -232,9 +232,9 @@ class FirTypeIntersectionScope private constructor(
         super.processClassifiersByNameWithSubstitution(name, processor)
     }
 
-    override fun processOverriddenFunctions(
+    override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
     ): ProcessorAction {
         @Suppress("UNCHECKED_CAST")
         val directOverriddenSymbols =
@@ -244,8 +244,11 @@ class FirTypeIntersectionScope private constructor(
         for (directOverridden in directOverriddenSymbols) {
             // TODO: Preserve the scope where directOverridden came from
             for (scope in scopes) {
-                if (!processor(directOverridden)) return ProcessorAction.STOP
-                if (!scope.processOverriddenFunctions(directOverridden, processor)) return ProcessorAction.STOP
+                if (!processor(directOverridden, 0)) return ProcessorAction.STOP
+                if (!scope.processOverriddenFunctionsWithDepth(directOverridden) { symbol, depth ->
+                        processor(symbol, depth)
+                    }
+                ) return ProcessorAction.STOP
             }
         }
 

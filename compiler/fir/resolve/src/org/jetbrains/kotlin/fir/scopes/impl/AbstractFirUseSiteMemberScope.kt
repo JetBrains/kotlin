@@ -137,9 +137,9 @@ abstract class AbstractFirUseSiteMemberScope(
             isVararg = parameter.isVararg
         }
 
-    override fun processOverriddenFunctions(
+    override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
     ): ProcessorAction = doProcessOverriddenFunctions(functionSymbol, processor, directOverridden, superTypesScope)
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
