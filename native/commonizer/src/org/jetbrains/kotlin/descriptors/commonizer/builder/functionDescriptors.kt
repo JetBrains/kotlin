@@ -63,7 +63,6 @@ private fun CirFunction.buildDescriptor(
     functionDescriptor.isActual = isActual
 
     functionDescriptor.setHasStableParameterNames(hasStableParameterNames)
-    functionDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames)
 
     val (typeParameters, typeParameterResolver) = typeParameters.buildDescriptorsAndTypeParameterResolver(
         targetComponents,
