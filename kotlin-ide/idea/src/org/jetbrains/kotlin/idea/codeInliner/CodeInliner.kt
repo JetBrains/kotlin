@@ -74,6 +74,10 @@ class CodeInliner<TCallElement : KtElement>(
             && !codeToInline.mainExpression.shouldKeepValue(usageCount = 0)
             && elementToBeReplaced.getStrictParentOfType<KtAnnotationEntry>() == null
         ) {
+            codeToInline.mainExpression?.getCopyableUserData(CommentHolder.COMMENTS_TO_RESTORE_KEY)?.let { commentHolder ->
+                codeToInline.addExtraComments(CommentHolder(emptyList(), commentHolder.leadingComments + commentHolder.trailingComments))
+            }
+
             codeToInline.mainExpression = null
         }
 
@@ -133,6 +137,8 @@ class CodeInliner<TCallElement : KtElement>(
         codeToInline.fqNamesToImport
             .flatMap { file.resolveImportReference(it) }
             .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
+
+        codeToInline.extraComments?.restoreComments(elementToBeReplaced)
 
         val replacementPerformer = when (elementToBeReplaced) {
             is KtExpression -> ExpressionReplacementPerformer(codeToInline, elementToBeReplaced)
@@ -294,21 +300,17 @@ class CodeInliner<TCallElement : KtElement>(
             val thisReplaced = codeToInline.collectDescendantsOfType<KtExpression> { it[RECEIVER_VALUE_KEY] }
             codeToInline.introduceValue(receiver, receiverType, thisReplaced, expressionToBeReplaced, safeCall = true)
         } else {
-            val ifExpression = psiFactory.buildExpression {
+            codeToInline.mainExpression = psiFactory.buildExpression {
                 appendFixedText("if (")
                 appendExpression(receiver)
                 appendFixedText("!=null) {")
-                codeToInline.statementsBefore.forEach {
-                    appendExpression(it)
-                    appendFixedText("\n")
+                with(codeToInline) {
+                    appendExpressionsFromCodeToInline(postfixForMainExpression = "\n")
                 }
-                codeToInline.mainExpression?.let {
-                    appendExpression(it)
-                    appendFixedText("\n")
-                }
+
                 appendFixedText("}")
             }
-            codeToInline.mainExpression = ifExpression
+
             codeToInline.statementsBefore.clear()
         }
     }
@@ -438,6 +440,9 @@ class CodeInliner<TCallElement : KtElement>(
 
         for (pointer in pointers) {
             val element = pointer.element ?: continue
+
+            restoreComments(element)
+
             introduceNamedArguments(element)
 
             restoreFunctionLiteralArguments(element)
@@ -473,6 +478,7 @@ class CodeInliner<TCallElement : KtElement>(
         for (element in newElements) {
             // clean up user data
             element.forEachDescendantOfType<KtExpression> {
+                it.clear(CommentHolder.COMMENTS_TO_RESTORE_KEY)
                 it.clear(USER_CODE_KEY)
                 it.clear(CodeToInline.PARAMETER_USAGE_KEY)
                 it.clear(CodeToInline.TYPE_PARAMETER_USAGE_KEY)
@@ -480,6 +486,7 @@ class CodeInliner<TCallElement : KtElement>(
                 it.clear(RECEIVER_VALUE_KEY)
                 it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
             }
+
             element.forEachDescendantOfType<KtValueArgument> {
                 it.clear(MAKE_ARGUMENT_NAMED_KEY)
                 it.clear(DEFAULT_PARAMETER_VALUE_KEY)
@@ -487,6 +494,12 @@ class CodeInliner<TCallElement : KtElement>(
         }
 
         return if (newElements.isEmpty()) PsiChildRange.EMPTY else PsiChildRange(newElements.first(), newElements.last())
+    }
+
+    private fun restoreComments(element: KtElement) {
+        element.forEachDescendantOfType<KtExpression> {
+            it.getCopyableUserData(CommentHolder.COMMENTS_TO_RESTORE_KEY)?.restoreComments(it)
+        }
     }
 
     private fun removeRedundantUnitExpressions(result: KtElement) {

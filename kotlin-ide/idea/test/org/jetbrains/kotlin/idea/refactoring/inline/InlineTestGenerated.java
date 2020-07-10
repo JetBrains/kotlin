@@ -291,6 +291,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/function/expressionBody/StringTemplate.kt");
             }
 
+            @TestMetadata("WithComment.kt")
+            public void testWithComment() throws Exception {
+                runTest("testData/refactoring/inline/function/expressionBody/WithComment.kt");
+            }
+
             @TestMetadata("WithReference.kt")
             public void testWithReference() throws Exception {
                 runTest("testData/refactoring/inline/function/expressionBody/WithReference.kt");
@@ -527,9 +532,34 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/function/returnAtEnd/SafeCall.kt");
             }
 
+            @TestMetadata("SafeCallWithComments.kt")
+            public void testSafeCallWithComments() throws Exception {
+                runTest("testData/refactoring/inline/function/returnAtEnd/SafeCallWithComments.kt");
+            }
+
             @TestMetadata("SingleStatement.kt")
             public void testSingleStatement() throws Exception {
                 runTest("testData/refactoring/inline/function/returnAtEnd/SingleStatement.kt");
+            }
+
+            @TestMetadata("UnitReturnWithComments.kt")
+            public void testUnitReturnWithComments() throws Exception {
+                runTest("testData/refactoring/inline/function/returnAtEnd/UnitReturnWithComments.kt");
+            }
+
+            @TestMetadata("UnitReturnWithComments2.kt")
+            public void testUnitReturnWithComments2() throws Exception {
+                runTest("testData/refactoring/inline/function/returnAtEnd/UnitReturnWithComments2.kt");
+            }
+
+            @TestMetadata("UnitReturnWithComments3.kt")
+            public void testUnitReturnWithComments3() throws Exception {
+                runTest("testData/refactoring/inline/function/returnAtEnd/UnitReturnWithComments3.kt");
+            }
+
+            @TestMetadata("UnitReturnWithComments4.kt")
+            public void testUnitReturnWithComments4() throws Exception {
+                runTest("testData/refactoring/inline/function/returnAtEnd/UnitReturnWithComments4.kt");
             }
 
             @TestMetadata("UnusedComplicatedReturnValue.kt")
@@ -545,6 +575,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("ValIntializer.kt")
             public void testValIntializer() throws Exception {
                 runTest("testData/refactoring/inline/function/returnAtEnd/ValIntializer.kt");
+            }
+
+            @TestMetadata("WithComments.kt")
+            public void testWithComments() throws Exception {
+                runTest("testData/refactoring/inline/function/returnAtEnd/WithComments.kt");
             }
         }
     }
@@ -607,6 +642,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("BasicCaretOnDeclaration.kt")
         public void testBasicCaretOnDeclaration() throws Exception {
             runTest("testData/refactoring/inline/inlineVariableOrProperty/BasicCaretOnDeclaration.kt");
+        }
+
+        @TestMetadata("CommentAfterProperty.kt")
+        public void testCommentAfterProperty() throws Exception {
+            runTest("testData/refactoring/inline/inlineVariableOrProperty/CommentAfterProperty.kt");
+        }
+
+        @TestMetadata("CommentsInGetter.kt")
+        public void testCommentsInGetter() throws Exception {
+            runTest("testData/refactoring/inline/inlineVariableOrProperty/CommentsInGetter.kt");
         }
 
         @TestMetadata("ifInQualifiedExpression.kt")

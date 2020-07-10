@@ -164,10 +164,19 @@ internal fun buildCodeToInline(
 
         return builder.prepareCodeToInline(
             lastReturn?.returnedExpression,
-            statements.dropLast(returnStatements.size), ::analyzeExpressionInContext, reformat = true
+            statements.dropLast(returnStatements.size),
+            ::analyzeExpressionInContext,
+            reformat = true,
+            declaration,
         )
     } else {
-        return builder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeExpressionInContext, reformat = true)
+        return builder.prepareCodeToInline(
+            bodyCopy,
+            emptyList(),
+            ::analyzeExpressionInContext,
+            reformat = true,
+            declaration,
+        )
     }
 }
 

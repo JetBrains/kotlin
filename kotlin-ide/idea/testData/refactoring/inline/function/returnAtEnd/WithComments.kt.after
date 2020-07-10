@@ -1,0 +1,16 @@
+fun t() {
+    // above function
+    // after open brace
+// eol comment in body
+    /* block comment in body
+    * second line */
+
+
+    // topTest
+    println(4) // test
+    val c =
+        // above return
+        4 // after return
+    // after close brace
+}
+

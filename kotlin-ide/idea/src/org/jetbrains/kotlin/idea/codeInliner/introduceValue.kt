@@ -106,17 +106,10 @@ internal fun MutableCodeToInline.introduceValue(
                 appendFixedText("->")
             }
 
-            for (statement in statementsBefore) {
-                appendExpression(statement)
-                appendFixedText("\n")
-            }
-
-            if (mainExpression != null) {
-                appendExpression(mainExpression)
-            }
-
+            appendExpressionsFromCodeToInline()
             appendFixedText("}")
         }
+
         statementsBefore.clear()
     }
 }

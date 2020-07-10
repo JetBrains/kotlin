@@ -1,0 +1,4 @@
+fun t() {
+    val b =     // before getter
+        (4/*tete*/) // after
+}

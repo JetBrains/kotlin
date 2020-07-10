@@ -1,0 +1,85 @@
+fun f(s: String?) {
+    if (s != null) {
+        // above function
+        /* after open brace */ // after open brace
+        /* above println */
+        println(1) // after println
+        // above return
+        s.hashCode() * 1 // after return
+        // below return
+        // at the end
+        /* after function 1 */   /* after function 2 */ // after function 3
+    }
+    val s1 = s?.let {
+        // above function
+        /* after open brace */ // after open brace
+        /* above println */
+        println(3) // after println
+        // above return
+        it.hashCode() * 3 // after return
+        // below return
+        // at the end
+        /* after function 1 */   /* after function 2 */ // after function 3
+    }
+    val s2 = s?.substring(1)?.let {
+        // above function
+        /* after open brace */ // after open brace
+        /* above println */
+        println(4) // after println
+        // above return
+        it.hashCode() * 4 // after return
+        // below return
+        // at the end
+        /* after function 1 */   /* after function 2 */ // after function 3
+    }
+
+    val s3 = s?.substring(1)
+    if (s3 != null) {
+        // above function
+        /* after open brace */ // after open brace
+        /* above println */
+        println(2) // after println
+        // above return
+        s3.hashCode() * 2 // after return
+        // below return
+        // at the end
+        /* after function 1 */   /* after function 2 */ // after function 3
+    }
+    if (s3 != null) {
+        // above function
+        /* after open brace */ // after open brace
+        /* above println */
+        println(3) // after println
+        // above return
+        s3.hashCode() * 3 // after return
+        // below return
+        // at the end
+        /* after function 1 */   /* after function 2 */ // after function 3
+    }
+
+
+    // above function
+    /* after open brace */ // after open brace
+    /* above println */
+    println(42) // after println
+    // above return
+    "".hashCode() * 42 // after return
+    // below return
+    // at the end
+    /* after function 1 */   /* after function 2 */ // after function 3
+}
+
+fun doo(s: String?) {
+    val substring = s?.substring(1)
+    if (substring != null) {
+        // above function
+        /* after open brace */ // after open brace
+        /* above println */
+        println(2) // after println
+        // above return
+        substring.hashCode() * 2 // after return
+        // below return
+        // at the end
+        /* after function 1 */   /* after function 2 */ // after function 3
+    }
+}

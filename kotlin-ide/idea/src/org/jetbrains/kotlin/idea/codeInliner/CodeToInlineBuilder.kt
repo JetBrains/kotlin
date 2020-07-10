@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.idea.codeInliner
 
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.codeInliner.CommentHolder.CommentNode.Companion.mergeComments
+import org.jetbrains.kotlin.idea.codeInliner.CommentHolder.Companion.collectComments
 import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
@@ -21,8 +25,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
@@ -51,6 +54,7 @@ class CodeToInlineBuilder(
         statementsBefore: List<KtExpression>,
         analyze: (KtExpression) -> BindingContext,
         reformat: Boolean,
+        contextDeclaration: KtDeclaration? = null,
     ): CodeToInline {
         val alwaysKeepMainExpression =
             when (val descriptor = mainExpression?.getResolvedCall(analyze(mainExpression))?.resultingDescriptor) {
@@ -62,8 +66,13 @@ class CodeToInlineBuilder(
             mainExpression,
             statementsBefore.toMutableList(),
             mutableSetOf(),
-            alwaysKeepMainExpression
+            alwaysKeepMainExpression,
+            extraComments = null,
         )
+
+        if (contextDeclaration != null) {
+            saveComments(codeToInline, contextDeclaration)
+        }
 
         insertExplicitTypeArguments(codeToInline, analyze)
 
@@ -82,6 +91,65 @@ class CodeToInlineBuilder(
         }
 
         return codeToInline.toNonMutable()
+    }
+
+    private fun saveComments(codeToInline: MutableCodeToInline, contextDeclaration: KtDeclaration) {
+        val topLevelLeadingComments = contextDeclaration.collectDescendantsOfType<PsiComment>(
+            canGoInside = { it == contextDeclaration || it !is KtExpression },
+            predicate = { it.parent != contextDeclaration || it.getNextSiblingIgnoringWhitespaceAndComments() != null }
+        ).map { CommentHolder.CommentNode.create(it) }
+
+        val topLevelTrailingComments = contextDeclaration.children
+            .lastOrNull { it !is PsiComment && it !is PsiWhiteSpace }
+            ?.siblings(forward = true, withItself = false)
+            ?.collectComments()
+            ?: emptyList()
+
+        val bodyBlockExpression = contextDeclaration.safeAs<KtDeclarationWithBody>()?.bodyBlockExpression
+        if (bodyBlockExpression != null) {
+            addCommentHoldersForStatements(codeToInline, bodyBlockExpression)
+
+            val expressions = codeToInline.expressions
+            if (expressions.isEmpty()) {
+                codeToInline.addExtraComments(CommentHolder(topLevelLeadingComments, topLevelTrailingComments))
+            } else {
+                expressions.first().mergeComments(CommentHolder(topLevelLeadingComments, emptyList()))
+                codeToInline.addCommentHolderToExpressionOrToThis(
+                    codeToInline.mainExpression,
+                    CommentHolder(emptyList(), topLevelTrailingComments)
+                )
+            }
+        } else {
+            codeToInline.addCommentHolderToExpressionOrToThis(
+                codeToInline.mainExpression,
+                CommentHolder(topLevelLeadingComments, topLevelTrailingComments)
+            )
+        }
+    }
+
+    private fun MutableCodeToInline.addCommentHolderToExpressionOrToThis(expression: KtExpression?, commentHolder: CommentHolder) {
+        expression?.mergeComments(commentHolder) ?: this.addExtraComments(commentHolder)
+    }
+
+    private fun addCommentHoldersForStatements(mutableCodeToInline: MutableCodeToInline, blockExpression: KtBlockExpression) {
+        val expressions = mutableCodeToInline.expressions
+
+        for ((indexOfIteration, commentHolder) in CommentHolder.extract(blockExpression).withIndex()) {
+            if (commentHolder.isEmpty) continue
+
+            if (expressions.isEmpty()) {
+                mutableCodeToInline.addExtraComments(commentHolder)
+            } else {
+                val expression = expressions.elementAtOrNull(indexOfIteration)
+                if (expression != null) {
+                    expression.mergeComments(commentHolder)
+                } else {
+                    expressions.last().mergeComments(
+                        CommentHolder(emptyList(), trailingComments = commentHolder.leadingComments + commentHolder.trailingComments)
+                    )
+                }
+            }
+        }
     }
 
     private fun getParametersForFunctionLiteral(

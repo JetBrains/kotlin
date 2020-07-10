@@ -56,12 +56,7 @@ object ReplaceWithAnnotationAnalyzer {
         reformat: Boolean
     ): CodeToInline? {
         val psiFactory = KtPsiFactory(resolutionFacade.project)
-        val expression = try {
-            psiFactory.createExpression(annotation.pattern)
-        } catch (t: Throwable) {
-            if (t is ControlFlowException) throw t
-            return null
-        }
+        val expression = psiFactory.createExpressionIfPossible(annotation.pattern) ?: return null
 
         val module = resolutionFacade.moduleDescriptor
         val scope = buildScope(resolutionFacade, annotation, symbolDescriptor) ?: return null
