@@ -164,7 +164,9 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             private val elements = HashSet<IrElement>()
 
             override fun visitElement(element: IrElement) {
-                require(elements.add(element)) { "Non-unique element: ${element.render()}" }
+                require(elements.add(element) || element is IrConst<*>) {
+                    "Non-unique element: ${element.render()}"
+                }
                 element.acceptChildrenVoid(this)
             }
         }
