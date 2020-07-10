@@ -1,5 +1,6 @@
 // "Remove redundant 'if' statement" "false"
 // ACTION: Add braces to 'if' statement
+// ACTION: Flip 'if' statements
 // ACTION: Invert 'if' condition
 // ACTION: Replace 'if' with 'when'
 

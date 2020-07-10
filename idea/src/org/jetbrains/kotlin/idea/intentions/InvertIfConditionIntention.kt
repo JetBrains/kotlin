@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.unblockDocument
 import org.jetbrains.kotlin.idea.inspections.ReplaceNegatedIsEmptyWithIsNotEmptyInspection.Companion.invertSelectorFunction
-import org.jetbrains.kotlin.idea.refactoring.getLineNumber
-import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -34,26 +30,11 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val rBrace = parentBlockRBrace(element)
-        val commentSavingRange = if (rBrace != null)
-            PsiChildRange(element, rBrace)
-        else
-            PsiChildRange.singleElement(element)
-
-        val commentSaver = CommentSaver(commentSavingRange)
-        if (rBrace != null) element.nextEolCommentOnSameLine()?.delete()
-
-        val condition = element.condition!!
-        val newCondition = (condition as? KtQualifiedExpression)?.invertSelectorFunction() ?: condition.negate()
-
-        val newIf = handleSpecialCases(element, newCondition) ?: handleStandardCase(element, newCondition)
-
-        val commentRestoreRange = if (rBrace != null)
-            PsiChildRange(newIf, rBrace)
-        else
-            PsiChildRange(newIf, parentBlockRBrace(newIf) ?: newIf)
-
-        commentSaver.restore(commentRestoreRange)
+        val newIf = element.replaceWithNewIfExpression {
+            val condition = element.condition!!
+            val newCondition = (condition as? KtQualifiedExpression)?.invertSelectorFunction() ?: condition.negate()
+            handleSpecialCases(element, newCondition) ?: handleStandardCase(element, newCondition)
+        }
 
         val newIfCondition = newIf.condition
         val simplifyIntention = ConvertBinaryExpressionWithDemorgansLawIntention()
@@ -89,20 +70,13 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(
         else
             thenBranch
 
-        val conditionLineNumber = ifExpression.condition?.getLineNumber(false)
-        val thenBranchLineNumber = thenBranch.getLineNumber(false)
-        val elseKeywordLineNumber = ifExpression.elseKeyword?.getLineNumber()
-        val afterCondition = if (newThen !is KtBlockExpression && elseKeywordLineNumber != elseBranch.getLineNumber(false)) "\n" else ""
-        val beforeElse = if (newThen !is KtBlockExpression && conditionLineNumber != elseKeywordLineNumber) "\n" else " "
-        val afterElse = if (newElse !is KtBlockExpression && conditionLineNumber != thenBranchLineNumber) "\n" else " "
-
-        val newIf = if (newElse == null) {
-            psiFactory.createExpressionByPattern("if ($0)$afterCondition$1", newCondition, newThen)
-        } else {
-            psiFactory.createExpressionByPattern("if ($0)$afterCondition$1${beforeElse}else$afterElse$2", newCondition, newThen, newElse)
-        } as KtIfExpression
-
-        return ifExpression.replaced(newIf)
+        return ifExpression.swapBranches(
+            thenBranch = thenBranch,
+            elseBranch = elseBranch,
+            newThenBranch = newThen,
+            newElseBranch = newElse,
+            newCondition = newCondition,
+        )
     }
 
     private fun handleSpecialCases(ifExpression: KtIfExpression, newCondition: KtExpression): KtIfExpression? {
@@ -241,13 +215,5 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(
             }
         }
         return null
-    }
-
-    private fun parentBlockRBrace(element: KtIfExpression): PsiElement? = (element.parent as? KtBlockExpression)?.rBrace
-
-    private fun KtIfExpression.nextEolCommentOnSameLine(): PsiElement? = getLineNumber(false).let { lastLineNumber ->
-        siblings(withItself = false)
-            .takeWhile { it.getLineNumber() == lastLineNumber }
-            .firstOrNull { it is PsiComment && it.node.elementType == KtTokens.EOL_COMMENT }
     }
 }

@@ -306,6 +306,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.SwapIfStatementsIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.refactoring.move.changePackage.ChangePackageIntention</className>
       <category>Kotlin</category>
     </intentionAction>

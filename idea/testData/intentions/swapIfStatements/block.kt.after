@@ -1,0 +1,10 @@
+fun foo() {}
+
+fun bar() {}
+
+fun test(i: Int) {
+    if (i == 1) bar()
+    else {
+        foo()
+    }
+}

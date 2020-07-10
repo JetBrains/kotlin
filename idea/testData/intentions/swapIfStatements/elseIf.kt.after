@@ -1,0 +1,11 @@
+fun foo(i: Int) {
+    if (i == 1) {
+        bar(1)
+    } else <caret>if (i == 2) {
+        bar(3)
+    } else {
+        bar(2)
+    }
+}
+
+fun bar(i: Int) {}

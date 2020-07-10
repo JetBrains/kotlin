@@ -1,0 +1,14 @@
+fun foo() {}
+
+fun bar() {}
+
+fun test(i: Int) {
+    if (i == 1) {
+        // bar
+        bar()
+    } else {
+        // foo
+        foo()
+    }
+}
+

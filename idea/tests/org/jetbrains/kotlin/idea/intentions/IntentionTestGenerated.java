@@ -16381,6 +16381,69 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/swapIfStatements")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SwapIfStatements extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSwapIfStatements() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/swapIfStatements"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("block.kt")
+        public void testBlock() throws Exception {
+            runTest("idea/testData/intentions/swapIfStatements/block.kt");
+        }
+
+        @TestMetadata("block2.kt")
+        public void testBlock2() throws Exception {
+            runTest("idea/testData/intentions/swapIfStatements/block2.kt");
+        }
+
+        @TestMetadata("block3.kt")
+        public void testBlock3() throws Exception {
+            runTest("idea/testData/intentions/swapIfStatements/block3.kt");
+        }
+
+        @TestMetadata("elseIf.kt")
+        public void testElseIf() throws Exception {
+            runTest("idea/testData/intentions/swapIfStatements/elseIf.kt");
+        }
+
+        @TestMetadata("hasElseIf.kt")
+        public void testHasElseIf() throws Exception {
+            runTest("idea/testData/intentions/swapIfStatements/hasElseIf.kt");
+        }
+
+        @TestMetadata("nonBlock.kt")
+        public void testNonBlock() throws Exception {
+            runTest("idea/testData/intentions/swapIfStatements/nonBlock.kt");
+        }
+
+        @TestMetadata("nonBlock2.kt")
+        public void testNonBlock2() throws Exception {
+            runTest("idea/testData/intentions/swapIfStatements/nonBlock2.kt");
+        }
+
+        @TestMetadata("nonBlock3.kt")
+        public void testNonBlock3() throws Exception {
+            runTest("idea/testData/intentions/swapIfStatements/nonBlock3.kt");
+        }
+
+        @TestMetadata("nonBlock4.kt")
+        public void testNonBlock4() throws Exception {
+            runTest("idea/testData/intentions/swapIfStatements/nonBlock4.kt");
+        }
+
+        @TestMetadata("nonBlock5.kt")
+        public void testNonBlock5() throws Exception {
+            runTest("idea/testData/intentions/swapIfStatements/nonBlock5.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/swapStringEqualsIgnoreCase")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

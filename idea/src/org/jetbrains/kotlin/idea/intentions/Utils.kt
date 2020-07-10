@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
@@ -17,16 +18,16 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
+import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -363,4 +364,65 @@ fun KotlinType.reflectToRegularFunctionType(): KotlinType {
     val classDescriptor =
         if (isKSuspendFunctionType) builtIns.getSuspendFunction(parameterCount) else builtIns.getFunction(parameterCount)
     return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
+}
+
+fun KtIfExpression.swapBranches(
+    thenBranch: KtExpression = this.then!!,
+    elseBranch: KtExpression = this.`else`!!,
+    newThenBranch: KtExpression = elseBranch,
+    newElseBranch: KtExpression? = thenBranch,
+    newCondition: KtExpression = this.condition!!,
+): KtIfExpression {
+    val conditionLineNumber = this.condition?.getLineNumber(false)
+    val thenBranchLineNumber = thenBranch.getLineNumber(false)
+    val elseKeywordLineNumber = this.elseKeyword?.getLineNumber()
+    val afterCondition =
+        if (newThenBranch !is KtBlockExpression && elseKeywordLineNumber != elseBranch.getLineNumber(false)) "\n" else ""
+    val beforeElse = if (newThenBranch !is KtBlockExpression && conditionLineNumber != elseKeywordLineNumber) "\n" else " "
+    val afterElse = if (newElseBranch !is KtBlockExpression && conditionLineNumber != thenBranchLineNumber) "\n" else " "
+
+    val psiFactory = KtPsiFactory(this)
+    val newIf = if (newElseBranch == null) {
+        psiFactory.createExpressionByPattern(
+            "if ($0)$afterCondition$1", newCondition, newThenBranch
+        )
+    } else {
+        psiFactory.createExpressionByPattern(
+            "if ($0)$afterCondition$1${beforeElse}else$afterElse$2", newCondition, newThenBranch, newElseBranch
+        )
+    } as KtIfExpression
+
+    return this.replaced(newIf)
+}
+
+fun KtIfExpression.nextEolCommentOnSameLine(): PsiElement? {
+    val lastLineNumber = getLineNumber(false)
+    return siblings(withItself = false)
+        .takeWhile { it.getLineNumber() == lastLineNumber }
+        .firstOrNull { it is PsiComment && it.node.elementType == KtTokens.EOL_COMMENT }
+}
+
+fun KtIfExpression.replaceWithNewIfExpression(createNewIfExpression: KtIfExpression.() -> KtIfExpression): KtIfExpression {
+    fun parentBlockRBrace(element: KtIfExpression): PsiElement? = (element.parent as? KtBlockExpression)?.rBrace
+
+    val parentBlockRBrace = parentBlockRBrace(this)
+
+    val commentSavingRange = if (parentBlockRBrace != null) {
+        PsiChildRange(this, parentBlockRBrace)
+    } else {
+        PsiChildRange.singleElement(this)
+    }
+    val commentSaver = CommentSaver(commentSavingRange)
+    if (parentBlockRBrace != null) nextEolCommentOnSameLine()?.delete()
+
+    val newIf = createNewIfExpression()
+
+    val commentRestoreRange = if (parentBlockRBrace != null) {
+        PsiChildRange(newIf, parentBlockRBrace)
+    } else {
+        PsiChildRange(newIf, parentBlockRBrace(newIf) ?: newIf)
+    }
+    commentSaver.restore(commentRestoreRange)
+
+    return newIf
 }
