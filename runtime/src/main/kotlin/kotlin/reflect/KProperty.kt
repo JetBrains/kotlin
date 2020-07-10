@@ -31,10 +31,10 @@ public actual interface KProperty1<T, out V> : kotlin.reflect.KProperty<V>, (T) 
     public override operator fun invoke(p1: T): V
 }
 
-public actual interface KProperty2<T1, T2, out V> : kotlin.reflect.KProperty<V>, (T1, T2) -> V {
-    public actual fun get(receiver1: T1, receiver2: T2): V
+public actual interface KProperty2<D, E, out V> : kotlin.reflect.KProperty<V>, (D, E) -> V {
+    public actual fun get(receiver1: D, receiver2: E): V
 
-    public override operator fun invoke(p1: T1, p2: T2): V
+    public override operator fun invoke(p1: D, p2: E): V
 }
 
 /**
@@ -50,6 +50,6 @@ public actual interface KMutableProperty1<T, V> : KProperty1<T, V>, KMutableProp
     public actual fun set(receiver: T, value: V)
 }
 
-public actual interface KMutableProperty2<T1, T2, V> : KProperty2<T1, T2, V>, KMutableProperty<V> {
-    public actual fun set(receiver1: T1, receiver2: T2, value: V)
+public actual interface KMutableProperty2<D, E, V> : KProperty2<D, E, V>, KMutableProperty<V> {
+    public actual fun set(receiver1: D, receiver2: E, value: V)
 }
