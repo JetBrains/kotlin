@@ -23,6 +23,10 @@ fun JavaExec.passClasspathInJar() {
         dependsOn(classpath)
         inputs.files(classpath)
         inputs.property("main", main)
+
+        archiveFileName.set("$main.${this@passClasspathInJar.name}.classpath.container.jar")
+        destinationDirectory.set(temporaryDir)
+
         doFirst {
             val classPathString = classpath.joinToString(" ") { project.file(it).toURI().toString() }
             manifest {
@@ -34,15 +38,11 @@ fun JavaExec.passClasspathInJar() {
                 )
             }
         }
-        archiveName = "$main.${this@passClasspathInJar.name}.classpath.container.$extension"
-        destinationDir = temporaryDir
     }
 
     dependsOn(jarTask)
-    mainClass.set("-jar")
 
-    doFirst {
-        classpath = project.files()
-        args = listOf(jarTask.outputs.files.singleFile.path) + args.orEmpty()
-    }
+    main = "-jar"
+    classpath = project.files()
+    args = listOf(jarTask.outputs.files.singleFile.path) + args.orEmpty()
 }
