@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.codeInsight.hints
 
 import com.intellij.codeInsight.hints.ChangeListener
 import com.intellij.codeInsight.hints.ImmediateConfigurable
+import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.layout.panel
 import org.jetbrains.kotlin.idea.KotlinBundle
 import javax.swing.JComponent
@@ -24,35 +25,7 @@ class KotlinReferencesTypeHintsProvider : KotlinAbstractHintsProvider<KotlinRefe
     override val name: String = KotlinBundle.message("hints.settings.types")
 
     override fun createConfigurable(settings: Settings): ImmediateConfigurable {
-        return object : ImmediateConfigurable {
-            override fun createComponent(listener: ChangeListener): JComponent = panel {}
-
-            override val mainCheckboxText: String = KotlinBundle.message("hints.settings.common.items")
-
-            override val cases: List<ImmediateConfigurable.Case>
-                get() = listOf(
-                    ImmediateConfigurable.Case(
-                        KotlinBundle.message("hints.settings.types.property"),
-                        "hints.type.property",
-                        settings::propertyType
-                    ),
-                    ImmediateConfigurable.Case(
-                        KotlinBundle.message("hints.settings.types.variable"),
-                        "hints.type.variable",
-                        settings::localVariableType
-                    ),
-                    ImmediateConfigurable.Case(
-                        KotlinBundle.message("hints.settings.types.return"),
-                        "hints.type.function.return",
-                        settings::functionReturnType
-                    ),
-                    ImmediateConfigurable.Case(
-                        KotlinBundle.message("hints.settings.types.parameter"),
-                        "hints.type.function.parameter",
-                        settings::parameterType
-                    ),
-                )
-        }
+        return createTypeHintsImmediateConfigurable(settings)
     }
 
     override fun createSettings(): Settings = Settings()

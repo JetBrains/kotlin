@@ -5,17 +5,12 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.hints
 
-import com.intellij.codeInsight.hints.ChangeListener
 import com.intellij.codeInsight.hints.ImmediateConfigurable
 import com.intellij.codeInsight.hints.InlayHintsSink
 import com.intellij.codeInsight.hints.presentation.PresentationRenderer
-import com.intellij.openapi.application.TransactionGuard
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.Editor
-import com.intellij.ui.layout.panel
-import com.sun.glass.ui.Application
 import org.jetbrains.kotlin.idea.KotlinBundle
-import javax.swing.JComponent
+import org.jetbrains.kotlin.idea.util.application.invokeLater
 
 /**
  * Please note that the executable test class is currently not generated. The thing is that [KotlinLambdasHintsProvider] utilizes a hack
@@ -61,25 +56,7 @@ class KotlinLambdasHintsProvider : KotlinAbstractHintsProvider<KotlinLambdasHint
     }
 
     override fun createConfigurable(settings: Settings): ImmediateConfigurable {
-        return object : ImmediateConfigurable {
-            override fun createComponent(listener: ChangeListener): JComponent = panel {}
-
-            override val mainCheckboxText: String = KotlinBundle.message("hints.settings.common.items")
-
-            override val cases: List<ImmediateConfigurable.Case>
-                get() = listOf(
-                    ImmediateConfigurable.Case(
-                        KotlinBundle.message("hints.settings.lambda.return"),
-                        "hints.lambda.return",
-                        settings::returnExpressions
-                    ),
-                    ImmediateConfigurable.Case(
-                        KotlinBundle.message("hints.settings.lambda.receivers.parameters"),
-                        "hints.lambda.receivers.parameters",
-                        settings::implicitReceiversAndParams
-                    )
-                )
-        }
+        return createLambdaHintsImmediateConfigurable(settings)
     }
 
     override fun createSettings(): Settings = Settings()
