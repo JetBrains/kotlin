@@ -31,5 +31,5 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
     abstract fun resolveCall(call: KtCallExpression): CallInfo?
     abstract fun resolveCall(call: KtBinaryExpression): CallInfo?
 
-    abstract fun analyzeInContext(): KtAnalysisSession
+    abstract fun createContextDependentCopy(): KtAnalysisSession
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.isSuspend
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
@@ -38,34 +40,20 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 class KtFirAnalysisSession
-@Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
-constructor(
+private constructor(
     private val element: KtElement,
-    resolveState: FirModuleResolveState
-) : KtAnalysisSession(element.project) {
-    internal val token get() = validityToken
+    val firSession: FirSession,
+    val firResolveState: FirModuleResolveState,
+    internal val firSymbolBuilder: KtSymbolByFirBuilder,
+    private val typeContext: ConeTypeCheckerContext,
+    token: ValidityToken,
+    val isContextSession: Boolean,
+) : KtAnalysisSession(token) {
     private val project = element.project
-
-    internal val firResolveState = resolveState
-
-    internal val firSession get() = LowLevelFirApiFacade.getSessionFor(element, firResolveState)
-
-    private val typeCheckerContext = ConeTypeCheckerContext(
-        isErrorTypeEqualsToAnything = true,
-        isStubTypeEqualsToAnything = true,
-        firSession
-    )
-
-    internal val firSymbolBuilder = KtSymbolByFirBuilder(
-        firSession.firSymbolProvider,
-        typeCheckerContext,
-        project,
-        validityToken
-    )
 
     override val symbolProvider: KtSymbolProvider =
         KtFirSymbolProvider(
-            this,
+            token,
             firSession.firSymbolProvider,
             firResolveState,
             firSymbolBuilder
@@ -133,10 +121,17 @@ constructor(
         resolveCall(firCall, call)
     }
 
-    override fun analyzeInContext(): KtAnalysisSession {
+    override fun createContextDependentCopy(): KtAnalysisSession {
+        check(!isContextSession) { "Cannot create context-dependent copy of KtAnalysis session from a context dependent one" }
+        val contextResolveState = LowLevelFirApiFacade.getResolveStateForCompletion(element, firResolveState as FirModuleResolveStateImpl)
         return KtFirAnalysisSession(
             element,
-            LowLevelFirApiFacade.getResolveStateForCompletion(element, firResolveState as FirModuleResolveStateImpl)
+            firSession,
+            contextResolveState,
+            firSymbolBuilder,
+            typeContext,
+            token,
+            isContextSession = true
         )
     }
 
@@ -199,6 +194,30 @@ constructor(
             listOf(
                 CallableId(KotlinBuiltIns.getFunctionClassId(arity), Name.identifier("invoke")),
                 CallableId(KotlinBuiltIns.getSuspendFunctionClassId(arity), Name.identifier("invoke"))
+            )
+        }
+
+        @Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
+        fun createForElement(element: KtElement): KtFirAnalysisSession {
+            val firResolveState = LowLevelFirApiFacade.getResolveStateFor(element)
+            val firSession = LowLevelFirApiFacade.getSessionFor(element, firResolveState)
+            val project = element.project
+            val typeContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = true, isStubTypeEqualsToAnything = true, firSession)
+            val token = ReadActionConfinementValidityToken(project)
+            val firSymbolBuilder = KtSymbolByFirBuilder(
+                firSession.firSymbolProvider,
+                typeContext,
+                project,
+                token
+            )
+            return KtFirAnalysisSession(
+                element,
+                firSession,
+                firResolveState,
+                firSymbolBuilder.createReadOnlyCopy(),
+                typeContext,
+                token,
+                isContextSession = false
             )
         }
     }

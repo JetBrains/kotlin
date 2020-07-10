@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirNonStarImportingScope(
     firScope: FirAbstractSimpleImportingScope,
     builder: KtSymbolByFirBuilder,
-    override val token: ValidityToken
+    token: ValidityToken
 ) : KtFirDelegatingScope(builder, token), KtNonStarImportingScope, ValidityTokenOwner {
     override val firScope: FirAbstractSimpleImportingScope = firScope
 

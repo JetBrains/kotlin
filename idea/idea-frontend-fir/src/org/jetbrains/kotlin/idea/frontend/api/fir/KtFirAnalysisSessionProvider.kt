@@ -26,9 +26,9 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
             )
         }
 
-    @Suppress("DEPRECATION")
     override fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession =
         analysisSessionByModuleInfoCache.value.getOrPut(contextElement.getModuleInfo()) {
-            KtFirAnalysisSession(contextElement, LowLevelFirApiFacade.getResolveStateFor(contextElement))
+            @Suppress("DEPRECATION")
+            KtFirAnalysisSession.createForElement(contextElement)
         }
 }
