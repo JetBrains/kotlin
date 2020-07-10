@@ -116,8 +116,8 @@ class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotio
           DocRenderer.EditorPane editorPane = ((DocRenderer)renderer).getRendererComponent(inlay, relativeBounds.width);
           if (targetPane == null || targetPane == editorPane) {
             int button = mouseEvent.getButton();
-            int modifiers = eventId == MouseEvent.MOUSE_DRAGGED && button == MouseEvent.BUTTON1 ? InputEvent.BUTTON1_DOWN_MASK : 0;
-            dispatchEvent(editorPane, new MouseEvent(editorPane, eventId, 0, modifiers, x, y, mouseEvent.getClickCount(), false,
+            dispatchEvent(editorPane, new MouseEvent(editorPane, eventId, 0, mouseEvent.getModifiersEx(), x, y,
+                                                     mouseEvent.getClickCount(), false,
                                                      // hack to process middle-button clicks (JEditorPane ignores them)
                                                      button == MouseEvent.BUTTON2 ? MouseEvent.BUTTON1 : button));
             return editorPane;
