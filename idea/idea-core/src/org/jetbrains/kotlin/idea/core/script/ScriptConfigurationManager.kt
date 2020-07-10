@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.serviceIfCreated
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.util.Key
@@ -108,8 +109,8 @@ interface ScriptConfigurationManager {
     fun getAllScriptDependenciesSources(): List<VirtualFile>
 
     companion object {
-        fun getAlreadyInitializedInstance(project: Project): ScriptConfigurationManager? =
-            ServiceManager.getServiceIfCreated(project, ScriptConfigurationManager::class.java)
+        fun getServiceIfCreated(project: Project): ScriptConfigurationManager? =
+            project.serviceIfCreated()
 
         @JvmStatic
         fun getInstance(project: Project): ScriptConfigurationManager =

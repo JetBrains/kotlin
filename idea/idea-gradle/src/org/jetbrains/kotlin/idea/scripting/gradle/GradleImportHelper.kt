@@ -105,7 +105,7 @@ class LoadConfigurationAction : AnAction(
 
         // prevent services initializtion
         // (all services actually initialized under the ScriptDefinitionProvider during startup activity)
-        if (ScriptDefinitionProvider.getAlreadyCreateInstance(project) == null) return false
+        if (ScriptDefinitionProvider.getServiceIfCreated(project) == null) return false
 
         val file = getKotlinScriptFile(editor) ?: return false
 

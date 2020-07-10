@@ -28,7 +28,7 @@ class ScriptTrafficLightRendererContributor : TrafficLightRendererContributor {
         override fun getDaemonCodeAnalyzerStatus(severityRegistrar: SeverityRegistrar): DaemonCodeAnalyzerStatus {
             val status = super.getDaemonCodeAnalyzerStatus(severityRegistrar)
 
-            val configurations = ScriptConfigurationManager.getAlreadyInitializedInstance(project)
+            val configurations = ScriptConfigurationManager.getServiceIfCreated(project)
             if (configurations == null) {
                 // services not yet initialized (it should be initialized under the LoadScriptDefinitionsStartupActivity)
                 status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.configuration")
