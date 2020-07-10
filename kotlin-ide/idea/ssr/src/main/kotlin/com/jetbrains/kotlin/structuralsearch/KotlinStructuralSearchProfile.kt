@@ -189,11 +189,14 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
                 is KtArrayAccessExpression,
                 is KtPostfixExpression,
                 is KtSafeQualifiedExpression,
+                is KtCallableReferenceExpression,
                 is KtSimpleNameStringTemplateEntry, is KtBlockStringTemplateEntry,
                 is KtPropertyAccessor,
                 is KtWhenEntry -> true
                 else -> false
             }
+            family[0] is KtProperty -> true
+            family[0] is KtParameter -> true
             else -> false
         }
     }
