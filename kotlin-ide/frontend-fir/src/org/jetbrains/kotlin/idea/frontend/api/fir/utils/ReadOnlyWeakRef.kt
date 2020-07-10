@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import java.lang.ref.WeakReference
 import kotlin.reflect.KProperty
 
-class ReadOnlyWeakRef<V : Any>(value: V, val validityOwner: ValidityOwner) {
+class ReadOnlyWeakRef<V : Any>
+@Deprecated("Consider suing ValidityTokenOwner.weakRef instead")
+constructor(value: V, val token: ValidityToken) {
     val weakRef = WeakReference(value)
 
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun getValue(thisRef: Any, property: KProperty<*>): V =
-        weakRef.get() ?: if (validityOwner.isValid()) {
+        weakRef.get() ?: if (token.isValid()) {
             error("Value of $property was garbage collected while analysis session is still valid")
         } else {
             error("Accessing the invalid value of $property")
@@ -22,6 +25,6 @@ class ReadOnlyWeakRef<V : Any>(value: V, val validityOwner: ValidityOwner) {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun <V : Any> ValidityOwner.weakRef(value: V) = ReadOnlyWeakRef(value, this)
+internal inline fun <V : Any> ValidityTokenOwner.weakRef(value: V) = ReadOnlyWeakRef(value, token)
 
-internal inline fun <V : Any> ValidityOwner.weakRef(value: () -> V) = ReadOnlyWeakRef(value(), this)
+internal inline fun <V : Any> ValidityTokenOwner.weakRef(value: () -> V) = ReadOnlyWeakRef(value(), token)

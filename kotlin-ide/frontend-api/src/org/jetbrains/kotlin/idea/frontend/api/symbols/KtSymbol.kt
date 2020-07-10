@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 
-interface KtSymbol : ValidityOwner {
+interface KtSymbol : ValidityTokenOwner {
     val origin: KtSymbolOrigin
     val psi: PsiElement?
 

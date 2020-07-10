@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.findPsi
-import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.ReadOnlyWeakRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirClassOrObjectSymbol(
     fir: FirRegularClass,
-    override val token: ValidityOwner,
+    override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtClassOrObjectSymbol(), KtFirSymbol<FirRegularClass> {
-    override val fir: FirRegularClass by ReadOnlyWeakRef(fir, this)
+    override val fir: FirRegularClass by weakRef(fir)
     override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
     override val name: Name get() = withValidityAssertion { fir.classId.shortClassName }
     override val classId: ClassId get() = withValidityAssertion { fir.classId }

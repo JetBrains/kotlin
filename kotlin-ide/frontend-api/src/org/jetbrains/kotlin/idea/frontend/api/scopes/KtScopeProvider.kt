@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.scopes
 
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-abstract class KtScopeProvider : ValidityOwner {
+abstract class KtScopeProvider : ValidityTokenOwner {
     abstract fun getMemberScope(classSymbol: KtClassOrObjectSymbol): KtMemberScope
     abstract fun getDeclaredMemberScope(classSymbol: KtClassOrObjectSymbol): KtDeclaredMemberScope
     abstract fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope

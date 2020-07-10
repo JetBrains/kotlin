@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.idea.fir.findPsi
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirPropertySymbol(
     fir: FirProperty,
-    override val token: ValidityOwner,
+    override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder,
     private val forcedOrigin: FirDeclarationOrigin?
 ) : KtPropertySymbol(), KtFirSymbol<FirProperty> {
