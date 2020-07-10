@@ -34,4 +34,6 @@ class KotlinSSLoopStatementTest : KotlinSSResourceInspectionTest() {
             """
         )
     }
+    
+    fun testWhileTwoStatements() { doTest("while ('_) { '_{2,2} }") }
 }

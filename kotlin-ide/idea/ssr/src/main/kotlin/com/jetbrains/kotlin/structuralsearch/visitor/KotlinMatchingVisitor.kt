@@ -11,7 +11,6 @@ import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.util.containers.reverse
 import com.jetbrains.kotlin.structuralsearch.binaryExprOpName
 import com.jetbrains.kotlin.structuralsearch.getCommentText
-import org.jetbrains.eval4j.VOID_VALUE
 import org.jetbrains.kotlin.fir.builder.toUnaryName
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
@@ -64,8 +63,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         element2: KtExpression?,
         returnExpr: Boolean = false
     ): Boolean {
-        val (e1, e2) = normalizeExpressions(element, element2, returnExpr)
-        return match(e1, e2)
+        val (e1, e2) =
+            if (element is KtBlockExpression && element2 is KtBlockExpression) element to element2
+            else normalizeExpressions(element, element2, returnExpr)
+
+        val impossible = e1?.let {
+            val handler = getHandler(it);
+            e2 !is KtBlockExpression && handler is SubstitutionHandler && handler.minOccurs > 1
+        } ?: false
+
+        return !impossible && match(e1, e2)
     }
 
     private fun getHandler(element: PsiElement) = myMatchingVisitor.matchContext.pattern.getHandler(element)
@@ -827,14 +834,14 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         when (val other = myMatchingVisitor.element) {
             is KtAnnotatedExpression -> myMatchingVisitor.result =
                 if (expression.annotationEntries.all
-                    { val handler = getHandler(it) ; handler is SubstitutionHandler && handler.maxOccurs == 0 }
+                    { val handler = getHandler(it); handler is SubstitutionHandler && handler.maxOccurs == 0 }
                     && other.annotationEntries.any()
                 ) false
                 else myMatchingVisitor.match(expression.baseExpression, other.baseExpression)
                         && myMatchingVisitor.matchInAnyOrder(expression.annotationEntries, other.annotationEntries)
             else -> {
                 myMatchingVisitor.result = if (expression.annotationEntries.all
-                    { val handler = getHandler(it) ; handler is SubstitutionHandler && handler.minOccurs == 0 }
+                    { val handler = getHandler(it); handler is SubstitutionHandler && handler.minOccurs == 0 }
                 ) myMatchingVisitor.match(expression.baseExpression, other) else false
             }
         }
