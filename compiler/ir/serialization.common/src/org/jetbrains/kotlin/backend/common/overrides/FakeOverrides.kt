@@ -18,11 +18,7 @@ package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
-import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverrideFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverridePropertyImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
@@ -118,13 +114,13 @@ class FakeOverrideBuilder(
 
     override fun linkFakeOverride(fakeOverride: IrOverridableMember) {
         when (fakeOverride) {
-            is IrFakeOverrideFunctionImpl -> linkFunctionFakeOverride(fakeOverride)
-            is IrFakeOverridePropertyImpl -> linkPropertyFakeOverride(fakeOverride)
+            is IrFakeOverrideFunction -> linkFunctionFakeOverride(fakeOverride)
+            is IrFakeOverrideProperty -> linkPropertyFakeOverride(fakeOverride)
             else -> error("Unexpected fake override: $fakeOverride")
         }
     }
 
-    private fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunctionImpl) {
+    private fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction) {
         val signature = signaturer.composePublicIdSignature(declaration)
 
         symbolTable.declareSimpleFunctionFromLinker(WrappedSimpleFunctionDescriptor(), signature) {
@@ -133,7 +129,7 @@ class FakeOverrideBuilder(
         }
     }
 
-    private fun linkPropertyFakeOverride(declaration: IrFakeOverridePropertyImpl) {
+    private fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty) {
         // To compute a signature for a property with type parameters,
         // we must have its accessor's correspondingProperty pointing to the property's symbol.
         // See IrMangleComputer.mangleTypeParameterReference() for details.
@@ -159,15 +155,11 @@ class FakeOverrideBuilder(
 
         declaration.getter?.let {
             it.correspondingPropertySymbol = declaration.symbol
-            linkFunctionFakeOverride(it as? IrFakeOverrideFunctionImpl
-                ?: error("Unexpected fake override getter: $it")
-            )
+            linkFunctionFakeOverride(it as? IrFakeOverrideFunction ?: error("Unexpected fake override getter: $it"))
         }
         declaration.setter?.let {
             it.correspondingPropertySymbol = declaration.symbol
-            linkFunctionFakeOverride(it as? IrFakeOverrideFunctionImpl
-                ?: error("Unexpected fake override setter: $it")
-            )
+            linkFunctionFakeOverride(it as? IrFakeOverrideFunction ?: error("Unexpected fake override setter: $it"))
         }
     }
 

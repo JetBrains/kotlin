@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverrideFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverridePropertyImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -280,7 +279,7 @@ class IrOverridingUtil(
     }
 
     private fun IrSimpleFunction.updateAccessorModalityAndVisibility(newModality: Modality, newVisibility: Visibility): IrSimpleFunction? {
-        require(this is IrFakeOverrideFunctionImpl) {
+        require(this is IrFakeOverrideFunction) {
             "Unexpected fake override accessor kind: $this"
         }
         // For descriptors it gets INVISIBLE_FAKE.
@@ -307,13 +306,13 @@ class IrOverridingUtil(
 
         val fakeOverride = mostSpecific.apply {
             when (this) {
-                is IrFakeOverridePropertyImpl -> {
+                is IrFakeOverrideProperty -> {
                     this.visibility = visibility
                     this.modality = modality
                     this.getter = this.getter?.updateAccessorModalityAndVisibility(modality, visibility)
                     this.setter = this.setter?.updateAccessorModalityAndVisibility(modality, visibility)
                 }
-                is IrFakeOverrideFunctionImpl -> {
+                is IrFakeOverrideFunction -> {
                     this.visibility = visibility
                     this.modality = modality
                 }
