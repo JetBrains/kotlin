@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.openapi.project.Project
 import com.intellij.patterns.PlatformPatterns
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
@@ -18,11 +16,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPossibleExtensionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.isExtension
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -87,22 +80,4 @@ private fun KtCallableSymbol.canBeCalledWith(implicitReceivers: List<KtType>): B
 
     val requiredReceiverType = receiverType ?: error("Receiver type should be present")
     return implicitReceivers.any { it.isSubTypeOf(requiredReceiverType) }
-}
-
-class PackageIndexHelper(private val project: Project) {
-    //todo use more concrete scope
-    private val searchScope = GlobalSearchScope.allScope(project)
-
-    private val functionByPackageIndex = KotlinTopLevelFunctionByPackageIndex.getInstance()
-    private val propertyByPackageIndex = KotlinTopLevelPropertyByPackageIndex.getInstance()
-
-    fun getPackageTopLevelNames(packageFqName: FqName): Set<Name> {
-        return getTopLevelCallables(packageFqName).mapTo(mutableSetOf()) { it.nameAsSafeName }
-    }
-
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun getTopLevelCallables(packageFqName: FqName): List<KtCallableDeclaration> = buildList {
-        addAll(functionByPackageIndex.get(packageFqName.asString(), project, searchScope))
-        addAll(propertyByPackageIndex.get(packageFqName.asString(), project, searchScope))
-    }
 }

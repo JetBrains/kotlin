@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
-import org.jetbrains.kotlin.idea.completion.PackageIndexHelper
 import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
 import org.jetbrains.kotlin.idea.frontend.api.ValidityOwnerByValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
@@ -17,7 +17,11 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.Import
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtStarImportingScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.StarImport
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 
 internal class KtFirStarImportingScope(
     firScope: FirAbstractStarImportingScope,
@@ -57,4 +61,21 @@ internal class KtFirStarImportingScope(
         setOf()
     }
 
+}
+
+private class PackageIndexHelper(private val project: Project) {
+    //todo use more concrete scope
+    private val searchScope = GlobalSearchScope.allScope(project)
+
+    private val functionByPackageIndex = KotlinTopLevelFunctionByPackageIndex.getInstance()
+    private val propertyByPackageIndex = KotlinTopLevelPropertyByPackageIndex.getInstance()
+
+    fun getPackageTopLevelNames(packageFqName: FqName): Set<Name> {
+        return getTopLevelCallables(packageFqName).mapTo(mutableSetOf()) { it.nameAsSafeName }
+    }
+
+    private fun getTopLevelCallables(packageFqName: FqName): Sequence<KtCallableDeclaration> = sequence<KtCallableDeclaration> {
+        yieldAll(functionByPackageIndex.get(packageFqName.asString(), project, searchScope))
+        yieldAll(propertyByPackageIndex.get(packageFqName.asString(), project, searchScope))
+    }
 }
