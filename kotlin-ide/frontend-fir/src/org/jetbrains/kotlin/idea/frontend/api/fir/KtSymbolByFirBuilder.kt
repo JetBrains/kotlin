@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.idea.frontend.api.*
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirLocalVariableSymbol
@@ -36,21 +36,52 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
+import java.util.concurrent.ConcurrentMap
 
 /**
  * Maps FirElement to KtSymbol & ConeType to KtType, thread safe
  */
-internal class KtSymbolByFirBuilder(
+internal class KtSymbolByFirBuilder private constructor(
     firProvider: FirSymbolProvider,
     typeCheckerContext: ConeTypeCheckerContext,
     private val project: Project,
-    override val token: ValidityOwner
-) : ValidityOwnerByValidityToken {
+    override val token: ValidityToken,
+    val withReadOnlyCaching: Boolean,
+    private val symbolsCache: BuilderCache<FirDeclaration, KtSymbol>,
+    private val typesCache: BuilderCache<ConeKotlinType, KtType>
+) : ValidityTokenOwner {
+
+    constructor(
+        firProvider: FirSymbolProvider,
+        typeCheckerContext: ConeTypeCheckerContext,
+        project: Project,
+        token: ValidityToken
+    ) : this(
+        firProvider = firProvider,
+        typeCheckerContext = typeCheckerContext,
+        project = project,
+        token = token,
+        withReadOnlyCaching = false,
+        symbolsCache = BuilderCache(),
+        typesCache = BuilderCache()
+    )
+
     private val firProvider by weakRef(firProvider)
     private val typeCheckerContext by weakRef(typeCheckerContext)
 
-    private val symbolsCache = BuilderCache<FirDeclaration, KtSymbol>()
-    private val typesCache = BuilderCache<ConeKotlinType, KtType>()
+    fun createReadOnlyCopy(): KtSymbolByFirBuilder {
+        check(!withReadOnlyCaching) { "Cannot create readOnly KtSymbolByFirBuilder from a readonly one" }
+        return KtSymbolByFirBuilder(
+            firProvider,
+            typeCheckerContext,
+            project,
+            token,
+            withReadOnlyCaching = true,
+            symbolsCache.createReadOnlyCopy(),
+            typesCache.createReadOnlyCopy()
+        )
+    }
+
 
     fun buildSymbol(fir: FirDeclaration): KtSymbol = symbolsCache.cache(fir) {
         when (fir) {
@@ -153,11 +184,23 @@ internal class KtSymbolByFirBuilder(
     }
 }
 
-private class BuilderCache<From, To> {
-    private val cache = MapMaker().weakKeys().makeMap<From, To>()
+private class BuilderCache<From, To> private constructor(
+    private val cache: ConcurrentMap<From, To>,
+    private val isReadOnly: Boolean
+) {
+    constructor() : this(cache = MapMaker().weakKeys().makeMap(), isReadOnly = false)
 
-    inline fun <reified S : To> cache(key: From, calculation: () -> S): S =
-        cache.getOrPut(key, calculation) as S
+    fun createReadOnlyCopy(): BuilderCache<From, To> {
+        check(!isReadOnly) { "Cannot create readOnly BuilderCache from a readonly one" }
+        return BuilderCache(cache, isReadOnly = true)
+    }
+
+    inline fun <reified S : To> cache(key: From, calculation: () -> S): S {
+        if (isReadOnly) {
+            return (cache[key] ?: calculation()) as S
+        }
+        return cache.getOrPut(key, calculation) as S
+    }
 }
 
 internal fun FirElement.buildSymbol(builder: KtSymbolByFirBuilder) =

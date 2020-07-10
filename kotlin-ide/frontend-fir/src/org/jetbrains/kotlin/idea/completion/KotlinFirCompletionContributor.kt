@@ -34,7 +34,7 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
         val possibleReceiver = nameExpression.getQualifiedExpressionForSelector()?.receiverExpression
 
         val originalSession = getAnalysisSessionFor(originalFile)
-        val sessionForCompletion = originalSession.analyzeInContext()
+        val sessionForCompletion = originalSession.createContextDependentCopy()
         val scopeProvider = sessionForCompletion.scopeProvider
 
         val (implicitScopes, implicitReceivers) = scopeProvider.getScopeContextForPosition(originalFile, nameExpression)

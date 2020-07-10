@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.name.Name
 
 internal abstract class KtFirDelegatingScope(
     private val builder: KtSymbolByFirBuilder,
-    override val token: ValidityToken
-) : KtScope, ValidityTokenOwner {
+    final override val token: ValidityToken
+) : KtScope {
 
     abstract val firScope: FirScope
 
-    private val allNamesCached by cached { getCallableNames() + getClassLikeSymbolNames() }
+    private val allNamesCached by cached(token) {
+        getCallableNames() + getClassLikeSymbolNames()
+    }
 
     override fun getAllNames(): Set<Name> = allNamesCached
 
