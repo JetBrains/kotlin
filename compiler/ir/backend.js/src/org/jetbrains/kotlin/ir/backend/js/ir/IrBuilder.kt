@@ -5,21 +5,16 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ir
 
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -50,80 +45,6 @@ object JsIrBuilder {
         IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, targetSymbol, value)
 
     fun buildThrow(type: IrType, value: IrExpression) = IrThrowImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, value)
-
-    fun buildValueParameter(parent: IrDeclarationParent, name: String, index: Int, type: IrType): IrValueParameter =
-        buildValueParameter(parent) {
-            this.origin = SYNTHESIZED_DECLARATION
-            this.name = Name.identifier(name)
-            this.index = index
-            this.type = type
-        }
-
-    fun buildFunction(
-        name: String,
-        returnType: IrType,
-        parent: IrDeclarationParent,
-        visibility: Visibility = Visibilities.PUBLIC,
-        modality: Modality = Modality.FINAL,
-        isInline: Boolean = false,
-        isExternal: Boolean = false,
-        isTailrec: Boolean = false,
-        isSuspend: Boolean = false,
-        isExpect: Boolean = false,
-        isFakeOverride: Boolean = false,
-        origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
-    ) = buildFunction(
-        Name.identifier(name),
-        returnType,
-        parent,
-        visibility,
-        modality,
-        isInline = isInline,
-        isExternal = isExternal,
-        isTailrec = isTailrec,
-        isSuspend = isSuspend,
-        isExpect = isExpect,
-        isFakeOverride = isFakeOverride,
-        origin = origin
-    )
-
-    fun buildFunction(
-        name: Name,
-        returnType: IrType,
-        parent: IrDeclarationParent,
-        visibility: Visibility = Visibilities.PUBLIC,
-        modality: Modality = Modality.FINAL,
-        isInline: Boolean = false,
-        isExternal: Boolean = false,
-        isTailrec: Boolean = false,
-        isSuspend: Boolean = false,
-        isExpect: Boolean = false,
-        isOperator: Boolean = false,
-        isInfix: Boolean = false,
-        isFakeOverride: Boolean = false,
-        origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
-    ): IrSimpleFunction = buildFun {
-        this.origin = origin
-        this.name = name
-        this.visibility = visibility
-        this.modality = modality
-        this.returnType = returnType
-        this.isInline = isInline
-        this.isExternal = isExternal
-        this.isTailrec = isTailrec
-        this.isSuspend = isSuspend
-        this.isOperator = isOperator
-        this.isInfix = isInfix
-        this.isExpect = isExpect
-        this.isFakeOverride = isFakeOverride
-    }.also {
-        it.parent = parent
-    }
-
-    fun buildAnonymousInitializer() =
-        IrAnonymousInitializerImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SYNTHESIZED_DECLARATION, IrAnonymousInitializerSymbolImpl(
-            WrappedClassDescriptor()
-        ))
 
     fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =
         IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, classSymbol)

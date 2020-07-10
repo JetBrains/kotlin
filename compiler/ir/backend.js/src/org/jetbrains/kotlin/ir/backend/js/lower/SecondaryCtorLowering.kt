@@ -159,12 +159,12 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
 
 private fun IrTypeParameter.toIrType() = IrSimpleTypeImpl(symbol, true, emptyList(), emptyList())
 
-private fun buildInitDeclaration(constructor: IrConstructor, irClass: IrClass): IrSimpleFunction {
+private fun JsIrBackendContext.buildInitDeclaration(constructor: IrConstructor, irClass: IrClass): IrSimpleFunction {
     val type = irClass.defaultType
     val constructorName = "${irClass.name}_init"
     val functionName = "${constructorName}_\$Init\$"
 
-    return JsIrBuilder.buildFunction(
+    return jsIrDeclarationBuilder.buildFunction(
         functionName,
         type,
         constructor.parent,
@@ -176,16 +176,16 @@ private fun buildInitDeclaration(constructor: IrConstructor, irClass: IrClass): 
         it.copyTypeParametersFrom(constructor.parentAsClass)
 
         it.valueParameters = constructor.valueParameters.map { p -> p.copyTo(it) }
-        it.valueParameters += JsIrBuilder.buildValueParameter(it, "\$this", constructor.valueParameters.size, type)
+        it.valueParameters += jsIrDeclarationBuilder.buildValueParameter(it, "\$this", constructor.valueParameters.size, type)
     }
 }
 
-private fun buildFactoryDeclaration(constructor: IrConstructor, irClass: IrClass): IrSimpleFunction {
+private fun JsIrBackendContext.buildFactoryDeclaration(constructor: IrConstructor, irClass: IrClass): IrSimpleFunction {
     val type = irClass.defaultType
     val constructorName = "${irClass.name}_init"
     val functionName = "${constructorName}_\$Create\$"
 
-    return JsIrBuilder.buildFunction(
+    return jsIrDeclarationBuilder.buildFunction(
         functionName,
         type,
         constructor.parent,

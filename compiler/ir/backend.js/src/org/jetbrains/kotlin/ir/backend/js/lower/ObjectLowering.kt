@@ -106,9 +106,9 @@ class ObjectUsageLowering(
     }
 }
 
-fun JsCommonBackendContext.getOrCreateGetInstanceFunction(obj: IrClass) =
+private fun JsCommonBackendContext.getOrCreateGetInstanceFunction(obj: IrClass) =
     mapping.objectToGetInstanceFunction.getOrPut(obj) {
-        JsIrBuilder.buildFunction(
+        jsIrDeclarationBuilder.buildFunction(
             obj.name.asString() + "_getInstance",
             returnType = obj.defaultType,
             parent = obj.parent

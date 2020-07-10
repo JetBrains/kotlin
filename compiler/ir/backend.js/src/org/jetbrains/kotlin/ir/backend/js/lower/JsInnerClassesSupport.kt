@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.SYNTHESIZED_DECLARATION
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -82,9 +83,12 @@ class JsInnerClassesSupport(mapping: JsMapping) : InnerClassesSupport {
 
         newConstructor.copyTypeParametersFrom(oldConstructor)
 
-        val outerThisValueParameter = JsIrBuilder.buildValueParameter(newConstructor, Namer.OUTER_NAME, 0, outerThisType)
-
-        val newValueParameters = mutableListOf(outerThisValueParameter)
+        val newValueParameters = mutableListOf(buildValueParameter(newConstructor) {
+            origin = SYNTHESIZED_DECLARATION
+            name = Name.identifier(Namer.OUTER_NAME)
+            index = 0
+            type = outerThisType
+        })
 
         for (p in oldConstructor.valueParameters) {
             newValueParameters += p.copyTo(newConstructor, index = p.index + 1)
