@@ -40,7 +40,7 @@ dependencies {
     if (ijProductBranch(cidrVersion) >= 202) {
         implementation("com.jetbrains.intellij.swift:swift-language:$cidrVersion") { isTransitive = false }
     }
-    api(project(":kotlin-ultimate:ide:common-cidr-mobile")) { isTransitive = false }
+    implementation(project(":kotlin-ultimate:ide:common-cidr-mobile"))
     implementation("com.jetbrains.intellij.android:android-kotlin-extensions-common:$cidrVersion") { isTransitive = false }
     implementation("com.android.tools.ddms:ddmlib:26.0.0") {
         exclude("com.google.guava", "guava")
