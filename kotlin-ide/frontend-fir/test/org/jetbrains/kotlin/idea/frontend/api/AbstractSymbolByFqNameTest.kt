@@ -37,9 +37,6 @@ abstract class AbstractSymbolByFqNameTest : KotlinLightCodeInsightFixtureTestCas
                 val symbols = createSymbols(symbolData, this)
                 symbols.map { DebugSymbolRenderer.render(it) }
             }
-            val analysisSession = KtFirAnalysisSession(fakeKtFile, LowLevelFirApiFacade.getResolveStateFor(fakeKtFile))
-            val symbols = createSymbols(symbolData, analysisSession)
-            symbols.map { DebugSymbolRenderer.render(it) }
         }
 
         val actual = buildString {
