@@ -308,6 +308,21 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         runTest("idea/testData/resolve/references/ResolvePackageInProperty.kt");
     }
 
+    @TestMetadata("ResolvePackageInTheEndInProperty.kt")
+    public void testResolvePackageInTheEndInProperty() throws Exception {
+        runTest("idea/testData/resolve/references/ResolvePackageInTheEndInProperty.kt");
+    }
+
+    @TestMetadata("ResolvePackageInTheMiddleInProperty.kt")
+    public void testResolvePackageInTheMiddleInProperty() throws Exception {
+        runTest("idea/testData/resolve/references/ResolvePackageInTheMiddleInProperty.kt");
+    }
+
+    @TestMetadata("ResolvePackageInTheTypeNameInProperty.kt")
+    public void testResolvePackageInTheTypeNameInProperty() throws Exception {
+        runTest("idea/testData/resolve/references/ResolvePackageInTheTypeNameInProperty.kt");
+    }
+
     @TestMetadata("SamAdapter.kt")
     public void testSamAdapter() throws Exception {
         runTest("idea/testData/resolve/references/SamAdapter.kt");
