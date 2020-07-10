@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirConstructorSymbol(
     fir: FirConstructor,
@@ -39,9 +40,14 @@ internal class KtFirConstructorSymbol(
     override val isPrimary: Boolean get() = withValidityAssertion { fir.isPrimary }
     override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
 
+    override val ownerClassId: ClassId
+        get() = withValidityAssertion {
+            fir.symbol.callableId.classId ?: error("ClassID should present for constructor")
+        }
+
     override val owner: KtClassOrObjectSymbol by cached {
         val session = fir.session
-        val classId = fir.symbol.callableId.classId ?: error("ClassID should present for constructor")
+        val classId = ownerClassId
         val firClass = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir
             ?: error("Class with id $classId id was not found")
         check(firClass is FirRegularClass) { "Owner class for constructor should be FirRegularClass, but ${firClass::class} was met" }
