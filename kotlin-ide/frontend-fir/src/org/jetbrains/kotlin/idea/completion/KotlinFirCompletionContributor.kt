@@ -76,8 +76,8 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
 }
 
 private fun KtCallableSymbol.canBeCalledWith(implicitReceivers: List<KtType>): Boolean {
-    require(this is KtPossibleExtensionSymbol && this.isExtension) { "This function should be called only on extensions!" }
+    val requiredReceiverType = (this as? KtPossibleExtensionSymbol)?.receiverType
+        ?: error("Extension receiver type should be present on ${this}")
 
-    val requiredReceiverType = receiverType ?: error("Receiver type should be present")
     return implicitReceivers.any { it.isSubTypeOf(requiredReceiverType) }
 }
