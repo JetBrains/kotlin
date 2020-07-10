@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_HOME
@@ -40,6 +42,7 @@ internal fun Project.isAllowCommonizer(
 
     //register commonizer only for 1.4+, only for HMPP projects
     return compareVersionNumbers(kotlinVersion, "1.4") >= 0
+            && multiplatformExtension.targets.any { it.platformType == KotlinPlatformType.native }
             && isKotlinGranularMetadataEnabled
             && !isNativeDependencyPropagationEnabled // temporary fix: turn on commonizer only when native deps propagation is disabled
 }
