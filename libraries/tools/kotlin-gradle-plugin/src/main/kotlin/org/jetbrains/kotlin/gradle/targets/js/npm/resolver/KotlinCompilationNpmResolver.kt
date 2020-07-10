@@ -179,8 +179,7 @@ internal class KotlinCompilationNpmResolver(
                 internalDependencies.add(projectResolver[main])
             }
 
-            val hasPublicNpmDependencies = externalNpmDependencies
-                .any { it.isPublicDependency() }
+            val hasPublicNpmDependencies = externalNpmDependencies.isNotEmpty()
 
             if (compilation.isMain() && hasPublicNpmDependencies) {
                 project.tasks
