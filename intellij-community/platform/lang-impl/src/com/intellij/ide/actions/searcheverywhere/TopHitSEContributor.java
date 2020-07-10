@@ -40,7 +40,6 @@ import java.util.function.Consumer;
 
 public class TopHitSEContributor implements SearchEverywhereContributor<Object> {
 
-  public static final int TOP_HIT_ELEMENT_PRIORITY = 15000;
   private final Collection<SearchTopHitProvider> myTopHitProviders = Arrays.asList(SearchTopHitProvider.EP_NAME.getExtensions());
 
   private final Project myProject;
@@ -122,11 +121,6 @@ public class TopHitSEContributor implements SearchEverywhereContributor<Object> 
     }
 
     return false;
-  }
-
-  @Override
-  public int getElementPriority(@NotNull Object element, @NotNull String searchPattern) {
-    return TOP_HIT_ELEMENT_PRIORITY;
   }
 
   @NotNull
