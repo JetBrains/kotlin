@@ -370,104 +370,112 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
             }
             @LiveLiteralFileInfo(file = "/Test.kt")
             internal class LiveLiterals%TestKt {
-              private var Int%arg-0%call-print%fun-A: State<Int>?
+              private var Int%arg-0%call-print%fun-A: Int = 1
+              private var State%Int%arg-0%call-print%fun-A: State<Int>?
               @LiveLiteralInfo(key = "Int%arg-0%call-print%fun-A", offset = 54)
               fun Int%arg-0%call-print%fun-A(): Int {
-                val tmp0 = <this>.Int%arg-0%call-print%fun-A
+                val tmp0 = <this>.State%Int%arg-0%call-print%fun-A
                 return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Int%arg-0%call-print%fun-A", 1)
-                  <this>.Int%arg-0%call-print%fun-A = tmp1
+                  val tmp1 = liveLiteral("Int%arg-0%call-print%fun-A", <this>.Int%arg-0%call-print%fun-A)
+                  <this>.State%Int%arg-0%call-print%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
                 }
                 .value
               }
-              private var String%arg-0%call-print-1%fun-A: State<String>?
+              private var String%arg-0%call-print-1%fun-A: String = "Hello World"
+              private var State%String%arg-0%call-print-1%fun-A: State<String>?
               @LiveLiteralInfo(key = "String%arg-0%call-print-1%fun-A", offset = 66)
               fun String%arg-0%call-print-1%fun-A(): String {
-                val tmp0 = <this>.String%arg-0%call-print-1%fun-A
+                val tmp0 = <this>.State%String%arg-0%call-print-1%fun-A
                 return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("String%arg-0%call-print-1%fun-A", "Hello World")
-                  <this>.String%arg-0%call-print-1%fun-A = tmp1
+                  val tmp1 = liveLiteral("String%arg-0%call-print-1%fun-A", <this>.String%arg-0%call-print-1%fun-A)
+                  <this>.State%String%arg-0%call-print-1%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
                 }
                 .value
               }
-              private var Boolean%cond%if%fun-A: State<Boolean>?
+              private var Boolean%cond%if%fun-A: Boolean = true
+              private var State%Boolean%cond%if%fun-A: State<Boolean>?
               @LiveLiteralInfo(key = "Boolean%cond%if%fun-A", offset = 86)
               fun Boolean%cond%if%fun-A(): Boolean {
-                val tmp0 = <this>.Boolean%cond%if%fun-A
+                val tmp0 = <this>.State%Boolean%cond%if%fun-A
                 return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Boolean%cond%if%fun-A", true)
-                  <this>.Boolean%cond%if%fun-A = tmp1
+                  val tmp1 = liveLiteral("Boolean%cond%if%fun-A", <this>.Boolean%cond%if%fun-A)
+                  <this>.State%Boolean%cond%if%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
                 }
                 .value
               }
-              private var Int%%this%call-plus%arg-0%call-print%branch%if%fun-A: State<Int>?
+              private var Int%%this%call-plus%arg-0%call-print%branch%if%fun-A: Int = 3
+              private var State%Int%%this%call-plus%arg-0%call-print%branch%if%fun-A: State<Int>?
               @LiveLiteralInfo(key = "Int%%this%call-plus%arg-0%call-print%branch%if%fun-A", offset = 104)
               fun Int%%this%call-plus%arg-0%call-print%branch%if%fun-A(): Int {
-                val tmp0 = <this>.Int%%this%call-plus%arg-0%call-print%branch%if%fun-A
+                val tmp0 = <this>.State%Int%%this%call-plus%arg-0%call-print%branch%if%fun-A
                 return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Int%%this%call-plus%arg-0%call-print%branch%if%fun-A", 3)
-                  <this>.Int%%this%call-plus%arg-0%call-print%branch%if%fun-A = tmp1
+                  val tmp1 = liveLiteral("Int%%this%call-plus%arg-0%call-print%branch%if%fun-A", <this>.Int%%this%call-plus%arg-0%call-print%branch%if%fun-A)
+                  <this>.State%Int%%this%call-plus%arg-0%call-print%branch%if%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
                 }
                 .value
               }
-              private var Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A: State<Int>?
+              private var Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A: Int = 4
+              private var State%Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A: State<Int>?
               @LiveLiteralInfo(key = "Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A", offset = 108)
               fun Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A(): Int {
-                val tmp0 = <this>.Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A
+                val tmp0 = <this>.State%Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A
                 return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A", 4)
-                  <this>.Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A = tmp1
+                  val tmp1 = liveLiteral("Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A", <this>.Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A)
+                  <this>.State%Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
                 }
                 .value
               }
-              private var Boolean%cond%if-1%fun-A: State<Boolean>?
+              private var Boolean%cond%if-1%fun-A: Boolean = true
+              private var State%Boolean%cond%if-1%fun-A: State<Boolean>?
               @LiveLiteralInfo(key = "Boolean%cond%if-1%fun-A", offset = 121)
               fun Boolean%cond%if-1%fun-A(): Boolean {
-                val tmp0 = <this>.Boolean%cond%if-1%fun-A
+                val tmp0 = <this>.State%Boolean%cond%if-1%fun-A
                 return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Boolean%cond%if-1%fun-A", true)
-                  <this>.Boolean%cond%if-1%fun-A = tmp1
+                  val tmp1 = liveLiteral("Boolean%cond%if-1%fun-A", <this>.Boolean%cond%if-1%fun-A)
+                  <this>.State%Boolean%cond%if-1%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
                 }
                 .value
               }
-              private var Float%arg-0%call-print%branch%if-1%fun-A: State<Float>?
+              private var Float%arg-0%call-print%branch%if-1%fun-A: Float = 1.0f
+              private var State%Float%arg-0%call-print%branch%if-1%fun-A: State<Float>?
               @LiveLiteralInfo(key = "Float%arg-0%call-print%branch%if-1%fun-A", offset = 139)
               fun Float%arg-0%call-print%branch%if-1%fun-A(): Float {
-                val tmp0 = <this>.Float%arg-0%call-print%branch%if-1%fun-A
+                val tmp0 = <this>.State%Float%arg-0%call-print%branch%if-1%fun-A
                 return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Float%arg-0%call-print%branch%if-1%fun-A", 1.0f)
-                  <this>.Float%arg-0%call-print%branch%if-1%fun-A = tmp1
+                  val tmp1 = liveLiteral("Float%arg-0%call-print%branch%if-1%fun-A", <this>.Float%arg-0%call-print%branch%if-1%fun-A)
+                  <this>.State%Float%arg-0%call-print%branch%if-1%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
                 }
                 .value
               }
-              private var Int%arg-0%call-print-2%fun-A: State<Int>?
+              private var Int%arg-0%call-print-2%fun-A: Int = 3
+              private var State%Int%arg-0%call-print-2%fun-A: State<Int>?
               @LiveLiteralInfo(key = "Int%arg-0%call-print-2%fun-A", offset = 157)
               fun Int%arg-0%call-print-2%fun-A(): Int {
-                val tmp0 = <this>.Int%arg-0%call-print-2%fun-A
+                val tmp0 = <this>.State%Int%arg-0%call-print-2%fun-A
                 return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Int%arg-0%call-print-2%fun-A", 3)
-                  <this>.Int%arg-0%call-print-2%fun-A = tmp1
+                  val tmp1 = liveLiteral("Int%arg-0%call-print-2%fun-A", <this>.Int%arg-0%call-print-2%fun-A)
+                  <this>.State%Int%arg-0%call-print-2%fun-A = tmp1
                   tmp1
                 } else {
                   tmp0
