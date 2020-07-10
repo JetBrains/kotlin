@@ -131,7 +131,7 @@ internal fun CirSimpleType.buildType(
     )
 
     return if (classifier is TypeAliasDescriptor)
-        classifier.underlyingType.withAbbreviation(simpleType)
+        classifier.underlyingType.makeNullableAsSpecified(simpleType.isMarkedNullable).withAbbreviation(simpleType)
     else
         simpleType
 }
