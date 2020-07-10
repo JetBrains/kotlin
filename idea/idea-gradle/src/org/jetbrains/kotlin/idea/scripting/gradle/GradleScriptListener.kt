@@ -23,7 +23,7 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
         addVfsListener(this, buildRootsManager)
     }
 
-    // caches services for hot path under vfs changes listener
+    // cache buildRootsManager service for hot path under vfs changes listener
     val fileChangesProcessor: (filePath: String, ts: Long) -> Unit
         get() {
             val buildRootsManager = buildRootsManager
