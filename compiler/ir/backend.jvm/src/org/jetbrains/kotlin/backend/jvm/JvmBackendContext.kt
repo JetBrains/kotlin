@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -59,6 +60,8 @@ class JvmBackendContext(
         get() = TODO("not implemented")
 
     override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
+
+    override val irFactory: IrFactory = IrFactoryImpl
 
     override val scriptMode: Boolean = false
     override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
