@@ -10,8 +10,10 @@ import com.intellij.util.io.createDirectories
 import com.intellij.util.io.delete
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import kotlin.streams.asSequence
 
 object IndexDiagnosticDumper {
@@ -33,8 +35,8 @@ object IndexDiagnosticDumper {
 
       val fileNamePrefix = "diagnostic-"
 
-      val timestamp = ZonedDateTime.now().format(diagnosticDateTimeFormatter)
-      val diagnosticJson = indexDiagnosticDirectory.resolve("$fileNamePrefix-$timestamp.json")
+      val timestamp = LocalDateTime.now().format(diagnosticDateTimeFormatter)
+      val diagnosticJson = indexDiagnosticDirectory.resolve("$fileNamePrefix$timestamp.json")
 
       val jsonIndexDiagnostic = JsonIndexDiagnostic.generateForHistory(projectIndexingHistory)
       jacksonMapper.writeValue(diagnosticJson.toFile(), jsonIndexDiagnostic)
@@ -42,21 +44,28 @@ object IndexDiagnosticDumper {
       val limitOfHistories = 20
       val survivedHistories = Files.list(indexDiagnosticDirectory).use { files ->
         files.asSequence()
-        .filter { it.fileName.toString().startsWith(fileNamePrefix) && it.fileName.toString().endsWith(".json") }
-        .sortedByDescending { file ->
-          val timeStamp = file.fileName.toString().substringAfter(fileNamePrefix).substringBefore(".json").toLongOrNull()
-          timeStamp ?: 0L
-        }
-        .take(limitOfHistories)
-        .toSet()
+          .filter { it.fileName.toString().startsWith(fileNamePrefix) && it.fileName.toString().endsWith(".json") }
+          .sortedByDescending { file ->
+            val timeStamp = file.fileName.toString().substringAfter(fileNamePrefix).substringBefore(".json")
+            try {
+              LocalDateTime.parse(timeStamp, diagnosticDateTimeFormatter)
+            }
+            catch (e: DateTimeParseException) {
+              LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC)
+            }
+          }
+          .take(limitOfHistories)
+          .toSet()
       }
 
       Files
         .list(indexDiagnosticDirectory)
-        .use { files -> files
-          .asSequence()
-          .filterNot { it in survivedHistories }
-          .forEach { it.delete() }}
+        .use { files ->
+          files
+            .asSequence()
+            .filterNot { it in survivedHistories }
+            .forEach { it.delete() }
+        }
     }
     catch (e: Exception) {
       LOG.warn("Failed to dump index diagnostic", e)
