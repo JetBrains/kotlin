@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
@@ -23,7 +25,11 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
-internal abstract class KtFirDelegatingScope(private val builder: KtSymbolByFirBuilder) : KtScope, ValidityOwnerByValidityToken {
+internal abstract class KtFirDelegatingScope(
+    private val builder: KtSymbolByFirBuilder,
+    override val token: ValidityToken
+) : KtScope, ValidityTokenOwner {
+
     abstract val firScope: FirScope
 
     private val allNamesCached by cached { getCallableNames() + getClassLikeSymbolNames() }

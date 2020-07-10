@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeProvider
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -13,11 +12,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 
-abstract class KtAnalysisSession(project: Project) : ValidityOwner {
-    protected open val validityToken = ReadActionConfinementValidityToken(project)
-    override fun isValid(): Boolean = validityToken.isValid()
-    override fun invalidationReason(): String = validityToken.invalidationReason()
-
+abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTokenOwner {
     abstract val symbolProvider: KtSymbolProvider
     abstract val scopeProvider: KtScopeProvider
 

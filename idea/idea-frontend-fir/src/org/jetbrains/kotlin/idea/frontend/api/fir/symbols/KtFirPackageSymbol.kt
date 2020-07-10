@@ -9,21 +9,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.file.PsiPackageImpl
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwnerByValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
-import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.name.FqName
 
 class KtFirPackageSymbol(
     override val fqName: FqName,
     private val project: Project,
-    override val token: ValidityOwner
-) : KtPackageSymbol(), ValidityOwnerByValidityToken {
+    override val token: ValidityToken
+) : KtPackageSymbol(), ValidityTokenOwner {
     override val psi: PsiElement? by cached {
         PsiPackageImpl(PsiManager.getInstance(project), fqName.asString().replace('/', '.'))
     }

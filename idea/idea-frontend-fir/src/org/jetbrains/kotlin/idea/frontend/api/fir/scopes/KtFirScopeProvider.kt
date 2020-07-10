@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwnerByValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPackageSymbol
@@ -36,12 +36,12 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import java.util.*
 
 internal class KtFirScopeProvider(
-    override val token: ValidityOwner,
+    override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder,
     private val project: Project,
     session: FirSession,
     val firResolveState: FirModuleResolveState
-) : KtScopeProvider(), ValidityOwnerByValidityToken {
+) : KtScopeProvider(), ValidityTokenOwner {
     private val session by weakRef(session)
 
     private val memberScopeCache = IdentityHashMap<KtClassOrObjectSymbol, KtMemberScope>()
@@ -120,7 +120,7 @@ internal class KtFirScopeProvider(
     }
 }
 
-private class KtFirDelegatingScopeImpl(firScope: FirScope, builder: KtSymbolByFirBuilder, override val token: ValidityOwner) :
-    KtFirDelegatingScope(builder), ValidityOwnerByValidityToken {
+private class KtFirDelegatingScopeImpl(firScope: FirScope, builder: KtSymbolByFirBuilder, token: ValidityToken) :
+    KtFirDelegatingScope(builder, token), ValidityTokenOwner {
     override val firScope: FirScope = firScope
 }

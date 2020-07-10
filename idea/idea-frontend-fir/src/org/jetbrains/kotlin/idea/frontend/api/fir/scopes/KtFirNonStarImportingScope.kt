@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultSimpleImportingScope
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwnerByValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtNonStarImportingScope
@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirNonStarImportingScope(
     firScope: FirAbstractSimpleImportingScope,
     builder: KtSymbolByFirBuilder,
-    override val token: ValidityOwner
-) : KtFirDelegatingScope(builder), KtNonStarImportingScope, ValidityOwnerByValidityToken {
+    override val token: ValidityToken
+) : KtFirDelegatingScope(builder, token), KtNonStarImportingScope, ValidityTokenOwner {
     override val firScope: FirAbstractSimpleImportingScope = firScope
 
     @OptIn(ExperimentalStdlibApi::class)

@@ -8,20 +8,19 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwnerByValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtPackageScope
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 
 internal class KtFirPackageScope(
     override val owner: KtFirPackageSymbol,
-    override val token: ValidityOwner,
+    token: ValidityToken,
     builder: KtSymbolByFirBuilder,
     session: FirSession,
-) : KtPackageScope, KtFirDelegatingScope(builder), ValidityOwnerByValidityToken {
+) : KtPackageScope, KtFirDelegatingScope(builder, token), ValidityTokenOwner {
     override val firScope: FirScope by weakRef {
         FirPackageMemberScope(owner.fqName, session)
     }

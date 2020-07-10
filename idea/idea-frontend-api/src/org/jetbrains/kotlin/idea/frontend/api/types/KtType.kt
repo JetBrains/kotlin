@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.idea.frontend.api.types
 
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgument
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-interface KtType : ValidityOwner {
+interface KtType : ValidityTokenOwner {
     fun isEqualTo(other: KtType): Boolean
     fun isSubTypeOf(superType: KtType): Boolean
 

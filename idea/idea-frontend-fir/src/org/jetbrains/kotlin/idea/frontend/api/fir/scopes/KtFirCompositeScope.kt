@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwnerByValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.name.Name
 @OptIn(ExperimentalStdlibApi::class)
 class KtFirCompositeScope(
     override val subScopes: List<KtScope>,
-    override val token: ValidityOwner
-) : KtCompositeScope, ValidityOwnerByValidityToken {
+    override val token: ValidityToken
+) : KtCompositeScope, ValidityTokenOwner {
     override fun getAllNames(): Set<Name> = withValidityAssertion {
         buildSet {
             subScopes.flatMapTo(this) { it.getAllNames() }

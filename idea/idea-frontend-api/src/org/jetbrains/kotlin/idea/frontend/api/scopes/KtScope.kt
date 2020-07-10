@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.scopes
 
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
-interface KtScope : ValidityOwner {
+interface KtScope : ValidityTokenOwner {
     // TODO check that names are accessible
     // maybe return some kind of lazy set
     fun getAllNames(): Set<Name>

@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwnerByValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.scopes.Import
@@ -29,8 +29,8 @@ internal class KtFirStarImportingScope(
     firScope: FirAbstractStarImportingScope,
     builder: KtSymbolByFirBuilder,
     project: Project,
-    override val token: ValidityOwner,
-) : KtFirDelegatingScope(builder), KtStarImportingScope, ValidityOwnerByValidityToken {
+    token: ValidityToken,
+) : KtFirDelegatingScope(builder, token), KtStarImportingScope, ValidityTokenOwner {
     override val firScope: FirAbstractStarImportingScope = firScope
     override val isDefaultImportingScope: Boolean = withValidityAssertion { firScope is FirDefaultStarImportingScope }
     private val packageHelper = PackageIndexHelper(project)
