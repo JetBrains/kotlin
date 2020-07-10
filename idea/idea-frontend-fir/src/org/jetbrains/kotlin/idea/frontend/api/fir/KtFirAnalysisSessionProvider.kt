@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.psi.KtElement
@@ -26,9 +26,14 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
             )
         }
 
-    override fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession =
-        analysisSessionByModuleInfoCache.value.getOrPut(contextElement.getModuleInfo()) {
+    override fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession {
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+            @Suppress("DEPRECATION")
+            return KtFirAnalysisSession.createForElement(contextElement)
+        }
+        return analysisSessionByModuleInfoCache.value.getOrPut(contextElement.getModuleInfo()) {
             @Suppress("DEPRECATION")
             KtFirAnalysisSession.createForElement(contextElement)
         }
+    }
 }
