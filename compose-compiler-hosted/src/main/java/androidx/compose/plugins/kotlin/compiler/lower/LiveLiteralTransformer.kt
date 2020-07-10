@@ -76,6 +76,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
@@ -124,11 +125,15 @@ import org.jetbrains.kotlin.resolve.BindingTrace
  *      print(LiveLiterals$FooKt.`getString$arg-0$call-print$fun-Foo`())
  *    }
  *    object LiveLiterals$FooKt {
- *      var `String$arg-0$call-print$fun-Foo`: MutableState<String>? = null
+ *      var `String$arg-0$call-print$fun-Foo`: String = "Hello World"
+ *      var `State$String$arg-0$call-print$fun-Foo`: MutableState<String>? = null
  *      fun `getString$arg-0$call-print$fun-Foo`(): String {
  *        val field = this.`String$arg-0$call-print$fun-Foo`
  *        val state = if (field == null) {
- *          val tmp = liveLiteral("String$arg-0$call-print$fun-Foo", "Hello World")
+ *          val tmp = liveLiteral(
+ *              "String$arg-0$call-print$fun-Foo",
+ *              this.`String$arg-0$call-print$fun-Foo`
+ *          )
  *          this.`String$arg-0$call-print$fun-Foo` = tmp
  *          tmp
  *        } else field
@@ -225,8 +230,19 @@ open class LiveLiteralTransformer(
         val clazz = liveLiteralsClass!!
         val stateType = stateInterface.owner.typeWith(literalType).makeNullable()
         val stateGetValue = stateInterface.getPropertyGetter("value")!!
-        val field = clazz.addField(
+        val defaultValueField = clazz.addField(
             fieldName = key,
+            fieldType = literalType,
+            fieldVisibility = Visibilities.PRIVATE
+        ).apply {
+            initializer = IrExpressionBodyImpl(
+                literalValue.startOffset,
+                literalValue.endOffset,
+                literalValue
+            )
+        }
+        val stateField = clazz.addField(
+            fieldName = "State\$$key",
             fieldType = stateType,
             fieldVisibility = Visibilities.PRIVATE
         )
@@ -237,25 +253,25 @@ open class LiveLiteralTransformer(
             val thisParam = fn.dispatchReceiverParameter!!
             fn.annotations.add(irLiveLiteralInfoAnnotation(key, literalValue.startOffset))
             fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
-                // val a = field
+                // val a = stateField
                 // val b = if (a == null) {
-                //     val c = liveLiteralState("key", constValue)
-                //     field = c
+                //     val c = liveLiteralState("key", defaultValueField)
+                //     stateField = c
                 //     c
                 // } else a
                 // return b.value
-                val a = irTemporary(irGetField(irGet(thisParam), field))
+                val a = irTemporary(irGetField(irGet(thisParam), stateField))
                 val b = irIfNull(
                     type = stateType,
                     subject = irGet(a),
                     thenPart = irBlock(resultType = stateType) {
                         val liveLiteralCall = irCall(liveLiteral).apply {
                             putValueArgument(0, irString(key))
-                            putValueArgument(1, literalValue)
+                            putValueArgument(1, irGetField(irGet(thisParam), defaultValueField))
                             putTypeArgument(0, literalType)
                         }
                         val c = irTemporary(liveLiteralCall)
-                        +irSetField(irGet(thisParam), field, irGet(c))
+                        +irSetField(irGet(thisParam), stateField, irGet(c))
                         +irGet(c)
                     },
                     elsePart = irGet(a)
