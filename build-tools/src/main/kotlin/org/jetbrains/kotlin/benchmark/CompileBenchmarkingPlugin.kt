@@ -70,7 +70,7 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
                         isIgnoreExitValue = true
                         konanRun.dependsOn(this)
                         doLast {
-                            exitCodes[name] = execResult.exitValue
+                            exitCodes[name] = execResult!!.exitValue
                         }
                     }
                 }
