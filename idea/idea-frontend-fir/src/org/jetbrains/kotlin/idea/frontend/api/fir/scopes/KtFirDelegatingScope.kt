@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
@@ -22,17 +23,12 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
-internal abstract class KtFirDelegatingScope(private val builder: KtSymbolByFirBuilder) : KtScope {
+internal abstract class KtFirDelegatingScope(private val builder: KtSymbolByFirBuilder) : KtScope, ValidityOwnerByValidityToken {
     abstract val firScope: FirScope
 
-    private var allNamesCached: Set<Name>? = null
+    private val allNamesCached by cached { getCallableNames() + getClassLikeSymbolNames() }
 
-    override fun getAllNames(): Set<Name> = withValidityAssertion {
-        if (allNamesCached == null) {
-            allNamesCached = getCallableNames() + getClassLikeSymbolNames()
-        }
-        allNamesCached!!
-    }
+    override fun getAllNames(): Set<Name> = allNamesCached
 
     override fun getCallableNames(): Set<Name> = withValidityAssertion {
         firScope.getCallableNames()
