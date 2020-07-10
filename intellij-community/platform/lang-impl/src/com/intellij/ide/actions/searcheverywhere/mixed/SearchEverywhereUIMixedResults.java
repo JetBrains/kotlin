@@ -97,6 +97,7 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
     SimpleTextAttributes.STYLE_SMALLER, JBUI.CurrentTheme.BigPopup.listTitleLabelForeground());
 
   private final List<? extends SearchEverywhereContributor<?>> myShownContributors;
+  private final List<String> prioritizedContributors = new ArrayList<>();
 
   private SearchListModel myListModel;
 
@@ -140,6 +141,12 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
                                 namesMap::get, c -> null)
                            : null;
 
+    prioritizedContributors.add("CommandsContributor");
+    prioritizedContributors.add(TopHitSEContributor.class.getSimpleName());
+    if (Registry.is("search.everywhere.recent.at.top")) {
+      prioritizedContributors.add(RecentFilesSEContributor.class.getSimpleName());
+    }
+
     init();
 
     initSearchActions();
@@ -173,36 +180,21 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
   @Override
   public JBList<Object> createList() {
     myListModel = new SearchListModel();
-    Comparator<SearchEverywhereFoundElementInfo> commandsComparator = (element1, element2) -> {
-      if (element1.getContributor() == myStubCommandContributor && element2.getContributor() == myStubCommandContributor) {
-        SearchEverywhereCommandInfo command1 = (SearchEverywhereCommandInfo)element1.getElement();
-        SearchEverywhereCommandInfo command2 = (SearchEverywhereCommandInfo)element2.getElement();
 
-        return command1.getCommand().compareTo(command2.getCommand());
-      }
+    Map <String, Integer> priorities = new HashMap<>();
+    for (int i = 0; i < prioritizedContributors.size(); i++) {
+      priorities.put(prioritizedContributors.get(i), prioritizedContributors.size() - i);
+    }
 
-      return element1.getContributor() == myStubCommandContributor ? 1
-             : element2.getContributor() == myStubCommandContributor ? -1 : 0;
+    Comparator<SearchEverywhereFoundElementInfo> prioritizedContributorsComparator = (element1, element2) -> {
+      int firstElementPriority = priorities.getOrDefault(element1.getContributor().getSearchProviderId(), 0);
+      int secondElementPriority = priorities.getOrDefault(element2.getContributor().getSearchProviderId(), 0);
+      return Integer.compare(firstElementPriority, secondElementPriority);
     };
 
-    Comparator<SearchEverywhereFoundElementInfo> recentFilesComparator = (element1, element2) -> {
-      boolean firstIsRecent = element1.getContributor() instanceof RecentFilesSEContributor;
-      boolean secondIsRecent = element2.getContributor() instanceof RecentFilesSEContributor;
-
-      if (firstIsRecent && secondIsRecent) {
-        return Integer.compare(element1.getPriority(), element2.getPriority());
-      }
-
-      if (!firstIsRecent && !secondIsRecent) {
-        return 0;
-      }
-
-      return firstIsRecent ? 1 : -1;
-    };
-
-    Comparator<SearchEverywhereFoundElementInfo> comparator = commandsComparator;
-    if (Registry.is("search.everywhere.recent.at.top")) comparator = comparator.thenComparing(recentFilesComparator);
-    comparator = comparator.thenComparing(SearchEverywhereFoundElementInfo.COMPARATOR).reversed();
+    Comparator<SearchEverywhereFoundElementInfo> comparator = prioritizedContributorsComparator
+      .thenComparing(SearchEverywhereFoundElementInfo.COMPARATOR)
+      .reversed();
     myListModel.setElementsComparator(comparator);
 
     addListDataListener(myListModel);
