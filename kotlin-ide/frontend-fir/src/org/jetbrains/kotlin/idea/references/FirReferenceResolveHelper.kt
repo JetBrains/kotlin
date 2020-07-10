@@ -86,8 +86,16 @@ internal object FirReferenceResolveHelper {
         }
     }
 
-    private fun getPackageSymbolFor(expression: KtSimpleNameExpression, symbolBuilder: KtSymbolByFirBuilder): KtFirPackageSymbol? {
-        val fqName = when (val qualified = expression.getQualifiedExpressionForSelector()) {
+    private fun getPackageSymbolFor(
+        expression: KtSimpleNameExpression,
+        symbolBuilder: KtSymbolByFirBuilder,
+        forQualifiedType: Boolean
+    ): KtFirPackageSymbol? {
+        val qualified = when {
+            forQualifiedType -> expression.parent?.takeIf { it is KtUserType && it.referenceExpression === expression }
+            else -> expression.getQualifiedExpressionForSelector()
+        }
+        val fqName = when (qualified) {
             null -> FqName(expression.getReferencedName())
             else -> {
                 qualified
@@ -96,9 +104,27 @@ internal object FirReferenceResolveHelper {
                     .let(::FqName)
             }
         }
-
         return symbolBuilder.createPackageSymbolIfOneExists(fqName)
     }
+
+    private fun KtSimpleNameExpression.isPartOfQualifiedExpression(): Boolean {
+        var parent = parent
+        while (parent is KtDotQualifiedExpression) {
+            if (parent.selectorExpression !== this) return true
+            parent = parent.parent
+        }
+        return false
+    }
+
+    private fun KtSimpleNameExpression.isPartOfUserTypeRefQualifier(): Boolean {
+        var parent = parent
+        while (parent is KtUserType) {
+            if (parent.referenceExpression !== this) return true
+            parent = parent.parent
+        }
+        return false
+    }
+
 
     internal fun resolveSimpleNameReference(
         ref: KtFirSimpleNameReference,
@@ -124,6 +150,9 @@ internal object FirReferenceResolveHelper {
                 return listOfNotNull(calleeReference.toTargetSymbol(session, symbolBuilder))
             }
             is FirResolvedTypeRef -> {
+                if (expression.isPartOfUserTypeRefQualifier()) {
+                    return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = true))
+                }
                 return listOfNotNull(fir.toTargetSymbol(session, symbolBuilder))
             }
             is FirResolvedQualifier -> {
@@ -150,14 +179,8 @@ internal object FirReferenceResolveHelper {
                 return listOfNotNull(type.toTargetSymbol(session, symbolBuilder))
             }
             is FirResolvedImport -> {
-                var parent = expression.parent
-                while (parent is KtDotQualifiedExpression) {
-                    if (parent.selectorExpression !== expression) {
-                        // Special: package reference in the middle of import directive
-                        // import a.<caret>b.c.SomeClass
-                        return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder)?.let { return listOf(it) })
-                    }
-                    parent = parent.parent
+                if (expression.isPartOfQualifiedExpression()) {
+                    return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = false))
                 }
 
                 val classId = fir.resolvedClassId
@@ -181,7 +204,7 @@ internal object FirReferenceResolveHelper {
             is FirFile -> {
                 if (expression.getNonStrictParentOfType<KtPackageDirective>() != null) {
                     // Special: package reference in the middle of package directive
-                    return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder))
+                    return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = false))
                 }
                 return listOf(symbolBuilder.buildSymbol(fir))
             }
