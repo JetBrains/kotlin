@@ -11,6 +11,7 @@ import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.util.containers.reverse
 import com.jetbrains.kotlin.structuralsearch.binaryExprOpName
 import com.jetbrains.kotlin.structuralsearch.getCommentText
+import org.jetbrains.eval4j.VOID_VALUE
 import org.jetbrains.kotlin.fir.builder.toUnaryName
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
@@ -819,7 +820,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.match(annotationEntry.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(annotationEntry.typeArgumentList, other.typeArgumentList)
                 && myMatchingVisitor.match(annotationEntry.valueArgumentList, other.valueArgumentList)
-                && myMatchingVisitor.match(annotationEntry.useSiteTarget, other.useSiteTarget)
+                && matchTextOrVariable(annotationEntry.useSiteTarget, other.useSiteTarget)
     }
 
     override fun visitAnnotatedExpression(expression: KtAnnotatedExpression) {
