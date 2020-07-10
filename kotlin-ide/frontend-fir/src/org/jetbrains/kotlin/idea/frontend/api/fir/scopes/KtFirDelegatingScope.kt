@@ -32,7 +32,7 @@ internal abstract class KtFirDelegatingScope(
 
     abstract val firScope: FirScope
 
-    private val allNamesCached by cached(token) {
+    private val allNamesCached by cached {
         getCallableNames() + getClassLikeSymbolNames()
     }
 
