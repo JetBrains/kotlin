@@ -12,6 +12,17 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 
+/**
+ * The entry point into all frontend-related work. Has the following contracts:
+ * - Should not be accessed from event dispatch thread
+ * - Should not be accessed outside read action
+ * - Should not be leaked outside read action it was created in
+ * - All entities retrieved from analysis facade should not be leaked outside the read action KtAnalysisSession was created in
+ *
+ * To pass a symbol from one read action to another use [KtSymbolPointer] which can be created from a symbol by [KtSymbol.createPointer]
+ *
+ * To create analysis session consider using [analyze]
+ */
 abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTokenOwner {
     abstract val symbolProvider: KtSymbolProvider
     abstract val scopeProvider: KtScopeProvider
