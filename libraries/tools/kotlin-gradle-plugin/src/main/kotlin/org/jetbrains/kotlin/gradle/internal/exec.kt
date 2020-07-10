@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import jetbrains.buildServer.messages.serviceMessages.ServiceMessageParserCallback
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.process.ExecResult
 import org.gradle.process.internal.ExecAction
 import org.gradle.process.internal.ExecActionFactory
@@ -67,24 +69,16 @@ internal fun Project.execWithProgress(description: String, readStdErr: Boolean =
     }
 }
 
-internal fun Project.execWithErrorLogger(description: String, body: (ExecAction) -> Unit): ExecResult {
+internal fun Project.execWithErrorLogger(
+    description: String,
+    body: (ExecAction, ProgressLogger) -> TeamCityMessageCommonClient
+): ExecResult {
     this as ProjectInternal
 
     val exec = services.get(ExecActionFactory::class.java).newExecAction()
-    body(exec)
     return project!!.operation(description) {
         progress(description)
-        val client = TeamCityMessageCommonClient(logger, this)
-        exec.standardOutput = TCServiceMessageOutputStreamHandler(
-            client = client,
-            onException = { },
-            logger = logger
-        )
-        exec.errorOutput = TCServiceMessageOutputStreamHandler(
-            client = client,
-            onException = { },
-            logger = logger
-        )
+        val client = body(exec, this)
         exec.isIgnoreExitValue = true
         val result = exec.execute()
         if (result.exitValue != 0) {

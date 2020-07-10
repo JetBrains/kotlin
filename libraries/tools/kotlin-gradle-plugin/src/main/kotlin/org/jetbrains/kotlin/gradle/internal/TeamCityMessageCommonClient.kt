@@ -14,11 +14,12 @@ import org.jetbrains.kotlin.gradle.utils.clearAnsiColor
 import java.text.ParseException
 
 class TeamCityMessageCommonClient(
-    private val log: Logger,
-    private val progressLogger: ProgressLogger
+    internal val log: Logger
 ) : ServiceMessageParserCallback {
 
     var afterMessage = false
+
+    var progressLogger: ProgressLogger? = null
 
     private val errors = mutableListOf<String>()
 
@@ -49,7 +50,7 @@ class TeamCityMessageCommonClient(
 
     private fun printMessage(text: String, type: LogType?) {
         val value = text.trimEnd()
-        progressLogger.progress(value)
+        progressLogger?.progress(value)
 
         val actualText = if (afterMessage)
             when {
