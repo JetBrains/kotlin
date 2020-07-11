@@ -78,6 +78,8 @@ abstract class KotlinBasePluginWrapper(
         kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
         project.createKotlinExtension(projectExtensionClass).apply {
+            coreLibrariesVersion = kotlinPluginVersion
+
             fun kotlinSourceSetContainer(factory: NamedDomainObjectFactory<KotlinSourceSet>) =
                 project.container(KotlinSourceSet::class.java, factory)
 

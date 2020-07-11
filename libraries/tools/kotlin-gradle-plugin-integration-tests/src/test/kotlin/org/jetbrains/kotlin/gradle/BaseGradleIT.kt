@@ -28,7 +28,7 @@ abstract class BaseGradleIT {
 
     protected var workingDir = File(".")
 
-    protected open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
+    internal open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
 
     open val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.None
