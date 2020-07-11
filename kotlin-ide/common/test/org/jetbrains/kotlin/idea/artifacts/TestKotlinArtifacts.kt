@@ -128,9 +128,12 @@ object TestKotlinArtifacts : KotlinArtifacts() {
     private const val artifactName = "KotlinPlugin"
 
     private val artifactDirectory: File by lazy {
-        val result = File(KotlinTestUtils.getHomeDirectory(), "../out/artifacts/$artifactName")
+        val result = run{
+            val file = File(KotlinTestUtils.getHomeDirectory(), "../out/artifacts/$artifactName")
+            if (file.exists()) file else File(KotlinTestUtils.getHomeDirectory(), "../out/tests/project-artifacts/$artifactName")
+        }
         if (!result.exists()) {
-            throw IllegalStateException("Artifact '$artifactName' doesn't exist")
+            throw IllegalStateException("Artifact '$artifactName' at ${result.absolutePath} doesn't exist")
         }
         return@lazy result
     }
