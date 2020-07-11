@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.interpreter.checker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.builtins.compileTimeAnnotation
 import org.jetbrains.kotlin.ir.interpreter.builtins.contractsDslAnnotation
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 
 class IrCompileTimeChecker(
-    containingDeclaration: IrElement? = null, private val mode: EvaluationMode = EvaluationMode.FULL
+    containingDeclaration: IrElement? = null, private val mode: EvaluationMode = EvaluationMode.WITH_ANNOTATIONS
 ) : IrElementVisitor<Boolean, Nothing?> {
     private val visitedStack = mutableListOf<IrElement>().apply { if (containingDeclaration != null) add(containingDeclaration) }
 
@@ -31,8 +32,9 @@ class IrCompileTimeChecker(
     private fun IrDeclaration.isContract() = isMarkedWith(contractsDslAnnotation)
     private fun IrDeclaration.isMarkedAsEvaluateIntrinsic() = isMarkedWith(evaluateIntrinsicAnnotation)
     private fun IrDeclaration.isMarkedAsCompileTime(expression: IrCall? = null): Boolean {
-        if (mode == EvaluationMode.FULL) {
-            return isMarkedWith(compileTimeAnnotation) ||
+        if (mode == EvaluationMode.WITH_ANNOTATIONS) {
+            return isMarkedWith(compileTimeAnnotation) || this.origin == IrBuiltIns.BUILTIN_OPERATOR ||
+                    (this is IrSimpleFunction && this.isOperator && this.name.asString() == "invoke") ||
                     (this is IrSimpleFunction && this.isFakeOverride && this.overriddenSymbols.any { it.owner.isMarkedAsCompileTime() }) ||
                     this.parentClassOrNull?.fqNameWhenAvailable?.asString() in compileTimeTypeAliases
         }

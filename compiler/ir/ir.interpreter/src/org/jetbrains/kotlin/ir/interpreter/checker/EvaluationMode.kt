@@ -6,5 +6,5 @@
 package org.jetbrains.kotlin.ir.interpreter.checker
 
 enum class EvaluationMode {
-    FULL, ONLY_BUILTINS
+    FULL, WITH_ANNOTATIONS, ONLY_BUILTINS
 }
