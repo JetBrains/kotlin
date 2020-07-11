@@ -10,10 +10,10 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.configureDefaultVersionsResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
@@ -36,7 +36,7 @@ open class KotlinJsPlugin(
         checkGradleCompatibility()
 
         val kotlinExtension = project.kotlinExtension as KotlinJsProjectExtension
-        configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
+        customizeKotlinDependencies(project)
 
         kotlinExtension.apply {
             irPreset = KotlinJsIrSingleTargetPreset(project, kotlinPluginVersion)

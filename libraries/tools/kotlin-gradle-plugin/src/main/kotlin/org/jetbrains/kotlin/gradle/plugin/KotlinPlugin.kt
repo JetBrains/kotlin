@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.*
-import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.api.SourceKind
+import com.android.build.gradle.api.*
 import org.gradle.api.*
-import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer
 import org.gradle.api.artifacts.maven.MavenResolver
 import org.gradle.api.attributes.Usage
@@ -32,8 +29,9 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
+import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -412,7 +410,7 @@ internal abstract class AbstractKotlinPlugin(
 
         rewriteMppDependenciesInPom(target)
 
-        configureProjectGlobalSettings(project, kotlinPluginVersion)
+        configureProjectGlobalSettings(project)
         registry.register(KotlinModelBuilder(kotlinPluginVersion, null))
 
         project.components.addAll(target.components)
@@ -452,8 +450,8 @@ internal abstract class AbstractKotlinPlugin(
     }
 
     companion object {
-        fun configureProjectGlobalSettings(project: Project, kotlinPluginVersion: String) {
-            configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
+        fun configureProjectGlobalSettings(project: Project) {
+            customizeKotlinDependencies(project)
             configureClassInspectionForIC(project)
             project.setupGeneralKotlinExtensionParameters()
         }
@@ -590,17 +588,6 @@ internal abstract class AbstractKotlinPlugin(
     }
 }
 
-internal fun configureDefaultVersionsResolutionStrategy(project: Project, kotlinPluginVersion: String) {
-    project.configurations.all { configuration ->
-        // Use the API introduced in Gradle 4.4 to modify the dependencies directly before they are resolved:
-        configuration.withDependencies { dependencySet ->
-            dependencySet.filterIsInstance<ExternalDependency>()
-                .filter { it.group == "org.jetbrains.kotlin" && it.version.isNullOrEmpty() }
-                .forEach { it.version { constraint -> constraint.require(kotlinPluginVersion) } }
-        }
-    }
-}
-
 internal open class KotlinPlugin(
     kotlinPluginVersion: String,
     registry: ToolingModelBuilderRegistry
@@ -703,7 +690,7 @@ internal open class KotlinAndroidPlugin(
 
         applyUserDefinedAttributes(androidTarget)
 
-        configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
+        customizeKotlinDependencies(project)
 
         registry.register(KotlinModelBuilder(kotlinPluginVersion, androidTarget))
 

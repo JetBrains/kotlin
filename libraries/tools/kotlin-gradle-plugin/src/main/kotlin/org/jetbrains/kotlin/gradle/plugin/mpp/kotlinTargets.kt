@@ -21,6 +21,7 @@ import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.ConfigureUtil
 import org.gradle.util.WrapUtil
@@ -98,7 +99,10 @@ abstract class AbstractKotlinTarget(
                         ?: project.configurations.create(kotlinUsageContext.name).also { configuration ->
                             configuration.isCanBeConsumed = false
                             configuration.isCanBeResolved = false
-                            configuration.dependencies.addAll(kotlinUsageContext.dependencies)
+                            /** Add dependencies lazily to avoid freezing the content of the configuration held by [kotlinUsageContext] */
+                            configuration.withDependencies { dependencies ->
+                                dependencies.addAll(kotlinUsageContext.dependencies)
+                            }
                             configuration.dependencyConstraints.addAll(kotlinUsageContext.dependencyConstraints)
                             configuration.artifacts.addAll(kotlinUsageContext.artifacts)
 

@@ -47,6 +47,8 @@ open class KotlinProjectExtension : KotlinSourceSetContainer {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
 
+    lateinit var coreLibrariesVersion: String
+
     var explicitApi: ExplicitApiMode? = null
 
     fun explicitApi() {
