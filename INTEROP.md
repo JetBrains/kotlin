@@ -131,7 +131,7 @@ are included into the bindings.
 
 The globs are applied to the header paths relative to the appropriate include
 path elements, e.g. `time.h` or `curl/curl.h`. So if the library is usually
-included with `#include <SomeLbrary/Header.h>`, then it would probably be
+included with `#include <SomeLibrary/Header.h>`, then it would probably be
 correct to filter headers with
 
 <div class="sample" markdown="1" theme="idea" mode="c">
