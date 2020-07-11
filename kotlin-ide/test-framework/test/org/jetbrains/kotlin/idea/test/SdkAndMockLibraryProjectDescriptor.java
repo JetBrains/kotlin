@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.KotlinCompilerStandalone;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 
@@ -43,19 +44,19 @@ import static java.util.Collections.emptyList;
 public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescriptor {
     public static final String MOCK_LIBRARY_NAME = "myKotlinLib";
 
-    private final String sourcesPath;
     private final boolean withSources;
     private final boolean withRuntime;
     private final boolean isJsLibrary;
     private final boolean allowKotlinPackage;
+    private final String sourcesPath;
     private final List<String> classpath;
 
-    public SdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources) {
+    public SdkAndMockLibraryProjectDescriptor(@NotNull String sourcesPath, boolean withSources) {
         this(sourcesPath, withSources, false, false, false);
     }
 
     public SdkAndMockLibraryProjectDescriptor(
-            String sourcesPath,
+            @NotNull String sourcesPath,
             boolean withSources,
             boolean withRuntime,
             boolean isJsLibrary,
@@ -65,18 +66,18 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
     }
 
     public SdkAndMockLibraryProjectDescriptor(
-            String sourcesPath,
+            @NotNull String sourcesPath,
             boolean withSources,
             boolean withRuntime,
             boolean isJsLibrary,
             boolean allowKotlinPackage,
-            List<String> classpath
+            @NotNull List<String> classpath
     ) {
-        this.sourcesPath = sourcesPath;
         this.withSources = withSources;
         this.withRuntime = withRuntime;
         this.isJsLibrary = isJsLibrary;
         this.allowKotlinPackage = allowKotlinPackage;
+        this.sourcesPath = sourcesPath;
         this.classpath = classpath;
     }
 
@@ -138,23 +139,17 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         SdkAndMockLibraryProjectDescriptor that = (SdkAndMockLibraryProjectDescriptor) o;
-
-        if (withSources != that.withSources) return false;
-        if (withRuntime != that.withRuntime) return false;
-        if (isJsLibrary != that.isJsLibrary) return false;
-        if (!sourcesPath.equals(that.sourcesPath)) return false;
-
-        return true;
+        return withSources == that.withSources &&
+               withRuntime == that.withRuntime &&
+               isJsLibrary == that.isJsLibrary &&
+               allowKotlinPackage == that.allowKotlinPackage &&
+               sourcesPath.equals(that.sourcesPath) &&
+               classpath.equals(that.classpath);
     }
 
     @Override
     public int hashCode() {
-        int result = sourcesPath.hashCode();
-        result = 31 * result + (withSources ? 1 : 0);
-        result = 31 * result + (withRuntime ? 1 : 0);
-        result = 31 * result + (isJsLibrary ? 1 : 0);
-        return result;
+        return Objects.hash(withSources, withRuntime, isJsLibrary, allowKotlinPackage, sourcesPath, classpath);
     }
 }
