@@ -72,8 +72,9 @@ class DeclarationCheckersDiagnosticComponent(
         reporter: DiagnosticReporter
     ) {
         for (checker in this) {
-            if (!checker.isExtended || checkExtended)
+            if (!checker.isExtended || checkExtended) {
                 checker.check(declaration, context, reporter)
+            }
         }
     }
 }
