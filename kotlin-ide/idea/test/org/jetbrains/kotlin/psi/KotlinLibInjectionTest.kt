@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.html.HTMLLanguage
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.testFramework.LightProjectDescriptor
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
+import java.io.File
+import java.net.URLClassLoader
 
 @RunWith(JUnit38ClassRunner::class)
 class KotlinLibInjectionTest : AbstractInjectionTest() {
