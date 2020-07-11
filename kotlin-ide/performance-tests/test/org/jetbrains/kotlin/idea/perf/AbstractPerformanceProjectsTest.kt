@@ -587,7 +587,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             configureInspections(it, project, project)
         }
         try {
-            return highlightFile {
+            return project.highlightFile {
                 val isWarmUp = note == WARM_UP
                 var highlightInfos: List<HighlightInfo> = emptyList()
                 performanceTest<EditorFile, List<HighlightInfo>> {
@@ -621,9 +621,9 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         }
     }
 
-    fun <T> highlightFile(block: () -> T): T {
+    internal fun <T> Project.highlightFile(block: () -> T): T {
         var value: T? = null
-        IdentifierHighlighterPassFactory.doWithHighlightingEnabled {
+        IdentifierHighlighterPassFactory.doWithHighlightingEnabled(this, this) {
             value = block()
         }
         return value!!

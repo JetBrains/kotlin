@@ -318,7 +318,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
         replaceWithCustomHighlighter()
 
-        highlightFile {
+        project.highlightFile {
             val testName = "fileAnalysis ${notePrefix(note)}${simpleFilename(fileName)}"
             val extraStats = Stats("${stats.name} $testName")
             val extraTimingsNs = mutableListOf<Map<String, Any>?>()
