@@ -146,11 +146,13 @@ public abstract class CompletionPhase implements Disposable {
         .submit(ourExecutor);
     }
 
-    private static void loadContributorsOutsideEdt(Editor editor, PsiFile file) {
+    @ApiStatus.Internal
+    public static void loadContributorsOutsideEdt(Editor editor, PsiFile file) {
       CompletionContributor.forLanguage(PsiUtilCore.getLanguageAtOffset(file, editor.getCaretModel().getOffset()));
     }
 
-    private static boolean shouldSkipAutoPopup(Editor editor, PsiFile psiFile) {
+    @ApiStatus.Internal
+    public static boolean shouldSkipAutoPopup(Editor editor, PsiFile psiFile) {
       int offset = editor.getCaretModel().getOffset();
       int psiOffset = Math.max(0, offset - 1);
 
