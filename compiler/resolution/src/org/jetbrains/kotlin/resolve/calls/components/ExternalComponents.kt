@@ -28,6 +28,10 @@ interface KotlinResolutionStatelessCallbacks {
     fun isOperatorCall(kotlinCall: KotlinCall): Boolean
     fun isSuperOrDelegatingConstructorCall(kotlinCall: KotlinCall): Boolean
     fun isHiddenInResolution(
+        descriptor: DeclarationDescriptor, kotlinCallArgument: KotlinCallArgument, resolutionCallbacks: KotlinResolutionCallbacks
+    ): Boolean
+
+    fun isHiddenInResolution(
         descriptor: DeclarationDescriptor, kotlinCall: KotlinCall, resolutionCallbacks: KotlinResolutionCallbacks
     ): Boolean
 

@@ -6535,6 +6535,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedHidden.kt");
         }
 
+        @TestMetadata("deprecatedHiddenOnCallableReferenceArgument.kt")
+        public void testDeprecatedHiddenOnCallableReferenceArgument() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedHiddenOnCallableReferenceArgument.kt");
+        }
+
         @TestMetadata("deprecatedInheritance.kt")
         public void testDeprecatedInheritance() throws Exception {
             runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedInheritance.kt");
@@ -6675,6 +6680,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             @TestMetadata("deprecatedSinceKotlinDeclaration.kt")
             public void testDeprecatedSinceKotlinDeclaration() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinDeclaration.kt");
+            }
+
+            @TestMetadata("deprecatedSinceKotlinHiddenOnReferenceArgument.kt")
+            public void testDeprecatedSinceKotlinHiddenOnReferenceArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinHiddenOnReferenceArgument.kt");
             }
 
             @TestMetadata("deprecatedSinceKotlinOutsideKotlinPackage.kt")

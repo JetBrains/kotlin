@@ -58,7 +58,7 @@ class PostponedArgumentsAnalyzer(
                 )
 
             is ResolvedCallableReferenceAtom ->
-                callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), argument, diagnosticsHolder)
+                callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), argument, diagnosticsHolder, resolutionCallbacks)
 
             is ResolvedCollectionLiteralAtom -> TODO("Not supported")
 
