@@ -8,13 +8,7 @@ package org.jetbrains.kotlin.ir.interpreter.checker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.interpreter.builtins.compileTimeAnnotation
-import org.jetbrains.kotlin.ir.interpreter.builtins.contractsDslAnnotation
-import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
-import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
-import org.jetbrains.kotlin.ir.interpreter.isUnsigned
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -24,48 +18,6 @@ class IrCompileTimeChecker(
     containingDeclaration: IrElement? = null, private val mode: EvaluationMode = EvaluationMode.WITH_ANNOTATIONS
 ) : IrElementVisitor<Boolean, Nothing?> {
     private val visitedStack = mutableListOf<IrElement>().apply { if (containingDeclaration != null) add(containingDeclaration) }
-
-    private val compileTimeTypeAliases = setOf(
-        "java.lang.StringBuilder", "java.lang.IllegalArgumentException", "java.util.NoSuchElementException"
-    )
-
-    private fun IrDeclaration.isContract() = isMarkedWith(contractsDslAnnotation)
-    private fun IrDeclaration.isMarkedAsEvaluateIntrinsic() = isMarkedWith(evaluateIntrinsicAnnotation)
-    private fun IrDeclaration.isMarkedAsCompileTime(expression: IrCall? = null): Boolean {
-        if (mode == EvaluationMode.WITH_ANNOTATIONS) {
-            return isMarkedWith(compileTimeAnnotation) || this.origin == IrBuiltIns.BUILTIN_OPERATOR ||
-                    (this is IrSimpleFunction && this.isOperator && this.name.asString() == "invoke") ||
-                    (this is IrSimpleFunction && this.isFakeOverride && this.overriddenSymbols.any { it.owner.isMarkedAsCompileTime() }) ||
-                    this.parentClassOrNull?.fqNameWhenAvailable?.asString() in compileTimeTypeAliases
-        }
-
-        val parent = this.parentClassOrNull
-        val parentType = parent?.defaultType
-        return when {
-            parentType?.isPrimitiveType() == true -> (this as IrFunction).name.asString() !in setOf("inc", "dec", "rangeTo", "hashCode")
-            parentType?.isString() == true -> (this as IrDeclarationWithName).name.asString() !in setOf("subSequence", "hashCode")
-            parentType?.isAny() == true -> (this as IrFunction).name.asString() == "toString" && expression?.dispatchReceiver !is IrGetObjectValue
-            parent?.isObject == true -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsignedType() } == true
-            parentType?.isUnsignedType() == true && (this is IrConstructor) -> true
-            else -> false
-        }
-    }
-
-    private fun IrDeclaration.isMarkedWith(annotation: FqName): Boolean {
-        if (this is IrClass && this.isCompanion) return false
-        if (this.hasAnnotation(annotation)) return true
-        return (this.parent as? IrClass)?.isMarkedWith(annotation) ?: false
-    }
-
-    private fun IrProperty?.isCompileTime(): Boolean {
-        if (this == null) return false
-        if (this.isConst) return true
-        if (this.isMarkedAsCompileTime()) return true
-
-        val backingField = this.backingField
-        val backingFieldExpression = backingField?.initializer?.expression as? IrGetValue
-        return backingFieldExpression?.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
-    }
 
     private fun IrElement.asVisited(block: () -> Boolean): Boolean {
         visitedStack += this
@@ -86,26 +38,21 @@ class IrCompileTimeChecker(
 
     private fun visitConstructor(expression: IrFunctionAccessExpression): Boolean {
         return when {
-            expression.symbol.owner.isMarkedAsEvaluateIntrinsic() -> true
             !visitValueParameters(expression, null) -> false
-            else -> expression.symbol.owner.isMarkedAsCompileTime()
+            else -> mode.canEvaluateFunction(expression.symbol.owner)
         }
     }
 
     override fun visitCall(expression: IrCall, data: Nothing?): Boolean {
-        if (expression.symbol.owner.isContract()) return false
+        val owner = expression.symbol.owner
+        if (!mode.canEvaluateFunction(owner, expression)) return false
 
-        val property = (expression.symbol.owner as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
-        if (expression.symbol.owner.isMarkedAsCompileTime(expression) || property.isCompileTime()) {
-            val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
-            val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
-            if (!visitValueParameters(expression, null)) return false
-            val bodyComputable = if (expression.symbol.owner.isLocal) expression.symbol.owner.body?.accept(this, null) ?: true else true
+        val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
+        val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
+        if (!visitValueParameters(expression, null)) return false
+        val bodyComputable = if (mode.canEvaluateBody(owner)) owner.body?.accept(this, null) ?: true else true
 
-            return dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
-        }
-
-        return false
+        return dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
     }
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): Boolean {
@@ -206,13 +153,13 @@ class IrCompileTimeChecker(
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): Boolean {
         return expression.asVisited {
-            expression.symbol.owner.isMarkedAsCompileTime() && expression.symbol.owner.body?.accept(this, data) == true
+            mode.canEvaluateFunction(expression.symbol.owner) && expression.symbol.owner.body?.accept(this, data) == true
         }
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?): Boolean {
         val isLambda = expression.origin == IrStatementOrigin.LAMBDA || expression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION
-        val isCompileTime = expression.function.isMarkedAsCompileTime()
+        val isCompileTime = mode.canEvaluateFunction(expression.function)
         return expression.function.asVisited {
             if (isLambda || isCompileTime) expression.function.body?.accept(this, data) == true else false
         }
