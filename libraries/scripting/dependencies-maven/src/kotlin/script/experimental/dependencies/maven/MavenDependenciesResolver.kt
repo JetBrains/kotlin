@@ -21,6 +21,7 @@ import kotlin.script.experimental.dependencies.impl.makeResolveFailureResult
 import kotlin.script.experimental.dependencies.impl.toRepositoryUrlOrNull
 import kotlin.script.experimental.dependencies.maven.impl.AetherResolveSession
 import kotlin.script.experimental.dependencies.maven.impl.mavenCentral
+import kotlin.script.experimental.dependencies.impl.dependencyScopes
 
 
 class MavenRepositoryCoordinates(
@@ -62,7 +63,12 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         val artifactId = artifactCoordinates.toMavenArtifact()!!
 
         try {
-            val deps = AetherResolveSession(localRepo, remoteRepositories()).resolve(artifactId, JavaScopes.RUNTIME)
+            val dependencyScopes = options.dependencyScopes ?: listOf(JavaScopes.COMPILE, JavaScopes.RUNTIME)
+            val deps = AetherResolveSession(
+                localRepo, remoteRepositories()
+            ).resolve(
+                artifactId, dependencyScopes.joinToString(",")
+            )
             if (deps != null)
                 return ResultWithDiagnostics.Success(deps.map { it.file })
         } catch (e: DependencyResolutionException) {

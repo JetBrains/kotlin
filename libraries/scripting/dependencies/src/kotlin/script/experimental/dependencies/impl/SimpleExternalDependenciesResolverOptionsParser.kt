@@ -9,7 +9,7 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 
 private val nameRegex = Regex("^[^\\S\\r\\n]*([a-zA-Z][a-zA-Z0-9-_]*)\\b")
-private val valueRegex = Regex("^[^\\S\\r\\n]*([a-zA-Z0-9-_]+)\\b")
+private val valueRegex = Regex("^[^\\S\\r\\n]*([a-zA-Z0-9-_,]+)\\b")
 private val equalsRegex = Regex("^[^\\S\\r\\n]*=")
 
 /**
