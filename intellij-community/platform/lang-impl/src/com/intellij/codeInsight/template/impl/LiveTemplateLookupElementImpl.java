@@ -7,6 +7,8 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class LiveTemplateLookupElementImpl extends LiveTemplateLookupElement {
   private final TemplateImpl myTemplate;
 
@@ -40,5 +42,18 @@ public class LiveTemplateLookupElementImpl extends LiveTemplateLookupElement {
     context.getDocument().deleteString(context.getStartOffset(), context.getTailOffset());
     context.setAddCompletionChar(false);
     TemplateManager.getInstance(context.getProject()).startTemplate(context.getEditor(), template);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    LiveTemplateLookupElementImpl element = (LiveTemplateLookupElementImpl)o;
+    return Objects.equals(myTemplate, element.myTemplate);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(myTemplate);
   }
 }
