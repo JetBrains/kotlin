@@ -4478,6 +4478,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                         runTest("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/notAbstractClass.kt");
                     }
 
+                    @TestMetadata("notWritableAbstractSuperclass.kt")
+                    public void testNotWritableAbstractSuperclass() throws Exception {
+                        runTest("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/notWritableAbstractSuperclass.kt");
+                    }
+
                     @TestMetadata("otherExplicitReceiver.kt")
                     public void testOtherExplicitReceiver() throws Exception {
                         runTest("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/otherExplicitReceiver.kt");
