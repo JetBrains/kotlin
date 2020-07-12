@@ -148,13 +148,21 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             receiverTypeInfo = TypeInfo(receiverType, Variance.IN_VARIANCE).ofThis()
         }
 
-        if (!receiverType.isAbstract() && TypeUtils.getAllSupertypes(receiverType).all { !it.isAbstract() }) return null
+        val project = originalExpression.project
+        if (!receiverType.isAbstract() && TypeUtils.getAllSupertypes(receiverType).none { it.isAbstract() && it.canRefactor(project) }) {
+            return null
+        }
 
         return mainCallable.copy(
             receiverTypeInfo = receiverTypeInfo,
             possibleContainers = emptyList(),
             modifierList = KtPsiFactory(originalExpression).createModifierList(KtTokens.ABSTRACT_KEYWORD)
         )
+    }
+
+    private fun KotlinType.canRefactor(project: Project): Boolean {
+        val declarationDescriptor = constructor.declarationDescriptor ?: return false
+        return DescriptorToSourceUtilsIde.getAnyDeclaration(project, declarationDescriptor)?.canRefactor() == true
     }
 
     protected fun getCallableWithReceiverInsideExtension(

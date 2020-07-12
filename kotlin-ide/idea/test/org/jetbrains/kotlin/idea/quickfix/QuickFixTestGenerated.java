@@ -4051,6 +4051,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                         runTest("testData/quickfix/createFromUsage/createFunction/call/abstract/notAbstractClass.kt");
                     }
 
+                    @TestMetadata("notWritableAbstractSuperclass.kt")
+                    public void testNotWritableAbstractSuperclass() throws Exception {
+                        runTest("testData/quickfix/createFromUsage/createFunction/call/abstract/notWritableAbstractSuperclass.kt");
+                    }
+
                     @TestMetadata("otherExplicitReceiver.kt")
                     public void testOtherExplicitReceiver() throws Exception {
                         runTest("testData/quickfix/createFromUsage/createFunction/call/abstract/otherExplicitReceiver.kt");
@@ -8631,17 +8636,17 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
             @TestMetadata("inLambda.kt")
             public void testInLambda() throws Exception {
-                runTest("idea/testData/quickfix/modifiers/suspend/inLambda.kt");
+                runTest("testData/quickfix/modifiers/suspend/inLambda.kt");
             }
 
             @TestMetadata("inLambda2.kt")
             public void testInLambda2() throws Exception {
-                runTest("idea/testData/quickfix/modifiers/suspend/inLambda2.kt");
+                runTest("testData/quickfix/modifiers/suspend/inLambda2.kt");
             }
 
             @TestMetadata("inLambda3.kt")
             public void testInLambda3() throws Exception {
-                runTest("idea/testData/quickfix/modifiers/suspend/inLambda3.kt");
+                runTest("testData/quickfix/modifiers/suspend/inLambda3.kt");
             }
 
             @TestMetadata("init.kt")
@@ -8962,9 +8967,8 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
-    @TestMetadata("idea/testData/quickfix/obsoleteKotlinJsPackages")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/quickfix/obsoleteKotlinJsPackages")
     public static class ObsoleteKotlinJsPackages extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -8972,32 +8976,32 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("kotlinBrowserFullyQualifiedProperty.kt")
         public void testKotlinBrowserFullyQualifiedProperty() throws Exception {
-            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserFullyQualifiedProperty.kt");
+            runTest("testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserFullyQualifiedProperty.kt");
         }
 
         @TestMetadata("kotlinBrowserPropertyImport.kt")
         public void testKotlinBrowserPropertyImport() throws Exception {
-            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserPropertyImport.kt");
+            runTest("testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserPropertyImport.kt");
         }
 
         @TestMetadata("kotlinBrowserStarImport.kt")
         public void testKotlinBrowserStarImport() throws Exception {
-            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserStarImport.kt");
+            runTest("testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserStarImport.kt");
         }
 
         @TestMetadata("kotlinDomAndBrowserImport.kt")
         public void testKotlinDomAndBrowserImport() throws Exception {
-            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinDomAndBrowserImport.kt");
+            runTest("testData/quickfix/obsoleteKotlinJsPackages/kotlinDomAndBrowserImport.kt");
         }
 
         @TestMetadata("kotlinDomPropertyImport.kt")
         public void testKotlinDomPropertyImport() throws Exception {
-            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinDomPropertyImport.kt");
+            runTest("testData/quickfix/obsoleteKotlinJsPackages/kotlinDomPropertyImport.kt");
         }
 
         @TestMetadata("kotlinDomStarImport.kt")
         public void testKotlinDomStarImport() throws Exception {
-            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinDomStarImport.kt");
+            runTest("testData/quickfix/obsoleteKotlinJsPackages/kotlinDomStarImport.kt");
         }
     }
 
