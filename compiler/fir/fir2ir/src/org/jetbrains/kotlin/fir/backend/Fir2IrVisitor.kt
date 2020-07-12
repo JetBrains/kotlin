@@ -106,23 +106,39 @@ class Fir2IrVisitor(
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?): IrElement {
         val irEnumEntry = classifierStorage.getCachedIrEnumEntry(enumEntry)!!
-        val correspondingClass = irEnumEntry.correspondingClass ?: return irEnumEntry
-        declarationStorage.enterScope(irEnumEntry)
-        classifierStorage.putEnumEntryClassInScope(enumEntry, correspondingClass)
-        converter.processAnonymousObjectMembers(enumEntry.initializer as FirAnonymousObject, correspondingClass)
-        conversionScope.withParent(correspondingClass) {
-            memberGenerator.convertClassContent(correspondingClass, enumEntry.initializer as FirAnonymousObject)
-            val constructor = correspondingClass.constructors.first()
-            irEnumEntry.initializerExpression = IrExpressionBodyImpl(
-                IrEnumConstructorCallImpl(
-                    startOffset, endOffset, enumEntry.returnTypeRef.toIrType(),
-                    constructor.symbol,
-                    typeArgumentsCount = constructor.typeParameters.size,
-                    valueArgumentsCount = constructor.valueParameters.size
+        val correspondingClass = irEnumEntry.correspondingClass
+        val initializer = enumEntry.initializer
+        // If then enum entry has its own members, we need to introduce a synthetic class.
+        if (correspondingClass != null) {
+            declarationStorage.enterScope(irEnumEntry)
+            classifierStorage.putEnumEntryClassInScope(enumEntry, correspondingClass)
+            converter.processAnonymousObjectMembers(enumEntry.initializer as FirAnonymousObject, correspondingClass)
+            conversionScope.withParent(correspondingClass) {
+                memberGenerator.convertClassContent(correspondingClass, enumEntry.initializer as FirAnonymousObject)
+                val constructor = correspondingClass.constructors.first()
+                irEnumEntry.initializerExpression = IrExpressionBodyImpl(
+                    IrEnumConstructorCallImpl(
+                        startOffset, endOffset, enumEntry.returnTypeRef.toIrType(),
+                        constructor.symbol,
+                        typeArgumentsCount = constructor.typeParameters.size,
+                        valueArgumentsCount = constructor.valueParameters.size
+                    )
                 )
-            )
+            }
+            declarationStorage.leaveScope(irEnumEntry)
+        } else if (initializer is FirAnonymousObject) {
+            // Otherwise, this is a default-ish enum entry, which doesn't need its own synthetic class.
+            // During raw FIR building, we put the delegated constructor call inside an anonymous object.
+            val primaryConstructor = initializer.getPrimaryConstructorIfAny()
+            if (primaryConstructor?.delegatedConstructor != null) {
+                with(memberGenerator) {
+                    irEnumEntry.initializerExpression = IrExpressionBodyImpl(
+                        primaryConstructor.delegatedConstructor!!.toIrDelegatingConstructorCall()
+                    )
+                }
+            }
         }
-        declarationStorage.leaveScope(irEnumEntry)
+
         return irEnumEntry
     }
 

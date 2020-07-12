@@ -396,11 +396,14 @@ class Fir2IrClassifierStorage(
                         this.parent = irParent
                     }
                     val initializer = enumEntry.initializer
-                    if (initializer != null) {
-                        initializer as FirAnonymousObject
-                        val klass = getIrAnonymousObjectForEnumEntry(initializer, enumEntry.name, irParent)
-
-                        this.correspondingClass = klass
+                    if (initializer is FirAnonymousObject) {
+                        // An enum entry with its own members
+                        if (initializer.declarations.any { it !is FirConstructor }) {
+                            val klass = getIrAnonymousObjectForEnumEntry(initializer, enumEntry.name, irParent)
+                            this.correspondingClass = klass
+                        }
+                        // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,
+                        // which will be translated via visitor later.
                     } else if (irParent != null && origin == IrDeclarationOrigin.DEFINED) {
                         val constructor = irParent.constructors.first()
                         this.initializerExpression = IrExpressionBodyImpl(
