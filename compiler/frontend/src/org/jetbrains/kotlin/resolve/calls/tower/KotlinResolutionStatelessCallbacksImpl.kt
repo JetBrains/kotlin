@@ -70,6 +70,18 @@ class KotlinResolutionStatelessCallbacksImpl(
             kotlinCall is PSIKotlinCallImpl && kotlinCall.psiCall.isCallWithSuperReceiver(),
         )
 
+    override fun isHiddenInResolution(
+        descriptor: DeclarationDescriptor,
+        kotlinCallArgument: KotlinCallArgument,
+        resolutionCallbacks: KotlinResolutionCallbacks
+    ): Boolean =
+        deprecationResolver.isHiddenInResolution(
+            descriptor,
+            kotlinCallArgument.psiCallArgument.psiExpression,
+            (resolutionCallbacks as? KotlinResolutionCallbacksImpl)?.trace?.bindingContext,
+            isSuperCall = false,
+        )
+
     override fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean =
         receiver?.psiExpression is KtSuperExpression
 

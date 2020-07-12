@@ -638,7 +638,7 @@ internal object EagerResolveOfCallableReferences : ResolutionPart() {
         getSubResolvedAtoms()
             .filterIsInstance<EagerCallableReferenceAtom>()
             .forEach {
-                callableReferenceResolver.processCallableReferenceArgument(csBuilder, it, this)
+                callableReferenceResolver.processCallableReferenceArgument(csBuilder, it, this, resolutionCallbacks)
             }
     }
 }
