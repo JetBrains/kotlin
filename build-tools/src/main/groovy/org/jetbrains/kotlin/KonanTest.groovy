@@ -63,6 +63,7 @@ class RunExternalTestGroup extends JavaExec {
     RunExternalTestGroup() {
         // We don't build the compiler if a custom dist path is specified.
         UtilsKt.dependsOnDist(this)
+        main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
     }
 
     @Override
@@ -75,7 +76,6 @@ class RunExternalTestGroup extends JavaExec {
     protected void runCompiler(List<String> filesToCompile, String output, List<String> moreArgs) {
         def log = new ByteArrayOutputStream()
         try {
-            main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.fileTree("$dist.canonicalPath/konan/lib/") {
                 include '*.jar'
             }
