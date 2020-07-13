@@ -69,6 +69,4 @@ open class J {
     var bar = 0
     get() = 3.1415926535
     set(value) {}
-
-
 }
