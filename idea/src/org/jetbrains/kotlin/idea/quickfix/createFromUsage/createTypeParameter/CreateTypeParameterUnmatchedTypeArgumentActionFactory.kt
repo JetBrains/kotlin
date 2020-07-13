@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -53,6 +54,7 @@ object CreateTypeParameterUnmatchedTypeArgumentActionFactory :
         } ?: return null
         val referencedDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, referencedDescriptor) as? KtTypeParameterListOwner
             ?: return null
+        if (!referencedDeclaration.canRefactor()) return null
 
         val missingParameterCount = typeArguments.size - referencedDeclaration.typeParameters.size
         if (missingParameterCount <= 0) return null

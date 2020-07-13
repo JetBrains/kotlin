@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.getUnsubstitutedTypeConstraintInfo
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.introduce.isObjectOrNonInnerClass
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.Name
@@ -66,6 +67,7 @@ object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFa
         val declaration = element.parents.firstOrNull {
             it is KtProperty || it is KtNamedFunction || it is KtClass
         } as? KtTypeParameterListOwner ?: return null
+        if (!declaration.canRefactor()) return null
         val containingDescriptor = declaration.resolveToDescriptorIfAny() ?: return null
         val fakeTypeParameter = createFakeTypeParameterDescriptor(
             containingDescriptor, newName, declaration.getResolutionFacade().frontendService<StorageManager>()

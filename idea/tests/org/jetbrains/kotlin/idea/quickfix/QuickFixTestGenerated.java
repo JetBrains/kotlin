@@ -5250,6 +5250,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createTypeParameter/inReferencedDeclaration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
                 }
 
+                @TestMetadata("externalLibrary.kt")
+                public void testExternalLibrary() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inReferencedDeclaration/externalLibrary.kt");
+                }
+
                 @TestMetadata("missingArguments.kt")
                 public void testMissingArguments() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inReferencedDeclaration/missingArguments.kt");
