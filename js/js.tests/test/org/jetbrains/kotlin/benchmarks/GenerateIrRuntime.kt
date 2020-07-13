@@ -42,9 +42,9 @@ import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryOnlyIrWriter
@@ -53,8 +53,6 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
-import org.jetbrains.kotlin.psi2ir.generators.createGeneratorContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -448,19 +446,9 @@ class GenerateIrRuntime {
     }
 
     private fun doPsi2Ir(files: List<KtFile>, analysisResult: AnalysisResult): IrModuleFragment {
-        val psi2IrConfiguration = Psi2IrConfiguration()
-        val mangler = JsManglerDesc
-        val signaturer = IdSignatureDescriptor(mangler)
-        val symbolTable = SymbolTable(signaturer)
-        val generatorExtensions = GeneratorExtensions()
-        val psi2IrContext = createGeneratorContext(
-            psi2IrConfiguration,
-            analysisResult.moduleDescriptor,
-            analysisResult.bindingContext,
-            languageVersionSettings,
-            symbolTable,
-            generatorExtensions
-        )
+        val psi2Ir = Psi2IrTranslator(languageVersionSettings, Psi2IrConfiguration())
+        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc))
+        val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
 
         val irBuiltIns = psi2IrContext.irBuiltIns
         val functionFactory = IrFunctionFactory(irBuiltIns, psi2IrContext.symbolTable)
@@ -477,7 +465,7 @@ class GenerateIrRuntime {
 
         val irProviders = listOf(irLinker)
 
-        val psi2IrTranslator = Psi2IrTranslator(languageVersionSettings, psi2IrContext.configuration, signaturer)
+        val psi2IrTranslator = Psi2IrTranslator(languageVersionSettings, psi2IrContext.configuration)
         return psi2IrTranslator.generateModuleFragment(psi2IrContext, files, irProviders, emptyList(), null)
     }
 

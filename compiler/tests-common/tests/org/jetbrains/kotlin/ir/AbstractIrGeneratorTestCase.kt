@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.NameProvider
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -85,11 +88,8 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
     protected open fun generateIrModule(ignoreErrors: Boolean = false): IrModuleFragment {
         assert(myFiles != null) { "myFiles not initialized" }
         assert(myEnvironment != null) { "myEnvironment not initialized" }
-        val mangler = JsManglerDesc
-        val signaturer = IdSignatureDescriptor(mangler)
-        return doGenerateIrModule(Psi2IrTranslator(myEnvironment.configuration.languageVersionSettings,
-                                                   Psi2IrConfiguration(ignoreErrors),
-                                                   signaturer))
+        val psi2Ir = Psi2IrTranslator(myEnvironment.configuration.languageVersionSettings, Psi2IrConfiguration(ignoreErrors))
+        return doGenerateIrModule(psi2Ir)
     }
 
     protected open fun doGenerateIrModule(psi2IrTranslator: Psi2IrTranslator): IrModuleFragment =
@@ -133,13 +133,21 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             ktFilesToAnalyze: List<KtFile>,
             generatorExtensions: GeneratorExtensions
         ): IrModuleFragment {
+            val (bindingContext, moduleDescriptor) = analysisResult
             if (!psi2ir.configuration.ignoreErrors) {
                 analysisResult.throwIfError()
-                AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
+                AnalyzingUtils.throwExceptionOnErrors(bindingContext)
             }
-            return psi2ir.generateModule(
-                analysisResult.moduleDescriptor, ktFilesToAnalyze, analysisResult.bindingContext, generatorExtensions
+            val context = psi2ir.createGeneratorContext(
+                moduleDescriptor,
+                bindingContext,
+                SymbolTable(IdSignatureDescriptor(JsManglerDesc), NameProvider.DEFAULT),
+                generatorExtensions
             )
+            val irProviders = generateTypicalIrProviderList(
+                moduleDescriptor, context.irBuiltIns, context.symbolTable, extensions = generatorExtensions
+            )
+            return psi2ir.generateModuleFragment(context, ktFilesToAnalyze, irProviders, emptyList())
         }
     }
 }
