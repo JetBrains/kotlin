@@ -9,7 +9,7 @@ class Outer<T> {
         x.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Inner>() }
         x.checkType { _<Outer<String>.Inner>() }
         z.checkType { _<Inner>() }
-        z.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Outer<T>.Inner>() }
+        z.checkType { _<Outer<T>.Inner>() }
 
         inner = x
     }

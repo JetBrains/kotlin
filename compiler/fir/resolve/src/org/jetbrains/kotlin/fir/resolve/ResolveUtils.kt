@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.providers.getSymbolByTypeRef
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
@@ -191,21 +192,7 @@ fun FirClassifierSymbol<*>.constructType(
 fun FirClassifierSymbol<*>.constructType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType =
     constructType(parts.toTypeProjections(), isNullable)
 
-fun FirClassifierSymbol<*>.constructType(
-    parts: List<FirQualifierPart>,
-    isNullable: Boolean,
-    symbolOriginSession: FirSession,
-    attributes: ConeAttributes = ConeAttributes.Empty
-): ConeKotlinType =
-    constructType(parts.toTypeProjections(), isNullable, attributes)
-        .also {
-            val lookupTag = it.lookupTag
-            if (lookupTag is ConeClassLikeLookupTagImpl && this is FirClassLikeSymbol<*>) {
-                lookupTag.bindSymbolToLookupTag(symbolOriginSession.firSymbolProvider, this)
-            }
-        }
-
-private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
+fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
 
 fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResolvedTypeRef {

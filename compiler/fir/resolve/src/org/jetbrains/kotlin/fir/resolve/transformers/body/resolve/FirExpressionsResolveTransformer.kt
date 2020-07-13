@@ -432,7 +432,9 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         typeOperatorCall: FirTypeOperatorCall,
         data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
-        val resolved = transformExpression(typeOperatorCall, ResolutionMode.ContextIndependent).single as FirTypeOperatorCall
+        val resolved = components.typeResolverTransformer.withAllowedBareTypes {
+            typeOperatorCall.transformConversionTypeRef(transformer, ResolutionMode.ContextIndependent)
+        }.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
         resolved.argumentList.transformArguments(integerLiteralTypeApproximator, null)
         val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument)
         resolved.transformChildren(object : FirDefaultTransformer<Nothing?>() {
