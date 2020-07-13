@@ -13,6 +13,9 @@ fun <T : A> fest() {
 fun test() {
     val b1 = B<<!UPPER_BOUND_VIOLATED!>Int<!>>()
     val b2 = B<C>()
+    val b3 = B<<!UPPER_BOUND_VIOLATED!>Any?<!>>()
+    val b4 = B<UnexistingType>()
+    val b5 = B<<!UPPER_BOUND_VIOLATED!>B<UnexistingType><!>>()
     fest<<!UPPER_BOUND_VIOLATED!>Boolean<!>>()
     fest<C>()
     fest<HHH>()
@@ -39,3 +42,7 @@ class NumColl<T : Collection<Number>>
 typealias NL<K> = NumColl<List<K>>
 val test7 = NL<Int>()
 val test8 = <!UPPER_BOUND_VIOLATED!>NL<String>()<!>
+
+class NumberPhile<T: Number>(x: T)
+val np1 = NumberPhile(10)
+val np2 = <!INAPPLICABLE_CANDIDATE!>NumberPhile<!>("Test")
