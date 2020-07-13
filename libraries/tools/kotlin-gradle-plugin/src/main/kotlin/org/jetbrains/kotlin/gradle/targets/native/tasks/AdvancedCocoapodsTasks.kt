@@ -233,6 +233,9 @@ open class PodBuildTask : CocoapodsWithSyntheticTask() {
     @get:OutputDirectory
     internal var buildDirProvider: Provider<File>? = null
 
+    private val CocoapodsExtension.CocoapodsDependency.schemeName: String
+        get() = name.split("/")[0]
+
     @TaskAction
     fun buildDependencies() {
         val podBuildSettings = PodBuildSettingsProperties.readSettingsFromStream(
@@ -246,7 +249,7 @@ open class PodBuildTask : CocoapodsWithSyntheticTask() {
             val podXcodeBuildCommand = listOf(
                 "xcodebuild",
                 "-project", podsXcodeProjDir.name,
-                "-scheme", it.moduleName,
+                "-scheme", it.schemeName,
                 "-sdk", kotlinNativeTarget.toValidSDK,
                 "-configuration", podBuildSettings.configuration
             )
