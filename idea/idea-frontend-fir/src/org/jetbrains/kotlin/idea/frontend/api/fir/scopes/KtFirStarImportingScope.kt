@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.Import
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtStarImportingScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.StarImport
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class KtFirStarImportingScope(
     firScope: FirAbstractStarImportingScope,
@@ -48,7 +50,7 @@ internal class KtFirStarImportingScope(
     override fun getCallableNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import: Import ->
             if (import.relativeClassName == null) { // top level callable
-                packageHelper.getPackageTopLevelNames(import.packageFqName)
+                packageHelper.getPackageTopLevelCallables(import.packageFqName)
             } else { //member
                 val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
                 firScope.getStaticsScope(classId)?.getCallableNames().orEmpty()
@@ -57,8 +59,14 @@ internal class KtFirStarImportingScope(
     }
 
     override fun getClassLikeSymbolNames(): Set<Name> = withValidityAssertion {
-        //TODO
-        setOf()
+        imports.flatMapTo(hashSetOf()) { import ->
+            if (import.relativeClassName == null) {
+                packageHelper.getPackageTopLevelClassifiers(import.packageFqName)
+            } else {
+                val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
+                firScope.getStaticsScope(classId)?.getClassifierNames().orEmpty()
+            }
+        }
     }
 
 }
@@ -70,9 +78,18 @@ private class PackageIndexHelper(private val project: Project) {
     private val functionByPackageIndex = KotlinTopLevelFunctionByPackageIndex.getInstance()
     private val propertyByPackageIndex = KotlinTopLevelPropertyByPackageIndex.getInstance()
 
-    fun getPackageTopLevelNames(packageFqName: FqName): Set<Name> {
-        return getTopLevelCallables(packageFqName).mapTo(mutableSetOf()) { it.nameAsSafeName }
+    private val classByPackageIndex = KotlinTopLevelClassByPackageIndex.getInstance()
+
+    fun getPackageTopLevelCallables(packageFqName: FqName): Set<Name> {
+        return getTopLevelCallables(packageFqName).mapTo(hashSetOf()) { it.nameAsSafeName }
     }
+
+    fun getPackageTopLevelClassifiers(packageFqName: FqName): Set<Name> {
+        return getTopLevelClassifiers(packageFqName).mapTo(hashSetOf()) { it.nameAsSafeName }
+    }
+
+    private fun getTopLevelClassifiers(packageFqName: FqName): MutableCollection<KtClassOrObject> =
+        classByPackageIndex.get(packageFqName.asString(), project, searchScope)
 
     private fun getTopLevelCallables(packageFqName: FqName): Sequence<KtCallableDeclaration> = sequence<KtCallableDeclaration> {
         yieldAll(functionByPackageIndex.get(packageFqName.asString(), project, searchScope))
