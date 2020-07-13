@@ -218,7 +218,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         typeOperatorCall.configure {
             +field("operation", operationType)
-            +field("conversionTypeRef", typeRef)
+            +field("conversionTypeRef", typeRef).withTransform()
+            needTransformOtherChildren()
         }
 
         whenBranch.configure {
