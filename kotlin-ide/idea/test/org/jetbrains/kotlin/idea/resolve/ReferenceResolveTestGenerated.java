@@ -435,6 +435,25 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         }
     }
 
+    @TestMetadata("idea/testData/resolve/references/constructorDelegatingReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConstructorDelegatingReference extends AbstractReferenceResolveTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("toPrimary.kt")
+        public void testToPrimary() throws Exception {
+            runTest("idea/testData/resolve/references/constructorDelegatingReference/toPrimary.kt");
+        }
+
+        @TestMetadata("toSecondary.kt")
+        public void testToSecondary() throws Exception {
+            runTest("idea/testData/resolve/references/constructorDelegatingReference/toSecondary.kt");
+        }
+    }
+
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/resolve/references/delegatedPropertyAccessors")
     public static class DelegatedPropertyAccessors extends AbstractReferenceResolveTest {
