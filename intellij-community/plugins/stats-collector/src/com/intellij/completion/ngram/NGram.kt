@@ -41,15 +41,13 @@ object NGram {
   private const val TEXT_RANGE_LIMIT = 64 * 1024 // 128 KB of chars
 
   internal fun getScorers(parameters: CompletionParameters, order: Int): Map<Key<Scorer>, Scorer?> {
-    val project = parameters.originalFile.project
     val language = parameters.originalFile.language
     if (!isSupported(language)) return emptyMap()
     val prefix = getNGramPrefix(parameters, order)
-    val reversedPostfix = getNGramReversedPostfix(parameters, order)
     val lexedFile = lexPsiFile(parameters.originalFile)
     return mapOf(NGRAM_SCORER_KEY to createScorer(prefix, lexedFile),
-                 NGRAM_REVERSED_SCORER_KEY to createReversedScorer(reversedPostfix, lexedFile),
-                 NGRAM_RECENT_FILES_SCORER_KEY to createRecentFilesScorer(project, language, prefix))
+                 NGRAM_REVERSED_SCORER_KEY to createReversedScorer(getNGramReversedPostfix(parameters, order), lexedFile),
+                 NGRAM_RECENT_FILES_SCORER_KEY to createRecentFilesScorer(parameters.originalFile.project, language, prefix))
   }
 
   private fun createScorer(prefix: Array<String>, lexedFile: List<String>): Scorer {
@@ -119,8 +117,8 @@ object NGram {
       .withRoot(file)
       .onRange(TextRange(0, textRange))
       .filter { shouldLex(it) }
-      .map { it.text }
       .toList()
+      .map { it.text }
   }
 
   private fun shouldLex(element: PsiElement): Boolean {
