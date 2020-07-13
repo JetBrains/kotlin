@@ -1,0 +1,6 @@
+package
+
+public fun bar(/*0*/ g: () -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ K> baz(): () -> K
+public fun </*0*/ T> foo(/*0*/ f: () -> T): kotlin.Unit
+public fun test(): kotlin.Unit
