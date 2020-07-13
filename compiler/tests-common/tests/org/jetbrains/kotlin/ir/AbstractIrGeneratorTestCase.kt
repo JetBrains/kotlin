@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.NameProvider
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
@@ -141,7 +142,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             val context = psi2ir.createGeneratorContext(
                 moduleDescriptor,
                 bindingContext,
-                SymbolTable(IdSignatureDescriptor(JsManglerDesc), NameProvider.DEFAULT),
+                SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl, NameProvider.DEFAULT),
                 generatorExtensions
             )
             val irProviders = generateTypicalIrProviderList(

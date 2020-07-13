@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
@@ -21,9 +22,7 @@ class JsReplTestAgainstKlib : AbstractJsReplTest() {
 
     override fun createCompilationState(): JsReplCompilationState {
         val nameTables = NameTables(emptyList())
-        val mangler = JsManglerDesc
-        val signaturer = IdSignatureDescriptor(mangler)
-        val symbolTable = SymbolTable(signaturer)
+        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
         val dependencyCompiler = JsScriptDependencyCompiler(environment.configuration, nameTables, symbolTable)
         val dependencies = readLibrariesFromConfiguration(environment.configuration)
         dependencyCode = dependencyCompiler.compile(dependencies)

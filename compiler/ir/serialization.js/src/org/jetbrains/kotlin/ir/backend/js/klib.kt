@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSeria
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KlibMetadataIncrementalSerializer
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
@@ -100,6 +101,7 @@ fun generateKLib(
     configuration: CompilerConfiguration,
     allDependencies: KotlinLibraryResolveResult,
     friendDependencies: List<KotlinLibrary>,
+    irFactory: IrFactory,
     outputKlibPath: String,
     nopack: Boolean
 ) {
@@ -138,7 +140,7 @@ fun generateKLib(
     val depsDescriptors =
         ModulesStructure(project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies)
 
-    val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
+    val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory)
     val irBuiltIns = psi2IrContext.irBuiltIns
     val functionFactory = IrFunctionFactory(irBuiltIns, psi2IrContext.symbolTable)
     irBuiltIns.functionFactory = functionFactory
@@ -212,14 +214,15 @@ fun loadIr(
     analyzer: AbstractAnalyzerWithCompilerReport,
     configuration: CompilerConfiguration,
     allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>
+    friendDependencies: List<KotlinLibrary>,
+    irFactory: IrFactory,
 ): IrModuleInfo {
     val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
     val deserializeFakeOverrides = configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
 
     when (mainModule) {
         is MainModule.SourceFiles -> {
-            val psi2IrContext: GeneratorContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
+            val psi2IrContext: GeneratorContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory)
             val irBuiltIns = psi2IrContext.irBuiltIns
             val symbolTable = psi2IrContext.symbolTable
             val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
@@ -249,7 +252,7 @@ fun loadIr(
             val moduleDescriptor = depsDescriptors.getModuleDescriptor(mainModule.lib)
             val mangler = JsManglerDesc
             val signaturer = IdSignatureDescriptor(mangler)
-            val symbolTable = SymbolTable(signaturer)
+            val symbolTable = SymbolTable(signaturer, irFactory)
             val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
             val typeTranslator = TypeTranslator(
                 symbolTable,
@@ -284,10 +287,10 @@ fun loadIr(
     }
 }
 
-private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure): GeneratorContext {
+private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure, irFactory: IrFactory): GeneratorContext {
     val (bindingContext, moduleDescriptor) = depsDescriptors.runAnalysis()
     val psi2Ir = Psi2IrTranslator(depsDescriptors.compilerConfiguration.languageVersionSettings, Psi2IrConfiguration())
-    val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc))
+    val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
     return psi2Ir.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
 }
 

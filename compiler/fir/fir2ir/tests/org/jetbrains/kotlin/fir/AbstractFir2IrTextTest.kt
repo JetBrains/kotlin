@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import java.io.File
 
 abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
@@ -87,10 +88,11 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
         return Fir2IrConverter.createModuleFragment(
             session, resolveTransformer.scopeSession, firFiles,
             myEnvironment.configuration.languageVersionSettings,
-            signaturer = signaturer,
+            signaturer,
             // TODO: differentiate JVM resolve from other targets, such as JS resolve.
-            generatorExtensions = JvmGeneratorExtensions(generateFacades = false),
-            mangler = FirJvmKotlinMangler(session)
+            JvmGeneratorExtensions(generateFacades = false),
+            FirJvmKotlinMangler(session),
+            IrFactoryImpl,
         ).irModuleFragment
     }
 }
