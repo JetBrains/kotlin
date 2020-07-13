@@ -3,44 +3,47 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-fun dummy(block: (() -> Unit)): Int {
-    if (true) {
-        return 0
-    } else {
-        return 1
+//fun dummy(block: (() -> Unit)): Int {
+//    if (true) {
+//        return 0
+//    } else {
+//        if(false) return 1
+//    }
+//    block()
+//    return -2
+//}
+
+fun dummy(block: (() -> Unit)) {
+    for (i in 0..0) {
+        block()
+    }
+}
+
+@ExperimentalContracts
+fun (() -> Unit).myInvoke() {
+    contract {
+        callsInPlace(this@myInvoke, InvocationKind.EXACTLY_ONCE)
+    }
+    this()
+}
+
+@ExperimentalContracts
+fun otherInvoke(block: (() -> Unit)) {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     block()
 }
 
-//fun dummy(block: (()->Unit)) {
-//    for(i in 0 until -6){
-//        block()
-//    }
-//}
-//
-//@ExperimentalContracts
-//fun (()->Unit).myInvoke() {
-//    contract {
-//        callsInPlace(this@myInvoke, InvocationKind.EXACTLY_ONCE)
-//    }
-//    this()
-//}
-//
-//@ExperimentalContracts
-//fun otherInvoke(block: (()->Unit)) {
-//    contract {
-//        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-//    }
-//    block()
-//}
-//
-//@ExperimentalContracts
-//fun ((Any) -> Unit).foo(x: Int, y: () -> Unit, z: () -> Unit){
-//    if(true){
-//        this(x)
-//        return
-//    }
-//    dummy(y)
+@ExperimentalContracts
+fun ((Any) -> Unit).foo(x: Int, y: () -> Unit, z: () -> Unit) {
+    contract {
+        callsInPlace(z, InvocationKind.EXACTLY_ONCE)
+    }
+    if (true) {
+        this(x)
+    }
+    dummy(y)
 //    otherInvoke(z)
-//    z.myInvoke()
-//}
+    z.myInvoke()
+}

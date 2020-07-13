@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.utils.addToStdlib.constant
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -39,34 +38,37 @@ class FirCallsEffectAnalyzer {
     fun analyze(function: FirFunction<*>, graph: ControlFlowGraph, reporter: DiagnosticReporter) {
         println("${function.symbol.callableId.callableName} {")
 
-        val functionalTypeParameters = function.valueParameters.filter { isFunctionalTypeRef(function.session, it.returnTypeRef) }
-        val functionalTypeSymbols = functionalTypeParameters.map { it.symbol }
-        val extensionToFunctionalType = isFunctionalTypeRef(function.session, function.receiverTypeRef)
+        val functionalTypeEffects = mutableMapOf<FirBasedSymbol<*>, EventOccurrencesRange>()
 
-        if (functionalTypeSymbols.isEmpty() && !extensionToFunctionalType) return
+        function.valueParameters.forEachIndexed { index, parameter ->
+            if (isFunctionalTypeRef(function.session, parameter.returnTypeRef)) {
+                functionalTypeEffects[parameter.symbol] = getParameterCallsEffect(function, index)
+            }
+        }
 
-        val data =
-            graph.collectDataForNode(
-                TraverseDirection.Forward,
-                FunctionalTypeInvocationInfo.EMPTY,
-                DataCollector(functionalTypeSymbols, extensionToFunctionalType)
-            )
+        if (isFunctionalTypeRef(function.session, function.receiverTypeRef)) {
+            functionalTypeEffects[function.symbol] = getParameterCallsEffect(function, -1)
+        }
 
+        if (functionalTypeEffects.isEmpty()) return
 
+        val data = graph.collectDataForNode(
+            TraverseDirection.Forward,
+            FunctionalTypeInvocationInfo.EMPTY,
+            DataCollector(functionalTypeEffects.keys)
+        )
 
-//        if (data.values.isEmpty()) return
-//        for ((key, value) in data.values.last()) {
-//            println("  ${(key as? FirVariableSymbol)?.callableId?.callableName ?: "this"} : $value")
-//        }
-
-//        println("NODE")
-//        graph.exitNode.incomingEdges.entries.forEach {
-//            println("IN: $it")
-//        }
-//
-//        graph.exitNode.followingNodes.forEach {
-//            println("OUT: $it")
-//        }
+        for ((symbol, expectedRange) in functionalTypeEffects) {
+            println("  ${(symbol as? FirVariableSymbol)?.callableId?.callableName ?: "this"} : $expectedRange")
+            graph.exitNode.previousCfgNodes.forEach { node ->
+                val range = data.getValue(node)[symbol]
+                if (range == null || range !in expectedRange) {
+                    println("    wrong : $range")
+                } else {
+                    println("    $range")
+                }
+            }
+        }
 
         println("}")
     }
@@ -94,8 +96,7 @@ class FirCallsEffectAnalyzer {
     }
 
     private inner class DataCollector(
-        val functionalTypeSymbols: List<FirVariableSymbol<*>>,
-        val collectForThis: Boolean
+        val functionalTypeSymbols: Set<FirBasedSymbol<*>>
     ) : ControlFlowGraphVisitor<FunctionalTypeInvocationInfo, Collection<FunctionalTypeInvocationInfo>>() {
 
         override fun visitNode(node: CFGNode<*>, data: Collection<FunctionalTypeInvocationInfo>): FunctionalTypeInvocationInfo {
@@ -114,7 +115,7 @@ class FirCallsEffectAnalyzer {
             contract {
                 returns(true) implies (reference != null)
             }
-            return reference != null && (referenceToSymbol(reference) in functionalTypeSymbols || collectForThis && reference is FirThisReference)
+            return reference != null && referenceToSymbol(reference) in functionalTypeSymbols
         }
 
         override fun visitFunctionCallNode(
