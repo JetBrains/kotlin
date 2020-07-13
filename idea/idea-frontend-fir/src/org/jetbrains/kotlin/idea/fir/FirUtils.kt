@@ -63,7 +63,7 @@ fun FirFunctionCall.getCalleeSymbol(): FirBasedSymbol<*>? =
 fun FirReference.getResolvedSymbolOfNameReference(): FirBasedSymbol<*>? =
     (this as? FirResolvedNamedReference)?.resolvedSymbol
 
-inline fun <reified D> D.unrollFakeOverrides(): D where D : FirDeclaration, D : FirSymbolOwner<D> {
+inline fun <reified D> D.unrollFakeOverrides(): D where D : FirDeclaration, D : FirSymbolOwner<*> {
     val symbol = symbol
     if (symbol !is PossiblyFirFakeOverrideSymbol<*, *>) return this
     if (!symbol.isFakeOverride) return this

@@ -1790,16 +1790,17 @@ class RawFirBuilder(
                 if (getArgument != null) {
                     calleeReference = buildSimpleNamedReference {
                         source = expression.parent.toFirSourceElement()
-                        this.source = source
+                        this.source = source.fakeElement(FirFakeSourceElementKind.ArrayAccessNameReference)
                         name = OperatorNameConventions.SET
                     }
                 } else {
                     source = expression.toFirSourceElement()
                     calleeReference = buildSimpleNamedReference {
-                        this.source = source
+                        this.source = source.fakeElement(FirFakeSourceElementKind.ArrayAccessNameReference)
                         name = OperatorNameConventions.GET
                     }
                 }
+                this.source = source
                 explicitReceiver = arrayExpression.toFirExpression("No array expression")
                 argumentList = buildArgumentList {
                     for (indexExpression in expression.indexExpressions) {
