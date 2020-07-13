@@ -2805,6 +2805,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/resolveReferenceAgainstKFunctionAndKPrpoerty.kt");
                 }
 
+                @TestMetadata("resolveTwoReferencesAgainstGenerics.kt")
+                public void testResolveTwoReferencesAgainstGenerics() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/resolveTwoReferencesAgainstGenerics.kt");
+                }
+
                 @TestMetadata("valVsFun.kt")
                 public void testValVsFun() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/valVsFun.kt");
