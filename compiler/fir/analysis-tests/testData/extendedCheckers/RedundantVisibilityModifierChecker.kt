@@ -63,4 +63,8 @@ class J {
     protected set(value) {
         field = value
     }
+
+    var bar = 0
+    get() = 3.1415926535
+    set(value) {}
 }

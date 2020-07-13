@@ -135,4 +135,11 @@ FILE: RedundantVisibilityModifierChecker.kt
                 this@R|/J|.F|/J.buf| = R|<local>/value|
             }
 
+        public final var bar: R|kotlin/Int| = Int(0)
+            public get(): R|kotlin/Int| {
+                ^ Double(3.1415926535)
+            }
+            public set(value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
     }
