@@ -10,10 +10,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPossibleExtensionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.isExtension
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtFile
@@ -45,7 +42,7 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
         val typeOfPossibleReceiver = possibleReceiver?.let { sessionForCompletion.getKtExpressionType(it) }
         val possibleReceiverScope = typeOfPossibleReceiver?.let { sessionForCompletion.scopeProvider.getScopeForType(it) }
 
-        fun addToCompletion(symbol: KtCallableSymbol) {
+        fun addToCompletion(symbol: KtSymbol) {
             if (symbol !is KtNamedSymbol) return
             result.addElement(LookupElementBuilder.create(symbol.name.asString()))
         }
@@ -54,12 +51,10 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
             val nonExtensionMembers = possibleReceiverScope
                 .getCallableSymbols()
                 .filterNot { it.isExtension }
-                .toList()
 
             val extensionNonMembers = implicitScopes
                 .getCallableSymbols()
                 .filter { it.isExtension && it.canBeCalledWith(listOf(typeOfPossibleReceiver)) }
-                .toList()
 
             nonExtensionMembers.forEach(::addToCompletion)
             extensionNonMembers.forEach(::addToCompletion)
@@ -69,15 +64,16 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
                 .filter { !it.isExtension || it.canBeCalledWith(implicitReceivers) }
 
             extensionNonMembers.forEach(::addToCompletion)
-        }
 
-        return
+            val availableClasses = implicitScopes.getClassClassLikeSymbols()
+            availableClasses.forEach(::addToCompletion)
+        }
     }
 }
 
 private fun KtCallableSymbol.canBeCalledWith(implicitReceivers: List<KtType>): Boolean {
     val requiredReceiverType = (this as? KtPossibleExtensionSymbol)?.receiverType
-        ?: error("Extension receiver type should be present on ${this}")
+        ?: error("Extension receiver type should be present on $this")
 
     return implicitReceivers.any { it.isSubTypeOf(requiredReceiverType) }
 }

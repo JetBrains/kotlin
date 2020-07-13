@@ -2216,6 +2216,11 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/stringCompletion.kt");
             }
 
+            @TestMetadata("topLevelClasses.kt")
+            public void testTopLevelClasses() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/topLevelClasses.kt");
+            }
+
             @TestMetadata("topLevelVariablesAndFunctions.kt")
             public void testTopLevelVariablesAndFunctions() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/topLevelVariablesAndFunctions.kt");
