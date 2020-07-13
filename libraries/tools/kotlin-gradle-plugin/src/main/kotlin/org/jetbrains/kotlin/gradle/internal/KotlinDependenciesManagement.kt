@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import com.android.build.gradle.TestedExtension
 import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.api.UnitTestVariant
 import org.gradle.api.Project
@@ -16,15 +17,15 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.junit.JUnitOptions
 import org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions
 import org.gradle.api.tasks.testing.testng.TestNGOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
@@ -53,14 +54,18 @@ private fun configureDefaultVersionsResolutionStrategy(project: Project) {
 }
 
 //region stdlib
-internal fun configureStdlibDefaultDependency(project: Project) {
+internal fun configureStdlibDefaultDependency(project: Project) = project.whenEvaluated {
     if (!PropertiesProvider(project).stdlibDefaultDependency)
-        return
+        return@whenEvaluated
 
     project.kotlinExtension.sourceSets.all { kotlinSourceSet ->
-        val apiConfiguration = project.sourceSetDependencyConfigurationByScope(kotlinSourceSet, KotlinDependencyScope.API_SCOPE)
+        val scope = if (isRelatedToAndroidTestSourceSet(project, kotlinSourceSet)) // AGP deprecates API configurations in test source sets
+            KotlinDependencyScope.IMPLEMENTATION_SCOPE
+        else KotlinDependencyScope.API_SCOPE
 
-        apiConfiguration.withDependencies { dependencies ->
+        val scopeConfiguration = project.sourceSetDependencyConfigurationByScope(kotlinSourceSet, scope)
+
+        scopeConfiguration.withDependencies { dependencies ->
             val sourceSetDependencyConfigurations =
                 KotlinDependencyScope.values().map { project.sourceSetDependencyConfigurationByScope(kotlinSourceSet, it) }
 
@@ -77,8 +82,8 @@ internal fun configureStdlibDefaultDependency(project: Project) {
 
             val sourceSetStdlibPlatformType = when {
                 platformTypes.isEmpty() -> KotlinPlatformType.common
-                setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm).containsAll(platformTypes) -> KotlinPlatformType.jvm
                 platformTypes.size == 1 -> platformTypes.single()
+                setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm).containsAll(platformTypes) -> KotlinPlatformType.jvm
                 else -> KotlinPlatformType.common
             }
 
@@ -88,7 +93,9 @@ internal fun configureStdlibDefaultDependency(project: Project) {
 
             if (!isStdlibAddedByUser) {
                 val stdlibModuleName = when (sourceSetStdlibPlatformType) {
-                    KotlinPlatformType.jvm, KotlinPlatformType.androidJvm -> jvmStdlibModuleForJvmCompilations(compilations)
+                    KotlinPlatformType.jvm -> stdlibModuleForJvmCompilations(compilations)
+                    KotlinPlatformType.androidJvm ->
+                        if (kotlinSourceSet.name == androidMainSourceSetName(project)) stdlibModuleForJvmCompilations(compilations) else null
                     KotlinPlatformType.js -> "kotlin-stdlib-js"
                     KotlinPlatformType.native -> null
                     KotlinPlatformType.common -> // there's no platform compilation that the source set is default for
@@ -107,9 +114,42 @@ internal fun configureStdlibDefaultDependency(project: Project) {
     }
 }
 
+private fun Project.findAndroidTarget(): KotlinAndroidTarget? {
+    val kotlinExtension = project.kotlinExtension
+    return when (kotlinExtension) {
+        is KotlinMultiplatformExtension -> kotlinExtension.targets.withType(KotlinAndroidTarget::class.java).single()
+        is KotlinAndroidProjectExtension -> kotlinExtension.target
+        else -> null
+    }
+}
+
+private fun androidMainSourceSetName(project: Project): String {
+    val target = project.findAndroidTarget() ?: error("No Android target found")
+    return AbstractAndroidProjectHandler.kotlinSourceSetNameForAndroidSourceSet(target, "main")
+}
+
+private fun isRelatedToAndroidTestSourceSet(project: Project, kotlinSourceSet: KotlinSourceSet): Boolean {
+    val androidExtension = project.extensions.findByName("android") as? TestedExtension ?: return false
+    val androidTarget = project.findAndroidTarget() ?: return false
+
+    if (androidTarget.compilations.any {
+            (it.androidVariant is UnitTestVariant || it.androidVariant is TestVariant) && it.defaultSourceSet === kotlinSourceSet
+        }
+    ) return true
+
+    (androidExtension.testVariants + androidExtension.unitTestVariants).forEach { variant ->
+        if (variant.sourceSets.any {
+                kotlinSourceSet.name == AbstractAndroidProjectHandler.kotlinSourceSetNameForAndroidSourceSet(androidTarget, it.name)
+            }
+        ) return true
+    }
+
+    return false
+}
+
 private val stdlibModules = setOf("kotlin-stdlib-common", "kotlin-stdlib", "kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8", "kotlin-stdlib-js")
 
-private fun jvmStdlibModuleForJvmCompilations(compilations: Iterable<KotlinCompilation<*>>): String {
+private fun stdlibModuleForJvmCompilations(compilations: Iterable<KotlinCompilation<*>>): String {
     val jvmTargets = compilations.map { (it.kotlinOptions as KotlinJvmOptions).jvmTarget }
     return if ("1.6" in jvmTargets) "kotlin-stdlib" else "kotlin-stdlib-jdk8"
 }

@@ -735,6 +735,11 @@ class KotlinConfigurationTools internal constructor(
 )
 
 abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTools: KotlinConfigurationTools) {
+    companion object {
+        fun kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget: KotlinAndroidTarget, androidSourceSetName: String) =
+            lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, androidSourceSetName)
+    }
+
     protected val logger = Logging.getLogger(this.javaClass)
 
     abstract fun getFlavorNames(variant: BaseVariant): List<String>
@@ -762,7 +767,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         ext.sourceSets.all { sourceSet ->
             logger.kotlinDebug("Creating KotlinBaseSourceSet for source set $sourceSet")
             val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(
-                lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, sourceSet.name)
+                kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget, sourceSet.name)
             ).apply {
                 kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
                 kotlin.srcDirs(sourceSet.java.srcDirs)
@@ -862,7 +867,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
          * see [org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.configureTarget]
          */
         (project.extensions.getByName("android") as BaseExtension).sourceSets.forEach { androidSourceSet ->
-            val kotlinSourceSetName = lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, androidSourceSet.name)
+            val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget, androidSourceSet.name)
             project.kotlinExtension.sourceSets.findByName(kotlinSourceSetName)?.let { kotlinSourceSet ->
                 addDependenciesToAndroidSourceSet(
                     androidSourceSet,
