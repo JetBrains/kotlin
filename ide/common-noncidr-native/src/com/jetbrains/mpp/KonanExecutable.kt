@@ -8,6 +8,7 @@ package com.jetbrains.mpp
 import com.jetbrains.konan.WorkspaceXML
 import org.jdom.Element
 import org.jetbrains.kotlin.gradle.KonanArtifactModel
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -48,6 +49,7 @@ data class KonanExecutableBase(
 
         fun constructFrom(artifact: KonanArtifactModel, targetName: String, projectPrefix: String): KonanExecutableBase? {
             val targetType = konanTarget(artifact.targetPlatform) ?: return null
+            if (!CompilerOutputKind.valueOf(artifact.type).isExecutable()) return null
             return KonanExecutableBase(targetType, targetName, artifact.executableName, projectPrefix)
         }
 
@@ -57,6 +59,9 @@ data class KonanExecutableBase(
             KonanTarget.MINGW_X64,
             KonanTarget.IOS_X64
         ).firstOrNull { it.name == dslName }
+
+        private fun CompilerOutputKind.isExecutable(): Boolean =
+            this == CompilerOutputKind.PROGRAM
     }
 }
 
