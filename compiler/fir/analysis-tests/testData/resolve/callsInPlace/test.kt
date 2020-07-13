@@ -3,47 +3,64 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-//fun dummy(block: (() -> Unit)): Int {
-//    if (true) {
-//        return 0
-//    } else {
-//        if(false) return 1
+//
+////fun dummy(block: (() -> Unit)): Int {
+////    if (true) {
+////        return 0
+////    } else {
+////        if(false) return 1
+////    }
+////    block()
+////    return -2
+////}
+//
+//fun dummy(block: (() -> Unit)) {
+//    for (i in 0..0) {
+//        block()
+//    }
+//}
+//
+//@ExperimentalContracts
+//fun (() -> Unit).myInvoke() {
+//    contract {
+//        callsInPlace(this@myInvoke, InvocationKind.EXACTLY_ONCE)
+//    }
+//    this()
+//}
+//
+//@ExperimentalContracts
+//fun otherInvoke(block: (() -> Unit)) {
+//    contract {
+//        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
 //    }
 //    block()
-//    return -2
+//}
+//
+//@ExperimentalContracts
+//fun ((Any) -> Unit).foo(x: Int, y: () -> Unit, z: () -> Unit) {
+//    contract {
+//        callsInPlace(z, InvocationKind.EXACTLY_ONCE)
+//    }
+//    if (true) {
+//        this(x)
+//    }
+//    dummy(y)
+//    otherInvoke(z)
+////    z.myInvoke()
+//}
+//fun kek(block : () -> Unit){
+//
 //}
 
-fun dummy(block: (() -> Unit)) {
-    for (i in 0..0) {
-        block()
-    }
-}
-
 @ExperimentalContracts
-fun (() -> Unit).myInvoke() {
+fun (() -> Unit).dummy(x: () -> Unit, y: () -> Unit, z: () -> Unit) {
     contract {
-        callsInPlace(this@myInvoke, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(x, InvocationKind.EXACTLY_ONCE)
     }
-    this()
-}
+    val var1 = this
 
-@ExperimentalContracts
-fun otherInvoke(block: (() -> Unit)) {
-    contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-    }
-    block()
-}
+    val var2: () -> Unit
+    var2 = y
 
-@ExperimentalContracts
-fun ((Any) -> Unit).foo(x: Int, y: () -> Unit, z: () -> Unit) {
-    contract {
-        callsInPlace(z, InvocationKind.EXACTLY_ONCE)
-    }
-    if (true) {
-        this(x)
-    }
-    dummy(y)
-//    otherInvoke(z)
-    z.myInvoke()
+    z.invoke()
 }

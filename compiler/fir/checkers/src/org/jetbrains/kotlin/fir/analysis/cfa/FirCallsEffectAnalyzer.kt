@@ -10,24 +10,24 @@ import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.effects
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitor
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FunctionCallNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.isInvoke
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import kotlin.contracts.ExperimentalContracts
@@ -36,18 +36,19 @@ import kotlin.contracts.contract
 class FirCallsEffectAnalyzer {
 
     fun analyze(function: FirFunction<*>, graph: ControlFlowGraph, reporter: DiagnosticReporter) {
-        println("${function.symbol.callableId.callableName} {")
-
-        val functionalTypeEffects = mutableMapOf<FirBasedSymbol<*>, EventOccurrencesRange>()
+        if(function !is FirContractDescriptionOwner) return
+        val functionalTypeEffects = mutableMapOf<FirBasedSymbol<*>, ConeCallsEffectDeclaration>()
 
         function.valueParameters.forEachIndexed { index, parameter ->
             if (isFunctionalTypeRef(function.session, parameter.returnTypeRef)) {
-                functionalTypeEffects[parameter.symbol] = getParameterCallsEffect(function, index)
+                val effectDeclaration = function.getParameterCallsEffectDeclaration(index)
+                if (effectDeclaration != null) functionalTypeEffects[parameter.symbol] = effectDeclaration
             }
         }
 
         if (isFunctionalTypeRef(function.session, function.receiverTypeRef)) {
-            functionalTypeEffects[function.symbol] = getParameterCallsEffect(function, -1)
+            val effectDeclaration = function.getParameterCallsEffectDeclaration(-1)
+            if (effectDeclaration != null) functionalTypeEffects[function.symbol] = effectDeclaration
         }
 
         if (functionalTypeEffects.isEmpty()) return
@@ -55,31 +56,30 @@ class FirCallsEffectAnalyzer {
         val data = graph.collectDataForNode(
             TraverseDirection.Forward,
             FunctionalTypeInvocationInfo.EMPTY,
-            DataCollector(functionalTypeEffects.keys)
+            DataCollector(function, functionalTypeEffects.keys)
         )
 
-        for ((symbol, expectedRange) in functionalTypeEffects) {
-            println("  ${(symbol as? FirVariableSymbol)?.callableId?.callableName ?: "this"} : $expectedRange")
+        for ((symbol, effectDeclaration) in functionalTypeEffects) {
             graph.exitNode.previousCfgNodes.forEach { node ->
-                val range = data.getValue(node)[symbol]
-                if (range == null || range !in expectedRange) {
-                    println("    wrong : $range")
-                } else {
-                    println("    $range")
+                val range = data.getValue(node)[symbol] ?: EventOccurrencesRange.ZERO
+                if (range !in effectDeclaration.kind) {
+                    symbol.fir.source?.let {
+                        reporter.report(FirErrors.WRONG_INVOCATION_KIND.on(it, symbol, range))
+                    }
                 }
             }
         }
-
-        println("}")
     }
 
     private class FunctionalTypeInvocationInfo(
-        map: PersistentMap<FirBasedSymbol<*>, EventOccurrencesRange> = persistentMapOf()
+        map: PersistentMap<FirBasedSymbol<*>, EventOccurrencesRange> = persistentMapOf(),
     ) : ControlFlowInfo<FunctionalTypeInvocationInfo, FirBasedSymbol<*>, EventOccurrencesRange>(map) {
 
         companion object {
             val EMPTY = FunctionalTypeInvocationInfo()
         }
+
+//        var insideIllegalScope = false
 
         override val constructor: (PersistentMap<FirBasedSymbol<*>, EventOccurrencesRange>) -> FunctionalTypeInvocationInfo =
             ::FunctionalTypeInvocationInfo
@@ -96,18 +96,82 @@ class FirCallsEffectAnalyzer {
     }
 
     private inner class DataCollector(
+        val rootFunction: FirFunction<*>,
         val functionalTypeSymbols: Set<FirBasedSymbol<*>>
     ) : ControlFlowGraphVisitor<FunctionalTypeInvocationInfo, Collection<FunctionalTypeInvocationInfo>>() {
+
+//        override fun visitFunctionEnterNode(
+//            node: FunctionEnterNode,
+//            data: Collection<FunctionalTypeInvocationInfo>
+//        ): FunctionalTypeInvocationInfo {
+//            return visitNode(node, data).apply {
+//                val function = node.fir
+//                if (!(function === rootFunction || function.isInPlaceLambda())) {
+//                    insideIllegalScope = true
+//                }
+//            }
+//        }
 
         override fun visitNode(node: CFGNode<*>, data: Collection<FunctionalTypeInvocationInfo>): FunctionalTypeInvocationInfo {
             if (data.isEmpty()) return FunctionalTypeInvocationInfo.EMPTY
             return data.reduce(FunctionalTypeInvocationInfo::merge)
         }
 
-        private fun referenceToSymbol(reference: FirReference?): FirBasedSymbol<*>? = when (reference) {
-            is FirResolvedNamedReference -> reference.resolvedSymbol
-            is FirThisReference -> reference.boundSymbol
-            else -> null
+        override fun visitFunctionCallNode(
+            node: FunctionCallNode,
+            data: Collection<FunctionalTypeInvocationInfo>
+        ): FunctionalTypeInvocationInfo {
+            var dataForNode = visitNode(node, data)
+
+            val extensionReceiver = (node.fir.extensionReceiver as? FirQualifiedAccess)?.calleeReference
+            val receiverReference = extensionReceiver ?: (node.fir.explicitReceiver as? FirQualifiedAccess)?.calleeReference
+
+            val functionSymbol = node.fir.toResolvedCallableSymbol() as? FirFunctionSymbol<*>?
+            val function = functionSymbol?.fir
+            val resolvedArguments = node.fir.argumentList as? FirResolvedArgumentList
+
+            // collect data for receiver
+            dataForNode = dataForNode.addDataForReference(receiverReference) {
+                when {
+//                    dataForNode.insideIllegalScope -> EventOccurrencesRange.UNKNOWN
+                    extensionReceiver != null -> function.getParameterCallsEffect(-1)
+                    functionSymbol?.callableId?.isInvoke() == true -> EventOccurrencesRange.EXACTLY_ONCE
+                    else -> EventOccurrencesRange.UNKNOWN
+                }
+            }
+
+            // collect data for arguments
+            for (arg in node.fir.argumentList.arguments) {
+                val argReference = (arg as? FirQualifiedAccess)?.calleeReference
+
+                dataForNode = dataForNode.addDataForReference(argReference) {
+                    if (function != null && resolvedArguments != null) {
+                        val parameter = resolvedArguments.mapping[arg]
+                        function.getParameterCallsEffect(function.valueParameters.indexOf(parameter))
+                    } else EventOccurrencesRange.UNKNOWN
+                }
+            }
+
+            return dataForNode
+        }
+
+        override fun visitVariableDeclarationNode(
+            node: VariableDeclarationNode,
+            data: Collection<FunctionalTypeInvocationInfo>
+        ): FunctionalTypeInvocationInfo = handleExpressionUsage(node, data, node.fir.initializer)
+
+        override fun visitVariableAssignmentNode(
+            node: VariableAssignmentNode,
+            data: Collection<FunctionalTypeInvocationInfo>
+        ): FunctionalTypeInvocationInfo = handleExpressionUsage(node, data, node.fir.rValue)
+
+        private fun handleExpressionUsage(
+            node: CFGNode<*>,
+            data: Collection<FunctionalTypeInvocationInfo>,
+            value: FirExpression?
+        ): FunctionalTypeInvocationInfo {
+            return visitNode(node, data)
+                .addDataForReference((value as? FirQualifiedAccess)?.calleeReference) { EventOccurrencesRange.UNKNOWN }
         }
 
         @OptIn(ExperimentalContracts::class)
@@ -118,35 +182,17 @@ class FirCallsEffectAnalyzer {
             return reference != null && referenceToSymbol(reference) in functionalTypeSymbols
         }
 
-        override fun visitFunctionCallNode(
-            node: FunctionCallNode,
-            data: Collection<FunctionalTypeInvocationInfo>
+        private fun referenceToSymbol(reference: FirReference?): FirBasedSymbol<*>? = when (reference) {
+            is FirResolvedNamedReference -> reference.resolvedSymbol
+            is FirThisReference -> reference.boundSymbol
+            else -> null
+        }
+
+        private inline fun FunctionalTypeInvocationInfo.addDataForReference(
+            reference: FirReference?,
+            rangeGetter: () -> EventOccurrencesRange
         ): FunctionalTypeInvocationInfo {
-            var dataForNode = visitNode(node, data)
-            val extensionReceiver = (node.fir.extensionReceiver as? FirQualifiedAccess)?.calleeReference
-            val receiverReference = (node.fir.dispatchReceiver as? FirQualifiedAccess)?.calleeReference ?: extensionReceiver
-
-            val functionSymbol = node.fir.toResolvedCallableSymbol() as? FirFunctionSymbol<*>
-            val function = functionSymbol?.fir
-
-            if (collectDataForReference(receiverReference)) {
-                val range = when {
-                    extensionReceiver != null -> getParameterCallsEffect(function, -1)
-                    functionSymbol?.callableId?.isInvoke() == true -> EventOccurrencesRange.EXACTLY_ONCE
-                    else -> EventOccurrencesRange.UNKNOWN
-                }
-                dataForNode = dataForNode.addInvocationInfo(receiverReference, range)
-            }
-
-            for ((i, arg) in node.fir.argumentList.arguments.withIndex()) {
-                val argReference = (arg as? FirQualifiedAccess)?.calleeReference
-                if (collectDataForReference(argReference)) {
-                    val range = getParameterCallsEffect(function, i)
-                    dataForNode = dataForNode.addInvocationInfo(argReference, range)
-                }
-            }
-
-            return dataForNode
+            return if (collectDataForReference(reference)) addInvocationInfo(reference, rangeGetter()) else this
         }
 
         private fun FunctionalTypeInvocationInfo.addInvocationInfo(
@@ -166,9 +212,17 @@ class FirCallsEffectAnalyzer {
         return typeRef?.coneType?.isBuiltinFunctionalType(session) == true
     }
 
-    private fun getParameterCallsEffect(function: FirFunction<*>?, index: Int): EventOccurrencesRange {
-        val effects = (function as? FirSimpleFunction?)?.contractDescription?.effects
+    private fun FirFunction<*>?.getParameterCallsEffectDeclaration(index: Int): ConeCallsEffectDeclaration? {
+        val effects = (this as? FirContractDescriptionOwner?)?.contractDescription?.effects
         val callsEffect = effects?.find { it is ConeCallsEffectDeclaration && it.valueParameterReference.parameterIndex == index }
-        return (callsEffect as? ConeCallsEffectDeclaration?)?.kind ?: EventOccurrencesRange.UNKNOWN
+        return callsEffect as? ConeCallsEffectDeclaration?
+    }
+
+    private fun FirFunction<*>?.getParameterCallsEffect(index: Int): EventOccurrencesRange {
+        return getParameterCallsEffectDeclaration(index)?.kind ?: EventOccurrencesRange.UNKNOWN
+    }
+
+    private fun FirFunction<*>.isInPlaceLambda(): Boolean {
+        return this is FirAnonymousFunction && this.isLambda && this.invocationKind != null
     }
 }

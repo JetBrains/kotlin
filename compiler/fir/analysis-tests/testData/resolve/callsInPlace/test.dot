@@ -9,73 +9,39 @@ digraph test_kt {
         subgraph cluster_1 {
             color=blue
             1 [label="Enter block"];
-            subgraph cluster_2 {
-                color=blue
-                2 [label="Enter when"];
-                subgraph cluster_3 {
-                    color=blue
-                    3 [label="Enter when branch condition "];
-                    4 [label="Const: Boolean(true)"];
-                    5 [label="Exit when branch condition"];
-                }
-                subgraph cluster_4 {
-                    color=blue
-                    6 [label="Enter when branch condition else"];
-                    7 [label="Exit when branch condition"];
-                }
-                8 [label="Enter when branch result"];
-                subgraph cluster_5 {
-                    color=blue
-                    9 [label="Enter block"];
-                    10 [label="Const: Int(1)"];
-                    11 [label="Jump: ^dummy Int(1)"];
-                    12 [label="Stub" style="filled" fillcolor=gray];
-                    13 [label="Exit block" style="filled" fillcolor=gray];
-                }
-                14 [label="Exit when branch result" style="filled" fillcolor=gray];
-                15 [label="Enter when branch result"];
-                subgraph cluster_6 {
-                    color=blue
-                    16 [label="Enter block"];
-                    17 [label="Const: Int(0)"];
-                    18 [label="Jump: ^dummy Int(0)"];
-                    19 [label="Stub" style="filled" fillcolor=gray];
-                    20 [label="Exit block" style="filled" fillcolor=gray];
-                }
-                21 [label="Exit when branch result" style="filled" fillcolor=gray];
-                22 [label="Exit when" style="filled" fillcolor=gray];
-            }
-            23 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=gray];
-            24 [label="Exit block" style="filled" fillcolor=gray];
+            2 [label="Access variable R|<local>/x|"];
+            3 [label="Function call: R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            4 [label="Function call: R|<local>/kek|()"];
+            5 [label="Access variable R|<local>/z|"];
+            6 [label="Function call: R|<local>/z|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            7 [label="Exit block"];
         }
-        25 [label="Exit function dummy" style="filled" fillcolor=red];
+        8 [label="Exit function dummy" style="filled" fillcolor=red];
+    }
+    subgraph cluster_2 {
+        color=blue
+        9 [label="Enter function kek" style="filled" fillcolor=red];
+        subgraph cluster_3 {
+            color=blue
+            10 [label="Enter block"];
+            11 [label="Access variable R|<local>/y|"];
+            12 [label="Function call: R|<local>/y|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            13 [label="Exit block"];
+        }
+        14 [label="Exit function kek" style="filled" fillcolor=red];
     }
     0 -> {1};
     1 -> {2};
     2 -> {3};
-    3 -> {4};
+    3 -> {9 4};
     4 -> {5};
-    5 -> {15 6};
+    5 -> {6};
     6 -> {7};
     7 -> {8};
-    8 -> {9};
     9 -> {10};
     10 -> {11};
-    11 -> {25};
-    11 -> {12} [style=dotted];
-    12 -> {13} [style=dotted];
-    13 -> {14} [style=dotted];
-    14 -> {22} [style=dotted];
-    15 -> {16};
-    16 -> {17};
-    17 -> {18};
-    18 -> {25};
-    18 -> {19} [style=dotted];
-    19 -> {20} [style=dotted];
-    20 -> {21} [style=dotted];
-    21 -> {22} [style=dotted];
-    22 -> {23} [style=dotted];
-    23 -> {24} [style=dotted];
-    24 -> {25} [style=dotted];
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
 
 }
