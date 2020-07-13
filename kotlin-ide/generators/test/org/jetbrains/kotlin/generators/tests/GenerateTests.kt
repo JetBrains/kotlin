@@ -816,10 +816,6 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("codeInsight/postfix")
         }
 
-        testClass<AbstractKotlinReferenceTypeHintsProviderTest> {
-            model("codeInsight/hints/types")
-        }
-
         testClass<AbstractKotlinLambdasHintsProvider> {
             model("codeInsight/hints/lambda")
         }
@@ -1079,6 +1075,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractMultiFileJvmBasicCompletionTest> {
             model("basic/multifile", pattern = DIRECTORY, isRecursive = false)
+        }
+
+        testClass<AbstractMultiFileJvmBasicCompletionTest>("org.jetbrains.kotlin.idea.completion.test.MultiFilePrimitiveJvmBasicCompletionTestGenerated") {
+            model("basic/multifilePrimitive", pattern = DIRECTORY, isRecursive = false)
         }
 
         testClass<AbstractMultiFileSmartCompletionTest> {
