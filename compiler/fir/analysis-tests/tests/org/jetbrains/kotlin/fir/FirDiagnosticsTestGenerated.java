@@ -665,6 +665,24 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
     }
 
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/callsInPlace")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallsInPlace extends AbstractFirDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCallsInPlace() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("test.kt")
+        public void testTest() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callsInPlace/test.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfg")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -1,0 +1,13 @@
+FILE: test.kt
+    public final fun dummy(block: R|() -> kotlin/Unit|): R|kotlin/Int| {
+        when () {
+            Boolean(true) ->  {
+                ^dummy Int(0)
+            }
+            else ->  {
+                ^dummy Int(1)
+            }
+        }
+
+        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
