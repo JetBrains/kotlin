@@ -133,6 +133,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_enum.kt");
     }
 
+    @TestMetadata("exhaustiveness_enumJava.kt")
+    public void testExhaustiveness_enumJava() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_enumJava.kt");
+    }
+
     @TestMetadata("exhaustiveness_sealedClass.kt")
     public void testExhaustiveness_sealedClass() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_sealedClass.kt");
@@ -141,6 +146,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
     @TestMetadata("exhaustiveness_sealedObject.kt")
     public void testExhaustiveness_sealedObject() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_sealedObject.kt");
+    }
+
+    @TestMetadata("exhaustiveness_sealedSubClass.kt")
+    public void testExhaustiveness_sealedSubClass() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_sealedSubClass.kt");
     }
 
     @TestMetadata("extension.kt")
@@ -653,6 +663,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         public void testTypeAliasWithNotNullBound() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasWithNotNullBound.kt");
         }
+
+        @TestMetadata("uselessMultipleBounds.kt")
+        public void testUselessMultipleBounds() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/uselessMultipleBounds.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfg")
@@ -889,6 +904,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("notASupertype.kt")
         public void testNotASupertype() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/notASupertype.kt");
+        }
+
+        @TestMetadata("projectionsOnNonClassTypeArguments.kt")
+        public void testProjectionsOnNonClassTypeArguments() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/projectionsOnNonClassTypeArguments.kt");
         }
 
         @TestMetadata("qualifiedSupertypeExtendedByOtherSupertype.kt")
@@ -1464,6 +1484,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypeForJavaTypeParameter.kt");
         }
 
+        @TestMetadata("coercionToUnitWithEarlyReturn.kt")
+        public void testCoercionToUnitWithEarlyReturn() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/coercionToUnitWithEarlyReturn.kt");
+        }
+
         @TestMetadata("definitelyNotNullIntersectionType.kt")
         public void testDefinitelyNotNullIntersectionType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/definitelyNotNullIntersectionType.kt");
@@ -1472,6 +1497,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("extensionCallableReferences.kt")
         public void testExtensionCallableReferences() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/extensionCallableReferences.kt");
+        }
+
+        @TestMetadata("integerLiteralAsComparable.kt")
+        public void testIntegerLiteralAsComparable() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/integerLiteralAsComparable.kt");
         }
 
         @TestMetadata("intersectionTypesInConstraints.kt")
@@ -2083,6 +2113,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             @TestMetadata("inPlaceLambdas.kt")
             public void testInPlaceLambdas() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas/inPlaceLambdas.kt");
+            }
+
+            @TestMetadata("lambdaInWhenBranch.kt")
+            public void testLambdaInWhenBranch() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas/lambdaInWhenBranch.kt");
             }
 
             @TestMetadata("smartcastOnLambda.kt")

@@ -64,12 +64,6 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val externalsDir: File
         get() = externalsDirRoot.resolve("src")
 
-    val publicPackageJson: File
-        get() = project.buildDir
-            .resolve("tmp")
-            .resolve(publicPackageJsonTaskName)
-            .resolve(PACKAGE_JSON)
-
     val publicPackageJsonTaskName: String
         get() = compilation.disambiguateName(PublicPackageJsonTask.NAME)
 

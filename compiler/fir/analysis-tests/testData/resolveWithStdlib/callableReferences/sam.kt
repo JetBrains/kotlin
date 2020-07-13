@@ -1,4 +1,4 @@
-interface MySam {
+fun interface MySam {
     fun run(x: String): Int
 }
 

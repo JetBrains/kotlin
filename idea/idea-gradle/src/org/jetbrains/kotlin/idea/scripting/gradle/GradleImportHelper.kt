@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelResolver
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.plugins.gradle.service.project.GradlePartialResolverPolicy
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -52,7 +53,9 @@ fun runPartialGradleImport(project: Project, root: GradleBuildRoot) {
     )
 }
 
+fun getMissingConfigurationsDescription() = KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.text")
 fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.text.load.script.configurations")
+fun getMissingConfigurationsHelp(): String? = KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.help")
 
 fun autoReloadScriptConfigurations(project: Project, file: VirtualFile): Boolean {
     val definition = file.findScriptDefinition(project) ?: return false
@@ -98,10 +101,14 @@ class LoadConfigurationAction : AnAction(
 
     private fun getNotificationVisibility(editor: Editor): Boolean {
         if (!scriptConfigurationsNeedToBeUpdatedBalloon) return false
-
         if (DiffUtil.isDiffEditor(editor)) return false
 
         val project = editor.project ?: return false
+
+        // prevent services initializtion
+        // (all services actually initialized under the ScriptDefinitionProvider during startup activity)
+        if (ScriptDefinitionProvider.getServiceIfCreated(project) == null) return false
+
         val file = getKotlinScriptFile(editor) ?: return false
 
         if (autoReloadScriptConfigurations(project, file)) {

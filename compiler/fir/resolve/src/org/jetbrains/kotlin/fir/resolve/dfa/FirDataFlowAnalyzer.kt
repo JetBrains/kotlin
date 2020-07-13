@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
@@ -106,6 +107,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     protected val any = components.session.builtinTypes.anyType.type
     private val nullableNothing = components.session.builtinTypes.nullableNothingType.type
 
+    @PrivateForInline
+    var ignoreFunctionCalls: Boolean = false
+
     // ----------------------------------- Requests -----------------------------------
 
     fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): MutableList<ConeKotlinType>? {
@@ -131,6 +135,17 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     fun dropSubgraphFromCall(call: FirFunctionCall) {
         graphBuilder.dropSubgraphFromCall(call)
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withIgnoreFunctionCalls(block: () -> T): T {
+        val oldValue = ignoreFunctionCalls
+        ignoreFunctionCalls = true
+        return try {
+            block()
+        } finally {
+            ignoreFunctionCalls = oldValue
+        }
     }
 
     // ----------------------------------- Named function -----------------------------------
@@ -493,8 +508,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitWhenBranchResult(whenBranch).mergeIncomingFlow()
     }
 
-    fun exitWhenExpression(whenExpression: FirWhenExpression, callCompleted: Boolean) {
-        val (whenExitNode, syntheticElseNode, unionNode) = graphBuilder.exitWhenExpression(whenExpression, callCompleted)
+    fun exitWhenExpression(whenExpression: FirWhenExpression) {
+        val (whenExitNode, syntheticElseNode) = graphBuilder.exitWhenExpression(whenExpression)
         if (syntheticElseNode != null) {
             val previousConditionExitNode = syntheticElseNode.firstPreviousNode as? WhenBranchConditionExitNode
             // previous node for syntheticElseNode can be not WhenBranchConditionExitNode in case of `when` without any branches
@@ -512,7 +527,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             }
         }
         whenExitNode.mergeIncomingFlow(updateReceivers = true)
-        unionNode?.let { unionFlowFromArguments(unionNode) }
     }
 
     // ----------------------------------- While Loop -----------------------------------
@@ -684,7 +698,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.enterCall()
     }
 
+    @OptIn(PrivateForInline::class)
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
+        if (ignoreFunctionCalls) {
+            graphBuilder.exitIgnoredCall(functionCall)
+            return
+        }
         val (functionCallNode, unionNode) = graphBuilder.exitFunctionCall(functionCall, callCompleted)
         unionNode?.let { unionFlowFromArguments(it) }
         functionCallNode.mergeIncomingFlow()
@@ -1017,11 +1036,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     // ----------------------------------- Elvis -----------------------------------
 
-    fun exitElvisLhs(elvisCall: FirElvisCall) {
-        val (lhsExitNode, lhsIsNotNullNode, rhsEnterNode) = graphBuilder.exitElvisLhs(elvisCall)
+    fun exitElvisLhs(elvisExpression: FirElvisExpression) {
+        val (lhsExitNode, lhsIsNotNullNode, rhsEnterNode) = graphBuilder.exitElvisLhs(elvisExpression)
         lhsExitNode.mergeIncomingFlow()
         val flow = lhsExitNode.flow
-        val lhsVariable = variableStorage.getOrCreateVariable(flow, elvisCall.lhs)
+        val lhsVariable = variableStorage.getOrCreateVariable(flow, elvisExpression.lhs)
         rhsEnterNode.flow = logicSystem.approveStatementsInsideFlow(
             flow,
             lhsVariable eq null,
@@ -1040,10 +1059,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    fun exitElvis(callCompleted: Boolean) {
-        val (elvisExitNode, unionNode) = graphBuilder.exitElvis(callCompleted)
-        elvisExitNode.mergeIncomingFlow()
-        unionNode?.let { unionFlowFromArguments(it) }
+    fun exitElvis() {
+        graphBuilder.exitElvis().mergeIncomingFlow()
     }
 
     // ------------------------------------------------------ Utils ------------------------------------------------------

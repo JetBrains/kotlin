@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
-import org.jetbrains.kotlin.descriptors.commonizer.utils.resolveClassOrTypeAlias
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.*
@@ -27,7 +25,6 @@ internal fun List<CirTypeParameter>.buildDescriptorsAndTypeParameterResolver(
     val ownTypeParameters = mutableListOf<TypeParameterDescriptor>()
 
     val typeParameterResolver = TypeParameterResolverImpl(
-        storageManager = targetComponents.storageManager,
         ownTypeParameters = ownTypeParameters,
         parent = parentTypeParameterResolver
     )
@@ -105,11 +102,11 @@ internal fun CirSimpleType.buildType(
 ): SimpleType {
     val classifier: ClassifierDescriptor = when (val classifierId = classifierId) {
         is CirClassifierId.Class -> {
-            findClassOrTypeAlias(targetComponents, classifierId.classId).checkClassifierType<ClassDescriptor>()
+            targetComponents.findClassOrTypeAlias(classifierId.classId).checkClassifierType<ClassDescriptor>()
         }
         is CirClassifierId.TypeAlias -> {
             val classId = classifierId.classId
-            val classOrTypeAlias: ClassifierDescriptorWithTypeParameters = findClassOrTypeAlias(targetComponents, classId)
+            val classOrTypeAlias: ClassifierDescriptorWithTypeParameters = targetComponents.findClassOrTypeAlias(classId)
 
             if (classId.packageFqName.isUnderStandardKotlinPackages || !targetComponents.isCommon) {
                 // classifier type could be only type alias
@@ -120,9 +117,8 @@ internal fun CirSimpleType.buildType(
             }
         }
         is CirClassifierId.TypeParameter -> {
-            val name = classifierId.name
-            typeParameterResolver.resolve(name)
-                ?: error("Type parameter $name not found in ${typeParameterResolver::class.java}, $typeParameterResolver for ${targetComponents.target}")
+            typeParameterResolver.resolve(classifierId.index)
+                ?: error("Type parameter $classifierId not found in ${typeParameterResolver::class.java}, $typeParameterResolver for ${targetComponents.target}")
         }
     }
 
@@ -134,35 +130,10 @@ internal fun CirSimpleType.buildType(
         kotlinTypeRefiner = null
     )
 
-    val computedType = if (classifier is TypeAliasDescriptor)
-        classifier.underlyingType.withAbbreviation(simpleType)
+    return if (classifier is TypeAliasDescriptor)
+        classifier.underlyingType.makeNullableAsSpecified(simpleType.isMarkedNullable).withAbbreviation(simpleType)
     else
         simpleType
-
-    return if (isDefinitelyNotNullType)
-        computedType.makeSimpleTypeDefinitelyNotNullOrNotNull()
-    else
-        computedType
-}
-
-internal fun findClassOrTypeAlias(
-    targetComponents: TargetDeclarationsBuilderComponents,
-    classId: ClassId
-): ClassifierDescriptorWithTypeParameters = when {
-    classId.packageFqName.isUnderStandardKotlinPackages -> {
-        // look up for classifier in built-ins module:
-        val builtInsModule = targetComponents.builtIns.builtInsModule
-
-        // TODO: this works fine for Native as far as built-ins module contains full Native stdlib, but this is not enough for JVM and JS
-        builtInsModule.resolveClassOrTypeAlias(classId)
-            ?: error("Classifier ${classId.asString()} not found in built-ins module $builtInsModule for ${targetComponents.target}")
-    }
-
-    else -> {
-        // otherwise, find the appropriate user classifier:
-        targetComponents.findAppropriateClassOrTypeAlias(classId)
-            ?: error("Classifier ${classId.asString()} not found in created descriptors cache for ${targetComponents.target}")
-    }
 }
 
 private inline fun <reified T : ClassifierDescriptorWithTypeParameters> ClassifierDescriptorWithTypeParameters.checkClassifierType(): T {

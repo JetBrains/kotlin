@@ -78,9 +78,9 @@ class IrLocalDelegatedPropertyImpl(
             }
         }
 
-    override var metadataField: MetadataSource.LocalDelegatedProperty? = null
+    override var metadataField: MetadataSource? = null
 
-    override var metadata: MetadataSource.LocalDelegatedProperty?
+    override var metadata: MetadataSource?
         get() = getCarrier().metadataField
         set(v) {
             if (metadata !== v) {

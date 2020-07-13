@@ -48,7 +48,7 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         MAP.put(
             SerializationErrors.SERIALIZER_NOT_FOUND,
             "Serializer has not been found for type ''{0}''. " +
-                    "To use context serializer as fallback, explicitly annotate type or property with @ContextualSerialization",
+                    "To use context serializer as fallback, explicitly annotate type or property with @Contextual",
             Renderers.RENDER_TYPE_WITH_ANNOTATIONS
         )
         MAP.put(
@@ -64,6 +64,10 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         MAP.put(
             SerializationErrors.TRANSIENT_IS_REDUNDANT,
             "Property does not have backing field which makes it non-serializable and therefore @Transient is redundant"
+        )
+        MAP.put(
+            SerializationErrors.INCORRECT_TRANSIENT,
+            "@kotlin.jvm.Transient does not affect @Serializable classes. Please use @kotlinx.serialization.Transient instead."
         )
     }
 }

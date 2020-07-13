@@ -49,7 +49,7 @@ fun compile(
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false
 ): CompilerResult {
-    stageController = object : StageController {}
+    stageController = StageController()
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
@@ -86,9 +86,7 @@ fun compile(
         eliminateDeadDeclarations(allModules, context)
 
         // TODO investigate whether this is needed anymore
-        stageController = object : StageController {
-            override val currentStage: Int = controller.currentStage
-        }
+        stageController = StageController(controller.currentStage)
 
         val transformer = IrModuleToJsTransformer(
             context,

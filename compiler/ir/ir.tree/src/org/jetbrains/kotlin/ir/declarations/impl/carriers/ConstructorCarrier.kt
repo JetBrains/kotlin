@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 
 
-interface ConstructorCarrier : FunctionBaseCarrier<ConstructorCarrier> {
+interface ConstructorCarrier : FunctionBaseCarrier {
 
     override fun clone(): ConstructorCarrier {
         return ConstructorCarrierImpl(

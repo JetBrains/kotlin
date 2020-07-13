@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
@@ -35,7 +34,6 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
     private val coroutineImplResultSymbolGetter = ctx.coroutineImplResultSymbolGetter
     private val coroutineImplResultSymbolSetter = ctx.coroutineImplResultSymbolSetter
 
-    private var exceptionTrapId = -1
     private var coroutineId = 0
 
     override val stateMachineMethodName = Name.identifier("doResume")
@@ -124,7 +122,17 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
 
         assignStateIds(stateMachineBuilder.entryState, stateVar.symbol, switch, rootLoop)
 
-        exceptionTrapId = stateMachineBuilder.rootExceptionTrap.id
+        // Set exceptionState to the global catch block
+        stateMachineBuilder.entryState.entryBlock.run {
+            val receiver = JsIrBuilder.buildGetValue(coroutineClass.thisReceiver!!.symbol)
+            val exceptionTrapId = stateMachineBuilder.rootExceptionTrap.id
+            assert(exceptionTrapId >= 0)
+            val id = JsIrBuilder.buildInt(context.irBuiltIns.intType, exceptionTrapId)
+            statements.add(0, JsIrBuilder.buildCall(coroutineImplExceptionStatePropertySetter.symbol).also { call ->
+                call.dispatchReceiver = receiver
+                call.putValueArgument(0, id)
+            })
+        }
 
         val functionBody =
             IrBlockBodyImpl(stateMachineFunction.startOffset, stateMachineFunction.endOffset, listOf(suspendResult, rootLoop))
@@ -208,20 +216,6 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
         })
 
         return result
-    }
-
-    override fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
-        for (it in coroutineConstructors) {
-            (it.body as? IrBlockBody)?.run {
-                val receiver = JsIrBuilder.buildGetValue(coroutineClassThis.symbol)
-                assert(exceptionTrapId >= 0)
-                val id = JsIrBuilder.buildInt(context.irBuiltIns.intType, exceptionTrapId)
-                statements += JsIrBuilder.buildCall(coroutineImplExceptionStatePropertySetter.symbol).also { call ->
-                    call.dispatchReceiver = receiver
-                    call.putValueArgument(0, id)
-                }
-            }
-        }
     }
 
     override fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression {

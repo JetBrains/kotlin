@@ -13,7 +13,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="193.5233.102.40.6085562" until-build="193.*"/>
+  <idea-version since-build="193.5233.102" until-build="193.*"/>
 
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.androidstudio</depends>
@@ -79,6 +79,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationInitializedListener implementation="org.jetbrains.kotlin.idea.PluginStartupListener" />
     <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService" />
 
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>

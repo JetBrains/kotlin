@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-interface AnonymousInitializerCarrier : DeclarationCarrier<AnonymousInitializerCarrier> {
+interface AnonymousInitializerCarrier : DeclarationCarrier {
     var bodyField: IrBlockBody?
 
     override fun clone(): AnonymousInitializerCarrier {

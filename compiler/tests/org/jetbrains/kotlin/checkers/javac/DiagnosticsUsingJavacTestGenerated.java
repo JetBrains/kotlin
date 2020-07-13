@@ -1926,6 +1926,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/callableReference/noAmbiguityWhenAllReferencesAreInapplicable.kt");
             }
 
+            @TestMetadata("noCompatibilityResolveWithProressiveModeForNI.kt")
+            public void testNoCompatibilityResolveWithProressiveModeForNI() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/noCompatibilityResolveWithProressiveModeForNI.kt");
+            }
+
             @TestMetadata("noExceptionOnRedCodeWithArrayLikeCall.kt")
             public void testNoExceptionOnRedCodeWithArrayLikeCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/noExceptionOnRedCodeWithArrayLikeCall.kt");
@@ -6532,6 +6537,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedHidden.kt");
             }
 
+            @TestMetadata("deprecatedHiddenOnCallableReferenceArgument.kt")
+            public void testDeprecatedHiddenOnCallableReferenceArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedHiddenOnCallableReferenceArgument.kt");
+            }
+
             @TestMetadata("deprecatedInheritance.kt")
             public void testDeprecatedInheritance() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedInheritance.kt");
@@ -6672,6 +6682,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("deprecatedSinceKotlinDeclaration.kt")
                 public void testDeprecatedSinceKotlinDeclaration() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinDeclaration.kt");
+                }
+
+                @TestMetadata("deprecatedSinceKotlinHiddenOnReferenceArgument.kt")
+                public void testDeprecatedSinceKotlinHiddenOnReferenceArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinHiddenOnReferenceArgument.kt");
                 }
 
                 @TestMetadata("deprecatedSinceKotlinOutsideKotlinPackage.kt")
@@ -10061,6 +10076,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inference/commonSuperTypeOfErrorTypes.kt");
             }
 
+            @TestMetadata("compatibilityResolveWhenVariableHasComplexIntersectionType.kt")
+            public void testCompatibilityResolveWhenVariableHasComplexIntersectionType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/compatibilityResolveWhenVariableHasComplexIntersectionType.kt");
+            }
+
             @TestMetadata("completeInferenceIfManyFailed.kt")
             public void testCompleteInferenceIfManyFailed() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/completeInferenceIfManyFailed.kt");
@@ -10209,6 +10229,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("intersectionTypeMultipleBoundsAsReceiver.kt")
             public void testIntersectionTypeMultipleBoundsAsReceiver() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/intersectionTypeMultipleBoundsAsReceiver.kt");
+            }
+
+            @TestMetadata("intersectionTypesWithContravariantTypes.kt")
+            public void testIntersectionTypesWithContravariantTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/intersectionTypesWithContravariantTypes.kt");
             }
 
             @TestMetadata("intersectionWithEnum.kt")
@@ -10399,6 +10424,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("returningLambdaInSuspendContext.kt")
             public void testReturningLambdaInSuspendContext() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/returningLambdaInSuspendContext.kt");
+            }
+
+            @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
+            public void testSkipedUnresolvedInBuilderInferenceWithStubReceiverType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt");
             }
 
             @TestMetadata("starApproximation.kt")
@@ -10654,6 +10684,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("coercionWithoutExpectedType.kt")
                 public void testCoercionWithoutExpectedType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionWithoutExpectedType.kt");
+                }
+
+                @TestMetadata("coerctionToUnitForATypeWithUpperBound.kt")
+                public void testCoerctionToUnitForATypeWithUpperBound() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coerctionToUnitForATypeWithUpperBound.kt");
                 }
 
                 @TestMetadata("coersionWithAnonymousFunctionsAndUnresolved.kt")
@@ -19481,6 +19516,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("kt31758_compat.kt")
                 public void testKt31758_compat() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt31758_compat.kt");
+                }
+
+                @TestMetadata("kt37692.kt")
+                public void testKt37692() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/kt37692.kt");
                 }
 
                 @TestMetadata("numberOfDefaults.kt")

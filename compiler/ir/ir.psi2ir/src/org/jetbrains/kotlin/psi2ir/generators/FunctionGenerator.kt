@@ -251,15 +251,13 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val startOffset = ktConstructorElement.getStartOffsetOfConstructorDeclarationKeywordOrNull() ?: ktConstructorElement.pureStartOffset
         val endOffset = ktConstructorElement.pureEndOffset
         val origin = IrDeclarationOrigin.DEFINED
-        return context.symbolTable.declareConstructor(
-            constructorDescriptor
-        ) {
-            IrConstructorImpl(
-                startOffset, endOffset, origin, it,
-                returnType = IrUninitializedType,
-                descriptor = constructorDescriptor,
-                name = context.symbolTable.nameProvider.nameForDeclaration(constructorDescriptor),
-            ).apply {
+        return context.symbolTable.declareConstructor(constructorDescriptor) {
+            with(constructorDescriptor) {
+                IrConstructorImpl(
+                    startOffset, endOffset, origin, it, context.symbolTable.nameProvider.nameForDeclaration(this),
+                    visibility, IrUninitializedType, isInline, isEffectivelyExternal(), isPrimary, isExpect
+                )
+            }.apply {
                 metadata = MetadataSource.Function(it.descriptor)
             }
         }.buildWithScope { irConstructor ->

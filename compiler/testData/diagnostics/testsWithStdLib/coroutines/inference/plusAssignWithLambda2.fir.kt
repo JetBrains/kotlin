@@ -13,8 +13,8 @@ fun <T> id(x: T) = x
 
 fun main() {
     var newValue = A()
-    <!INAPPLICABLE_CANDIDATE!>newValue += id { total -> A() }<!>
-    <!INAPPLICABLE_CANDIDATE!>newValue += id(fun(total) = A())<!>
-    <!INAPPLICABLE_CANDIDATE!>newValue += id(fun(total): A { return A() })<!>
+    <!ASSIGN_OPERATOR_AMBIGUITY!>newValue += id { total -> A() }<!>
+    <!ASSIGN_OPERATOR_AMBIGUITY!>newValue += id(fun(total) = A())<!>
+    <!ASSIGN_OPERATOR_AMBIGUITY!>newValue += id(fun(total): A { return A() })<!>
     <!ASSIGN_OPERATOR_AMBIGUITY!>newValue += id(::foo)<!>
 }

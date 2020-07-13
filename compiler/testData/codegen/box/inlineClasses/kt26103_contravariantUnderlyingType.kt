@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
 inline class GCmp<T>(val xc: Comparable<T>)

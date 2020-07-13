@@ -1,0 +1,18 @@
+FILE: projectionsOnNonClassTypeArguments.kt
+    public final class A<in T, out K> : R|kotlin/Any| {
+        public constructor<in T, out K>(): R|A<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval a1: R|A<kotlin/Int, B>| = R|/A.A|<in R|kotlin/Int|, out R|B|>()
+        lval a2: R|A<kotlin/Int, B>| = R|/A.A|<R|kotlin/Int|, R|B|>()
+        lval a3: R|A<kotlin/Any?, kotlin/Any?>| = R|/A.A|<*, *>()
+    }

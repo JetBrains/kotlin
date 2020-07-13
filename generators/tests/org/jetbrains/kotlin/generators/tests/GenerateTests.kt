@@ -466,6 +466,7 @@ fun main(args: Array<String>) {
                 model("codeInsight/moveUpDown/classBodyDeclarations", pattern = KT_OR_KTS, testMethod = "doTestClassBodyDeclaration")
                 model("codeInsight/moveUpDown/closingBraces", testMethod = "doTestExpression")
                 model("codeInsight/moveUpDown/expressions", pattern = KT_OR_KTS, testMethod = "doTestExpression")
+                model("codeInsight/moveUpDown/line", testMethod = "doTestLine")
                 model("codeInsight/moveUpDown/parametersAndArguments", testMethod = "doTestExpression")
                 model("codeInsight/moveUpDown/trailingComma", testMethod = "doTestExpressionWithTrailingComma")
             }
@@ -1039,6 +1040,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractScratchLineMarkersTest> {
                 model("scratch/lineMarker", testMethod = "doScratchTest", pattern = KT_OR_KTS)
+            }
+
+            testClass<AbstractScriptTemplatesFromDependenciesTest> {
+                model("script/templatesFromDependencies", extension = null, recursive = false)
             }
         }
 

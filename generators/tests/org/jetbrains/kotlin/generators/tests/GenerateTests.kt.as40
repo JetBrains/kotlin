@@ -119,10 +119,7 @@ import org.jetbrains.kotlin.idea.repl.AbstractIdeReplCompletionTest
 import org.jetbrains.kotlin.idea.resolve.*
 import org.jetbrains.kotlin.idea.scratch.AbstractScratchLineMarkersTest
 import org.jetbrains.kotlin.idea.scratch.AbstractScratchRunActionTest
-import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationCompletionTest
-import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingTest
-import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
-import org.jetbrains.kotlin.idea.script.AbstractScriptDefinitionsOrderTest
+import org.jetbrains.kotlin.idea.script.*
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerLeafGroupingTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerNullnessGroupingTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerTreeTest
@@ -841,19 +838,59 @@ fun main(args: Array<String>) {
 
         testGroup("idea/scripting-support/test", "idea/scripting-support/testData") {
             testClass<AbstractScratchRunActionTest> {
-                model("scratch", extension = "kts", testMethod = "doScratchCompilingTest", testClassName = "ScratchCompiling", recursive = false)
+                model(
+                    "scratch",
+                    extension = "kts",
+                    testMethod = "doScratchCompilingTest",
+                    testClassName = "ScratchCompiling",
+                    recursive = false
+                )
                 model("scratch", extension = "kts", testMethod = "doScratchReplTest", testClassName = "ScratchRepl", recursive = false)
-                model("scratch/multiFile", extension = null, testMethod = "doScratchMultiFileTest", testClassName = "ScratchMultiFile", recursive = false)
+                model(
+                    "scratch/multiFile",
+                    extension = null,
+                    testMethod = "doScratchMultiFileTest",
+                    testClassName = "ScratchMultiFile",
+                    recursive = false
+                )
 
-                model("worksheet", extension = "ws.kts", testMethod = "doWorksheetCompilingTest", testClassName = "WorksheetCompiling", recursive = false)
-                model("worksheet", extension = "ws.kts", testMethod = "doWorksheetReplTest", testClassName = "WorksheetRepl", recursive = false)
-                model("worksheet/multiFile", extension = null, testMethod = "doWorksheetMultiFileTest", testClassName = "WorksheetMultiFile", recursive = false)
+                model(
+                    "worksheet",
+                    extension = "ws.kts",
+                    testMethod = "doWorksheetCompilingTest",
+                    testClassName = "WorksheetCompiling",
+                    recursive = false
+                )
+                model(
+                    "worksheet",
+                    extension = "ws.kts",
+                    testMethod = "doWorksheetReplTest",
+                    testClassName = "WorksheetRepl",
+                    recursive = false
+                )
+                model(
+                    "worksheet/multiFile",
+                    extension = null,
+                    testMethod = "doWorksheetMultiFileTest",
+                    testClassName = "WorksheetMultiFile",
+                    recursive = false
+                )
 
-                model("scratch/rightPanelOutput", extension = "kts", testMethod = "doRightPreviewPanelOutputTest", testClassName = "ScratchRightPanelOutput", recursive = false)
+                model(
+                    "scratch/rightPanelOutput",
+                    extension = "kts",
+                    testMethod = "doRightPreviewPanelOutputTest",
+                    testClassName = "ScratchRightPanelOutput",
+                    recursive = false
+                )
             }
 
             testClass<AbstractScratchLineMarkersTest> {
                 model("scratch/lineMarker", testMethod = "doScratchTest", pattern = KT_OR_KTS)
+            }
+
+            testClass<AbstractScriptTemplatesFromDependenciesTest> {
+                model("script/templatesFromDependencies", extension = null, recursive = false)
             }
         }
 

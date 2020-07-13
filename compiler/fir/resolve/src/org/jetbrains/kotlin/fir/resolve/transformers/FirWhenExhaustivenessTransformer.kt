@@ -8,15 +8,11 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
-import org.jetbrains.kotlin.fir.declarations.modality
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -124,24 +120,49 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         sealedClass: FirRegularClass,
         nullable: Boolean
     ): Boolean {
-        val inheritors = sealedClass.sealedInheritors
-        if (inheritors.isNullOrEmpty()) return true
-        val data = SealedExhaustivenessData(
-            sealedClass.session.firSymbolProvider,
-            inheritors.toMutableSet(),
-            !nullable
-        )
+        if (sealedClass.sealedInheritors.isNullOrEmpty()) return true
+
+        val data = SealedExhaustivenessData(sealedClass, !nullable)
         for (branch in whenExpression.branches) {
             branch.condition.accept(SealedExhaustivenessVisitor, data)
         }
-        return data.containsNull && data.remainingInheritors.isEmpty()
+        return data.isExhaustive()
     }
 
-    private class SealedExhaustivenessData(
-        val symbolProvider: FirSymbolProvider,
-        val remainingInheritors: MutableSet<ClassId>,
-        var containsNull: Boolean
-    )
+    private inner class SealedExhaustivenessData(regularClass: FirRegularClass, var containsNull: Boolean) {
+        val symbolProvider = bodyResolveComponents.symbolProvider
+        private val rootNode = SealedClassInheritors(regularClass.classId, regularClass.sealedInheritors.mapToSealedInheritors())
+
+        private fun List<ClassId>?.mapToSealedInheritors(): MutableSet<SealedClassInheritors>? {
+            if (this.isNullOrEmpty()) return null
+
+            return this.mapNotNull {
+                val inheritor = symbolProvider.getClassLikeSymbolByFqName(it)?.fir as? FirRegularClass ?: return@mapNotNull null
+                SealedClassInheritors(inheritor.classId, inheritor.sealedInheritors.mapToSealedInheritors())
+            }.takeIf { it.isNotEmpty() }?.toMutableSet()
+        }
+
+        fun removeInheritor(classId: ClassId) {
+            if (rootNode.classId == classId) {
+                rootNode.inheritors?.clear()
+                return
+            }
+
+            rootNode.removeInheritor(classId)
+        }
+
+        fun isExhaustive() = containsNull && rootNode.isEmpty()
+    }
+
+    private data class SealedClassInheritors(val classId: ClassId, val inheritors: MutableSet<SealedClassInheritors>? = null) {
+        fun removeInheritor(classId: ClassId): Boolean {
+            return inheritors != null && (inheritors.removeIf { it.classId == classId } || inheritors.any { it.removeInheritor(classId) })
+        }
+
+        fun isEmpty(): Boolean {
+            return inheritors != null && inheritors.all { it.isEmpty() }
+        }
+    }
 
     private object SealedExhaustivenessVisitor : FirDefaultVisitor<Unit, SealedExhaustivenessData>() {
         override fun visitElement(element: FirElement, data: SealedExhaustivenessData) {}
@@ -171,7 +192,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: SealedExhaustivenessData) {
             val lookupTag = (resolvedTypeRef.type as? ConeLookupTagBasedType)?.lookupTag ?: return
             val symbol = data.symbolProvider.getSymbolByLookupTag(lookupTag) as? FirClassSymbol ?: return
-            data.remainingInheritors.remove(symbol.classId)
+            data.removeInheritor(symbol.classId)
         }
 
         override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: SealedExhaustivenessData) {

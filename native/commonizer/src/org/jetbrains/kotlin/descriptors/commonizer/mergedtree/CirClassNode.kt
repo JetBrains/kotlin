@@ -23,7 +23,7 @@ class CirClassNode(
     val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = THashMap()
     val classes: MutableMap<Name, CirClassNode> = THashMap()
 
-    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
+    override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T): R =
         visitor.visitClassNode(this, data)
 
     override fun toString() = CirNode.toString(this)

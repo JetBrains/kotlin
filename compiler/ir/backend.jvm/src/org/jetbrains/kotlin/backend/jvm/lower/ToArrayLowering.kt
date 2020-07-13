@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -97,7 +96,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
     }
 
     private fun IrClass.findOrCreate(indirectSubclass: Boolean, matcher: (IrSimpleFunction) -> Boolean, fallback: () -> IrSimpleFunction) {
-        val existing = functions.find(matcher) as? IrFunctionImpl
+        val existing = functions.find(matcher)
         if (existing != null) {
             // This is an explicit override of a method defined in `kotlin.collections.AbstractCollection`
             // or `java.util.Collection`. From here on, the frontend will check the existence of implementations;

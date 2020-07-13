@@ -157,7 +157,7 @@ class KotlinSourceFilterScope private constructor(
             includeProjectSourceFiles = true,
             includeLibrarySourceFiles = true,
             includeClassFiles = false,
-            includeScriptDependencies = false,
+            includeScriptDependencies = true,
             includeScriptsOutsideSourceRoots = true,
             project = project
         )

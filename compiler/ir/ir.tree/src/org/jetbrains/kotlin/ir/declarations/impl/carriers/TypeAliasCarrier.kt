@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-interface TypeAliasCarrier : DeclarationCarrier<TypeAliasCarrier> {
+interface TypeAliasCarrier : DeclarationCarrier {
 
     var typeParametersField: List<IrTypeParameter>
 

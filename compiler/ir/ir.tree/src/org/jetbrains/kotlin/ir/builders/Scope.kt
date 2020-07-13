@@ -81,13 +81,10 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         endOffset: Int = UNDEFINED_OFFSET
     ): IrVariable {
         val originalKotlinType = type ?: irType.toKotlinType()
+        val descriptor = createDescriptorForTemporaryVariable(originalKotlinType, nameHint, isMutable)
         return IrVariableImpl(
-            startOffset, endOffset, origin,
-            createDescriptorForTemporaryVariable(
-                originalKotlinType,
-                nameHint, isMutable
-            ),
-            irType
+            startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), descriptor.name,
+            irType, isMutable, isConst = false, isLateinit = false
         ).apply {
             parent = getLocalDeclarationParent()
         }

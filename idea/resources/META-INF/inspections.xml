@@ -2162,6 +2162,15 @@
                      language="kotlin"
                      key="inspection.obsolete.experimental.coroutines.display.name" bundle="messages.KotlinBundle"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ObsoleteKotlinJsPackagesInspection"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="ERROR"
+                     language="kotlin"
+                     key="inspection.obsolete.kotlin.js.packages.display.name" bundle="messages.KotlinBundle"/>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantWithInspection"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
@@ -2524,6 +2533,14 @@
                      level="WARNING"
                      language="kotlin"
                      key="inspection.logger.initialized.with.foreign.class.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceWithIgnoreCaseEqualsInspection"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.replace.with.ignore.case.equals.display.name" bundle="messages.KotlinBundle"/>
   </extensions>
 
 </idea-plugin>

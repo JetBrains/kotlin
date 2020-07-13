@@ -19,18 +19,17 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.FieldCarrier
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-
 
 class IrFieldImpl(
     startOffset: Int,
@@ -39,31 +38,13 @@ class IrFieldImpl(
     override val symbol: IrFieldSymbol,
     override val name: Name,
     override val type: IrType,
-    override val visibility: Visibility,
+    override var visibility: Visibility,
     override val isFinal: Boolean,
     override val isExternal: Boolean,
     override val isStatic: Boolean
 ) : IrDeclarationBase<FieldCarrier>(startOffset, endOffset, origin),
     IrField,
     FieldCarrier {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
-        type: IrType,
-        name: Name = descriptor.name,
-        symbol: IrFieldSymbol = IrFieldSymbolImpl(descriptor),
-        visibility: Visibility = descriptor.visibility
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        name = name, type,
-        visibility = visibility,
-        isFinal = !descriptor.isVar,
-        isExternal = descriptor.isEffectivelyExternal(),
-        isStatic = descriptor.dispatchReceiverParameter == null
-    )
 
     init {
         symbol.bind(this)

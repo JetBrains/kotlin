@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
-import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport.Companion.EPN
 import org.jetbrains.kotlin.idea.core.script.ucache.ScriptClassRootsBuilder
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.scripting.gradle.*
@@ -146,6 +145,8 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
             if (oldRoot is Imported && oldRoot.data.models.isEmpty()) return
         }
 
+        scriptingDebugLog { "save gradle project info after import: $sync" }
+
         if (oldRoot is Legacy) {
             oldRoot.importing.set(updated)
             return
@@ -161,6 +162,7 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
                 return
             }
 
+            scriptingDebugLog { "save script models after import: ${sync.models}" }
 
             val newData = GradleBuildRootData(
                 sync.ts, sync.projectRoots, gradleHome, sync.javaHome, sync.models
@@ -453,6 +455,6 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
 
     companion object {
         fun getInstance(project: Project): GradleBuildRootsManager =
-            EPN.getPoint(project).extensionList.firstIsInstance()
+            ScriptingSupport.EPN.findExtensionOrFail(GradleBuildRootsManager::class.java, project)
     }
 }

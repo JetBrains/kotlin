@@ -138,6 +138,14 @@ class FirStatusResolveTransformer(
         return transformDeclaration(property, data)
     }
 
+    override fun transformField(
+        field: FirField,
+        data: FirDeclarationStatus?
+    ): CompositeTransformResult<FirDeclaration> {
+        field.transformStatus(this, field.resolveStatus(field.status, containingClass, isLocal = false))
+        return transformDeclaration(field, data)
+    }
+
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: FirDeclarationStatus?): CompositeTransformResult<FirDeclaration> {
         return transformDeclaration(enumEntry, data)
     }

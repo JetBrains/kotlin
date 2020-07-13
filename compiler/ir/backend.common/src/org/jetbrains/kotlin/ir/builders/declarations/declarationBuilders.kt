@@ -122,7 +122,7 @@ inline fun IrProperty.addSetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
         }
     }
 
-fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): IrFunctionImpl {
+fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): IrSimpleFunction {
     val wrappedDescriptor = when (originalDescriptor) {
         is DescriptorWithContainerSource -> WrappedFunctionDescriptorWithContainerSource(originalDescriptor.containerSource)
         is PropertyGetterDescriptor -> WrappedPropertyGetterDescriptor(originalDescriptor.annotations, originalDescriptor.source)
@@ -141,7 +141,7 @@ fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): 
     }
 }
 
-fun IrFunctionBuilder.buildConstructor(): IrConstructorImpl {
+fun IrFunctionBuilder.buildConstructor(): IrConstructor {
     val wrappedDescriptor = WrappedClassConstructorDescriptor()
     return IrConstructorImpl(
         startOffset, endOffset, origin,
@@ -159,19 +159,21 @@ fun IrFunctionBuilder.buildConstructor(): IrConstructorImpl {
  * potentially external function (e.g. in an IrCall) we have to ensure that we keep
  * information from the original descriptor so as not to break inlining.
  */
-inline fun buildFunWithDescriptorForInlining(originalDescriptor: FunctionDescriptor, builder: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
+inline fun buildFunWithDescriptorForInlining(
+    originalDescriptor: FunctionDescriptor, builder: IrFunctionBuilder.() -> Unit
+): IrSimpleFunction =
     IrFunctionBuilder().run {
         builder()
         buildFun(originalDescriptor)
     }
 
-inline fun buildFun(builder: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
+inline fun buildFun(builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
     IrFunctionBuilder().run {
         builder()
         buildFun()
     }
 
-inline fun IrDeclarationContainer.addFunction(builder: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
+inline fun IrDeclarationContainer.addFunction(builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
     buildFun(builder).also { function ->
         declarations.add(function)
         function.parent = this@addFunction
@@ -201,13 +203,13 @@ fun IrDeclarationContainer.addFunction(
         }
     }
 
-inline fun buildConstructor(builder: IrFunctionBuilder.() -> Unit): IrConstructorImpl =
+inline fun buildConstructor(builder: IrFunctionBuilder.() -> Unit): IrConstructor =
     IrFunctionBuilder().run {
         builder()
         buildConstructor()
     }
 
-inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): IrConstructorImpl =
+inline fun IrClass.addConstructor(builder: IrFunctionBuilder.() -> Unit = {}): IrConstructor =
     buildConstructor {
         builder()
         returnType = defaultType

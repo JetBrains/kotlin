@@ -25,6 +25,7 @@ object FirErrors {
     val SYNTAX_ERROR by error0<FirSourceElement, PsiElement>()
     val UNRESOLVED_LABEL by error0<FirSourceElement, PsiElement>()
     val ILLEGAL_CONST_EXPRESSION by error0<FirSourceElement, PsiElement>()
+    val ILLEGAL_UNDERSCORE by error0<FirSourceElement, PsiElement>()
     val DESERIALIZATION_ERROR by error0<FirSourceElement, PsiElement>()
     val INFERENCE_ERROR by error0<FirSourceElement, PsiElement>()
     val TYPE_PARAMETER_AS_SUPERTYPE by error0<FirSourceElement, PsiElement>()
@@ -76,8 +77,14 @@ object FirErrors {
     val DEPRECATED_MODIFIER_PAIR by error2<FirSourceElement, PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
     val INCOMPATIBLE_MODIFIERS by error2<FirSourceElement, PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
 
+    // projection
+    val PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT by error0<FirSourceElement, PsiElement>()
+
     // Control flow diagnostics
     val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
+
+    // Extended checkers group
+    val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, PsiElement>()
 }
 
 

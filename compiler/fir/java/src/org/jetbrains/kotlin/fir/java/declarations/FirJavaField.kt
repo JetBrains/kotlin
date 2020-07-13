@@ -42,7 +42,6 @@ class FirJavaField @FirImplementationDetail constructor(
     override val isVar: Boolean,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameter>,
-    val isEnumEntry: Boolean
 ) : FirField() {
     init {
         symbol.bind(this)
@@ -138,7 +137,6 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     var modality: Modality? = null
     lateinit var visibility: Visibility
     var isStatic: Boolean by Delegates.notNull()
-    var isEnumEntry: Boolean by Delegates.notNull()
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
@@ -162,7 +160,6 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             isVar,
             annotations,
             typeParameters,
-            isEnumEntry
         )
     }
 

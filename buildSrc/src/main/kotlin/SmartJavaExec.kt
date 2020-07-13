@@ -39,10 +39,9 @@ fun JavaExec.passClasspathInJar() {
     }
 
     dependsOn(jarTask)
+    mainClass.set("-jar")
 
     doFirst {
-        main = "-jar"
-
         classpath = project.files()
         args = listOf(jarTask.outputs.files.singleFile.path) + args.orEmpty()
     }

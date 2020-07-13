@@ -651,6 +651,7 @@ tasks {
         dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
         dependsOn(":kotlin-scripting-ide-services-test:test")
+        dependsOn(":kotlin-scripting-ide-services-test:embeddableTest")
         dependsOn(":kotlin-scripting-js-test:test")
     }
 
@@ -824,6 +825,21 @@ tasks {
                 ":kotlin-test:kotlin-test-js:publish"
             )
         }
+    }
+
+    register("kmmTest", AggregateTest::class) {
+        dependsOn(
+            ":idea:idea-gradle:test",
+            ":idea:test",
+            ":compiler:test",
+            ":js:js.tests:test"
+        )
+        if (Ide.IJ193.orHigher())
+            dependsOn(":kotlin-gradle-plugin-integration-tests:test")
+        if (Ide.AS40.orHigher())
+            dependsOn(":kotlin-ultimate:ide:android-studio-native:test")
+
+        testPatternFile = file("tests/mpp/kmm-patterns.csv")
     }
 
     register("test") {

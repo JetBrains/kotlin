@@ -70,6 +70,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
             UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
             IllegalConstExpression -> FirErrors.ILLEGAL_CONST_EXPRESSION
+            IllegalUnderscore -> FirErrors.ILLEGAL_UNDERSCORE
             DeserializationError -> FirErrors.DESERIALIZATION_ERROR
             InferenceError -> FirErrors.INFERENCE_ERROR
             TypeParameterAsSupertype -> FirErrors.TYPE_PARAMETER_AS_SUPERTYPE

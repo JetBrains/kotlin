@@ -128,7 +128,7 @@ fun createFreeFakeLocalPropertyDescriptor(descriptor: LocalVariableDescriptor, t
     val property = PropertyDescriptorImpl.create(
         descriptor.containingDeclaration, descriptor.annotations, Modality.FINAL, descriptor.visibility, descriptor.isVar,
         descriptor.name, CallableMemberDescriptor.Kind.DECLARATION, descriptor.source, false, descriptor.isConst,
-        false, false, false, @Suppress("DEPRECATION") descriptor.isDelegated
+        false, false, false, descriptor.isDelegated
     )
     property.setType(
         descriptor.type, descriptor.typeParameters,

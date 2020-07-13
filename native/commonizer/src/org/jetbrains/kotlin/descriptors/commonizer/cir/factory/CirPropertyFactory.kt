@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertyImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.checkConstantSupportedInCommonization
@@ -38,7 +41,7 @@ object CirPropertyFactory {
             isVar = source.isVar,
             isLateInit = source.isLateInit,
             isConst = source.isConst,
-            isDelegate = @Suppress("DEPRECATION") source.isDelegated,
+            isDelegate = source.isDelegated,
             getter = source.getter?.let(CirPropertyGetterFactory::create),
             setter = source.setter?.let(CirPropertySetterFactory::create),
             backingFieldAnnotations = source.backingField?.annotations?.map(CirAnnotationFactory::create),

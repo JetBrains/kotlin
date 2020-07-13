@@ -407,6 +407,10 @@ fun isOverriding(
             // Not checking the field type (they should match each other if everything other match, otherwise it's a compilation error)
             target.name == superCandidate.name
         }
+        target is IrProperty && superCandidate is IrProperty -> {
+            // Not checking the property type (they should match each other if names match, otherwise it's a compilation error)
+            target.name == superCandidate.name
+        }
         else -> false
     }
 }

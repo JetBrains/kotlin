@@ -45,6 +45,7 @@ org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.CreateActual
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateClass.CallExpression.testCallInWhenEntry, KT-35728,,
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testJunit, ERROR: Couldn't find the following libraries,,
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Libraries.testTestNG, ERROR: Couldn't find the following libraries,,
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.ObsoleteKotlinJsPackages.testKotlinDomAndBrowserImport, Always red because UAST does not work with JS,,
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJvmModuleToJsModule_MoveFromJvmModuleToJsModule, KT-34106,,
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveJdkDependentToJsModule_MoveJdkDependentToJsModule, KT-34106,,
 org.jetbrains.kotlin.idea.resolve.PartialBodyResolveTestGenerated.testSmartCastInTheSameStatement, KT-35922,,
@@ -62,3 +63,5 @@ org.jetbrains.kotlin.jvm.compiler.CompileKotlinAgainstJavaTestGenerated.WithoutA
 org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncLambdas, redesign test AsyncStackTraces,,
 org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testStepOverInlinedLambdaStdlib, fails after advancing bootstrap KT-37879,,
 org.jetbrains.kotlin.incremental.IncrementalJsKlibCompilerRunnerTestGenerated.ClassHierarchyAffected.testMethodRemoved, full fledged FO in klib required,,
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.ConvertToAnonymousObject.testHasConcreateMember2, Unprocessed,,
+org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.MakePrivateAndOverrideMember.testSetter, Unprocessed,,

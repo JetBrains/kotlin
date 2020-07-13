@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -52,7 +51,6 @@ object JvmArrayVariableInLoopAssignmentChecker : AdditionalTypeChecker {
         val resolvedCall = lhsExpression.getResolvedCall(c.trace.bindingContext) ?: return
         val variableDescriptor = resolvedCall.resultingDescriptor as? LocalVariableDescriptor ?: return
         if (variableDescriptor is SyntheticFieldDescriptor) return
-        @Suppress("DEPRECATION")
         if (variableDescriptor.isDelegated) return
 
         val variableType = variableDescriptor.returnType

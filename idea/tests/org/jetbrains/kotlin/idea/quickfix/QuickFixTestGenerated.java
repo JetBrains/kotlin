@@ -6991,6 +6991,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("get.kt")
+            public void testGet() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/get.kt");
+            }
+
             @TestMetadata("in.kt")
             public void testIn() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/in.kt");
@@ -6999,6 +7004,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("plusAssign.kt")
             public void testPlusAssign() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/plusAssign.kt");
+            }
+
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/set.kt");
             }
         }
 
@@ -9873,6 +9883,49 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("unresolvedKotlinxImport.kt")
         public void testUnresolvedKotlinxImport() throws Exception {
             runTest("idea/testData/quickfix/obsoleteCoroutines/unresolvedKotlinxImport.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/obsoleteKotlinJsPackages")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ObsoleteKotlinJsPackages extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInObsoleteKotlinJsPackages() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/obsoleteKotlinJsPackages"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("kotlinBrowserFullyQualifiedProperty.kt")
+        public void testKotlinBrowserFullyQualifiedProperty() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserFullyQualifiedProperty.kt");
+        }
+
+        @TestMetadata("kotlinBrowserPropertyImport.kt")
+        public void testKotlinBrowserPropertyImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserPropertyImport.kt");
+        }
+
+        @TestMetadata("kotlinBrowserStarImport.kt")
+        public void testKotlinBrowserStarImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinBrowserStarImport.kt");
+        }
+
+        @TestMetadata("kotlinDomAndBrowserImport.kt")
+        public void testKotlinDomAndBrowserImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinDomAndBrowserImport.kt");
+        }
+
+        @TestMetadata("kotlinDomPropertyImport.kt")
+        public void testKotlinDomPropertyImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinDomPropertyImport.kt");
+        }
+
+        @TestMetadata("kotlinDomStarImport.kt")
+        public void testKotlinDomStarImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteKotlinJsPackages/kotlinDomStarImport.kt");
         }
     }
 

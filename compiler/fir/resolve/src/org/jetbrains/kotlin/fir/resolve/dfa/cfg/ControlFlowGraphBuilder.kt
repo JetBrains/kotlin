@@ -91,7 +91,26 @@ class ControlFlowGraphBuilder {
     private val initBlockExitNodes: Stack<InitBlockExitNode> = stackOf()
 
     private val exitSafeCallNodes: Stack<ExitSafeCallNode> = stackOf()
-    private val exitElvisCallNodes: Stack<ElvisExitNode> = stackOf()
+    private val exitElvisExpressionNodes: Stack<ElvisExitNode> = stackOf()
+
+    /*
+     * ignoredFunctionCalls is needed for resolve of += operator:
+     *   we have two different calls for resolve, but we left only one of them,
+     *   so we twice call `enterCall` and twice increase `levelCounter`, but
+     *   `exitFunctionCall` we call only once.
+     *
+     * So workflow looks like that:
+     *   Calls:
+     *     - a.plus(b) // (1)
+     *     - a.plusAssign(b) // (2)
+     *
+     * enterCall(a.plus(b)), increase counter
+     * exitIgnoredCall(a.plus(b)) // decrease counter
+     * enterCall(a.plusAssign(b)) // increase counter
+     * exitIgnoredCall(a.plusAssign(b)) // decrease counter
+     * exitFunctionCall(a.plus(b) | a.plusAssign(b)) // don't touch counter
+     */
+    private val ignoredFunctionCalls: MutableSet<FirFunctionCall> = mutableSetOf()
 
     // ----------------------------------- API for node builders -----------------------------------
 
@@ -533,10 +552,7 @@ class ControlFlowGraphBuilder {
         return node
     }
 
-    fun exitWhenExpression(
-        whenExpression: FirWhenExpression,
-        callCompleted: Boolean
-    ): Triple<WhenExitNode, WhenSyntheticElseBranchNode?, UnionFunctionCallArgumentsNode?> {
+    fun exitWhenExpression(whenExpression: FirWhenExpression): Pair<WhenExitNode, WhenSyntheticElseBranchNode?> {
         val whenExitNode = whenExitNodes.pop()
         // exit from last condition node still on stack
         // we should remove it
@@ -549,9 +565,9 @@ class ControlFlowGraphBuilder {
         } else null
         whenExitNode.updateDeadStatus()
         lastNodes.push(whenExitNode)
-        val (_, unionNode) = processUnionOfArguments(whenExitNode, callCompleted)
+        dropPostponedLambdasForNonDeterministicCalls()
         levelCounter--
-        return Triple(whenExitNode, syntheticElseBranchNode, unionNode)
+        return whenExitNode to syntheticElseBranchNode
     }
 
     // ----------------------------------- While Loop -----------------------------------
@@ -821,8 +837,18 @@ class ControlFlowGraphBuilder {
         levelCounter++
     }
 
-    fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): Pair<FunctionCallNode, UnionFunctionCallArgumentsNode?> {
+    fun exitIgnoredCall(functionCall: FirFunctionCall) {
         levelCounter--
+        ignoredFunctionCalls += functionCall
+    }
+
+    fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): Pair<FunctionCallNode, UnionFunctionCallArgumentsNode?> {
+        val callWasIgnored = ignoredFunctionCalls.remove(functionCall)
+        if (!callWasIgnored) {
+            levelCounter--
+        } else {
+            ignoredFunctionCalls.clear()
+        }
         val returnsNothing = functionCall.resultType.isNothing
         val node = createFunctionCallNode(functionCall)
         val (kind, unionNode) = processUnionOfArguments(node, callCompleted)
@@ -868,6 +894,16 @@ class ControlFlowGraphBuilder {
         val node = createCheckNotNullCallNode(checkNotNullCall).also { addNewSimpleNode(it) }
         val unionNode = processUnionOfArguments(node, callCompleted).second
         return node to unionNode
+    }
+
+    /*
+     * This is needed for some control flow constructions which are resolved as calls (when and elvis)
+     * For usual call we have invariant that all arguments will be called before function call, but for
+     *   when and elvis only one of arguments will be actually called, so it's illegal to pass data flow info
+     *   from lambda in one of branches
+     */
+    private fun dropPostponedLambdasForNonDeterministicCalls() {
+        exitsFromCompletedPostponedAnonymousFunctions.clear()
     }
 
     private fun processUnionOfArguments(
@@ -989,33 +1025,33 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Elvis -----------------------------------
 
-    fun exitElvisLhs(elvisCall: FirElvisCall): Triple<ElvisLhsExitNode, ElvisLhsIsNotNullNode, ElvisRhsEnterNode> {
-        val exitNode = createElvisExitNode(elvisCall).also {
-            exitElvisCallNodes.push(it)
+    fun exitElvisLhs(elvisExpression: FirElvisExpression): Triple<ElvisLhsExitNode, ElvisLhsIsNotNullNode, ElvisRhsEnterNode> {
+        val exitNode = createElvisExitNode(elvisExpression).also {
+            exitElvisExpressionNodes.push(it)
         }
 
-        val lhsExitNode = createElvisLhsExitNode(elvisCall).also {
+        val lhsExitNode = createElvisLhsExitNode(elvisExpression).also {
             popAndAddEdge(it)
         }
 
-        val lhsIsNotNullNode = createElvisLhsIsNotNullNode(elvisCall).also {
+        val lhsIsNotNullNode = createElvisLhsIsNotNullNode(elvisExpression).also {
             addEdge(lhsExitNode, it)
             addEdge(it, exitNode)
         }
 
-        val rhsEnterNode = createElvisRhsEnterNode(elvisCall).also {
+        val rhsEnterNode = createElvisRhsEnterNode(elvisExpression).also {
             addEdge(lhsExitNode, it)
         }
         lastNodes.push(rhsEnterNode)
         return Triple(lhsExitNode, lhsIsNotNullNode, rhsEnterNode)
     }
 
-    fun exitElvis(callCompleted: Boolean): Pair<ElvisExitNode, UnionFunctionCallArgumentsNode?> {
-        val exitNode = exitElvisCallNodes.pop()
+    fun exitElvis(): ElvisExitNode {
+        val exitNode = exitElvisExpressionNodes.pop()
         addNewSimpleNode(exitNode)
         exitNode.updateDeadStatus()
-        val (_, unionNode) = processUnionOfArguments(exitNode, callCompleted)
-        return exitNode to unionNode
+        dropPostponedLambdasForNonDeterministicCalls()
+        return exitNode
     }
 
     // ----------------------------------- Contract description -----------------------------------

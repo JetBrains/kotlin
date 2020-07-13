@@ -17,7 +17,7 @@ class CirTypeAliasNode(
     override val classId: ClassId
 ) : CirNodeWithClassId<CirTypeAlias, CirClassifier> {
 
-    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
+    override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T): R =
         visitor.visitTypeAliasNode(this, data)
 
     override fun toString() = CirNode.toString(this)

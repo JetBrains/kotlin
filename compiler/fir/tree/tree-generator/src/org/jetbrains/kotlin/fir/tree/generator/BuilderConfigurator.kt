@@ -287,7 +287,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             useTypes(stubReferenceType)
         }
 
-        builder(elvisCall) {
+        builder(elvisExpression) {
             default("calleeReference", "FirStubReference")
             useTypes(stubReferenceType)
         }

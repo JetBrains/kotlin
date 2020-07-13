@@ -74,6 +74,10 @@ abstract class DukatTask(
 
         destinationDir.deleteRecursively()
 
+        if (dTsFiles.isEmpty()) {
+            return
+        }
+
         DukatRunner(
             compilation,
             dTsFiles,

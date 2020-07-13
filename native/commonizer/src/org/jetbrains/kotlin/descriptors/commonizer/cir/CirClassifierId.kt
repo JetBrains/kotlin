@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 
 sealed class CirClassifierId {
     interface ClassOrTypeAlias {
@@ -15,5 +14,5 @@ sealed class CirClassifierId {
 
     data class Class(override val classId: ClassId) : ClassOrTypeAlias, CirClassifierId()
     data class TypeAlias(override val classId: ClassId) : ClassOrTypeAlias, CirClassifierId()
-    data class TypeParameter(val name: Name) : CirClassifierId()
+    data class TypeParameter(val index: Int) : CirClassifierId()
 }

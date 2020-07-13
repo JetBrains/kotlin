@@ -132,7 +132,9 @@ sealed class ScriptDependenciesSourceInfo(override val project: Project) : IdeaM
     override val binariesModuleInfo: ScriptDependenciesInfo
         get() = ScriptDependenciesInfo.ForProject(project)
 
-    override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(
+    // include project sources because script dependencies sources may contain roots from project
+    // the main example is buildSrc for *.gradle.kts files
+    override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.projectAndLibrariesSources(
         ScriptConfigurationManager.getInstance(project).getAllScriptDependenciesSourcesScope(), project
     )
 

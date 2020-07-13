@@ -1332,6 +1332,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         public void testLackOfNullCheckOnNullableInsideBuild() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/lackOfNullCheckOnNullableInsideBuild.kt");
         }
+
+        @TestMetadata("substituteStubTypeIntoCR.kt")
+        public void testSubstituteStubTypeIntoCR() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/substituteStubTypeIntoCR.kt");
+        }
+
+        @TestMetadata("substituteStubTypeIntolambdaParameterDescriptor.kt")
+        public void testSubstituteStubTypeIntolambdaParameterDescriptor() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/substituteStubTypeIntolambdaParameterDescriptor.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
@@ -8284,6 +8294,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("kt18902.kt")
             public void testKt18902() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/kt18902.kt");
+            }
+
+            @TestMetadata("kt39588.kt")
+            public void testKt39588() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/kt39588.kt");
             }
 
             @TestMetadata("local.kt")

@@ -32,10 +32,12 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
+import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import java.io.File
@@ -726,7 +728,7 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary) {
                 dfs(library)
 
         for (library in sortedLibraries) {
-            if (File(cacheDirectory, library.uniqueName.cachedName).exists())
+            if (File(cacheDirectory, library.uniqueName.cachedName).listFilesOrEmpty().isNotEmpty())
                 continue
             project.logger.info("Compiling ${library.uniqueName} to cache")
             val args = mutableListOf(
@@ -761,14 +763,14 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary) {
     }
 
     private val String.cachedName
-        get() = getCacheFileName(this, konanCacheKind, compilation.konanTarget)
+        get() = getCacheFileName(this, konanCacheKind)
 
     private fun ensureCompilerProvidedLibPrecached(platformLibName: String, platformLibs: Map<String, File>, visitedLibs: MutableSet<String>) {
         if (platformLibName in visitedLibs)
             return
         visitedLibs += platformLibName
         val platformLib = platformLibs[platformLibName] ?: error("$platformLibName is not found in platform libs")
-        if (File(rootCacheDirectory, platformLibName.cachedName).exists())
+        if (File(rootCacheDirectory, platformLibName.cachedName).listFilesOrEmpty().isNotEmpty())
             return
         val unresolvedDependencies = resolveSingleFileKlib(
             KFile(platformLib.absolutePath),
@@ -790,7 +792,9 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary) {
     }
 
     private fun ensureCompilerProvidedLibsPrecached() {
-        val platformLibs = libraries.filter { it.providedByCompiler(project) }.associateBy { it.name }
+        val distribution = Distribution(project.konanHome)
+        val platformLibs = (listOf(File(distribution.stdlib)) + File(distribution.platformLibs(compilation.konanTarget))
+            .listFiles()).associateBy { it.name }
         val visitedLibs = mutableSetOf<String>()
         for (platformLibName in platformLibs.keys)
             ensureCompilerProvidedLibPrecached(platformLibName, platformLibs, visitedLibs)
@@ -832,9 +836,9 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary) {
             return konanHome.resolve("klib/cache/$optionsAwareCacheName")
         }
 
-        internal fun getCacheFileName(baseName: String, cacheKind: NativeCacheKind, konanTarget: KonanTarget): String =
+        internal fun getCacheFileName(baseName: String, cacheKind: NativeCacheKind): String =
             cacheKind.outputKind?.let {
-                "${it.prefix(konanTarget)}${baseName}-cache${it.suffix(konanTarget)}"
+                "${baseName}-cache"
             } ?: error("No output for kind $cacheKind")
 
         internal fun cacheWorksFor(target: KonanTarget) =

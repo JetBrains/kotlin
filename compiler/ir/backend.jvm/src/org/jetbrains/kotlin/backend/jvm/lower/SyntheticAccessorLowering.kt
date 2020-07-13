@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     data class LambdaCallSite(val scope: IrDeclaration, val crossinline: Boolean)
@@ -220,7 +218,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
                         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR)
 
-    private fun handleHiddenConstructor(declaration: IrConstructor): IrConstructorImpl {
+    private fun handleHiddenConstructor(declaration: IrConstructor): IrConstructor {
         require(declaration.isOrShouldBeHidden, declaration::render)
         return context.hiddenConstructors.getOrPut(declaration) {
             declaration.makeConstructorAccessor(JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR).also { accessor ->
@@ -229,8 +227,10 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 // signature of the accessor. We implement this special case in the JVM IR backend by
                 // attaching the metadata directly to the accessor. We also have to move all annotations
                 // to the accessor. Parameter annotations are already moved by the copyTo method.
-                accessor.metadata = declaration.metadata
-                declaration.safeAs<IrConstructorImpl>()?.metadata = null
+                if (declaration.metadata != null) {
+                    accessor.metadata = declaration.metadata
+                    declaration.metadata = null
+                }
                 accessor.annotations += declaration.annotations
                 declaration.annotations = emptyList()
                 declaration.valueParameters.forEach { it.annotations = emptyList() }
@@ -253,7 +253,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun IrConstructor.makeConstructorAccessor(
         originForConstructorAccessor: IrDeclarationOrigin =
             JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
-    ): IrConstructorImpl {
+    ): IrConstructor {
         val source = this
 
         return buildConstructor {

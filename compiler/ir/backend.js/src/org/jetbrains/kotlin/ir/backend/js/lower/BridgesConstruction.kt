@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
-import org.jetbrains.kotlin.backend.common.ir.isSuspend
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -23,7 +20,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.functionSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -138,11 +134,7 @@ class BridgesConstruction(val context: CommonBackendContext) : DeclarationTransf
             origin = origin
         ).apply {
             copyTypeParametersFrom(bridge)
-            // TODO: should dispatch receiver be copied?
-            dispatchReceiverParameter = bridge.dispatchReceiverParameter?.run {
-                IrValueParameterImpl(startOffset, endOffset, origin, descriptor, type, varargElementType).also { it.parent = this@apply }
-            }
-            extensionReceiverParameter = bridge.extensionReceiverParameter?.copyTo(this)
+            copyReceiverParametersFrom(bridge)
             valueParameters += bridge.valueParameters.map { p -> p.copyTo(this) }
             annotations += bridge.annotations
             overriddenSymbols += delegateTo.overriddenSymbols

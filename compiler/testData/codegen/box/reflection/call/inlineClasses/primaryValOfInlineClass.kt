@@ -1,8 +1,5 @@
 // IGNORE_BACKEND: JS_IR, JS, NATIVE
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
-// ^ TODO fix reflection for primary inline class properties with mangled getter method
 // WITH_REFLECT
 
 import kotlin.test.assertEquals

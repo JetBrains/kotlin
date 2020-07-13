@@ -582,12 +582,9 @@ open class SymbolTable(
         visibility: Visibility? = null,
         fieldFactory: (IrFieldSymbol) -> IrField = {
             IrFieldImpl(
-                startOffset, endOffset, origin,
-                name = nameProvider.nameForDeclaration(descriptor),
-                type = type,
-                descriptor = descriptor,
-                symbol = it,
-                visibility = visibility ?: it.descriptor.visibility,
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type,
+                visibility ?: it.descriptor.visibility, !it.descriptor.isVar, it.descriptor.isEffectivelyExternal(),
+                it.descriptor.dispatchReceiverParameter == null
             ).apply {
                 metadata = MetadataSource.Property(it.descriptor)
             }
@@ -648,7 +645,7 @@ open class SymbolTable(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
-        @Suppress("DEPRECATION") isDelegated: Boolean = descriptor.isDelegated,
+        isDelegated: Boolean = descriptor.isDelegated,
         propertyFactory: (IrPropertySymbol) -> IrProperty = { symbol ->
             IrPropertyImpl(
                 startOffset, endOffset, origin, symbol, isDelegated = isDelegated,
@@ -826,13 +823,17 @@ open class SymbolTable(
         return IrTypeParameterSymbolImpl(descriptor)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun declareGlobalTypeParameter(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = {
-            IrTypeParameterImpl(startOffset, endOffset, origin, descriptor, nameProvider.nameForDeclaration(descriptor), it)
+            IrTypeParameterImpl(
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor),
+                it.descriptor.index, it.descriptor.isReified, it.descriptor.variance
+            )
         }
     ): IrTypeParameter =
         globalTypeParameterSymbolTable.declare(
@@ -850,13 +851,17 @@ open class SymbolTable(
         return globalTypeParameterSymbolTable.declare(descriptor, { IrTypeParameterSymbolImpl(descriptor) }, typeParameterFactory)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun declareScopedTypeParameter(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = {
-            IrTypeParameterImpl(startOffset, endOffset, origin, descriptor, nameProvider.nameForDeclaration(descriptor), it)
+            IrTypeParameterImpl(
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor),
+                it.descriptor.index, it.descriptor.isReified, it.descriptor.variance
+            )
         }
     ): IrTypeParameter =
         scopedTypeParameterSymbolTable.declare(
@@ -886,10 +891,8 @@ open class SymbolTable(
         varargElementType: IrType? = null,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
             IrValueParameterImpl(
-                startOffset, endOffset, origin, descriptor,
-                name = nameProvider.nameForDeclaration(descriptor),
-                type = type, varargElementType = varargElementType,
-                symbol = it
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor),
+                descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline
             )
         }
     ): IrValueParameter =
@@ -927,9 +930,11 @@ open class SymbolTable(
         descriptor: VariableDescriptor,
         type: IrType,
         variableFactory: (IrVariableSymbol) -> IrVariable = {
-            IrVariableImpl(startOffset, endOffset, origin, descriptor, type, nameProvider.nameForDeclaration(descriptor), it)
+            IrVariableImpl(
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type,
+                descriptor.isVar, descriptor.isConst, descriptor.isLateInit
+            )
         }
-
     ): IrVariable =
         variableSymbolTable.declareLocal(
             descriptor,

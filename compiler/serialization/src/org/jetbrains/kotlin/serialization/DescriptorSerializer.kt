@@ -240,7 +240,7 @@ class DescriptorSerializer private constructor(
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isVar, hasGetter, hasSetter, hasConstant, descriptor.isConst, descriptor.isLateInit, descriptor.isExternal,
-            @Suppress("DEPRECATION") descriptor.isDelegated, descriptor.isExpect
+            descriptor.isDelegated, descriptor.isExpect
         )
         if (flags != builder.flags) {
             builder.flags = flags

@@ -40,10 +40,7 @@ private fun areSimpleTypesEqual(cache: CirClassifiersCache, a: CirSimpleType, b:
     val bId = b.classifierId
 
     if (a !== b) {
-        if (a.arguments.size != b.arguments.size
-            || a.isMarkedNullable != b.isMarkedNullable
-            || a.isDefinitelyNotNullType != b.isDefinitelyNotNullType
-        ) {
+        if (a.arguments.size != b.arguments.size || a.isMarkedNullable != b.isMarkedNullable) {
             return false
         }
 
@@ -52,7 +49,7 @@ private fun areSimpleTypesEqual(cache: CirClassifiersCache, a: CirSimpleType, b:
         }
 
         if (aId is CirClassifierId.TypeParameter) {
-            if (bId !is CirClassifierId.TypeParameter || aId.name != bId.name) return false
+            if (bId !is CirClassifierId.TypeParameter || aId.index != bId.index) return false
         }
     }
 

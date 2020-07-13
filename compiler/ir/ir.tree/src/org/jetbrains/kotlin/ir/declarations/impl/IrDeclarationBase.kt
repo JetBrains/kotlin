@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.ir.declarations.impl.carriers.DeclarationCarrier
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-abstract class IrDeclarationBase<T : DeclarationCarrier<T>>(
+abstract class IrDeclarationBase<T : DeclarationCarrier>(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin
 ) : IrPersistingElementBase<T>(startOffset, endOffset),
     IrDeclaration,
-    DeclarationCarrier<T> {
+    DeclarationCarrier {
 
     override var parentField: IrDeclarationParent? = null
 
@@ -65,9 +65,6 @@ abstract class IrDeclarationBase<T : DeclarationCarrier<T>>(
             }
         }
 
-    override val metadata: MetadataSource?
-        get() = null
-
     override fun ensureLowered() {
         if (stageController.currentStage > loweredUpTo) {
             stageController.lazyLower(this)
@@ -75,18 +72,18 @@ abstract class IrDeclarationBase<T : DeclarationCarrier<T>>(
     }
 }
 
-abstract class IrPersistingElementBase<T : Carrier<T>>(
+abstract class IrPersistingElementBase<T : Carrier>(
     startOffset: Int,
     endOffset: Int
 ) : IrElementBase(startOffset, endOffset),
-    Carrier<T> {
+    Carrier {
 
     override var lastModified: Int = stageController.currentStage
 
     var loweredUpTo = stageController.currentStage
 
     // TODO Array<T>?
-    private var values: Array<Any?>? = null
+    private var values: Array<Carrier>? = null
 
     val createdOn: Int = stageController.currentStage
 //        get() = values?.let { (it[0] as T).lastModified } ?: lastModified
@@ -140,13 +137,7 @@ abstract class IrPersistingElementBase<T : Carrier<T>>(
         if (stage == lastModified) {
             return this as T
         } else {
-            val newValues = values?.let { oldValues ->
-                oldValues.copyOf(oldValues.size + 1)
-            } ?: arrayOfNulls<Any?>(1)
-
-            newValues[newValues.size - 1] = this.clone()
-
-            values = newValues
+            values = (values ?: emptyArray()) + this.clone() as T
         }
 
         this.lastModified = stage

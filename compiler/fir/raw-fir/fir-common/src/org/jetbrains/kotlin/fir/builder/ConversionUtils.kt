@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
-import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
@@ -142,8 +141,8 @@ fun IElementType.toFirOperation(): FirOperation =
 
 fun FirExpression.generateNotNullOrOther(
     other: FirExpression, baseSource: FirSourceElement?,
-): FirElvisCall {
-    return buildElvisCall {
+): FirElvisExpression {
+    return buildElvisExpression {
         source = baseSource
         lhs = this@generateNotNullOrOther
         rhs = other

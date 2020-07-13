@@ -37,6 +37,6 @@ class B {
 }
 
 fun foo3(x: B) = {
-    <!VARIABLE_EXPECTED!>x<!> += { "" }
-    <!VARIABLE_EXPECTED!>x<!> += id { "" }
+    x += { "" }
+    x += id { "" }
 }

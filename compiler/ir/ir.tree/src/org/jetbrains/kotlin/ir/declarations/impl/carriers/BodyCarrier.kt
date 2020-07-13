@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.declarations.impl.carriers
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 
-interface BodyCarrier : Carrier<BodyCarrier> {
+interface BodyCarrier : Carrier {
 
     var containerField: IrDeclaration?
 

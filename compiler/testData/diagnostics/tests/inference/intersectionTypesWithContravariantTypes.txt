@@ -1,0 +1,20 @@
+package
+
+public fun </*0*/ T : kotlin.Comparable<T>, /*1*/ S : T> greater(/*0*/ x: Bar<in S>, /*1*/ other: Foo<T>): kotlin.String
+public fun </*0*/ T : kotlin.Comparable<T>, /*1*/ S : T> greater(/*0*/ x: Bar<in S>, /*1*/ t: T): kotlin.Int
+public fun test(/*0*/ b: Bar<kotlin.Long>): kotlin.Unit
+
+public abstract class Bar</*0*/ T> : Foo<T>, kotlin.Comparable<Bar<T>> {
+    public constructor Bar</*0*/ T>()
+    public abstract override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Bar<T>): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

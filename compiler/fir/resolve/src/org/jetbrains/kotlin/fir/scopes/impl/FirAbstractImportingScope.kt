@@ -37,7 +37,7 @@ abstract class FirAbstractImportingScope(
             val firClass = (symbol as FirClassSymbol<*>).fir
 
             return if (firClass.classKind == ClassKind.OBJECT)
-                firClass.unsubstitutedScope(session, scopeSession)
+                FirObjectImportedCallableScope(classId, firClass.unsubstitutedScope(session, scopeSession))
             else
                 firClass.scopeProvider.getStaticScope(firClass, session, scopeSession)
         }

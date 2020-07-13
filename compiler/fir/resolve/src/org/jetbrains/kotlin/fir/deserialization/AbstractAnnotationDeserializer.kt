@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
@@ -42,6 +41,9 @@ abstract class AbstractAnnotationDeserializer(
     private val session: FirSession
 ) {
     protected val protocol = BuiltInSerializerProtocol
+
+    open fun inheritAnnotationInfo(parent: AbstractAnnotationDeserializer) {
+    }
 
     enum class CallableKind {
         PROPERTY,

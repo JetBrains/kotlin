@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 interface Trait {
     fun foo() = "O"
     fun bar(): String

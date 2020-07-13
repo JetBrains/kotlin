@@ -354,19 +354,12 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         }
     }
 
-    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter {
-        val symbol = IrValueParameterSymbolImpl(descriptor)
-        val varargType = if (descriptor is ValueParameterDescriptor) descriptor.varargElementType else null
-        return IrValueParameterImpl(
-            offset,
-            offset,
-            memberOrigin,
-            descriptor,
-            symbol = symbol,
-            type = toIrType(descriptor.type),
-            varargElementType = varargType?.let { toIrType(it) }
+    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
+        IrValueParameterImpl(
+            offset, offset, memberOrigin, IrValueParameterSymbolImpl(this), name, indexOrMinusOne, toIrType(type),
+            (this as? ValueParameterDescriptor)?.varargElementType?.let(::toIrType), isCrossinline, isNoinline
         ).also {
-            it.parent = this
+            it.parent = this@createValueParameter
         }
     }
 

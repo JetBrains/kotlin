@@ -6,20 +6,23 @@
 package org.jetbrains.kotlin.scripting.ide_services
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.scripting.ide_services.test_util.*
-import org.jetbrains.kotlin.scripting.ide_services.test_util.JvmTestRepl
-import org.jetbrains.kotlin.scripting.ide_services.test_util.SourceCodeTestImpl
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
-import kotlin.script.experimental.util.LinkedSnippet
-import kotlin.script.experimental.util.get
 import kotlin.script.experimental.jvm.util.isError
 import kotlin.script.experimental.jvm.util.isIncomplete
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
+import kotlin.script.experimental.util.LinkedSnippet
+import kotlin.script.experimental.util.get
 
 // Adapted form GenericReplTest
 
@@ -288,15 +291,13 @@ class JvmIdeServicesTest : TestCase() {
 
         JvmTestRepl(conf)
             .use { repl ->
-                /*
-                    The only source file in test.jar contains following code:
+                val outputJarName = "kt35651.jar"
+                val (exitCode, outputJarPath) = compileFile("stringTo.kt", outputJarName)
+                assertEquals(ExitCode.OK, exitCode)
 
-                    package example.dependency
-                    infix fun String.to(that: String) = this + that
-                 */
                 assertEvalUnit(
                     repl, """
-                        @file:DependsOn("plugins/scripting/scripting-ide-services-test/testData/KT-35651-test.jar")
+                        @file:DependsOn("$outputJarPath")
                         import example.dependency.*
                         
                         val x = listOf<String>()
@@ -315,6 +316,33 @@ class JvmIdeServicesTest : TestCase() {
 
                 assertEvalResult(repl, """ "a" to "a" """, "aa")
             }
+    }
+
+    companion object {
+        private const val MODULE_PATH = "plugins/scripting/scripting-ide-services-test"
+        private val outputJarDir = createTempDir("temp-ide-services").toPath()
+
+        private data class CliCompilationResult(val exitCode: ExitCode, val outputJarPath: String)
+
+        private fun compileFile(inputKtFileName: String, outputJarName: String): CliCompilationResult {
+            val jarPath = outputJarDir.resolve(outputJarName).toAbsolutePath().toString().replace('\\', '/')
+
+            val compilerArgs = arrayOf(
+                "$MODULE_PATH/testData/$inputKtFileName",
+                "-kotlin-home", "dist/kotlinc",
+                "-d", jarPath
+            )
+
+            val exitCode = K2JVMCompiler().exec(
+                MessageCollector.NONE,
+                Services.EMPTY,
+                K2JVMCompilerArguments().apply {
+                    K2JVMCompiler().parseArguments(compilerArgs, this)
+                }
+            )
+
+            return CliCompilationResult(exitCode, jarPath)
+        }
     }
 }
 

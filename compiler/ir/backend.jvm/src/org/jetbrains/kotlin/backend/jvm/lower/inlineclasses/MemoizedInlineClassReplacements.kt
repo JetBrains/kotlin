@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForInlining
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -45,7 +45,7 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean) {
             when {
                 // Don't mangle anonymous or synthetic functions
                 it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
-                        it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
+                        (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == Visibilities.LOCAL) ||
                         it.isStaticInlineClassReplacement ||
                         it.origin.isSynthetic -> null
 
@@ -184,7 +184,7 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean) {
         function: IrFunction,
         replacementOrigin: IrDeclarationOrigin,
         noFakeOverride: Boolean = false,
-        body: IrFunctionImpl.() -> Unit
+        body: IrFunction.() -> Unit
     ) = buildFunWithDescriptorForInlining(function.descriptor) {
         updateFrom(function)
         if (function is IrConstructor) {

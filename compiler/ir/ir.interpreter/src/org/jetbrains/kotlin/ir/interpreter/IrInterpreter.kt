@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.interpreter
 
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.interpreter.builtins.*
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterMethodNotFoundException
@@ -13,15 +20,6 @@ import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.ir.interpreter.stack.StackImpl
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
@@ -100,8 +98,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         try {
             incrementAndCheckCommands()
             val executionResult = when (this) {
-                is IrFunctionImpl -> interpretFunction(this)
-                is IrLazyFunction -> interpretFunction(this as IrSimpleFunction)
+                is IrSimpleFunction -> interpretFunction(this)
                 is IrCall -> interpretCall(this)
                 is IrConstructorCall -> interpretConstructorCall(this)
                 is IrEnumConstructorCall -> interpretEnumConstructorCall(this)

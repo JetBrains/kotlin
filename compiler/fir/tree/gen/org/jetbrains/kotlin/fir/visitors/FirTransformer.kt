@@ -76,7 +76,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessWithoutCallee
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
-import org.jetbrains.kotlin.fir.expressions.FirElvisCall
+import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
@@ -420,8 +420,8 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(checkNotNullCall, data)
     }
 
-    open fun transformElvisCall(elvisCall: FirElvisCall, data: D): CompositeTransformResult<FirStatement> {
-        return transformElement(elvisCall, data)
+    open fun transformElvisExpression(elvisExpression: FirElvisExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformElement(elvisExpression, data)
     }
 
     open fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): CompositeTransformResult<FirStatement> {
@@ -916,8 +916,8 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformCheckNotNullCall(checkNotNullCall, data)
     }
 
-    final override fun visitElvisCall(elvisCall: FirElvisCall, data: D): CompositeTransformResult<FirStatement> {
-        return transformElvisCall(elvisCall, data)
+    final override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformElvisExpression(elvisExpression, data)
     }
 
     final override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): CompositeTransformResult<FirStatement> {

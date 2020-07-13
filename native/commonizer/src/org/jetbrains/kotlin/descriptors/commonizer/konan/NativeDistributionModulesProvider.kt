@@ -43,7 +43,7 @@ internal class NativeDistributionModulesProvider(
         }
     }
 
-    override fun loadModules(): Collection<ModuleDescriptor> {
+    override fun loadModules(): Map<String, ModuleDescriptor> {
         val builtIns = loadBuiltIns()
         val stdlib = builtIns.builtInsModule
 
@@ -74,6 +74,6 @@ internal class NativeDistributionModulesProvider(
             module.setDependencies(listOf(module) + dependencies + forwardDeclarations)
         }
 
-        return platformModulesMap.values.toList()
+        return platformModulesMap
     }
 }

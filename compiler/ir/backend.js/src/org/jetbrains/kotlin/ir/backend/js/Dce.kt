@@ -205,9 +205,6 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
         while (queue.isNotEmpty()) {
             val declaration = queue.pollFirst()
 
-            // TODO remove?
-            stageController.lazyLower(declaration)
-
             fun IrDeclaration.enqueue(description: String, isContagious: Boolean = true) {
                 enqueue(declaration, description, isContagious)
             }
@@ -215,15 +212,6 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
             if (declaration is IrClass) {
                 declaration.superTypes.forEach {
                     (it.classifierOrNull as? IrClassSymbol)?.owner?.enqueue("superTypes")
-                }
-
-                // TODO find out how `doResume` gets removed
-                if (declaration.symbol == context.ir.symbols.coroutineImpl) {
-                    declaration.declarations.toList().forEach {
-                        if (it is IrSimpleFunction && it.name.asString() == "doResume") {
-                            it.enqueue("hack for CoroutineImpl::doResume")
-                        }
-                    }
                 }
 
                 declaration.annotations.forEach {
@@ -253,9 +241,6 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                 is IrVariable -> declaration.initializer
                 else -> null
             }
-
-            // TODO remove?
-            (body as? IrBody)?.let { stageController.lazyLower(it) }
 
             body?.acceptVoid(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
@@ -401,11 +386,9 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                 ) {
                     declaration.enqueue(klass, "annotated by @JsName")
                 }
-            }
 
-            // TODO is this needed?
-            for (declaration in ArrayList(klass.declarations)) {
-                // TODO this is a hack.
+                // A hack to enforce property lowering.
+                // Until a getter is accessed it doesn't get moved to the declaration list.
                 if (declaration is IrProperty) {
                     fun IrSimpleFunction.enqueue(description: String) {
                         findOverriddenContagiousDeclaration()?.let { enqueue(it, description) }
@@ -413,16 +396,6 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
 
                     declaration.getter?.enqueue("(getter) overrides useful declaration")
                     declaration.setter?.enqueue("(setter) overrides useful declaration")
-                }
-            }
-
-            // TODO find out how `doResume` gets removed
-            if (klass.symbol == context.ir.symbols.coroutineImpl) {
-                ArrayList(klass.declarations).forEach {
-                    // TODO: fix the heck
-//                    if (it is IrSimpleFunction && it.name.asString() == "doResume") {
-                        it.enqueue(klass, "hack for CoroutineImpl::doResume")
-//                    }
                 }
             }
         }

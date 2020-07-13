@@ -59,7 +59,10 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     protected abstract fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression)
 
-    protected abstract fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration)
+    protected fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
+        // Do nothing by default
+        // TODO find out if Kotlin/Native needs this method.
+    }
 
     protected open fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression =
         delegatingCall
@@ -470,7 +473,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
             coroutineClass.addFakeOverridesViaIncorrectHeuristic(implementedMembers)
 
-            // TODO: to meet PIR lower model constructor modification shouldn't be performed here
+            // TODO: find out whether Kotlin/Native needs this call
             initializeStateMachine(listOf(coroutineConstructor), coroutineClassThis)
 
             return BuiltCoroutine(

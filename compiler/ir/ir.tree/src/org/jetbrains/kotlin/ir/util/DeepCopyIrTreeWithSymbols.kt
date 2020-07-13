@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -307,7 +307,7 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.superTypes.mapTo(superTypes) { it.remapType() }
         }
 
-    private fun copyTypeParameter(declaration: IrTypeParameter) =
+    private fun copyTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
         IrTypeParameterImpl(
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),

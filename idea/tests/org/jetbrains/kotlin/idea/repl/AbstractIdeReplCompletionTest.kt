@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.idea.completion.test.KotlinFixtureCompletionBaseTestCase
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -27,6 +28,7 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
     override fun setUp() {
         super.setUp()
         consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module)!!
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(consoleRunner!!.consoleFile)
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
     }
 

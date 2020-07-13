@@ -11,9 +11,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.formatter.lineIndent.KotlinIndentationAdjuster
-import org.jetbrains.kotlin.idea.formatter.lineIndent.KotlinLikeLangLineIndentProvider
+import org.jetbrains.kotlin.idea.formatter.lineIndent.KotlinLangLineIndentProvider
 
-class KotlinLineIndentProvider : KotlinLikeLangLineIndentProvider() {
+class KotlinLineIndentProvider : KotlinLangLineIndentProvider() {
     override fun getLineIndent(project: Project, editor: Editor, language: Language?, offset: Int): String? =
         if (useFormatter)
             null

@@ -120,7 +120,7 @@ class RTableContext {
 }
 
 
-internal enum class TableTimeUnit(val postfixText: String, val nsMultiplier: Double, val fractionDigits: Int) {
+enum class TableTimeUnit(val postfixText: String, val nsMultiplier: Double, val fractionDigits: Int) {
     NS("ns", 1.0, 0),
     MICS("mcs", 1e-3, 3),
     MS("ms", 1e-6, 6),
@@ -131,7 +131,16 @@ internal enum class TableTimeUnit(val postfixText: String, val nsMultiplier: Dou
     }
 }
 
-internal inline fun RTableContext.RTableRowContext.timeCell(
+inline class TableTimeUnitConversion(val value: Double) {
+    infix fun to(dest: TableTimeUnit): Double {
+        return value * dest.nsMultiplier
+    }
+}
+
+infix fun Long.from(from: TableTimeUnit) = TableTimeUnitConversion(this / from.nsMultiplier)
+
+
+inline fun RTableContext.RTableRowContext.timeCell(
     time: Long,
     outputUnit: TableTimeUnit = TableTimeUnit.MS,
     inputUnit: TableTimeUnit = TableTimeUnit.NS,
@@ -144,6 +153,6 @@ internal inline fun RTableContext.RTableRowContext.timeCell(
     cell("${df.format(outputUnit.convert(time, inputUnit))} ${outputUnit.postfixText}")
 }
 
-internal inline fun printTable(out: Appendable = System.out, body: RTableContext.() -> Unit) {
+inline fun printTable(out: Appendable = System.out, body: RTableContext.() -> Unit) {
     RTableContext().apply(body).printout(out)
 }

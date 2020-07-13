@@ -342,7 +342,6 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry) {
-        enumEntry.annotations.renderAnnotations()
         visitCallableDeclaration(enumEntry)
         enumEntry.initializer?.let {
             print(" = ")
@@ -1022,10 +1021,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         print("!!")
     }
 
-    override fun visitElvisCall(elvisCall: FirElvisCall) {
-        elvisCall.lhs.accept(this)
+    override fun visitElvisExpression(elvisExpression: FirElvisExpression) {
+        elvisExpression.lhs.accept(this)
         print(" ?: ")
-        elvisCall.rhs.accept(this)
+        elvisExpression.rhs.accept(this)
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {

@@ -716,6 +716,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         public void testIfElvisReturn() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/ifElvisReturn.kt");
         }
+
+        @TestMetadata("plusAssignWithLambdaInRhs.kt")
+        public void testPlusAssignWithLambdaInRhs() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/plusAssignWithLambdaInRhs.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k")
@@ -868,6 +873,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("KotlinClassParameterGeneric.kt")
         public void testKotlinClassParameterGeneric() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/KotlinClassParameterGeneric.kt");
+        }
+
+        @TestMetadata("kt39076.kt")
+        public void testKt39076() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/kt39076.kt");
         }
 
         @TestMetadata("LoggerInstance.kt")

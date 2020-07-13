@@ -34,6 +34,12 @@ class JvmBinaryAnnotationDeserializer(
         session.loadMemberAnnotations(kotlinBinaryClass, byteContent)
     }
 
+    override fun inheritAnnotationInfo(parent: AbstractAnnotationDeserializer) {
+        if (parent is JvmBinaryAnnotationDeserializer) {
+            annotationInfo.memberAnnotations.putAll(parent.annotationInfo.memberAnnotations)
+        }
+    }
+
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotationCall> {
         val annotations = typeProto.getExtension(JvmProtoBuf.typeAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }
@@ -242,7 +248,7 @@ class JvmBinaryAnnotationDeserializer(
 }
 
 // TODO: Rename this once property constants are recorded as well
-private data class MemberAnnotations(val memberAnnotations: Map<MemberSignature, MutableList<FirAnnotationCall>>)
+private data class MemberAnnotations(val memberAnnotations: MutableMap<MemberSignature, MutableList<FirAnnotationCall>>)
 
 // TODO: better to be in KotlinDeserializedJvmSymbolsProvider?
 private fun FirSession.loadMemberAnnotations(kotlinBinaryClass: KotlinJvmBinaryClass, byteContent: ByteArray?): MemberAnnotations {

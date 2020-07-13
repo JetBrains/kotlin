@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -101,7 +100,7 @@ class JvmBackendContext(
     internal val multifileFacadeClassForPart = mutableMapOf<IrClass, IrClass>()
     internal val multifileFacadeMemberToPartMember = mutableMapOf<IrFunction, IrFunction>()
 
-    internal val hiddenConstructors = mutableMapOf<IrConstructor, IrConstructorImpl>()
+    internal val hiddenConstructors = mutableMapOf<IrConstructor, IrConstructor>()
 
     internal val collectionStubComputer = CollectionStubComputer(this)
 

@@ -48,6 +48,7 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     NUMBER_OF_SUBPROJECTS(SUM, RANDOM_10_PERCENT),
 
     STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD(SUM, RANDOM_10_PERCENT),
+    STATISTICS_COLLECT_METRICS_OVERHEAD(SUM, RANDOM_10_PERCENT),
 
     // User scenarios
 

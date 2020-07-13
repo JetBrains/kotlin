@@ -603,25 +603,25 @@ class ExitSafeCallNode(owner: ControlFlowGraph, override val fir: FirSafeCallExp
 
 // ----------------------------------- Elvis -----------------------------------
 
-class ElvisLhsExitNode(owner: ControlFlowGraph, override val fir: FirElvisCall, level: Int, id: Int) : CFGNode<FirElvisCall>(owner, level, id) {
+class ElvisLhsExitNode(owner: ControlFlowGraph, override val fir: FirElvisExpression, level: Int, id: Int) : CFGNode<FirElvisExpression>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitElvisLhsExitNode(this, data)
     }
 }
 
-class ElvisLhsIsNotNullNode(owner: ControlFlowGraph, override val fir: FirElvisCall, level: Int, id: Int) : CFGNode<FirElvisCall>(owner, level, id) {
+class ElvisLhsIsNotNullNode(owner: ControlFlowGraph, override val fir: FirElvisExpression, level: Int, id: Int) : CFGNode<FirElvisExpression>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitElvisLhsIsNotNullNode(this, data)
     }
 }
 
-class ElvisRhsEnterNode(owner: ControlFlowGraph, override val fir: FirElvisCall, level: Int, id: Int) : CFGNode<FirElvisCall>(owner, level, id) {
+class ElvisRhsEnterNode(owner: ControlFlowGraph, override val fir: FirElvisExpression, level: Int, id: Int) : CFGNode<FirElvisExpression>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitElvisRhsEnterNode(this, data)
     }
 }
 
-class ElvisExitNode(owner: ControlFlowGraph, override val fir: FirElvisCall, level: Int, id: Int) : AbstractBinaryExitNode<FirElvisCall>(owner, level, id) {
+class ElvisExitNode(owner: ControlFlowGraph, override val fir: FirElvisExpression, level: Int, id: Int) : AbstractBinaryExitNode<FirElvisExpression>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitElvisExitNode(this, data)
     }

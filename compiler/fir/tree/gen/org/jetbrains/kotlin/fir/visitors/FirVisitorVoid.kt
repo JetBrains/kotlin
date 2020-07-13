@@ -76,7 +76,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessWithoutCallee
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
-import org.jetbrains.kotlin.fir.expressions.FirElvisCall
+import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
@@ -418,8 +418,8 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(checkNotNullCall)
     }
 
-    open fun visitElvisCall(elvisCall: FirElvisCall) {
-        visitElement(elvisCall)
+    open fun visitElvisExpression(elvisExpression: FirElvisExpression) {
+        visitElement(elvisExpression)
     }
 
     open fun visitArrayOfCall(arrayOfCall: FirArrayOfCall) {
@@ -914,8 +914,8 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitCheckNotNullCall(checkNotNullCall)
     }
 
-    final override fun visitElvisCall(elvisCall: FirElvisCall, data: Nothing?) {
-        visitElvisCall(elvisCall)
+    final override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: Nothing?) {
+        visitElvisExpression(elvisExpression)
     }
 
     final override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: Nothing?) {

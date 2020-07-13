@@ -37,13 +37,13 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -75,6 +75,14 @@ class Fir2IrVisitor(
         TODO("Should not be here: ${element.render()}")
     }
 
+    override fun visitField(field: FirField, data: Any?): IrField {
+        if (field.isSynthetic) {
+            return declarationStorage.getCachedIrField(field)!!
+        } else {
+            throw AssertionError("Unexpected field: ${field.render()}")
+        }
+    }
+
     override fun visitFile(file: FirFile, data: Any?): IrFile {
         return conversionScope.withParent(declarationStorage.getIrFile(file)) {
             file.declarations.forEach {
@@ -85,7 +93,7 @@ class Fir2IrVisitor(
                 it.accept(this@Fir2IrVisitor, data) as? IrConstructorCall
             }
 
-            (this as IrFileImpl).metadata = FirMetadataSource.File(file, components.session)
+            metadata = FirMetadataSource.File(file, components.session)
         }
     }
 
@@ -330,6 +338,17 @@ class Fir2IrVisitor(
         return callGenerator.convertToIrCall(qualifiedAccessExpression, qualifiedAccessExpression.typeRef, explicitReceiverExpression)
     }
 
+    // Note that this mimics psi2ir [StatementGenerator#isThisForClassPhysicallyAvailable].
+    private fun isThisForClassPhysicallyAvailable(irClass: IrClass): Boolean {
+        var lastClass = conversionScope.lastClass()
+        while (lastClass != null) {
+            if (irClass == lastClass) return true
+            if (!lastClass.isInner) return false
+            lastClass = lastClass.parentClassOrNull
+        }
+        return false
+    }
+
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): IrElement {
         val calleeReference = thisReceiverExpression.calleeReference
         val boundSymbol = calleeReference.boundSymbol
@@ -337,11 +356,9 @@ class Fir2IrVisitor(
             // Object case
             val firClass = boundSymbol.fir as FirClass
             val irClass = classifierStorage.getCachedIrClass(firClass)!!
-            if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.classKind == ClassKind.OBJECT) {
-                if (irClass != conversionScope.lastClass()) {
-                    return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
-                    }
+            if (firClass.classKind == ClassKind.OBJECT && !isThisForClassPhysicallyAvailable(irClass)) {
+                return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
+                    IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
                 }
             }
 
@@ -552,21 +569,21 @@ class Fir2IrVisitor(
         }
     }
 
-    override fun visitElvisCall(elvisCall: FirElvisCall, data: Any?): IrElement {
+    override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: Any?): IrElement {
         val firLhsVariable = buildProperty {
-            source = elvisCall.source
+            source = elvisExpression.source
             session = this@Fir2IrVisitor.session
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = elvisCall.lhs.typeRef
+            returnTypeRef = elvisExpression.lhs.typeRef
             name = Name.special("<elvis>")
-            initializer = elvisCall.lhs
+            initializer = elvisExpression.lhs
             symbol = FirPropertySymbol(name)
             isVar = false
             isLocal = true
             status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
         }
         val irLhsVariable = firLhsVariable.accept(this, null) as IrVariable
-        return elvisCall.convertWithOffsets { startOffset, endOffset ->
+        return elvisExpression.convertWithOffsets { startOffset, endOffset ->
             fun irGetLhsValue(): IrGetValue =
                 IrGetValueImpl(startOffset, endOffset, irLhsVariable.type, irLhsVariable.symbol)
 
@@ -581,7 +598,7 @@ class Fir2IrVisitor(
                         irGetLhsValue(),
                         IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType)
                     ),
-                    convertToIrExpression(elvisCall.rhs)
+                    convertToIrExpression(elvisExpression.rhs)
                 ),
                 IrElseBranchImpl(
                     IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true),
@@ -599,7 +616,7 @@ class Fir2IrVisitor(
             generateWhen(
                 startOffset, endOffset, IrStatementOrigin.ELVIS,
                 irLhsVariable, irBranches,
-                elvisCall.typeRef.toIrType()
+                elvisExpression.typeRef.toIrType()
             )
         }
     }

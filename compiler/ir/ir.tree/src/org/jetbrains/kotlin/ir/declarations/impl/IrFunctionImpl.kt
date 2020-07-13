@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.FunctionCarrier
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -94,40 +95,6 @@ class IrFunctionImpl(
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE
 ) : IrFunctionCommonImpl(startOffset, endOffset, origin, name, visibility, modality, returnType, isInline,
     isExternal, isTailrec, isSuspend, isOperator, isExpect, isFakeOverride) {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrSimpleFunctionSymbol,
-        returnType: IrType,
-        descriptor: FunctionDescriptor,
-        name: Name = descriptor.name
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        name = name,
-        visibility = descriptor.visibility,
-        modality = descriptor.modality,
-        returnType = returnType,
-        isInline = descriptor.isInline,
-        isExternal = descriptor.isExternal,
-        isTailrec = descriptor.isTailrec,
-        isSuspend = descriptor.isSuspend,
-        isOperator = descriptor.isOperator,
-        isExpect = descriptor.isExpect
-    )
-
-    // Used by kotlin-native in InteropLowering.kt and IrUtils2.kt
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: FunctionDescriptor,
-        returnType: IrType
-    ) : this(
-        startOffset, endOffset, origin,
-        IrSimpleFunctionSymbolImpl(descriptor), returnType, descriptor
-    )
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor get() = symbol.descriptor

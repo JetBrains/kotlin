@@ -374,6 +374,7 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyGenerationStarted()
             val signaturer = IdSignatureDescriptor(JvmManglerDesc())
 
+            performanceManager?.notifyIRTranslationStarted()
             val (moduleFragment, symbolTable, sourceManager, components) =
                 Fir2IrConverter.createModuleFragment(
                     session, resolveTransformer.scopeSession, firFiles,
@@ -381,6 +382,9 @@ object KotlinToJVMBytecodeCompiler {
                     generatorExtensions = JvmGeneratorExtensions(),
                     mangler = FirJvmKotlinMangler(session)
                 )
+
+            performanceManager?.notifyIRTranslationFinished(ktFiles.size, codeLines, debugTargetDescription)
+
             val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
             val codegenFactory = JvmIrCodegenFactory(moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
@@ -402,7 +406,7 @@ object KotlinToJVMBytecodeCompiler {
 
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-
+            performanceManager?.notifyIRGenerationStarted()
             generationState.beforeCompile()
             codegenFactory.generateModuleInFrontendIRMode(
                 generationState, moduleFragment, symbolTable, sourceManager
@@ -431,6 +435,7 @@ object KotlinToJVMBytecodeCompiler {
                 generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector
             )
 
+            performanceManager?.notifyIRGenerationFinished(ktFiles.size, codeLines, additionalDescription = debugTargetDescription)
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             outputs[module] = generationState
         }

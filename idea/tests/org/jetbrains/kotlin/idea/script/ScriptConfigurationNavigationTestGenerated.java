@@ -28,6 +28,11 @@ public class ScriptConfigurationNavigationTestGenerated extends AbstractScriptCo
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/script/definition/navigation"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
+    @TestMetadata("buildSrcProblem")
+    public void testBuildSrcProblem() throws Exception {
+        runTest("idea/testData/script/definition/navigation/buildSrcProblem/");
+    }
+
     @TestMetadata("conflictingModule")
     public void testConflictingModule() throws Exception {
         runTest("idea/testData/script/definition/navigation/conflictingModule/");

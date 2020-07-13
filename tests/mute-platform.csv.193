@@ -101,7 +101,6 @@ org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.Other.testCo
 org.jetbrains.kotlin.idea.refactoring.inline.InlineTestGenerated.Function.ExpressionBody.testMultipleInExpression, Unstable order of usages,,FLAKY
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda_MoveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda, final modifier added,,
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance_MoveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance, final modifier added,,
-org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testDefinedExtension, KT-34825,,
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testInLibrarySource, KT-34542, FAIL,
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToFunParameter, KT-34542, FAIL,
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToLocalFun, KT-34542, FAIL,

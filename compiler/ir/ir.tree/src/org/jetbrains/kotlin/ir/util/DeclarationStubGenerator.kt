@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -159,15 +160,14 @@ class DeclarationStubGenerator(
 
         val origin = computeOrigin(descriptor)
         return symbolTable.declareProperty(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original,
-            isDelegated = @Suppress("DEPRECATION") descriptor.isDelegated
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original, descriptor.isDelegated
         ) {
             IrLazyProperty(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
-                @Suppress("DEPRECATION") descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
+                descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
                 stubGenerator = this, typeTranslator = typeTranslator, bindingContext = bindingContext
             )
@@ -248,10 +248,10 @@ class DeclarationStubGenerator(
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter {
-        return IrValueParameterImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor),
-            descriptor, descriptor.type.toIrType(), descriptor.varargElementType?.toIrType()
+    internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
+        IrValueParameterImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), name, index, type.toIrType(),
+            varargElementType?.toIrType(), isCrossinline, isNoinline
         ).also { irValueParameter ->
             if (descriptor.declaresDefaultValue()) {
                 irValueParameter.defaultValue =

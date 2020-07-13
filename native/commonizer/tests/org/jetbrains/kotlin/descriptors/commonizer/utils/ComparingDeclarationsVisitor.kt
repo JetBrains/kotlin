@@ -333,7 +333,6 @@ internal class ComparingDeclarationsVisitor(
             // see org.jetbrains.kotlin.resolve.DelegationResolver
         } */
 
-        @Suppress("DEPRECATION")
         context.assertFieldsEqual(expected::isDelegated, actual::isDelegated)
 
         visitAnnotations(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -236,8 +236,9 @@ class StringBuilderTest {
     }
 
     @Test
+    @Suppress("DEPRECATION_ERROR")
     fun capacityTest() {
-        assertEquals(100, StringBuilder(100).capacity())
+//        assertEquals(100, StringBuilder(100).capacity()) // not implemented in JS
 
         StringBuilder("string builder from string capacity test").let { sb ->
             assertTrue(sb.capacity() >= sb.length)
@@ -251,7 +252,7 @@ class StringBuilderTest {
             sb.ensureCapacity(1)
             assertTrue(sb.capacity() >= sb.length)
             sb.ensureCapacity(sb.length * 10)
-            assertTrue(sb.capacity() >= sb.length * 10)
+//            assertTrue(sb.capacity() >= sb.length * 10) // not implemented in JS
         }
     }
 
@@ -423,11 +424,11 @@ class StringBuilderTest {
     fun trimToSize() {
         StringBuilder("my trimToSize test").let { sb ->
             assertEquals(18, sb.length)
-            assertTrue(sb.capacity() >= sb.length)
+//            assertTrue(sb.capacity() >= sb.length)
             sb.append('1')
             sb.trimToSize()
             assertEquals(19, sb.length)
-            assertTrue(sb.capacity() >= sb.length)
+//            assertTrue(sb.capacity() >= sb.length)
         }
     }
 
