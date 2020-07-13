@@ -46,7 +46,6 @@ object FirErrors {
     val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error0<FirSourceElement, PsiElement>()
     val ABSTRACT_SUPER_CALL by error0<FirSourceElement, PsiElement>()
     val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error0<FirSourceElement, PsiElement>()
-    val REDUNDANT_VISIBILITY_MODIFIER by error0<FirSourceElement, PsiElement>()
 
     val INAPPLICABLE_INFIX_MODIFIER by existing<FirSourceElement, PsiElement, String>(Errors.INAPPLICABLE_INFIX_MODIFIER)
     val CONSTRUCTOR_IN_OBJECT by existing<FirSourceElement, KtDeclaration>(Errors.CONSTRUCTOR_IN_OBJECT)
