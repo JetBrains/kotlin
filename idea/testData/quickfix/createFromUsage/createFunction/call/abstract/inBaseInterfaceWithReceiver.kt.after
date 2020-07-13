@@ -1,0 +1,9 @@
+// "Create abstract function 'I.bar'" "true"
+
+interface I {
+    fun bar()
+}
+
+fun test(i: I) {
+    i.bar()
+}

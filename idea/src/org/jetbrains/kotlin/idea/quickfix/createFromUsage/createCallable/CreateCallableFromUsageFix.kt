@@ -109,7 +109,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
                         CallableBuilderConfiguration(callableInfos, element, isExtension = isExtension)
                             .createBuilder()
                             .computeTypeCandidates(receiverTypeInfo)
-                            .firstOrNull()
+                            .firstOrNull { candidate -> if (it.isAbstract) candidate.theType.isAbstract() else true }
                             ?.theType
                     } else null
 
