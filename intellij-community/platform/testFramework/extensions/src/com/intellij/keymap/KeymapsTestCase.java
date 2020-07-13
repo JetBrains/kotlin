@@ -157,6 +157,7 @@ public abstract class KeymapsTestCase extends KeymapsTestCaseBase {
     { "shift ctrl RIGHT",         "Diff.ApplyLeftSide", "NextEditorTab"},
     { "shift meta G",             "ClassTemplateNavigation", "GoToClass", "FindPrevious"},
     { "shift meta M",             "ChangesView.Move", "RInsertPipeAction", "Vcs.MoveChangedLinesToChangelist"},
+    { "shift meta L",             "Jdbc.OpenConsole.New", "rspec.LetIntroduce"},
     { "shift meta LEFT",          "EditorLineStartWithSelection", "ResizeToolWindowLeft"},
     { "shift meta RIGHT",         "EditorLineEndWithSelection", "ResizeToolWindowRight"},
     { "shift meta CLOSE_BRACKET", "Diff.NextChange", "NextTab"},
