@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -461,7 +459,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     return symbolTable.declareValueParameter(
         startOffset, endOffset, thisOrigin, receiverDescriptor, thisType
     ) { symbol ->
-        IrValueParameterImpl(
+        symbolTable.irFactory.createValueParameter(
             startOffset, endOffset, thisOrigin, symbol,
             Name.special("<this>"), -1, thisType,
             varargElementType = null, isCrossinline = false, isNoinline = false

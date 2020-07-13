@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
@@ -19,6 +20,7 @@ class Fir2IrComponentsStorage(
     override val scopeSession: ScopeSession,
     override val symbolTable: SymbolTable,
     override val irBuiltIns: IrBuiltIns,
+    override val irFactory: IrFactory,
     mangler: FirMangler
 ) : Fir2IrComponents {
     override lateinit var classifierStorage: Fir2IrClassifierStorage

@@ -22,10 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrEnumEntryImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedEnumEntryDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedTypeAliasDescriptor
@@ -195,7 +191,7 @@ class Fir2IrClassifierStorage(
         preCacheTypeParameters(typeAlias)
         return typeAlias.convertWithOffsets { startOffset, endOffset ->
             declareIrTypeAlias(signature) { symbol ->
-                val irTypeAlias = IrTypeAliasImpl(
+                val irTypeAlias = irFactory.createTypeAlias(
                     startOffset, endOffset, symbol,
                     typeAlias.name, typeAlias.visibility,
                     typeAlias.expandedTypeRef.toIrType(),
@@ -235,7 +231,7 @@ class Fir2IrClassifierStorage(
         val signature = if (regularClass.isLocal) null else signatureComposer.composeSignature(regularClass)
         val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
             declareIrClass(signature) { symbol ->
-                IrClassImpl(
+                irFactory.createClass(
                     startOffset,
                     endOffset,
                     origin,
@@ -278,7 +274,7 @@ class Fir2IrClassifierStorage(
         val signature = null
         val result = anonymousObject.convertWithOffsets { startOffset, endOffset ->
             declareIrClass(signature) { symbol ->
-                IrClassImpl(
+                irFactory.createClass(
                     startOffset, endOffset, origin, symbol, name,
                     // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
                     anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
@@ -312,7 +308,7 @@ class Fir2IrClassifierStorage(
         val irTypeParameter = with(typeParameter) {
             convertWithOffsets { startOffset, endOffset ->
                 symbolTable.declareGlobalTypeParameter(startOffset, endOffset, origin, descriptor) { symbol ->
-                    IrTypeParameterImpl(
+                    irFactory.createTypeParameter(
                         startOffset, endOffset, origin, symbol,
                         name, if (index < 0) 0 else index,
                         isReified,
@@ -393,7 +389,7 @@ class Fir2IrClassifierStorage(
         return enumEntry.convertWithOffsets { startOffset, endOffset ->
             val signature = signatureComposer.composeSignature(enumEntry)
             val result = declareIrEnumEntry(signature) { symbol ->
-                IrEnumEntryImpl(
+                irFactory.createEnumEntry(
                     startOffset, endOffset, origin, symbol, enumEntry.name
                 ).apply {
                     declarationStorage.enterScope(this)

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -26,20 +26,28 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
+import org.jetbrains.kotlin.fir.symbols.Fir2IrConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.Fir2IrPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrErrorType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -238,7 +246,7 @@ class Fir2IrDeclarationStorage(
             symbolTable.declareValueParameter(
                 startOffset, endOffset, origin, descriptor, type
             ) { symbol ->
-                IrValueParameterImpl(
+                irFactory.createValueParameter(
                     startOffset, endOffset, IrDeclarationOrigin.DEFINED, symbol,
                     Name.special("<set-?>"), 0, type,
                     varargElementType = null,
@@ -388,7 +396,7 @@ class Fir2IrDeclarationStorage(
         val signature = if (isLocal) null else signatureComposer.composeSignature(function)
         val created = function.convertWithOffsets { startOffset, endOffset ->
             val result = declareIrSimpleFunction(signature, simpleFunction?.containerSource) { symbol ->
-                IrFunctionImpl(
+                irFactory.createFunction(
                     startOffset, endOffset, updatedOrigin, symbol,
                     name, visibility,
                     simpleFunction?.modality ?: Modality.FINAL,
@@ -464,7 +472,7 @@ class Fir2IrDeclarationStorage(
         val signature = if (isLocal) null else signatureComposer.composeSignature(constructor)
         val created = constructor.convertWithOffsets { startOffset, endOffset ->
             declareIrConstructor(signature) { symbol ->
-                IrConstructorImpl(
+                irFactory.createConstructor(
                     startOffset, endOffset, origin, symbol,
                     Name.special("<init>"), constructor.visibility,
                     constructor.returnTypeRef.toIrType(),
@@ -517,7 +525,7 @@ class Fir2IrDeclarationStorage(
             isGetter = !isSetter
         ) { symbol ->
             val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
-            IrFunctionImpl(
+            irFactory.createFunction(
                 startOffset, endOffset, origin, symbol,
                 Name.special("<$prefix-${correspondingProperty.name}>"),
                 propertyAccessor?.visibility ?: correspondingProperty.visibility,
@@ -577,7 +585,7 @@ class Fir2IrDeclarationStorage(
         return symbolTable.declareField(
             startOffset, endOffset, origin, descriptor, inferredType
         ) { symbol ->
-            IrFieldImpl(
+            irFactory.createField(
                 startOffset, endOffset, origin, symbol,
                 name, inferredType,
                 visibility, isFinal = isFinal,
@@ -627,7 +635,7 @@ class Fir2IrDeclarationStorage(
         val signature = if (isLocal) null else signatureComposer.composeSignature(property)
         return property.convertWithOffsets { startOffset, endOffset ->
             val result = declareIrProperty(signature, property.containerSource) { symbol ->
-                IrPropertyImpl(
+                irFactory.createProperty(
                     startOffset, endOffset, origin, symbol,
                     property.name, property.visibility, property.modality!!,
                     isVar = property.isVar,
@@ -746,7 +754,7 @@ class Fir2IrDeclarationStorage(
                 startOffset, endOffset,
                 origin, descriptor, type
             ) { symbol ->
-                IrFieldImpl(
+                irFactory.createField(
                     startOffset, endOffset, origin, symbol,
                     field.name, type, field.visibility,
                     isFinal = field.modality == Modality.FINAL,
@@ -774,7 +782,7 @@ class Fir2IrDeclarationStorage(
             symbolTable.declareValueParameter(
                 startOffset, endOffset, origin, descriptor, type
             ) { symbol ->
-                IrValueParameterImpl(
+                irFactory.createValueParameter(
                     startOffset, endOffset, origin, symbol,
                     valueParameter.name, index, type,
                     if (!valueParameter.isVararg) null

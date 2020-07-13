@@ -6,15 +6,9 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.FirMetadataSource
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -25,20 +19,16 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitIntTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -245,23 +235,10 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             }
             val signature = if (classId.isLocal) null else components.signatureComposer.composeSignature(firFunction)
             return components.declarationStorage.declareIrSimpleFunction(signature, null) { symbol ->
-                IrFunctionImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    origin,
-                    symbol,
-                    name,
-                    Visibilities.PUBLIC,
-                    Modality.OPEN,
-                    returnType,
-                    isInline = false,
-                    isExternal = false,
-                    isTailrec = false,
-                    isSuspend = false,
-                    isExpect = false,
-                    isFakeOverride = false,
-                    isOperator = false,
-                    isInfix = false
+                components.irFactory.createFunction(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, Visibilities.PUBLIC, Modality.OPEN, returnType,
+                    isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false,
+                    isFakeOverride = false, isOperator = false, isInfix = false,
                 ).apply {
                     if (otherParameterNeeded) {
                         val irValueParameter = createSyntheticIrParameter(
@@ -288,23 +265,11 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
         private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType, index: Int = 0): IrValueParameter {
             val descriptor = WrappedValueParameterDescriptor()
             return components.symbolTable.declareValueParameter(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                origin,
-                descriptor,
-                type
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor, type
             ) { symbol ->
-                IrValueParameterImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    origin,
-                    symbol,
-                    name,
-                    index,
-                    type,
-                    null,
-                    isCrossinline = false,
-                    isNoinline = false
+                components.irFactory.createValueParameter(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, index, type, null,
+                    isCrossinline = false, isNoinline = false
                 )
             }.apply {
                 parent = irFunction

@@ -218,7 +218,7 @@ class Fir2IrConverter(
             val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             FirBuiltinSymbols(builtIns, moduleDescriptor.builtIns, symbolTable)
             val sourceManager = PsiSourceManager()
-            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns, mangler)
+            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns, irFactory, mangler)
             val conversionScope = Fir2IrConversionScope()
             val classifierStorage = Fir2IrClassifierStorage(components)
             val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
