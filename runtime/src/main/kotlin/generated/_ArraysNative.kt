@@ -321,8 +321,9 @@ public actual fun <T> Array<out T>?.contentDeepToString(): String {
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
     return this.contentEquals(other)
 }
@@ -334,8 +335,9 @@ public actual infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boo
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
     return this.contentEquals(other)
 }
@@ -347,8 +349,9 @@ public actual infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
     return this.contentEquals(other)
 }
@@ -360,8 +363,9 @@ public actual infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual infix fun IntArray.contentEquals(other: IntArray): Boolean {
     return this.contentEquals(other)
 }
@@ -373,8 +377,9 @@ public actual infix fun IntArray.contentEquals(other: IntArray): Boolean {
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual infix fun LongArray.contentEquals(other: LongArray): Boolean {
     return this.contentEquals(other)
 }
@@ -386,8 +391,9 @@ public actual infix fun LongArray.contentEquals(other: LongArray): Boolean {
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
     return this.contentEquals(other)
 }
@@ -399,8 +405,9 @@ public actual infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
     return this.contentEquals(other)
 }
@@ -412,8 +419,9 @@ public actual infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
     return this.contentEquals(other)
 }
@@ -425,8 +433,9 @@ public actual infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual infix fun CharArray.contentEquals(other: CharArray): Boolean {
     return this.contentEquals(other)
 }
@@ -596,8 +605,9 @@ public actual infix fun CharArray?.contentEquals(other: CharArray?): Boolean {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun <T> Array<out T>.contentHashCode(): Int {
     return this.contentHashCode()
 }
@@ -605,8 +615,9 @@ public actual fun <T> Array<out T>.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun ByteArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
@@ -614,8 +625,9 @@ public actual fun ByteArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun ShortArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
@@ -623,8 +635,9 @@ public actual fun ShortArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun IntArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
@@ -632,8 +645,9 @@ public actual fun IntArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun LongArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
@@ -641,8 +655,9 @@ public actual fun LongArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun FloatArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
@@ -650,8 +665,9 @@ public actual fun FloatArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun DoubleArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
@@ -659,8 +675,9 @@ public actual fun DoubleArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun BooleanArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
@@ -668,8 +685,9 @@ public actual fun BooleanArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun CharArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
@@ -787,8 +805,9 @@ public actual fun CharArray?.contentHashCode(): Int {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun <T> Array<out T>.contentToString(): String {
     return this.contentToString()
 }
@@ -798,8 +817,9 @@ public actual fun <T> Array<out T>.contentToString(): String {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun ByteArray.contentToString(): String {
     return this.contentToString()
 }
@@ -809,8 +829,9 @@ public actual fun ByteArray.contentToString(): String {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun ShortArray.contentToString(): String {
     return this.contentToString()
 }
@@ -820,8 +841,9 @@ public actual fun ShortArray.contentToString(): String {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun IntArray.contentToString(): String {
     return this.contentToString()
 }
@@ -831,8 +853,9 @@ public actual fun IntArray.contentToString(): String {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun LongArray.contentToString(): String {
     return this.contentToString()
 }
@@ -842,8 +865,9 @@ public actual fun LongArray.contentToString(): String {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun FloatArray.contentToString(): String {
     return this.contentToString()
 }
@@ -853,8 +877,9 @@ public actual fun FloatArray.contentToString(): String {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun DoubleArray.contentToString(): String {
     return this.contentToString()
 }
@@ -864,8 +889,9 @@ public actual fun DoubleArray.contentToString(): String {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun BooleanArray.contentToString(): String {
     return this.contentToString()
 }
@@ -875,8 +901,9 @@ public actual fun BooleanArray.contentToString(): String {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public actual fun CharArray.contentToString(): String {
     return this.contentToString()
 }
