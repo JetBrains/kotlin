@@ -23,16 +23,18 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
     override val isExtended = true
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration is FirConstructor && declaration.source is FirFakeSourceElement<*>) return
+        if (declaration.source is FirFakeSourceElement<*>) return
         if (
             declaration !is FirMemberDeclaration
-            && !(declaration is FirPropertyAccessor && declaration.visibility == Visibilities.PUBLIC)
+            && !(declaration is FirPropertyAccessor
+                    && declaration.visibility == (context.containingDeclarations.last() as FirProperty).visibility)
         ) return
-        if (declaration is FirConstructor && declaration.source is FirFakeSourceElement<*>) return
 
         val modifierList = (declaration.source.getModifierList() as? FirPsiModifierList)?.modifierList ?: return
         val visibilityModifier = modifierList.getVisibility()
         val implicitVisibility = declaration.implicitVisibility(context)
-        val containingMemberDeclaration = context.containingDeclarations.getOrNull(1) as? FirMemberDeclaration
+        val containingMemberDeclaration = context.findClosest<FirMemberDeclaration>()
 
         val redundantVisibility = when {
             visibilityModifier == implicitVisibility -> implicitVisibility
@@ -53,8 +55,10 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
 
     private fun FirDeclaration.implicitVisibility(context: CheckerContext): Visibility {
         return when {
-            this is FirPropertyAccessor && isSetter && status.isOverride -> {
-                this.visibility
+            this is FirPropertyAccessor && isSetter && status.isOverride -> this.visibility
+
+            this is FirPropertyAccessor -> {
+                context.findClosest<FirProperty>()?.visibility ?: Visibilities.DEFAULT_VISIBILITY
             }
 
             this is FirConstructor -> {
@@ -70,7 +74,7 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
             }
 
             this is FirSimpleFunction
-                    && context.containingDeclarations.getOrNull(1) is FirClass<*>
+                    && context.containingDeclarations.last() is FirClass<*>
                     && this.isOverride -> findFunctionVisibility(this, context)
 
             else -> Visibilities.DEFAULT_VISIBILITY
