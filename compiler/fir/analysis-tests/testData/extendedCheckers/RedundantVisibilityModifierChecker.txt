@@ -114,3 +114,25 @@ FILE: RedundantVisibilityModifierChecker.kt
     public final var baz: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int|
         public set(value: R|kotlin/Int|): R|kotlin/Unit|
+    public final class J : R|kotlin/Any| {
+        public constructor(): R|J| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var baf: R|kotlin/Int| = Int(0)
+            public get(): R|kotlin/Int| {
+                ^ Int(1)
+            }
+            public set(value: R|kotlin/Int|): R|kotlin/Unit| {
+                this@R|/J|.F|/J.baf| = R|<local>/value|
+            }
+
+        public final var buf: R|kotlin/Int| = Int(0)
+            private get(): R|kotlin/Int| {
+                ^ Int(42)
+            }
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit| {
+                this@R|/J|.F|/J.buf| = R|<local>/value|
+            }
+
+    }

@@ -50,3 +50,17 @@ fun f() {
 }
 
 <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> var baz = 0
+
+class J {
+    var baf = 0
+    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> get() = 1
+    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> set(value) {
+        field = value
+    }
+
+    var buf = 0
+    private get() = 42
+    protected set(value) {
+        field = value
+    }
+}
