@@ -38,7 +38,7 @@ class KotlinBuildStatHandler {
             }
         }
 
-        private fun logException(description: String, e: Throwable) {
+        internal fun logException(description: String, e: Throwable) {
             getLogger().info(description)
             getLogger().debug(e.message, e)
         }
