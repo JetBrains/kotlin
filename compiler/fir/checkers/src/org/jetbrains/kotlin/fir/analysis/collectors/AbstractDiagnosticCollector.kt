@@ -196,9 +196,9 @@ abstract class AbstractDiagnosticCollector(
     }
 }
 
-fun AbstractDiagnosticCollector.registerAllComponents() {
+fun AbstractDiagnosticCollector.registerAllComponents(checkExtended: Boolean = false) {
     initializeComponents(
-        DeclarationCheckersDiagnosticComponent(this),
+        DeclarationCheckersDiagnosticComponent(this, checkExtended),
         ExpressionCheckersDiagnosticComponent(this),
         ErrorNodeDiagnosticCollectorComponent(this),
         ControlFlowAnalysisDiagnosticComponent(this),
