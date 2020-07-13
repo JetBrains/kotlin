@@ -10,4 +10,8 @@ class KotlinSSTypeFilterTest : KotlinSSResourceInspectionTest() {
     fun testFqNameTypeFilter() { doTest("val '_x:[exprtype(kotlin.Int)]") }
 
     fun testWithinHierarchyTypeFilter() { doTest("val '_x:[exprtype(*Number)]") }
+
+    fun testTypeArrayAccessArrayExpression() { doTest("'_:[exprtype(Array)]['_]") }
+
+    fun testTypeArrayAccessIndicesNode() { doTest("'_['_:[exprtype(String)]]") }
 }

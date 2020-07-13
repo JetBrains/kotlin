@@ -45,7 +45,7 @@ class KotlinExprTypePredicate(
                 if (searchName.contains(".")) KotlinFullClassNameIndex.getInstance()
                 else KotlinClassShortNameIndex.getInstance()
 
-            subTypes.addAll(index.get(searchName, project, scope).map {
+            subTypes.addAll(index.get(searchName.substringBefore("<"), project, scope).map {
                 (it.descriptor as ClassDescriptor).toSimpleType()
             })
         }
