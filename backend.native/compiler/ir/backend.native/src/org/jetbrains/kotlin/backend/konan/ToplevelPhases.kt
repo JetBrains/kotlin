@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -112,7 +113,7 @@ private var Context.symbolTable: SymbolTable? by Context.nullValue()
 
 internal val createSymbolTablePhase = konanUnitPhase(
         op = {
-            this.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc))
+            this.symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
         },
         name = "CreateSymbolTable",
         description = "Create SymbolTable"
