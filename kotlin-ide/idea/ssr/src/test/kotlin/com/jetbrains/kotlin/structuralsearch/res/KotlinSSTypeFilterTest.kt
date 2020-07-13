@@ -14,4 +14,8 @@ class KotlinSSTypeFilterTest : KotlinSSResourceInspectionTest() {
     fun testTypeArrayAccessArrayExpression() { doTest("'_:[exprtype(Array)]['_]") }
 
     fun testTypeArrayAccessIndicesNode() { doTest("'_['_:[exprtype(String)]]") }
+
+    fun testNullableType() { doTest("'_('_:[exprtype(Int?)])") }
+
+    fun testNullableTypeHierarchy() { doTest("val '_:[exprtype(*A)]") }
 }

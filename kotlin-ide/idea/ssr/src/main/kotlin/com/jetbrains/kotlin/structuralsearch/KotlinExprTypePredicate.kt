@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinSuperClassIndex
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 
 class KotlinExprTypePredicate(
@@ -32,24 +33,37 @@ class KotlinExprTypePredicate(
 
         val project = node.project
         val scope = project.allScope()
-        val subTypes = if (withinHierarchy) {
-            searchedTypeNames.map { searchName ->
-                KotlinSuperClassIndex.getInstance().get(searchName, project, scope).map {
-                    (it.descriptor as ClassDescriptor).toSimpleType()
-                }
-            }.flatten().toMutableSet()
-        } else mutableSetOf()
 
-        searchedTypeNames.forEach { searchName ->
+        for (searchedType in searchedTypeNames) {
+            val nullable = '?' in searchedType
+            val searchNameCorrected = searchedType.substringBefore("<").substringBefore("?")
+
+            // Consider super types if within hierarchy is set
+            val subTypes: MutableSet<SimpleType> = mutableSetOf()
+            if (withinHierarchy) {
+                KotlinSuperClassIndex.getInstance().get(searchNameCorrected, project, scope).forEach {
+                    val classDescriptor = it.descriptor as ClassDescriptor
+                    subTypes.add(classDescriptor.toSimpleType())
+                    if (nullable) subTypes.add(classDescriptor.toSimpleType(true))
+                }
+            }
+
             val index =
-                if (searchName.contains(".")) KotlinFullClassNameIndex.getInstance()
+                if (searchedType.contains(".")) KotlinFullClassNameIndex.getInstance()
                 else KotlinClassShortNameIndex.getInstance()
 
-            subTypes.addAll(index.get(searchName.substringBefore("<"), project, scope).map {
-                (it.descriptor as ClassDescriptor).toSimpleType()
-            })
-        }
+            index.get(searchNameCorrected, project, scope).forEach {
+                val classDescriptor = it.descriptor as ClassDescriptor
+                subTypes.add(classDescriptor.toSimpleType(nullable))
+                if (nullable && withinHierarchy) subTypes.add(classDescriptor.toSimpleType())
+            }
 
-        return subTypes.any { searchType -> "${type.fqName}".equals("${searchType.fqName}", ignoreCase) }
+            if (subTypes.any { searchType ->
+                    "${type.fqName}".equals("${searchType.fqName}", ignoreCase)
+                            && ((nullable && withinHierarchy) || type.isMarkedNullable == searchType.isMarkedNullable)
+                }) return true
+        }
+        return false
     }
+
 }
