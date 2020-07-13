@@ -23,8 +23,10 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
     override val isExtended = true
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration is FirPropertyAccessor && declaration.isGetter) return
-        if (declaration !is FirMemberDeclaration) return
+        if (
+            declaration !is FirMemberDeclaration
+            && !(declaration is FirPropertyAccessor && declaration.visibility == Visibilities.PUBLIC)
+        ) return
         if (declaration is FirConstructor && declaration.source is FirFakeSourceElement<*>) return
 
         val modifierList = (declaration.source.getModifierList() as? FirPsiModifierList)?.modifierList ?: return
@@ -36,14 +38,13 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
             visibilityModifier == implicitVisibility -> implicitVisibility
             visibilityModifier == Visibilities.INTERNAL
                     && containingMemberDeclaration?.visibility == Visibilities.PRIVATE
-                    || declaration.visibility == Visibilities.INTERNAL -> Visibilities.INTERNAL
+                    || declaration.visibilityForDeclarationAndPropertyAccessor == Visibilities.INTERNAL -> Visibilities.INTERNAL
             else -> null
         } ?: return
 
         if (redundantVisibility == Visibilities.PUBLIC
-            && declaration is FirProperty
-            && declaration.isVar
-            && declaration.setter?.visibility.let { it != null && it != Visibilities.PUBLIC }
+            && declaration is FirPropertyAccessor
+            && declaration.source is FirFakeSourceElement<*>
         ) return
 
         val source = modifierList.visibilityModifier()?.toFirPsiSourceElement()
@@ -102,4 +103,11 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
         }
         return null
     }
+
+    private val FirDeclaration.visibilityForDeclarationAndPropertyAccessor
+        get() = when (this) {
+            is FirMemberDeclaration -> status.visibility
+            is FirPropertyAccessor -> status.visibility
+            else -> null
+        }
 }
