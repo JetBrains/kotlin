@@ -51,7 +51,9 @@ fun f() {
 
 <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> var baz = 0
 
-class J {
+open class J {
+    protected val baz = 0
+    <!REDUNDANT_VISIBILITY_MODIFIER!>protected<!> get() = field * 2
     var baf = 0
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> get() = 1
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> set(value) {
@@ -67,4 +69,6 @@ class J {
     var bar = 0
     get() = 3.1415926535
     set(value) {}
+
+
 }
