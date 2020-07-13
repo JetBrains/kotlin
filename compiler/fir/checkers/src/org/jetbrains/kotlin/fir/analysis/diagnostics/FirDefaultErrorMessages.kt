@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGN_OPERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_INVOCATION_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER_PAIR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_AS_SUPERTYPE
@@ -78,6 +79,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
 
             // Control flow diagnostics
             map.put(UNINITIALIZED_VARIABLE, "{2} must be initialized before access", PROPERTY_NAME)
+            map.put(WRONG_INVOCATION_KIND, "{2} wrong invocation kind. Found possible {3} case.", TO_STRING, TO_STRING)
         }
     }
 }

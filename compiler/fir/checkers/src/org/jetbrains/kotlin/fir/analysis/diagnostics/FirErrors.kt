@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.DescriptorWithRelation
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.DeclarationWithRelation
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -83,6 +85,7 @@ object FirErrors {
 
     // Control flow diagnostics
     val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
+    val WRONG_INVOCATION_KIND by error2<FirSourceElement, PsiElement, FirBasedSymbol<*>, EventOccurrencesRange>()
 }
 
 

@@ -187,7 +187,7 @@ class ControlFlowGraphBuilder {
         }
 
         if (previousNode != null) {
-            addEdge(previousNode, enterNode, preferredKind = EdgeKind.DfgForward)
+            addEdge(previousNode, enterNode)
         }
 
         createFunctionExitNode(function).also {
