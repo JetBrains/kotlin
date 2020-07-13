@@ -375,7 +375,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val isMultiplatform: Boolean = project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper }
 
     @get:Internal
-    internal val abstractKotlinCompileArgumentsContributor by project.provider { AbstractKotlinCompileArgumentsContributor(thisTaskProvider) }
+    internal val abstractKotlinCompileArgumentsContributor = AbstractKotlinCompileArgumentsContributor(KotlinCompileArgumentsProvider(this))
 
     override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         abstractKotlinCompileArgumentsContributor.contributeArguments(
@@ -392,6 +392,45 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     protected fun hasFilesInTaskBuildDirectory(): Boolean {
         val taskBuildDir = taskBuildDirectory
         return taskBuildDir.walk().any { it != taskBuildDir && it.isFile }
+    }
+}
+
+open class KotlinCompileArgumentsProvider<T : AbstractKotlinCompile<out CommonCompilerArguments>>(taskProvider: T) {
+
+    val coroutines: Provider<Coroutines>
+    val logger: Logger
+    val isMultiplatform: Boolean
+    val pluginClasspath: FileCollection
+    val pluginOptions: CompilerPluginOptions
+
+    init {
+        coroutines = taskProvider.coroutines
+        logger = taskProvider.logger
+        isMultiplatform = taskProvider.isMultiplatform
+        pluginClasspath = taskProvider.pluginClasspath
+        pluginOptions = taskProvider.pluginOptions
+    }
+}
+
+class KotlinJvmCompilerArgumentsProvider
+    (taskProvider: KotlinCompile) : KotlinCompileArgumentsProvider<KotlinCompile>(taskProvider) {
+
+    val moduleName: String
+    val friendPaths: Array<String>
+    val compileClasspath: Iterable<File>
+    val destinationDir: File
+    internal val kotlinOptions: List<KotlinJvmOptionsImpl?>
+
+    init {
+//        super(taskProvider)
+        moduleName = taskProvider.moduleName
+        friendPaths = taskProvider.friendPaths
+        compileClasspath = taskProvider.compileClasspath
+        destinationDir = taskProvider.destinationDir
+        kotlinOptions = listOfNotNull(
+            taskProvider.parentKotlinOptionsImpl as KotlinJvmOptionsImpl?,
+            taskProvider.kotlinOptions as KotlinJvmOptionsImpl
+        )
     }
 }
 
@@ -443,7 +482,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     @get:Internal
     internal val compilerArgumentsContributor: CompilerArgumentsContributor<K2JVMCompilerArguments> by lazy {
-        KotlinJvmCompilerArgumentsContributor(thisTaskProvider)
+        KotlinJvmCompilerArgumentsContributor(KotlinJvmCompilerArgumentsProvider(this))
     }
 
     @Internal
@@ -559,8 +598,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         incremental = true
     }
 
-    override val kotlinOptions: KotlinJsOptions
-        get() = taskData.compilation.kotlinOptions as KotlinJsOptions
+    override val kotlinOptions = taskData.compilation.kotlinOptions as KotlinJsOptions
 
     @get:Internal
     protected val defaultOutputFile: File
@@ -654,7 +692,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         }
 
     @get:Internal
-    private val absolutePathProvider = project.projectDir.absolutePath
+    internal val absolutePathProvider = project.projectDir.absolutePath
 
     override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.KotlinOnly

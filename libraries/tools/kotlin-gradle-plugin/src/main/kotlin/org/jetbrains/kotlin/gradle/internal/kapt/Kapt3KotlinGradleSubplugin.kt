@@ -9,7 +9,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.SourceKind
-import com.intellij.openapi.util.SystemInfo
+import com.intellij.util.lang.JavaVersion
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -474,7 +474,8 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val dslJavacOptions: Provider<Map<String, String>> = project.provider {
             kaptExtension.getJavacOptions().toMutableMap().also { result ->
                 if (javaCompile != null && "-source" !in result && "--source" !in result && "--release" !in result) {
-                    val sourceOptionKey = if (SystemInfo.isJavaVersionAtLeast(12, 0, 0)) {
+                    val current = JavaVersion.parse(project.providers.systemProperty("java.version").forUseAtConfigurationTime().get())
+                    val sourceOptionKey = if (current.feature >= 12) {
                         "--source"
                     } else {
                         "-source"

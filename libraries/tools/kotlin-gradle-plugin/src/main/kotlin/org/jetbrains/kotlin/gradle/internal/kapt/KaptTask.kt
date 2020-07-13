@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle.internal
 
-import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
@@ -140,8 +139,36 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
 
     private fun isRootAllowed(file: File): Boolean =
         file.exists() &&
-                !FileUtil.isAncestor(destinationDir, file, /* strict = */ false) &&
-                !FileUtil.isAncestor(classesDir, file, /* strict = */ false)
+                !isAncestor(destinationDir, file) &&
+                !isAncestor(classesDir, file)
+
+    //Have to avoid using FileUtil because it is required system property reading that is not allowed for configuration cache
+    private fun isAncestor(dir: File, file: File): Boolean {
+        val path = file.canonicalPath
+        val prefix = dir.canonicalPath
+        val pathLength = path.length
+        val prefixLength = prefix.length
+        //TODO
+        val caseSensitive = true
+        return if (prefixLength == 0) {
+            true
+        } else if (prefixLength > pathLength) {
+            false
+        } else if (!path.regionMatches(0, prefix, 0, prefixLength, ignoreCase = !caseSensitive)) {
+            return false
+        } else if (pathLength == prefixLength) {
+            return true
+        } else {
+            val lastPrefixChar: Char = prefix.get(prefixLength - 1)
+            var slashOrSeparatorIdx = prefixLength
+            if (lastPrefixChar == '/' || lastPrefixChar == File.separatorChar) {
+                slashOrSeparatorIdx = prefixLength - 1
+            }
+            val next1 = path[slashOrSeparatorIdx]
+            return !(next1 != '/' && next1 != File.separatorChar)
+        }
+    }
+
 
     private fun FileCollection?.orEmpty(): FileCollection =
         this ?: project.files()

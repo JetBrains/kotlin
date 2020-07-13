@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 import java.net.URI
+import java.util.Arrays.asList
 import kotlin.test.fail
 
 class ConfigurationCacheIT : BaseGradleIT() {
@@ -60,11 +61,19 @@ class ConfigurationCacheIT : BaseGradleIT() {
             setupIncrementalAptProject("AGGREGATING")
         }
 
-    private fun Project.testConfigurationCacheOf(vararg taskNames: String, buildOptions: BuildOptions = defaultBuildOptions()) {
+    private fun Project.testConfigurationCacheOf(
+        vararg taskNames: String,
+        executedTaskNames: List<String>? = null,
+        buildOptions: BuildOptions = defaultBuildOptions()
+    ) {
         // First, run a build that serializes the tasks state for instant execution in further builds
-        configurationCacheOf(*taskNames, buildOptions = buildOptions) {
+
+        val executedTask: List<String> = executedTaskNames ?: taskNames.toList()
+
+        build(*taskNames, options = buildOptions) {
             assertSuccessful()
-            assertTasksExecuted(*taskNames)
+            assertTasksExecuted(executedTask)
+            assertContains("Calculating task graph as no configuration cache is available for tasks: ${taskNames.joinToString(separator = " ")}")
             checkInstantExecutionSucceeded()
         }
 
@@ -73,14 +82,15 @@ class ConfigurationCacheIT : BaseGradleIT() {
         }
 
         // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-        configurationCacheOf(*taskNames, buildOptions = buildOptions) {
+        build(*taskNames, options = buildOptions) {
             assertSuccessful()
-            assertTasksExecuted(*taskNames)
+            assertTasksExecuted(executedTask)
+            assertContains("Reusing configuration cache.")
         }
 
-        configurationCacheOf(*taskNames, buildOptions = buildOptions) {
+        build(*taskNames, options = buildOptions) {
             assertSuccessful()
-            assertTasksUpToDate(*taskNames)
+            assertTasksUpToDate(executedTask)
         }
     }
 
@@ -89,13 +99,6 @@ class ConfigurationCacheIT : BaseGradleIT() {
             fail("Instant execution problems were found, check ${htmlReportFile.asClickableFileUrl()} for details.")
         }
     }
-
-    private fun Project.configurationCacheOf(
-        vararg tasks: String,
-        buildOptions: BuildOptions = defaultBuildOptions(),
-        check: CompiledProject.() -> Unit
-    ) =
-        build("-Dorg.gradle.unsafe.configuration-cache=true", *tasks, options = buildOptions, check = check)
 
     /**
      * Copies all files from the directory containing the given [htmlReportFile] to a
@@ -149,58 +152,12 @@ class ConfigurationCacheIT : BaseGradleIT() {
     }
 
     @Test
-    fun testInstantExecution() {
-        val project = Project("instantExecution")
-
-        //first run without cache
-        project.build("assemble") {
-            assertSuccessful()
-            assertContains("Calculating task graph as no configuration cache is available for tasks: assemble")
-
-            assertTasksExecuted(
-                ":compileKotlin",
-                ":compileTestKotlin"
-            )
-        }
-
-        //second run should use cache
-        project.build("assemble") {
-            assertSuccessful()
-
-            assertContains("Reusing configuration cache.")
-
-            assertTasksExecuted(
-                ":compileKotlin",
-                ":compileTestKotlin"
-            )
-        }
-
+    fun testInstantExecution() = with(Project("instantExecution")) {
+        testConfigurationCacheOf("assemble", executedTaskNames = asList(":lib-project:compileKotlin"))
     }
 
     @Test
-    fun testInstantExecutionForJs() {
-        val project = Project("instantExecutionToJs")
-
-        project.build("assemble") {
-            assertSuccessful()
-            assertContains("Calculating task graph as no configuration cache is available for tasks: assemble")
-
-            assertTasksExecuted(
-                ":compileKotlin2Js",
-                ":compileTestKotlin2Js"
-            )
-
-            assertFileExists("build/kotlin2js/main/module.js")
-            assertFileExists("build/kotlin2js/test/module-tests.js")
-        }
-
-        project.build("assemble") {
-            assertSuccessful()
-            assertContains("Reusing configuration cache.")
-
-            assertFileExists("build/kotlin2js/main/module.js")
-            assertFileExists("build/kotlin2js/test/module-tests.js")
-        }
-
+    fun testInstantExecutionForJs() = with(Project("instantExecutionToJs")) {
+        testConfigurationCacheOf("assemble", executedTaskNames = asList(":compileKotlin2Js"))
     }
 }

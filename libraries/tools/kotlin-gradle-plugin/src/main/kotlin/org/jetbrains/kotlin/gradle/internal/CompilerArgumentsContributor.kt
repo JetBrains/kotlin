@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.gradle.dsl.Coroutines
+import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileArgumentsProvider
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompilerArgumentsProvider
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
@@ -38,16 +40,14 @@ internal fun compilerArgumentsConfigurationFlags(defaultsOnly: Boolean, ignoreCl
  * but outside the tasks, so that this state & logic can be reused without referencing the task directly. */
 internal open class AbstractKotlinCompileArgumentsContributor<T : CommonCompilerArguments>(
     // Don't save this reference into a property! That would be hostile to Gradle instant execution
-    taskProvider: TaskProvider<out AbstractKotlinCompile<T>>
+    taskProvider: KotlinCompileArgumentsProvider<out AbstractKotlinCompile<T>>
 ) : CompilerArgumentsContributor<T> {
-    private val coroutines by taskProvider.map { it.coroutines }
 
-    protected val logger by taskProvider.map { it.logger }
-
-    private val isMultiplatform = taskProvider.map { it.isMultiplatform }.get()
-
-    private val pluginClasspath by taskProvider.map { it.pluginClasspath }
-    private val pluginOptions by taskProvider.map { it.pluginOptions }
+    private val coroutines = taskProvider.coroutines
+    protected val logger = taskProvider.logger
+    private val isMultiplatform = taskProvider.isMultiplatform
+    private val pluginClasspath = taskProvider.pluginClasspath
+    private val pluginOptions = taskProvider.pluginOptions
 
     override fun contributeArguments(
         args: T,
@@ -79,28 +79,14 @@ internal open class AbstractKotlinCompileArgumentsContributor<T : CommonCompiler
 
 internal open class KotlinJvmCompilerArgumentsContributor(
     // Don't save this reference into a property! That would be hostile to Gradle instant execution. Only map it to the task properties.
-    taskProvider: TaskProvider<out KotlinCompile>
+    taskProvider: KotlinJvmCompilerArgumentsProvider
 ) : AbstractKotlinCompileArgumentsContributor<K2JVMCompilerArguments>(taskProvider) {
 
-    private val moduleName by taskProvider.map { it.moduleName }
-
-    //TODO
-    //objects.fileCollection
-    // .from(taskData.compilation.output.classesDir, taskData.compilation.friendArtifacts)
-    // .elements
-    // .map { it.asFile.canonicalPath }
-    private val friendPaths by taskProvider.map { it.friendPaths }
-
-    private val compileClasspath by taskProvider.map { it.compileClasspath }
-
-    private val destinationDir by taskProvider.map { it.destinationDir }
-
-    private val kotlinOptions by taskProvider.map {
-        listOfNotNull(
-            it.parentKotlinOptionsImpl as KotlinJvmOptionsImpl?,
-            it.kotlinOptions as KotlinJvmOptionsImpl
-        )
-    }
+    private val moduleName = taskProvider.moduleName
+    private val friendPaths = taskProvider.friendPaths
+    private val compileClasspath = taskProvider.compileClasspath
+    private val destinationDir = taskProvider.destinationDir
+    private val kotlinOptions = taskProvider.kotlinOptions
 
     override fun contributeArguments(
         args: K2JVMCompilerArguments,
@@ -126,6 +112,6 @@ internal open class KotlinJvmCompilerArgumentsContributor(
         }
         args.destinationAsFile = destinationDir
 
-        kotlinOptions.forEach { it.updateArguments(args) }
+        kotlinOptions.forEach { it?.updateArguments(args) }
     }
 }
