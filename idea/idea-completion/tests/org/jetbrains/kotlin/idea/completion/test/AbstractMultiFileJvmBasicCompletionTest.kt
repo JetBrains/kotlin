@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.completion.test
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.kotlin.idea.test.AstAccessControl
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
 abstract class AbstractMultiFileJvmBasicCompletionTest : KotlinCompletionTestCase() {
     protected fun doTest(testPath: String) {
@@ -23,6 +24,6 @@ abstract class AbstractMultiFileJvmBasicCompletionTest : KotlinCompletionTestCas
     }
 
     override fun getTestDataPath(): String {
-        return COMPLETION_TEST_DATA_BASE_PATH + "/basic/multifile/" + getTestName(false) + "/"
+        return KotlinTestUtils.getTestsRoot(this::class.java) + "/" + getTestName(false) + "/"
     }
 }
