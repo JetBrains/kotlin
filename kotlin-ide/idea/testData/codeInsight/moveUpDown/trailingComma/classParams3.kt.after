@@ -1,8 +1,8 @@
 // MOVE: up
 class A(
-        b:<caret> Int,
-        a: Int,
-        c: Int
+    b:<caret> Int,
+    a: Int,
+    c: Int
 ) {
 
 }
