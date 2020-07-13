@@ -328,50 +328,56 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
     private val deviceName = project.findProperty("device_name") as? String
 
     override fun execute(action: Action<in ExecSpec>): ExecResult? {
-        val udid = targetUDID()
-        println("Found device UDID: $udid")
-        install(udid, xcProject.resolve("build/KonanTestLauncher.ipa").toString())
-        val bundleId = "org.jetbrains.kotlin.KonanTestLauncher"
-        val commands = startDebugServer(udid, bundleId)
-                .split("\n")
-                .filter { it.isNotBlank() }
-                .flatMap { listOf("-o", it) }
+        var result: ExecResult? = null
+        try {
+            val udid = targetUDID()
+            println("Found device UDID: $udid")
+            install(udid, xcProject.resolve("build/KonanTestLauncher.ipa").toString())
+            val bundleId = "org.jetbrains.kotlin.KonanTestLauncher"
+            val commands = startDebugServer(udid, bundleId)
+                    .split("\n")
+                    .filter { it.isNotBlank() }
+                    .flatMap { listOf("-o", it) }
 
-        var savedOut: OutputStream? = null
-        val out = ByteArrayOutputStream()
-        val result = project.exec { execSpec: ExecSpec ->
-            action.execute(execSpec)
-            execSpec.executable = "lldb"
-            execSpec.args = commands + "-b" + "-o" + "command script import ${pythonScript()}" +
-                    "-o" + ("process launch" +
+            var savedOut: OutputStream? = null
+            val out = ByteArrayOutputStream()
+            result = project.exec { execSpec: ExecSpec ->
+                action.execute(execSpec)
+                execSpec.executable = "lldb"
+                execSpec.args = commands + "-b" + "-o" + "command script import ${pythonScript()}" +
+                        "-o" + ("process launch" +
                         (execSpec.args.takeUnless { it.isEmpty() }
                                 ?.let { " -- ${it.joinToString(" ")}" }
                                 ?: "")) +
-                    "-o" + "get_exit_code" +
-                    "-k" + "get_exit_code" +
-                    "-k" + "exit -1"
-            // A test task that uses project.exec { } sets the stdOut to parse the result,
-            // but the test executable is being run under debugger that has its own output mixed with the
-            // output from the test. Save the stdOut from the test to write the parsed output to it.
-            savedOut = execSpec.standardOutput
-            execSpec.standardOutput = out
-        }
-        out.toString()
-                .also { if (project.verboseTest) println(it) }
-                .split("\n")
-                .dropWhile { s -> !s.startsWith("(lldb) process launch") }
-                .drop(1)  // drop 'process launch' also
-                .dropLastWhile { ! it.matches(".*Process [0-9]* exited with status .*".toRegex()) }
-                .joinToString("\n") {
-                    it.replace("Process [0-9]* exited with status .*".toRegex(), "")
-                            .replace("\r", "")   // TODO: investigate: where does the \r comes from
-                }
-                .also {
-                    savedOut?.write(it.toByteArray())
-                }
+                        "-o" + "get_exit_code" +
+                        "-k" + "get_exit_code" +
+                        "-k" + "exit -1"
+                // A test task that uses project.exec { } sets the stdOut to parse the result,
+                // but the test executable is being run under debugger that has its own output mixed with the
+                // output from the test. Save the stdOut from the test to write the parsed output to it.
+                savedOut = execSpec.standardOutput
+                execSpec.standardOutput = out
+            }
+            out.toString()
+                    .also { if (project.verboseTest) println(it) }
+                    .split("\n")
+                    .dropWhile { s -> !s.startsWith("(lldb) process launch") }
+                    .drop(1)  // drop 'process launch' also
+                    .dropLastWhile { !it.matches(".*Process [0-9]* exited with status .*".toRegex()) }
+                    .joinToString("\n") {
+                        it.replace("Process [0-9]* exited with status .*".toRegex(), "")
+                                .replace("\r", "")   // TODO: investigate: where does the \r comes from
+                    }
+                    .also {
+                        savedOut?.write(it.toByteArray())
+                    }
 
-        uninstall(udid, bundleId)
-        kill()
+            uninstall(udid, bundleId)
+        } catch (exc: Exception) {
+            throw RuntimeException("iOS-device execution failed", exc)
+        } finally {
+            kill()
+        }
         return result
     }
 
