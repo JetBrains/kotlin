@@ -9,7 +9,6 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.util.elementType
 import com.intellij.structuralsearch.*
 import com.intellij.structuralsearch.impl.matcher.CompiledPattern
@@ -80,9 +79,13 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     ): Array<PsiElement> {
         var elements: List<PsiElement>
         if (PROPERTY_CONTEXT.id == contextId) {
-            val fragment = KtPsiFactory(project, false).createProperty(text)
-            elements = listOf(getNonWhitespaceChildren(fragment).first().parent)
-            if (elements.first() !is KtProperty) return PsiElement.EMPTY_ARRAY
+            try {
+                val fragment = KtPsiFactory(project, false).createProperty(text)
+                elements = listOf(getNonWhitespaceChildren(fragment).first().parent)
+                if (elements.first() !is KtProperty) return PsiElement.EMPTY_ARRAY
+            } catch (e: Exception) {
+                throw MalformedPatternException(KSSRBundle.message("error.context.getter.or.setter"))
+            }
         } else {
             val fragment = KtPsiFactory(project, false).createBlockCodeFragment("Unit\n$text", null)
             elements = when (fragment.lastChild) {
@@ -286,8 +289,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
 
     companion object {
         const val TYPED_VAR_PREFIX: String = "_____"
-        val DEFAULT_CONTEXT: PatternContext = PatternContext("default", "Default")
-        val PROPERTY_CONTEXT: PatternContext = PatternContext("property", "Top-level / Class property")
+        val DEFAULT_CONTEXT: PatternContext = PatternContext("default", KSSRBundle.message("context.default"))
+        val PROPERTY_CONTEXT: PatternContext = PatternContext("property", KSSRBundle.message("context.property.getter.or.setter"))
         private val PATTERN_CONTEXTS: MutableList<PatternContext> = mutableListOf(DEFAULT_CONTEXT, PROPERTY_CONTEXT)
 
         fun getNonWhitespaceChildren(fragment: PsiElement): List<PsiElement> {
