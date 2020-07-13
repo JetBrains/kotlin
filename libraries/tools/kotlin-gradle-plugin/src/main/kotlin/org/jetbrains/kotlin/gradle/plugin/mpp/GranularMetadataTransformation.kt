@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.*
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -108,9 +109,14 @@ internal class GranularMetadataTransformation(
 
         requestedDependencies.forEach { dependency ->
             if (dependency !in originalDependencies) {
-                modifiedConfiguration = (modifiedConfiguration ?: allSourceSetsConfiguration.copyRecursive()).apply {
-                    dependencies.add(dependency)
+                modifiedConfiguration = modifiedConfiguration ?: project.configurations.detachedConfiguration().apply {
+                    fun <T> copyAttribute(key: Attribute<T>) {
+                        attributes.attribute(key, allSourceSetsConfiguration.attributes.getAttribute(key)!!)
+                    }
+                    allSourceSetsConfiguration.attributes.keySet().forEach { copyAttribute(it) }
+                    allSourceSetsConfiguration.extendsFrom.forEach { extendsFrom(it) }
                 }
+                modifiedConfiguration!!.dependencies.add(dependency)
             }
         }
 
