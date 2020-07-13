@@ -416,6 +416,25 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         runTest("testData/resolve/references/WrongNumberOfTypeArgumentsInSupertype.kt");
     }
 
+    @TestMetadata("idea/testData/resolve/references/arrayAccess")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ArrayAccess extends AbstractReferenceResolveTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("get.kt")
+        public void testGet() throws Exception {
+            runTest("idea/testData/resolve/references/arrayAccess/get.kt");
+        }
+
+        @TestMetadata("set.kt")
+        public void testSet() throws Exception {
+            runTest("idea/testData/resolve/references/arrayAccess/set.kt");
+        }
+    }
+
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/resolve/references/delegatedPropertyAccessors")
     public static class DelegatedPropertyAccessors extends AbstractReferenceResolveTest {

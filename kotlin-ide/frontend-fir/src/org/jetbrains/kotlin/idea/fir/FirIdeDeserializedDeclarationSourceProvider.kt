@@ -116,7 +116,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
     }
 
     private fun FirCallableDeclaration<*>.containingKtClass(project: Project): KtClassOrObject? =
-        symbol.callableId.classId?.let { classByClassId(it, scope(project), project) }
+        unrollFakeOverrides().symbol.callableId.classId?.let { classByClassId(it, scope(project), project) }
 
     private fun classByClassId(classId: ClassId, scope: GlobalSearchScope, project: Project): KtClassOrObject? {
         val fqName = classId.asStringForUsingInIndexes().let { classIdMapping[it] ?: it }
