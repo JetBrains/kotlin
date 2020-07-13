@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import kotlin.math.min
 
 open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
@@ -692,16 +694,39 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 // TODO: it's temporary incorrect solution until we design resolve and completion for annotation calls
                 it.argumentList.transformArguments(integerLiteralTypeApproximator, null)
                 annotationCall.getCorrespondingConstructorReferenceOrNull(session)?.let { calleeReference ->
-                    val argumentMapping =
-                        mapArguments(it.arguments, calleeReference.resolvedSymbol.fir as FirFunction<*>)
-                            .toArgumentToParameterMapping()
-                    it.replaceArgumentList(buildResolvedArgumentList(argumentMapping))
+                    val callee = calleeReference.resolvedSymbol.fir as FirFunction<*>
+                    val argumentMapping = mapArguments(it.arguments, callee).toArgumentToParameterMapping()
+                    val varargParameter = callee.valueParameters.firstOrNull { param -> param.isVararg }
+                    if (varargParameter == null) {
+                        it.replaceArgumentList(buildResolvedArgumentList(argumentMapping))
+                    } else {
+                        // TODO: refactor/reuse [Candidate#handleVarargs] in [FirCallCompletionResultsWriterTransformer]
+                        val varargParameterTypeRef = varargParameter.returnTypeRef
+                        val arrayType = varargParameterTypeRef.coneType
+                        val elementType = arrayType.arrayElementType()
+                        var firstIndex = it.argumentList.arguments.size
+                        val newArgumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
+                        val varargArgument = buildVarargArgumentsExpression {
+                            varargElementType = varargParameterTypeRef.withReplacedConeType(elementType)
+                            this@buildVarargArgumentsExpression.typeRef = varargParameterTypeRef
+                            for ((i, arg) in it.argumentList.arguments.withIndex()) {
+                                val valueParameter = argumentMapping[arg] ?: continue
+                                if (valueParameter.isVararg) {
+                                    firstIndex = min(firstIndex, i)
+                                    arguments += arg
+                                } else {
+                                    newArgumentMapping[arg] = valueParameter
+                                }
+                            }
+                        }
+                        newArgumentMapping[varargArgument] = varargParameter
+                        it.replaceArgumentList(buildResolvedArgumentList(newArgumentMapping))
+                    }
                 }
                 it.replaceResolveStatus(status)
                 dataFlowAnalyzer.exitAnnotationCall(it)
             }.compose()
         }
-
     }
 
     private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
