@@ -82,7 +82,7 @@
     <enterHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinMultilineStringEnterHandler"
                           id="KotlinMultilineStringEnterHandler" order="before EnterBetweenBracesHandler"/>
     <enterBetweenBracesDelegate language="kotlin"
-                                implementationClass="org.jetbrains.kotlin.idea.editor.EnterBetweenBracesAndBracketsNoCommitDelegate"/>
+                                implementationClass="org.jetbrains.kotlin.idea.editor.KotlinEnterBetweenBracesAndBracketsNoCommitDelegate"/>
     <lang.smartEnterProcessor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler"/>
     <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinBackspaceHandler"/>
     <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinStringTemplateBackspaceHandler"/>

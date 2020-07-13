@@ -9,7 +9,7 @@ import com.intellij.codeInsight.editorActions.enter.EnterBetweenBracesNoCommitDe
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 
-class EnterBetweenBracesAndBracketsNoCommitDelegate : EnterBetweenBracesNoCommitDelegate() {
+class KotlinEnterBetweenBracesAndBracketsNoCommitDelegate : EnterBetweenBracesNoCommitDelegate() {
     override fun isCommentType(type: IElementType?): Boolean = type in KtTokens.COMMENTS
 
     override fun isBracePair(lBrace: Char, rBrace: Char): Boolean = super.isBracePair(lBrace, rBrace) || (lBrace == '[' && rBrace == ']')
