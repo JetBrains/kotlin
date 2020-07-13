@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -345,7 +343,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         return context.symbolTable.declareSimpleFunction(
             adapterFunctionDescriptor
         ) { irAdapterSymbol ->
-            IrFunctionImpl(
+            context.irFactory.createFunction(
                 startOffset, endOffset,
                 IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
                 irAdapterSymbol,
@@ -400,7 +398,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         return context.symbolTable.declareValueParameter(
             startOffset, endOffset, IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE, descriptor, type.toIrType()
         ) { irAdapterParameterSymbol ->
-            IrValueParameterImpl(
+            context.irFactory.createValueParameter(
                 startOffset, endOffset,
                 IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
                 irAdapterParameterSymbol,

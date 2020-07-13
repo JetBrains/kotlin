@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -253,7 +252,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val origin = IrDeclarationOrigin.DEFINED
         return context.symbolTable.declareConstructor(constructorDescriptor) {
             with(constructorDescriptor) {
-                IrConstructorImpl(
+                context.irFactory.createConstructor(
                     startOffset, endOffset, origin, it, context.symbolTable.nameProvider.nameForDeclaration(this),
                     visibility, IrUninitializedType, isInline, isEffectivelyExternal(), isPrimary, isExpect
                 )

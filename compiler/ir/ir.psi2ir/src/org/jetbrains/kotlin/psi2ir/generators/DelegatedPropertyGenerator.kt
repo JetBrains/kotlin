@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.descriptors.IrLocalDelegatedPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrLocalDelegatedPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
@@ -133,7 +132,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
             context.symbolTable.declareField(
                 startOffset, endOffset, origin, delegateDescriptor, type
             ) {
-                IrFieldImpl(
+                context.irFactory.createField(
                     startOffset, endOffset, origin, it, delegateDescriptor.name, type, delegateDescriptor.visibility,
                     !delegateDescriptor.isVar, false, delegateDescriptor.dispatchReceiverParameter == null
                 ).apply {

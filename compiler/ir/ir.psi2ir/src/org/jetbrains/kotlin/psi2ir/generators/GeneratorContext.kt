@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
@@ -32,6 +33,7 @@ class GeneratorContext(
     val constantValueGenerator: ConstantValueGenerator,
     override val irBuiltIns: IrBuiltIns
 ) : IrGeneratorContext {
+    val irFactory: IrFactory get() = symbolTable.irFactory
 
     val callToSubstitutedDescriptorMap = mutableMapOf<IrDeclarationReference, CallableDescriptor>()
 
