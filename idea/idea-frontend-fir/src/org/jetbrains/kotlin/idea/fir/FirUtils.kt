@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.reflect.KClass
@@ -62,6 +64,11 @@ fun FirFunctionCall.getCalleeSymbol(): FirBasedSymbol<*>? =
 
 fun FirReference.getResolvedSymbolOfNameReference(): FirBasedSymbol<*>? =
     (this as? FirResolvedNamedReference)?.resolvedSymbol
+
+internal fun FirReference.getResolvedKtSymbolOfNameReference(builder: KtSymbolByFirBuilder): KtSymbol? =
+    (getResolvedSymbolOfNameReference()?.fir as? FirDeclaration)?.let { firDeclaration ->
+        builder.buildSymbol(firDeclaration)
+    }
 
 inline fun <reified D> D.unrollFakeOverrides(): D where D : FirDeclaration, D : FirSymbolOwner<*> {
     val symbol = symbol
