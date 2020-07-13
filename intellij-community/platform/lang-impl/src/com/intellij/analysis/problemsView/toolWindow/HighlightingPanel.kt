@@ -115,7 +115,7 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
     val document = ProblemsView.getDocument(project, file) ?: return statusAnalyzing(file)
     val editor = EditorFactory.getInstance().editors(document, project).findFirst().orElse(null) ?: return statusAnalyzing(file)
     val model = editor.markupModel as? EditorMarkupModel ?: return statusAnalyzing(file)
-    val status = model.errorStripeRenderer?.getStatus(editor) ?: return statusAnalyzing(file)
+    val status = model.errorStripeRenderer?.getStatus(editor) ?: return statusComplete(file)
     return when (status.analyzingType) {
       AnalyzingType.SUSPENDED -> Status(status.title, status.details, request = true)
       AnalyzingType.COMPLETE -> statusComplete(file, state.hideBySeverity.isNotEmpty())
@@ -133,7 +133,7 @@ internal class HighlightingPanel(project: Project, state: ProblemsViewState)
     return Status(title, request = true)
   }
 
-  private fun statusComplete(file: VirtualFile, filtered: Boolean): Status {
+  private fun statusComplete(file: VirtualFile, filtered: Boolean = false): Status {
     val title = ProblemsViewBundle.message("problems.view.highlighting.problems.not.found", file.name)
     if (filtered) {
       val details = ProblemsViewBundle.message("problems.view.highlighting.problems.not.found.filter")
