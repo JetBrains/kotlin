@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 object KotlinAddOrderEntryActionFactory : KotlinIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val simpleExpression = diagnostic.psiElement as? KtSimpleNameExpression ?: return emptyList()
-        if (ProjectRootsUtil.isInProjectSource(simpleExpression, includeScriptsOutsideSourceRoots = false)) return emptyList()
+        if (!ProjectRootsUtil.isInProjectSource(simpleExpression, includeScriptsOutsideSourceRoots = false)) return emptyList()
 
         val refElement = simpleExpression.getQualifiedElement()
 

@@ -33,6 +33,13 @@ import java.io.File
 
 abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), QuickFixTest {
     companion object {
+        const val APPLY_QUICKFIX_DIRECTIVE = "APPLY_QUICKFIX"
+        const val ACTION_DIRECTIVE = "ACTION"
+        const val SHOULD_BE_AVAILABLE_AFTER_EXECUTION_DIRECTIVE = "SHOULD_BE_AVAILABLE_AFTER_EXECUTION"
+        const val FIXTURE_CLASS_DIRECTIVE = "FIXTURE_CLASS"
+        const val SHOULD_FAIL_WITH_DIRECTIVE = "SHOULD_FAIL_WITH"
+        const val FORCE_PACKAGE_FOLDER_DIRECTIVE = "FORCE_PACKAGE_FOLDER"
+
         private val quickFixesAllowedToResolveInWriteAction = AllowedToResolveUnderWriteActionData(
                 "${KotlinTestUtils.getHomeDirectory()}/idea/testData/quickfix/allowResolveInWriteAction.txt",
                 """
@@ -77,7 +84,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
 
     private fun shouldBeAvailableAfterExecution(): Boolean = InTextDirectivesUtils.isDirectiveDefined(
         myFixture.file.text,
-        "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION"
+        "// $SHOULD_BE_AVAILABLE_AFTER_EXECUTION_DIRECTIVE"
     )
 
     protected open fun configExtra(options: String) {
@@ -101,15 +108,15 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                 fileText = FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET)
                 TestCase.assertTrue("\"<caret>\" is missing in file \"${testFile.path}\"", fileText.contains("<caret>"))
 
-                fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(fileText, "// FIXTURE_CLASS: ")
+                fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(fileText, "// $FIXTURE_CLASS_DIRECTIVE: ")
                 for (fixtureClass in fixtureClasses) {
                     TestFixtureExtension.loadFixture(fixtureClass, module)
                 }
 
-                expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ")
+                expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $SHOULD_FAIL_WITH_DIRECTIVE: ")
                 val contents = StringUtil.convertLineSeparators(fileText)
                 var fileName = testFile.canonicalFile.name
-                val putIntoPackageFolder = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FORCE_PACKAGE_FOLDER") != null
+                val putIntoPackageFolder = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $FORCE_PACKAGE_FOLDER_DIRECTIVE") != null
                 if (putIntoPackageFolder) {
                     fileName = getPathAccordingToPackage(fileName, contents)
                     myFixture.addFileToProject(fileName, contents)
@@ -171,30 +178,36 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                 }
             }
 
-            val stubComparisonFailure: ComparisonFailure? = try {
-                forceCheckForResolveInDispatchThreadInTests(writeActionResolveHandler) {
-                    myFixture.launchAction(intention)
+            val applyQuickFix = (InTextDirectivesUtils.findStringWithPrefixes(myFixture.file.text, "// $APPLY_QUICKFIX_DIRECTIVE: ")
+                ?: "true").toBoolean()
+            val stubComparisonFailure: ComparisonFailure?
+            if (applyQuickFix) {
+                stubComparisonFailure = try {
+                    forceCheckForResolveInDispatchThreadInTests(writeActionResolveHandler) {
+                        myFixture.launchAction(intention)
+                    }
+                    null
                 }
-                null
-            } catch (comparisonFailure: ComparisonFailure) {
-                comparisonFailure
-            }
+                catch (comparisonFailure: ComparisonFailure) {
+                    comparisonFailure
+                }
 
-            UIUtil.dispatchAllInvocationEvents()
-            UIUtil.dispatchAllInvocationEvents()
+                UIUtil.dispatchAllInvocationEvents()
+                UIUtil.dispatchAllInvocationEvents()
 
-            if (!shouldBeAvailableAfterExecution()) {
-                assertNull(
-                    "Action '${actionHint.expectedText}' is still available after its invocation in test " + fileName,
-                    findActionWithText(actionHint.expectedText)
-                )
+                if (!shouldBeAvailableAfterExecution()) {
+                    assertNull(
+                        "Action '${actionHint.expectedText}' is still available after its invocation in test " + fileName,
+                        findActionWithText(actionHint.expectedText)
+                    )
+                }
+            } else {
+                stubComparisonFailure = null
             }
 
             myFixture.checkResultByFile(File(fileName).name + ".after")
 
-            if (stubComparisonFailure != null) {
-                throw stubComparisonFailure
-            }
+            stubComparisonFailure?.let { throw it }
         } else {
             assertNull("Action with text ${actionHint.expectedText} is present, but should not", intention)
         }
@@ -213,7 +226,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                 val aClass = Class.forName(className)
                 assert(IntentionAction::class.java.isAssignableFrom(aClass)) { "$className should be inheritor of IntentionAction" }
 
-                val validActions = HashSet(InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// ACTION:"))
+                val validActions = setOf(InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// $ACTION_DIRECTIVE:"))
 
                 actions.removeAll { action -> !aClass.isAssignableFrom(action.javaClass) || validActions.contains(action.text) }
 
