@@ -33,13 +33,10 @@ import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.projectLibrary
 import java.io.File
 import java.nio.file.Paths
-import java.util.regex.Pattern
-import kotlin.reflect.full.findAnnotation
 import kotlin.script.dependencies.Environment
 import kotlin.script.experimental.api.ScriptDiagnostic
 
@@ -189,7 +186,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     private fun createScriptEnvironment(scriptFile: File): Environment {
-        val defaultEnvironment = defaultEnvironment(scriptFile.parent + File.separator)
+        val defaultEnvironment = defaultEnvironment(scriptFile.parent)
         val env = mutableMapOf<String, Any?>()
         scriptFile.forEachLine { line ->
 
@@ -236,17 +233,19 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     private fun defaultEnvironment(path: String): Map<String, File?> {
-        val templateOutDir = File("${path}template").takeIf { it.isDirectory }?.let {
+        val templateOutDir = File(path, "template").takeIf { it.isDirectory }?.let {
             compileLibToDir(it, getScriptingClasspath())
-        } ?: File("idea/testData/script/definition/defaultTemplate").takeIf { it.isDirectory }?.let {
+        } ?: testDataFile("../defaultTemplate").takeIf { it.isDirectory }?.let {
             compileLibToDir(it, getScriptingClasspath())
         }
 
         if (templateOutDir != null) {
             System.setProperty("kotlin.script.classpath", templateOutDir.path)
+        } else {
+            LOG.warn("templateOutDir is not found")
         }
 
-        val libSrcDir = File("${path}lib").takeIf { it.isDirectory }
+        val libSrcDir = File(path, "lib").takeIf { it.isDirectory }
 
         val libClasses = libSrcDir?.let { compileLibToDir(it, emptyList()) }
 
