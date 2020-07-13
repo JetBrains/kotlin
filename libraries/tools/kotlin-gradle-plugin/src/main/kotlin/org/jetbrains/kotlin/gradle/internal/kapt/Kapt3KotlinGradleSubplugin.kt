@@ -43,9 +43,7 @@ import javax.inject.Inject
 
 // apply plugin: 'kotlin-kapt'
 class Kapt3GradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
-    KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION") // implementing to fix KT-39809
-    KotlinGradleSubplugin<AbstractCompile> {
+    KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         target.extensions.create("kapt", KaptExtension::class.java)
@@ -591,20 +589,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(artifactId = KAPT_ARTIFACT_NAME)
-
-    //region Stub implementation for legacy API, KT-39809
-    internal constructor(): this(object : ToolingModelBuilderRegistry {
-        override fun register(p0: ToolingModelBuilder) = Unit
-        override fun getBuilder(p0: String): ToolingModelBuilder? = null
-    })
-
-    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = false
-
-    override fun apply(
-        project: Project, kotlinCompile: AbstractCompile, javaCompile: AbstractCompile?, variantData: Any?, androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
-    ): List<SubpluginOption> = emptyList()
-    //endregion
 }
 private val artifactType = Attribute.of("artifactType", String::class.java)
 
@@ -709,3 +693,19 @@ private val BaseVariant.dataBindingDependencyArtifactsIfSupported: FileCollectio
         .find { it.name == "getDataBindingDependencyArtifacts" }
         ?.also { it.isAccessible = true }
         ?.invoke(this) as? FileCollection
+
+//region Stub implementation for legacy API, KT-39809
+@Suppress("DEPRECATION") // implementing to fix KT-39809
+class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = false
+
+    override fun apply(
+        project: Project, kotlinCompile: AbstractCompile, javaCompile: AbstractCompile?, variantData: Any?, androidProjectHandler: Any?,
+        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
+    ): List<SubpluginOption> = emptyList()
+
+    override fun getCompilerPluginId(): String = Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID
+
+    override fun getPluginArtifact(): SubpluginArtifact = JetBrainsSubpluginArtifact(artifactId = Kapt3GradleSubplugin.KAPT_ARTIFACT_NAME)
+}
+//endregion
