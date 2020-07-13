@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
@@ -59,7 +59,10 @@ private constructor(
             firSymbolBuilder
         )
 
-    override val scopeProvider: KtScopeProvider = KtFirScopeProvider(token, firSymbolBuilder, project, firSession, firResolveState)
+    private val firScopeStorage = FirScopeRegistry()
+
+    override val scopeProvider: KtScopeProvider =
+        KtFirScopeProvider(token, firSymbolBuilder, project, firSession, firResolveState, firScopeStorage)
 
     init {
         assertIsValid()
@@ -220,5 +223,18 @@ private constructor(
                 isContextSession = false
             )
         }
+    }
+}
+
+/**
+ * Stores strong references to all instances of [FirScope] used
+ * Needed as the only entity which may have a strong references to FIR internals is [KtFirAnalysisSession]
+ * Entities which needs storing [FirScope] instances will store them as weak references via [org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef]
+ */
+internal class FirScopeRegistry {
+    private val scopes = mutableListOf<FirScope>()
+
+    fun register(scope: FirScope) {
+        scopes += scope
     }
 }
