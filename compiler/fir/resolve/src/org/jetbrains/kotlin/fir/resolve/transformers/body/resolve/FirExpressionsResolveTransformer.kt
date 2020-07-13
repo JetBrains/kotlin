@@ -691,13 +691,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             (annotationCall.transformChildren(transformer, data) as FirAnnotationCall).also {
                 // TODO: it's temporary incorrect solution until we design resolve and completion for annotation calls
                 it.argumentList.transformArguments(integerLiteralTypeApproximator, null)
-                if (it.arguments.any { arg -> arg is FirNamedArgumentExpression }) {
-                    annotationCall.getCorrespondingConstructorReferenceOrNull(session)?.let { calleeReference ->
-                        val argumentMapping =
-                            mapArguments(it.arguments, calleeReference.resolvedSymbol.fir as FirFunction<*>)
-                                .toArgumentToParameterMapping()
-                        it.replaceArgumentList(buildResolvedArgumentList(argumentMapping))
-                    }
+                annotationCall.getCorrespondingConstructorReferenceOrNull(session)?.let { calleeReference ->
+                    val argumentMapping =
+                        mapArguments(it.arguments, calleeReference.resolvedSymbol.fir as FirFunction<*>)
+                            .toArgumentToParameterMapping()
+                    it.replaceArgumentList(buildResolvedArgumentList(argumentMapping))
                 }
                 it.replaceResolveStatus(status)
                 dataFlowAnalyzer.exitAnnotationCall(it)
