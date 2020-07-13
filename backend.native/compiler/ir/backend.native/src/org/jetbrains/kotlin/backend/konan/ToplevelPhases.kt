@@ -1,8 +1,11 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
+import org.jetbrains.kotlin.backend.common.CheckDeclarationParentsVisitor
+import org.jetbrains.kotlin.backend.common.IrValidator
+import org.jetbrains.kotlin.backend.common.IrValidatorConfig
+import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
@@ -144,9 +147,8 @@ internal val psiToIrPhase = konanUnitPhase(
 
             val symbolTable = symbolTable!!
 
-            val translator = Psi2IrTranslator(config.configuration.languageVersionSettings,
-                    Psi2IrConfiguration(false), KonanIdSignaturer(KonanManglerDesc))
-            val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable = symbolTable)
+            val translator = Psi2IrTranslator(config.configuration.languageVersionSettings, Psi2IrConfiguration(false))
+            val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
 
             val pluginExtensions = IrGenerationExtension.getInstances(config.project)
 
