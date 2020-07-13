@@ -24676,6 +24676,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/unitConversion/chainedUnitSuspendConversion.kt");
             }
 
+            @TestMetadata("noUnitConversionForGenericTypeFromArrow.kt")
+            public void testNoUnitConversionForGenericTypeFromArrow() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/noUnitConversionForGenericTypeFromArrow.kt");
+            }
+
+            @TestMetadata("noUnitConversionOnReturningGenericFunctionalType.kt")
+            public void testNoUnitConversionOnReturningGenericFunctionalType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/noUnitConversionOnReturningGenericFunctionalType.kt");
+            }
+
             @TestMetadata("unitConversionCompatibility.kt")
             public void testUnitConversionCompatibility() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/unitConversion/unitConversionCompatibility.kt");

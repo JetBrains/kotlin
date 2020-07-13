@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
@@ -28,8 +28,8 @@ object UnitTypeConversions : ParameterTypeConversion {
         if (argument !is SimpleKotlinCallArgument) return true
 
         val receiver = argument.receiver
-        if (receiver.receiverValue.type.hasUnitOrSubtypeReturnType()) return true
-        if (receiver.typesFromSmartCasts.any { it.hasUnitOrSubtypeReturnType() }) return true
+        if (receiver.receiverValue.type.hasUnitOrSubtypeReturnType(candidate.csBuilder)) return true
+        if (receiver.typesFromSmartCasts.any { it.hasUnitOrSubtypeReturnType(candidate.csBuilder) }) return true
 
         if (
             !expectedParameterType.isBuiltinFunctionalType ||
@@ -39,10 +39,15 @@ object UnitTypeConversions : ParameterTypeConversion {
         return false
     }
 
-    private fun KotlinType.hasUnitOrSubtypeReturnType(): Boolean =
-        isFunctionOrKFunctionTypeWithAnySuspendability && arguments.last().type.isUnitOrSubtype()
+    private fun KotlinType.hasUnitOrSubtypeReturnType(c: ConstraintSystemOperation): Boolean =
+        isFunctionOrKFunctionTypeWithAnySuspendability && arguments.last().type.isUnitOrSubtypeOrVariable(c)
 
-    private fun KotlinType.isUnitOrSubtype(): Boolean = isUnit() || isDynamic() || isNothing()
+    private fun KotlinType.isUnitOrSubtypeOrVariable(c: ConstraintSystemOperation): Boolean =
+        isUnitOrSubtype() || c.isTypeVariable(this)
+
+    private fun KotlinType.isUnitOrSubtype(): Boolean =
+        isUnit() || isDynamic() || isNothing()
+
 
     override fun conversionIsNeededBeforeSubtypingCheck(argument: KotlinCallArgument): Boolean =
         argument is SimpleKotlinCallArgument && argument.receiver.stableType.isFunctionType
@@ -53,7 +58,7 @@ object UnitTypeConversions : ParameterTypeConversion {
         var isFunctionTypeOrSubtype = false
         val hasReturnTypeInSubtypes = argument.receiver.stableType.isFunctionTypeOrSubtype {
             isFunctionTypeOrSubtype = true
-            it.getReturnTypeFromFunctionType().isUnitOrSubtype()
+            it.getReturnTypeFromFunctionType().isUnitOrSubtype() // there is no need to check for variable as it was done earlier
         }
 
         if (!isFunctionTypeOrSubtype) return false
