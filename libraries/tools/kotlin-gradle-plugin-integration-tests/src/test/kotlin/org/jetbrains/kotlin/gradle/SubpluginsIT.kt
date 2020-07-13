@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertTrue
@@ -193,10 +195,10 @@ class SubpluginsIT : BaseGradleIT() {
     }
 
     @Test
-    fun testKotlinVersionDowngradeInSupbrojectKt39809() = with(Project("multiprojectWithDependency")) {
+    fun testKotlinVersionDowngradeInSupbrojectKt39809() = with(Project("android-dagger", directoryPrefix = "kapt2")) {
         setupWorkingDir()
 
-        projectDir.resolve("projA/build.gradle").modify {
+        gradleBuildScript("app").modify {
             """
                 buildscript {
                 	repositories {
@@ -210,7 +212,13 @@ class SubpluginsIT : BaseGradleIT() {
                 $it
             """.trimIndent()
         }
-        build(":projA:compileKotlin") {
+        build(
+            ":app:compileDebugKotlin",
+            options = defaultBuildOptions().copy(
+                androidGradlePluginVersion = AGPVersion.v3_4_1,
+                androidHome = KotlinTestUtils.findAndroidSdk()
+            )
+        ) {
             assertSuccessful()
         }
     }
