@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-class ShowUsagesTable extends JBTable implements DataProvider {
+public class ShowUsagesTable extends JBTable implements DataProvider {
   final Usage MORE_USAGES_SEPARATOR = new UsageAdapter();
   final Usage USAGES_OUTSIDE_SCOPE_SEPARATOR = new UsageAdapter();
   final Usage USAGES_FILTERED_OUT_SEPARATOR = new UsageAdapter();
@@ -172,6 +172,12 @@ class ShowUsagesTable extends JBTable implements DataProvider {
         }
       }
     };
+  }
+
+  public boolean isSeparatorNode(@Nullable Usage node) {
+    return node == USAGES_OUTSIDE_SCOPE_SEPARATOR
+           ||node == MORE_USAGES_SEPARATOR
+           ||node == USAGES_FILTERED_OUT_SEPARATOR;
   }
 
   @Nullable

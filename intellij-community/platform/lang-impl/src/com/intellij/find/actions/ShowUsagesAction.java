@@ -921,9 +921,9 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                            @NotNull RelativePoint popupPosition,
                                            @NotNull IntRef minWidth,
                                            @NotNull List<? extends UsageNode> data) {
-    if (!(popup instanceof AbstractPopup)) {
-      return;
-    }
+
+    if (isCodeWithMeClientInstance(popup)) return;
+
     JComponent content = popup.getContent();
     Window window = SwingUtilities.windowForComponent(content);
     Dimension d = window.getSize();
@@ -957,6 +957,11 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
     window.validate();
     window.repaint();
+  }
+
+  private static boolean isCodeWithMeClientInstance(@NotNull JBPopup popup) {
+    JComponent content = popup.getContent();
+    return content.getClientProperty("THIN_CLIENT") != null;
   }
 
   @NotNull
