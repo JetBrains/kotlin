@@ -17,12 +17,13 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.KtUnsubstitutedScope
 
 internal class KtFirDeclaredMemberScope(
     override val owner: KtFirClassOrObjectSymbol,
+    firScope: FirScope,
     token: ValidityToken,
     builder: KtSymbolByFirBuilder
 ) : KtFirDelegatingScope(builder, token),
     KtDeclaredMemberScope,
     KtUnsubstitutedScope<KtFirDelegatingScope>,
     ValidityTokenOwner {
-    override val firScope: FirScope by weakRef(declaredMemberScope(owner.fir))
+    override val firScope: FirScope by weakRef(firScope)
 }
 
