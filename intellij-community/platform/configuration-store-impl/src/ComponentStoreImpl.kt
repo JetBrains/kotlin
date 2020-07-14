@@ -115,7 +115,7 @@ abstract class ComponentStoreImpl : IComponentStore {
     }
   }
 
-  final override fun unloadComponent(component: Any) {
+  override fun unloadComponent(component: Any) {
     @Suppress("DEPRECATION")
     val name = when (component) {
       is PersistentStateComponent<*> -> getStateSpec(component.javaClass)?.name ?: return

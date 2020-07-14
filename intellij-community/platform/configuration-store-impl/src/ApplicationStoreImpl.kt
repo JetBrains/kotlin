@@ -12,6 +12,7 @@ import com.intellij.openapi.diagnostic.runAndLogException
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.NamedJDOMExternalizable
 import com.intellij.util.io.systemIndependentPath
+import com.intellij.serviceContainer.ComponentManagerImpl
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.jps.model.serialization.JpsGlobalLoader
@@ -25,6 +26,9 @@ class ApplicationStoreImpl : ComponentStoreWithExtraComponents() {
   private val application = ApplicationManager.getApplication()
 
   override val storageManager = ApplicationStorageManager(application, PathMacroManager.getInstance(ApplicationManager.getApplication()))
+
+  override val serviceContainer: ComponentManagerImpl
+    get() = ApplicationManager.getApplication() as ComponentManagerImpl
 
   // number of app components require some state, so, we load default state in test mode
   override val loadPolicy: StateLoadPolicy

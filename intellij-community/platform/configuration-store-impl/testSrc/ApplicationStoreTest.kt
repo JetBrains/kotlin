@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.*
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream
+import com.intellij.serviceContainer.ComponentManagerImpl
 import com.intellij.testFramework.*
 import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.util.io.lastModified
@@ -404,6 +405,9 @@ internal class ApplicationStoreTest {
   }
 
   private class MyComponentStore(testAppConfigPath: Path) : ComponentStoreWithExtraComponents() {
+    override val serviceContainer: ComponentManagerImpl
+      get() = ApplicationManager.getApplication() as ComponentManagerImpl
+
     override val storageManager = ApplicationStorageManager(ApplicationManager.getApplication())
 
     init {

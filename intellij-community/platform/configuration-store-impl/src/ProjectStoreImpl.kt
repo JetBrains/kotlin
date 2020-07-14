@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.ReadonlyStatusHandler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtilRt
+import com.intellij.serviceContainer.ComponentManagerImpl
 import com.intellij.util.SmartList
 import com.intellij.util.io.delete
 import com.intellij.util.io.isDirectory
@@ -38,6 +39,9 @@ open class ProjectStoreImpl(project: Project) : ProjectStoreBase(project) {
   init {
     assert(!project.isDefault)
   }
+
+  override val serviceContainer: ComponentManagerImpl
+    get() = project as ComponentManagerImpl
 
   final override fun getPathMacroManagerForDefaults() = PathMacroManager.getInstance(project)
 
