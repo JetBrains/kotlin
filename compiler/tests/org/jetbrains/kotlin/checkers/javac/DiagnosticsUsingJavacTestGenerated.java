@@ -10421,6 +10421,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inference/returningLambdaInSuspendContext.kt");
             }
 
+            @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
+            public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
+            }
+
             @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
             public void testSkipedUnresolvedInBuilderInferenceWithStubReceiverType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt");

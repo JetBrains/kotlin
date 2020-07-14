@@ -187,7 +187,7 @@ class PostponedArgumentsAnalyzer(
 
         lambda.setAnalyzedResults(returnArgumentsInfo, subResolvedKtPrimitives)
 
-        if (inferenceSession != null) {
+        if (inferenceSession != null && lambda.atom.hasBuilderInferenceAnnotation) {
             val storageSnapshot = c.getBuilder().currentStorage()
 
             val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot, diagnosticHolder)

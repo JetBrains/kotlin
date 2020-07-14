@@ -110,6 +110,12 @@ class LambdaKotlinCallArgumentImpl(
 ) : PSIFunctionKotlinCallArgument(outerCallContext, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
     override val ktFunction get() = ktLambdaExpression.functionLiteral
     override val expression get() = containingBlockForLambda
+
+    override var hasBuilderInferenceAnnotation = false
+        set(value) {
+            assert(!field)
+            field = value
+        }
 }
 
 class FunctionExpressionImpl(
