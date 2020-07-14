@@ -63,7 +63,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(x: Int, y: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<Wrap>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<Wrap>:Test.kt")
               val %dirty = %changed
               val x = x
               val y = y
@@ -128,7 +128,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(x: Int, y: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<Wrap>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<Wrap>:Test.kt")
               val %dirty = %changed
               val x = x
               val y = y
@@ -239,7 +239,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangement: Vertical?, crossAxisAlignment: Horizontal?, crossAxisSize: SizeMode?, children: Function3<Composer<*>, Int, Int, Unit>, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(RowColumnImpl)P(5,4!1,2,3):Test.kt")
               val %dirty = %changed
               val modifier = modifier
               val arrangement = arrangement
@@ -306,7 +306,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun Column(modifier: Modifier?, verticalArrangement: Vertical?, horizontalGravity: Horizontal?, children: Function3<Composer<*>, Int, Int, Unit>, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<RowCol...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Column)P(2,3,1)<RowCol...>:Test.kt")
               val %dirty = %changed
               val modifier = modifier
               val verticalArrangement = verticalArrangement
@@ -381,7 +381,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun SimpleBox(modifier: Modifier?, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(SimpleBox):Test.kt")
               val %dirty = %changed
               val modifier = modifier
               if (%default and 0b0001 !== 0) {
@@ -418,7 +418,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Example(a: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Example):Test.kt")
               val %dirty = %changed
               val a = a
               if (%changed and 0b0110 === 0) {
@@ -473,7 +473,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun SimpleBox(modifier: Modifier?, shape: Shape?, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(SimpleBox):Test.kt")
               val %dirty = %changed
               val modifier = modifier
               val shape = shape
@@ -532,7 +532,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun SimpleBox(modifier: Modifier?, children: Function3<Composer<*>, Int, Int, Unit>?, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(SimpleBox)P(1):Test.kt")
               val %dirty = %changed
               val modifier = modifier
               val children = children
@@ -650,7 +650,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun SomeThing(children: Function3<Composer<*>, Int, Int, Unit>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(SomeThing):Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(children)) 0b0100 else 0b0010
@@ -665,7 +665,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             }
             @Composable
             fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<SomeTh...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Example)<SomeTh...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 SomeThing(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %key: Int, %changed: Int ->
                   if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
@@ -697,7 +697,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun B(values: IntArray, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(B):Test.kt")
               val %dirty = %changed
               %composer.startReplaceableGroup(values.size)
               val tmp0_iterator = values.iterator()
@@ -736,7 +736,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun B(values: Array<out Foo>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(B):Test.kt")
               val %dirty = %changed
               %composer.startReplaceableGroup(values.size)
               val tmp0_iterator = values.iterator()
@@ -775,7 +775,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun B(values: Array<out Foo>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(B):Test.kt")
               print(values)
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
                 B(*values, %composer, %key, %changed or 0b0001)
@@ -804,7 +804,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
               val counter: Int = 0
               @Composable
               fun A(%composer: Composer<*>?, %key: Int, %changed: Int) {
-                %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+                %composer.startRestartGroup(<> xor %key, "C(A):Test.kt")
                 val %dirty = %changed
                 %dirty = %dirty or 0b0110
                 if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
@@ -819,7 +819,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
               }
               @Composable
               fun B(%composer: Composer<*>?, %key: Int, %changed: Int) {
-                %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+                %composer.startRestartGroup(<> xor %key, "C(B):Test.kt")
                 val %dirty = %changed
                 print(counter)
                 val tmp0_rcvr = <this>
@@ -845,7 +845,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Example(a: Int, b: Int, c: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<makeIn...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Example)<makeIn...>:Test.kt")
               val %dirty = %changed
               val a = a
               val b = b
@@ -912,7 +912,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Wrap(y: Int, children: Function4<@[ParameterName(name = 'x')] Int, Composer<*>, Int, Int, Unit>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<childr...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Wrap)P(1)<childr...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(y)) 0b0100 else 0b0010
@@ -931,7 +931,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
             }
             @Composable
             fun Test(x: Int, y: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<Wrap(1...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<Wrap(1...>:Test.kt")
               val %dirty = %changed
               val x = x
               val y = y
@@ -988,7 +988,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Test(x: Int, y: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int): Int {
-              %composer.startReplaceableGroup(<> xor %key, "C<A(x,>:Test.kt")
+              %composer.startReplaceableGroup(<> xor %key, "C(Test)<A(x,>:Test.kt")
               val x = if (%default and 0b0001 !== 0) 0 else x
               val y = if (%default and 0b0010 !== 0) 0 else y
               A(x, y, %composer, <>, 0b0110 and %changed or 0b00011000 and %changed, 0)
@@ -1035,7 +1035,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Test(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int): Int {
-              %composer.startReplaceableGroup(<> xor %key, "C<A()>:Test.kt")
+              %composer.startReplaceableGroup(<> xor %key, "C(Test)<A()>:Test.kt")
               val tmp0 = A(0, 0, %composer, <>, 0, 0b0011)
               %composer.endReplaceableGroup()
               return tmp0
@@ -1056,7 +1056,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Test(x: Int, y: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<A(y>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<A(y>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -1096,7 +1096,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun CanSkip(a: Int, b: Foo?, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(CanSkip):Test.kt")
               val %dirty = %changed
               val a = a
               val b = b
@@ -1135,7 +1135,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
             }
             @Composable
             fun CannotSkip(a: Int, b: Foo, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(CannotSkip):Test.kt")
               print("Hello World")
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
                 CannotSkip(a, b, %composer, %key, %changed or 0b0001)
@@ -1143,7 +1143,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
             }
             @Composable
             fun NoParams(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(NoParams):Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 print("Hello World")
               } else {
@@ -1170,7 +1170,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<A()>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<A()>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 A(%composer, <>, 0)
               } else {
@@ -1197,7 +1197,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Test(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<A(x)>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<A(x)>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -1235,7 +1235,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun A(text: String, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<B(text...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(A)<B(text...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
@@ -1251,7 +1251,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
             }
             @Composable
             fun B(text: String, color: Color, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(B)P(1,0:Color):Test.kt")
               val %dirty = %changed
               val color = color
               if (%default and 0b0001 !== 0) {
@@ -1342,7 +1342,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun A(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<D>,<C({})>,<{}>,<C(stab...>,<C(16.d...>,<C(Dp(1...>,<C(16.d...>,<C(norm...>,<C(Int....>,<C(stab...>,<C(Modi...>,<C(Foo....>,<C(cons...>,<C(123)>,<C(123>,<C(x)>,<C(x>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(A)<D>,<C({})>,<{}>,<C(stab...>,<C(16.d...>,<C(Dp(1...>,<C(16.d...>,<C(norm...>,<C(Int....>,<C(stab...>,<C(Modi...>,<C(Foo....>,<C(cons...>,<C(123)>,<C(123>,<C(x)>,<C(x>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 val x = 123
                 D(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %key: Int, %changed: Int ->
@@ -1379,7 +1379,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
             }
             @Composable
             fun B(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<C(Math...>,<C(Math...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(B)<C(Math...>,<C(Math...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 C(random(), %composer, <>, 0)
                 C(random() / 100.0f, %composer, <>, 0)
@@ -1406,7 +1406,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<D>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Example)<D>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 D(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %key: Int, %changed: Int ->
                   if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
@@ -1440,7 +1440,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Test(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<A(x)>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<A(x)>:Test.kt")
               val %dirty = %changed
               val x = x
               if (%default and 0b0001 !== 0) {
@@ -1478,7 +1478,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Test(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<I()>,<A(x)>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<I()>,<A(x)>:Test.kt")
               val %dirty = %changed
               val x = x
               if (%changed and 0b0110 === 0) {
@@ -1524,7 +1524,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Test(x: Foo, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<A(x)>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<A(x)>:Test.kt")
               A(x, %composer, <>, 0b0110 and %changed)
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
                 Test(x, %composer, %key, %changed or 0b0001)
@@ -1548,7 +1548,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Test(x: Foo?, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<A(x)>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<A(x)>:Test.kt")
               val %dirty = %changed
               val x = x
               if (%default and 0b0001 !== 0) {
@@ -1594,7 +1594,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Test(a: Int, b: Boolean, c: Int, d: Foo?, e: List<Int>?, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<A(a,>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<A(a,>:Test.kt")
               val %dirty = %changed
               val c = c
               val d = d
@@ -1669,7 +1669,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun X(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<X(x>,<X(x)>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(X)<X(x>,<X(x)>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -1711,7 +1711,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun A(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<B(>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(A)<B(>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -1807,7 +1807,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun A(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<Provid...>,<B(x)>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(A)<Provid...>,<B(x)>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -1863,7 +1863,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun A(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<foo(x)>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(A)<foo(x)>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -1871,7 +1871,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
               if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                 @Composable
                 fun foo(y: Int, %composer: Composer<*>?, %key: Int, %changed: Int) {
-                  %composer.startRestartGroup(<> xor %key, "C<B(x,>:Test.kt")
+                  %composer.startRestartGroup(<> xor %key, "C(foo)<B(x,>:Test.kt")
                   val %dirty = %changed
                   if (%changed and 0b0110 === 0) {
                     %dirty = %dirty or if (%composer.changed(y)) 0b0100 else 0b0010
@@ -1960,7 +1960,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<Exampl...>,<Exampl...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Example)<Exampl...>,<Exampl...>:Test.kt")
               val %dirty = %changed
               val a00 = a00
               val a01 = a01
@@ -2177,7 +2177,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %changed1: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<Exampl...>,<Exampl...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Example)<Exampl...>,<Exampl...>:Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
               val a00 = a00
@@ -2403,7 +2403,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Example(wontChange: Int, mightChange: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<curren...>,<A(wont...>,<A(migh...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Example)P(1)<curren...>,<A(wont...>,<A(migh...>:Test.kt")
               val %dirty = %changed
               val wontChange = wontChange
               val mightChange = mightChange
@@ -2456,7 +2456,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Example(content: Function3<Composer<*>, Int, Int, Unit>, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C<invoke...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Example)<invoke...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
@@ -2515,7 +2515,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Box2(modifier: Modifier?, paddingStart: Dp, children: Function3<Composer<*>, Int, Int, Unit>?, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Box2)P(1,2:u#unit.Dp):Test.kt")
               val %dirty = %changed
               val modifier = modifier
               val paddingStart = paddingStart
