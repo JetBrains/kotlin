@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
@@ -260,7 +261,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                 )
             }
             if (includeCompatExperimentalCoroutines) {
-                configuration.addJvmClasspathRoot(ForTestCompileRuntime.coroutinesCompatForTests())
+                configuration.addJvmClasspathRoot(KotlinArtifacts.kotlinCoroutinesExperimentalCompat)
             }
             if (explicitLanguageVersionSettings != null) {
                 configuration.languageVersionSettings = explicitLanguageVersionSettings

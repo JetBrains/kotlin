@@ -72,6 +72,7 @@ object KotlinArtifacts : BaseKotlinArtifactsProvider() {
     val kotlinDaemon: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_DAEMON) }
     val kotlinScriptingCompiler: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMPILER) }
     val kotlinScriptingCompilerImpl: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMPILER_IMPL) }
+    val kotlinCoroutinesExperimentalCompat: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_COROUTINES_EXPERIMENTAL_COMPAT) }
 
     private fun findFile(parent: File, path: String): File {
         val result = File(parent, path)

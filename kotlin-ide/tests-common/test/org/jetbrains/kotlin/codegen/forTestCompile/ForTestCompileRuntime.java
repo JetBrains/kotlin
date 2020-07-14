@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen.forTestCompile;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -20,20 +19,6 @@ import java.util.List;
 
 public class ForTestCompileRuntime {
     private static volatile SoftReference<ClassLoader> runtimeJarClassLoader = new SoftReference<>(null);
-
-    @NotNull
-    public static File coroutinesCompatForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-coroutines-experimental-compat.jar"));
-    }
-
-    @NotNull
-    private static File assertExists(@NotNull File file) {
-        File absolute = new File(KotlinTestUtils.getHomeDirectory() + "/..", file.getPath());
-        if (!absolute.exists()) {
-            throw new IllegalStateException(absolute + " does not exist. Run 'gradlew dist'");
-        }
-        return absolute;
-    }
 
     @NotNull
     public static synchronized ClassLoader runtimeJarClassLoader() {

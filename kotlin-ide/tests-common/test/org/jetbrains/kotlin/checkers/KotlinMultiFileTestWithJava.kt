@@ -88,7 +88,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         if (DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage ||
             fileText.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())
         ) {
-            result.add(ForTestCompileRuntime.coroutinesCompatForTests())
+            result.add(KotlinArtifacts.kotlinCoroutinesExperimentalCompat)
         }
         return result
     }
