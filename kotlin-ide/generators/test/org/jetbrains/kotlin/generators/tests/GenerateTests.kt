@@ -228,6 +228,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("resolve/partialBodyResolve")
         }
 
+        testClass<AbstractResolveModeComparisonTest> {
+            model("resolve/resolveModeComparison")
+        }
+
         testClass<AbstractPsiCheckerTest> {
             model("checker", isRecursive = false)
             model("checker/regression")
