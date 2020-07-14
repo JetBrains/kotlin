@@ -22,6 +22,7 @@ import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
 import com.jetbrains.cidr.lang.symbols.symtable.SymbolTableProvider
 import com.jetbrains.cidr.util.events.CidrEventSpan
 import org.jetbrains.konan.KonanOCSwiftBundle
+import org.jetbrains.konan.resolve.KtDependencyGraph
 import org.jetbrains.konan.resolve.translation.KtFileTranslator
 
 object KonanBridgeSymbolLoading {
@@ -59,6 +60,7 @@ object KonanBridgeSymbolLoading {
         override fun onFinished(): Unit = synchronized(this) { indicator = null }
 
         override fun run(indicator: ProgressIndicator) {
+            KtDependencyGraph.getInstance(project).waitForPendingVerifications()
             CidrEventSpan(traceCategory, traceTitle, null).use {
                 processTargets(indicator)
             }

@@ -8,6 +8,7 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.AsyncFileListener
 import com.intellij.openapi.vfs.VirtualFile
@@ -23,8 +24,12 @@ import gnu.trove.THashSet
 import gnu.trove.TObjectHash
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import org.jetbrains.concurrency.CancellablePromise
 import org.jetbrains.konan.resolve.symbols.KtDependencyMarker
+import org.jetbrains.konan.resolve.translation.KtFileTranslator
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
+import org.jetbrains.kotlin.idea.core.unwrapModuleSourceInfo
 import java.util.*
 
 @Service
@@ -32,7 +37,12 @@ class KtDependencyGraph(val project: Project) : Disposable {
     private val dependent: MultiMap<VirtualFile, VirtualFile> = MultiMap.createSet()
 
     @Volatile
-    private var invalidationWorkerActive = false
+    private var invalidationWorker: CancellablePromise<Void>? = null
+
+    @Volatile
+    private var verificationWorker: CancellablePromise<Void>? = null
+
+    private val pendingVerificationFiles: Queue<VirtualFile> = ArrayDeque()
     private val changedFiles: Queue<VirtualFile> = ArrayDeque()
     private val createdFileParents: Queue<VirtualFile> = ArrayDeque()
 
@@ -128,7 +138,7 @@ class KtDependencyGraph(val project: Project) : Disposable {
 
                 synchronized(changedFiles) {
                     if (changedFiles.isEmpty() && createdFileParents.isEmpty()) {
-                        invalidationWorkerActive = false
+                        invalidationWorker = null
                         return@run
                     }
                 }
@@ -141,14 +151,78 @@ class KtDependencyGraph(val project: Project) : Disposable {
         synchronized(changedFiles) {
             changedFiles += newlyChangedFiles
             createdFileParents += newlyCreatedFileParents
-            if (!invalidationWorkerActive) {
-                ReadAction.nonBlocking(InvalidationWorker())
-                    .inSmartMode(project)
-                    .expireWith(this)
-                    .submit(AppExecutorUtil.getAppExecutorService())
-                invalidationWorkerActive = true
+            if (invalidationWorker == null) {
+                invalidationWorker =
+                    ReadAction.nonBlocking(InvalidationWorker())
+                        .inSmartMode(project)
+                        .expireWith(this)
+                        .submit(AppExecutorUtil.getAppExecutorService())
             }
         }
+    }
+
+    private inner class VerificationWorker : Runnable {
+        private val dirtyFiles = THashSet<VirtualFile>()
+        private var pendingVerificationFile: VirtualFile? = null
+
+        override fun run() {
+            // write action might add new files to queues, so only remember processed files for duration of read action
+            val alreadyProcessedFiles = THashSet<VirtualFile>()
+
+            while (true) {
+                while (true) {
+                    ProgressManager.checkCanceled()
+                    val file = pendingVerificationFile
+                        ?: synchronized(pendingVerificationFiles) { pendingVerificationFiles.poll() }.also { pendingVerificationFile = it }
+                        ?: break
+
+                    if (alreadyProcessedFiles.add(file)) {
+                        val moduleInfo by lazy(LazyThreadSafetyMode.NONE) {
+                            getModuleInfoByVirtualFile(project, file)?.unwrapModuleSourceInfo()
+                        }
+                        for (table in FileSymbolTablesCache.getInstance(project).allTablesForFile(file)) {
+                            val marker = table.getKtDependencyMarker()
+                            if (marker == null || !marker.needsVerification) continue
+                            if (!KtFileTranslator.verifyDependencies(file, moduleInfo, marker.dependencies)) {
+                                dirtyFiles += file
+                                break
+                            }
+                            marker.needsVerification = false
+                        }
+                    }
+
+                    if (alreadyProcessedFiles.add(file)) dirtyFiles.addAll(getDependentFiles(file))
+                    pendingVerificationFile = null
+                }
+
+                FileSymbolTablesCache.getInstance(project).invalidateDirtyIncludeFiles(dirtyFiles)
+                dirtyFiles.clear()
+
+                synchronized(pendingVerificationFiles) {
+                    if (pendingVerificationFiles.isEmpty()) {
+                        verificationWorker = null
+                        return@run
+                    }
+                }
+            }
+        }
+    }
+
+    private fun scheduleVerification(file: VirtualFile) {
+        synchronized(pendingVerificationFiles) {
+            pendingVerificationFiles += file
+            if (verificationWorker == null) {
+                verificationWorker =
+                    ReadAction.nonBlocking(VerificationWorker())
+                        .inSmartMode(project)
+                        .expireWith(this)
+                        .submit(AppExecutorUtil.getAppExecutorService())
+            }
+        }
+    }
+
+    fun waitForPendingVerifications() {
+        ProgressIndicatorUtils.awaitWithCheckCanceled(verificationWorker ?: return)
     }
 
     @Synchronized
@@ -156,15 +230,17 @@ class KtDependencyGraph(val project: Project) : Disposable {
 
     class Listener(val project: Project) : FileSymbolTablesPackListener {
         override fun afterTableAddedToPack(table: FileSymbolTable) {
-            val marker = table.contents.lastOrNull() as? KtDependencyMarker ?: return
-            getInstance(project)
-                .addDependencies(table.containingFile, marker.dependencies)
+            val marker = table.getKtDependencyMarker() ?: return
+            with(getInstance(project)) {
+                addDependencies(marker.containingFile, marker.dependencies)
+                if (marker.needsVerification) scheduleVerification(marker.containingFile)
+            }
         }
 
         override fun beforeTableRemovedFromPack(table: FileSymbolTable) {
-            val marker = table.contents.lastOrNull() as? KtDependencyMarker ?: return
+            val marker = table.getKtDependencyMarker() ?: return
             getInstance(project)
-                .removeDependencies(table.containingFile, marker.dependencies)
+                .removeDependencies(marker.containingFile, marker.dependencies)
         }
     }
 
@@ -184,5 +260,8 @@ class KtDependencyGraph(val project: Project) : Disposable {
 
         private fun isSymlinkChange(propertyChangeEvent: VFilePropertyChangeEvent): Boolean =
             propertyChangeEvent.propertyName == VirtualFile.PROP_SYMLINK_TARGET
+
+        private fun FileSymbolTable.getKtDependencyMarker(): KtDependencyMarker? =
+            contents.lastOrNull() as? KtDependencyMarker
     }
 }
