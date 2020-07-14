@@ -67,13 +67,8 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         tempDeserialize.readExternal(element);
 
         String customDefaults = tempDeserialize.CODE_STYLE_DEFAULTS;
-        if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(customDefaults)) {
-            KotlinStyleGuideCodeStyle.Companion.applyToCommonSettings(this, true);
-        }
-        else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(customDefaults)) {
-            KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(this, true);
-        }
-        else if (customDefaults == null && FormatterUtilKt.isDefaultOfficialCodeStyle()) {
+        boolean isSuccess = FormatterUtilKt.applyKotlinCodeStyle(customDefaults, this, true);
+        if (!isSuccess && customDefaults == null && FormatterUtilKt.isDefaultOfficialCodeStyle()) {
             // Temporary load settings against previous defaults
             settingsAgainstPreviousDefaults = createForTempDeserialize();
             KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(settingsAgainstPreviousDefaults, true);
@@ -86,14 +81,8 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         CommonCodeStyleSettings defaultSettings = getDefaultSettings();
-
         if (defaultSettings != null) {
-            if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
-                KotlinStyleGuideCodeStyle.Companion.applyToCommonSettings(defaultSettings, false);
-            }
-            else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
-                KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(defaultSettings, false);
-            }
+            FormatterUtilKt.applyKotlinCodeStyle(CODE_STYLE_DEFAULTS, defaultSettings, false);
         }
 
         writeExternalBase(element, defaultSettings);

@@ -12,8 +12,12 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
@@ -65,4 +69,34 @@ val PsiElement.isComma: Boolean get() = PsiUtil.getElementType(this) == KtTokens
 fun PsiElement.containsLineBreakInThis(globalStartOffset: Int, globalEndOffset: Int): Boolean {
     val textRange = TextRange.create(globalStartOffset, globalEndOffset).shiftLeft(startOffset)
     return StringUtil.containsLineBreak(textRange.subSequence(text))
+}
+
+fun applyKotlinCodeStyle(codeStyleId: String?, codeStyleSettings: KotlinCodeStyleSettings, modifyCodeStyle: Boolean = true): Boolean {
+    when (codeStyleId) {
+        KotlinStyleGuideCodeStyle.CODE_STYLE_ID -> KotlinStyleGuideCodeStyle.applyToKotlinCustomSettings(codeStyleSettings, modifyCodeStyle)
+        KotlinObsoleteCodeStyle.CODE_STYLE_ID -> KotlinObsoleteCodeStyle.applyToKotlinCustomSettings(codeStyleSettings, modifyCodeStyle)
+        else -> return false
+    }
+
+    return true
+}
+
+fun applyKotlinCodeStyle(codeStyleId: String?, codeStyleSettings: CommonCodeStyleSettings, modifyCodeStyle: Boolean = true): Boolean {
+    when (codeStyleId) {
+        KotlinStyleGuideCodeStyle.CODE_STYLE_ID -> KotlinStyleGuideCodeStyle.applyToCommonSettings(codeStyleSettings, modifyCodeStyle)
+        KotlinObsoleteCodeStyle.CODE_STYLE_ID -> KotlinObsoleteCodeStyle.applyToCommonSettings(codeStyleSettings, modifyCodeStyle)
+        else -> return false
+    }
+
+    return true
+}
+
+fun applyKotlinCodeStyle(codeStyleId: String?, codeStyleSettings: CodeStyleSettings): Boolean {
+    when (codeStyleId) {
+        KotlinStyleGuideCodeStyle.CODE_STYLE_ID -> KotlinStyleGuideCodeStyle.apply(codeStyleSettings)
+        KotlinObsoleteCodeStyle.CODE_STYLE_ID -> KotlinObsoleteCodeStyle.apply(codeStyleSettings)
+        else -> return false
+    }
+
+    return true
 }
