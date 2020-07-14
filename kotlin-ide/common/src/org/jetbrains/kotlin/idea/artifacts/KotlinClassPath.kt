@@ -32,7 +32,7 @@ enum class KotlinClassPath(private val jarGetters: List<() -> File> = emptyList(
     )
     ;
 
-    fun computeClassPath(artifacts: KotlinArtifacts): List<File> = this.jarGetters.map { it() }
+    fun computeClassPath(): List<File> = this.jarGetters.map { it() }
 
     constructor(vararg jarGetters: () -> File) : this(jarGetters.asList())
     constructor(baseClassPath: KotlinClassPath, vararg jarGetters: () -> File) : this(baseClassPath.jarGetters + jarGetters)

@@ -61,7 +61,7 @@ class KotlinConsoleKeeper(val project: Project) {
 
             val kotlinArtifacts = KotlinArtifacts
             javaParameters.classPath.apply {
-                val classPath = KotlinClassPath.CompilerWithScripting.computeClassPath(kotlinArtifacts)
+                val classPath = KotlinClassPath.CompilerWithScripting.computeClassPath()
                 addAll(classPath.map {
                     val absolutePath = it.absolutePath
                     if (!it.exists()) {

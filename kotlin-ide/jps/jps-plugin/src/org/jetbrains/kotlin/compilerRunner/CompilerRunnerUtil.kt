@@ -97,7 +97,7 @@ object CompilerRunnerUtil {
         environment: JpsCompilerEnvironment,
         fn: (ClassLoader) -> T
     ): T? {
-        val paths = KotlinClassPath.CompilerWithScripting.computeClassPath(environment.kotlinArtifacts).let { classPath ->
+        val paths = KotlinClassPath.CompilerWithScripting.computeClassPath().let { classPath ->
             jdkToolsJar?.let { classPath + it } ?: classPath
         }
 
