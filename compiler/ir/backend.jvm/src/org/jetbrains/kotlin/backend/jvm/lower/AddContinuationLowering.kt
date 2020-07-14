@@ -533,7 +533,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
     private fun createStaticSuspendImpl(irFunction: IrSimpleFunction): IrSimpleFunction {
         // Create static suspend impl method.
-        val static = createStaticFunctionWithReceivers(
+        val static = context.irFactory.createStaticFunctionWithReceivers(
             irFunction.parent,
             irFunction.name.toSuspendImplementationName(),
             irFunction,

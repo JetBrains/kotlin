@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -258,5 +257,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
     }
 
     private fun createStaticBodilessMethod(function: IrFunction): IrSimpleFunction =
-        createStaticFunctionWithReceivers(function.parent, function.name.toInlineClassImplementationName(), function)
+        context.irFactory.createStaticFunctionWithReceivers(
+            function.parent, function.name.toInlineClassImplementationName(), function
+        )
 }

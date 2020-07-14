@@ -138,7 +138,7 @@ class JvmCachedDeclarations(
             val defaultImpls = getDefaultImplsClass(interfaceFun.parentAsClass)
 
             val name = Name.identifier(methodSignatureMapper.mapFunctionName(interfaceFun))
-            createStaticFunctionWithReceivers(
+            context.irFactory.createStaticFunctionWithReceivers(
                 defaultImpls, name, interfaceFun,
                 dispatchReceiverType = parent.defaultType,
                 // If `interfaceFun` is not a real implementation, then we're generating stubs in a descendant

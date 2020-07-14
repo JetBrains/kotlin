@@ -76,7 +76,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
     }
 
     fun generateClass(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor, symbol: IrClassSymbol): IrClass {
-        val irClass = createIrClassFromDescriptor(startOffset, endOffset, origin, symbol, descriptor)
+        val irClass = irFactory.createIrClassFromDescriptor(startOffset, endOffset, origin, symbol, descriptor)
 
         symbolTable.withScope(irClass) {
             irClass.metadata = MetadataSource.Class(descriptor)

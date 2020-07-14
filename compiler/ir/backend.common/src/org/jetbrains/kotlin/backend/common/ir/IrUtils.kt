@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -154,7 +152,7 @@ fun IrValueParameter.copyTo(
             }
         }
     }
-    return IrValueParameterImpl(
+    return factory.createValueParameter(
         startOffset, endOffset, origin, symbol,
         name, index, type, varargElementType, isCrossinline, isNoinline
     ).also {
@@ -179,7 +177,7 @@ fun IrTypeParameter.copyToWithoutSuperTypes(
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
     dispatchReceiverParameter = from.dispatchReceiverParameter?.run {
-        IrValueParameterImpl(
+        factory.createValueParameter(
             startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor), descriptor.name,
             descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline,
             descriptor.isNoinline
@@ -427,7 +425,7 @@ fun IrClass.createParameterDeclarations() {
 fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = null) {
     assert(dispatchReceiverParameter == null)
 
-    dispatchReceiverParameter = IrValueParameterImpl(
+    dispatchReceiverParameter = factory.createValueParameter(
         startOffset, endOffset,
         origin ?: parentAsClass.origin,
         IrValueParameterSymbolImpl(parentAsClass.thisReceiver!!.descriptor),
@@ -512,7 +510,7 @@ fun IrClass.addFakeOverridesViaIncorrectHeuristic(implementedMembers: List<IrSim
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun createStaticFunctionWithReceivers(
+fun IrFactory.createStaticFunctionWithReceivers(
     irParent: IrDeclarationParent,
     name: Name,
     oldFunction: IrFunction,
@@ -527,7 +525,7 @@ fun createStaticFunctionWithReceivers(
     val descriptor = (oldFunction.descriptor as? DescriptorWithContainerSource)?.let {
         WrappedFunctionDescriptorWithContainerSource(it.containerSource)
     } ?: WrappedSimpleFunctionDescriptor(Annotations.EMPTY, oldFunction.descriptor.source)
-    return IrFunctionImpl(
+    return createFunction(
         oldFunction.startOffset, oldFunction.endOffset,
         origin,
         IrSimpleFunctionSymbolImpl(descriptor),

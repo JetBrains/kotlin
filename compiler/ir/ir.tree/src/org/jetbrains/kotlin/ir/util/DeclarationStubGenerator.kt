@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
@@ -250,7 +249,7 @@ class DeclarationStubGenerator(
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
-        IrValueParameterImpl(
+        symbolTable.irFactory.createValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), name, index, type.toIrType(),
             varargElementType?.toIrType(), isCrossinline, isNoinline
         ).also { irValueParameter ->
