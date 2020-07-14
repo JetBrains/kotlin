@@ -50,7 +50,7 @@ internal interface DescriptorToIrTranslationMixin {
      */
     fun createClass(descriptor: ClassDescriptor, builder: (IrClass) -> Unit): IrClass =
             symbolTable.declareClass(descriptor) {
-                createIrClassFromDescriptor(
+                symbolTable.irFactory.createIrClassFromDescriptor(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, it, descriptor
                 )
             }.also { irClass ->

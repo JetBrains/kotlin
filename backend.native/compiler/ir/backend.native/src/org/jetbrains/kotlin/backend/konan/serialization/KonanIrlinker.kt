@@ -198,7 +198,7 @@ internal class KonanIrLinker(
             val irFile = getIrFile(packageDescriptor)
 
             val klass = symbolTable.declareClassFromLinker(descriptor, idSig) { symbol ->
-                createIrClassFromDescriptor(offset, offset, FORWARD_DECLARATION_ORIGIN, symbol, descriptor)
+                symbolTable.irFactory.createIrClassFromDescriptor(offset, offset, FORWARD_DECLARATION_ORIGIN, symbol, descriptor)
             }
 
             klass.parent = irFile

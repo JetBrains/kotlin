@@ -153,7 +153,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
     }
 
     private fun createIrClass(symbol: IrClassSymbol, descriptor: ClassDescriptor): IrClass =
-        createIrClassFromDescriptor(offset, offset, DECLARATION_ORIGIN_FUNCTION_CLASS, symbol, descriptor)
+        IrFactoryImpl.createIrClassFromDescriptor(offset, offset, DECLARATION_ORIGIN_FUNCTION_CLASS, symbol, descriptor)
 
     private fun createClass(descriptor: FunctionClassDescriptor, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
         symbolTable?.declarator { createIrClass(it, descriptor) }
