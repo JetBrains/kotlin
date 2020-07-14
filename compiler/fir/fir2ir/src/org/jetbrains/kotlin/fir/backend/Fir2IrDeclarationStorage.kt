@@ -396,7 +396,8 @@ class Fir2IrDeclarationStorage(
                     isSuspend = isSuspend,
                     isExpect = simpleFunction?.isExpect == true,
                     isFakeOverride = updatedOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
-                    isOperator = simpleFunction?.isOperator == true
+                    isOperator = simpleFunction?.isOperator == true,
+                    isInfix = simpleFunction?.isInfix == true
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
                     convertAnnotationsFromLibrary(function)
@@ -520,7 +521,7 @@ class Fir2IrDeclarationStorage(
                 isExternal = propertyAccessor?.isExternal == true,
                 isTailrec = false, isSuspend = false, isExpect = false,
                 isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-                isOperator = false
+                isOperator = false, isInfix = false
             ).apply {
                 correspondingPropertySymbol = correspondingProperty.symbol
                 if (propertyAccessor != null) {

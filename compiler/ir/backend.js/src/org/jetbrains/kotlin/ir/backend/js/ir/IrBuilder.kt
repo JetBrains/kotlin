@@ -99,6 +99,7 @@ object JsIrBuilder {
         isSuspend: Boolean = false,
         isExpect: Boolean = false,
         isOperator: Boolean = false,
+        isInfix: Boolean = false,
         isFakeOverride: Boolean = false,
         origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
     ): IrSimpleFunction = buildFun {
@@ -112,6 +113,7 @@ object JsIrBuilder {
         this.isTailrec = isTailrec
         this.isSuspend = isSuspend
         this.isOperator = isOperator
+        this.isInfix = isInfix
         this.isExpect = isExpect
         this.isFakeOverride = isFakeOverride
     }.also {

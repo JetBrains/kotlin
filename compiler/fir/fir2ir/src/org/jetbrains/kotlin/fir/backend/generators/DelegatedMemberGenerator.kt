@@ -129,6 +129,7 @@ internal class DelegatedMemberGenerator(
                 superFunction.isTailrec,
                 superFunction.isSuspend,
                 superFunction.isOperator,
+                superFunction.isInfix,
                 superFunction.isExpect
             ).apply {
                 descriptor.bind(this)

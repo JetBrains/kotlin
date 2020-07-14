@@ -51,6 +51,9 @@ class Fir2IrLazySimpleFunction(
     override val isOperator: Boolean
         get() = fir.isOperator
 
+    override val isInfix: Boolean
+        get() = fir.isInfix
+
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
         get() = super.descriptor as FunctionDescriptor

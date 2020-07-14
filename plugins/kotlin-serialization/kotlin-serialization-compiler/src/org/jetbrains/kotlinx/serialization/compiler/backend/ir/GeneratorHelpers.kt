@@ -287,7 +287,8 @@ interface IrBuilderExtension {
             with(descriptor) {
                 IrFunctionImpl(
                     fieldSymbol.owner.startOffset, fieldSymbol.owner.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol,
-                    name, visibility, modality, returnType!!.toIrType(), isInline, isExternal, isTailrec, isSuspend, isOperator, isExpect
+                    name, visibility, modality, returnType!!.toIrType(),
+                    isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
                 )
             }.also { f ->
                 generateOverriddenFunctionSymbols(f, compilerContext.symbolTable)

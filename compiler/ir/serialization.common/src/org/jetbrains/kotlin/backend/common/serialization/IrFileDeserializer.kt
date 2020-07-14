@@ -1191,6 +1191,7 @@ abstract class IrFileDeserializer(
                     flags.isTailrec,
                     flags.isSuspend,
                     flags.isOperator,
+                    flags.isInfix,
                     flags.isExpect,
                     flags.isFakeOverride
                 )

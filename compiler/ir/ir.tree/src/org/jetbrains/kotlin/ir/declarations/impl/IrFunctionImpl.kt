@@ -33,6 +33,7 @@ abstract class IrFunctionCommonImpl(
     override val isTailrec: Boolean,
     override val isSuspend: Boolean,
     override val isOperator: Boolean,
+    override val isInfix: Boolean,
     isExpect: Boolean,
     override val isFakeOverride: Boolean
 ) :
@@ -91,10 +92,11 @@ class IrFunctionImpl(
     override val isTailrec: Boolean,
     override val isSuspend: Boolean,
     override val isOperator: Boolean,
+    isInfix: Boolean,
     isExpect: Boolean,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE
 ) : IrFunctionCommonImpl(startOffset, endOffset, origin, name, visibility, modality, returnType, isInline,
-    isExternal, isTailrec, isSuspend, isOperator, isExpect, isFakeOverride) {
+    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride) {
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor get() = symbol.descriptor
@@ -120,9 +122,10 @@ class IrFakeOverrideFunctionImpl(
     isTailrec: Boolean,
     isSuspend: Boolean,
     isOperator: Boolean,
+    isInfix: Boolean,
     isExpect: Boolean
 ) : IrFunctionCommonImpl(startOffset, endOffset, origin, name, visibility, modality, returnType, isInline,
-    isExternal, isTailrec, isSuspend, isOperator, isExpect,
+    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
     isFakeOverride = true)
 {
     private var _symbol: IrSimpleFunctionSymbol? = null

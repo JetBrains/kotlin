@@ -59,7 +59,8 @@ class FakeOverrideCopier(
             isTailrec = declaration.isTailrec,
             isSuspend = declaration.isSuspend,
             isExpect = declaration.isExpect,
-            isOperator = declaration.isOperator
+            isOperator = declaration.isOperator,
+            isInfix = declaration.isInfix
         ).apply {
             transformFunctionChildren(declaration)
         }

@@ -24,7 +24,7 @@ fun SymbolTable.declareSimpleFunctionWithOverrides(
         with(descriptor) {
             IrFunctionImpl(
                 startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(this),
-                visibility, modality, IrUninitializedType, isInline, isExternal, isTailrec, isSuspend, isOperator, isExpect
+                visibility, modality, IrUninitializedType, isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
             ).also { declaration ->
                 declaration.metadata = MetadataSource.Function(this)
             }

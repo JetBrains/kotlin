@@ -264,6 +264,7 @@ class JvmDeclarationFactory(
                 isTailrec = false
                 isSuspend = fakeOverride.isSuspend
                 isOperator = fakeOverride.isOperator
+                isInfix = fakeOverride.isInfix
                 isExpect = false
                 isFakeOverride = false
             }.apply {

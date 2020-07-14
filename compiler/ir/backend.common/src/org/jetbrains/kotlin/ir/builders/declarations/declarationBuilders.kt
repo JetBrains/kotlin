@@ -136,7 +136,7 @@ internal fun IrFunctionBuilder.buildFunction(originalDescriptor: FunctionDescrip
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(wrappedDescriptor),
         name, visibility, modality, returnType,
-        isInline, isExternal, isTailrec, isSuspend, isOperator, isExpect, isFakeOverride
+        isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride
     ).also {
         wrappedDescriptor.bind(it)
     }

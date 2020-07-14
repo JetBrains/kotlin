@@ -220,7 +220,8 @@ class DeclarationStubGenerator(
                 it, descriptor,
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isInline, descriptor.isExternal, descriptor.isTailrec, descriptor.isSuspend, descriptor.isExpect,
-                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE), isOperator = descriptor.isOperator,
+                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
+                isOperator = descriptor.isOperator, isInfix = descriptor.isInfix,
                 stubGenerator = this, typeTranslator = typeTranslator
             )
         }

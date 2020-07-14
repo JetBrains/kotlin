@@ -304,6 +304,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                     isTailrec = false,
                     isSuspend = isSuspend,
                     isOperator = true,
+                    isInfix = false,
                     isExpect = false,
                     isFakeOverride = false
                 )
@@ -374,7 +375,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                 descriptor.run {
                     IrFunctionImpl(
                         offset, offset, memberOrigin, it, name, visibility, modality, returnType,
-                        isInline, isExternal, isTailrec, isSuspend, isOperator, isExpect, true
+                        isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, true
                     )
                 }
             }

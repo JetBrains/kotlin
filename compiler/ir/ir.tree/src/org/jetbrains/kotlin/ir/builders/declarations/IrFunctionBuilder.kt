@@ -24,6 +24,7 @@ class IrFunctionBuilder : IrDeclarationBuilder() {
     var isSuspend: Boolean = false
     var isExpect: Boolean = false
     var isOperator: Boolean = false
+    var isInfix: Boolean = false
 
     var isPrimary: Boolean = false
 
@@ -41,12 +42,14 @@ class IrFunctionBuilder : IrDeclarationBuilder() {
             isTailrec = from.isTailrec
             isSuspend = from.isSuspend
             isOperator = from.isOperator
+            isInfix = from.isInfix
             isFakeOverride = from.isFakeOverride
         } else {
             modality = Modality.FINAL
             isTailrec = false
             isSuspend = false
             isOperator = false
+            isInfix = false
         }
 
         if (from is IrConstructor) {

@@ -36,6 +36,7 @@ class IrLazyFunction(
     isExpect: Boolean,
     override val isFakeOverride: Boolean,
     override val isOperator: Boolean,
+    override val isInfix: Boolean,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator
 ) :
