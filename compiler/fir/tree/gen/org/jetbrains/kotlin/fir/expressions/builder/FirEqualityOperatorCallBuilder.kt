@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
-import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
-import org.jetbrains.kotlin.fir.expressions.impl.FirOperatorCallImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirEqualityOperatorCallImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -26,14 +25,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 @FirBuilderDsl
-class FirOperatorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
+class FirEqualityOperatorCallBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override lateinit var argumentList: FirArgumentList
+    lateinit var argumentList: FirArgumentList
     lateinit var operation: FirOperation
 
-    override fun build(): FirOperatorCall {
-        return FirOperatorCallImpl(
+    override fun build(): FirEqualityOperatorCall {
+        return FirEqualityOperatorCallImpl(
             source,
             annotations,
             argumentList,
@@ -42,7 +41,7 @@ class FirOperatorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, Fi
     }
 
 
-    @Deprecated("Modification of 'typeRef' has no impact for FirOperatorCallBuilder", level = DeprecationLevel.HIDDEN)
+    @Deprecated("Modification of 'typeRef' has no impact for FirEqualityOperatorCallBuilder", level = DeprecationLevel.HIDDEN)
     override var typeRef: FirTypeRef
         get() = throw IllegalStateException()
         set(value) {
@@ -51,9 +50,9 @@ class FirOperatorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, Fi
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildOperatorCall(init: FirOperatorCallBuilder.() -> Unit): FirOperatorCall {
+inline fun buildEqualityOperatorCall(init: FirEqualityOperatorCallBuilder.() -> Unit): FirEqualityOperatorCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirOperatorCallBuilder().apply(init).build()
+    return FirEqualityOperatorCallBuilder().apply(init).build()
 }

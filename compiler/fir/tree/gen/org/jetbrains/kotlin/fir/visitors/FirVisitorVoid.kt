@@ -71,6 +71,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
+import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
+import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessWithoutCallee
@@ -396,6 +398,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall) {
         visitElement(typeOperatorCall)
+    }
+
+    open fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement) {
+        visitElement(assignmentOperatorStatement)
+    }
+
+    open fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall) {
+        visitElement(equalityOperatorCall)
     }
 
     open fun visitWhenExpression(whenExpression: FirWhenExpression) {
@@ -892,6 +902,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?) {
         visitTypeOperatorCall(typeOperatorCall)
+    }
+
+    final override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: Nothing?) {
+        visitAssignmentOperatorStatement(assignmentOperatorStatement)
+    }
+
+    final override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?) {
+        visitEqualityOperatorCall(equalityOperatorCall)
     }
 
     final override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?) {

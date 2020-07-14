@@ -71,6 +71,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
+import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
+import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessWithoutCallee
@@ -398,6 +400,14 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: D): CompositeTransformResult<FirStatement> {
         return transformElement(typeOperatorCall, data)
+    }
+
+    open fun transformAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: D): CompositeTransformResult<FirStatement> {
+        return transformElement(assignmentOperatorStatement, data)
+    }
+
+    open fun transformEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: D): CompositeTransformResult<FirStatement> {
+        return transformElement(equalityOperatorCall, data)
     }
 
     open fun transformWhenExpression(whenExpression: FirWhenExpression, data: D): CompositeTransformResult<FirStatement> {
@@ -894,6 +904,14 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: D): CompositeTransformResult<FirStatement> {
         return transformTypeOperatorCall(typeOperatorCall, data)
+    }
+
+    final override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: D): CompositeTransformResult<FirStatement> {
+        return transformAssignmentOperatorStatement(assignmentOperatorStatement, data)
+    }
+
+    final override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: D): CompositeTransformResult<FirStatement> {
+        return transformEqualityOperatorCall(equalityOperatorCall, data)
     }
 
     final override fun visitWhenExpression(whenExpression: FirWhenExpression, data: D): CompositeTransformResult<FirStatement> {
