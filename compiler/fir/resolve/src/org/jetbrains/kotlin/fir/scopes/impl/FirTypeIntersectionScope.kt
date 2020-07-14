@@ -37,6 +37,8 @@ class FirTypeIntersectionScope private constructor(
 
     private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<FirCallableSymbol<*>>> = mutableMapOf()
 
+    private val intersectionOverrides: MutableMap<FirNamedFunctionSymbol, FirNamedFunctionSymbol> = mutableMapOf()
+
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         if (!processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)) {
             super.processFunctionsByName(name, processor)
@@ -93,29 +95,32 @@ class FirTypeIntersectionScope private constructor(
             val mostSpecific = selectMostSpecificMember(extractedOverrides)
             if (extractedOverrides.size > 1 && mostSpecific is FirNamedFunctionSymbol) {
                 // TODO: same code for properties
-                val newSymbol = FirNamedFunctionSymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific)
-                val mostSpecificFunction = mostSpecific.fir
-                createFunctionCopy(mostSpecific.fir, newSymbol).apply {
-                    resolvePhase = mostSpecificFunction.resolvePhase
-                    typeParameters += mostSpecificFunction.typeParameters
-                    valueParameters += mostSpecificFunction.valueParameters.mapIndexed { index, mostSpecificParameter ->
-                        val overriddenWithDefault =
-                            extractedOverrides.firstOrNull {
-                                (it as FirNamedFunctionSymbol).fir.valueParameters.getOrNull(index)?.defaultValue != null
-                            }?.fir as? FirSimpleFunction
-                        if (overriddenWithDefault == null) {
-                            mostSpecificParameter
-                        } else {
-                            val overriddenWithDefaultParameter = overriddenWithDefault.valueParameters[index]
-                            createValueParameterCopy(mostSpecificParameter, overriddenWithDefaultParameter.defaultValue).apply {
-                                annotations += mostSpecificParameter.annotations
-                            }.build()
+                val intersectionOverride = intersectionOverrides.getOrPut(mostSpecific) {
+                    val newSymbol = FirNamedFunctionSymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific)
+                    val mostSpecificFunction = mostSpecific.fir
+                    createFunctionCopy(mostSpecific.fir, newSymbol).apply {
+                        resolvePhase = mostSpecificFunction.resolvePhase
+                        typeParameters += mostSpecificFunction.typeParameters
+                        valueParameters += mostSpecificFunction.valueParameters.mapIndexed { index, mostSpecificParameter ->
+                            val overriddenWithDefault =
+                                extractedOverrides.firstOrNull {
+                                    (it as FirNamedFunctionSymbol).fir.valueParameters.getOrNull(index)?.defaultValue != null
+                                }?.fir as? FirSimpleFunction
+                            if (overriddenWithDefault == null) {
+                                mostSpecificParameter
+                            } else {
+                                val overriddenWithDefaultParameter = overriddenWithDefault.valueParameters[index]
+                                createValueParameterCopy(mostSpecificParameter, overriddenWithDefaultParameter.defaultValue).apply {
+                                    annotations += mostSpecificParameter.annotations
+                                }.build()
+                            }
                         }
-                    }
-                }.build()
-                overriddenSymbols[newSymbol] = extractedOverrides
+                    }.build()
+                    newSymbol
+                }
+                overriddenSymbols[intersectionOverride] = extractedOverrides
                 @Suppress("UNCHECKED_CAST")
-                processor(newSymbol as D)
+                processor(intersectionOverride as D)
             } else {
                 overriddenSymbols[mostSpecific] = extractedOverrides
                 processor(mostSpecific)
