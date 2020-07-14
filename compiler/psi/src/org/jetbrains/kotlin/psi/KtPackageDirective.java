@@ -137,6 +137,7 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
         PsiElement keyword = getPackageKeyword();
         if (keyword != null) {
             addAfter(newExpression, keyword);
+            addAfter(psiFactory.createWhiteSpace(), keyword);
             return;
         }
 
