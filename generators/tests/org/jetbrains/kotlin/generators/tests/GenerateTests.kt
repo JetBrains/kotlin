@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateTestSuppor
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateToStringActionTest
 import org.jetbrains.kotlin.idea.codeInsight.hints.AbstractKotlinLambdasHintsProvider
 import org.jetbrains.kotlin.idea.codeInsight.hints.AbstractKotlinReferenceTypeHintsProviderTest
-import org.jetbrains.kotlin.idea.codeInsight.hints.AbstractKotlinSuspendingCallHintsProviderTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveLeftRightTest
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveStatementTest
 import org.jetbrains.kotlin.idea.codeInsight.postfix.AbstractPostfixTemplateProviderTest
@@ -880,10 +879,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractKotlinCodeVisionProviderTest> {
                 model("codeInsight/codeVision")
-            }
-
-            testClass<AbstractKotlinSuspendingCallHintsProviderTest> {
-                model("codeInsight/hints/suspending")
             }
 
             testClass<AbstractKotlinReferenceTypeHintsProviderTest> {
