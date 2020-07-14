@@ -1139,7 +1139,7 @@ public final class SearchEverywhereUIMixedResults extends SearchEverywhereUIBase
     }
 
     public boolean hasMoreElements(SearchEverywhereContributor<?> contributor) {
-      return hasMoreContributors.get(contributor);
+      return Boolean.TRUE.equals(hasMoreContributors.get(contributor));
     }
 
     public void addElements(List<? extends SearchEverywhereFoundElementInfo> items) {
