@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.*
@@ -148,7 +151,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
         val startOffset = irAccessor.startOffset
         val endOffset = irAccessor.endOffset
-        val irBody = IrBlockBodyImpl(startOffset, endOffset)
+        val irBody = context.irFactory.createBlockBody(startOffset, endOffset)
 
         val receiver = generateReceiverExpressionForDefaultPropertyAccessor(property, irAccessor)
 
@@ -175,7 +178,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
         val startOffset = irAccessor.startOffset
         val endOffset = irAccessor.endOffset
-        val irBody = IrBlockBodyImpl(startOffset, endOffset)
+        val irBody = context.irFactory.createBlockBody(startOffset, endOffset)
 
         val receiver = generateReceiverExpressionForDefaultPropertyAccessor(property, irAccessor)
 

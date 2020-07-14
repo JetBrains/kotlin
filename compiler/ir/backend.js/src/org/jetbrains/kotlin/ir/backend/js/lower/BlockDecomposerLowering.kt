@@ -82,7 +82,7 @@ abstract class AbstractBlockDecomposerLowering(
     }
 
     private fun IrExpressionBody.toBlockBody(containingFunction: IrFunction): IrBlockBody {
-        return IrBlockBodyImpl(startOffset, endOffset) {
+        return context.irFactory.createBlockBody(startOffset, endOffset) {
             expression.patchDeclarationParents(containingFunction)
             val returnStatement = JsIrBuilder.buildReturn(containingFunction.symbol, expression, nothingType)
             statements += returnStatement

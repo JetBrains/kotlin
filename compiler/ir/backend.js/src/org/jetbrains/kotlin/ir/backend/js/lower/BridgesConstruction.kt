@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
@@ -140,7 +139,7 @@ class BridgesConstruction(val context: JsCommonBackendContext) : DeclarationTran
             overriddenSymbols += bridge.symbol
         }
 
-        irFunction.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+        irFunction.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements += context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
                 if (specialMethodInfo != null) {
                     irFunction.valueParameters.take(specialMethodInfo.argumentsToCheck).forEach {

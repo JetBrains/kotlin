@@ -70,7 +70,7 @@ open class DefaultArgumentStubGenerator(
         log { "$irFunction -> $newIrFunction" }
         val builder = context.createIrBuilder(newIrFunction.symbol)
 
-        newIrFunction.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+        newIrFunction.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             statements += builder.irBlockBody(newIrFunction) {
                 val params = mutableListOf<IrValueDeclaration>()
                 val variables = mutableMapOf<IrValueDeclaration, IrValueDeclaration>()

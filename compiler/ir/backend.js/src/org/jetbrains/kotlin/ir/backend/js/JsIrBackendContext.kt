@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrDeclarationBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
@@ -129,7 +128,7 @@ class JsIrBackendContext(
         return testContainerFuns.getOrPut(module) {
             val file = syntheticFile("tests", module)
             jsIrDeclarationBuilder.buildFunction("test fun", irBuiltIns.unitType, file).apply {
-                body = JsIrBuilder.buildBlockBody(emptyList())
+                body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
                 file.declarations += this
             }
         }

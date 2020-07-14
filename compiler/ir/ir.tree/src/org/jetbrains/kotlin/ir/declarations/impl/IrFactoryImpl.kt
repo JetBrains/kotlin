@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -244,4 +247,24 @@ object IrFactoryImpl : IrFactory {
         expression: IrExpression,
     ): IrExpressionBody =
         IrExpressionBodyImpl(expression)
+
+    override fun createBlockBody(
+        startOffset: Int,
+        endOffset: Int,
+    ): IrBlockBody =
+        IrBlockBodyImpl(startOffset, endOffset, null)
+
+    override fun createBlockBody(
+        startOffset: Int,
+        endOffset: Int,
+        statements: List<IrStatement>,
+    ): IrBlockBody =
+        IrBlockBodyImpl(startOffset, endOffset, statements)
+
+    override fun createBlockBody(
+        startOffset: Int,
+        endOffset: Int,
+        initializer: IrBlockBody.() -> Unit,
+    ): IrBlockBody =
+        IrBlockBodyImpl(startOffset, endOffset, initializer)
 }

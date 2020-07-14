@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
@@ -45,7 +44,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
         initializeStatements.forEach { it.first.initializer = null }
 
         val initializeScriptFunction = createFunction(irScript, "\$initializeScript\$", context.irBuiltIns.unitType).also {
-            it.body = IrBlockBodyImpl(
+            it.body = it.factory.createBlockBody(
                 startOffset,
                 endOffset,
                 initializeStatements.map { (field, expression) -> createIrSetField(field, expression) }
@@ -53,7 +52,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
         }
 
         val evaluateScriptFunction = createFunction(irScript, "\$evaluateScript\$", getReturnType(irScript)).also {
-            it.body = IrBlockBodyImpl(
+            it.body = it.factory.createBlockBody(
                 startOffset,
                 endOffset,
                 irScript.statements.prepareForEvaluateScriptFunction(it)

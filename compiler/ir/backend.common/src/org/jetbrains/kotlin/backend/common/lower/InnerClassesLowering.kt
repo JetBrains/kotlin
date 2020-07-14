@@ -69,7 +69,7 @@ class InnerClassesLowering(val context: BackendContext, private val innerClasses
 
         val blockBody = irConstructor.body as? IrBlockBody ?: throw AssertionError("Unexpected constructor body: ${irConstructor.body}")
 
-        loweredConstructor.body = IrBlockBodyImpl(blockBody.startOffset, blockBody.endOffset) {
+        loweredConstructor.body = context.irFactory.createBlockBody(blockBody.startOffset, blockBody.endOffset) {
             context.createIrBuilder(irConstructor.symbol, irConstructor.startOffset, irConstructor.endOffset).apply {
                 statements.add(0, irSetField(irGet(irClass.thisReceiver!!), parentThisField, irGet(outerThisParameter)))
             }

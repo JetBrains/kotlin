@@ -34,7 +34,9 @@ interface IrExpressionBody : IrBody {
         accept(transformer, data) as IrExpressionBody
 }
 
-interface IrBlockBody : IrBody, IrStatementContainer
+interface IrBlockBody : IrBody, IrStatementContainer {
+    val factory: IrFactory
+}
 
 interface IrSyntheticBody : IrBody {
     val kind: IrSyntheticBodyKind

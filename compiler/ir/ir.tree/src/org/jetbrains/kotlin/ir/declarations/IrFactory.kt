@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
@@ -212,4 +214,21 @@ interface IrFactory {
     fun createExpressionBody(
         expression: IrExpression,
     ): IrExpressionBody
+
+    fun createBlockBody(
+        startOffset: Int,
+        endOffset: Int,
+    ): IrBlockBody
+
+    fun createBlockBody(
+        startOffset: Int,
+        endOffset: Int,
+        statements: List<IrStatement>,
+    ): IrBlockBody
+
+    fun createBlockBody(
+        startOffset: Int,
+        endOffset: Int,
+        initializer: IrBlockBody.() -> Unit,
+    ): IrBlockBody
 }

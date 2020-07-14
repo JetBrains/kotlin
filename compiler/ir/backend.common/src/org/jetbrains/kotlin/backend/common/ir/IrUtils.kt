@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -66,7 +65,7 @@ fun IrClass.addSimpleDelegatingConstructor(
             parameter.copyTo(constructor, index = index)
         }
 
-        constructor.body = IrBlockBodyImpl(
+        constructor.body = factory.createBlockBody(
             startOffset, endOffset,
             listOf(
                 IrDelegatingConstructorCallImpl(

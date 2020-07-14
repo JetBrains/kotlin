@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR
@@ -115,7 +116,7 @@ class ES6AddInternalParametersToConstructorPhase(val context: JsIrBackendContext
         ).apply {
             addValueParameter("\$this\$", context.dynamicType)
 
-            body = JsIrBuilder.buildBlockBody(constructor.body?.statements ?: emptyList())
+            body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, constructor.body?.statements.orEmpty())
 
             transformChildren(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {

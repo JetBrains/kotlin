@@ -131,7 +131,7 @@ fun breakCrossModuleFieldAccess(
                 name = Name.identifier("get-$fieldName")
                 returnType = type
             }
-            getter.body = IrBlockBodyImpl(
+            getter.body = factory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, getter.symbol,
@@ -158,7 +158,7 @@ fun breakCrossModuleFieldAccess(
 
             val param = setter.addValueParameter("value", type)
 
-            setter.body = IrBlockBodyImpl(
+            setter.body = factory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrSetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, type).apply {
                         value = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, param.symbol)

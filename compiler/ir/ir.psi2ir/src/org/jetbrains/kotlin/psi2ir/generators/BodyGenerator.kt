@@ -54,7 +54,7 @@ class BodyGenerator(
     fun generateFunctionBody(ktBody: KtExpression): IrBody {
         val statementGenerator = createStatementGenerator()
 
-        val irBlockBody = IrBlockBodyImpl(ktBody.startOffsetSkippingComments, ktBody.endOffset)
+        val irBlockBody = context.irFactory.createBlockBody(ktBody.startOffsetSkippingComments, ktBody.endOffset)
         if (ktBody is KtBlockExpression) {
             statementGenerator.generateStatements(ktBody.statements, irBlockBody)
         } else {
@@ -77,7 +77,7 @@ class BodyGenerator(
         val statementGenerator = createStatementGenerator()
 
         val ktBody = ktFun.bodyExpression!!
-        val irBlockBody = IrBlockBodyImpl(ktBody.startOffsetSkippingComments, ktBody.endOffset)
+        val irBlockBody = context.irFactory.createBlockBody(ktBody.startOffsetSkippingComments, ktBody.endOffset)
 
         for (ktParameter in ktFun.valueParameters) {
             val ktDestructuringDeclaration = ktParameter.destructuringDeclaration ?: continue
@@ -131,7 +131,7 @@ class BodyGenerator(
     }
 
     fun generateSecondaryConstructorBody(ktConstructor: KtSecondaryConstructor): IrBody {
-        val irBlockBody = IrBlockBodyImpl(ktConstructor.startOffsetSkippingComments, ktConstructor.endOffset)
+        val irBlockBody = context.irFactory.createBlockBody(ktConstructor.startOffsetSkippingComments, ktConstructor.endOffset)
 
         generateDelegatingConstructorCall(irBlockBody, ktConstructor)
 
@@ -177,7 +177,7 @@ class BodyGenerator(
         loopTable[expression]
 
     fun generatePrimaryConstructorBody(ktClassOrObject: KtPureClassOrObject): IrBody {
-        val irBlockBody = IrBlockBodyImpl(ktClassOrObject.pureStartOffset, ktClassOrObject.pureEndOffset)
+        val irBlockBody = context.irFactory.createBlockBody(ktClassOrObject.pureStartOffset, ktClassOrObject.pureEndOffset)
 
         generateSuperConstructorCall(irBlockBody, ktClassOrObject)
 
@@ -194,7 +194,7 @@ class BodyGenerator(
     }
 
     fun generateSecondaryConstructorBodyWithNestedInitializers(ktConstructor: KtSecondaryConstructor): IrBody {
-        val irBlockBody = IrBlockBodyImpl(ktConstructor.startOffsetSkippingComments, ktConstructor.endOffset)
+        val irBlockBody = context.irFactory.createBlockBody(ktConstructor.startOffsetSkippingComments, ktConstructor.endOffset)
 
         generateDelegatingConstructorCall(irBlockBody, ktConstructor)
 

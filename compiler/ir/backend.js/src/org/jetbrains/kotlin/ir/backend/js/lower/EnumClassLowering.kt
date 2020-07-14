@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -129,7 +128,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             enumConstructor.newConstructor = this
 
             enumConstructor.body?.let { oldBody ->
-                body = IrBlockBodyImpl(oldBody.startOffset, oldBody.endOffset) {
+                body = context.irFactory.createBlockBody(oldBody.startOffset, oldBody.endOffset) {
                     statements += (oldBody as IrBlockBody).statements
 
                     context.fixReferencesToConstructorParameters(enumClass, this)
@@ -400,7 +399,7 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
 
     private fun createInitEntryInstancesFun(irClass: IrClass, entryInstancesInitializedField: IrField): IrSimpleFunction =
         context.jsIrDeclarationBuilder.buildFunction(irClass, "${irClass.name.identifier}_initEntries", context.irBuiltIns.unitType).also {
-            it.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+            it.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 statements += context.createIrBuilder(it.symbol).irBlockBody(it) {
                     +irIfThen(irGetField(null, entryInstancesInitializedField), irReturnUnit())
                     +irSetField(null, entryInstancesInitializedField, irBoolean(true))
@@ -456,7 +455,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext): 
                 enumEntry.getType(irClass)
             )
         }.also {
-            it.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+            it.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 statements += context.createIrBuilder(it.symbol).irBlockBody(it) {
                     +irCall(initEntryInstancesFun)
                     +irReturn(irGetField(null, enumEntry.correspondingField!!))
@@ -475,7 +474,7 @@ class EnumSyntheticFunctionsLowering(val context: JsIrBackendContext): Declarati
                 val kind = body.kind
 
                 declaration.parents.filterIsInstance<IrClass>().firstOrNull { it.goodEnum }?.let { irClass ->
-                    declaration.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                    declaration.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                         statements += when (kind) {
                             IrSyntheticBodyKind.ENUM_VALUES -> createEnumValuesBody(declaration, irClass)
                             IrSyntheticBodyKind.ENUM_VALUEOF -> createEnumValueOfBody(declaration, irClass)

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
@@ -54,7 +55,7 @@ class TestGenerator(val context: JsIrBackendContext, val testContainerFactory: (
         parentFunction: IrSimpleFunction,
         ignored: Boolean = false
     ): FunctionWithBody {
-        val body = JsIrBuilder.buildBlockBody(emptyList())
+        val body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
 
         val function = context.jsIrDeclarationBuilder.buildFunction("$name test fun", context.irBuiltIns.anyNType, parentFunction)
         function.body = body

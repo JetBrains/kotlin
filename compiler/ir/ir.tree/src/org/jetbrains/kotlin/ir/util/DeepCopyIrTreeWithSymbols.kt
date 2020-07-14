@@ -372,7 +372,7 @@ open class DeepCopyIrTreeWithSymbols(
         body.factory.createExpressionBody(body.expression.transform())
 
     override fun visitBlockBody(body: IrBlockBody): IrBlockBody =
-        IrBlockBodyImpl(
+        body.factory.createBlockBody(
             body.startOffset, body.endOffset,
             body.statements.map { it.transform() }
         )

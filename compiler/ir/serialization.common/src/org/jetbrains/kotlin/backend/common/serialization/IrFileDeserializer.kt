@@ -113,7 +113,7 @@ abstract class IrFileDeserializer(
     private val deserializeFakeOverrides: Boolean,
     private val fakeOverrideQueue: MutableList<IrClass>
 ) {
-    private val irFactory: IrFactory get() = symbolTable.irFactory
+    protected val irFactory: IrFactory get() = symbolTable.irFactory
 
     abstract fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, IdSignature>
     abstract fun deserializeIrSymbol(code: Long): IrSymbol
@@ -269,7 +269,7 @@ abstract class IrFileDeserializer(
             statements.add(deserializeStatement(it) as IrStatement)
         }
 
-        return IrBlockBodyImpl(start, end, statements)
+        return irFactory.createBlockBody(start, end, statements)
     }
 
     private fun deserializeBranch(proto: ProtoBranch, start: Int, end: Int): IrBranch {

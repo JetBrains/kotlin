@@ -141,7 +141,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             createAdapterFun(startOffset, endOffset, adapteeDescriptor, ktExpectedParameterTypes, ktExpectedReturnType, callBuilder, callableReferenceType)
         val irCall = createAdapteeCall(startOffset, endOffset, adapteeSymbol, callBuilder, irAdapterFun)
 
-        irAdapterFun.body = IrBlockBodyImpl(startOffset, endOffset).apply {
+        irAdapterFun.body = context.irFactory.createBlockBody(startOffset, endOffset).apply {
             if (KotlinBuiltIns.isUnit(ktExpectedReturnType))
                 statements.add(irCall)
             else
