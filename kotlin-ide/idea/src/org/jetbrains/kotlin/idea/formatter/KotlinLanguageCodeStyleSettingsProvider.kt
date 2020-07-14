@@ -9,12 +9,14 @@ import com.intellij.application.options.CodeStyleAbstractConfigurable
 import com.intellij.application.options.CodeStyleAbstractPanel
 import com.intellij.application.options.IndentOptionsEditor
 import com.intellij.application.options.SmartIndentOptionsEditor
+import com.intellij.application.options.codeStyle.properties.CodeStyleFieldAccessor
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.psi.codeStyle.*
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import java.lang.reflect.Field
 import kotlin.reflect.KProperty
 
 class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
@@ -35,6 +37,10 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
     }
 
     override fun createCustomSettings(settings: CodeStyleSettings?): CustomCodeStyleSettings = KotlinCodeStyleSettings(settings)
+
+    override fun getAccessor(codeStyleObject: Any, field: Field): CodeStyleFieldAccessor<*, *>? {
+        return KotlinCodeStyleFieldAccessor.create(codeStyleObject, field) ?: super.getAccessor(codeStyleObject, field)
+    }
 
     override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: SettingsType) {
         fun showCustomOption(field: KProperty<*>, title: String, groupName: String? = null, vararg options: Any) {
