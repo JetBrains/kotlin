@@ -6,17 +6,18 @@
 package org.jetbrains.kotlin.idea.decompiler
 
 import com.intellij.psi.ClassFileViewProvider
-import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.junit.internal.runners.JUnit38ClassRunner
-import org.junit.Ignore
 import org.junit.runner.RunWith
+import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
-@Ignore("has to be deleted as it seems a compiler test")
 class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest() {
-    private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/internalClasses"
+    private val mockLibraryFacility = MockLibraryFacility(
+        source = File(PluginTestCaseBase.getTestDataPathBase(), "/decompiler/internalClasses"),
+        attachSources = false
+    )
 
     fun testSyntheticClassesAreInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClasses()
 
@@ -26,12 +27,13 @@ class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest() {
         ClassFileViewProvider.isInnerClass(this)
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor {
-        return SdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH, /* withSources = */ false)
+    override fun setUp() {
+        super.setUp()
+        mockLibraryFacility.setUp(module)
     }
 
     override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        mockLibraryFacility.tearDown(module)
         super.tearDown()
     }
 }

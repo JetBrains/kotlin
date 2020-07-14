@@ -6,23 +6,30 @@
 package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import java.io.File
 
 abstract class AbstractJvmWithLibBasicCompletionTest : KotlinFixtureCompletionBaseTestCase() {
-    private val TEST_PATH = COMPLETION_TEST_DATA_BASE_PATH + "/basic/withLib"
+    private companion object {
+        val MOCK_SOURCES_BASE = File(COMPLETION_TEST_DATA_BASE_PATH, "basic/withLib")
+    }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor {
-        if (PluginTestCaseBase.isAllFilesPresentTest(getTestName(true))) {
-            return super.getProjectDescriptor()
-        }
-        return SdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(false) + "Src", false)
+    private lateinit var mockLibraryFacility: MockLibraryFacility
+
+    override fun setUp() {
+        super.setUp()
+
+        mockLibraryFacility = MockLibraryFacility(
+            source = File(MOCK_SOURCES_BASE, getTestName(false) + "Src"),
+            attachSources = false
+        )
+
+        mockLibraryFacility.setUp(module)
     }
 
     override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        mockLibraryFacility.tearDown(module)
         super.tearDown()
     }
 

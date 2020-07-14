@@ -14,10 +14,10 @@ import org.junit.runner.RunWith
 @RunWith(JUnit38ClassRunner::class)
 class KotlinFindUsagesWithLibraryCustomTest : AbstractKotlinFindUsagesWithLibraryTest() {
     fun testFindUsagesForLocalClassProperty() {
-        val libraryFile = FilenameIndex.getFilesByName(getProject(), "library.kt", myFixture.module.moduleWithLibrariesScope).first()
+        val libraryFile = FilenameIndex.getFilesByName(project, "library.kt", myFixture.module.moduleWithDependenciesScope).first()
         val indexOf = libraryFile.text.indexOf("localClassProperty")
         val jetParameter = libraryFile.findElementAt(indexOf)!!.getStrictParentOfType<KtParameter>()!!
-        val usages = findUsages(jetParameter.getOriginalElement(), null, false, project)
+        val usages = findUsages(jetParameter.originalElement, null, false, project)
         assertEquals(2, usages.size)
     }
 }

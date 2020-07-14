@@ -49,40 +49,46 @@ abstract class AbstractNavigateToDecompiledLibraryTest : AbstractNavigateToLibra
 }
 
 abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLibraryTest() {
-    override val expectedFileExt: String get() = ".source.expected"
+    override val expectedFileExt: String = ".source.expected"
 
-    override fun getProjectDescriptor(): KotlinLightProjectDescriptor = PROJECT_DESCRIPTOR
+    private val mockLibraryFacility = MockLibraryFacility(
+        source = File(PluginTestCaseBase.getTestDataPathBase(), "decompiler/navigation/library")
+    )
 
-    override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
-        super.tearDown()
+    override fun setUp() {
+        super.setUp()
+        mockLibraryFacility.setUp(module)
     }
 
-    protected companion object {
-        val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
-            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", true
-        )
+    override fun tearDown() {
+        mockLibraryFacility.tearDown(module)
+        super.tearDown()
     }
 }
 
 abstract class AbstractNavigateJavaToLibrarySourceTest : AbstractNavigateToLibraryTest() {
-    override val expectedFileExt: String get() = ".source.expected"
+    protected val mockLibraryFacility = MockLibraryFacility(
+        source = File(PluginTestCaseBase.getTestDataPathBase(), "decompiler/navigation/fromJavaSource")
+    )
 
-    override fun getProjectDescriptor(): KotlinLightProjectDescriptor = PROJECT_DESCRIPTOR
+    override val expectedFileExt: String = ".source.expected"
 
-    override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
-        super.tearDown()
+    override fun setUp() {
+        super.setUp()
+        mockLibraryFacility.setUp(module)
     }
 
-    protected companion object {
-        val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
-            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/fromJavaSource", true
-        )
+    override fun tearDown() {
+        mockLibraryFacility.tearDown(module)
+        super.tearDown()
     }
 }
 
 abstract class AbstractNavigateToLibrarySourceTestWithJS : AbstractNavigateToLibrarySourceTest() {
+    private val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
+        PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/fromJavaSource", true
+    )
+
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = KotlinMultiModuleProjectDescriptor(
         "AbstractNavigateToLibrarySourceTestWithJS",
         PROJECT_DESCRIPTOR,

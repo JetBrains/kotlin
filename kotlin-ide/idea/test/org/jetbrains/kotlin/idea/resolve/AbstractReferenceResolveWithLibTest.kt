@@ -2,62 +2,53 @@
  * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.idea.resolve
 
-package org.jetbrains.kotlin.idea.resolve;
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.source.resolve.reference.impl.PsiDelegateReference
+import org.jetbrains.kotlin.idea.test.AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE
+import org.jetbrains.kotlin.idea.test.AstAccessControl.execute
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import java.io.File
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.source.resolve.reference.impl.PsiDelegateReference;
-import com.intellij.testFramework.LightProjectDescriptor;
-import kotlin.jvm.functions.Function0;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.test.AstAccessControl;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-
-public abstract class AbstractReferenceResolveWithLibTest extends AbstractReferenceResolveTest {
-    private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/resolve/referenceWithLib";
-
-    @Override
-    protected LightProjectDescriptor getProjectDescriptor() {
-        if (PluginTestCaseBase.isAllFilesPresentTest(getTestName(true))) {
-            return null;
-        }
-        return new SdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(true) + "Src", false, true, false, false);
+abstract class AbstractReferenceResolveWithLibTest : AbstractReferenceResolveTest() {
+    private companion object {
+        val MOCK_SOURCES_BASE = File(PluginTestCaseBase.getTestDataPathBase(), "/resolve/referenceWithLib")
     }
 
-    @Override
-    protected void tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(getModule());
-        super.tearDown();
+    private lateinit var mockLibraryFacility: MockLibraryFacility
+
+    override fun setUp() {
+        super.setUp()
+        mockLibraryFacility = MockLibraryFacility(File(MOCK_SOURCES_BASE, getTestName(true) + "Src"), attachSources = false)
+        mockLibraryFacility.setUp(module)
     }
 
-    @Nullable
-    @Override
-    public PsiReference wrapReference(@Nullable final PsiReference reference) {
-        if (reference == null) return null;
+    override fun tearDown() {
+        mockLibraryFacility.tearDown(module)
+        super.tearDown()
+    }
 
-        if (InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), AstAccessControl.INSTANCE.getALLOW_AST_ACCESS_DIRECTIVE())) {
-            return reference;
+    override fun wrapReference(reference: PsiReference?): PsiReference? {
+        if (reference == null) {
+            return null
+        } else if (InTextDirectivesUtils.isDirectiveDefined(myFixture.file.text, ALLOW_AST_ACCESS_DIRECTIVE)) {
+            return reference
         }
 
-        return new PsiDelegateReference(reference) {
-            @Nullable
-            @Override
-            public PsiElement resolve() {
-                return AstAccessControl.INSTANCE.execute(false, getTestRootDisposable(), myFixture, new Function0<PsiElement>() {
-                    @Override
-                    public PsiElement invoke() {
-                        return reference.resolve();
-                    }
-                });
+        return object : PsiDelegateReference(reference) {
+            override fun resolve(): PsiElement? {
+                return execute(false, testRootDisposable, myFixture) {
+                    reference.resolve() ?: error("Reference can't be resolved")
+                }
             }
 
-            @Override
-            public String toString() {
-                return reference.toString();
+            override fun toString(): String {
+                return reference.toString()
             }
-        };
+        }
     }
 }

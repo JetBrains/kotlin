@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
@@ -17,7 +16,6 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
@@ -55,9 +53,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.io.IOException
-import java.nio.file.Paths
 import java.util.*
-import kotlin.reflect.full.findAnnotation
 
 abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFixtureTestCaseBase() {
     private val exceptions = ArrayList<Throwable>()
@@ -76,9 +72,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     protected fun getLocalPath(path: String): String = File(path).toRelativeString(File(testDataPath))
 
-    override fun getTestDataPath(): String {
-        return TestMetadataUtil.getTestDataPath(javaClass) ?: super.getTestDataPath()
-    }
+    override fun getTestDataPath(): String = TestMetadataUtil.getTestDataPath(javaClass)
 
     override fun setUp() {
         super.setUp()

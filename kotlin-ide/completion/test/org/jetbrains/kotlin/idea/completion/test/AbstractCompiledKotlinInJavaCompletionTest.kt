@@ -6,17 +6,25 @@
 package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import java.io.File
 
 abstract class AbstractCompiledKotlinInJavaCompletionTest : KotlinFixtureCompletionBaseTestCase() {
+    private val mockLibraryFacility = MockLibraryFacility(
+        source = File(COMPLETION_TEST_DATA_BASE_PATH, "injava/mockLib"),
+        attachSources = false
+    )
+
     override fun getPlatform() = JvmPlatforms.unspecifiedJvmPlatform
 
-    override fun getProjectDescriptor() =
-        SdkAndMockLibraryProjectDescriptor("$COMPLETION_TEST_DATA_BASE_PATH/injava/mockLib", false)
+    override fun setUp() {
+        super.setUp()
+        mockLibraryFacility.setUp(module)
+    }
 
     override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        mockLibraryFacility.tearDown(module)
         super.tearDown()
     }
 

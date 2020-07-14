@@ -5,19 +5,22 @@
 
 package org.jetbrains.kotlin.findUsages
 
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import java.io.File
 
 abstract class AbstractKotlinFindUsagesWithLibraryTest : AbstractFindUsagesTest() {
-    override fun getProjectDescriptor(): SdkAndMockLibraryProjectDescriptor {
-        return SdkAndMockLibraryProjectDescriptor(
-            PluginTestCaseBase.getTestDataPathBase() + "/findUsages/libraryUsages/_library",
-            true
-        )
+    private val mockLibraryFacility = MockLibraryFacility(
+        source = File(PluginTestCaseBase.getTestDataPathBase(), "/findUsages/libraryUsages/_library")
+    )
+
+    override fun setUp() {
+        super.setUp()
+        mockLibraryFacility.setUp(module)
     }
 
     override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        mockLibraryFacility.tearDown(module)
         super.tearDown()
     }
 }

@@ -5,26 +5,34 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.TestRoot
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
+import java.io.File
 
+@TestRoot("idea")
+@TestDataPath("\$CONTENT_ROOT")
 @RunWith(JUnit38ClassRunner::class)
+@TestMetadata("testData/codeInsight/overrideImplement/withLib")
 class OverrideImplementWithLibTest : AbstractOverrideImplementTest() {
-    private val TEST_PATH = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement/withLib"
+    private companion object {
+        private val MOCK_SOURCES_BASE = File(PluginTestCaseBase.getTestDataPathBase(), "codeInsight/overrideImplement/withLib")
+    }
+
+    private lateinit var mockLibraryFacility: MockLibraryFacility
 
     override fun setUp() {
         super.setUp()
-        myFixture.testDataPath = TEST_PATH
-    }
-
-    override fun getProjectDescriptor(): SdkAndMockLibraryProjectDescriptor {
-        return SdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(true) + "Src", false)
+        mockLibraryFacility = MockLibraryFacility(File(MOCK_SOURCES_BASE, getTestName(true) + "Src"), attachSources = false)
+        mockLibraryFacility.setUp(module)
     }
 
     override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        mockLibraryFacility.tearDown(module)
         super.tearDown()
     }
 

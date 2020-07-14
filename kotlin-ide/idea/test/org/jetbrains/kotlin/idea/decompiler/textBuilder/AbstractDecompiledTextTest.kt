@@ -31,7 +31,7 @@ abstract class AbstractDecompiledTextTest(baseDirectory: String, allowKotlinPack
     override fun getFileToDecompile(): VirtualFile {
         val className = getTestName(false)
 
-        val customPackageFile = Paths.get(TEST_DATA_PATH, className, CUSTOM_PACKAGE_FILE)
+        val customPackageFile = Paths.get(mockSourcesBase.absolutePath, className, CUSTOM_PACKAGE_FILE)
         val testFilePackage = customPackageFile.takeIf { it.exists() }?.readText()?.trimEnd() ?: TEST_PACKAGE
 
         return getClassFile(testFilePackage, className, module!!)

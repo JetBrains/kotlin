@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
@@ -26,7 +26,7 @@ import kotlin.test.assertTrue
 private const val CHECK_PACKAGE_DIRECTIVE = "CHECK_PACKAGE"
 
 abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) :
-    AbstractDecompiledTextBaseTest(baseDirectory, true, withRuntime = true) {
+    AbstractDecompiledTextBaseTest(baseDirectory, isJsLibrary = true, withRuntime = true) {
     override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, module)
 
     override fun checkPsiFile(psiFile: PsiFile) {
@@ -58,7 +58,7 @@ abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) :
         val singleClassName = getTestName(false)
         val singleClass = psiFile.children.find { child -> child is KtClass && child.name == singleClassName } ?: return null
 
-        val mainFilePath = "$TEST_DATA_PATH/$singleClassName/$singleClassName.kt"
+        val mainFilePath = "$mockSourcesBase/$singleClassName/$singleClassName.kt"
         val mainFile = File(mainFilePath)
         if (mainFile.exists() && InTextDirectivesUtils.isDirectiveDefined(File(mainFilePath).readText(), CHECK_PACKAGE_DIRECTIVE)) {
             return null
@@ -75,7 +75,7 @@ abstract class AbstractJsDecompiledTextFromJsMetadataTest : AbstractDecompiledTe
 fun getKjsmFile(packageName: String, module: Module): VirtualFile {
     val root = findTestLibraryRoot(module)!!
     root.refresh(false, true)
-    val packagePath = SdkAndMockLibraryProjectDescriptor.MOCK_LIBRARY_NAME + "/" + packageName.replace(".", "/")
+    val packagePath = MockLibraryFacility.MOCK_LIBRARY_NAME + "/" + packageName.replace(".", "/")
     val packageDir = root.findFileByRelativePath(packagePath)!!
     return packageDir.findChild(JsSerializerProtocol.getKjsmFilePath(FqName(packageName)).substringAfterLast('/'))!!
 }

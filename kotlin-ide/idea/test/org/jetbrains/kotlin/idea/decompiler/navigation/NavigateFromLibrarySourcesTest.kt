@@ -7,19 +7,23 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
+import java.io.File
 import kotlin.test.assertTrue
 
 @RunWith(JUnit38ClassRunner::class)
 class NavigateFromLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() {
+    private val mockLibraryFacility = MockLibraryFacility(
+        source = File(PluginTestCaseBase.getTestDataPathBase(), "decompiler/navigation/fromLibSource")
+    )
+
     fun testJdkClass() {
         checkNavigationFromLibrarySource("Thread", "java.lang.Thread")
     }
@@ -48,35 +52,21 @@ class NavigateFromLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() 
         checkNavigationElement(navigationElementForReferenceInLibrarySource("usage.kt", referenceText), targetFqName)
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor {
-        return SdkAndMockLibraryProjectDescriptor(
-            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/fromLibSource",
-            true,
-            true,
-            false,
-            false
-        )
+    override fun setUp() {
+        super.setUp()
+        mockLibraryFacility.setUp(module)
     }
 
     override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        mockLibraryFacility.tearDown(module)
         super.tearDown()
     }
 
-    private fun navigationElementForReferenceInLibrarySource(referenceText: String) =
-        navigationElementForReferenceInLibrarySource("usage.kt", referenceText)
-
     private fun checkNavigationElement(element: PsiElement, expectedFqName: String) {
         when (element) {
-            is PsiClass -> {
-                assertEquals(expectedFqName, element.qualifiedName)
-            }
-            is KtClass -> {
-                assertEquals(expectedFqName, element.fqName!!.asString())
-            }
-            else -> {
-                fail("Navigation element should be JetClass or PsiClass: " + element::class.java + ", " + element.text)
-            }
+            is PsiClass -> assertEquals(expectedFqName, element.qualifiedName)
+            is KtClass -> assertEquals(expectedFqName, element.fqName!!.asString())
+            else -> fail("Navigation element should be JetClass or PsiClass: " + element::class.java + ", " + element.text)
         }
     }
 }

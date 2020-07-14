@@ -38,6 +38,8 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 
+/* Use MockLibraryFacility instead. */
+@Deprecated
 public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescriptor {
     public static final String MOCK_LIBRARY_NAME = "myKotlinLib";
 

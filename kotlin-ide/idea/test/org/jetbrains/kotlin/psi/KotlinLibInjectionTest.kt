@@ -6,20 +6,20 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.testFramework.LightProjectDescriptor
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class KotlinLibInjectionTest : AbstractInjectionTest() {
-    override fun setUp() {
-        super.setUp()
-    }
+    private val mockLibraryFacility = MockLibraryFacility(
+        File(PluginTestCaseBase.getTestDataPathBase(), "injection/lib"),
+        attachSources = false
+    )
 
     fun testFunInjection() = assertInjectionPresent(
         """
@@ -45,18 +45,13 @@ class KotlinLibInjectionTest : AbstractInjectionTest() {
         doInjectionPresentTest(text, languageId = languageId, unInjectShouldBePresent = false)
     }
 
-
-    override fun getProjectDescriptor(): LightProjectDescriptor {
-        val ideaSdkPath = System.getProperty("idea.home.path")?.takeIf { File(it).isDirectory }
-            ?: throw RuntimeException("Unable to get a valid path from 'idea.home.path' property, please point it to the Idea location")
-        return SdkAndMockLibraryProjectDescriptor(
-            PluginTestCaseBase.getTestDataPathBase() + "/injection/lib/", false, false, false, true,
-            listOf(File(ideaSdkPath, "lib/annotations.jar").absolutePath)
-        )
+    override fun setUp() {
+        super.setUp()
+        mockLibraryFacility.setUp(module)
     }
 
     override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        mockLibraryFacility.tearDown(module)
         super.tearDown()
     }
 }

@@ -9,34 +9,39 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.junit.Assert
 import java.io.File
 
-private val FILE_WITH_KOTLIN_CODE = PluginTestCaseBase.TEST_DATA_DIR + "/resolve/referenceInJava/dependency/dependencies.kt"
+private val FILE_WITH_KOTLIN_CODE = File(PluginTestCaseBase.TEST_DATA_DIR, "resolve/referenceInJava/dependency/dependencies.kt")
 
 abstract class AbstractReferenceResolveInJavaTest : AbstractReferenceResolveTest() {
     override fun doTest(path: String) {
         val fileName = fileName()
         assert(fileName.endsWith(".java")) { fileName }
-        myFixture.configureByText("dependencies.kt", FileUtil.loadFile(File(FILE_WITH_KOTLIN_CODE), true))
+        myFixture.configureByText("dependencies.kt", FileUtil.loadFile(FILE_WITH_KOTLIN_CODE, true))
         myFixture.configureByFile(fileName)
         performChecks()
     }
 }
 
 abstract class AbstractReferenceToCompiledKotlinResolveInJavaTest : AbstractReferenceResolveTest() {
+    private val mockLibraryFacility = MockLibraryFacility(FILE_WITH_KOTLIN_CODE)
+
     override fun doTest(path: String) {
         myFixture.configureByFile(fileName())
         performChecks()
     }
 
-    override fun getProjectDescriptor() = SdkAndMockLibraryProjectDescriptor(FILE_WITH_KOTLIN_CODE, true)
+    override fun setUp() {
+        super.setUp()
+        mockLibraryFacility.setUp(module)
+    }
 
     override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
+        mockLibraryFacility.tearDown(module)
         super.tearDown()
     }
 
