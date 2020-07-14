@@ -98,7 +98,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
         if (property is FirSyntheticProperty) {
             transformSimpleFunction(property.getter.delegate, data)
-            property.replaceReturnTypeRef(property.getter.delegate.returnTypeRef)
             return property.compose()
         }
         return withTypeParametersOf(property) {
