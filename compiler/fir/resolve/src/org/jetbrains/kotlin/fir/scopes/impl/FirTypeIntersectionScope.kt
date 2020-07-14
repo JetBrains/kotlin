@@ -95,10 +95,26 @@ class FirTypeIntersectionScope private constructor(
                 // TODO: same code for properties
                 val newSymbol = FirNamedFunctionSymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific)
                 val mostSpecificFunction = mostSpecific.fir
+                val overriddenWithDefault =
+                    extractedOverrides.firstOrNull {
+                        (it as FirNamedFunctionSymbol).fir.valueParameters.any { parameter -> parameter.defaultValue != null }
+                    }?.fir as? FirSimpleFunction
                 createFunctionCopy(mostSpecific.fir, newSymbol).apply {
                     resolvePhase = mostSpecificFunction.resolvePhase
                     typeParameters += mostSpecificFunction.typeParameters
-                    valueParameters += mostSpecificFunction.valueParameters
+                    if (overriddenWithDefault == null) {
+                        valueParameters += mostSpecificFunction.valueParameters
+                    } else {
+                        valueParameters += mostSpecificFunction.valueParameters.zip(overriddenWithDefault.valueParameters)
+                            .map { (mostSpecificParameter, overriddenWithDefaultParameter) ->
+                                if (overriddenWithDefaultParameter.defaultValue != null)
+                                    createValueParameterCopy(mostSpecificParameter, overriddenWithDefaultParameter.defaultValue).apply {
+                                        annotations += mostSpecificParameter.annotations
+                                    }.build()
+                                else
+                                    mostSpecificParameter
+                            }
+                    }
                 }.build()
                 overriddenSymbols[newSymbol] = extractedOverrides
                 @Suppress("UNCHECKED_CAST")
