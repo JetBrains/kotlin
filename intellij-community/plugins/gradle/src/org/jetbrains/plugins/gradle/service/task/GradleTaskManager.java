@@ -233,7 +233,7 @@ public class GradleTaskManager implements ExternalSystemTaskManager<GradleExecut
     }
   }
 
-  private static void setupDebuggerDispatchPort(@NotNull GradleExecutionSettings effectiveSettings) {
+  public static void setupDebuggerDispatchPort(@NotNull GradleExecutionSettings effectiveSettings) {
     Integer dispatchPort = effectiveSettings.getUserData(DEBUGGER_DISPATCH_PORT_KEY);
     if (dispatchPort != null) {
       effectiveSettings.withVmOption(String.format("-D%s=%d", DISPATCH_PORT_SYS_PROP, dispatchPort));
