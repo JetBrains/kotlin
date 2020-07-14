@@ -4,6 +4,7 @@ import com.intellij.jarRepository.JarRepositoryManager
 import com.intellij.util.io.Decompressor
 import org.eclipse.aether.repository.RemoteRepository
 import org.jdom.input.SAXBuilder
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.idea.maven.aether.ArtifactRepositoryManager
 import org.jetbrains.idea.maven.aether.ProgressConsumer
@@ -74,15 +75,24 @@ object KotlinArtifacts {
     val kotlinScriptingCompiler: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMPILER) }
     val kotlinScriptingCompilerImpl: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMPILER_IMPL) }
 
-    val kotlinStdlibCommon: File get() = throw error("'stdlib-common' artifact is not available")
-    val kotlinStdlibCommonSources: File get() = throw error("'stdlib-common' artifact is not available")
-
     private fun findFile(parent: File, path: String): File {
         val result = File(parent, path)
         if (!result.exists()) {
             throw FileNotFoundException("File $result doesn't exist")
         }
         return result
+    }
+}
+
+object KotlinTestArtifacts {
+    @get:TestOnly
+    val kotlinStdlibCommon: File by lazy {
+        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_stdlib_common.xml", "org.jetbrains.kotlin", "kotlin-stdlib-common")
+    }
+
+    @get:TestOnly
+    val kotlinStdlibCommonSources: File by lazy {
+        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_stdlib_common.xml", "org.jetbrains.kotlin", "kotlin-stdlib-common", LibraryFileKind.SOURCES)
     }
 }
 

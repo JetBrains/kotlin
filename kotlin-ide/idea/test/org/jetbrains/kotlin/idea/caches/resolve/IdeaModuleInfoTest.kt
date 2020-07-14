@@ -23,6 +23,7 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ThrowableRunnable
 
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinTestArtifacts
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo
@@ -473,9 +474,8 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     }
 
     private fun stdlibCommon(): LibraryEx = projectLibrary(
-
       "kotlin-stdlib-common",
-      KotlinArtifacts.kotlinStdlibCommon.jarRoot,
+      KotlinTestArtifacts.kotlinStdlibCommon.jarRoot,
       kind = CommonLibraryKind
     )
 

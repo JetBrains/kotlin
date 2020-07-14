@@ -13,6 +13,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import org.jetbrains.kotlin.checkers.utils.clearFileFromDiagnosticMarkup
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinTestArtifacts
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
@@ -129,7 +130,7 @@ private fun AbstractMultiModuleTest.doSetupProject(rootInfos: List<RootInfo>) {
                 is ModuleDependency -> module.addDependency(modulesById[it.moduleId]!!)
                 is StdlibDependency -> {
                     when {
-                        platform.isCommon() -> module.addLibrary(KotlinArtifacts.kotlinStdlibCommon, kind = CommonLibraryKind)
+                        platform.isCommon() -> module.addLibrary(KotlinTestArtifacts.kotlinStdlibCommon, kind = CommonLibraryKind)
                         platform.isJvm() -> module.addLibrary(KotlinArtifacts.kotlinStdlib)
                         platform.isJs() -> module.addLibrary(KotlinArtifacts.kotlinStdlibJs, kind = JSLibraryKind)
                         else -> error("Unknown platform $this")
