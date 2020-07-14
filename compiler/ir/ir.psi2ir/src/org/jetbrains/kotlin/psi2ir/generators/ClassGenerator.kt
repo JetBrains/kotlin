@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
@@ -319,7 +320,7 @@ class ClassGenerator(
         delegatedDescriptor: FunctionDescriptor,
         delegateToDescriptor: FunctionDescriptor,
         irDelegatedFunction: IrSimpleFunction
-    ): IrBlockBodyImpl {
+    ): IrBlockBody {
         val startOffset = irDelegate.startOffset
         val endOffset = irDelegate.endOffset
 

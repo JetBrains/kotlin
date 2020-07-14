@@ -26,7 +26,7 @@ import java.util.*
 class IrBlockBodyImpl(
     startOffset: Int,
     endOffset: Int,
-    initializer: (IrBlockBodyImpl.() -> Unit)? = null
+    initializer: (IrBlockBody.() -> Unit)? = null
 ) :
     IrBodyBase<IrBlockBodyImpl>(startOffset, endOffset, initializer),
     IrBlockBody {

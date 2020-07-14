@@ -26,7 +26,7 @@ class IrExpressionBodyImpl private constructor(
     startOffset: Int,
     endOffset: Int,
     private var expressionField: IrExpression? = null,
-    initializer: (IrExpressionBodyImpl.() -> Unit)? = null
+    initializer: (IrExpressionBody.() -> Unit)? = null
 ) :
     IrBodyBase<IrExpressionBodyImpl>(startOffset, endOffset, initializer),
     IrExpressionBody {
@@ -35,7 +35,8 @@ class IrExpressionBodyImpl private constructor(
 
     constructor(startOffset: Int, endOffset: Int, expression: IrExpression) : this(startOffset, endOffset, expression, null)
 
-    constructor(startOffset: Int, endOffset: Int, initializer: IrExpressionBodyImpl.() -> Unit) : this(startOffset, endOffset, null, initializer)
+    constructor(startOffset: Int, endOffset: Int, initializer: IrExpressionBody.() -> Unit) :
+        this(startOffset, endOffset, null, initializer)
 
     override var expression: IrExpression
         get() = checkEnabled { expressionField!! }
