@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.transformSubsetFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -111,11 +114,6 @@ private class DeclarationContainerLoweringVisitor(
         declaration.acceptChildrenVoid(this)
         loweringPass.lower(declaration)
     }
-
-    override fun visitScript(declaration: IrScript) {
-        declaration.acceptChildrenVoid(this)
-        loweringPass.lower(declaration)
-    }
 }
 
 fun BodyLoweringPass.runOnFilePostfix(
@@ -160,11 +158,8 @@ private class BodyLoweringVisitor(
     }
 
     override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
-        ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
-        if (withLocalDeclarations) {
-            declaration.statements.forEach { it.accept(this, null) }
-        }
         declaration.thisReceiver.accept(this, declaration)
+        ArrayList(declaration.statements).forEach { it.accept(this, declaration) }
     }
 }
 
@@ -214,22 +209,26 @@ interface DeclarationTransformer : FileLoweringPass {
 
             val visitor = this
 
+            fun IrDeclaration.replaceInContainer(container: MutableList<in IrDeclaration>, result: List<IrDeclaration>): Boolean {
+                var index = container.indexOf(this)
+                if (index == -1) {
+                    index = container.indexOf(declaration)
+                } else {
+                    container.removeAt(index)
+                    --index
+                }
+                return container.addAll(index + 1, result)
+            }
+
             fun IrDeclaration.transform() {
 
                 acceptVoid(visitor)
 
                 val result = transformer.transformFlatRestricted(this)
                 if (result != null) {
-                    (parent as? IrDeclarationContainer)?.let {
-                        var index = it.declarations.indexOf(this)
-                        if (index == -1) {
-                            index = it.declarations.indexOf(declaration)
-                        } else {
-                            it.declarations.removeAt(index)
-                            --index
-                        }
-
-                        it.declarations.addAll(index + 1, result)
+                    when (val parentCopy = parent) {
+                        is IrDeclarationContainer -> replaceInContainer(parentCopy.declarations, result)
+                        is IrStatementContainer -> replaceInContainer(parentCopy.statements, result)
                     }
                 }
             }
@@ -248,12 +247,12 @@ interface DeclarationTransformer : FileLoweringPass {
         }
 
         override fun visitScript(declaration: IrScript) {
-            ArrayList(declaration.declarations).forEach { it.accept(this, null) }
-            declaration.declarations.transformFlat(transformer::transformFlatRestricted)
-
-            if (transformer.withLocalDeclarations) {
-                declaration.statements.forEach { it.accept(this, null) }
+            ArrayList(declaration.statements).forEach {
+                if (transformer.withLocalDeclarations || it is IrDeclaration) {
+                    it.accept(this, null)
+                }
             }
+            declaration.statements.transformSubsetFlat(transformer::transformFlatRestricted)
 
             declaration.thisReceiver.accept(this, null)
         }

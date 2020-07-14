@@ -51,6 +51,7 @@ private tailrec fun erase(type: IrType): IrClass? {
 
     return when (classifier) {
         is IrClassSymbol -> classifier.owner
+        is IrScriptSymbol -> null // TODO: check if correct
         is IrTypeParameterSymbol -> erase(classifier.owner.superTypes.first())
         else -> error(classifier)
     }

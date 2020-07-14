@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -160,6 +160,12 @@ open class IrBuildingTransformer(private val context: BackendContext) : IrElemen
     override fun visitEnumEntry(declaration: IrEnumEntry): IrStatement {
         withBuilder(declaration.symbol) {
             return super.visitEnumEntry(declaration)
+        }
+    }
+
+    override fun visitScript(declaration: IrScript): IrStatement {
+        withBuilder(declaration.symbol) {
+            return super.visitScript(declaration)
         }
     }
 }

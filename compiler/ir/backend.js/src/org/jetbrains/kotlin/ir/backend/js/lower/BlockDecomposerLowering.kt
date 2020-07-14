@@ -117,10 +117,6 @@ class BlockDecomposerTransformer(
         function = declaration
 
         with(declaration) {
-            val transformedDeclarations = declarations.map { it.transform(statementTransformer, null) as IrDeclaration }
-            declarations.clear()
-            declarations.addAll(transformedDeclarations)
-
             val transformedStatements = mutableListOf<IrStatement>()
             statements.forEach {
                 val transformer = if (it === statements.last()) expressionTransformer else statementTransformer

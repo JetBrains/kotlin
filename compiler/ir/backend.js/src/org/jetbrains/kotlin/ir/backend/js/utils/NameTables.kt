@@ -186,10 +186,12 @@ class NameTables(
             for (declaration in p.declarations) {
                 generateNamesForTopLevelDecl(declaration)
                 if (declaration is IrScript) {
-                    for (memberDecl in declaration.declarations) {
-                        generateNamesForTopLevelDecl(memberDecl)
-                        if (memberDecl is IrClass) {
-                            classDeclaration += memberDecl
+                    for (memberDecl in declaration.statements) {
+                        if (memberDecl is IrDeclaration) {
+                            generateNamesForTopLevelDecl(memberDecl)
+                            if (memberDecl is IrClass) {
+                                classDeclaration += memberDecl
+                            }
                         }
                     }
                 }

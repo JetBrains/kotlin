@@ -52,8 +52,11 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
 
     override fun visitScript(irScript: IrScript, context: JsGenerationContext): JsStatement {
         return JsGlobalBlock().apply {
-            statements += irScript.declarations.map { it.accept(this@IrDeclarationToJsTransformer, context) }
-            statements += irScript.statements.map { it.accept(IrElementToJsStatementTransformer(), context) }
+            irScript.statements.forEach {
+                statements +=
+                    if (it is IrDeclaration) it.accept(this@IrDeclarationToJsTransformer, context)
+                    else it.accept(IrElementToJsStatementTransformer(), context)
+            }
         }
     }
 }

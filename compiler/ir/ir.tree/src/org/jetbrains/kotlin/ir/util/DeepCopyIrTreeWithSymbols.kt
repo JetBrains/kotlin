@@ -117,10 +117,9 @@ open class DeepCopyIrTreeWithSymbols(
             //TODO: something may go wrong, because expected using symbolRemapper
             IrScriptSymbolImpl(declaration.descriptor as ScriptDescriptor),
             declaration.name
-        ).also {
-            it.thisReceiver = declaration.thisReceiver.transform()
-            declaration.transformDeclarationsTo(it)
-            it.statements.addAll(declaration.statements.map { it.transform() })
+        ).also { scriptCopy ->
+            scriptCopy.thisReceiver = declaration.thisReceiver.transform()
+            declaration.statements.mapTo(scriptCopy.statements) { it.transform() }
         }
     }
 

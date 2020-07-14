@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.name.Name
 
@@ -35,7 +36,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
     private fun lower(irScript: IrScript): List<IrDeclaration> {
         val (startOffset, endOffset) = getFunctionBodyOffsets(irScript)
 
-        val initializeStatements = irScript.declarations
+        val initializeStatements = irScript.statements
             .filterIsInstance<IrProperty>()
             .mapNotNull { it.backingField }
             .filter { it.initializer != null }
@@ -55,14 +56,16 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
             it.body = it.factory.createBlockBody(
                 startOffset,
                 endOffset,
-                irScript.statements.prepareForEvaluateScriptFunction(it)
+                irScript.statements.filter { it !is IrDeclaration }.prepareForEvaluateScriptFunction(it)
             )
         }
 
         with(irScript) {
-            declarations += initializeScriptFunction
-            declarations += evaluateScriptFunction
-            statements.clear()
+            statements.removeIf { it !is IrDeclaration }
+            statements += initializeScriptFunction
+            initializeScriptFunction.patchDeclarationParents(this)
+            statements += evaluateScriptFunction
+            evaluateScriptFunction.patchDeclarationParents(this)
             statements += createCall(initializeScriptFunction)
             statements += createCall(evaluateScriptFunction)
         }

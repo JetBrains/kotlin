@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 
-private val SCRIPT_ORIGIN = object : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE") {}
+private val SCRIPT_ORIGIN = object : IrDeclarationOriginImpl("SCRIPT") {}
 
 class IrScriptImpl(
     override val symbol: IrScriptSymbol,
@@ -38,7 +38,6 @@ class IrScriptImpl(
 
     override var annotations: List<IrConstructorCall> = SmartList()
 
-    override val declarations: MutableList<IrDeclaration> = mutableListOf()
     override val statements: MutableList<IrStatement> = mutableListOf()
 
     override lateinit var thisReceiver: IrValueParameter
@@ -59,13 +58,11 @@ class IrScriptImpl(
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        declarations.forEach { it.accept(visitor, data) }
         statements.forEach { it.accept(visitor, data) }
         thisReceiver.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        declarations.transformInPlace(transformer, data)
         statements.transformInPlace(transformer, data)
         thisReceiver = thisReceiver.transform(transformer, data)
     }

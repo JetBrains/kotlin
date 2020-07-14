@@ -152,7 +152,7 @@ class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : FileLowe
 
         script.transformChildrenVoid(transformer)
 
-        script.declarations.forEach {
+        script.statements.forEach {
             when (it) {
                 is IrSimpleFunction -> it.dispatchReceiverParameter = null
                 is IrProperty -> {
