@@ -273,6 +273,10 @@ fun main(args: Array<String>) {
                 model("resolve/partialBodyResolve")
             }
 
+            testClass<AbstractResolveModeComparisonTest> {
+                model("resolve/resolveModeComparison")
+            }
+
             testClass<AbstractPsiCheckerTest> {
                 model("checker", recursive = false)
                 model("checker/regression")
