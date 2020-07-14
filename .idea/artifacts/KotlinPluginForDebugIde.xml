@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <component name="ArtifactManager">
-  <artifact name="KotlinPlugin">
-    <output-path>$PROJECT_DIR$/out/artifacts/KotlinPlugin</output-path>
+  <artifact name="KotlinPluginForDebugIde">
+    <output-path>$PROJECT_DIR$/out/artifacts/KotlinPluginForDebugIde</output-path>
     <root id="root">
       <element id="directory" name="lib">
         <element id="library" level="project" name="kotlinc.android-extensions-compiler-plugin" />
