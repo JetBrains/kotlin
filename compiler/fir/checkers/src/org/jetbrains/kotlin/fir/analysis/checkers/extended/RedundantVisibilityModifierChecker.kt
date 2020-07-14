@@ -34,12 +34,12 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
         val modifierList = (declaration.source.getModifierList() as? FirPsiModifierList)?.modifierList ?: return
         val visibilityModifier = modifierList.getVisibility() ?: return
         val implicitVisibility = declaration.implicitVisibility(context)
-        val containingMemberDeclaration = context.findClosest<FirMemberDeclaration>() ?: return
+        val containingMemberDeclaration = context.findClosest<FirMemberDeclaration>()
 
         val redundantVisibility = when {
             visibilityModifier == implicitVisibility -> implicitVisibility
             visibilityModifier == Visibilities.INTERNAL
-                    && containingMemberDeclaration.visibility == Visibilities.PRIVATE
+                    && containingMemberDeclaration?.visibility == Visibilities.PRIVATE
                     || declaration.visibilityForDeclarationAndPropertyAccessor == Visibilities.INTERNAL -> Visibilities.INTERNAL
             else -> null
         } ?: return
