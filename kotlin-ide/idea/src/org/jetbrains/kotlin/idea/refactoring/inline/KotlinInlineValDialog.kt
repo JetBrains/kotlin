@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.help.HelpManager
 import com.intellij.refactoring.HelpID
-import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtBinaryExpression

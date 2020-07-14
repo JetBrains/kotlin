@@ -117,7 +117,8 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
 
             conflictsCopy.putValue(
                 null,
-                KotlinBundle.message("0.usages.are.not.supported.by.the.inline.refactoring.they.won.t.be.processed",
+                KotlinBundle.message(
+                    "0.usages.are.not.supported.by.the.inline.refactoring.they.won.t.be.processed",
                     allOrSome
                 )
             )
