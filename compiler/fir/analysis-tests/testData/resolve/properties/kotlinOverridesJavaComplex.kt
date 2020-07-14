@@ -13,15 +13,38 @@ public interface Psi<D> {
 // FILE: Member.java
 
 public interface Member<D> extends Psi<D> {
+}
 
+// FILE: TypeParametersOwner.java
+
+import java.util.List;
+
+public interface TypeParametersOwner {
+    public List<String> getTypeParameters();
+}
+
+// FILE: Klass.java
+
+public interface Klass extends TypeParametersOwner {
 }
 
 // FILE: Test.kt
 
-public interface Light
+fun List<String>.single(): String = ""
+fun List<Int>.single(): Int = 2
 
-public class LightMember<D> : Light, Member<D> {
+fun listOf(): List<String> {}
+
+public class LightMember<D> : Member<D>, Light() {
     override fun getName(): String = "Light"
+}
+
+public class LightClassWrapper : Light(), Klass {
+    fun test() = typeParameters.single()
+}
+
+public abstract class Light : Field, TypeParametersOwner {
+    fun getTypeParameters() = listOf()
 }
 
 public interface Field : Named

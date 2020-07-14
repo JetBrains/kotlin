@@ -1,13 +1,39 @@
 FILE: Test.kt
-    public abstract interface Light : R|kotlin/Any| {
+    public final fun R|kotlin/collections/List<kotlin/String>|.single(): R|kotlin/String| {
+        ^single String()
     }
-    public final class LightMember<D> : R|Light|, R|Member<D>| {
+    public final fun R|kotlin/collections/List<kotlin/Int>|.single(): R|kotlin/Int| {
+        ^single Int(2)
+    }
+    public final fun listOf(): R|kotlin/collections/List<kotlin/String>| {
+    }
+    public final class LightMember<D> : R|Member<D>|, R|Light| {
         public constructor<D>(): R|LightMember<D>| {
-            super<R|kotlin/Any|>()
+            super<R|Light|>()
         }
 
         public final override fun getName(): R|kotlin/String| {
             ^getName String(Light)
+        }
+
+    }
+    public final class LightClassWrapper : R|Light|, R|Klass| {
+        public constructor(): R|LightClassWrapper| {
+            super<R|Light|>()
+        }
+
+        public final fun test(): R|kotlin/String| {
+            ^test this@R|/LightClassWrapper|.R|/Light.typeParameters|.R|/single|()
+        }
+
+    }
+    public abstract class Light : R|Field|, R|TypeParametersOwner| {
+        public constructor(): R|Light| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getTypeParameters(): R|kotlin/collections/List<kotlin/String>| {
+            ^getTypeParameters R|/listOf|()
         }
 
     }
