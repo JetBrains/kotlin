@@ -19,13 +19,14 @@ import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.execution.TrivialRunParameters
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriverConfiguration
 import com.jetbrains.cidr.system.LocalHost
-import com.jetbrains.mpp.debugger.KonanLLDBInstaller
 import com.jetbrains.konan.debugger.KonanLocalDebugProcess
+import com.jetbrains.mpp.debugger.KonanLLDBInstaller
+import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 import java.io.File
 
 class KonanCommandLineState(
     env: ExecutionEnvironment,
-    val configuration: BinaryRunConfigurationBase,
+    val configuration: BinaryRunConfiguration,
     private val runFile: File,
     private val lldbConfiguration: LLDBDriverConfiguration?
 ) : CommandLineState(env) {

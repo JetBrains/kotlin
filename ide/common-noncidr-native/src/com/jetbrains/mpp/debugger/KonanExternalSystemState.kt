@@ -15,11 +15,11 @@ import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.execution.TrivialRunParameters
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriverConfiguration
 import com.jetbrains.konan.debugger.KonanRemoteDebugProcess
-import com.jetbrains.mpp.BinaryRunConfigurationBase
+import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 
 class KonanExternalSystemState(
-    val configuration: BinaryRunConfigurationBase,
+    val configuration: BinaryRunConfiguration,
     private val project: Project,
     environment: ExecutionEnvironment,
     gradleConfiguration: GradleRunConfiguration,

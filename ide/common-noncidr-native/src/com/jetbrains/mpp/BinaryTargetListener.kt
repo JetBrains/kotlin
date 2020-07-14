@@ -8,14 +8,15 @@ package com.jetbrains.mpp
 import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.ExecutionTargetListener
 import com.intellij.execution.RunManager
+import com.intellij.openapi.project.Project
+import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 
-open class BinaryTargetListener(private val workspace: WorkspaceBase) :
-    ExecutionTargetListener {
-    protected fun configuration() = RunManager.getInstance(workspace.project).selectedConfiguration?.configuration
+internal class BinaryTargetListener(private val project: Project) : ExecutionTargetListener {
 
     override fun activeTargetChanged(target: ExecutionTarget) {
-        (configuration() as? BinaryRunConfigurationBase)?.let {
-            it.selectedTarget = target as? BinaryExecutionTarget
-        }
+        val runManager = RunManager.getInstance(project)
+        val selectedConfiguration = runManager.selectedConfiguration?.configuration as? BinaryRunConfiguration
+
+        selectedConfiguration?.selectedTarget = target as? BinaryExecutionTarget
     }
 }

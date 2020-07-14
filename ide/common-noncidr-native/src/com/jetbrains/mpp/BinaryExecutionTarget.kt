@@ -8,6 +8,7 @@ package com.jetbrains.mpp
 import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.configurations.RunConfiguration
 import com.jetbrains.konan.WorkspaceXML
+import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 import org.jdom.Element
 import org.jetbrains.kotlin.gradle.KonanArtifactModel
 import java.io.File
@@ -22,7 +23,7 @@ class BinaryExecutionTarget(
     override fun getDisplayName() = if (isDebug) "Debug" else "Release"
     override fun getIcon(): Icon? = null
 
-    override fun canRun(configuration: RunConfiguration) = configuration is BinaryRunConfigurationBase
+    override fun canRun(configuration: RunConfiguration) = configuration is BinaryRunConfiguration
 
     fun toXml(projectDir: File): Element {
         val element = Element(WorkspaceXML.Target.nodeName)

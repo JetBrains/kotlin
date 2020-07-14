@@ -18,13 +18,14 @@ import com.intellij.xml.util.XmlStringUtil
 import com.jetbrains.cidr.execution.CidrCommandLineState
 import com.jetbrains.kmm.ios.AppleRunConfiguration
 import com.jetbrains.kmm.ios.ProjectWorkspace
+import com.jetbrains.kmm.ios.XcFileExtensions
 import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mobile.execution.ApplePhysicalDevice
-import com.jetbrains.mpp.*
-import com.jetbrains.kmm.ios.XcFileExtensions
+import com.jetbrains.mpp.KonanCommandLineState
+import com.jetbrains.mpp.RunnerBase
 import com.jetbrains.mpp.debugger.KonanExternalSystemState
+import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 import java.io.File
-import kotlin.jvm.Throws
 
 internal const val ACTUAL_XC_PROJECT_FILE = "project.pbxproj"
 internal const val DEBUG_INFORMATION_FORMAT_KEY = "DEBUG_INFORMATION_FORMAT"

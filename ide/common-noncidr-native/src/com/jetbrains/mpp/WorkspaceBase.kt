@@ -7,10 +7,17 @@ package com.jetbrains.mpp
 
 import com.intellij.execution.ExecutionTargetManager
 import com.intellij.execution.RunManager
+import com.intellij.execution.configurations.ConfigurationTypeBase
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.components.*
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
-import com.jetbrains.konan.*
+import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriverConfiguration
+import com.jetbrains.konan.KonanBundle
+import com.jetbrains.konan.KonanLog
+import com.jetbrains.konan.WorkspaceXML
+import com.jetbrains.konan.getKotlinNativeVersion
+import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 import org.jdom.Element
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.CompilerVersionImpl
@@ -31,11 +38,15 @@ private fun compare(lhs: CompilerVersion, rhs: CompilerVersion): Int {
     return 0
 }
 
-open class WorkspaceBase(val project: Project) : PersistentStateComponent<Element>, ProjectComponent {
-    val executables = HashSet<KonanExecutable>()
+abstract class WorkspaceBase(val project: Project) : PersistentStateComponent<Element>, ProjectComponent {
     private val basePath = File(project.basePath!!)
-    var konanHome: String? = null
 
+    val executables = HashSet<KonanExecutable>()
+
+    abstract val binaryRunConfigurationType: Class<out ConfigurationTypeBase>
+    abstract val lldbDriverConfiguration: LLDBDriverConfiguration
+
+    var konanHome: String? = null
     val lldbHome: File?
         get() {
             if (konanHome == null || !File(konanHome).exists()) {
@@ -92,6 +103,12 @@ open class WorkspaceBase(val project: Project) : PersistentStateComponent<Elemen
             return false
         }
 
+    init {
+        project.messageBus.connect().apply {
+            subscribe(ExecutionTargetManager.TOPIC, BinaryTargetListener(project))
+        }
+    }
+
     override fun getState(): Element {
         val stateElement = Element("state")
         val executablesElement = Element(WorkspaceXML.Executable.containerName)
@@ -125,8 +142,8 @@ open class WorkspaceBase(val project: Project) : PersistentStateComponent<Elemen
         val activeTarget = ExecutionTargetManager.getActiveTarget(project)
 
         runManager.selectedConfiguration?.apply {
-            if (configuration is BinaryRunConfigurationBase) {
-                val binaryConfiguration = configuration as BinaryRunConfigurationBase
+            if (configuration is BinaryRunConfiguration) {
+                val binaryConfiguration = configuration as BinaryRunConfiguration
                 val binaryTarget = activeTarget as? BinaryExecutionTarget
                 binaryConfiguration.selectedTarget = binaryTarget ?: binaryConfiguration.executable?.executionTargets?.firstOrNull()
             }

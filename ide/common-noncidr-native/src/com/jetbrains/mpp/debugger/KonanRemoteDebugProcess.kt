@@ -11,10 +11,8 @@ import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.execution.RunParameters
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriver
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriver
-import com.jetbrains.mpp.AttachmentByName
-import com.jetbrains.mpp.AttachmentByPort
-import com.jetbrains.mpp.AttachmentStrategy
 import com.jetbrains.konan.KonanLog
+import com.jetbrains.mpp.runconfig.AttachmentStrategy
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -68,7 +66,7 @@ class KonanRemoteDebugProcess(
     }
 
     override fun doLoadTarget(driver: DebuggerDriver) = when (attachmentStrategy) {
-        is AttachmentByName -> loadTargetByName(driver as LLDBDriver, executableFile.absolutePath)
-        is AttachmentByPort -> loadTargetByPort(driver as LLDBDriver, attachmentStrategy.port)
+        is AttachmentStrategy.ByName -> loadTargetByName(driver as LLDBDriver, executableFile.absolutePath)
+        is AttachmentStrategy.ByPort -> loadTargetByPort(driver as LLDBDriver, attachmentStrategy.port)
     }
 }

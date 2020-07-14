@@ -5,14 +5,13 @@
 
 package com.jetbrains.kmm.ios
 
-import com.intellij.execution.ExecutionTargetManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.jetbrains.kmm.ios.execution.BinaryRunConfigurationType
 import com.jetbrains.konan.WorkspaceXML
-import com.jetbrains.mpp.BinaryTargetListener
 import com.jetbrains.mpp.WorkspaceBase
 import org.jdom.Element
 import java.io.File
@@ -26,6 +25,8 @@ sealed class XcProjectStatus {
 
 @State(name = WorkspaceXML.projectComponentName, storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
 class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
+    override val binaryRunConfigurationType = BinaryRunConfigurationType::class.java
+    override val lldbDriverConfiguration = AppleLLDBDriverConfiguration()
 
     var xcProjectStatus: XcProjectStatus = XcProjectStatus.NotLocated
         private set
@@ -64,11 +65,6 @@ class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
         } else {
             XcProjectStatus.NotFound("can't find Xcode projects located at $xcProjectDir")
         }
-    }
-
-    init {
-        val connection = project.messageBus.connect()
-        connection.subscribe(ExecutionTargetManager.TOPIC, BinaryTargetListener(this))
     }
 
     override fun getState(): Element {

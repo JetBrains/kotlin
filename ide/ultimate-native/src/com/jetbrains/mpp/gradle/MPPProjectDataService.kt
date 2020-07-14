@@ -6,15 +6,8 @@
 package com.jetbrains.mpp.gradle
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.mpp.KonanExecutable
-import com.jetbrains.mpp.MPPBinaryRunConfiguration
-import com.jetbrains.mpp.MPPBinaryRunConfigurationType
 import com.jetbrains.mpp.MPPWorkspace
 
 class MPPProjectDataService : ProjectDataServiceBase() {
-
     override fun getWorkspace(project: Project) = MPPWorkspace.getInstance(project)
-
-    override fun createBinaryConfiguration(project: Project, executable: KonanExecutable) =
-        MPPBinaryRunConfiguration(project, MPPBinaryRunConfigurationType.instance.factory, executable)
 }

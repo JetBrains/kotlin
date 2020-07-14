@@ -6,8 +6,6 @@
 package com.jetbrains.mpp.gradle
 
 import com.intellij.execution.RunManager
-import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
@@ -17,7 +15,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.execution.ParametersListUtil
 import com.jetbrains.konan.filterOutSystemEnvs
 import com.jetbrains.konan.getKotlinNativeVersion
-import com.jetbrains.mpp.*
+import com.jetbrains.mpp.BinaryExecutionTarget
+import com.jetbrains.mpp.KonanExecutable
+import com.jetbrains.mpp.KonanExecutableBase
+import com.jetbrains.mpp.WorkspaceBase
+import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 import org.jetbrains.kotlin.gradle.KonanRunConfigurationModel
 import org.jetbrains.kotlin.idea.configuration.KotlinTargetData
 import org.jetbrains.kotlin.idea.configuration.kotlinNativeHome
@@ -25,7 +27,6 @@ import org.jetbrains.kotlin.idea.configuration.kotlinNativeHome
 abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetData, Void>() {
     override fun getTargetDataKey() = KotlinTargetData.KEY
     protected abstract fun getWorkspace(project: Project): WorkspaceBase
-    protected abstract fun createBinaryConfiguration(project: Project, executable: KonanExecutable): BinaryRunConfigurationBase
 
     override fun onSuccessImport(
         imported: MutableCollection<DataNode<KotlinTargetData>>,
@@ -34,29 +35,28 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
         modelsProvider: IdeModelsProvider
     ) {
         super.onSuccessImport(imported, projectData, project, modelsProvider)
-        updateProject(
-            project,
-            collectConfigurations(project, imported),
+
+        val importedRunConfigurationParameters = collectRunConfigurationParameters(imported)
+        updateWorkspace(
             getWorkspace(project),
-            getKonanHome(imported)
+            getKonanHome(imported),
+            importedRunConfigurationParameters.map { it.executable }
         )
+        updateRunConfigurations(
+            project,
+            importedRunConfigurationParameters
+        )
+
+        //default selection
+        RunManager.getInstance(project).apply {
+            selectedConfiguration = selectedConfiguration ?: allSettings.firstOrNull()
+        }
     }
 
-    private fun getKonanHome(nodes: Collection<DataNode<KotlinTargetData>>): String? {
-        val moduleData = nodes.firstOrNull()?.parent as? DataNode<ModuleData> ?: return null
-        return moduleData.kotlinNativeHome
-    }
-
-    private fun getProjectPrefix(moduleIds: Set<String>): String {
-        val id = moduleIds.firstOrNull() ?: return ""
-        return id.substring(0, id.lastIndexOf(':') + 1)
-    }
-
-    private fun collectConfigurations(
-        project: Project,
+    private fun collectRunConfigurationParameters(
         targetNodes: Collection<DataNode<KotlinTargetData>>
-    ): List<BinaryRunConfigurationBase> {
-        val result = ArrayList<BinaryRunConfigurationBase>()
+    ): List<RunConfigurationParameters> {
+        val result = ArrayList<RunConfigurationParameters>()
 
         val executionTargets = HashMap<KonanExecutableBase, ArrayList<BinaryExecutionTarget>>()
         val runConfigurations = HashMap<KonanExecutableBase, KonanRunConfigurationModel>()
@@ -81,64 +81,86 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
         }
 
         executionTargets.forEach { (executableBase, targets) ->
-            val executable = KonanExecutable(executableBase, targets)
-            val configuration = createBinaryConfiguration(project, executable).apply {
-                selectedTarget = targets.firstOrNull()
-                runConfigurations[executableBase]?.let {
-                    workingDirectory = it.workingDirectory
-                    programParameters = ParametersListUtil.join(it.programParameters)
-                    envs = filterOutSystemEnvs(it.environmentVariables)
-                }
-            }
-
-            result.add(configuration)
+            val rc = runConfigurations[executableBase]
+            result.add(RunConfigurationParameters(
+                KonanExecutable(executableBase, targets),
+                targets.firstOrNull(),
+                rc?.workingDirectory,
+                rc?.let { ParametersListUtil.join(rc.programParameters) },
+                rc?.let { filterOutSystemEnvs(rc.environmentVariables) } ?: emptyMap()
+            ))
         }
 
         return result
     }
 
-    private fun updateProject(
-        project: Project,
-        runConfigurations: List<BinaryRunConfigurationBase>,
+    private fun getProjectPrefix(moduleIds: Set<String>): String =
+        moduleIds.firstOrNull()?.let { id ->
+            id.substring(0, id.lastIndexOf(':') + 1)
+        } ?: ""
+
+    private fun getKonanHome(nodes: Collection<DataNode<KotlinTargetData>>): String? {
+        val moduleData = nodes.firstOrNull()?.parent as? DataNode<ModuleData> ?: return null
+        return moduleData.kotlinNativeHome
+    }
+
+    private fun updateWorkspace(
         workspace: WorkspaceBase,
-        konanHome: String?
+        konanHome: String?,
+        executables: List<KonanExecutable>
     ) {
         konanHome?.let {
             workspace.konanHome = it
             workspace.konanVersion = getKotlinNativeVersion(it)
         }
 
+        workspace.executables.apply {
+            clear()
+            addAll(executables)
+        }
+    }
+
+    private fun updateRunConfigurations(
+        project: Project,
+        runConfigurationParameters: List<RunConfigurationParameters>
+    ) {
+        val type = getWorkspace(project).binaryRunConfigurationType
         val runManager = RunManager.getInstance(project)
 
-        workspace.executables.clear()
-        runConfigurations.sortedBy { it.name }.forEach { runConfiguration ->
-            val executable = runConfiguration.executable ?: return@forEach
-            workspace.executables.add(executable)
-            val ideConfiguration = runManager.createConfiguration(
-                executable.base.name,
-                runConfiguration.factory as ConfigurationFactory
-            )
-            (ideConfiguration.configuration as BinaryRunConfigurationBase).copyFrom(runConfiguration)
-            updateConfiguration(runManager, ideConfiguration)
-        }
+        runConfigurationParameters
+            .sortedBy { it.executable.base.name }
+            .forEach { importedConfig ->
+                val new = runManager.createConfiguration(importedConfig.executable.base.name, type)
+                val old = runManager.findConfigurationByTypeAndName(new.type, new.name)
 
-        runManager.apply {
-            selectedConfiguration = selectedConfiguration ?: allSettings.firstOrNull()
+                (new.configuration as BinaryRunConfiguration).setup(importedConfig, old?.configuration as? BinaryRunConfiguration)
+
+                runManager.removeConfiguration(old)
+                runManager.addConfiguration(new)
+            }
+    }
+
+    private fun BinaryRunConfiguration.setup(importedConfig: RunConfigurationParameters, old: BinaryRunConfiguration?) {
+        if (old != null) {
+            executable = old.executable
+            selectedTarget = old.selectedTarget
+            workingDirectory = old.workingDirectory
+            programParameters = old.programParameters
+            envs = old.envs
+        } else {
+            executable = importedConfig.executable
+            selectedTarget = importedConfig.target
+            workingDirectory = importedConfig.workingDirectory
+            programParameters = importedConfig.programParameters
+            envs = importedConfig.envs
         }
     }
 
-    // preserves manually typed run configuration data when gradle provides nothing in return
-    private fun updateConfiguration(runManager: RunManager, newSettings: RunnerAndConfigurationSettings) {
-        runManager.allSettings.firstOrNull { it.name == newSettings.name }?.let { oldSettings ->
-            val newConfiguration = newSettings.configuration as BinaryRunConfigurationBase
-            val oldConfiguration = oldSettings.configuration as? BinaryRunConfigurationBase ?: return@let
-
-            newConfiguration.workingDirectory = newConfiguration.workingDirectory ?: oldConfiguration.workingDirectory
-            newConfiguration.programParameters = newConfiguration.programParameters ?: oldConfiguration.programParameters
-            if (newConfiguration.envs.isEmpty()) newConfiguration.envs = oldConfiguration.envs
-            runManager.removeConfiguration(oldSettings)
-        }
-
-        runManager.addConfiguration(newSettings)
-    }
+    private class RunConfigurationParameters(
+        val executable: KonanExecutable,
+        val target: BinaryExecutionTarget?,
+        val workingDirectory: String?,
+        val programParameters: String?,
+        val envs: Map<String, String>
+    )
 }

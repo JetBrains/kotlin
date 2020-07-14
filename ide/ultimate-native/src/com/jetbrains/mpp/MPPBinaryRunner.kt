@@ -14,6 +14,7 @@ import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.openapi.project.Project
 import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mpp.debugger.KonanExternalSystemState
+import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 
 class MPPBinaryRunner : RunnerBase() {
 
@@ -24,7 +25,7 @@ class MPPBinaryRunner : RunnerBase() {
     }
 
     override fun canRun(executorId: String, profile: RunProfile) = when (profile) {
-        is MPPBinaryRunConfiguration -> canRunBinary(executorId, profile)
+        is BinaryRunConfiguration -> canRunBinary(executorId, profile)
         else -> false
     }
 

@@ -13,12 +13,12 @@ import com.intellij.openapi.util.SystemInfo
 import com.jetbrains.cidr.execution.CidrExecUtil
 import com.jetbrains.cidr.execution.EnvParameterNames
 import com.jetbrains.cidr.execution.Installer
-import com.jetbrains.mpp.BinaryRunConfigurationBase
+import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 import java.io.File
 
 class KonanLLDBInstaller(
     private val executableFile: File,
-    private val configuration: BinaryRunConfigurationBase
+    private val configuration: BinaryRunConfiguration
 ) : Installer {
     override fun getExecutableFile(): File = executableFile
 

@@ -1,4 +1,5 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/NonCidrNative.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <application-components>
     <component>
       <interface-class>com.jetbrains.konan.KonanIconProvider</interface-class>
@@ -15,7 +16,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="com.jetbrains.mpp.MPPBinaryRunConfigurationType"/>
     <executionTargetProvider implementation="com.jetbrains.mpp.BinaryExecutionTargetProvider"/>
-    <stepsBeforeRunProvider implementation="com.jetbrains.mpp.MPPBuildBeforeRunTaskProvider"/>
     <programRunner implementation="com.jetbrains.mpp.MPPBinaryRunner"/>
     <projectTaskRunner implementation="com.jetbrains.mpp.MPPProjectTaskRunner"/>
 

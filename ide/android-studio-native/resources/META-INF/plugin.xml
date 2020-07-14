@@ -1,5 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="/META-INF/CocoaCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/NonCidrNative.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <id>com.jetbrains.kmm</id>
   <name>Mobile Multiplatform</name>
   <version>0.1</version>

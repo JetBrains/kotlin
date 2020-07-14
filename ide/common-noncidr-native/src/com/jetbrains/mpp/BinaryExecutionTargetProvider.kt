@@ -8,10 +8,11 @@ package com.jetbrains.mpp
 import com.intellij.execution.ExecutionTargetProvider
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.openapi.project.Project
+import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 
 class BinaryExecutionTargetProvider : ExecutionTargetProvider() {
     override fun getTargets(project: Project, ideConfiguration: RunConfiguration): List<BinaryExecutionTarget> {
-        val konanConfiguration = ideConfiguration as? BinaryRunConfigurationBase ?: return emptyList()
+        val konanConfiguration = ideConfiguration as? BinaryRunConfiguration ?: return emptyList()
         return konanConfiguration.executable?.executionTargets ?: emptyList()
     }
 }

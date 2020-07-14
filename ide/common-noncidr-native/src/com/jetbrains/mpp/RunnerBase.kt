@@ -19,6 +19,7 @@ import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.impl.XDebugProcessConfiguratorStarter
 import com.intellij.xdebugger.impl.ui.XDebugSessionData
+import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 
 abstract class RunnerBase : DefaultProgramRunner() {
     protected abstract fun getWorkspace(project: Project): WorkspaceBase
@@ -54,7 +55,7 @@ abstract class RunnerBase : DefaultProgramRunner() {
     }
 
 
-    protected fun canRunBinary(executorId: String, profile: BinaryRunConfigurationBase): Boolean {
+    protected fun canRunBinary(executorId: String, profile: BinaryRunConfiguration): Boolean {
         val workspace = getWorkspace(profile.project)
 
         return when (executorId) {
