@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 class JpsCompilerEnvironment(
-    val kotlinArtifacts: KotlinArtifacts,
     services: Services,
     val classesToLoadByParent: ClassCondition,
     messageCollector: MessageCollector,

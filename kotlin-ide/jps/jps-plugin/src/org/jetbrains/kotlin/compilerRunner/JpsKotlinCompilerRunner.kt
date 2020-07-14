@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -166,7 +167,7 @@ class JpsKotlinCompilerRunner {
         compilerArgs: CommonCompilerArguments,
         environment: JpsCompilerEnvironment
     ) {
-        log.debug("Using kotlin-home = " + environment.kotlinArtifacts.kotlincDirectory)
+        log.debug("Using kotlin-home = " + KotlinArtifacts.kotlincDirectory)
 
         withDaemonOrFallback(
             withDaemon = { compileWithDaemon(compilerClassName, compilerArgs, environment) },
@@ -336,8 +337,8 @@ class JpsKotlinCompilerRunner {
     private fun getDaemonConnection(environment: JpsCompilerEnvironment): CompileServiceSession? =
         getOrCreateDaemonConnection {
             environment.progressReporter.progress("connecting to daemon")
-            val compilerPath = environment.kotlinArtifacts.kotlinCompiler
-            val daemonJarPath = environment.kotlinArtifacts.kotlinDaemon
+            val compilerPath = KotlinArtifacts.kotlinCompiler
+            val daemonJarPath = KotlinArtifacts.kotlinDaemon
             val toolsJarPath = CompilerRunnerUtil.jdkToolsJar
             val compilerId = CompilerId.makeCompilerId(listOfNotNull(compilerPath, toolsJarPath, daemonJarPath))
             val daemonOptions = configureDaemonOptions()

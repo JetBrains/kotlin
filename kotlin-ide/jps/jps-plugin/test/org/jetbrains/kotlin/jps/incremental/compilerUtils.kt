@@ -34,7 +34,6 @@ fun createTestingCompilerEnvironment(
 ): JpsCompilerEnvironment {
     val wrappedMessageCollector = MessageCollectorToOutputItemsCollectorAdapter(messageCollector, outputItemsCollector)
     return JpsCompilerEnvironment(
-        KotlinArtifacts,
         services,
         KotlinBuilder.classesToLoadByParent,
         wrappedMessageCollector,
