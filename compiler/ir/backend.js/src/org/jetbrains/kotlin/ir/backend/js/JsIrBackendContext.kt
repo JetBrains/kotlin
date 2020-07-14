@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrDeclarationBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
@@ -56,7 +56,7 @@ class JsIrBackendContext(
     override var inVerbosePhase: Boolean = false
 
     override val irFactory: IrFactory = IrFactoryImpl
-    override val jsIrDeclarationBuilder: JsIrDeclarationBuilder = JsIrDeclarationBuilder()
+    override val jsIrDeclarationBuilder: JsIrDeclarationBuilder = JsIrDeclarationBuilder(irFactory)
 
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
 
@@ -139,7 +139,7 @@ class JsIrBackendContext(
         get() = testContainerFuns
 
     override val mapping = JsMapping()
-    val innerClassesSupport = JsInnerClassesSupport(mapping)
+    val innerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 
     companion object {
         val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))

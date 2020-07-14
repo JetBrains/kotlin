@@ -67,7 +67,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     private fun createStubMethod(
         function: IrSimpleFunction, irClass: IrClass, substitutionMap: Map<IrTypeParameterSymbol, IrType>
     ): IrSimpleFunction {
-        return buildFun {
+        return context.irFactory.buildFun {
             name = function.name
             returnType = function.returnType.substitute(substitutionMap)
             visibility = function.visibility

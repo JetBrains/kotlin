@@ -266,13 +266,13 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         body = IrExpressionBodyImpl(startOffset, endOffset, IrErrorExpressionImpl(startOffset, endOffset, returnType, message))
     }
 
-    private fun IrDeclarationContainer.addFunctionOverride(function: IrSimpleFunction): IrSimpleFunction =
+    private fun IrClass.addFunctionOverride(function: IrSimpleFunction): IrSimpleFunction =
         addFunction(function.name.asString(), function.returnType).apply {
             overriddenSymbols += function.symbol
             valueParameters += function.valueParameters.map { it.copyTo(this) }
         }
 
-    private fun IrDeclarationContainer.addFunctionOverride(
+    private fun IrClass.addFunctionOverride(
         function: IrSimpleFunction,
         makeBody: IrBlockBodyBuilder.(IrFunction) -> Unit
     ): IrSimpleFunction =
@@ -356,7 +356,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         parent: IrDeclarationParent,
         newOrigin: IrDeclarationOrigin,
         newVisibility: Visibility
-    ): IrClass = buildClass {
+    ): IrClass = context.irFactory.buildClass {
         name = Name.special("<Continuation>")
         origin = newOrigin
         visibility = newVisibility
@@ -590,7 +590,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 if (function.body == null || !function.hasContinuation()) return result
 
                 if (flag.capturesCrossinline || function.isInline) {
-                    result += buildFun(view.descriptor) {
+                    result += context.irFactory.buildFun(view.descriptor) {
                         name = Name.identifier(view.name.asString() + FOR_INLINE_SUFFIX)
                         returnType = view.returnType
                         modality = view.modality
@@ -658,7 +658,7 @@ internal fun IrFunction.suspendFunctionOriginal(): IrFunction =
 
 private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): IrFunction {
     require(this.isSuspend && this is IrSimpleFunction)
-    return buildFun(descriptor) {
+    return factory.buildFun(descriptor) {
         updateFrom(this@createSuspendFunctionStub)
         name = this@createSuspendFunctionStub.name
         origin = this@createSuspendFunctionStub.origin

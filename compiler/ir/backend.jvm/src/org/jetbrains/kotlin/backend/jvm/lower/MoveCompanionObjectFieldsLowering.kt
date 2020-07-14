@@ -113,7 +113,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
             isConst = true
         }.also { property ->
             val oldField = oldProperty.backingField!!
-            property.backingField = buildField {
+            property.backingField = context.irFactory.buildField {
                 updateFrom(oldField)
                 name = oldField.name
                 isStatic = true

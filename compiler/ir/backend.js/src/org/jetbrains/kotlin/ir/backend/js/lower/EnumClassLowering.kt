@@ -62,7 +62,7 @@ class EnumUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     }
 
     private fun createFieldForEntry(entry: IrEnumEntry, irClass: IrClass): IrField =
-        buildField {
+        context.irFactory.buildField {
             startOffset = entry.startOffset
             endOffset = entry.endOffset
             origin = entry.origin
@@ -117,7 +117,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
     }
 
     private fun transformEnumConstructor(enumConstructor: IrConstructor, enumClass: IrClass): IrConstructor {
-        return buildConstructor {
+        return context.irFactory.buildConstructor {
             updateFrom(enumConstructor)
             returnType = enumConstructor.returnType
         }.apply {
@@ -321,7 +321,7 @@ class EnumEntryInstancesLowering(val context: JsIrBackendContext) : DeclarationT
     private fun createEnumEntryInstanceVariable(irClass: IrClass, enumEntry: IrEnumEntry): IrField {
         val enumName = irClass.name.identifier
 
-        val result = buildField {
+        val result = context.irFactory.buildField {
             name = Name.identifier("${enumName}_${enumEntry.name.identifier}_instance")
             type = enumEntry.getType(irClass).makeNullable()
             isStatic = true
@@ -389,7 +389,7 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
         return null
     }
 
-    private fun createEntryInstancesInitializedVar(irClass: IrClass): IrField = buildField {
+    private fun createEntryInstancesInitializedVar(irClass: IrClass): IrField = context.irFactory.buildField {
         val enumName = irClass.name.identifier
         name = Name.identifier("${enumName}_entriesInitialized")
         type = context.irBuiltIns.booleanType

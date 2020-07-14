@@ -326,7 +326,9 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
     private val IrSimpleFunction.specialBridgeOrNull: SpecialBridge?
         get() = specialBridgeCache.getOrPutNullable(symbol) {
             specialBridgeMethods.getSpecialMethodInfo(this)?.let { specialMethodInfo ->
-                SpecialBridge(this, jvmMethod, methodInfo = specialMethodInfo, needsGenericSignature = specialMethodInfo.needsGenericSignature)
+                SpecialBridge(
+                    this, jvmMethod, methodInfo = specialMethodInfo, needsGenericSignature = specialMethodInfo.needsGenericSignature
+                )
             } ?: specialBridgeMethods.getBuiltInWithDifferentJvmName(this)?.let { specialBuiltInInfo ->
                 SpecialBridge(this, jvmMethod, needsGenericSignature = specialBuiltInInfo.needsGenericSignature)
             } ?: overriddenSymbols.asSequence().mapNotNull { it.owner.specialBridgeOrNull }.firstOrNull()?.let { specialBridge ->
@@ -337,7 +339,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                         if (index < erasedParameterCount) context.irBuiltIns.anyNType else param.type
                     }
 
-                    val substitutedOverride = buildFun {
+                    val substitutedOverride = context.irFactory.buildFun {
                         updateFrom(specialBridge.overridden)
                         name = Name.identifier(specialBridge.signature.name)
                         returnType = this@specialBridgeOrNull.returnType
@@ -487,7 +489,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                             }
                         }
                         valueParameters = newValueParameters
-                        // After the checks, insert the orignal method body.
+                        // After the checks, insert the original method body.
                         if (body is IrExpressionBody) {
                             +irReturn((body as IrExpressionBody).expression)
                         } else {

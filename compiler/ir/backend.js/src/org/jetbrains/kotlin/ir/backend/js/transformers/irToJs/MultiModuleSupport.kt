@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.name.Name
 
 interface CrossModuleReferenceInfo {
@@ -127,7 +127,7 @@ fun breakCrossModuleFieldAccess(
     fun IrField.getter(): IrSimpleFunction {
         return fieldToGetter.getOrPut(this) {
             val fieldName = name
-            val getter = buildFun {
+            val getter = context.irFactory.buildFun {
                 name = Name.identifier("get-$fieldName")
                 returnType = type
             }
@@ -151,7 +151,7 @@ fun breakCrossModuleFieldAccess(
     fun IrField.setter(): IrSimpleFunction {
         return fieldToSetter.getOrPut(this) {
             val fieldName = name
-            val setter = buildFun {
+            val setter = context.irFactory.buildFun {
                 name = Name.identifier("set-$fieldName")
                 returnType = context.irBuiltIns.unitType
             }

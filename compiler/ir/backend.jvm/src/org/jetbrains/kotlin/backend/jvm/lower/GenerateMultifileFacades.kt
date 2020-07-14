@@ -109,7 +109,7 @@ private fun generateMultifileFacades(
             "Multifile facade $jvmClassName:\n  ${partClasses.joinToString("\n  ") { it.fqNameWhenAvailable!!.asString() }}\n"
         }
 
-        val facadeClass = buildClass {
+        val facadeClass = context.irFactory.buildClass {
             name = jvmClassName.fqNameForTopLevelClassMaybeWithDollars.shortName()
         }.apply {
             parent = file
@@ -206,7 +206,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
         origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
     ) return null
 
-    val function = buildFun {
+    val function = context.irFactory.buildFun {
         updateFrom(target)
         isFakeOverride = shouldGeneratePartHierarchy
         name = if (shouldGeneratePartHierarchy) {

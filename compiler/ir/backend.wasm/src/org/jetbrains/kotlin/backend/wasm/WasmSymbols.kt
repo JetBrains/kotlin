@@ -14,12 +14,10 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.SimpleType
 
 class WasmSymbols(
     context: WasmBackendContext,
@@ -49,7 +47,7 @@ class WasmSymbols(
     override val getContinuation
         get() = TODO()
     override val coroutineContextGetter by lazy {
-        context.excludedDeclarations.addFunction {
+        context.irFactory.addFunction(context.excludedDeclarations) {
             name = Name.identifier("coroutineContextGetter\$Stub")
         }.symbol
     }

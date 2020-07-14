@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.Scope
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
@@ -51,18 +51,14 @@ fun IrClass.addSimpleDelegatingConstructor(
     isPrimary: Boolean = false,
     origin: IrDeclarationOrigin? = null
 ): IrConstructor =
-    buildConstructor {
+    addConstructor {
         val klass = this@addSimpleDelegatingConstructor
         this.startOffset = klass.startOffset
         this.endOffset = klass.endOffset
         this.origin = origin ?: klass.origin
         this.visibility = superConstructor.visibility
-        this.returnType = klass.defaultType
         this.isPrimary = isPrimary
     }.also { constructor ->
-        constructor.parent = this
-        declarations += constructor
-
         constructor.valueParameters = superConstructor.valueParameters.mapIndexed { index, parameter ->
             parameter.copyTo(constructor, index = index)
         }
@@ -477,7 +473,7 @@ fun IrClass.addFakeOverridesViaIncorrectHeuristic(implementedMembers: List<IrSim
 
     fun createFakeOverride(overriddenFunctions: List<IrSimpleFunction>) =
         overriddenFunctions.first().let { irFunction ->
-            buildFun {
+            irFunction.factory.buildFun {
                 origin = IrDeclarationOrigin.FAKE_OVERRIDE
                 name = irFunction.name
                 visibility = Visibilities.PUBLIC

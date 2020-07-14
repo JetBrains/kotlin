@@ -86,7 +86,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
     }
 
     private fun createFunction(irScript: IrScript, name: String, returnType: IrType): IrSimpleFunction =
-        buildFun {
+        context.irFactory.buildFun {
             val (startOffset, endOffset) = getFunctionBodyOffsets(irScript)
             this.startOffset = startOffset
             this.endOffset = endOffset

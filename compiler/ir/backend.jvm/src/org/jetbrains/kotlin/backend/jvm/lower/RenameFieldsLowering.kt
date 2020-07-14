@@ -103,7 +103,7 @@ private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElement
 
     override fun visitField(declaration: IrField): IrStatement {
         val newName = newNames[declaration] ?: return super.visitField(declaration)
-        return buildField {
+        return declaration.factory.buildField {
             updateFrom(declaration)
             name = newName
         }.also {

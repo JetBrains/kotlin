@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -159,7 +162,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
                 context.ir.symbols.functionN(superMethod.valueParameters.size + extensionReceiversCount).owner
         val wrappedFunctionType = wrappedFunctionClass.defaultType
 
-        val subclass = buildClass {
+        val subclass = context.irFactory.buildClass {
             name = wrapperName
             origin = IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
             visibility = wrapperVisibility

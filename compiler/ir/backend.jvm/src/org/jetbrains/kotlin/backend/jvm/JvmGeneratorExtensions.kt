@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -56,11 +57,11 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
         else
             IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 
-    override fun generateFacadeClass(source: DeserializedContainerSource): IrClass? {
+    override fun generateFacadeClass(irFactory: IrFactory, source: DeserializedContainerSource): IrClass? {
         if (!generateFacades) return null
         val jvmPackagePartSource = source as? JvmPackagePartSource ?: return null
         val facadeName = jvmPackagePartSource.facadeClassName ?: jvmPackagePartSource.className
-        return buildClass {
+        return irFactory.buildClass {
             origin = IrDeclarationOrigin.FILE_CLASS
             name = facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName()
         }.also {

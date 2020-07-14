@@ -58,7 +58,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
         private fun buildFactoryFunction(reference: IrPropertyReference): IrSimpleFunction {
             val property = reference.symbol.owner
 
-            val factoryDeclaration = buildFun {
+            val factoryDeclaration = context.irFactory.buildFun {
                 startOffset = reference.startOffset
                 endOffset = reference.endOffset
                 returnType = reference.type
@@ -126,7 +126,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
             val supperAccessor =
                 classifier.owner.declarations.filterIsInstance<IrSimpleFunction>().single { it.name.asString() == superName }
 
-            val function = buildFun {
+            val function = context.irFactory.buildFun {
                 startOffset = reference.startOffset
                 endOffset = reference.endOffset
                 returnType = supperAccessor.returnType
@@ -239,7 +239,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
 
         private fun buildLocalDelegateLambda(expression: IrLocalDelegatedPropertyReference): IrExpression {
             val delegatedVar = expression.delegate.owner
-            val function = buildFun {
+            val function = context.irFactory.buildFun {
                 startOffset = expression.startOffset
                 endOffset = expression.endOffset
                 returnType = context.irBuiltIns.nothingType

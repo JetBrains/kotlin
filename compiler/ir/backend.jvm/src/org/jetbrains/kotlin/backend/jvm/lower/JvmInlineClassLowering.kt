@@ -163,7 +163,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     // but unfortunately this is a special case in the old backend. The bridge method is not marked as such and does not follow the normal
     // visibility rules for bridge methods.
     private fun createBridgeDeclaration(source: IrSimpleFunction, mangledName: Name) =
-        buildFun {
+        context.irFactory.buildFun {
             updateFrom(source)
             name = mangledName
             returnType = source.returnType

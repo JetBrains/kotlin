@@ -46,7 +46,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
         if (function.visibility != Visibilities.PRIVATE || function.dispatchReceiverParameter == null) return null
 
-        val staticFunction = buildFun {
+        val staticFunction = context.irFactory.buildFun {
             updateFrom(function)
             name = function.name
             returnType = function.returnType

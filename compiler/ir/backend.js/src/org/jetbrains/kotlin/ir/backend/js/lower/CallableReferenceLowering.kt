@@ -117,7 +117,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private val isKReference = superFunctionInterface.name.identifier[0] == 'K'
 
         private fun buildReferenceClass(): IrClass {
-            return buildClass {
+            return context.irFactory.buildClass {
                 setSourceRange(reference)
                 visibility = Visibilities.LOCAL
                 // A callable reference results in a synthetic class, while a lambda is not synthetic.

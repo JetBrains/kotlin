@@ -10,17 +10,14 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 // This is a temporary class for migration to IrFactory. Usages should be refactored to use the factory directly once possible,
 // since it doesn't add sufficient value on its own.
-class JsIrDeclarationBuilder {
-    fun buildValueParameter(parent: IrDeclarationParent, name: String, index: Int, type: IrType): IrValueParameter =
+class JsIrDeclarationBuilder(private val irFactory: IrFactory) {
+    fun buildValueParameter(parent: IrFunction, name: String, index: Int, type: IrType): IrValueParameter =
         buildValueParameter(parent) {
             this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
             this.name = Name.identifier(name)
@@ -64,7 +61,7 @@ class JsIrDeclarationBuilder {
         isInfix: Boolean = false,
         isFakeOverride: Boolean = false,
         origin: IrDeclarationOrigin = JsIrBuilder.SYNTHESIZED_DECLARATION,
-    ): IrSimpleFunction = buildFun {
+    ): IrSimpleFunction = irFactory.buildFun {
         this.origin = origin
         this.name = name
         this.visibility = visibility

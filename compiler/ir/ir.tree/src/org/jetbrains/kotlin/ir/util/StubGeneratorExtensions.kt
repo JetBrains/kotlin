@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 
 open class StubGeneratorExtensions {
     open fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin? = null
 
-    open fun generateFacadeClass(source: DeserializedContainerSource): IrClass? = null
+    open fun generateFacadeClass(irFactory: IrFactory, source: DeserializedContainerSource): IrClass? = null
 
     open fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean = false
 

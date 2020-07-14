@@ -70,7 +70,7 @@ class JvmBackendContext(
     val typeMapper = IrTypeMapper(this)
     val methodSignatureMapper = MethodSignatureMapper(this)
 
-    internal val innerClassesSupport = JvmInnerClassesSupport()
+    internal val innerClassesSupport = JvmInnerClassesSupport(irFactory)
     internal val cachedDeclarations = JvmCachedDeclarations(this, methodSignatureMapper, state.languageVersionSettings)
 
     override val mapping: Mapping = DefaultMapping()
@@ -79,7 +79,7 @@ class JvmBackendContext(
 
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
 
-    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns)
+    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns, irFactory)
 
     val irIntrinsics by lazy { IrIntrinsicMethods(irBuiltIns, ir.symbols) }
 
@@ -119,7 +119,7 @@ class JvmBackendContext(
 
     val staticDefaultStubs = mutableMapOf<IrFunctionSymbol, IrFunction>()
 
-    val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled)
+    val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory)
 
     internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
         symbolTable.lazyWrapper.referenceClass(descriptor)

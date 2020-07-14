@@ -256,7 +256,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     ): IrConstructor {
         val source = this
 
-        return buildConstructor {
+        return factory.buildConstructor {
             origin = originForConstructorAccessor
             name = source.name
             visibility = Visibilities.PUBLIC
@@ -292,7 +292,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun IrSimpleFunction.makeSimpleFunctionAccessor(expression: IrCall, parent: IrDeclarationParent): IrSimpleFunction {
         val source = this
 
-        return buildFun {
+        return factory.buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.accessorName(expression.superQualifierSymbol)
             visibility = Visibilities.PUBLIC
@@ -324,7 +324,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         }
 
     private fun makeGetterAccessorSymbol(fieldSymbol: IrFieldSymbol, parent: IrClass): IrSimpleFunctionSymbol =
-        buildFun {
+        context.irFactory.buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = fieldSymbol.owner.accessorNameForGetter()
             visibility = Visibilities.PUBLIC
@@ -360,7 +360,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     }
 
     private fun makeSetterAccessorSymbol(fieldSymbol: IrFieldSymbol, parent: IrClass): IrSimpleFunctionSymbol =
-        buildFun {
+        context.irFactory.buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = fieldSymbol.owner.accessorNameForSetter()
             visibility = Visibilities.PUBLIC

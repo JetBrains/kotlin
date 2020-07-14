@@ -106,7 +106,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 if (declaration.isEnumEntry) super.visitClass(declaration) else declaration
 
             override fun visitConstructor(declaration: IrConstructor): IrStatement =
-                buildConstructor {
+                context.irFactory.buildConstructor {
                     updateFrom(declaration)
                     returnType = declaration.returnType
                 }.apply {

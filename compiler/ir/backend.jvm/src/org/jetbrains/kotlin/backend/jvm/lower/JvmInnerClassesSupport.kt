@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 
-class JvmInnerClassesSupport : InnerClassesSupport {
+class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupport {
     private val outerThisDeclarations = HashMap<IrClass, IrField>()
     private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
     private val originalInnerClassPrimaryConstructorByClass = HashMap<IrClass, IrConstructor>()
@@ -31,7 +32,7 @@ class JvmInnerClassesSupport : InnerClassesSupport {
     override fun getOuterThisField(innerClass: IrClass): IrField =
         outerThisDeclarations.getOrPut(innerClass) {
             assert(innerClass.isInner) { "Class is not inner: ${innerClass.dump()}" }
-            buildField {
+            irFactory.buildField {
                 name = Name.identifier("this$0")
                 type = innerClass.parentAsClass.defaultType
                 origin = InnerClassesSupport.FIELD_FOR_OUTER_THIS
@@ -62,7 +63,7 @@ class JvmInnerClassesSupport : InnerClassesSupport {
     }
 
     private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor =
-        buildConstructor(oldConstructor.descriptor) {
+        irFactory.buildConstructor(oldConstructor.descriptor) {
             updateFrom(oldConstructor)
             returnType = oldConstructor.returnType
         }.apply {

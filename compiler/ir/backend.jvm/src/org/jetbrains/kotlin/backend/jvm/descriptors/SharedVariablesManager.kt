@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -28,13 +31,14 @@ import org.jetbrains.kotlin.name.Name
 class JvmSharedVariablesManager(
     module: ModuleDescriptor,
     val symbols: JvmSymbols,
-    val irBuiltIns: IrBuiltIns
+    val irBuiltIns: IrBuiltIns,
+    irFactory: IrFactory,
 ) : SharedVariablesManager {
     private val jvmInternalPackage = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
         module, FqName("kotlin.jvm.internal")
     )
 
-    private val refNamespaceClass = jvmInternalPackage.addClass {
+    private val refNamespaceClass = irFactory.addClass(jvmInternalPackage) {
         name = Name.identifier("Ref")
     }
 
@@ -51,7 +55,7 @@ class JvmSharedVariablesManager(
     }
 
     private val primitiveRefProviders = irBuiltIns.primitiveIrTypes.associate { primitiveType ->
-        val refClass = refNamespaceClass.addClass {
+        val refClass = irFactory.addClass(refNamespaceClass) {
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             name = Name.identifier(primitiveType.classOrNull!!.owner.name.asString() + "Ref")
         }.apply {
@@ -61,7 +65,7 @@ class JvmSharedVariablesManager(
     }
 
     private val objectRefProvider = run {
-        val refClass = refNamespaceClass.addClass {
+        val refClass = irFactory.addClass(refNamespaceClass) {
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             name = Name.identifier("ObjectRef")
         }.apply {
@@ -148,7 +152,10 @@ class JvmSharedVariablesManager(
         }
 }
 
-private inline fun IrDeclarationContainer.addClass(builder: IrClassBuilder.() -> Unit) = buildClass(builder).also {
-    it.parent = this
-    declarations += it
+private inline fun IrFactory.addClass(
+    container: IrDeclarationContainer,
+    builder: IrClassBuilder.() -> Unit
+): IrClass = buildClass(builder).also {
+    it.parent = container
+    container.declarations += it
 }

@@ -60,7 +60,7 @@ class StaticLambdaLowering(val backendContext: JvmBackendContext) : FileLowering
 
     private fun getFieldForStaticLambdaInstance(lambdaClass: IrClass): IrField =
         staticLambdaFields.getOrPut(lambdaClass) {
-            buildField {
+            backendContext.irFactory.buildField {
                 name = Name.identifier(JvmAbi.INSTANCE_FIELD)
                 type = lambdaClass.defaultType
                 origin = JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_LAMBDA_INSTANCE

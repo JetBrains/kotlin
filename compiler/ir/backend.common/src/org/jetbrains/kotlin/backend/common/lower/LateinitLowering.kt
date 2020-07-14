@@ -201,7 +201,7 @@ class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLowe
 private fun CommonBackendContext.buildOrGetNullableField(originalField: IrField): IrField {
     if (originalField.type.isMarkedNullable()) return originalField
     return mapping.lateInitFieldToNullableField.getOrPut(originalField) {
-        buildField {
+        irFactory.buildField {
             updateFrom(originalField)
             type = originalField.type.makeNullable()
             name = originalField.name

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -51,6 +52,8 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
         DeclarationIrBuilder(this, symbol, symbol.owner.startOffset, symbol.owner.endOffset)
 
     private val symbolMap = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+
+    private val irFactory: IrFactory = IrFactoryImpl
 
     fun transform(moduleFragment: IrModuleFragment) {
         moduleFragment.accept(this, null)
@@ -199,7 +202,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                 isFinal = true
             }.apply {
                 val irField = this
-                val creatorClass = buildClass {
+                val creatorClass = irFactory.buildClass {
                     name = Name.identifier("Creator")
                     visibility = Visibilities.LOCAL
                 }.apply {

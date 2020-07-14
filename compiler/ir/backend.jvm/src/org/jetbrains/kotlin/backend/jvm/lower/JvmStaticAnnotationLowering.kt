@@ -192,7 +192,7 @@ private class MakeCallsStatic(
     }
 
     private fun IrSimpleFunction.copyRemovingDispatchReceiver(): IrSimpleFunction =
-        buildFun(descriptor) {
+        factory.buildFun(descriptor) {
             updateFrom(this@copyRemovingDispatchReceiver)
             name = this@copyRemovingDispatchReceiver.name
             returnType = this@copyRemovingDispatchReceiver.returnType
