@@ -26,7 +26,11 @@ class KotlinExprTypePredicate(
         val node = StructuralSearchUtil.getParentIfIdentifier(matchedNode)
         val type = when (node) {
             is KtDeclaration -> node.type()
-            is KtExpression -> node.resolveType()
+            is KtExpression -> try {
+                node.resolveType()
+            } catch (e: Exception) {
+                null
+            }
             else -> throw IllegalStateException("Kotlin matching element should either be an expression or a statement.")
         } ?: return false
 
