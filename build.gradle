@@ -313,6 +313,7 @@ task detectJarCollision(type: CollisionDetector) {
         librariesWithIgnoredClassCollisions.addAll(["util", "container", "resolution", "serialization", "psi", "frontend",
                                                     "config", "config.jvm", "js.config", "javac-wrapper",
                                                     "frontend.common", "frontend.java", "cli-common", "ir.tree",
+                                                    "ir.tree.impl", "ir.tree.persisting",
                                                     "ir.psi2ir", "ir.backend.common", "backend.jvm", "backend.js",
                                                     "backend.wasm", "ir.serialization.common", "ir.serialization.js",
                                                     "ir.serialization.jvm", "ir.interpreter", "jvm", "compiler.version",
