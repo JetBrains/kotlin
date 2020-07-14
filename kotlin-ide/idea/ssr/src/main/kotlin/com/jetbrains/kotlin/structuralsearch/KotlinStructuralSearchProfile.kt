@@ -181,7 +181,6 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
 
     private fun isApplicableType(variableNode: PsiElement): Boolean {
         val family = ancestors(variableNode)
-        println(family.map { if (it == null) "null" else it::class.java.toString().split(".").last() })
         return when {
             family[0] is KtNameReferenceExpression -> when (family[1]) {
                 is KtValueArgument,

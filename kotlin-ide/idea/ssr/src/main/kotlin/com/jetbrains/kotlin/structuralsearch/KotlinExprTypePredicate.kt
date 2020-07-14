@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtStringTemplateEntry
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 
@@ -24,13 +26,15 @@ class KotlinExprTypePredicate(
 ) : MatchPredicate() {
     override fun match(matchedNode: PsiElement, start: Int, end: Int, context: MatchContext): Boolean {
         val node = StructuralSearchUtil.getParentIfIdentifier(matchedNode)
-        val type = when (node) {
-            is KtDeclaration -> node.type()
-            is KtExpression -> try {
+        val type = when {
+            node is KtDeclaration -> node.type()
+            node is KtExpression -> try {
                 node.resolveType()
             } catch (e: Exception) {
                 null
             }
+            node is KtStringTemplateEntry && node !is KtSimpleNameStringTemplateEntry -> null
+            node is KtSimpleNameStringTemplateEntry -> node.expression?.resolveType()
             else -> throw IllegalStateException("Kotlin matching element should either be an expression or a statement.")
         } ?: return false
 
