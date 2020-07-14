@@ -22,5 +22,3 @@ ij_java_finally_on_new_line = false
 
 [{*.kt,*.kts}]
 ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
-ij_continuation_indent_size = 4
-ij_kotlin_align_multiline_binary_operation = false
