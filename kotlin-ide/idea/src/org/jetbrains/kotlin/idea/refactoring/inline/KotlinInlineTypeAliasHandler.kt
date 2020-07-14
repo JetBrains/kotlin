@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
-import com.intellij.lang.Language
-import com.intellij.lang.refactoring.InlineActionHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
@@ -18,14 +16,13 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -38,7 +35,7 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 
-class KotlinInlineTypeAliasHandler : InlineActionHandler() {
+class KotlinInlineTypeAliasHandler : KotlinInlineActionHandler() {
     companion object {
         val REFACTORING_NAME get() = KotlinBundle.message("name.inline.type.alias")
     }
@@ -46,8 +43,6 @@ class KotlinInlineTypeAliasHandler : InlineActionHandler() {
     private fun showErrorHint(project: Project, editor: Editor?, message: String) {
         CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, null)
     }
-
-    override fun isEnabledForLanguage(l: Language?) = l == KotlinLanguage.INSTANCE
 
     override fun canInlineElement(element: PsiElement?) = element is KtTypeAlias
 

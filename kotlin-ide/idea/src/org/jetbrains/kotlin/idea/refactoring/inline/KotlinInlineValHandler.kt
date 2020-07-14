@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
-import com.intellij.lang.Language
-import com.intellij.lang.refactoring.InlineActionHandler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -28,13 +26,12 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
-import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
 import org.jetbrains.kotlin.idea.project.builtIns
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -46,11 +43,8 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
-class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHandler() {
-
+class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActionHandler() {
     constructor() : this(withPrompt = true)
-
-    override fun isEnabledForLanguage(l: Language) = l == KotlinLanguage.INSTANCE
 
     override fun canInlineElement(element: PsiElement): Boolean {
         return element is KtProperty && element.name != null
@@ -173,7 +167,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : InlineActionHand
 
         val initializerInDeclaration = declaration.initializer
         if (initializerInDeclaration != null) {
-            if (!writeUsages.isEmpty()) {
+            if (writeUsages.isNotEmpty()) {
                 reportAmbiguousAssignment(project, editor, declaration.name!!, writeUsages)
                 return null
             }
