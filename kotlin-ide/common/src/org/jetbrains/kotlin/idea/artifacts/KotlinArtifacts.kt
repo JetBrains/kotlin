@@ -4,12 +4,10 @@ import com.intellij.jarRepository.JarRepositoryManager
 import com.intellij.util.io.Decompressor
 import org.eclipse.aether.repository.RemoteRepository
 import org.jdom.input.SAXBuilder
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.idea.maven.aether.ArtifactRepositoryManager
 import org.jetbrains.idea.maven.aether.ProgressConsumer
-import org.jetbrains.kotlin.idea.artifacts.RepoLocation.MAVEN_REPOSITORY
-import org.jetbrains.kotlin.idea.artifacts.RepoLocation.PROJECT_DIR
+import org.jetbrains.kotlin.idea.artifacts.BaseKotlinArtifactsProvider.RepoLocation.MAVEN_REPOSITORY
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.FileNotFoundException
@@ -17,7 +15,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.security.MessageDigest
 
-object KotlinArtifacts {
+object KotlinArtifacts : BaseKotlinArtifactsProvider() {
     val kotlinPluginDirectory: File by lazy {
         val classFile = PathUtil.getResourcePathForClass(KotlinArtifacts::class.java)
         if (!classFile.exists()) {
@@ -84,51 +82,102 @@ object KotlinArtifacts {
     }
 }
 
-object KotlinTestArtifacts {
-    @get:TestOnly
-    val kotlinStdlibCommon: File by lazy {
-        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_stdlib_common.xml", "org.jetbrains.kotlin", "kotlin-stdlib-common")
+open class BaseKotlinArtifactsProvider {
+    protected fun findLibrary(
+        repoLocation: RepoLocation,
+        library: String,
+        groupId: String,
+        artifactId: String,
+        kind: LibraryFileKind = LibraryFileKind.CLASSES
+    ): File {
+        val librariesDir = File(kotlinIdeHome(), "../.idea/libraries")
+        if (!librariesDir.exists()) {
+            throw IllegalStateException("Can't find $librariesDir")
+        }
+
+        val libraryFile = File(librariesDir, library)
+        if (!libraryFile.exists()) {
+            throw IllegalStateException("Can't find library $library")
+        }
+
+        val document = libraryFile.inputStream().use { stream -> SAXBuilder().build(stream) }
+        val urlScheme = "jar://"
+        val pathInRepository = groupId.replace('.', '/') + '/' + artifactId
+        val pathPrefix = "$urlScheme$repoLocation/$pathInRepository/"
+
+        val root = document.rootElement
+            .getChild("library")
+            ?.getChild(kind.name)
+            ?.getChildren("root")
+            ?.singleOrNull { (it.getAttributeValue("url") ?: "").startsWith(pathPrefix) }
+            ?: throw IllegalStateException("Root '$pathInRepository' not found in library $library")
+
+        val url = root.getAttributeValue("url") ?: ""
+        val path = url.drop(urlScheme.length).dropLast(2) // last '!/'
+
+        val result = File(substitutePathVariables(path))
+        if (!result.exists()) {
+            if (kind == LibraryFileKind.SOURCES) {
+                val version = result.nameWithoutExtension.drop(artifactId.length + 1).dropLast(kind.classifierSuffix.length)
+                return resolveArtifact(groupId, artifactId, version, kind)
+            }
+
+            throw IllegalStateException("File $result doesn't exist")
+        }
+        return result
     }
 
-    @get:TestOnly
-    val kotlinStdlibCommonSources: File by lazy {
-        findLibrary(MAVEN_REPOSITORY, "kotlinc_kotlin_stdlib_common.xml", "org.jetbrains.kotlin", "kotlin-stdlib-common", LibraryFileKind.SOURCES)
+    protected enum class RepoLocation {
+        PROJECT_DIR {
+            override fun toString(): String {
+                return "\$PROJECT_DIR\$"
+            }
+        },
+        MAVEN_REPOSITORY {
+            override fun toString(): String {
+                return "\$MAVEN_REPOSITORY\$"
+            }
+        }
+    }
+
+    protected enum class LibraryFileKind(val classifierSuffix: String, val artifactKind: ArtifactKind) {
+        CLASSES("", ArtifactKind.ARTIFACT), SOURCES("-sources", ArtifactKind.SOURCES);
+    }
+
+    private fun substitutePathVariables(path: String): String {
+        if (path.startsWith("${RepoLocation.PROJECT_DIR}/")) {
+            val projectDir = File(kotlinIdeHome()).parentFile
+            return projectDir.absolutePath + path.drop(RepoLocation.PROJECT_DIR.toString().length)
+        }
+        else if (path.startsWith("$MAVEN_REPOSITORY/")) {
+            val userHomeDir = System.getProperty("user.home", null) ?: error("Unable to get the user home directory")
+            val repoDir = File(userHomeDir, ".m2/repository")
+            return repoDir.absolutePath + path.drop(MAVEN_REPOSITORY.toString().length)
+        }
+
+        return path
+    }
+
+    private fun resolveArtifact(groupId: String, artifactId: String, version: String, kind: LibraryFileKind): File {
+        val repositoryManager = ArtifactRepositoryManager(
+            JarRepositoryManager.getLocalRepositoryPath(),
+            remoteMavenRepositories,
+            ProgressConsumer.DEAF,
+            false
+        )
+
+        val artifacts = repositoryManager.resolveDependencyAsArtifact(
+            groupId, artifactId, version,
+            setOf(kind.artifactKind), false, emptyList()
+        )
+
+        assert(artifacts.size == 1) { "Single artifact expected for library \"$groupId:$artifactId:$version\", got $artifacts" }
+        return artifacts.single().file
     }
 }
 
 private fun File.md5(): String {
     return MessageDigest.getInstance("MD5").digest(readBytes()).joinToString("") { "%02x".format(it) }
-}
-
-private fun substitutePathVariables(path: String): String {
-    if (path.startsWith("$PROJECT_DIR/")) {
-        val projectDir = File(kotlinIdeHome()).parentFile
-        return projectDir.absolutePath + path.drop(PROJECT_DIR.toString().length)
-    }
-    else if (path.startsWith("$MAVEN_REPOSITORY/")) {
-        val userHomeDir = System.getProperty("user.home", null) ?: error("Unable to get the user home directory")
-        val repoDir = File(userHomeDir, ".m2/repository")
-        return repoDir.absolutePath + path.drop(MAVEN_REPOSITORY.toString().length)
-    }
-
-    return path
-}
-
-private enum class RepoLocation {
-    PROJECT_DIR {
-        override fun toString(): String {
-            return "\$PROJECT_DIR\$"
-        }
-    },
-    MAVEN_REPOSITORY {
-        override fun toString(): String {
-            return "\$MAVEN_REPOSITORY\$"
-        }
-    }
-}
-
-private enum class LibraryFileKind(val classifierSuffix: String, val artifactKind: ArtifactKind) {
-    CLASSES("", ArtifactKind.ARTIFACT), SOURCES("-sources", ArtifactKind.SOURCES);
 }
 
 private fun kotlinIdeHome(): String {
@@ -139,50 +188,6 @@ private fun kotlinIdeHome(): String {
     checkNotNull(current) { "Cannot find kotlin-ide root" }
     current = current.resolve("kotlin")
     return current.toString()
-}
-
-private fun findLibrary(
-    repoLocation: RepoLocation,
-    library: String,
-    groupId: String,
-    artifactId: String,
-    kind: LibraryFileKind = LibraryFileKind.CLASSES
-): File {
-    val librariesDir = File(kotlinIdeHome(), "../.idea/libraries")
-    if (!librariesDir.exists()) {
-        throw IllegalStateException("Can't find $librariesDir")
-    }
-
-    val libraryFile = File(librariesDir, library)
-    if (!libraryFile.exists()) {
-        throw IllegalStateException("Can't find library $library")
-    }
-
-    val document = libraryFile.inputStream().use { stream -> SAXBuilder().build(stream) }
-    val urlScheme = "jar://"
-    val pathInRepository = groupId.replace('.', '/') + '/' + artifactId
-    val pathPrefix = "$urlScheme$repoLocation/$pathInRepository/"
-
-    val root = document.rootElement
-        .getChild("library")
-        ?.getChild(kind.name)
-        ?.getChildren("root")
-        ?.singleOrNull { (it.getAttributeValue("url") ?: "").startsWith(pathPrefix) }
-        ?: throw IllegalStateException("Root '$pathInRepository' not found in library $library")
-
-    val url = root.getAttributeValue("url") ?: ""
-    val path = url.drop(urlScheme.length).dropLast(2) // last '!/'
-
-    val result = File(substitutePathVariables(path))
-    if (!result.exists()) {
-        if (kind == LibraryFileKind.SOURCES) {
-            val version = result.nameWithoutExtension.drop(artifactId.length + 1).dropLast(kind.classifierSuffix.length)
-            return resolveArtifact(groupId, artifactId, version, kind)
-        }
-
-        throw IllegalStateException("File $result doesn't exist")
-    }
-    return result
 }
 
 private val remoteMavenRepositories: List<RemoteRepository> by lazy {
@@ -205,21 +210,4 @@ private val remoteMavenRepositories: List<RemoteRepository> by lazy {
     }
 
     return@lazy repositories
-}
-
-private fun resolveArtifact(groupId: String, artifactId: String, version: String, kind: LibraryFileKind): File {
-    val repositoryManager = ArtifactRepositoryManager(
-        JarRepositoryManager.getLocalRepositoryPath(),
-        remoteMavenRepositories,
-        ProgressConsumer.DEAF,
-        false
-    )
-
-    val artifacts = repositoryManager.resolveDependencyAsArtifact(
-        groupId, artifactId, version,
-        setOf(kind.artifactKind), false, emptyList()
-    )
-
-    assert(artifacts.size == 1) { "Single artifact expected for library \"$groupId:$artifactId:$version\", got $artifacts" }
-    return artifacts.single().file
 }
