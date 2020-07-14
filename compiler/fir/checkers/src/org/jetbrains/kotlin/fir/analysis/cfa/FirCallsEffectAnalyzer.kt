@@ -36,7 +36,7 @@ import kotlin.contracts.contract
 class FirCallsEffectAnalyzer {
 
     fun analyze(function: FirFunction<*>, graph: ControlFlowGraph, reporter: DiagnosticReporter) {
-        if(function !is FirContractDescriptionOwner) return
+        if (function !is FirContractDescriptionOwner) return
         val functionalTypeEffects = mutableMapOf<FirBasedSymbol<*>, ConeCallsEffectDeclaration>()
 
         function.valueParameters.forEachIndexed { index, parameter ->

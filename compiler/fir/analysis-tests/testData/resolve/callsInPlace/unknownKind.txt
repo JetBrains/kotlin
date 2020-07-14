@@ -1,0 +1,24 @@
+FILE: unknownKind.kt
+    public final fun bar(x: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun foo(x: R|() -> kotlin/Unit|, y: R|() -> kotlin/Unit|, z: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(x, UNKNOWN)
+            CallsInPlace(y, UNKNOWN)
+            CallsInPlace(z, UNKNOWN)
+        >
+     {
+        [StubStatement]
+        when () {
+            Boolean(true) ->  {
+                R|/bar|(R|<local>/x|)
+            }
+            else ->  {
+                lval yCopy: R|() -> kotlin/Unit| = R|<local>/y|
+            }
+        }
+
+        lval zCopy: R|() -> kotlin/Unit|
+        R|<local>/zCopy| = R|<local>/z|
+    }

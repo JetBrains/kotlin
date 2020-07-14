@@ -677,9 +677,24 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @TestMetadata("test.kt")
-        public void testTest() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/callsInPlace/test.kt");
+        @TestMetadata("contractsUsage.kt")
+        public void testContractsUsage() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callsInPlace/contractsUsage.kt");
+        }
+
+        @TestMetadata("flow.kt")
+        public void testFlow() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callsInPlace/flow.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callsInPlace/simple.kt");
+        }
+
+        @TestMetadata("unknownKind.kt")
+        public void testUnknownKind() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callsInPlace/unknownKind.kt");
         }
     }
 
