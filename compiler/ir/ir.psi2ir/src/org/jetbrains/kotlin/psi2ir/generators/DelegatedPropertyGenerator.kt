@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrLocalDelegatedPropertyDelegateDescr
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -166,7 +165,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         val irProvideDelegate = CallGenerator(statementGenerator).generateCall(
             ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset, provideDelegateCall
         )
-        return IrExpressionBodyImpl(irProvideDelegate)
+        return context.irFactory.createExpressionBody(irProvideDelegate)
     }
 
     private fun createBackingFieldValueForDelegate(

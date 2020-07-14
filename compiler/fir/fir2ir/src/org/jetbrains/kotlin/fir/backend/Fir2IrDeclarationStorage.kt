@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -670,7 +669,7 @@ class Fir2IrDeclarationStorage(
                                 if (initializer is FirConstExpression<*>) {
                                     // TODO: Normally we shouldn't have error type here
                                     val constType = initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type
-                                    field.initializer = IrExpressionBodyImpl(initializer.toIrConst(constType))
+                                    field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
                                 }
                             }
                         } else if (delegate != null) {
@@ -794,7 +793,7 @@ class Fir2IrDeclarationStorage(
                             it != null && (useStubForDefaultValueStub || it !is FirExpressionStub)
                         }
                     ) {
-                        this.defaultValue = IrExpressionBodyImpl(
+                        this.defaultValue = factory.createExpressionBody(
                             IrErrorExpressionImpl(
                                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, type,
                                 "Stub expression for default value of ${valueParameter.name}"

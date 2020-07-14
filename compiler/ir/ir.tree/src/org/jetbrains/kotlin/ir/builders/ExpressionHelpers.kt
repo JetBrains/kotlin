@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -68,7 +67,7 @@ fun <T : IrElement> IrStatementsBuilder<T>.irTemporaryVar(
 
 
 fun IrBuilderWithScope.irExprBody(value: IrExpression) =
-    IrExpressionBodyImpl(startOffset, endOffset, value)
+    context.irFactory.createExpressionBody(startOffset, endOffset, value)
 
 fun IrBuilderWithScope.irWhen(type: IrType, branches: List<IrBranch>) =
     IrWhenImpl(startOffset, endOffset, type, null, branches)

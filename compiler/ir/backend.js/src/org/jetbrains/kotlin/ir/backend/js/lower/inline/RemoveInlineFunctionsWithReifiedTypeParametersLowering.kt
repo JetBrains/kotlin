@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
-
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
 class RemoveInlineFunctionsWithReifiedTypeParametersLowering: DeclarationTransformer {
@@ -40,9 +38,10 @@ class CopyInlineFunctionBodyLowering(val context: JsIrBackendContext) : Declarat
 
         if (declaration is IrValueParameter && declaration.parent.let { it is IrFunction && it.isInline }) {
             declaration.defaultValue?.let { originalDefault ->
-                declaration.defaultValue = IrExpressionBodyImpl(originalDefault.startOffset, originalDefault.endOffset) {
-                    expression = originalDefault.expression.deepCopyWithSymbols(declaration.parent)
-                }
+                declaration.defaultValue =
+                    context.irFactory.createExpressionBody(originalDefault.startOffset, originalDefault.endOffset) {
+                        expression = originalDefault.expression.deepCopyWithSymbols(declaration.parent)
+                    }
             }
         }
 

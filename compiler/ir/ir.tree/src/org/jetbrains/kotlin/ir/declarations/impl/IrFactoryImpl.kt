@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
@@ -222,4 +225,23 @@ object IrFactoryImpl : IrFactory {
         isNoinline: Boolean,
     ): IrValueParameter =
         IrValueParameterImpl(startOffset, endOffset, origin, symbol, name, index, type, varargElementType, isCrossinline, isNoinline)
+
+    override fun createExpressionBody(
+        startOffset: Int,
+        endOffset: Int,
+        initializer: IrExpressionBody.() -> Unit,
+    ): IrExpressionBody =
+        IrExpressionBodyImpl(startOffset, endOffset, initializer)
+
+    override fun createExpressionBody(
+        startOffset: Int,
+        endOffset: Int,
+        expression: IrExpression,
+    ): IrExpressionBody =
+        IrExpressionBodyImpl(startOffset, endOffset, expression)
+
+    override fun createExpressionBody(
+        expression: IrExpression,
+    ): IrExpressionBody =
+        IrExpressionBodyImpl(expression)
 }

@@ -1014,7 +1014,7 @@ abstract class IrFileDeserializer(
                 flags.isNoInline
             ).apply {
                 if (proto.hasDefaultValue())
-                    defaultValue = IrExpressionBodyImpl(deserializeExpressionBody(proto.defaultValue))
+                    defaultValue = irFactory.createExpressionBody(deserializeExpressionBody(proto.defaultValue))
 
                 (descriptor as? WrappedValueParameterDescriptor)?.bind(this)
                 (descriptor as? WrappedReceiverParameterDescriptor)?.bind(this)
@@ -1239,7 +1239,7 @@ abstract class IrFileDeserializer(
                 if (proto.hasCorrespondingClass())
                     correspondingClass = deserializeIrClass(proto.correspondingClass)
                 if (proto.hasInitializer())
-                    initializerExpression = IrExpressionBodyImpl(deserializeExpressionBody(proto.initializer))
+                    initializerExpression = irFactory.createExpressionBody(deserializeExpressionBody(proto.initializer))
 
                 (descriptor as? WrappedEnumEntryDescriptor)?.bind(this)
             }
@@ -1297,7 +1297,7 @@ abstract class IrFileDeserializer(
             }.usingParent {
                 if (proto.hasInitializer()) {
                     withInitializerGuard(isPrivateProperty) {
-                        initializer = IrExpressionBodyImpl(deserializeExpressionBody(proto.initializer))
+                        initializer = irFactory.createExpressionBody(deserializeExpressionBody(proto.initializer))
                     }
                 }
 

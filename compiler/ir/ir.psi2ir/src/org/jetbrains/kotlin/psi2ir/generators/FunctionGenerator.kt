@@ -344,7 +344,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val constantDefaultValue =
             ConstantExpressionEvaluator.getConstant(valueExpression, context.bindingContext)?.toConstantValue(valueParameterDescriptor.type)
                 ?: error("Constant value expected for default parameter value in annotation, got $valueExpression")
-        return IrExpressionBodyImpl(
+        return context.irFactory.createExpressionBody(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             context.constantValueGenerator.generateConstantValueAsExpression(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, constantDefaultValue, valueParameterDescriptor.varargElementType

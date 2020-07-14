@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.symbols.Fir2IrPropertySymbol
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -103,7 +102,7 @@ class Fir2IrLazyProperty(
                         if (initializer is FirConstExpression<*>) {
                             // TODO: Normally we shouldn't have error type here
                             val constType = with(typeConverter) { initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type }
-                            field.initializer = IrExpressionBodyImpl(initializer.toIrConst(constType))
+                            field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
                         }
                     }
                 }

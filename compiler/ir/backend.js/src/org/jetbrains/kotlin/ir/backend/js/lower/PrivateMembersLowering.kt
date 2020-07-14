@@ -96,7 +96,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
             parameterMapping[it]?.apply {
                 it.defaultValue?.let { originalDefault ->
-                    defaultValue = IrExpressionBodyImpl(it.startOffset, it.endOffset) {
+                    defaultValue = context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
                         expression = (originalDefault.copyWithParameters() as IrExpressionBody).expression
                     }
                 }
@@ -108,7 +108,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
                 is IrBlockBody -> IrBlockBodyImpl(it.startOffset, it.endOffset) {
                     statements += (it.copyWithParameters() as IrBlockBody).statements
                 }
-                is IrExpressionBody -> IrExpressionBodyImpl(it.startOffset, it.endOffset) {
+                is IrExpressionBody -> context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
                     expression = (it.copyWithParameters() as IrExpressionBody).expression
                 }
                 is IrSyntheticBody -> it

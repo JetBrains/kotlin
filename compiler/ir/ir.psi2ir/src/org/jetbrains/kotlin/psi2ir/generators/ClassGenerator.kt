@@ -498,7 +498,7 @@ class ClassGenerator(
 
             if (!enumEntryDescriptor.isExpect) {
                 irEnumEntry.initializerExpression =
-                    IrExpressionBodyImpl(createBodyGenerator(irEnumEntry.symbol)
+                    context.irFactory.createExpressionBody(createBodyGenerator(irEnumEntry.symbol)
                         .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor))
             }
 

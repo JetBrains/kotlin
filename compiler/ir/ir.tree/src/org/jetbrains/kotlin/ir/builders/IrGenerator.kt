@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 
 interface IrGenerator {
@@ -35,6 +36,8 @@ interface IrGeneratorContextInterface {
 interface IrGeneratorContext : IrGeneratorContextInterface {
     @ObsoleteDescriptorBasedAPI
     val builtIns: KotlinBuiltIns get() = irBuiltIns.builtIns
+
+    val irFactory: IrFactory get() = irBuiltIns.irFactory
 }
 
 open class IrGeneratorContextBase(override val irBuiltIns: IrBuiltIns) : IrGeneratorContext

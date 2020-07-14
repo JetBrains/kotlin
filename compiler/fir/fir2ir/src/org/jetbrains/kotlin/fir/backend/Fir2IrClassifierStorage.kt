@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedEnumEntryDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedTypeAliasDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
@@ -408,7 +407,7 @@ class Fir2IrClassifierStorage(
                         // which will be translated via visitor later.
                     } else if (irParent != null && origin == IrDeclarationOrigin.DEFINED) {
                         val constructor = irParent.constructors.first()
-                        this.initializerExpression = IrExpressionBodyImpl(
+                        this.initializerExpression = factory.createExpressionBody(
                             IrEnumConstructorCallImpl(
                                 startOffset, endOffset, irType, constructor.symbol,
                                 valueArgumentsCount = constructor.valueParameters.size,

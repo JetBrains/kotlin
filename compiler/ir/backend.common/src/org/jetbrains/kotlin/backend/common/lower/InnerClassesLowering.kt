@@ -48,7 +48,7 @@ class InnerClassesLowering(val context: BackendContext, private val innerClasses
             val oldConstructorParameterToNew = innerClassesSupport.primaryConstructorParameterMap(declaration)
             for ((oldParam, newParam) in oldConstructorParameterToNew.entries) {
                 newParam.defaultValue = oldParam.defaultValue?.let { oldDefault ->
-                    IrExpressionBodyImpl(oldDefault.startOffset, oldDefault.endOffset) {
+                    context.irFactory.createExpressionBody(oldDefault.startOffset, oldDefault.endOffset) {
                         expression = oldDefault.expression.patchDeclarationParents(newConstructor)
                     }
                 }

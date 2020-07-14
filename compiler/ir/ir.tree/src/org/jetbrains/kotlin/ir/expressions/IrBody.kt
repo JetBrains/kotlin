@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 interface IrBody : IrElement {
@@ -25,6 +26,8 @@ interface IrBody : IrElement {
 }
 
 interface IrExpressionBody : IrBody {
+    val factory: IrFactory
+
     var expression: IrExpression
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpressionBody =
@@ -41,4 +44,3 @@ enum class IrSyntheticBodyKind {
     ENUM_VALUES,
     ENUM_VALUEOF
 }
-

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
@@ -192,4 +194,22 @@ interface IrFactory {
         isCrossinline: Boolean,
         isNoinline: Boolean,
     ): IrValueParameter
+
+    // Bodies
+
+    fun createExpressionBody(
+        startOffset: Int,
+        endOffset: Int,
+        initializer: IrExpressionBody.() -> Unit,
+    ): IrExpressionBody
+
+    fun createExpressionBody(
+        startOffset: Int,
+        endOffset: Int,
+        expression: IrExpression,
+    ): IrExpressionBody
+
+    fun createExpressionBody(
+        expression: IrExpression,
+    ): IrExpressionBody
 }
