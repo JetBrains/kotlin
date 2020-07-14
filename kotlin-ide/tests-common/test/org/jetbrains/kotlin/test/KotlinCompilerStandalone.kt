@@ -120,6 +120,8 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
         val copyFun = if (target.extension.toLowerCase() == "jar") ::copyToJar else ::copyToDirectory
         copyFun(compilerTargets, target)
 
+        compilerTargets.forEach { it.deleteRecursively() }
+
         return target
     }
 
