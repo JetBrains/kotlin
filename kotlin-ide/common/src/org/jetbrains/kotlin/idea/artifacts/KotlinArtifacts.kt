@@ -16,18 +16,20 @@ import java.nio.file.Paths
 import java.security.MessageDigest
 
 object KotlinArtifacts : BaseKotlinArtifactsProvider() {
-    val kotlinPluginDirectory: File by lazy {
+    private val kotlincDistDir: File by lazy {
         val classFile = PathUtil.getResourcePathForClass(KotlinArtifacts::class.java)
         if (!classFile.exists()) {
             throw FileNotFoundException("Class file not found for class ${KotlinArtifacts::class.java}")
         }
-        var outDir = classFile
-        while (outDir.name != "out") {
-            outDir = outDir.parentFile ?: throw FileNotFoundException("`out` directory not found")
+        val outDir = run {
+            var outDirMutable = classFile
+            while (outDirMutable.name != "out") {
+                outDirMutable = outDirMutable.parentFile ?: throw FileNotFoundException("`out` directory not found")
+            }
+            outDirMutable
         }
-        val jpsTestsArtifactsDir = outDir.resolve("artifacts/jps-tests-artifacts")
-        val kotlinPluginDirectory = jpsTestsArtifactsDir.resolve("KotlinPlugin")
-        val hashFile = jpsTestsArtifactsDir.resolve("KotlinPlugin.md5")
+        val kotlincDistDir = outDir.resolve("kotlinc-dist")
+        val hashFile = outDir.resolve("kotlinc-dist/kotlinc-dist.md5")
         val kotlincJar = findLibrary(
             MAVEN_REPOSITORY,
             "kotlinc_dist.xml",
@@ -35,19 +37,19 @@ object KotlinArtifacts : BaseKotlinArtifactsProvider() {
             "kotlin-dist-for-ide"
         )
         val hash = kotlincJar.md5()
-        if (hashFile.exists() && hashFile.readText() == hash && kotlinPluginDirectory.exists()) {
-            return@lazy kotlinPluginDirectory
+        if (hashFile.exists() && hashFile.readText() == hash && kotlincDistDir.exists()) {
+            return@lazy kotlincDistDir
         }
-        val dirWhereToExtractKotlinc= kotlinPluginDirectory.resolve("kotlinc").also {
+        val dirWhereToExtractKotlinc= kotlincDistDir.resolve("kotlinc").also {
             it.deleteRecursively()
             it.mkdirs()
         }
         hashFile.writeText(hash)
         Decompressor.Zip(kotlincJar).extract(dirWhereToExtractKotlinc)
-        return@lazy kotlinPluginDirectory
+        return@lazy kotlincDistDir
     }
 
-    val kotlincDirectory by lazy { findFile(kotlinPluginDirectory, "kotlinc") }
+    val kotlincDirectory by lazy { findFile(kotlincDistDir, "kotlinc") }
     val kotlincLibDirectory by lazy { findFile(kotlincDirectory, "lib") }
 
     val jetbrainsAnnotations by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.JETBRAINS_ANNOTATIONS) }
