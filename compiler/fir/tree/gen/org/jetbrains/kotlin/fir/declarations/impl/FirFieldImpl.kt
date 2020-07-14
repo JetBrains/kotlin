@@ -65,6 +65,7 @@ internal class FirFieldImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         transformReturnTypeRef(transformer, data)
+        transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformOtherChildren(transformer, data)
         return this
@@ -100,6 +101,11 @@ internal class FirFieldImpl(
         return this
     }
 
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         status = status.transformSingle(transformer, data)
         return this
@@ -107,7 +113,6 @@ internal class FirFieldImpl(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         transformAnnotations(transformer, data)
-        typeParameters.transformInplace(transformer, data)
         return this
     }
 

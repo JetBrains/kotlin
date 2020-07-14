@@ -55,11 +55,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         typeParametersOwner.configure {
-            +typeParameters
+            +typeParameters.withTransform()
         }
 
         typeParameterRefsOwner.configure {
-            +typeParameterRefs
+            +typeParameterRefs.withTransform()
         }
 
         resolvable.configure {
@@ -307,7 +307,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbol("FirPropertySymbol")
             +field("backingFieldSymbol", backingFieldSymbolType)
             +booleanField("isLocal")
-            +typeParameters
             +status
         }
 

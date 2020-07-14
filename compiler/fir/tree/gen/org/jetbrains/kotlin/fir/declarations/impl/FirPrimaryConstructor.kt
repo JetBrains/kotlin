@@ -68,7 +68,7 @@ internal class FirPrimaryConstructor(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        typeParameters.transformInplace(transformer, data)
+        transformTypeParameters(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
         transformStatus(transformer, data)
@@ -85,6 +85,11 @@ internal class FirPrimaryConstructor(
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
         receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 

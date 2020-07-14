@@ -46,10 +46,10 @@ internal class FirPropertyImpl(
     override var getter: FirPropertyAccessor?,
     override var setter: FirPropertyAccessor?,
     override val annotations: MutableList<FirAnnotationCall>,
+    override val typeParameters: MutableList<FirTypeParameter>,
     override val containerSource: DeserializedContainerSource?,
     override val symbol: FirPropertySymbol,
     override val isLocal: Boolean,
-    override val typeParameters: MutableList<FirTypeParameter>,
     override var status: FirDeclarationStatus,
 ) : FirProperty() {
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -71,8 +71,8 @@ internal class FirPropertyImpl(
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
+        controlFlowGraphReference.accept(visitor, data)
         status.accept(visitor, data)
     }
 
@@ -83,6 +83,7 @@ internal class FirPropertyImpl(
         transformDelegate(transformer, data)
         transformGetter(transformer, data)
         transformSetter(transformer, data)
+        transformTypeParameters(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         transformStatus(transformer, data)
         transformOtherChildren(transformer, data)
@@ -124,6 +125,11 @@ internal class FirPropertyImpl(
         return this
     }
 
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
+        typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
@@ -136,7 +142,6 @@ internal class FirPropertyImpl(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirPropertyImpl {
         transformAnnotations(transformer, data)
-        typeParameters.transformInplace(transformer, data)
         return this
     }
 

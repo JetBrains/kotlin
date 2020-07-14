@@ -69,4 +69,6 @@ abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimp
     abstract override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSimpleFunction
+
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 }

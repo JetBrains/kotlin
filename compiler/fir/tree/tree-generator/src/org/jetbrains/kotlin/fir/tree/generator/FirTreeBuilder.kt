@@ -36,7 +36,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val typeParameter = element("TypeParameter", Declaration, typeParameterRef, annotatedDeclaration, symbolOwner)
     val typeParameterRefsOwner = element("TypeParameterRefsOwner", Declaration)
     val typeParametersOwner = element("TypeParametersOwner", Declaration, typeParameterRefsOwner)
-    val memberDeclaration = element("MemberDeclaration", Declaration, annotatedDeclaration)
+    val memberDeclaration = element("MemberDeclaration", Declaration, annotatedDeclaration, typeParameterRefsOwner)
     val callableMemberDeclaration = element("CallableMemberDeclaration", Declaration, callableDeclaration, memberDeclaration)
 
     val variable = element("Variable", Declaration, callableDeclaration, annotatedDeclaration, statement)
