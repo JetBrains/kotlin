@@ -110,7 +110,7 @@ public class KotlinTestUtils {
             @NotNull TestJdkKind jdkKind
     ) {
         return KotlinCoreEnvironment.createForTests(
-                disposable, newConfiguration(configurationKind, jdkKind, KotlinArtifacts.getInstance().getJetbrainsAnnotations()), EnvironmentConfigFiles.JVM_CONFIG_FILES
+                disposable, newConfiguration(configurationKind, jdkKind, KotlinArtifacts.INSTANCE.getJetbrainsAnnotations()), EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
     }
 
@@ -358,7 +358,7 @@ public class KotlinTestUtils {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
         }
 
-        KotlinArtifacts artifacts = KotlinArtifacts.getInstance();
+        KotlinArtifacts artifacts = KotlinArtifacts.INSTANCE;
 
         if (configurationKind.getKotlinStdlib()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, artifacts.getKotlinStdlib());

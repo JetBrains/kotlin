@@ -246,7 +246,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
     fun testKotlinJavaScriptProjectWithDirectoryAsStdlib() {
         initProject()
-        val jslibJar = KotlinArtifacts.getInstance().kotlinStdlibJs
+        val jslibJar = KotlinArtifacts.kotlinStdlibJs
         val jslibDir = File(workDir, "KotlinJavaScript")
         try {
             ZipUtil.extract(jslibJar, jslibDir, null)

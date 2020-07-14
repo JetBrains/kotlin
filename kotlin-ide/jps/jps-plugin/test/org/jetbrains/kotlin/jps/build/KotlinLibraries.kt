@@ -16,27 +16,27 @@ enum class KotlinJpsLibrary(val id: String, vararg val roots: File) {
     @Deprecated("Use JvmStdlib instead")
     MockRuntime(
         "kotlin-mock-runtime",
-        KotlinArtifacts.getInstance().kotlinStdlib,
-        KotlinArtifacts.getInstance().jetbrainsAnnotations
+        KotlinArtifacts.kotlinStdlib,
+        KotlinArtifacts.jetbrainsAnnotations
     ),
 
     JvmStdLib(
         "kotlin-stdlib",
-        KotlinArtifacts.getInstance().kotlinStdlib,
-        KotlinArtifacts.getInstance().jetbrainsAnnotations
+        KotlinArtifacts.kotlinStdlib,
+        KotlinArtifacts.jetbrainsAnnotations
     ),
     JvmTest(
         "kotlin-test",
-        KotlinArtifacts.getInstance().kotlinTest
+        KotlinArtifacts.kotlinTest
     ),
 
     JsStdLib(
         "KotlinJavaScript",
-        KotlinArtifacts.getInstance().kotlinStdlibJs
+        KotlinArtifacts.kotlinStdlibJs
     ),
     JsTest(
         "KotlinJavaScriptTest",
-        KotlinArtifacts.getInstance().kotlinTestJs
+        KotlinArtifacts.kotlinTestJs
     );
 
     fun create(project: JpsProject): JpsLibrary {

@@ -582,7 +582,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         return JpsCompilerEnvironment(
-            KotlinArtifacts.getInstance(),
+            KotlinArtifacts,
             compilerServices,
             classesToLoadByParent,
             messageCollector,

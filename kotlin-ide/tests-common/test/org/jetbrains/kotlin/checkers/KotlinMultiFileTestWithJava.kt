@@ -79,11 +79,11 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
 
     private fun getClasspath(file: File): List<File> {
         val result: MutableList<File> = ArrayList()
-        result.add(KotlinArtifacts.getInstance().jetbrainsAnnotations)
+        result.add(KotlinArtifacts.jetbrainsAnnotations)
         result.addAll(getExtraClasspath())
         val fileText = file.readText(Charsets.UTF_8)
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "STDLIB_JDK8")) {
-            result.add(KotlinArtifacts.getInstance().kotlinStdlibJdk8)
+            result.add(KotlinArtifacts.kotlinStdlibJdk8)
         }
         if (DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage ||
             fileText.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())

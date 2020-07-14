@@ -59,7 +59,7 @@ class KotlinConsoleKeeper(val project: Project) {
             javaParameters.charset = null
             javaParameters.vmParametersList.add("-Dkotlin.repl.ideMode=true")
 
-            val kotlinArtifacts = KotlinArtifacts.getInstance()
+            val kotlinArtifacts = KotlinArtifacts
             javaParameters.classPath.apply {
                 val classPath = KotlinClassPath.CompilerWithScripting.computeClassPath(kotlinArtifacts)
                 addAll(classPath.map {

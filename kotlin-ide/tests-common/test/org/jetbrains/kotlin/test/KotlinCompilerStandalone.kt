@@ -74,8 +74,8 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
 
         if (includeKotlinStdlib) {
             when (platform) {
-                is JdkPlatform -> completeClasspath += listOf(KotlinArtifacts.getInstance().kotlinStdlib, KotlinArtifacts.getInstance().jetbrainsAnnotations)
-                is JsPlatform -> completeClasspath += KotlinArtifacts.getInstance().kotlinStdlibJs
+                is JdkPlatform -> completeClasspath += listOf(KotlinArtifacts.kotlinStdlib, KotlinArtifacts.jetbrainsAnnotations)
+                is JsPlatform -> completeClasspath += KotlinArtifacts.kotlinStdlibJs
             }
         }
 

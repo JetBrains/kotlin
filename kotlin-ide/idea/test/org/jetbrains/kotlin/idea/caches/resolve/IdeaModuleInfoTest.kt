@@ -475,15 +475,15 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     private fun stdlibCommon(): LibraryEx = projectLibrary(
 
       "kotlin-stdlib-common",
-      KotlinArtifacts.getInstance().kotlinStdlibCommon.jarRoot,
+      KotlinArtifacts.kotlinStdlibCommon.jarRoot,
       kind = CommonLibraryKind
     )
 
-    private fun stdlibJvm(): LibraryEx = projectLibrary("kotlin-stdlib", KotlinArtifacts.getInstance().kotlinStdlib.jarRoot)
+    private fun stdlibJvm(): LibraryEx = projectLibrary("kotlin-stdlib", KotlinArtifacts.kotlinStdlib.jarRoot)
 
     private fun stdlibJs(): LibraryEx = projectLibrary(
       "kotlin-stdlib-js",
-      KotlinArtifacts.getInstance().kotlinStdlibJs.jarRoot,
+      KotlinArtifacts.kotlinStdlibJs.jarRoot,
       kind = JSLibraryKind
     )
 

@@ -61,7 +61,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind,
                 testJdkKind,
-                Collections.singletonList(KotlinArtifacts.getInstance().getJetbrainsAnnotations()),
+                Collections.singletonList(KotlinArtifacts.INSTANCE.getJetbrainsAnnotations()),
                 ArraysKt.filterNotNull(javaSourceRoots),
                 testFilesWithConfigurationDirectives
         );

@@ -22,15 +22,15 @@ class KotlinJdkAndMultiplatformStdlibDescriptor private constructor(private val 
         model.addLib(
             STDLIB_COMMON_LIB_NAME,
             withSources,
-            KotlinArtifacts.getInstance().kotlinStdlibCommon,
-            KotlinArtifacts.getInstance().kotlinStdlibCommonSources
+            KotlinArtifacts.kotlinStdlibCommon,
+            KotlinArtifacts.kotlinStdlibCommonSources
         )
 
         model.addLib(
           STDLIB_LIB_NAME,
           withSources,
-          KotlinArtifacts.getInstance().kotlinStdlib,
-          KotlinArtifacts.getInstance().kotlinStdlibSources
+          KotlinArtifacts.kotlinStdlib,
+          KotlinArtifacts.kotlinStdlibSources
         )
     }
 

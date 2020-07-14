@@ -180,7 +180,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     override fun createJavaParameters(mainClass: String?): JavaParameters {
         return super.createJavaParameters(mainClass).apply {
             ModuleRootManager.getInstance(myModule).orderEntries.asSequence().filterIsInstance<LibraryOrderEntry>()
-            classPath.add(KotlinArtifacts.getInstance().kotlinStdlib)
+            classPath.add(KotlinArtifacts.kotlinStdlib)
             classPath.add(libraryOutputDirectory)
         }
     }
@@ -192,8 +192,8 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
             try {
                 attachLibrary(
                   model, KOTLIN_LIBRARY_NAME,
-                  listOf(KotlinArtifacts.getInstance().kotlinStdlib, KotlinArtifacts.getInstance().jetbrainsAnnotations),
-                  listOf(KotlinArtifacts.getInstance().kotlinStdlibSources)
+                  listOf(KotlinArtifacts.kotlinStdlib, KotlinArtifacts.jetbrainsAnnotations),
+                  listOf(KotlinArtifacts.kotlinStdlibSources)
                 )
 
                 attachLibrary(model, TEST_LIBRARY_NAME, listOf(libraryOutputDirectory), listOf(librarySrcDirectory))

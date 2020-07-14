@@ -49,7 +49,7 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
           File(tmpdir, "output").absolutePath,
           listOf(sourceDir),
           listOf(JvmSourceRoot(sourceDir)),
-          listOf(KotlinArtifacts.getInstance().kotlinStdlib),
+          listOf(KotlinArtifacts.kotlinStdlib),
           emptyList(),
           null,
           JavaModuleBuildTargetType.PRODUCTION.typeId,

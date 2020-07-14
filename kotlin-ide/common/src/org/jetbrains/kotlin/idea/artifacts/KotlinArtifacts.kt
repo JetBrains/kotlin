@@ -16,39 +16,36 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.security.MessageDigest
 
-class KotlinArtifacts private constructor(val kotlinPluginDirectory: File) {
-    companion object {
-        @JvmStatic
-        fun getInstance(): KotlincArtifacts {
-            val classFile = PathUtil.getResourcePathForClass(KotlincArtifacts::class.java)
-            if (!classFile.exists()) {
-                throw FileNotFoundException("Class file not found for class ${KotlincArtifacts::class.java}")
-            }
-            var outDir = classFile
-            while (outDir.name != "out") {
-                outDir = outDir.parentFile ?: throw FileNotFoundException("`out` directory not found")
-            }
-            val jpsTestsArtifactsDir = outDir.resolve("artifacts/KotlinPlugin")
-            val kotlinPluginDirectory = jpsTestsArtifactsDir.resolve("KotlinPlugin")
-            val hashFile = jpsTestsArtifactsDir.resolve("KotlinPlugin.md5")
-            val kotlincJar = findLibrary(
-                MAVEN_REPOSITORY,
-                "kotlinc_dist.xml",
-                "org.jetbrains.kotlin",
-                "kotlin-dist-for-ide"
-            )
-            val hash = kotlincJar.md5()
-            if (hashFile.exists() && hashFile.readText() == hash && kotlinPluginDirectory.exists()) {
-                return KotlincArtifacts(kotlinPluginDirectory)
-            }
-            val dirWhereToExtractKotlinc= kotlinPluginDirectory.resolve("kotlinc").also {
-                it.deleteRecursively()
-                it.mkdirs()
-            }
-            hashFile.writeText(hash)
-            Decompressor.Zip(kotlincJar).extract(dirWhereToExtractKotlinc)
-            return KotlincArtifacts(kotlinPluginDirectory)
+object KotlinArtifacts {
+    val kotlinPluginDirectory: File by lazy {
+        val classFile = PathUtil.getResourcePathForClass(KotlinArtifacts::class.java)
+        if (!classFile.exists()) {
+            throw FileNotFoundException("Class file not found for class ${KotlinArtifacts::class.java}")
         }
+        var outDir = classFile
+        while (outDir.name != "out") {
+            outDir = outDir.parentFile ?: throw FileNotFoundException("`out` directory not found")
+        }
+        val jpsTestsArtifactsDir = outDir.resolve("artifacts/jps-tests-artifacts")
+        val kotlinPluginDirectory = jpsTestsArtifactsDir.resolve("KotlinPlugin")
+        val hashFile = jpsTestsArtifactsDir.resolve("KotlinPlugin.md5")
+        val kotlincJar = findLibrary(
+            MAVEN_REPOSITORY,
+            "kotlinc_dist.xml",
+            "org.jetbrains.kotlin",
+            "kotlin-dist-for-ide"
+        )
+        val hash = kotlincJar.md5()
+        if (hashFile.exists() && hashFile.readText() == hash && kotlinPluginDirectory.exists()) {
+            return@lazy kotlinPluginDirectory
+        }
+        val dirWhereToExtractKotlinc= kotlinPluginDirectory.resolve("kotlinc").also {
+            it.deleteRecursively()
+            it.mkdirs()
+        }
+        hashFile.writeText(hash)
+        Decompressor.Zip(kotlincJar).extract(dirWhereToExtractKotlinc)
+        return@lazy kotlinPluginDirectory
     }
 
     val kotlincDirectory by lazy { findFile(kotlinPluginDirectory, "kotlinc") }

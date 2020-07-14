@@ -291,12 +291,11 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         moduleNew.addLibrary(libOld)
         moduleNew.addLibrary(libNew)
-
-        moduleNew.addLibrary(KotlinArtifacts.getInstance().kotlinStdlib)
+        moduleNew.addLibrary(KotlinArtifacts.kotlinStdlib)
 
         moduleOld.addLibrary(libNew)
         moduleOld.addLibrary(libOld)
-        moduleOld.addLibrary(KotlinArtifacts.getInstance().kotlinStdlib)
+        moduleOld.addLibrary(KotlinArtifacts.kotlinStdlib)
 
         moduleNew.addDependency(moduleOld)
 

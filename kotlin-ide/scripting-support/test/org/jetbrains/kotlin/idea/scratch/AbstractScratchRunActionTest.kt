@@ -116,7 +116,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             compileJavaFiles(javaFiles, options)
         }
 
-        val kotlinArtifacts = KotlinArtifacts.getInstance()
+        val kotlinArtifacts = KotlinArtifacts
         KotlinCompilerStandalone(
             listOf(baseDir),
             target = outputDir,
@@ -346,8 +346,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         private val INSTANCE_WITH_KOTLIN_TEST = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
-              KotlinArtifacts.getInstance().kotlinStdlib,
-              KotlinArtifacts.getInstance().kotlinTest
+              KotlinArtifacts.kotlinStdlib,
+              KotlinArtifacts.kotlinTest
             )
         ) {
             override fun getSdk() = PluginTestCaseBase.fullJdk()
@@ -359,8 +359,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         private val INSTANCE_WITH_SCRIPT_RUNTIME = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
-              KotlinArtifacts.getInstance().kotlinStdlib,
-              KotlinArtifacts.getInstance().kotlinScriptRuntime
+              KotlinArtifacts.kotlinStdlib,
+              KotlinArtifacts.kotlinScriptRuntime
             )
         ) {
             override fun getSdk() = PluginTestCaseBase.fullJdk()

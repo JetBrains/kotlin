@@ -31,7 +31,7 @@ import java.util.List;
 
 public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndLibraryProjectDescriptor {
     protected KotlinWithJdkAndRuntimeLightProjectDescriptor() {
-        super(KotlinArtifacts.getInstance().getKotlinStdlib());
+        super(KotlinArtifacts.INSTANCE.getKotlinStdlib());
     }
 
     public KotlinWithJdkAndRuntimeLightProjectDescriptor(@NotNull List<? extends File> libraryFiles) {
@@ -40,7 +40,7 @@ public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndL
 
     @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
-            Arrays.asList(KotlinArtifacts.getInstance().getKotlinStdlib(),
+            Arrays.asList(KotlinArtifacts.INSTANCE.getKotlinStdlib(),
                           ForTestCompileRuntime.coroutinesCompatForTests())
     );
 
@@ -58,21 +58,20 @@ public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndL
 
     @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_WITH_KOTLIN_TEST = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
-            Arrays.asList(KotlinArtifacts.getInstance().getKotlinStdlib(),
-                          KotlinArtifacts.getInstance().getKotlinTest())
+            Arrays.asList(KotlinArtifacts.INSTANCE.getKotlinStdlib(),
+                          KotlinArtifacts.INSTANCE.getKotlinTest())
     );
 
     @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_WITH_SCRIPT_RUNTIME = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
-
-            Arrays.asList(KotlinArtifacts.getInstance().getKotlinStdlib(),
-                          KotlinArtifacts.getInstance().getKotlinScriptRuntime())
+            Arrays.asList(KotlinArtifacts.INSTANCE.getKotlinStdlib(),
+                          KotlinArtifacts.INSTANCE.getKotlinScriptRuntime())
     );
 
     @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_WITH_REFLECT = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
-            Arrays.asList(KotlinArtifacts.getInstance().getKotlinStdlib(),
-                          KotlinArtifacts.getInstance().getKotlinReflect())
+            Arrays.asList(KotlinArtifacts.INSTANCE.getKotlinStdlib(),
+                          KotlinArtifacts.INSTANCE.getKotlinReflect())
     );
 
     @NotNull

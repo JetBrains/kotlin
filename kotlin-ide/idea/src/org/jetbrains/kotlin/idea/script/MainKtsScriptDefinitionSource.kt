@@ -15,7 +15,7 @@ class MainKtsScriptDefinitionSource : ScriptDefinitionsProvider {
     override fun getDefinitionClasses(): Iterable<String> = emptyList()
 
     override fun getDefinitionsClassPath(): Iterable<File> {
-        return with(KotlinArtifacts.getInstance()) {
+        return with(KotlinArtifacts) {
             listOf(kotlinMainKts, kotlinScriptRuntime, kotlinStdlib, kotlinReflect)
         }
     }

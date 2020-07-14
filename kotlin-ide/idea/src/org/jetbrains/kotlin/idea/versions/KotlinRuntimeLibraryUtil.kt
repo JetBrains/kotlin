@@ -132,7 +132,7 @@ enum class LibraryJarDescriptor(
         return LibraryUtils.getJarFile(listOf(*library.getFiles(orderRootType)), jarName)
     }
 
-    fun getPathInPlugin() = getPath(KotlinArtifacts.getInstance())
+    fun getPathInPlugin() = getPath(KotlinArtifacts)
 }
 
 fun bundledRuntimeVersion(): String = KotlinCompilerVersion.VERSION

@@ -39,7 +39,7 @@ public class ForTestCompileRuntime {
     public static synchronized ClassLoader runtimeJarClassLoader() {
         ClassLoader loader = runtimeJarClassLoader.get();
         if (loader == null) {
-            KotlinArtifacts artifacts = KotlinArtifacts.getInstance();
+            KotlinArtifacts artifacts = KotlinArtifacts.INSTANCE;
             loader = createClassLoader(artifacts.getKotlinStdlib(), artifacts.getKotlinScriptRuntime(), artifacts.getKotlinTest());
             runtimeJarClassLoader = new SoftReference<>(loader);
         }
