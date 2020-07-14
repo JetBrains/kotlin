@@ -83,6 +83,7 @@ object FirErrors {
 
     // Extended checkers group
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, PsiElement>()
+    val REDUNDANT_MODALITY_MODIFIER by warning0<FirSourceElement, PsiElement>()
 }
 
 
