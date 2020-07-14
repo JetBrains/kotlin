@@ -25,6 +25,7 @@ private fun FirDeclarationOrigin.asKtSymbolOrigin() = when (this) {
     FirDeclarationOrigin.Synthetic -> throw InvalidFirDeclarationOriginForSymbol(this)
     FirDeclarationOrigin.FakeOverride -> throw InvalidFirDeclarationOriginForSymbol(this)
     FirDeclarationOrigin.ImportedFromObject -> throw InvalidFirDeclarationOriginForSymbol(this)
+    FirDeclarationOrigin.IntersectionOverride -> throw InvalidFirDeclarationOriginForSymbol(this)
     FirDeclarationOrigin.Enhancement -> throw InvalidFirDeclarationOriginForSymbol(this)
     is FirDeclarationOrigin.Plugin -> throw InvalidFirDeclarationOriginForSymbol(this)
 }

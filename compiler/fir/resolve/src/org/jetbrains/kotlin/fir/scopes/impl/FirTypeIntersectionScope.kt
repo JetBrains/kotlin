@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -100,6 +101,7 @@ class FirTypeIntersectionScope private constructor(
                     val mostSpecificFunction = mostSpecific.fir
                     createFunctionCopy(mostSpecific.fir, newSymbol).apply {
                         resolvePhase = mostSpecificFunction.resolvePhase
+                        origin = FirDeclarationOrigin.IntersectionOverride
                         typeParameters += mostSpecificFunction.typeParameters
                         valueParameters += mostSpecificFunction.valueParameters.mapIndexed { index, mostSpecificParameter ->
                             val overriddenWithDefault =
