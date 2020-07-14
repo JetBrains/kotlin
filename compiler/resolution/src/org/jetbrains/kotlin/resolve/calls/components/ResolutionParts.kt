@@ -238,6 +238,10 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
             if (!callComponents.statelessCallbacks.isCoroutineCall(argument, parameter)) continue
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
 
+            if (argument is LambdaKotlinCallArgument && !argument.hasBuilderInferenceAnnotation) {
+                argument.hasBuilderInferenceAnnotation = true
+            }
+
             for (freshVariable in resolvedCall.freshVariablesSubstitutor.freshVariables) {
                 if (resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(freshVariable.originalTypeParameter) is SimpleTypeArgument)
                     continue

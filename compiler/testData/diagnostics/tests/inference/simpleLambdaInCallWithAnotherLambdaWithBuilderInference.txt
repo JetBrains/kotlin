@@ -1,0 +1,11 @@
+package
+
+@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ R> combined(/*0*/ check: () -> kotlin.Unit, /*1*/ @kotlin.BuilderInference block: TestInterface<R>.() -> kotlin.Unit): R
+public fun test(): kotlin.Unit
+
+public interface TestInterface</*0*/ R> {
+    public abstract fun emit(/*0*/ r: R): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
