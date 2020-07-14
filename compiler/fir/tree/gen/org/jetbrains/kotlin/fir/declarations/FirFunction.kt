@@ -44,6 +44,8 @@ interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTarget
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference)
+
     fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction<F>

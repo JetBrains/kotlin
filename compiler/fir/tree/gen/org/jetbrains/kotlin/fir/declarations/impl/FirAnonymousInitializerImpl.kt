@@ -56,4 +56,8 @@ internal class FirAnonymousInitializerImpl(
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference) {
+        controlFlowGraphReference = newControlFlowGraphReference
+    }
 }

@@ -49,6 +49,8 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference)
+
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)

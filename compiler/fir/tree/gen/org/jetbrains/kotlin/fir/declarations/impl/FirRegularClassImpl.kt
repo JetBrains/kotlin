@@ -107,6 +107,10 @@ internal class FirRegularClassImpl(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference) {
+        controlFlowGraphReference = newControlFlowGraphReference
+    }
+
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSuperTypeRefs)

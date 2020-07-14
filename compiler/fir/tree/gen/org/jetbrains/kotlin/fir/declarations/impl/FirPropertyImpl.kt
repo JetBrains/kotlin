@@ -151,4 +151,8 @@ internal class FirPropertyImpl(
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
         receiverTypeRef = newReceiverTypeRef
     }
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference) {
+        controlFlowGraphReference = newControlFlowGraphReference
+    }
 }

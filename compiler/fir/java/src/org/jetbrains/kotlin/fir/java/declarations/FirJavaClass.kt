@@ -71,6 +71,8 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference) {}
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }

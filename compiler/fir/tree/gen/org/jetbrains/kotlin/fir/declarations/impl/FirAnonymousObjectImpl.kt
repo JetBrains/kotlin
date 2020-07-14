@@ -96,6 +96,10 @@ internal class FirAnonymousObjectImpl(
         superTypeRefs.addAll(newSuperTypeRefs)
     }
 
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference) {
+        controlFlowGraphReference = newControlFlowGraphReference
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }

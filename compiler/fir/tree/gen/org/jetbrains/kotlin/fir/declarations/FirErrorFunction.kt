@@ -46,6 +46,8 @@ abstract class FirErrorFunction : FirPureAbstractElement(), FirFunction<FirError
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference)
+
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorFunction
