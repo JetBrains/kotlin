@@ -4,9 +4,11 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils
 import com.intellij.openapi.project.Project
@@ -105,43 +107,50 @@ class KtDependencyGraph(val project: Project) : Disposable {
         private var createdFileParent: VirtualFile? = null
 
         override fun run() {
-            // write action might add new files to queues, so only remember processed files for duration of read action
-            val alreadyProcessedFiles = THashSet<VirtualFile>()
-            val alreadyProcessedModules = THashSet<Module>()
-
-            while (true) {
-                while (true) {
-                    ProgressManager.checkCanceled()
-                    val file = changedFile
-                        ?: synchronized(changedFiles) { changedFiles.poll() }.also { changedFile = it }
-                        ?: break
-
-                    if (alreadyProcessedFiles.add(file)) dirtyFiles.addAll(getDependentFiles(file))
-                    changedFile = null
-                }
+            try {
+                // write action might add new files to queues, so only remember processed files for duration of read action
+                val alreadyProcessedFiles = THashSet<VirtualFile>()
+                val alreadyProcessedModules = THashSet<Module>()
 
                 while (true) {
-                    ProgressManager.checkCanceled()
-                    val parent = createdFileParent
-                        ?: synchronized(changedFiles) { createdFileParents.poll() }.also { createdFileParent = it }
-                        ?: break
+                    while (true) {
+                        ProgressManager.checkCanceled()
+                        val file = changedFile
+                            ?: synchronized(changedFiles) { changedFiles.poll() }.also { changedFile = it }
+                            ?: break
 
-                    ModuleUtil.findModuleForFile(parent, project)?.takeIf { alreadyProcessedModules.add(it) }?.let { module ->
-                        //TODO: Is there a better way with LookupTracker?
-                        dirtyFiles.addAll(FileTypeIndex.getFiles(KotlinFileType.INSTANCE, module.moduleWithDependentsScope))
+                        if (alreadyProcessedFiles.add(file)) dirtyFiles.addAll(getDependentFiles(file))
+                        changedFile = null
                     }
-                    createdFileParent = null
-                }
 
-                FileSymbolTablesCache.getInstance(project).invalidateDirtyIncludeFiles(dirtyFiles)
-                dirtyFiles.clear()
+                    while (true) {
+                        ProgressManager.checkCanceled()
+                        val parent = createdFileParent
+                            ?: synchronized(changedFiles) { createdFileParents.poll() }.also { createdFileParent = it }
+                            ?: break
 
-                synchronized(changedFiles) {
-                    if (changedFiles.isEmpty() && createdFileParents.isEmpty()) {
-                        invalidationWorker = null
-                        return@run
+                        ModuleUtil.findModuleForFile(parent, project)?.takeIf { alreadyProcessedModules.add(it) }?.let { module ->
+                            //TODO: Is there a better way with LookupTracker?
+                            dirtyFiles.addAll(FileTypeIndex.getFiles(KotlinFileType.INSTANCE, module.moduleWithDependentsScope))
+                        }
+                        createdFileParent = null
+                    }
+
+                    FileSymbolTablesCache.getInstance(project).invalidateDirtyIncludeFiles(dirtyFiles)
+                    dirtyFiles.clear()
+
+                    synchronized(changedFiles) {
+                        if (changedFiles.isEmpty() && createdFileParents.isEmpty()) {
+                            invalidationWorker = null
+                            return@run
+                        }
                     }
                 }
+            } catch (e: ProcessCanceledException) {
+                throw e
+            } catch (t: Throwable) {
+                LOG.error("Error during invalidation", t)
+                throw t
             }
         }
     }
@@ -157,8 +166,13 @@ class KtDependencyGraph(val project: Project) : Disposable {
                         .inSmartMode(project)
                         .expireWith(this)
                         .submit(AppExecutorUtil.getAppExecutorService())
+                        .onError { invalidationWorker = null }
             }
         }
+    }
+
+    fun waitForPendingInvalidation() {
+        ProgressIndicatorUtils.awaitWithCheckCanceled(invalidationWorker ?: return)
     }
 
     private inner class VerificationWorker : Runnable {
@@ -166,44 +180,53 @@ class KtDependencyGraph(val project: Project) : Disposable {
         private var pendingVerificationFile: VirtualFile? = null
 
         override fun run() {
-            // write action might add new files to queues, so only remember processed files for duration of read action
-            val alreadyProcessedFiles = THashSet<VirtualFile>()
+            try {
+                // write action might add new files to queues, so only remember processed files for duration of read action
+                val alreadyProcessedFiles = THashSet<VirtualFile>()
 
-            while (true) {
                 while (true) {
-                    ProgressManager.checkCanceled()
-                    val file = pendingVerificationFile
-                        ?: synchronized(pendingVerificationFiles) { pendingVerificationFiles.poll() }.also { pendingVerificationFile = it }
-                        ?: break
-
-                    if (alreadyProcessedFiles.add(file)) {
-                        val moduleInfo by lazy(LazyThreadSafetyMode.NONE) {
-                            getModuleInfoByVirtualFile(project, file)?.unwrapModuleSourceInfo()
-                        }
-                        for (table in FileSymbolTablesCache.getInstance(project).allTablesForFile(file)) {
-                            val marker = table.getKtDependencyMarker()
-                            if (marker == null || !marker.needsVerification) continue
-                            if (!KtFileTranslator.verifyDependencies(file, moduleInfo, marker.dependencies)) {
-                                dirtyFiles += file
-                                break
+                    while (true) {
+                        ProgressManager.checkCanceled()
+                        val file = pendingVerificationFile
+                            ?: synchronized(pendingVerificationFiles) { pendingVerificationFiles.poll() }.also {
+                                pendingVerificationFile = it
                             }
-                            marker.needsVerification = false
+                            ?: break
+
+                        if (alreadyProcessedFiles.add(file)) {
+                            val moduleInfo by lazy(LazyThreadSafetyMode.NONE) {
+                                getModuleInfoByVirtualFile(project, file)?.unwrapModuleSourceInfo()
+                            }
+                            for (table in FileSymbolTablesCache.getInstance(project).allTablesForFile(file)) {
+                                val marker = table.getKtDependencyMarker()
+                                if (marker == null || !marker.needsVerification) continue
+                                if (!KtFileTranslator.verifyDependencies(file, moduleInfo, marker.dependencies)) {
+                                    dirtyFiles += file
+                                    break
+                                }
+                                marker.needsVerification = false
+                            }
+                        }
+
+                        if (alreadyProcessedFiles.add(file)) dirtyFiles.addAll(getDependentFiles(file))
+                        pendingVerificationFile = null
+                    }
+
+                    FileSymbolTablesCache.getInstance(project).invalidateDirtyIncludeFiles(dirtyFiles)
+                    dirtyFiles.clear()
+
+                    synchronized(pendingVerificationFiles) {
+                        if (pendingVerificationFiles.isEmpty()) {
+                            verificationWorker = null
+                            return@run
                         }
                     }
-
-                    if (alreadyProcessedFiles.add(file)) dirtyFiles.addAll(getDependentFiles(file))
-                    pendingVerificationFile = null
                 }
-
-                FileSymbolTablesCache.getInstance(project).invalidateDirtyIncludeFiles(dirtyFiles)
-                dirtyFiles.clear()
-
-                synchronized(pendingVerificationFiles) {
-                    if (pendingVerificationFiles.isEmpty()) {
-                        verificationWorker = null
-                        return@run
-                    }
-                }
+            } catch (e: ProcessCanceledException) {
+                throw e
+            } catch (t: Throwable) {
+                LOG.error("Error during verification", t)
+                throw t
             }
         }
     }
@@ -217,6 +240,7 @@ class KtDependencyGraph(val project: Project) : Disposable {
                         .inSmartMode(project)
                         .expireWith(this)
                         .submit(AppExecutorUtil.getAppExecutorService())
+                        .onError { verificationWorker = null }
             }
         }
     }
@@ -248,6 +272,8 @@ class KtDependencyGraph(val project: Project) : Disposable {
 
     companion object {
         fun getInstance(project: Project): KtDependencyGraph = project.service()
+
+        private val LOG = Logger.getInstance("#org.jetbrains.konan.resolve.KtDependencyGraph")
 
         private fun isRelevant(file: VirtualFile): Boolean = FileTypeManager.getInstance().isFileOfType(file, KotlinFileType.INSTANCE)
 
