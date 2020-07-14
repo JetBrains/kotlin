@@ -190,7 +190,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     addCommonSourceFiles(arg)
                 }
 
-                if (File(arg).isDirectory) {
+                if (arg.endsWith(".srcjar") || File(arg).isDirectory) {
                     addJavaSourceRoot(JavaRootPath(arg, args.javaPackagePrefix))
                 }
             }
