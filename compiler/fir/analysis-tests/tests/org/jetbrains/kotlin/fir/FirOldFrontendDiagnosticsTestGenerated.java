@@ -9380,6 +9380,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/generics/starProjections/collectionInheritedFromJava.kt");
             }
 
+            @TestMetadata("foldRecursiveTypesToStarProjection.kt")
+            public void testFoldRecursiveTypesToStarProjection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/starProjections/foldRecursiveTypesToStarProjection.kt");
+            }
+
             @TestMetadata("inheritedFromJava.kt")
             public void testInheritedFromJava() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/starProjections/inheritedFromJava.kt");
