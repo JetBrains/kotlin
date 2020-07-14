@@ -3,50 +3,45 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.declarations.impl.carriers
+package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 
-interface ClassCarrier : DeclarationCarrier {
-    var thisReceiverField: IrValueParameter?
-    var metadataField: MetadataSource?
-    var visibilityField: Visibility
-    var modalityField: Modality
-    var attributeOwnerIdField: IrAttributeContainer
-    var typeParametersField: List<IrTypeParameter>
-    var superTypesField: List<IrType>
+interface ConstructorCarrier : FunctionBaseCarrier {
 
-    override fun clone(): ClassCarrier {
-        return ClassCarrierImpl(
+    override fun clone(): ConstructorCarrier {
+        return ConstructorCarrierImpl(
             lastModified,
             parentField,
             originField,
             annotationsField,
-            thisReceiverField,
+            returnTypeFieldField,
+            dispatchReceiverParameterField,
+            extensionReceiverParameterField,
+            bodyField,
             metadataField,
             visibilityField,
-            modalityField,
-            attributeOwnerIdField,
             typeParametersField,
-            superTypesField
+            valueParametersField
         )
     }
 }
 
-class ClassCarrierImpl(
+class ConstructorCarrierImpl(
     override val lastModified: Int,
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,
     override var annotationsField: List<IrConstructorCall>,
-    override var thisReceiverField: IrValueParameter?,
+    override var returnTypeFieldField: IrType,
+    override var dispatchReceiverParameterField: IrValueParameter?,
+    override var extensionReceiverParameterField: IrValueParameter?,
+    override var bodyField: IrBody?,
     override var metadataField: MetadataSource?,
     override var visibilityField: Visibility,
-    override var modalityField: Modality,
-    override var attributeOwnerIdField: IrAttributeContainer,
     override var typeParametersField: List<IrTypeParameter>,
-    override var superTypesField: List<IrType>
-) : ClassCarrier
+    override var valueParametersField: List<IrValueParameter>
+) : ConstructorCarrier

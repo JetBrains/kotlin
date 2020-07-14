@@ -3,24 +3,24 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.declarations.impl.carriers
+package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-interface LocalDelegatedPropertyCarrier : DeclarationCarrier {
-    var delegateField: IrVariable?
-    var getterField: IrFunction?
-    var setterField: IrFunction?
+interface PropertyCarrier : DeclarationCarrier {
+    var backingFieldField: IrField?
+    var getterField: IrSimpleFunction?
+    var setterField: IrSimpleFunction?
     var metadataField: MetadataSource?
 
-    override fun clone(): LocalDelegatedPropertyCarrier {
-        return LocalDelegatedPropertyCarrierImpl(
+    override fun clone(): PropertyCarrier {
+        return PropertyCarrierImpl(
             lastModified,
             parentField,
             originField,
             annotationsField,
-            delegateField,
+            backingFieldField,
             getterField,
             setterField,
             metadataField
@@ -28,13 +28,13 @@ interface LocalDelegatedPropertyCarrier : DeclarationCarrier {
     }
 }
 
-class LocalDelegatedPropertyCarrierImpl(
+class PropertyCarrierImpl(
     override val lastModified: Int,
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,
     override var annotationsField: List<IrConstructorCall>,
-    override var delegateField: IrVariable?,
-    override var getterField: IrFunction?,
-    override var setterField: IrFunction?,
+    override var backingFieldField: IrField?,
+    override var getterField: IrSimpleFunction?,
+    override var setterField: IrSimpleFunction?,
     override var metadataField: MetadataSource?
-) : LocalDelegatedPropertyCarrier
+) : PropertyCarrier

@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrBodyBase
-import org.jetbrains.kotlin.ir.declarations.impl.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.util.isLocal
 
@@ -18,7 +18,7 @@ open class MutableController(val context: JsIrBackendContext, val lowerings: Lis
     override var currentStage: Int = 0
 
     override fun lazyLower(declaration: IrDeclaration) {
-        if (declaration is IrDeclarationBase<*>) {
+        if (declaration is PersistentIrDeclarationBase<*>) {
             while (declaration.loweredUpTo + 1 < currentStage) {
                 val i = declaration.loweredUpTo + 1
                 withStage(i) {
@@ -44,7 +44,7 @@ open class MutableController(val context: JsIrBackendContext, val lowerings: Lis
     }
 
     override fun lazyLower(body: IrBody) {
-        if (body is IrBodyBase<*>) {
+        if (body is PersistentIrBodyBase<*>) {
             for (i in (body.loweredUpTo + 1) until currentStage) {
                 withStage(i) {
                     if (body.container !in context.externalDeclarations) {
@@ -63,7 +63,7 @@ open class MutableController(val context: JsIrBackendContext, val lowerings: Lis
     }
 
     // Launches a lowering and applies it's results
-    private fun DeclarationLowering.doApplyLoweringTo(declaration: IrDeclarationBase<*>) {
+    private fun DeclarationLowering.doApplyLoweringTo(declaration: PersistentIrDeclarationBase<*>) {
         val parentBefore = declaration.parent
         val result = restrictTo(declaration) { this.declarationTransformer(context).transformFlat(declaration) }
         if (result != null) {

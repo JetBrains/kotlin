@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSeria
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.util.*
@@ -448,7 +448,7 @@ class GenerateIrRuntime {
 
     private fun doPsi2Ir(files: List<KtFile>, analysisResult: AnalysisResult): IrModuleFragment {
         val psi2Ir = Psi2IrTranslator(languageVersionSettings, Psi2IrConfiguration())
-        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
+        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), PersistentIrFactory)
         val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
 
         val irBuiltIns = psi2IrContext.irBuiltIns
@@ -508,7 +508,7 @@ class GenerateIrRuntime {
     private fun doDeserializeIrModule(moduleDescriptor: ModuleDescriptorImpl): DeserializedModuleInfo {
         val mangler = JsManglerDesc
         val signaturer = IdSignatureDescriptor(mangler)
-        val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
+        val symbolTable = SymbolTable(signaturer, PersistentIrFactory)
         val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns).also {
             it.constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
         }
@@ -537,7 +537,7 @@ class GenerateIrRuntime {
         val moduleDescriptor = doDeserializeModuleMetadata(moduleRef)
         val mangler = JsManglerDesc
         val signaturer = IdSignatureDescriptor(mangler)
-        val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
+        val symbolTable = SymbolTable(signaturer, PersistentIrFactory)
         val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns).also {
             it.constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
         }

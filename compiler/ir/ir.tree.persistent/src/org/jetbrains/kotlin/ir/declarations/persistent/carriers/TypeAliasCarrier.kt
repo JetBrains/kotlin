@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.declarations.impl.carriers
+package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -31,4 +31,4 @@ class TypeAliasCarrierImpl(
     override var originField: IrDeclarationOrigin,
     override var annotationsField: List<IrConstructorCall>,
     override var typeParametersField: List<IrTypeParameter>
-    ) : TypeAliasCarrier
+) : TypeAliasCarrier

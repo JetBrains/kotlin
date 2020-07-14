@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.declarations.impl.carriers
+package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
 interface Carrier {
     val lastModified: Int
