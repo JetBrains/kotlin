@@ -169,10 +169,6 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
                         serviceImplementation="org.jetbrains.kotlin.idea.references.KotlinReferenceContributor"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts"
-                        serviceImplementation="org.jetbrains.kotlin.idea.artifacts.ProductionKotlinArtifacts"
-                        testServiceImplementation="org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts"/>
-
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.kotlin.idea.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
 

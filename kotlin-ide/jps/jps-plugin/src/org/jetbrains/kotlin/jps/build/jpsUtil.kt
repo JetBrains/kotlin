@@ -21,11 +21,6 @@ import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.module.JpsModule
-import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
-import org.jetbrains.kotlin.idea.artifacts.ProductionKotlinArtifacts
-import org.jetbrains.kotlin.idea.artifacts.ProductionLikeKotlinArtifacts
-import org.jetbrains.kotlin.utils.PathUtil
-import java.io.File
 
 fun ModuleChunk.isDummy(context: CompileContext): Boolean {
     val targetIndex = context.projectDescriptor.buildTargetIndex
@@ -51,11 +46,3 @@ val JpsModule.productionBuildTarget
 val JpsModule.testBuildTarget
     get() = ModuleBuildTarget(this, true)
 
-fun KotlinArtifacts.Companion.getInstanceForJps(): KotlinArtifacts {
-    if (System.getProperty("kotlin.jps.tests") == "true") {
-        val artifactsClass = Class.forName("org.jetbrains.kotlin.jps.artifacts.JpsPluginTestArtifacts")
-        return artifactsClass.getMethod("getInstance").invoke(null) as KotlinArtifacts
-    } else {
-        return ProductionKotlinArtifacts
-    }
-}
