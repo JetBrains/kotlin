@@ -1416,6 +1416,7 @@ internal object EscapeAnalysis {
                 // opposite subgraph: [d -> v; d -> w; v !-> w; w !-> v] is not interesting, because [d]
                 // can't hold both values simultaneously, but two references can hold the same value
                 // at the same time, that's the difference.
+                // For concrete example see [codegen/escapeAnalysis/test10.kt].
                 val connectedNodes = mutableSetOf<Pair<PointsToGraphNode, PointsToGraphNode>>()
                 allNodes.filter { nodeIds[it] != null && nodeIds[it.drain] == null /* The drain has been optimized away */ }
                         .forEach { node ->

@@ -2770,6 +2770,10 @@ task expression_as_statement(type: KonanLocalTest) {
     source = "codegen/basics/expression_as_statement.kt"
 }
 
+task codegen_escapeAnalysis_zeroOutObjectOnAlloc(type: KonanLocalTest) {
+    source = "codegen/escapeAnalysis/zeroOutObjectOnAlloc.kt"
+}
+
 task memory_var1(type: KonanLocalTest) {
     source = "runtime/memory/var1.kt"
 }
