@@ -1,11 +1,14 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverrideFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFakeOverridePropertyImpl
 import org.jetbrains.kotlin.ir.util.*
 
 class FakeOverrideCopier(
@@ -47,7 +50,7 @@ class FakeOverrideCopier(
         }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
-        IrFakeOverrideFunctionImpl(
+        declaration.factory.createFakeOverrideFunction(
             declaration.startOffset, declaration.endOffset,
             IrDeclarationOrigin.FAKE_OVERRIDE,
             symbolRenamer.getFunctionName(declaration.symbol),
@@ -67,7 +70,7 @@ class FakeOverrideCopier(
 
 
     override fun visitProperty(declaration: IrProperty): IrProperty =
-        IrFakeOverridePropertyImpl(
+        declaration.factory.createFakeOverrideProperty(
             declaration.startOffset, declaration.endOffset,
             IrDeclarationOrigin.FAKE_OVERRIDE,
             declaration.name,
