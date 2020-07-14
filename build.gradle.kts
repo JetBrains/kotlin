@@ -229,6 +229,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:frontend.java",
     ":compiler:cli-common",
     ":compiler:ir.tree",
+    ":compiler:ir.tree.impl",
     ":compiler:ir.tree.persistent",
     ":compiler:ir.psi2ir",
     ":compiler:ir.backend.common",
