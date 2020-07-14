@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -38,7 +39,8 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
     fun generateExport(module: IrModuleFragment): ExportedModule =
         ExportedModule(
-            sanitizeName(context.configuration[CommonConfigurationKeys.MODULE_NAME]!!),
+            context.configuration[CommonConfigurationKeys.MODULE_NAME]!!,
+            context.configuration[JSConfigurationKeys.MODULE_KIND]!!,
             (context.externalPackageFragment.values + module.files).flatMap {
                 generateExport(it)
             }

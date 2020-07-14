@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.ir.backend.js.export
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 sealed class ExportedDeclaration
 
 data class ExportedModule(
     val name: String,
+    val moduleKind: ModuleKind,
     val declarations: List<ExportedDeclaration>
 )
 
