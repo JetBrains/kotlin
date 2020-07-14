@@ -9,12 +9,10 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import java.util.concurrent.ConcurrentMap
 
 interface KtUltraLightSupport {
     val moduleName: String
@@ -23,6 +21,7 @@ interface KtUltraLightSupport {
     val moduleDescriptor: ModuleDescriptor
     val isReleasedCoroutine: Boolean
     fun hasAlias(file: KtFile, shortName: Name?): Boolean = false
+    fun getConstantEvaluator(expression: KtExpression): ConstantExpressionEvaluator
 
     companion object {
         // This property may be removed once IntelliJ versions earlier than 2018.3 become unsupported
@@ -52,4 +51,7 @@ class UltraLightSupportViaService(private val ktElement: KtElement) : KtUltraLig
 
     override val isReleasedCoroutine: Boolean
         get() = serviceProvidedSupport.isReleasedCoroutine
+
+    override fun getConstantEvaluator(expression: KtExpression): ConstantExpressionEvaluator =
+        serviceProvidedSupport.getConstantEvaluator(expression)
 }

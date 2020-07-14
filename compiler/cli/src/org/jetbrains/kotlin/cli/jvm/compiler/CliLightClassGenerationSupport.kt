@@ -24,9 +24,6 @@ import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolderImpl
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightClassForFacade
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightClassForScript
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -36,7 +33,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
 import org.jetbrains.kotlin.name.FqName
@@ -44,9 +40,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator as ResolveEvaluator
 
 /**
  * This class solves the problem of interdependency between analyzing Kotlin code and generating JetLightClasses
@@ -64,11 +60,16 @@ class CliLightClassGenerationSupport(private val traceHolder: CliTraceHolder) : 
 
     private val ultraLightSupport = object : KtUltraLightSupport {
 
+        //TODO: languageVersionSettings is always default
         private val languageVersionSettings: LanguageVersionSettings
-            get() = getContext().languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
+            get() = getContext().languageVersionSettings
+                ?: LanguageVersionSettingsImpl.DEFAULT
 
         override val isReleasedCoroutine
             get() = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+
+        override fun getConstantEvaluator(expression: KtExpression): org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator =
+            ResolveEvaluator(moduleDescriptor, languageVersionSettings, expression.project)
 
         override val moduleDescriptor get() = traceHolder.module
 
@@ -174,4 +175,6 @@ class CliLightClassGenerationSupport(private val traceHolder: CliTraceHolder) : 
     override fun analyzeAnnotation(element: KtAnnotationEntry) = traceHolder.bindingContext.get(BindingContext.ANNOTATION, element)
 
     override fun analyzeWithContent(element: KtClassOrObject) = traceHolder.bindingContext
+
+
 }

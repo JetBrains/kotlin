@@ -21,6 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightElementWithNullabilityAnnotation
+import org.jetbrains.kotlin.asJava.classes.runReadAction
 import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -32,6 +33,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.types.TypeUtils
 
 /**
  * Can be null in scripts and for elements from non-jvm modules.
@@ -248,4 +253,31 @@ fun fastCheckIsNullabilityApplied(lightElement: KtLightElement<*, PsiModifierLis
     }
 
     return true
+}
+
+fun computeExpression(expression: PsiElement): Any? {
+    fun evalConstantValue(constantValue: ConstantValue<*>): Any? {
+        return if (constantValue is ArrayValue) {
+            val items = constantValue.value.map { evalConstantValue(it) }
+            items.singleOrNull() ?: items
+        } else constantValue.value
+    }
+
+    val expressionToCompute = when (expression) {
+        is KtLightElementBase -> expression.kotlinOrigin as? KtExpression ?: return null
+        else -> return null
+    }
+
+    val generationSupport = LightClassGenerationSupport.getInstance(expressionToCompute.project)
+    val evaluator = generationSupport
+        .getUltraLightClassSupport(expressionToCompute)
+        .getConstantEvaluator(expressionToCompute)
+
+    val constant = runReadAction {
+        val evaluatorTrace = DelegatingBindingTrace(generationSupport.analyze(expressionToCompute), "Evaluating annotation argument")
+        evaluator.evaluateExpression(expressionToCompute, evaluatorTrace)
+    } ?: return null
+
+    if (constant.isError) return null
+    return evalConstantValue(constant.toConstantValue(TypeUtils.NO_EXPECTED_TYPE))
 }

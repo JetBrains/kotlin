@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
@@ -46,12 +47,18 @@ import java.util.concurrent.ConcurrentMap
 
 class IDELightClassGenerationSupport(private val project: Project) : LightClassGenerationSupport() {
 
-    private inner class KtUltraLightSupportImpl(private val element: KtElement) : KtUltraLightSupport {
+    private class KtUltraLightSupportImpl(private val element: KtElement) : KtUltraLightSupport {
 
         private val module = ModuleUtilCore.findModuleForPsiElement(element)
 
+        private val languageVersionSettings
+            get() = module?.languageVersionSettings ?: KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT
+
         override val isReleasedCoroutine
-            get() = module?.languageVersionSettings?.supportsFeature(LanguageFeature.ReleaseCoroutines) ?: true
+            get() = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines) ?: true
+
+        override fun getConstantEvaluator(expression: KtExpression): ConstantExpressionEvaluator =
+            ConstantExpressionEvaluator(moduleDescriptor, KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, expression.project)
 
         private val resolutionFacade get() = element.getResolutionFacade()
 
@@ -68,7 +75,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         override val typeMapper: KotlinTypeMapper by lazyPub {
             KotlinTypeMapper(
                 BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES,
-                moduleName, KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
+                moduleName, languageVersionSettings,
                 jvmTarget = JvmTarget.JVM_1_8,
                 typePreprocessor = KotlinType::cleanFromAnonymousTypes,
                 namePreprocessor = ::tryGetPredefinedName
