@@ -118,6 +118,7 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(
                         if (callable is KtProperty) {
                             callableDescriptor.getContainingScope()
                                 ?.findFunction(callableDescriptor.name, NoLookupLocation.FROM_IDE) { it.valueParameters.isEmpty() }
+                                ?.takeIf { it.receiverType() == callableDescriptor.receiverType() }
                                 ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                                 ?.let { reportDeclarationConflict(conflicts, it) { s -> KotlinBundle.message("0.already.exists", s) } }
                         } else if (callable is PsiMethod) callable.checkDeclarationConflict(propertyName, conflicts, callables)

@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+class Foo {
+    fun isEmpty(): Boolean = true
+}

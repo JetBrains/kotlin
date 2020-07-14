@@ -119,6 +119,7 @@ class ConvertFunctionToPropertyIntention :
 
                     callableDescriptor.getContainingScope()
                         ?.findVariable(callableDescriptor.name, NoLookupLocation.FROM_IDE)
+                        ?.takeIf { it.receiverType() == callableDescriptor.receiverType() }
                         ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                         ?.let { reportDeclarationConflict(conflicts, it) { s -> KotlinBundle.message("0.already.exists", s) } }
                 }

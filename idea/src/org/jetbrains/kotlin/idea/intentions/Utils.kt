@@ -363,3 +363,5 @@ fun KotlinType.reflectToRegularFunctionType(): KotlinType {
         if (isKSuspendFunctionType) builtIns.getSuspendFunction(parameterCount) else builtIns.getFunction(parameterCount)
     return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
 }
+
+fun CallableDescriptor.receiverType(): KotlinType? = (dispatchReceiverParameter ?: extensionReceiverParameter)?.type

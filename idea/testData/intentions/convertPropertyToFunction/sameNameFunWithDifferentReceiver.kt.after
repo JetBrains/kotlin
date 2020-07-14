@@ -1,0 +1,9 @@
+package foo
+
+class A
+
+class B
+
+fun A.x(): String = "A.x"
+
+fun B.getX(): String = "B.x"
