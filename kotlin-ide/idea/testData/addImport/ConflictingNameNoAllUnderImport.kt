@@ -1,4 +1,4 @@
-// IMPORT: java.sql.Date
+// IMPORT: dependency.Date
 package p
 
 import java.util.*

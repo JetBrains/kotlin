@@ -1,9 +1,9 @@
 // IMPORT: java.util.Calendar
 package p
 
-import java.sql.*
+import dependency2.*
 import dependency.Date // import of function does not affect class name conflict
-import java.sql.Date
+import dependency2.Date
 import java.util.*
 
 val d = Date(1)

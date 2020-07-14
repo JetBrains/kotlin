@@ -1,8 +1,8 @@
 // IMPORT: java.util.Calendar
 package p
 
-import java.sql.*
-import java.sql.Date
+import dependency.*
+import dependency.Date
 import java.util.*
 
 val d = Date()

@@ -1,4 +1,4 @@
-// IMPORT: java.sql.Date
+// IMPORT: dependency.Date
 import java.util.*
 
 val d: Date = Date()
