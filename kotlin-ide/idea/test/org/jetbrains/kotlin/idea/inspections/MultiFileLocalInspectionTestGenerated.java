@@ -76,6 +76,11 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
         runTest("testData/multiFileLocalInspections/reconcilePackageWithDirectory/changeToNonDefaultPackage/changeToNonDefaultPackage.test");
     }
 
+    @TestMetadata("reconcilePackageWithDirectory/changeToNonDefaultPackageFromRootWithPackageKeyword/changeToNonDefaultPackageFromRootWithPackageKeyword.test")
+    public void testReconcilePackageWithDirectory_changeToNonDefaultPackageFromRootWithPackageKeyword_ChangeToNonDefaultPackageFromRootWithPackageKeyword() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/reconcilePackageWithDirectory/changeToNonDefaultPackageFromRootWithPackageKeyword/changeToNonDefaultPackageFromRootWithPackageKeyword.test");
+    }
+
     @TestMetadata("reconcilePackageWithDirectory/innerClass/innerClass.test")
     public void testReconcilePackageWithDirectory_innerClass_InnerClass() throws Exception {
         runTest("testData/multiFileLocalInspections/reconcilePackageWithDirectory/innerClass/innerClass.test");
