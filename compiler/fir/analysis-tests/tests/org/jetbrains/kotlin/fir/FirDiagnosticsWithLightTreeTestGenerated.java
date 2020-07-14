@@ -1807,6 +1807,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/properties/javaAccessorsComplex.kt");
         }
 
+        @TestMetadata("kotlinOverridesJavaComplex.kt")
+        public void testKotlinOverridesJavaComplex() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/properties/kotlinOverridesJavaComplex.kt");
+        }
+
         @TestMetadata("noBackingFieldForExtension.kt")
         public void testNoBackingFieldForExtension() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/properties/noBackingFieldForExtension.kt");

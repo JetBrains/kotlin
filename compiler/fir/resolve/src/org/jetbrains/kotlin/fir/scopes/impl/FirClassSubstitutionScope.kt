@@ -68,13 +68,15 @@ class FirClassSubstitutionScope(
         functionSymbol: FirFunctionSymbol<*>,
         processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
     ): ProcessorAction {
-        val unwrapped = functionSymbol.overriddenSymbol as FirFunctionSymbol<*>? ?: functionSymbol
-        val overriddenDepth = if (unwrapped != functionSymbol) 1 else 0
-        if (!processor(unwrapped, overriddenDepth)) {
+        if (!useSiteMemberScope.processOverriddenFunctionsWithDepth(functionSymbol, processor)) {
+            return ProcessorAction.STOP
+        }
+        val unwrapped = functionSymbol.overriddenSymbol as FirFunctionSymbol<*>? ?: return ProcessorAction.NEXT
+        if (!processor(unwrapped, 1)) {
             return ProcessorAction.STOP
         }
         return useSiteMemberScope.processOverriddenFunctionsWithDepth(unwrapped) { symbol, depth ->
-            processor(symbol, depth + overriddenDepth)
+            processor(symbol, depth + 1)
         }
     }
 

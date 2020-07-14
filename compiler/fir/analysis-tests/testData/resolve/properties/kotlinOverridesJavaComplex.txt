@@ -1,0 +1,30 @@
+FILE: Test.kt
+    public abstract interface Light : R|kotlin/Any| {
+    }
+    public final class LightMember<D> : R|Light|, R|Member<D>| {
+        public constructor<D>(): R|LightMember<D>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun getName(): R|kotlin/String| {
+            ^getName String(Light)
+        }
+
+    }
+    public abstract interface Field : R|Named| {
+    }
+    public final class LightField<D> : R|LightMember<kotlin/Any>|, R|Field| {
+        public constructor<D>(): R|LightField<D>| {
+            super<R|LightMember<kotlin/Any>|>()
+        }
+
+        public final fun test(other: R|kotlin/Any?|): R|kotlin/Unit| {
+            when () {
+                (R|<local>/other| is R|LightField<*>|) ->  {
+                    R|<local>/other|.R|/LightMember.name|
+                }
+            }
+
+        }
+
+    }
