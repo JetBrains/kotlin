@@ -447,8 +447,9 @@ class Fir2IrVisitor(
         if (castTypeRef is FirResolvedTypeRef && originalTypeRef is FirResolvedTypeRef) {
             val castType = castTypeRef.type
             if (castType is ConeIntersectionType) {
+                val unwrappedSymbol = (referencedSymbol as? FirCallableSymbol)?.overriddenSymbol ?: referencedSymbol
                 castType.intersectedTypes.forEach {
-                    if (it.doesContainReferencedSymbolInScope(referencedSymbol, calleeReference.name)) {
+                    if (it.doesContainReferencedSymbolInScope(unwrappedSymbol, calleeReference.name)) {
                         return implicitCastOrExpression(value, it)
                     }
                 }

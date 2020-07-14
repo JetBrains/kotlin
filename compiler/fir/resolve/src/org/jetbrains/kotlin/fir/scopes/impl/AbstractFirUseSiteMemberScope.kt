@@ -6,13 +6,8 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirValueParameterBuilder
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -107,35 +102,6 @@ abstract class AbstractFirUseSiteMemberScope(
 
         return newSymbol
     }
-
-    protected open fun createFunctionCopy(
-        firSimpleFunction: FirSimpleFunction,
-        newSymbol: FirNamedFunctionSymbol
-    ): FirSimpleFunctionBuilder =
-        FirSimpleFunctionBuilder().apply {
-            source = firSimpleFunction.source
-            session = firSimpleFunction.session
-            origin = FirDeclarationOrigin.FakeOverride
-            returnTypeRef = firSimpleFunction.returnTypeRef
-            receiverTypeRef = firSimpleFunction.receiverTypeRef
-            name = firSimpleFunction.name
-            status = firSimpleFunction.status
-            symbol = newSymbol
-        }
-
-    protected open fun createValueParameterCopy(parameter: FirValueParameter, newDefaultValue: FirExpression?): FirValueParameterBuilder =
-        FirValueParameterBuilder().apply {
-            source = parameter.source
-            session = parameter.session
-            origin = FirDeclarationOrigin.FakeOverride
-            returnTypeRef = parameter.returnTypeRef
-            name = parameter.name
-            symbol = FirVariableSymbol(parameter.symbol.callableId)
-            defaultValue = newDefaultValue
-            isCrossinline = parameter.isCrossinline
-            isNoinline = parameter.isNoinline
-            isVararg = parameter.isVararg
-        }
 
     override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,

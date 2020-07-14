@@ -91,8 +91,22 @@ class FirTypeIntersectionScope private constructor(
             val extractedOverrides = extractBothWaysOverridable(maxByVisibility, allMembers)
 
             val mostSpecific = selectMostSpecificMember(extractedOverrides)
-            overriddenSymbols[mostSpecific] = extractedOverrides
-            processor(mostSpecific)
+            if (extractedOverrides.size > 1 && mostSpecific is FirNamedFunctionSymbol) {
+                // TODO: same code for properties
+                val newSymbol = FirNamedFunctionSymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific)
+                val mostSpecificFunction = mostSpecific.fir
+                createFunctionCopy(mostSpecific.fir, newSymbol).apply {
+                    resolvePhase = mostSpecificFunction.resolvePhase
+                    typeParameters += mostSpecificFunction.typeParameters
+                    valueParameters += mostSpecificFunction.valueParameters
+                }.build()
+                overriddenSymbols[newSymbol] = extractedOverrides
+                @Suppress("UNCHECKED_CAST")
+                processor(newSymbol as D)
+            } else {
+                overriddenSymbols[mostSpecific] = extractedOverrides
+                processor(mostSpecific)
+            }
         }
 
         return true
@@ -240,12 +254,13 @@ class FirTypeIntersectionScope private constructor(
         functionSymbol: FirFunctionSymbol<*>,
         processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
     ): ProcessorAction {
-        for (directOverridden in getDirectOverriddenSymbols(functionSymbol)) {
-            if (!processor(directOverridden, 0)) return ProcessorAction.STOP
+        for (overridden in getDirectOverriddenSymbols(functionSymbol)) {
+            val overriddenDepth = if (overridden is FirNamedFunctionSymbol && overridden.overriddenSymbol != null) 0 else 1
+            if (!processor(overridden, overriddenDepth)) return ProcessorAction.STOP
             // TODO: Preserve the scope where directOverridden came from
             for (scope in scopes) {
-                if (!scope.processOverriddenFunctionsWithDepth(directOverridden) { symbol, depth ->
-                        processor(symbol, depth)
+                if (!scope.processOverriddenFunctionsWithDepth(overridden) { symbol, depth ->
+                        processor(symbol, depth + overriddenDepth)
                     }
                 ) return ProcessorAction.STOP
             }
