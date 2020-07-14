@@ -1,8 +1,10 @@
 // "Add 'testng' to classpath" "true"
 // ERROR: Unresolved reference: BeforeMethod
-// ERROR: Unresolved reference: testng
-// UNCONFIGURE_LIBRARY: testng
 // WITH_RUNTIME
+
+// Do not apply quickfix as platform can't handle open maven download dialog in unit test mode
+// APPLY_QUICKFIX: false
+
 package some
 
 abstract class KBase {
