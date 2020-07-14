@@ -10,11 +10,12 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames.NO_NAME_PROVIDED
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -37,6 +38,28 @@ class KtUltraLightClassForFacade(
     override val lightClassData: LightClassData get() = invalidAccess()
 
     override val javaFileStub: PsiJavaFileStub? = null
+
+    private val _modifierList: PsiModifierList =
+        KtUltraLightSimpleModifierList(owner = this, modifiers = setOf(PsiModifier.PUBLIC, PsiModifier.FINAL))
+
+    private val _givenAnnotations: List<KtLightAbstractAnnotation>? by lazyPub {
+        files.flatMap { file ->
+            file.annotationEntries.mapNotNull { entry ->
+                entry.analyzeAnnotation()?.fqName?.let { fqName ->
+                    KtLightAnnotationForSourceEntry(
+                        qualifiedName = fqName.asString(),
+                        kotlinOrigin = entry,
+                        parent = _modifierList,
+                        lazyClsDelegate = null
+                    )
+                }
+            }
+        }
+    }
+
+    override val givenAnnotations: List<KtLightAbstractAnnotation>? get() = _givenAnnotations
+
+    override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun getScope(): PsiElement? = parent
 

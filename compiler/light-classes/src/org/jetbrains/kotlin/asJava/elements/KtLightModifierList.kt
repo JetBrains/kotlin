@@ -92,30 +92,19 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
     }
 }
 
-open class KtUltraLightSimpleModifierList(
+class KtUltraLightSimpleModifierList(
     owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>,
     private val modifiers: Set<String>,
-    private val support: KtUltraLightSupport
-) : KtUltraLightModifierList<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner, support) {
+) : KtUltraLightModifierListBase<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner) {
     override fun hasModifierProperty(name: String) = name in modifiers
 
-    override fun copy() = KtUltraLightSimpleModifierList(owner, modifiers, support)
+    override fun copy() = KtUltraLightSimpleModifierList(owner, modifiers)
 }
 
 abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     owner: T,
     private val support: KtUltraLightSupport
-) : KtLightModifierList<T>(owner) {
-
-    override val clsDelegate: PsiModifierList get() = invalidAccess()
-
-    private fun throwInvalidOperation(): Nothing = throw IncorrectOperationException()
-
-    override fun setModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
-
-    override fun checkSetModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
-
-    override fun addAnnotation(qualifiedName: String): PsiAnnotation = throwInvalidOperation()
+) : KtUltraLightModifierListBase<T>(owner) {
 
     override fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> {
 
@@ -136,7 +125,25 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
     }
 }
 
-open class KtLightSimpleModifierList(
+abstract class KtUltraLightModifierListBase<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
+    owner: T
+) : KtLightModifierList<T>(owner) {
+
+    override val clsDelegate: PsiModifierList get() = invalidAccess()
+
+    private fun throwInvalidOperation(): Nothing = throw IncorrectOperationException()
+
+    override fun setModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
+
+    override fun checkSetModifierProperty(name: String, value: Boolean): Unit = throwInvalidOperation()
+
+    override fun addAnnotation(qualifiedName: String): PsiAnnotation = throwInvalidOperation()
+
+    override fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> =
+        emptyList()
+}
+
+class KtLightSimpleModifierList(
     owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>, private val modifiers: Set<String>
 ) : KtLightModifierList<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner) {
     override fun hasModifierProperty(name: String) = name in modifiers

@@ -13,10 +13,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightFieldForSourceDeclarationSupport
-import org.jetbrains.kotlin.asJava.elements.KtUltraLightSimpleModifierList
+import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -33,16 +30,17 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 
-private class KtUltraLightSimpleModifierListField(
+private class KtUltraLightFieldModifierList(
     private val support: KtUltraLightSupport,
     private val declaration: KtNamedDeclaration,
     owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>,
     private val modifiers: Set<String>,
-) : KtUltraLightSimpleModifierList(owner, modifiers, support) {
+) : KtUltraLightModifierList<KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(owner, support) {
+
     override fun hasModifierProperty(name: String): Boolean = when (name) {
         PsiModifier.VOLATILE -> hasFieldAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
         PsiModifier.TRANSIENT -> hasFieldAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)
-        else -> super.hasModifierProperty(name)
+        else -> modifiers.contains(name)
     }
 
     private fun hasFieldAnnotation(fqName: FqName): Boolean {
@@ -54,7 +52,7 @@ private class KtUltraLightSimpleModifierListField(
         return target == expectedTarget
     }
 
-    override fun copy() = KtUltraLightSimpleModifierListField(support, declaration, owner, modifiers)
+    override fun copy() = KtUltraLightFieldModifierList(support, declaration, owner, modifiers)
 }
 
 internal class KtUltraLightFieldForSourceDeclaration(
@@ -76,7 +74,7 @@ internal open class KtUltraLightFieldImpl protected constructor(
     KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiField> {
 
     private val modifierList by lazyPub {
-        KtUltraLightSimpleModifierListField(support, declaration, this, modifiers)
+        KtUltraLightFieldModifierList(support, declaration, this, modifiers)
     }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
