@@ -31,7 +31,7 @@ abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimp
     abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
     abstract override val status: FirDeclarationStatus
@@ -50,6 +50,8 @@ abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimp
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
     abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
@@ -57,8 +59,6 @@ abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimp
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction
-
-    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 

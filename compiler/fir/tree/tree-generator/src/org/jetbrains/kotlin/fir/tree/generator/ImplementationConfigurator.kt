@@ -370,10 +370,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(superReference, "FirExplicitSuperReference")
 
-        impl(controlFlowGraphReference, "FirEmptyControlFlowGraphReference") {
-            noSource()
-            kind = Object
-        }
+        noImpl(controlFlowGraphReference)
 
         impl(resolvedTypeRef) {
             publicImplementation()
@@ -470,10 +467,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
     private fun configureAllImplementations() {
         configureFieldInAllImplementations(
             field = "controlFlowGraphReference",
-            implementationPredicate = { it.type != "FirAnonymousFunctionImpl"}
+            implementationPredicate = { it.type != "FirAnonymousFunctionImpl" }
         ) {
-            default(it, "FirEmptyControlFlowGraphReference")
-            useTypes(emptyCfgReferenceType)
+            defaultNull(it)
         }
 
         val implementationWithConfigurableTypeRef = listOf(

@@ -133,7 +133,7 @@ sealed class CFGNodeWithCfgOwner<out E : FirControlFlowGraphOwner>(owner: Contro
     }
 
     val subGraphs: List<ControlFlowGraph> by lazy {
-        _subGraphs.also { it.addIfNotNull(fir.controlFlowGraphReference.controlFlowGraph) }
+        _subGraphs.also { it.addIfNotNull(fir.controlFlowGraphReference?.controlFlowGraph) }
     }
 }
 

@@ -132,7 +132,7 @@ class ControlFlowGraphBuilder {
             else -> fir.extractArgument()
         }
 
-        val exitNode = function.controlFlowGraphReference.controlFlowGraph?.exitNode
+        val exitNode = function.controlFlowGraphReference?.controlFlowGraph?.exitNode
             ?: exitsOfAnonymousFunctions.getValue(function.symbol)
         return exitNode.previousNodes.mapNotNullTo(mutableSetOf()) {
             it.extractArgument() as FirStatement?
@@ -368,8 +368,8 @@ class ControlFlowGraphBuilder {
         var prevInitPartNode: CFGNode<*>? = null
         for (declaration in klass.declarations) {
             val graph = when (declaration) {
-                is FirProperty -> declaration.controlFlowGraphReference.controlFlowGraph
-                is FirAnonymousInitializer -> declaration.controlFlowGraphReference.controlFlowGraph
+                is FirProperty -> declaration.controlFlowGraphReference?.controlFlowGraph
+                is FirAnonymousInitializer -> declaration.controlFlowGraphReference?.controlFlowGraph
                 else -> null
             } ?: continue
 
@@ -430,7 +430,7 @@ class ControlFlowGraphBuilder {
 
     fun visitLocalClassFunctions(klass: FirClass<*>, node: CFGNodeWithCfgOwner<*>) {
         klass.declarations.filterIsInstance<FirFunction<*>>().forEach { function ->
-            val functionGraph = function.controlFlowGraphReference.controlFlowGraph
+            val functionGraph = function.controlFlowGraphReference?.controlFlowGraph
             if (functionGraph != null && functionGraph.owner == null) {
                 addEdge(node, functionGraph.enterNode, preferredKind = EdgeKind.CfgForward)
                 node.addSubGraph(functionGraph)
@@ -1115,11 +1115,11 @@ class ControlFlowGraphBuilder {
             }
 
             override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-                anonymousFunction.controlFlowGraphReference.accept(this)
+                anonymousFunction.controlFlowGraphReference?.accept(this)
             }
 
             override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
-                anonymousObject.controlFlowGraphReference.accept(this)
+                anonymousObject.controlFlowGraphReference?.accept(this)
             }
 
             override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {

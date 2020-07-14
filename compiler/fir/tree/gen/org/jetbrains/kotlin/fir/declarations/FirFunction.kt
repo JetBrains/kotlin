@@ -31,7 +31,7 @@ interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTarget
     override val returnTypeRef: FirTypeRef
     override val receiverTypeRef: FirTypeRef?
     override val typeParameters: List<FirTypeParameterRef>
-    override val controlFlowGraphReference: FirControlFlowGraphReference
+    override val controlFlowGraphReference: FirControlFlowGraphReference?
     override val symbol: FirFunctionSymbol<F>
     val valueParameters: List<FirValueParameter>
     val body: FirBlock?
@@ -44,6 +44,8 @@ interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTarget
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
     fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunction<F>
@@ -53,8 +55,6 @@ interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTarget
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<F>
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFunction<F>
-
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirFunction<F>
 
     fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction<F>
 

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -56,14 +55,10 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
-    override val controlFlowGraphReference: FirControlFlowGraphReference get() = FirEmptyControlFlowGraphReference
+    override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         valueParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         return this
     }
 
@@ -78,7 +73,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
         valueParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
@@ -87,7 +82,6 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         transformReturnTypeRef(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
         transformTypeParameters(transformer, data)
         transformValueParameters(transformer, data)
         status = status.transformSingle(transformer, data)
@@ -134,6 +128,8 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
 }
 
 @FirBuilderDsl

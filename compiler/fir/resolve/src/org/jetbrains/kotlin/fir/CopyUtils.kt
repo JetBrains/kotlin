@@ -68,7 +68,7 @@ fun FirAnonymousFunction.copy(
     annotations: List<FirAnnotationCall> = this.annotations,
     typeRef: FirTypeRef = this.typeRef,
     label: FirLabel? = this.label,
-    controlFlowGraphReference: FirControlFlowGraphReference = this.controlFlowGraphReference,
+    controlFlowGraphReference: FirControlFlowGraphReference? = this.controlFlowGraphReference,
     invocationKind: EventOccurrencesRange? = this.invocationKind
 ): FirAnonymousFunction {
     return buildAnonymousFunction {
