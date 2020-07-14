@@ -551,6 +551,8 @@ class DelegatedPropertyResolver(
         if (delegateTypeConstructor is IntegerLiteralTypeConstructor)
             delegateType = delegateTypeConstructor.getApproximatedType()
 
+        val delegateTypeForProperType = if (delegateType.isProperType()) delegateType else null
+
         if (languageVersionSettings.supportsFeature(LanguageFeature.OperatorProvideDelegate)) {
             val traceForProvideDelegate = TemporaryBindingTrace.create(traceToResolveDelegatedProperty, "Trace to resolve provide delegate")
 
@@ -584,7 +586,9 @@ class DelegatedPropertyResolver(
             }
         }
         return inferDelegateTypeFromGetSetValueMethods(
-            delegateExpression, variableDescriptor, scopeForDelegate, traceToResolveDelegatedProperty, delegateType, delegateDataFlow
+            delegateExpression, variableDescriptor, scopeForDelegate,
+            traceToResolveDelegatedProperty, delegateType, delegateTypeForProperType,
+            delegateDataFlow
         )
     }
 
@@ -626,6 +630,7 @@ class DelegatedPropertyResolver(
         scopeForDelegate: LexicalScope,
         trace: TemporaryBindingTrace,
         delegateType: KotlinType,
+        delegateTypeForProperType: KotlinType?,
         delegateDataFlow: DataFlowInfo
     ): UnwrappedType {
         val expectedType = if (variableDescriptor.type !is DeferredType) variableDescriptor.type.unwrap() else null
@@ -683,7 +688,7 @@ class DelegatedPropertyResolver(
         }
 
         val resolvedDelegateType = extractResolvedDelegateType(delegateExpression, trace, delegateType)
-        trace.recordType(delegateExpression, resolvedDelegateType)
+        trace.recordType(delegateExpression, delegateTypeForProperType ?: resolvedDelegateType)
         trace.commit()
         return resolvedDelegateType.unwrap()
     }
