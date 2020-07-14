@@ -31,6 +31,7 @@ import java.nio.file.Path
 
 abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     private var vfsDisposable: Ref<Disposable>? = null
+    private val myFilesToDelete = mutableListOf<Path>()
 
     override fun setUp() {
         super.setUp()
@@ -39,6 +40,10 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     }
 
     override fun tearDown() = runAll(
+        ThrowableRunnable {
+            myFilesToDelete.forEach { it.toFile().deleteRecursively() }
+            myFilesToDelete.clear()
+        },
         ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
         ThrowableRunnable { PathMacros.getInstance().removeMacro(TEMP_DIR_MACRO_KEY) },
         ThrowableRunnable { super.tearDown() },
@@ -103,11 +108,14 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     val modules: Array<Module>
         get() = ModuleManager.getInstance(myProject).modules
 
+    // TODO: overriding 'getProjectDirOrFile()' is not possible anymore. What else can we do here?
+    /*
     override fun getProjectDirOrFile(): Path {
         val projectFilePath = projectRoot + "/projectFile.ipr"
         TestCase.assertTrue("Project file should exists " + projectFilePath, File(projectFilePath).exists())
         return File(projectFilePath).toPath()
     }
+    */
 
     private val projectName: String
         get() {

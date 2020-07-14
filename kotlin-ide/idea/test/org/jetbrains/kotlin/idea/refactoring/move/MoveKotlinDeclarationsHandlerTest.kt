@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.runner.RunWith
+import java.nio.file.Path
 
 @RunWith(JUnit38ClassRunner::class)
 class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
@@ -30,11 +31,17 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
     override fun getTestRoot() = "/refactoring/moveHandler/declarations"
 
     private fun doTest(action: (rootDir: VirtualFile, handler: MoveKotlinDeclarationsHandler) -> Unit) {
-        val path = "$testDataPath$testRoot/${getTestName(true)}"
-        val rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, myFilesToDelete, false)
-        prepareProject(rootDir)
-        PsiDocumentManager.getInstance(myProject).commitAllDocuments()
-        action(rootDir, MoveKotlinDeclarationsHandler())
+        val filesToDelete = mutableListOf<Path>()
+
+        try {
+            val path = "$testDataPath$testRoot/${getTestName(true)}"
+            val rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, filesToDelete, false)
+            prepareProject(rootDir)
+            PsiDocumentManager.getInstance(myProject).commitAllDocuments()
+            action(rootDir, MoveKotlinDeclarationsHandler())
+        } finally {
+            filesToDelete.forEach { it.toFile().deleteRecursively() }
+        }
     }
 
     private fun getPsiDirectory(rootDir: VirtualFile, path: String) = rootDir.findFileByRelativePath(path)!!.toPsiDirectory(project)!!

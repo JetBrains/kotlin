@@ -14,17 +14,22 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import java.io.File
+import java.nio.file.Path
 
 abstract class AbstractRunConfigurationTest : @Suppress("DEPRECATION") KotlinCodeInsightTestCase() {
     fun getTestProject() = myProject!!
     override fun getModule() = myModule!!
 
-    protected fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = module): CreateModuleResult {
+    protected fun TestFileContext.configureModule(
+        moduleDir: String,
+        outputParentDir: VirtualFile,
+        configModule: Module = module
+    ): CreateModuleResult {
         val srcPath = "$moduleDir/src"
         val srcDir: VirtualFile?
 
         if (File(srcPath).exists()) {
-            srcDir = PsiTestUtil.createTestProjectStructure(project, configModule, srcPath, myFilesToDelete, false)
+            srcDir = PsiTestUtil.createTestProjectStructure(project, configModule, srcPath, filesToDelete, false)
             PsiTestUtil.addSourceRoot(module, srcDir, false)
         } else {
             srcDir = null
@@ -35,7 +40,7 @@ abstract class AbstractRunConfigurationTest : @Suppress("DEPRECATION") KotlinCod
 
         if (File(testPath).exists()) {
             testDir = if (srcDir == null) {
-                PsiTestUtil.createTestProjectStructure(project, configModule, testPath, myFilesToDelete, false)
+                PsiTestUtil.createTestProjectStructure(project, configModule, testPath, filesToDelete, false)
             } else {
                 val canonicalPath = File(testPath).canonicalPath.replace(File.separatorChar, '/')
                 LocalFileSystem.getInstance().refreshAndFindFileByPath(canonicalPath)
@@ -74,4 +79,13 @@ abstract class AbstractRunConfigurationTest : @Suppress("DEPRECATION") KotlinCod
 
     protected fun moduleDirPath(moduleName: String) = "${testDataPath}${getTestName(false)}/$moduleName"
     override fun getTestProjectJdk() = mockJdk()
+
+    protected class TestFileContext {
+        val filesToDelete: MutableList<Path> = mutableListOf()
+    }
+
+    protected inline fun withTestFiles(block: TestFileContext.() -> Unit) {
+        val context = TestFileContext().apply(block)
+        context.filesToDelete.forEach { it.toFile().deleteRecursively() }
+    }
 }

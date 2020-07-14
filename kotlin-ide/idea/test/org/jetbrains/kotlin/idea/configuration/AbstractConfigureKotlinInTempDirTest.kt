@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 import java.nio.file.Path
 
 abstract class AbstractConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
+    // TODO: overriding 'getProjectDirOrFile()' is not possible anymore. What else can we do here?
+    /*
     override fun getProjectDirOrFile(): Path {
-        val tempDir = FileUtil.generateRandomTemporaryPath()
-        FileUtil.createTempDirectory("temp", null)
-        myFilesToDelete.add(tempDir.toPath())
+        val tempDir = KotlinTestUtils.tmpDirForReusableFolder("temp")
 
         FileUtil.copyDir(File(projectRoot), tempDir)
 
@@ -35,5 +35,5 @@ abstract class AbstractConfigureKotlinInTempDirTest : AbstractConfigureKotlinTes
         }
 
         return File(projectFilePath).toPath()
-    }
+    }*/
 }

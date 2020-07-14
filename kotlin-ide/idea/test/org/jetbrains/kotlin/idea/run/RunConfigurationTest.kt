@@ -17,6 +17,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
+import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.kotlin.checkers.languageVersionSettingsFromText
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -42,8 +43,9 @@ private const val RUN_PREFIX = "// RUN:"
 
 @RunWith(JUnit38ClassRunner::class)
 class RunConfigurationTest : AbstractRunConfigurationTest() {
-    fun testMainInTest() {
-        val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
+    fun testMainInTest() = withTestFiles {
+        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
+        val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
         withCustomLanguageAndApiVersion(
             createModuleResult.module.project, createModuleResult.module,
             LanguageVersionSettingsImpl.DEFAULT.languageVersion.versionString, apiVersion = null
@@ -74,8 +76,9 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         }
     }
 
-    fun testDependencyModuleClasspath() {
-        val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), getTestProject().baseDir!!).srcOutputDir
+    fun testDependencyModuleClasspath() = withTestFiles {
+        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
+        val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), baseDir).srcOutputDir
 
         val moduleWithDependencyDir = runWriteAction { getTestProject().baseDir!!.createChildDirectory(this, "moduleWithDependency") }
 
@@ -97,8 +100,9 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         assertTrue(javaParameters.classPath.rootDirs.contains(moduleWithDependencySrcDir))
     }
 
-    fun testLongCommandLine() {
-        val myModule = configureModule(moduleDirPath("module"), getTestProject().baseDir).module
+    fun testLongCommandLine() = withTestFiles {
+        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
+        val myModule = configureModule(moduleDirPath("module"), baseDir).module
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, addJdk(testRootDisposable, ::mockJdk))
 
         ModuleRootModificationUtil.addDependency(myModule, createLibraryWithLongPaths(project))
@@ -121,8 +125,9 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         doTest(ConfigLibraryUtil::configureKotlinJsRuntimeAndSdk)
     }
 
-    fun testUpdateOnClassRename() {
-        val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
+    fun testUpdateOnClassRename() = withTestFiles {
+        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
+        val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
 
         val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
@@ -134,8 +139,9 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         assertEquals("renameTest.Bar", runConfiguration.MAIN_CLASS_NAME)
     }
 
-    fun testUpdateOnPackageRename() {
-        val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
+    fun testUpdateOnPackageRename() = withTestFiles {
+        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
+        val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
 
         val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
@@ -147,20 +153,21 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         assertEquals("afterRenameTest.Foo", runConfiguration.MAIN_CLASS_NAME)
     }
 
-    fun testWithModuleForJdk6() {
+    fun testWithModuleForJdk6() = withTestFiles {
         checkModuleInfoName(null, addJdk(testRootDisposable, ::mockJdk))
     }
 
-    fun testWithModuleForJdk9() {
+    fun testWithModuleForJdk9() = withTestFiles {
         checkModuleInfoName("MAIN", addJdk(testRootDisposable, ::mockJdk9))
     }
 
-    fun testWithModuleForJdk9WithoutModuleInfo() {
+    fun testWithModuleForJdk9WithoutModuleInfo() = withTestFiles {
         checkModuleInfoName(null, addJdk(testRootDisposable, ::mockJdk9))
     }
 
-    private fun checkModuleInfoName(moduleName: String?, sdk: Sdk) {
-        val module = configureModule(moduleDirPath("module"), getTestProject().baseDir!!).module
+    private fun TestFileContext.checkModuleInfoName(moduleName: String?, sdk: Sdk) {
+        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
+        val module = configureModule(moduleDirPath("module"), baseDir).module
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, sdk)
 
         val javaParameters = getJavaRunParameters(createConfigurationFromMain(getTestProject(),"some.main"))
@@ -168,8 +175,8 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         assertEquals(moduleName, javaParameters.moduleName)
     }
 
-    private fun doTest(configureRuntime: (Module, Sdk) -> Unit) {
-        val baseDir = getTestProject().baseDir!!
+    private fun doTest(configureRuntime: (Module, Sdk) -> Unit) = withTestFiles {
+        val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
         val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
         val srcDir = createModuleResult.srcDir!!
 
