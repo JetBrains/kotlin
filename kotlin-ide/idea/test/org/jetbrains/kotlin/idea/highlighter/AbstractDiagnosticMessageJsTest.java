@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts;
+
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
@@ -54,7 +55,8 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
     }
 
     protected List<String> jsStdlib() {
-        File stdlibPath = TestKotlinArtifacts.INSTANCE.getKotlinStdlibJs();
+
+        File stdlibPath = KotlinArtifacts.getInstance().getKotlinStdlibJs();
         return Collections.singletonList(stdlibPath.getAbsolutePath());
     }
 

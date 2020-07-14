@@ -27,7 +27,7 @@ import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.io.FileUtilRt;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts;
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts;
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind;
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType;
 import org.jetbrains.kotlin.platform.SimplePlatform;
@@ -89,7 +89,7 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
         mockLibraryModel.addRoot(jarUrl, OrderRootType.CLASSES);
 
         if (withRuntime && !isJsLibrary) {
-            mockLibraryModel.addRoot(getJarUrl(TestKotlinArtifacts.INSTANCE.getKotlinStdlib()), OrderRootType.CLASSES);
+            mockLibraryModel.addRoot(getJarUrl(KotlinArtifacts.getInstance().getKotlinStdlib()), OrderRootType.CLASSES);
         }
 
         if (isJsLibrary && mockLibraryModel instanceof LibraryEx.ModifiableModelEx) {

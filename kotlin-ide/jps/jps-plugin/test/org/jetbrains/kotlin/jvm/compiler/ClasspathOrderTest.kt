@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.kotlin.build.JvmSourceRoot
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.test.KotlinCliCompilerFacade
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
@@ -45,17 +45,17 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
 
     fun testClasspathOrderForModuleScriptBuild() {
         val xmlContent = KotlinModuleXmlBuilder().addModule(
-            "name",
-            File(tmpdir, "output").absolutePath,
-            listOf(sourceDir),
-            listOf(JvmSourceRoot(sourceDir)),
-            listOf(TestKotlinArtifacts.kotlinStdlib),
-            emptyList(),
-            null,
-            JavaModuleBuildTargetType.PRODUCTION.typeId,
-            JavaModuleBuildTargetType.PRODUCTION.isTests,
-            setOf(),
-            emptyList()
+          "name",
+          File(tmpdir, "output").absolutePath,
+          listOf(sourceDir),
+          listOf(JvmSourceRoot(sourceDir)),
+          listOf(KotlinArtifacts.getInstance().kotlinStdlib),
+          emptyList(),
+          null,
+          JavaModuleBuildTargetType.PRODUCTION.typeId,
+          JavaModuleBuildTargetType.PRODUCTION.isTests,
+          setOf(),
+          emptyList()
         ).asText().toString()
 
         val xml = File(tmpdir, "module.xml")

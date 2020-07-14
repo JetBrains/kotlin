@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext
 import org.jetbrains.kotlin.idea.caches.resolve.LightClassLazinessChecker.Tracker.Level.*
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
@@ -101,9 +102,10 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
         val testDataDir = TestMetadataUtil.getTestData(this::class.java)
         val testFile = listOf(File(testDataDir, "$testName.kt"), File(testDataDir, "$testName.kts")).first { it.exists() }
 
-        val extraClasspath = mutableListOf(TestKotlinArtifacts.jetbrainsAnnotations)
+
+        val extraClasspath = mutableListOf(KotlinArtifacts.getInstance().jetbrainsAnnotations)
         if (testFile.extension == "kts") {
-            extraClasspath += TestKotlinArtifacts.kotlinScriptRuntime
+            extraClasspath += KotlinArtifacts.getInstance().kotlinScriptRuntime
         }
 
         val libraryJar = KotlinCompilerStandalone(listOf(testFile), classpath = extraClasspath).compile()

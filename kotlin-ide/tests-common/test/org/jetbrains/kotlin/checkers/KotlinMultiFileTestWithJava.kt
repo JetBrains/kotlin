@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.cre
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.script.loadScriptingPlugin
@@ -79,11 +79,11 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
 
     private fun getClasspath(file: File): List<File> {
         val result: MutableList<File> = ArrayList()
-        result.add(TestKotlinArtifacts.jetbrainsAnnotations)
+        result.add(KotlinArtifacts.getInstance().jetbrainsAnnotations)
         result.addAll(getExtraClasspath())
         val fileText = file.readText(Charsets.UTF_8)
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "STDLIB_JDK8")) {
-            result.add(TestKotlinArtifacts.kotlinStdlibJdk8)
+            result.add(KotlinArtifacts.getInstance().kotlinStdlibJdk8)
         }
         if (DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage ||
             fileText.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())

@@ -21,10 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts;
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
@@ -60,9 +57,9 @@ public class CodegenTestUtil {
     ) {
         try {
             List<String> classpath = new ArrayList<>();
-            classpath.add(TestKotlinArtifacts.INSTANCE.getKotlinStdlib().getPath());
-            classpath.add(TestKotlinArtifacts.INSTANCE.getKotlinReflect().getPath());
-            classpath.add(TestKotlinArtifacts.INSTANCE.getJetbrainsAnnotations().getPath());
+            classpath.add(KotlinArtifacts.getInstance().getKotlinStdlib().getPath());
+            classpath.add(KotlinArtifacts.getInstance().getKotlinReflect().getPath());
+            classpath.add(KotlinArtifacts.getInstance().getJetbrainsAnnotations().getPath());
             classpath.addAll(additionalClasspath);
 
             List<String> options = new ArrayList<>(Arrays.asList(

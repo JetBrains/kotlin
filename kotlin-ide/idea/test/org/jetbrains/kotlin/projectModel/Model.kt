@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.projectModel
 
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -112,21 +111,21 @@ sealed class Stdlib(
 
     object CommonStdlib : Stdlib(
         "stdlib-common",
-        TestKotlinArtifacts.kotlinStdlibCommon,
+        KotlinArtifacts.getInstance().kotlinStdlibCommon,
         CommonPlatforms.defaultCommonPlatform,
         CommonLibraryKind
     )
 
     object JvmStdlib : Stdlib(
         "stdlib-jvm",
-        TestKotlinArtifacts.kotlinStdlib,
+        KotlinArtifacts.getInstance().kotlinStdlib,
         JvmPlatforms.defaultJvmPlatform,
         null
     )
 
     object JsStdlib : Stdlib(
         "stdlib-js",
-        TestKotlinArtifacts.kotlinStdlibJs,
+        KotlinArtifacts.getInstance().kotlinStdlibJs,
         JsPlatforms.defaultJsPlatform,
         JSLibraryKind
     )
@@ -141,14 +140,14 @@ sealed class KotlinTest(
 
     object JsKotlinTest : KotlinTest(
         "kotlin-test-js",
-        TestKotlinArtifacts.kotlinTestJs,
+        KotlinArtifacts.getInstance().kotlinTestJs,
         JsPlatforms.defaultJsPlatform,
         JSLibraryKind
     )
 
     object JvmKotlinTest : KotlinTest(
         "kotlin-test-jvm",
-        TestKotlinArtifacts.kotlinTestJunit,
+        KotlinArtifacts.getInstance().kotlinTestJunit,
         JvmPlatforms.defaultJvmPlatform,
         null
     )

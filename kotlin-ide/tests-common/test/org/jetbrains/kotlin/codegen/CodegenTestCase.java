@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.JvmTarget;
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts;
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -61,7 +61,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind,
                 testJdkKind,
-                Collections.singletonList(TestKotlinArtifacts.INSTANCE.getJetbrainsAnnotations()),
+                Collections.singletonList(KotlinArtifacts.getInstance().getJetbrainsAnnotations()),
                 ArraysKt.filterNotNull(javaSourceRoots),
                 testFilesWithConfigurationDirectives
         );

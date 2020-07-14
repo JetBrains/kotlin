@@ -21,8 +21,8 @@ import com.intellij.testFramework.ModuleTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ThrowableRunnable
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo
@@ -473,17 +473,18 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     }
 
     private fun stdlibCommon(): LibraryEx = projectLibrary(
-            "kotlin-stdlib-common",
-            TestKotlinArtifacts.kotlinStdlibCommon.jarRoot,
-            kind = CommonLibraryKind
+
+      "kotlin-stdlib-common",
+      KotlinArtifacts.getInstance().kotlinStdlibCommon.jarRoot,
+      kind = CommonLibraryKind
     )
 
-    private fun stdlibJvm(): LibraryEx = projectLibrary("kotlin-stdlib", TestKotlinArtifacts.kotlinStdlib.jarRoot)
+    private fun stdlibJvm(): LibraryEx = projectLibrary("kotlin-stdlib", KotlinArtifacts.getInstance().kotlinStdlib.jarRoot)
 
     private fun stdlibJs(): LibraryEx = projectLibrary(
-        "kotlin-stdlib-js",
-        TestKotlinArtifacts.kotlinStdlibJs.jarRoot,
-        kind = JSLibraryKind
+      "kotlin-stdlib-js",
+      KotlinArtifacts.getInstance().kotlinStdlibJs.jarRoot,
+      kind = JSLibraryKind
     )
 
     override fun setUp() {

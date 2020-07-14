@@ -17,7 +17,7 @@ import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ui.UIUtil
 import org.jdom.Element
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.updateScriptDependenciesSynchronously
@@ -105,7 +105,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             module.addDependency(
                 projectLibrary(
                     "script-runtime",
-                    classesRoot = VfsUtil.findFileByIoFile(TestKotlinArtifacts.kotlinScriptRuntime, true)
+                    classesRoot = VfsUtil.findFileByIoFile(KotlinArtifacts.getInstance().kotlinScriptRuntime, true)
                 )
             )
 
@@ -250,19 +250,19 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         val libClasses = libSrcDir?.let { compileLibToDir(it, emptyList()) }
 
         return mapOf(
-            "runtime-classes" to TestKotlinArtifacts.kotlinStdlib,
-            "runtime-source" to TestKotlinArtifacts.kotlinStdlibSources,
-            "lib-classes" to libClasses,
-            "lib-source" to libSrcDir,
-            "template-classes" to templateOutDir
+          "runtime-classes" to KotlinArtifacts.getInstance().kotlinStdlib,
+          "runtime-source" to KotlinArtifacts.getInstance().kotlinStdlibSources,
+          "lib-classes" to libClasses,
+          "lib-source" to libSrcDir,
+          "template-classes" to templateOutDir
         )
     }
 
     private fun getScriptingClasspath(): List<File> {
         return listOf(
-            TestKotlinArtifacts.kotlinScriptRuntime,
-            TestKotlinArtifacts.kotlinScriptingCommon,
-            TestKotlinArtifacts.kotlinScriptingJvm
+          KotlinArtifacts.getInstance().kotlinScriptRuntime,
+          KotlinArtifacts.getInstance().kotlinScriptingCommon,
+          KotlinArtifacts.getInstance().kotlinScriptingJvm
         )
     }
 

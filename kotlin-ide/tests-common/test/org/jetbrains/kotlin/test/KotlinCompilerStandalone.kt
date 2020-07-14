@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.js.JsPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -74,8 +74,8 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
 
         if (includeKotlinStdlib) {
             when (platform) {
-                is JdkPlatform -> completeClasspath += listOf(TestKotlinArtifacts.kotlinStdlib, TestKotlinArtifacts.jetbrainsAnnotations)
-                is JsPlatform -> completeClasspath += TestKotlinArtifacts.kotlinStdlibJs
+                is JdkPlatform -> completeClasspath += listOf(KotlinArtifacts.getInstance().kotlinStdlib, KotlinArtifacts.getInstance().jetbrainsAnnotations)
+                is JsPlatform -> completeClasspath += KotlinArtifacts.getInstance().kotlinStdlibJs
             }
         }
 

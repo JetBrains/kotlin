@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
@@ -85,7 +85,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
             sourcesToCompile = filesToCompile.toList(),
             commonSources = emptyList(),
             javaSourceRoots = listOf(JvmSourceRoot(srcDir, null)),
-            classpath = listOf(outDir, TestKotlinArtifacts.kotlinStdlib).filter { it.exists() },
+            classpath = listOf(outDir, KotlinArtifacts.getInstance().kotlinStdlib).filter { it.exists() },
             friendDirs = emptyList()
         )
 
@@ -166,7 +166,7 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
     }
 
     protected open val jsStdlibFile: File
-        get() = TestKotlinArtifacts.kotlinStdlibJs
+        get() = KotlinArtifacts.getInstance().kotlinStdlibJs
 
     protected open fun configureAdditionalArgs(args: K2JSCompilerArguments) {
         args.outputFile = File(outDir, "out.js").canonicalPath

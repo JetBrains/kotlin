@@ -9,7 +9,8 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -37,9 +38,10 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
 
         return object : KotlinJdkAndLibraryProjectDescriptor(
             listOf(
-                TestKotlinArtifacts.kotlinStdlib,
-                foreignAnnotationsJar,
-                libraryJar
+
+              KotlinArtifacts.getInstance().kotlinStdlib,
+              foreignAnnotationsJar,
+              libraryJar
             )
         ) {
             override fun configureModule(module: Module, model: ModifiableRootModel) {

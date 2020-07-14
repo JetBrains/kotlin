@@ -9,35 +9,34 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.java.JpsJavaLibraryType
 import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.jps.model.library.JpsOrderRootType
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
-import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import java.io.File
 
 enum class KotlinJpsLibrary(val id: String, vararg val roots: File) {
     @Deprecated("Use JvmStdlib instead")
     MockRuntime(
         "kotlin-mock-runtime",
-        TestKotlinArtifacts.kotlinStdlib,
-        TestKotlinArtifacts.jetbrainsAnnotations
+        KotlinArtifacts.getInstance().kotlinStdlib,
+        KotlinArtifacts.getInstance().jetbrainsAnnotations
     ),
 
     JvmStdLib(
         "kotlin-stdlib",
-        TestKotlinArtifacts.kotlinStdlib,
-        TestKotlinArtifacts.jetbrainsAnnotations
+        KotlinArtifacts.getInstance().kotlinStdlib,
+        KotlinArtifacts.getInstance().jetbrainsAnnotations
     ),
     JvmTest(
         "kotlin-test",
-        TestKotlinArtifacts.kotlinTest
+        KotlinArtifacts.getInstance().kotlinTest
     ),
 
     JsStdLib(
         "KotlinJavaScript",
-        TestKotlinArtifacts.kotlinStdlibJs
+        KotlinArtifacts.getInstance().kotlinStdlibJs
     ),
     JsTest(
         "KotlinJavaScriptTest",
-        TestKotlinArtifacts.kotlinTestJs
+        KotlinArtifacts.getInstance().kotlinTestJs
     );
 
     fun create(project: JpsProject): JpsLibrary {

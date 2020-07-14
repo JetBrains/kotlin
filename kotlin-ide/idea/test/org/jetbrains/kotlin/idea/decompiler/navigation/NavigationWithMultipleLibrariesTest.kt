@@ -15,7 +15,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.ModuleTestCase
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.LibrarySourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
@@ -67,7 +68,8 @@ class NavigationWithMultipleRuntimesTest : AbstractNavigationToSourceOrDecompile
     }
 
     override fun createProjectLib(libraryName: String, withSources: Boolean): Library {
-        val libraryJar = TestKotlinArtifacts.kotlinStdlib.copyTo(File(createTempDirectory(), "$libraryName.jar"))
+
+        val libraryJar = KotlinArtifacts.getInstance().kotlinStdlib.copyTo(File(createTempDirectory(), "$libraryName.jar"))
         val jarUrl = libraryJar.jarRoot
         return runWriteAction {
             val library = ProjectLibraryTable.getInstance(project).createLibrary(libraryName)
@@ -75,7 +77,8 @@ class NavigationWithMultipleRuntimesTest : AbstractNavigationToSourceOrDecompile
             modifiableModel.addRoot(jarUrl, OrderRootType.CLASSES)
             if (withSources) {
                 val sourcesJar =
-                    TestKotlinArtifacts.kotlinStdlibSources.copyTo(File(createTempDirectory(), "$libraryName-sources.jar"))
+
+                    KotlinArtifacts.getInstance().kotlinStdlibSources.copyTo(File(createTempDirectory(), "$libraryName-sources.jar"))
                 modifiableModel.addRoot(sourcesJar.jarRoot, OrderRootType.SOURCES)
             }
             modifiableModel.commit()

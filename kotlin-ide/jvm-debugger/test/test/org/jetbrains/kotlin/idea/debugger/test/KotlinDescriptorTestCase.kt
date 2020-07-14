@@ -23,7 +23,7 @@ import com.intellij.testFramework.EdtTestUtil
 import com.intellij.util.ThrowableRunnable
 import com.intellij.xdebugger.XDebugSession
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.debugger.test.preference.*
 import org.jetbrains.kotlin.idea.debugger.test.util.BreakpointCreator
@@ -180,7 +180,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     override fun createJavaParameters(mainClass: String?): JavaParameters {
         return super.createJavaParameters(mainClass).apply {
             ModuleRootManager.getInstance(myModule).orderEntries.asSequence().filterIsInstance<LibraryOrderEntry>()
-            classPath.add(TestKotlinArtifacts.kotlinStdlib)
+            classPath.add(KotlinArtifacts.getInstance().kotlinStdlib)
             classPath.add(libraryOutputDirectory)
         }
     }
@@ -191,9 +191,9 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
 
             try {
                 attachLibrary(
-                    model, KOTLIN_LIBRARY_NAME,
-                    listOf(TestKotlinArtifacts.kotlinStdlib, TestKotlinArtifacts.jetbrainsAnnotations),
-                    listOf(TestKotlinArtifacts.kotlinStdlibSources)
+                  model, KOTLIN_LIBRARY_NAME,
+                  listOf(KotlinArtifacts.getInstance().kotlinStdlib, KotlinArtifacts.getInstance().jetbrainsAnnotations),
+                  listOf(KotlinArtifacts.getInstance().kotlinStdlibSources)
                 )
 
                 attachLibrary(model, TEST_LIBRARY_NAME, listOf(libraryOutputDirectory), listOf(librarySrcDirectory))

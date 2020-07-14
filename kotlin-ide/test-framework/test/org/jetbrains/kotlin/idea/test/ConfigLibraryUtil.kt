@@ -17,7 +17,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.vfs.VfsUtil
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -55,16 +55,16 @@ object ConfigLibraryUtil {
 
     fun configureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_JS, TestKotlinArtifacts.kotlinStdlibJs), module, JSLibraryKind)
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_JS, KotlinArtifacts.getInstance().kotlinStdlibJs), module, JSLibraryKind)
     }
 
     fun configureKotlinCommonRuntime(module: Module) {
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_COMMON, TestKotlinArtifacts.kotlinStdlibCommon), module, CommonLibraryKind)
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_COMMON, KotlinArtifacts.getInstance().kotlinStdlibCommon), module, CommonLibraryKind)
     }
 
     fun configureKotlinRuntime(module: Module) {
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_JAVA_RUNTIME, TestKotlinArtifacts.kotlinStdlib), module)
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_TEST, TestKotlinArtifacts.kotlinTest), module)
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_JAVA_RUNTIME, KotlinArtifacts.getInstance().kotlinStdlib), module)
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_TEST, KotlinArtifacts.getInstance().kotlinTest), module)
     }
 
     fun unConfigureKotlinRuntime(module: Module) {

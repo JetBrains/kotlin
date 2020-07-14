@@ -53,8 +53,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts;
-import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil;
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -111,7 +110,7 @@ public class KotlinTestUtils {
             @NotNull TestJdkKind jdkKind
     ) {
         return KotlinCoreEnvironment.createForTests(
-                disposable, newConfiguration(configurationKind, jdkKind, TestKotlinArtifacts.INSTANCE.getJetbrainsAnnotations()), EnvironmentConfigFiles.JVM_CONFIG_FILES
+                disposable, newConfiguration(configurationKind, jdkKind, KotlinArtifacts.getInstance().getJetbrainsAnnotations()), EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
     }
 
@@ -359,7 +358,7 @@ public class KotlinTestUtils {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
         }
 
-        TestKotlinArtifacts artifacts = TestKotlinArtifacts.INSTANCE;
+        KotlinArtifacts artifacts = KotlinArtifacts.getInstance();
 
         if (configurationKind.getKotlinStdlib()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, artifacts.getKotlinStdlib());
