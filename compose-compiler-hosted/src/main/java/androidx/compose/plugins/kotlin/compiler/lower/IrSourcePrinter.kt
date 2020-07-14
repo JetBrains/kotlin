@@ -545,6 +545,12 @@ private class IrSourcePrinterVisitor(
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
                 expression.argument.print()
             }
+            IrTypeOperator.NOT_INSTANCEOF -> {
+                expression.argument.print()
+            }
+            IrTypeOperator.CAST -> {
+                expression.argument.print()
+            }
             else -> error("Unknown type operator: ${expression.operator}")
         }
     }
