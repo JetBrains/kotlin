@@ -63,7 +63,7 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
                                                 boolean hasFocus) {
 
     SimpleColoredComponent component = (SimpleColoredComponent)super.getListCellRendererComponent(list, value, index, selected, hasFocus);
-    JPanel panel = new JPanel(new BorderLayout()) {
+    JPanel panel = new CellRendererPanel() {
       private final AccessibleContext myContext = component.getAccessibleContext();
 
       @Override
@@ -78,6 +78,7 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
         component.setBorder(border);
       }
     };
+    panel.setLayout(new BorderLayout());
     panel.add(component, BorderLayout.CENTER);
 
     SdkListModel model = myGetModel.produce();
@@ -110,7 +111,8 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
       separator.setOpaque(false);
       separator.setBackground(list.getBackground());
 
-      JPanel wrapper = new JPanel(new BorderLayout());
+      JPanel wrapper = new CellRendererPanel();
+      wrapper.setLayout(new BorderLayout());
       wrapper.add(separator, BorderLayout.CENTER);
       wrapper.setBackground(list.getBackground());
       wrapper.setOpaque(true);
