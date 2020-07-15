@@ -1323,11 +1323,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         +")"
     }
 
-    private fun FlowContent.generateBinary(expression: FirOperatorCall) {
-        val (first, second) = expression.arguments
+    private fun FlowContent.generateBinary(first: FirExpression, second: FirExpression, operation: FirOperation) {
         generate(first)
         ws
-        unresolved { +expression.operation.operator }
+        unresolved { +operation.operator }
         ws
         generate(second)
     }
@@ -1341,7 +1340,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(expression: FirOperatorCall) {
         when (expression.arguments.size) {
             1 -> generateUnary(expression)
-            2 -> generateBinary(expression)
+            2 -> generateBinary(expression.arguments[0], expression.arguments[1], expression.operation)
             else -> inlineUnsupported(expression)
         }
     }
@@ -1352,6 +1351,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         keyword(typeOperatorCall.operation.operator)
         ws
         generate(typeOperatorCall.conversionTypeRef)
+    }
+
+    private fun FlowContent.generate(equalityOperatorCall: FirEqualityOperatorCall) {
+        generateBinary(equalityOperatorCall.arguments[0], equalityOperatorCall.arguments[1], equalityOperatorCall.operation)
     }
 
     private fun FlowContent.generate(checkNotNullCall: FirCheckNotNullCall) {
@@ -1567,6 +1570,8 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 }
                 is FirTypeOperatorCall -> generate(expression)
                 is FirOperatorCall -> generate(expression)
+                is FirAssignmentOperatorStatement -> generateBinary(expression.leftArgument, expression.rightArgument, expression.operation)
+                is FirEqualityOperatorCall -> generate(expression)
                 is FirBinaryLogicExpression -> generate(expression)
                 is FirCheckNotNullCall -> generate(expression)
                 is FirElvisExpression -> generate(expression)

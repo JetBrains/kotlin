@@ -406,6 +406,14 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             //skip rendering for as/as?/is/!is
         }
 
+        override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: StringBuilder) {
+            data.append("assignment operator statement ${assignmentOperatorStatement.operation}")
+        }
+
+        override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: StringBuilder) {
+            data.append("equality operator call ${equalityOperatorCall.operation}")
+        }
+
         override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: StringBuilder) {
             safeCallExpression.receiver.accept(this, data)
             data.append("?.{ ")
