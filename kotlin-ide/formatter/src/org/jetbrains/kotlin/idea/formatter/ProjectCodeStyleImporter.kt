@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,15 +34,13 @@ object ProjectCodeStyleImporter {
             return
         }
 
-        val projectSettingsUpdated: CodeStyleSettings = if (settingsManager.USE_PER_PROJECT_SETTINGS) {
-            customSettings.clone()
+        val projectSettingsUpdated: CodeStyleSettings = if (CodeStyle.usesOwnSettings(project)) {
+            settingsManager.cloneSettings(customSettings)
         } else {
-            CodeStyleSettings()
+            CodeStyle.getDefaultSettings()
         }
 
-        settingsManager.USE_PER_PROJECT_SETTINGS = true
-
         predefinedCodeStyle.apply(projectSettingsUpdated)
-        settingsManager.mainProjectCodeStyle = projectSettingsUpdated
+        CodeStyle.setMainProjectSettings(project, projectSettingsUpdated)
     }
 }

@@ -67,7 +67,7 @@ class KotlinFormatterUsageCollector : ProjectUsagesCollector() {
         }
 
         fun getKotlinFormatterKind(project: Project): KotlinFormatterKind {
-            val isProject = CodeStyleSettingsManager.getInstance(project).USE_PER_PROJECT_SETTINGS
+            val isProject = CodeStyle.usesOwnSettings(project)
 
             val settings = CodeStyle.getSettings(project)
             val kotlinCommonSettings = settings.kotlinCommonSettings
@@ -93,14 +93,15 @@ class KotlinFormatterUsageCollector : ProjectUsagesCollector() {
                 return paired(IDEA_KOTLIN, isProject)
             }
 
-            val isKotlinOfficialLikeSettings = settings == CodeStyleSettingsManager.getInstance(project).cloneSettings(settings).also {
+            val codeStyleSettingsManager = CodeStyleSettingsManager.getInstance(project)
+            val isKotlinOfficialLikeSettings = settings == codeStyleSettingsManager.cloneSettings(settings).also {
                 KotlinStyleGuideCodeStyle.apply(it)
             }
             if (isKotlinOfficialLikeSettings) {
                 return paired(IDEA_OFFICIAL_KOTLIN_WITH_CUSTOM, isProject)
             }
 
-            val isKotlinObsoleteLikeSettings = settings == CodeStyleSettingsManager.getInstance(project).cloneSettings(settings).also {
+            val isKotlinObsoleteLikeSettings = settings == codeStyleSettingsManager.cloneSettings(settings).also {
                 KotlinObsoleteCodeStyle.apply(it)
             }
             if (isKotlinObsoleteLikeSettings) {
