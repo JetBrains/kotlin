@@ -100,6 +100,9 @@
     public protected *;
 }
 
+# temporary workaround for KTI-298
+-keepclassmembers class com.google.common.** { *; }
+
 -keep class org.jetbrains.kotlin.container.** { *; }
 
 -keep class org.jetbrains.org.objectweb.asm.Opcodes { *; }
