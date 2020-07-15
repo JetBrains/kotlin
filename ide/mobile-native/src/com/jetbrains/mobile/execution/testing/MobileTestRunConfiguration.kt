@@ -58,11 +58,6 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         MobileTestRunConfigurationEditor(project, helper, ::isSuitable)
 
-    override fun createTestRunProfile(
-        rerunAction: CidrRerunFailedTestsAction,
-        testScope: CidrTestScope
-    ): CidrRerunFailedTestsAction.CidrReturnTestProfile = CidrRerunFailedTestsAction.CidrReturnTestProfile(rerunAction, this, testScope)
-
     override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher =
         AppleXCTestLauncher(this, environment, environment.executionTarget as AppleDevice)
 
