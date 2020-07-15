@@ -15,7 +15,6 @@ import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
+import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
@@ -133,7 +133,6 @@ private fun getDiscoveryResultsConfigurationName(sourceSetName: String): String 
     getDiscoveryClasspathConfigurationName(sourceSetName) + RESULTS_CONFIGURATION_SUFFIX
 
 
-
 private fun configureDiscoveryTransformation(
     project: Project,
     discoveryConfiguration: Configuration,
@@ -153,11 +152,11 @@ private fun configureDiscoveryTransformation(
 }
 
 internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<TransformParameters.None> {
-    @InputArtifact
-    abstract fun getInputArtifact(): Provider<FileSystemLocation>
+    @get:InputArtifact
+    abstract val inputArtifact: File
 
     override fun transform(outputs: TransformOutputs) {
-        val input = getInputArtifact().get().asFile
+        val input = inputArtifact
 
         val definitions =
             ScriptDefinitionsFromClasspathDiscoverySource(

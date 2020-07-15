@@ -9,8 +9,6 @@ import org.gradle.api.artifacts.transform.InputArtifact
 import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
-import org.gradle.api.file.FileSystemLocation
-import org.gradle.api.provider.Provider
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.*
