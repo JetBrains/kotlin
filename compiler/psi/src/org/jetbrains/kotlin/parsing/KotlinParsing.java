@@ -459,7 +459,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             return parseClass(detector.isEnumDetected(), true);
         }
         else if (keywordToken == FUN_KEYWORD) {
-            return parseFunction();
+            boolean isContractFunction = detector.isContractDetected();
+            return parseFunction(isContractFunction);
         }
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
             return parseProperty(declarationParsingMode);
@@ -1593,8 +1594,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     @NotNull
-    IElementType parseFunction() {
-        return parseFunction(false);
+    IElementType parseFunction(boolean isContractFunction) {
+        return parseFunction(false, isContractFunction);
     }
 
     /*
@@ -1604,11 +1605,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *       SimpleName
      *       typeParameters? functionParameters (":" type)?
      *       typeConstraints
+     *       TODO: contractEffects?
      *       functionBody?
      *   ;
      */
-    @Contract("false -> !null")
-    IElementType parseFunction(boolean failIfIdentifierExists) {
+    //@Contract("false -> !null") // TODO: need to change contract since the function's arguments number has been changed
+    IElementType parseFunction(boolean failIfIdentifierExists, boolean isContractFunction) {
         assert _at(FUN_KEYWORD);
 
         advance(); // FUN_KEYWORD
@@ -1665,19 +1667,27 @@ public class KotlinParsing extends AbstractKotlinParsing {
             error("Expecting '('");
         }
 
-        if (at(COLON)) {
-            advance(); // COLON
+        if (isContractFunction) {
+            assert _at(EQ);
+            advance(); // EQ
 
-            parseTypeRef();
-        }
+            myExpressionParsing.parseContractEffectList();
+        } else {
 
-        parseTypeConstraintsGuarded(typeParameterListOccurred);
+            if (at(COLON)) {
+                advance(); // COLON
 
-        if (at(SEMICOLON)) {
-            advance(); // SEMICOLON
-        }
-        else if (at(EQ) || at(LBRACE)) {
-            parseFunctionBody();
+                parseTypeRef();
+            }
+
+            parseTypeConstraintsGuarded(typeParameterListOccurred);
+
+            if (at(SEMICOLON)) {
+                advance(); // SEMICOLON
+            }
+            else if (at(EQ) || at(LBRACE)) {
+                parseFunctionBody();
+            }
         }
 
         return FUN;
@@ -2475,12 +2485,16 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*package*/ static class ModifierDetector implements Consumer<IElementType> {
         private boolean enumDetected = false;
+        private boolean contractDetected = false;
         private boolean companionDetected = false;
 
         @Override
         public void consume(IElementType item) {
             if (item == KtTokens.ENUM_KEYWORD) {
                 enumDetected = true;
+            }
+            else if (item == KtTokens.CONTRACT_KEYWORD) {
+                contractDetected = true;
             }
             else if (item == KtTokens.COMPANION_KEYWORD) {
                 companionDetected = true;
@@ -2489,6 +2503,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         public boolean isEnumDetected() {
             return enumDetected;
+        }
+
+        public boolean isContractDetected() {
+            return contractDetected;
         }
 
         public boolean isCompanionDetected() {
