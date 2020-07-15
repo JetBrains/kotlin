@@ -380,6 +380,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/FunctionTypes.kt");
         }
 
+        @TestMetadata("FunctionWithMultilineContract.kt")
+        public void testFunctionWithMultilineContract() throws Exception {
+            runTest("compiler/testData/psi/FunctionWithMultilineContract.kt");
+        }
+
+        @TestMetadata("FunctionWithTypeConstraintsAndContract.kt")
+        public void testFunctionWithTypeConstraintsAndContract() throws Exception {
+            runTest("compiler/testData/psi/FunctionWithTypeConstraintsAndContract.kt");
+        }
+
         @TestMetadata("Functions.kt")
         public void testFunctions() throws Exception {
             runTest("compiler/testData/psi/Functions.kt");
@@ -618,6 +628,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         @TestMetadata("SimpleExpressions.kt")
         public void testSimpleExpressions() throws Exception {
             runTest("compiler/testData/psi/SimpleExpressions.kt");
+        }
+
+        @TestMetadata("SimpleFunctionWithContract.kt")
+        public void testSimpleFunctionWithContract() throws Exception {
+            runTest("compiler/testData/psi/SimpleFunctionWithContract.kt");
         }
 
         @TestMetadata("SimpleModifiers.kt")
