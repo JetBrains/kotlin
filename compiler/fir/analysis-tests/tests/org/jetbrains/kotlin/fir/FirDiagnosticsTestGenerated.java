@@ -1744,6 +1744,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/complexLambdaWithTypeVariableAsExpectedType.kt");
         }
 
+        @TestMetadata("defaultParametersFromDifferentScopes.kt")
+        public void testDefaultParametersFromDifferentScopes() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/defaultParametersFromDifferentScopes.kt");
+        }
+
         @TestMetadata("definitelyNotNullAndOriginalType.kt")
         public void testDefinitelyNotNullAndOriginalType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/definitelyNotNullAndOriginalType.kt");
