@@ -14,9 +14,9 @@ import java.net.URI
 import java.util.Arrays.asList
 import kotlin.test.fail
 
-class ConfigurationCacheIT : BaseGradleIT() {
+open class ConfigurationCacheIT : BaseGradleIT() {
     private val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v4_0_ALPHA_8
+        get() = AGPVersion.v4_1_0
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
@@ -61,7 +61,7 @@ class ConfigurationCacheIT : BaseGradleIT() {
             setupIncrementalAptProject("AGGREGATING")
         }
 
-    private fun Project.testConfigurationCacheOf(
+    internal fun Project.testConfigurationCacheOf(
         vararg taskNames: String,
         executedTaskNames: List<String>? = null,
         buildOptions: BuildOptions = defaultBuildOptions()

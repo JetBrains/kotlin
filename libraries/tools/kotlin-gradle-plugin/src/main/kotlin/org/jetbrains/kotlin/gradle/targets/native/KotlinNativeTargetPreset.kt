@@ -89,13 +89,9 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
         createTargetConfigurator().configureTarget(result)
 
-        if (!isConfigurationCacheAvailable(project.gradle)) {
-            SingleActionPerProject.run(project, "setUpKotlinNativePlatformDependencies") {
-                project.gradle.addListener(object : BuildAdapter() {
-                    override fun projectsEvaluated(gradle: Gradle) {
-                        project.setUpKotlinNativePlatformDependencies()
-                    }
-                })
+        SingleActionPerProject.run(project, "setUpKotlinNativePlatformDependencies") {
+            project.gradle.projectsEvaluated {
+                project.setUpKotlinNativePlatformDependencies()
             }
         }
 
