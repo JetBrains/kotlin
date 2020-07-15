@@ -4,5 +4,3 @@ buildscript {
         mavenCentral()
     }
 }
-
-apply(plugin  ="kotlin")

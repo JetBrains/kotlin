@@ -6,8 +6,6 @@ buildscript {
         mavenCentral()
     }
 }
-
-apply(plugin  ="kotlin")
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
     freeCompilerArgs = listOf("-Xinline-classes")
