@@ -17,9 +17,9 @@ version = "1.0"
 
 kotlin {
     iosX64("iOS")
-
     cocoapods {
-        noPodspec()
-        podfile = project.file("ios-app/Podfile")
+        homepage = "https://github.com/JetBrains/kotlin"
+        summary = "CocoaPods test library"
+        ios.deploymentTarget = "13.5"
     }
 }

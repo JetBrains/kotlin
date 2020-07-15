@@ -15,10 +15,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.addExtension
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -41,10 +44,15 @@ internal class CocoapodsBuildDirs(val project: Project) {
     val buildSettings: File
         get() = root.resolve("buildSettings")
 
-    private val synthetic: File
+    val synthetic: File
         get() = root.resolve("synthetic")
 
     fun synthetic(kotlinNativeTarget: KotlinNativeTarget) = synthetic.resolve(kotlinNativeTarget.name)
+
+    val externalSources: File
+        get() = root.resolve("externalSources")
+
+    fun externalSources(fileName: String) = externalSources.resolve(fileName)
 
     fun fatFramework(buildType: String) =
         root.resolve("fat-frameworks/${buildType.toLowerCase()}")
@@ -61,11 +69,16 @@ private val KotlinNativeTarget.toSetupBuildTaskName: String
         disambiguationClassifier
     )
 
-
 private val KotlinNativeTarget.toBuildDependenciesTaskName: String
     get() = lowerCamelCaseName(
         KotlinCocoapodsPlugin.POD_BUILD_DEPENDENCIES_TASK_NAME,
         disambiguationClassifier
+    )
+
+private val CocoapodsDependency.toPodDownloadTaskName: String
+    get() = lowerCamelCaseName(
+        KotlinCocoapodsPlugin.POD_DOWNLOAD_TASK_NAME,
+        name
     )
 
 open class KotlinCocoapodsPlugin : Plugin<Project> {
@@ -185,7 +198,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         cocoapodsExtension: CocoapodsExtension
     ) {
         val moduleNames = mutableSetOf<String>()
-
 
         cocoapodsExtension.pods.all { pod ->
             if (moduleNames.contains(pod.moduleName)) {
@@ -317,12 +329,41 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+    private fun registerPodDownloadTask(
+        project: Project,
+        cocoapodsExtension: CocoapodsExtension
+    ) {
+        val downloadAllTask = project.tasks.register(POD_DOWNLOAD_TASK_NAME) {
+            it.group = TASK_GROUP
+            it.description = "Downloads CocoaPods dependencies from external sources"
+        }
+
+        cocoapodsExtension.pods.all { pod ->
+            val podSource = pod.source
+            val downloadPodTask = when (podSource) {
+                is Git -> project.tasks.register(pod.toPodDownloadTaskName, PodDownloadGitTask::class.java) {
+                    it.cocoapodsExtension = cocoapodsExtension
+                    it.podName = project.provider { pod.name }
+                    it.podSource = project.provider { podSource as Git }
+                }
+                is Url -> project.tasks.register(pod.toPodDownloadTaskName, PodDownloadUrlTask::class.java) {
+                    it.cocoapodsExtension = cocoapodsExtension
+                    it.podName = project.provider { pod.name }
+                    it.podSource = project.provider { podSource as Url }
+                }
+                else -> return@all
+            }
+
+            downloadAllTask.dependsOn(downloadPodTask)
+        }
+    }
+
     private fun registerPodGenTask(
         project: Project, kotlinExtension: KotlinMultiplatformExtension, cocoapodsExtension: CocoapodsExtension
     ) {
 
         val podspecTaskProvider = project.tasks.named(POD_SPEC_TASK_NAME, PodspecTask::class.java)
-
+        val downloadPods = project.tasks.named(POD_DOWNLOAD_TASK_NAME)
         kotlinExtension.supportedTargets().all { target ->
             project.tasks.register(target.toPodGenTaskName, PodGenTask::class.java) {
                 it.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
@@ -330,6 +371,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 it.kotlinNativeTarget = target
                 it.cocoapodsExtension = cocoapodsExtension
                 it.dependsOn(podspecTaskProvider)
+                it.dependsOn(downloadPods)
                 it.onlyIf { isAvailableToProduceSynthetic }
             }
         }
@@ -415,6 +457,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             createSyncTask(project, kotlinExtension)
             registerPodspecTask(project, cocoapodsExtension)
 
+            registerPodDownloadTask(project, cocoapodsExtension)
             registerPodGenTask(project, kotlinExtension, cocoapodsExtension)
             registerPodInstallTask(project, cocoapodsExtension)
             registerPodSetupBuildTasks(project, kotlinExtension, cocoapodsExtension)
@@ -443,6 +486,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         const val POD_SPEC_TASK_NAME = "podspec"
         const val DUMMY_FRAMEWORK_TASK_NAME = "generateDummyFramework"
         const val POD_INSTALL_TASK_NAME = "podInstall"
+        const val POD_DOWNLOAD_TASK_NAME = "podDownload"
         const val POD_GEN_TASK_NAME = "podGen"
         const val POD_SETUP_BUILD_TASK_NAME = "podSetupBuild"
         const val POD_BUILD_DEPENDENCIES_TASK_NAME = "podBuildDependencies"
