@@ -5,9 +5,9 @@ versions.ideaPluginForCidr.repo=Kotlin_KotlinDev_Aggregate
 
 # Used for dependencies in shared modules when syncing to IDE
 # During build this value is substituted with the actual dependency
-versions.cidrPlatform=203.647
+versions.cidrPlatform=203.1219
 
-versions.appcode=202.5657
+versions.appcode=203.1219
 versions.appcode.strict=true
 versions.appcode.repo=ijplatform_master_CIDR_AppCode_Installers
 versions.xcode-compat=0.2.5
