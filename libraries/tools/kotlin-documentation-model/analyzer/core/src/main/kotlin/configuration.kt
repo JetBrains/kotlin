@@ -5,6 +5,7 @@ package org.jetbrains.dokka
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import java.io.File
 import java.net.URL
 
@@ -26,7 +27,7 @@ object DokkaDefaults {
     val analysisPlatform: Platform = Platform.DEFAULT
     const val suppress: Boolean = false
 
-    const val displayName = "JVM"
+    const val sourceSetDisplayName = "JVM"
     const val sourceSetName = "main"
 }
 
@@ -62,8 +63,9 @@ data class DokkaSourceSetID(
 }
 
 @OptIn(UnstableDefault::class)
-fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl {
-    return Json.parse(DokkaConfigurationImpl.serializer(), json)
+fun DokkaConfigurationImpl(input: String): DokkaConfigurationImpl {
+    val json = Json(JsonConfiguration.Default.copy(ignoreUnknownKeys = true))
+    return json.parse(DokkaConfigurationImpl.serializer(), input)
 }
 
 interface DokkaConfiguration {
