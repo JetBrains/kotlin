@@ -20,7 +20,7 @@ data class DokkaConfigurationImpl(
 @Serializable
 data class DokkaSourceSetImpl(
     override val moduleDisplayName: String,
-    override val displayName: String = DokkaDefaults.displayName,
+    override val displayName: String = DokkaDefaults.sourceSetDisplayName,
     override val sourceSetID: DokkaSourceSetID,
     override val classpath: List<String> = emptyList(),
     override val sourceRoots: List<SourceRootImpl>,
