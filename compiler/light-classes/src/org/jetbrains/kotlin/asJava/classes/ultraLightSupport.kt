@@ -20,7 +20,8 @@ interface KtUltraLightSupport {
     val typeMapper: KotlinTypeMapper
     val moduleDescriptor: ModuleDescriptor
     val isReleasedCoroutine: Boolean
-    fun hasAlias(file: KtFile, shortName: Name?): Boolean = false
+    fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean
+
     fun getConstantEvaluator(expression: KtExpression): ConstantExpressionEvaluator
 
     companion object {
@@ -51,6 +52,9 @@ class UltraLightSupportViaService(private val ktElement: KtElement) : KtUltraLig
 
     override val isReleasedCoroutine: Boolean
         get() = serviceProvidedSupport.isReleasedCoroutine
+
+    override fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean =
+        serviceProvidedSupport.possiblyHasAlias(file, shortName)
 
     override fun getConstantEvaluator(expression: KtExpression): ConstantExpressionEvaluator =
         serviceProvidedSupport.getConstantEvaluator(expression)

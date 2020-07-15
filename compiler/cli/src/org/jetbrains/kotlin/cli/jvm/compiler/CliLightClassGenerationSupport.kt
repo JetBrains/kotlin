@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
@@ -67,6 +68,8 @@ class CliLightClassGenerationSupport(private val traceHolder: CliTraceHolder) : 
 
         override val isReleasedCoroutine
             get() = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+
+        override fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean = true
 
         override fun getConstantEvaluator(expression: KtExpression): org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator =
             ResolveEvaluator(moduleDescriptor, languageVersionSettings, expression.project)

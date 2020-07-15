@@ -16,13 +16,9 @@ import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.impl.light.*
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.BitUtil.isSet
 import com.intellij.util.IncorrectOperationException
-import com.intellij.util.containers.ConcurrentFactoryMap
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
@@ -46,10 +42,8 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
@@ -66,7 +60,6 @@ import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.text.StringCharacterIterator
-import java.util.concurrent.ConcurrentMap
 
 private interface TypeParametersSupport<D, T> {
     fun parameters(declaration: D): List<T>
@@ -493,9 +486,14 @@ inline fun KtFile.safeIsScript() = runReadAction { this.isScript() }
 inline fun KtFile.safeScript() = runReadAction { this.script }
 
 internal fun KtUltraLightSupport.findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>? {
-    val candidates = owner.annotationEntries.filter {
-        it.shortName == fqName.shortName() || hasAlias(owner.containingKtFile, it.shortName)
-    }
+
+    val candidates = owner.annotationEntries
+        .filter {
+            it.shortName?.let { name ->
+                name == fqName.shortName() || possiblyHasAlias(owner.containingKtFile, name)
+            } ?: false
+        }
+
     for (entry in candidates) {
         val descriptor = entry.analyzeAnnotation()
         if (descriptor?.fqName == fqName) {

@@ -68,6 +68,17 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             JvmCodegenUtil.getModuleName(moduleDescriptor)
         }
 
+        override fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean =
+            allAliases(file)[shortName.asString()] == true
+
+        private fun allAliases(file: KtFile): ConcurrentMap<String, Boolean> = CachedValuesManager.getCachedValue(file) {
+            val importAliases = file.importDirectives.mapNotNull { it.aliasName }.toSet()
+            val map = ConcurrentFactoryMap.createMap<String, Boolean> { s ->
+                s in importAliases || KotlinTypeAliasShortNameIndex.getInstance().get(s, file.project, file.resolveScope).isNotEmpty()
+            }
+            CachedValueProvider.Result.create<ConcurrentMap<String, Boolean>>(map, PsiModificationTracker.MODIFICATION_COUNT)
+        }
+
         @OptIn(FrontendInternals::class)
         override val deprecationResolver: DeprecationResolver
             get() = resolutionFacade.getFrontendService(DeprecationResolver::class.java)
@@ -131,19 +142,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     override fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport =
         KtUltraLightSupportImpl(element)
-
-    private fun KtFile.hasAlias(shortName: Name?): Boolean {
-        if (shortName == null) return false
-        return allAliases(this)[shortName.asString()] == true
-    }
-
-    private fun allAliases(file: KtFile): ConcurrentMap<String, Boolean> = CachedValuesManager.getCachedValue(file) {
-        val importAliases = file.importDirectives.mapNotNull { it.aliasName }.toSet()
-        val map = ConcurrentFactoryMap.createMap<String, Boolean> { s ->
-            s in importAliases || KotlinTypeAliasShortNameIndex.getInstance().get(s, project, file.resolveScope).isNotEmpty()
-        }
-        CachedValueProvider.Result.create<ConcurrentMap<String, Boolean>>(map, PsiModificationTracker.MODIFICATION_COUNT)
-    }
 
     private val scopeFileComparator = JavaElementFinder.byClasspathComparator(GlobalSearchScope.allScope(project))
 
