@@ -98,7 +98,11 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
     @Test
     fun testUnchangedAnnotationProcessorClasspathButContentChanged() {
         val project = getProject()
-        val processorJar = project.projectDir.resolve("processor.jar").also { it.createNewFile() }
+        val processorJar = project.projectDir.resolve("processor.jar").also {
+            ZipOutputStream(it.outputStream()).use {
+                // create an empty jar
+            }
+        }
         project.gradleBuildScript().appendText(
             """
             
