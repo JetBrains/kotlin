@@ -11354,6 +11354,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/nothingWithCallableReference.kt");
                 }
 
+                @TestMetadata("nullableExpectedTypeFromVariable.kt")
+                public void testNullableExpectedTypeFromVariable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/nullableExpectedTypeFromVariable.kt");
+                }
+
                 @TestMetadata("platformNothingAsUsefulConstraint.kt")
                 public void testPlatformNothingAsUsefulConstraint() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/platformNothingAsUsefulConstraint.kt");
@@ -11362,6 +11367,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("reifiedParameterWithRecursiveBound.kt")
                 public void testReifiedParameterWithRecursiveBound() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/reifiedParameterWithRecursiveBound.kt");
+                }
+
+                @TestMetadata("specialCallWithMaterializeAndExpectedType.kt")
+                public void testSpecialCallWithMaterializeAndExpectedType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/specialCallWithMaterializeAndExpectedType.kt");
                 }
             }
 

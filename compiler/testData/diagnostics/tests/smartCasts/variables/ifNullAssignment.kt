@@ -3,7 +3,7 @@
 
 fun basic(): String {
     var current: String? = null
-    current = if (current == null) "bar" else <!NI;DEBUG_INFO_SMARTCAST!>current<!>
+    current = if (current == null) "bar" else current
     return <!DEBUG_INFO_SMARTCAST!>current<!>
 }
 
