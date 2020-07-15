@@ -19,4 +19,5 @@ abstract class FirModuleBasedSession(
 fun FirModuleBasedSession.registerResolveComponents() {
     register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
     register(FirTypeResolver::class, FirTypeResolverImpl(this))
+    register(FirEffectiveVisibilityResolver::class, FirEffectiveVisibilityResolverImpl(this))
 }

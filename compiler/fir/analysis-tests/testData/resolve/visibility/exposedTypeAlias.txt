@@ -5,7 +5,7 @@ FILE: exposedTypeAlias.kt
         }
 
         private final inner class Inner : R|kotlin/Any| {
-            public[private] constructor(): R|A.Inner| {
+            public constructor(): R|A.Inner| {
                 super<R|kotlin/Any|>()
             }
 

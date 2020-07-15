@@ -73,7 +73,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
     }
 
     override fun shouldSerializeNestedClass(nestedClass: FirRegularClass): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || nestedClass.effectiveVisibility != FirEffectiveVisibilityImpl.Private
+        return classBuilderMode != ClassBuilderMode.ABI || nestedClass.visibility != Visibilities.PRIVATE
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)

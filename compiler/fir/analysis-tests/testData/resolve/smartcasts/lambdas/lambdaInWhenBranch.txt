@@ -6,24 +6,24 @@ FILE: lambdaInWhenBranch.kt
 
     }
     private final data class SubClass1 : R|Sealed| {
-        public[private] constructor(t: R|kotlin/String|): R|SubClass1| {
+        public constructor(t: R|kotlin/String|): R|SubClass1| {
             super<R|Sealed|>()
         }
 
-        public[private] final val t: R|kotlin/String| = R|<local>/t|
+        public final val t: R|kotlin/String| = R|<local>/t|
             public get(): R|kotlin/String|
 
-        public[private] final fun component1(): R|kotlin/String|
+        public final fun component1(): R|kotlin/String|
 
-        public[private] final fun copy(t: R|kotlin/String| = this@R|/SubClass1|.R|/SubClass1.t|): R|SubClass1|
+        public final fun copy(t: R|kotlin/String| = this@R|/SubClass1|.R|/SubClass1.t|): R|SubClass1|
 
     }
     private final data class SubClass2 : R|Sealed| {
-        public[private] constructor(): R|SubClass2| {
+        public constructor(): R|SubClass2| {
             super<R|Sealed|>()
         }
 
-        public[private] final fun copy(): R|SubClass2|
+        public final fun copy(): R|SubClass2|
 
     }
     private final fun foo(p: R|Sealed|): R|kotlin/Unit| {

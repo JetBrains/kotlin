@@ -30,16 +30,16 @@ FILE: CallBasedInExpressionGenerator.kt
 
         private final fun gen(argument: R|ERROR CLASS: Symbol not found, for `StackValue`|): R|ERROR CLASS: Symbol not found, for `BranchedValue`| {
             ^gen object : R|ERROR CLASS: Symbol not found, for `BranchedValue`| {
-                private[local] constructor(): R|<anonymous>| {
+                private constructor(): R|<anonymous>| {
                     super<R|ERROR CLASS: Symbol not found, for `BranchedValue`|>(R|<local>/argument|, Null(null), R|<local>/argument|.<Unresolved name: type>#, <Unresolved name: Opcodes>#.<Unresolved name: IFEQ>#)
                 }
 
-                public[local] final override fun putSelector(type: R|ERROR CLASS: Symbol not found, for `Type`|, kotlinType: R|ERROR CLASS: Symbol not found, for `KotlinType?`|, v: R|ERROR CLASS: Symbol not found, for `InstructionAdapter`|): R|kotlin/Unit| {
+                public final override fun putSelector(type: R|ERROR CLASS: Symbol not found, for `Type`|, kotlinType: R|ERROR CLASS: Symbol not found, for `KotlinType?`|, v: R|ERROR CLASS: Symbol not found, for `InstructionAdapter`|): R|kotlin/Unit| {
                     this@R|/<anonymous>|.R|/<anonymous>.invokeFunction|(R|<local>/v|)
                     <Unresolved name: coerceTo>#(R|<local>/type|, R|<local>/kotlinType|, R|<local>/v|)
                 }
 
-                public[local] final override fun condJump(jumpLabel: R|ERROR CLASS: Symbol not found, for `Label`|, v: R|ERROR CLASS: Symbol not found, for `InstructionAdapter`|, jumpIfFalse: R|kotlin/Boolean|): R|kotlin/Unit| {
+                public final override fun condJump(jumpLabel: R|ERROR CLASS: Symbol not found, for `Label`|, v: R|ERROR CLASS: Symbol not found, for `InstructionAdapter`|, jumpIfFalse: R|kotlin/Boolean|): R|kotlin/Unit| {
                     this@R|/<anonymous>|.R|/<anonymous>.invokeFunction|(R|<local>/v|)
                     R|<local>/v|.<Unresolved name: visitJumpInsn>#(when () {
                         R|<local>/jumpIfFalse| ->  {
@@ -52,7 +52,7 @@ FILE: CallBasedInExpressionGenerator.kt
                     , R|<local>/jumpLabel|)
                 }
 
-                private[local] final fun invokeFunction(v: R|ERROR CLASS: Symbol not found, for `InstructionAdapter`|): R|kotlin/Unit| {
+                private final fun invokeFunction(v: R|ERROR CLASS: Symbol not found, for `InstructionAdapter`|): R|kotlin/Unit| {
                     lval result: <ERROR TYPE REF: Unresolved name: invokeFunction> = this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.codegen|.<Unresolved name: invokeFunction>#(this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.resolvedCall|.<Unresolved name: call>#, this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.resolvedCall|, <Unresolved name: none>#())
                     R|<local>/result|.<Unresolved name: put>#(R|<local>/result|.<Unresolved name: type>#, R|<local>/result|.<Unresolved name: kotlinType>#, R|<local>/v|)
                 }

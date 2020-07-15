@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
@@ -147,13 +149,6 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaField {
-        val status: FirDeclarationStatus = FirDeclarationStatusImpl(visibility, modality).apply {
-            isStatic = this@FirJavaFieldBuilder.isStatic
-            isExpect = false
-            isActual = false
-            isOverride = false
-        }
-
         return FirJavaField(
             source,
             session,

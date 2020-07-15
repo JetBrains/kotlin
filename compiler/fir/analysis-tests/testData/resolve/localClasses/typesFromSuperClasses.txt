@@ -12,11 +12,11 @@ FILE: typesFromSuperClasses.kt
     }
     public final fun main(): R|kotlin/Unit| {
         object : R|Outer| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|Outer|>()
             }
 
-            public[local] final fun foo(n: R|Outer.Nested|): R|kotlin/Unit| {
+            public final fun foo(n: R|Outer.Nested|): R|kotlin/Unit| {
                 R|<local>/n|.R|/Outer.Nested.bar|()
             }
 

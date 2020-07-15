@@ -11,19 +11,19 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getOrPut
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
@@ -90,7 +90,10 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                         session = this@FirBuiltinSymbolProvider.session
                         origin = FirDeclarationOrigin.Synthetic
                         name = relativeClassName.shortName()
-                        status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.ABSTRACT).apply {
+                        status = FirResolvedDeclarationStatusImpl(
+                            Visibilities.PUBLIC,
+                            Modality.ABSTRACT
+                        ).apply {
                             isExpect = false
                             isActual = false
                             isInner = false
@@ -127,7 +130,10 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                             },
                         )
                         val name = OperatorNameConventions.INVOKE
-                        val functionStatus = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.ABSTRACT).apply {
+                        val functionStatus = FirResolvedDeclarationStatusImpl(
+                            Visibilities.PUBLIC,
+                            Modality.ABSTRACT
+                        ).apply {
                             isExpect = false
                             isActual = false
                             isOverride = false

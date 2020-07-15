@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -142,15 +141,6 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaClass {
-        val isInner = !isTopLevel && !isStatic
-        val status = FirDeclarationStatusImpl(visibility, modality).apply {
-            this.isInner = isInner
-            isCompanion = false
-            isData = false
-            isInline = false
-            isFun = classKind == ClassKind.INTERFACE
-        }
-
         return FirJavaClass(
             source,
             session,

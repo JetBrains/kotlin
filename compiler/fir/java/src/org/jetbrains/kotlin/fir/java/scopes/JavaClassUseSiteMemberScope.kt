@@ -127,6 +127,7 @@ class JavaClassUseSiteMemberScope(
             modality = firSimpleFunction.modality
             returnTypeRef = firSimpleFunction.returnTypeRef
             isStatic = firSimpleFunction.status.isStatic
+            status = firSimpleFunction.status
         }
     }
 

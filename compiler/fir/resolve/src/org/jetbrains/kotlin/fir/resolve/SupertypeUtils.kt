@@ -42,6 +42,18 @@ fun lookupSuperTypes(
     }
 }
 
+fun lookupSuperTypes(
+    symbol: FirClassifierSymbol<*>,
+    lookupInterfaces: Boolean,
+    deep: Boolean,
+    useSiteSession: FirSession,
+    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
+): List<ConeClassLikeType> {
+    return mutableListOf<ConeClassLikeType>().also {
+        symbol.collectSuperTypes(it, mutableSetOf(), deep, lookupInterfaces, false, useSiteSession, supertypeSupplier)
+    }
+}
+
 inline fun <reified ID : Any, reified FS : FirScope> scopeSessionKey(): ScopeSessionKey<ID, FS> {
     return object : ScopeSessionKey<ID, FS>() {}
 }

@@ -51,7 +51,7 @@ FILE: singletonConstructors.kt
         }
 
         public final static enum entry X: R|E| = object : R|E| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|E|>()
             }
 

@@ -12,6 +12,6 @@ class J extends I {
 
 // FILE: K.kt
 
-open class K : J() {
+open class K : <!EXPOSED_SUPER_CLASS!>J<!>() {
     fun baz() {}
 }

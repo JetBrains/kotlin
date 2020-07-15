@@ -42,7 +42,6 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.PRIVATE,
-                FirEffectiveVisibilityImpl.Private,
                 Modality.FINAL
             ).apply {
                 isInner = true
@@ -68,7 +67,6 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
             }
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.PUBLIC,
-                FirEffectiveVisibilityImpl.Public,
                 Modality.FINAL
             )
             symbol = FirConstructorSymbol(CallableId(classId, classId.shortClassName))
@@ -81,7 +79,6 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
             returnTypeRef = session.builtinTypes.intType
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.PUBLIC,
-                FirEffectiveVisibilityImpl.Public,
                 Modality.FINAL
             )
             name = Name.identifier("hello")

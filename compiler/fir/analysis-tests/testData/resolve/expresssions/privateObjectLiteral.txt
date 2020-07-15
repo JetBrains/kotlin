@@ -5,11 +5,11 @@ FILE: privateObjectLiteral.kt
         }
 
         private final val x: R|<anonymous>| = object : R|kotlin/Any| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
-            public[local] final fun foo(): R|kotlin/Int| {
+            public final fun foo(): R|kotlin/Int| {
                 ^foo Int(42)
             }
 
@@ -21,11 +21,11 @@ FILE: privateObjectLiteral.kt
             public get(): R|kotlin/Int|
 
         internal final val z: R|<anonymous>| = object : R|kotlin/Any| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
-            public[local] final fun foo(): R|kotlin/Int| {
+            public final fun foo(): R|kotlin/Int| {
                 ^foo Int(13)
             }
 

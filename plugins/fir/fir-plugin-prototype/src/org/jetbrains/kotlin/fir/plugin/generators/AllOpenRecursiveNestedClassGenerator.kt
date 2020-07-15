@@ -39,7 +39,6 @@ class AllOpenRecursiveNestedClassGenerator(session: FirSession) : FirDeclaration
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.PUBLIC,
-                FirEffectiveVisibilityImpl.Public,
                 Modality.FINAL
             )
             classKind = ClassKind.CLASS

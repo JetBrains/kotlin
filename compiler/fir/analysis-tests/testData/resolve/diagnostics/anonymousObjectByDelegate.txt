@@ -11,7 +11,7 @@ FILE: anonymousObjectByDelegate.kt
         object : R|B| {
             local final field <$$delegate_0>: R|B|
 
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
                 this@R|/<anonymous>|.R|<local>/<$$delegate_0>| = this@R|/test_1|.R|/A.b|
             }
@@ -23,7 +23,7 @@ FILE: anonymousObjectByDelegate.kt
         object : R|B| {
             local final field <$$delegate_0>: R|B|
 
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
                 this@R|/<anonymous>|.R|<local>/<$$delegate_0>| = this@R|/test_2|.R|/A.b|
             }

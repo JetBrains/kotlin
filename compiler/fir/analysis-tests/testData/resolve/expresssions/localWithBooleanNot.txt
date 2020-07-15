@@ -1,19 +1,19 @@
 FILE: foo.kt
     public final fun foo(): R|kotlin/Boolean| {
         object : R|Node<kotlin/Boolean>| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
-            private[local] final var result: R|kotlin/Boolean| = Boolean(false)
+            private final var result: R|kotlin/Boolean| = Boolean(false)
                 private get(): R|kotlin/Boolean|
                 private set(value: R|kotlin/Boolean|): R|kotlin/Unit|
 
-            public[local] final fun bar(): R|kotlin/Boolean| {
+            public final fun bar(): R|kotlin/Boolean| {
                 ^bar this@R|/<anonymous>|.R|/<anonymous>.result|.R|kotlin/Boolean.not|()
             }
 
-            public[local] final override fun result(): R|kotlin/Boolean| {
+            public final override fun result(): R|kotlin/Boolean| {
                 ^result this@R|/<anonymous>|.R|/<anonymous>.result|
             }
 

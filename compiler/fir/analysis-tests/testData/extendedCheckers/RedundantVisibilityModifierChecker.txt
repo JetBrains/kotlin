@@ -1,11 +1,11 @@
 FILE: RedundantVisibilityModifierChecker.kt
     public final fun f(): R|kotlin/Unit| {
         local final class LocalClass : R|kotlin/Any| {
-            public[local] constructor(): R|LocalClass| {
+            public constructor(): R|LocalClass| {
                 super<R|kotlin/Any|>()
             }
 
-            internal[local] final var foo: R|kotlin/Int| = Int(0)
+            internal final var foo: R|kotlin/Int| = Int(0)
                 internal get(): R|kotlin/Int|
                 internal set(value: R|kotlin/Int|): R|kotlin/Unit|
 
@@ -23,11 +23,11 @@ FILE: RedundantVisibilityModifierChecker.kt
         }
 
         internal final val z: R|<anonymous>| = object : R|kotlin/Any| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
-            public[local] final fun foo(): R|kotlin/Int| {
+            public final fun foo(): R|kotlin/Int| {
                 ^foo Int(13)
             }
 
@@ -45,7 +45,7 @@ FILE: RedundantVisibilityModifierChecker.kt
         }
 
         internal final inner class B<T, T2, T1, T2 : R|T1|> : R|kotlin/Any| {
-            public[internal] constructor<T, T2>(): R|Foo2.B<T, T2, T1, T2>| {
+            public constructor<T, T2>(): R|Foo2.B<T, T2, T1, T2>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -97,7 +97,7 @@ FILE: RedundantVisibilityModifierChecker.kt
             public get(): R|kotlin/Int|
 
         public final static enum entry FIRST: R|F| = object : R|F| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|F|>(Int(42))
             }
 

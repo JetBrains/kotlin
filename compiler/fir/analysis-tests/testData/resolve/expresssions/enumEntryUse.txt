@@ -7,11 +7,11 @@ FILE: enumEntryUse.kt
         public final static enum entry FIRST: R|TestEnum|
         public final static enum entry SECOND: R|TestEnum|
         public final static enum entry THIRD: R|TestEnum| = object : R|TestEnum| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|TestEnum|>()
             }
 
-            public[local] final fun foo(): R|kotlin/Unit| {
+            public final fun foo(): R|kotlin/Unit| {
             }
 
         }

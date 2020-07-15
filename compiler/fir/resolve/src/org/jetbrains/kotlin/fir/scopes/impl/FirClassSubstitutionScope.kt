@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirEffectiveVisibilityImpl
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
@@ -342,19 +339,11 @@ class FirClassSubstitutionScope(
             }
         }
 
-        private fun FirDeclarationStatus.withLocalEffectiveVisibility(isLocal: Boolean): FirDeclarationStatus {
-            return if (isLocal && this is FirDeclarationStatusImpl) {
-                resolved(visibility, FirEffectiveVisibilityImpl.Local, modality!!)
-            } else {
-                this
-            }
-        }
-
         private fun FirDeclarationStatus.withExpect(isExpect: Boolean): FirDeclarationStatus {
             return if (this.isExpect == isExpect) {
                 this
             } else {
-                FirResolvedDeclarationStatusImpl(visibility, effectiveVisibility, modality!!).apply {
+                FirResolvedDeclarationStatusImpl(visibility, modality!!).apply {
                     this.isExpect = isExpect
                 }
             }
@@ -372,7 +361,6 @@ class FirClassSubstitutionScope(
         ): FirSimpleFunction {
             // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
             // As second alternative, we can invent some light-weight kind of FirRegularClass
-            val isLocal = fakeOverrideSymbol.callableId.classId?.isLocal == true
             return buildSimpleFunction {
                 source = baseFunction.source
                 this.session = session
@@ -380,7 +368,7 @@ class FirClassSubstitutionScope(
                 returnTypeRef = baseFunction.returnTypeRef.withReplacedReturnType(newReturnType)
                 receiverTypeRef = baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType)
                 name = baseFunction.name
-                status = baseFunction.status.withLocalEffectiveVisibility(isLocal).withExpect(isExpect)
+                status = baseFunction.status.withExpect(isExpect)
                 symbol = fakeOverrideSymbol
                 resolvePhase = baseFunction.resolvePhase
                 configureAnnotationsAndParameters(session, baseFunction, newParameterTypes)
@@ -440,7 +428,7 @@ class FirClassSubstitutionScope(
                 isVar = baseProperty.isVar
                 this.symbol = symbol
                 isLocal = false
-                status = baseProperty.status.withLocalEffectiveVisibility(isLocal).withExpect(isExpect)
+                status = baseProperty.status.withExpect(isExpect)
                 resolvePhase = baseProperty.resolvePhase
                 annotations += baseProperty.annotations
                 if (newTypeParameters != null) {

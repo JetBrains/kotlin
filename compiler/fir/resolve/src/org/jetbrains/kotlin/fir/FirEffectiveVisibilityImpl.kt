@@ -7,10 +7,16 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility.Permissiveness
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.effectiveVisibilityResolver
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 sealed class FirEffectiveVisibilityImpl(
     override val name: String,
@@ -68,7 +74,7 @@ sealed class FirEffectiveVisibilityImpl(
         override fun lowerBound(other: FirEffectiveVisibility) = when (val o = other as FirEffectiveVisibilityImpl) {
             Public -> this
             Private, Local, InternalProtectedBound, is InternalOrPackage, is InternalProtected -> other
-            is Protected -> InternalProtected(o.container)
+            is Protected -> InternalProtected(o.containerSymbol, o.session)
             ProtectedBound -> InternalProtectedBound
         }
     }
@@ -81,19 +87,22 @@ sealed class FirEffectiveVisibilityImpl(
         override fun toVisibility() = Visibilities.PRIVATE
     }
 
-    class Protected(val container: FirRegularClass?) : FirEffectiveVisibilityImpl("protected", publicApi = true) {
+    class Protected(
+        val containerSymbol: FirClassLikeSymbol<*>?,
+        internal val session: FirSession
+    ) : FirEffectiveVisibilityImpl("protected", publicApi = true) {
 
-        override fun equals(other: Any?) = (other is Protected && container == other.container)
+        override fun equals(other: Any?) = (other is Protected && containerSymbol == other.containerSymbol)
 
-        override fun hashCode() = container?.hashCode() ?: 0
+        override fun hashCode() = containerSymbol?.hashCode() ?: 0
 
-        override fun toString() = "${super.toString()} (in ${container?.name ?: '?'})"
+        override fun toString() = "${super.toString()} (in ${containerSymbol.safeAs<FirRegularClassSymbol>()?.fir?.name ?: '?'})"
 
         override fun relation(other: FirEffectiveVisibility) = when (val o = other as FirEffectiveVisibilityImpl) {
             Public -> Permissiveness.LESS
             Private, Local, ProtectedBound, InternalProtectedBound -> Permissiveness.MORE
-            is Protected -> containerRelation(container, o.container)
-            is InternalProtected -> when (containerRelation(container, o.container)) {
+            is Protected -> containerRelation(containerSymbol, o.containerSymbol, session)
+            is InternalProtected -> when (containerRelation(containerSymbol, o.containerSymbol, session)) {
                 // Protected never can be less permissive than internal & protected
                 Permissiveness.SAME, Permissiveness.MORE -> Permissiveness.MORE
                 Permissiveness.UNKNOWN, Permissiveness.LESS -> Permissiveness.UNKNOWN
@@ -113,7 +122,7 @@ sealed class FirEffectiveVisibilityImpl(
                 Permissiveness.LESS -> other
                 else -> InternalProtectedBound
             }
-            is InternalOrPackage -> InternalProtected(container)
+            is InternalOrPackage -> InternalProtected(containerSymbol, session)
         }
 
         override fun toVisibility() = Visibilities.PROTECTED
@@ -138,19 +147,22 @@ sealed class FirEffectiveVisibilityImpl(
     }
 
     // Lower bound for internal and protected(C)
-    class InternalProtected(val container: FirRegularClass?) : FirEffectiveVisibilityImpl("internal & protected") {
+    class InternalProtected(
+        val containerSymbol: FirClassLikeSymbol<*>?,
+        private val session: FirSession
+    ) : FirEffectiveVisibilityImpl("internal & protected") {
 
-        override fun equals(other: Any?) = (other is InternalProtected && container == other.container)
+        override fun equals(other: Any?) = (other is InternalProtected && containerSymbol == other.containerSymbol)
 
-        override fun hashCode() = container?.hashCode() ?: 0
+        override fun hashCode() = containerSymbol?.hashCode() ?: 0
 
-        override fun toString() = "${super.toString()} (in ${container?.name ?: '?'})"
+        override fun toString() = "${super.toString()} (in ${containerSymbol.safeAs<FirRegularClassSymbol>()?.fir?.name ?: '?'})"
 
         override fun relation(other: FirEffectiveVisibility) = when (val o = other as FirEffectiveVisibilityImpl) {
             Public, is InternalOrPackage -> Permissiveness.LESS
             Private, Local, InternalProtectedBound -> Permissiveness.MORE
-            is InternalProtected -> containerRelation(container, o.container)
-            is Protected -> when (containerRelation(container, o.container)) {
+            is InternalProtected -> containerRelation(containerSymbol, o.containerSymbol, session)
+            is Protected -> when (containerRelation(containerSymbol, o.containerSymbol, session)) {
                 // Internal & protected never can be more permissive than just protected
                 Permissiveness.SAME, Permissiveness.LESS -> Permissiveness.LESS
                 Permissiveness.UNKNOWN, Permissiveness.MORE -> Permissiveness.UNKNOWN
@@ -193,25 +205,30 @@ sealed class FirEffectiveVisibilityImpl(
     }
 
     companion object {
-        private fun containerRelation(first: FirRegularClass?, second: FirRegularClass?): Permissiveness =
+        private fun containerRelation(first: FirClassLikeSymbol<*>?, second: FirClassLikeSymbol<*>?, session: FirSession): Permissiveness =
             if (first == null || second == null) {
                 Permissiveness.UNKNOWN
             } else if (first == second) {
                 Permissiveness.SAME
             } else {
                 when {
-                    first.collectSupertypes().any { it.classId == second.symbol.classId } -> Permissiveness.LESS
-                    second.collectSupertypes().any { it.classId == first.symbol.classId } -> Permissiveness.MORE
+                    first.collectSupertypes(session).any { it.classId == second.classId } -> Permissiveness.LESS
+                    second.collectSupertypes(session).any { it.classId == first.classId } -> Permissiveness.MORE
                     else -> Permissiveness.UNKNOWN
                 }
             }
 
-        private fun FirRegularClass.collectSupertypes() = lookupSuperTypes(
-            this as FirClass<*>,
+        private fun FirClassifierSymbol<*>.collectSupertypes(session: FirSession) = lookupSuperTypes(
+            this,
             lookupInterfaces = true,
             deep = true,
-            useSiteSession = this.session
+            useSiteSession = session
         )
     }
 }
 
+fun FirMemberDeclaration.getEffectiveVisibility(
+    session: FirSession,
+    containingDeclarations: List<FirDeclaration>,
+    scopeSession: ScopeSession
+): FirEffectiveVisibility = session.effectiveVisibilityResolver.resolveFor(this, containingDeclarations, scopeSession)
