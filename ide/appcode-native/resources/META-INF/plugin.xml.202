@@ -35,6 +35,7 @@
 
   <extensions defaultExtensionNs="cidr.lang">
     <customHeaderProvider implementation="org.jetbrains.konan.resolve.konan.KonanFrameworkHeaderProvider"/>
+    <serializerProvider implementation="org.jetbrains.konan.resolve.konan.AppCodeKonanSerializerProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.konan">

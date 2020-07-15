@@ -19,6 +19,7 @@ proprietaryRepositories(project)
 addIdeaNativeModuleDeps(project)
 
 dependencies {
+    compileOnly("com.esotericsoftware.kryo:kryo:2.24.0")
     compileOnly(fileTree(appcodeUnscrambledJarDir) { include("**/*.jar") })
     api(project(":kotlin-ultimate:ide:common-cidr-swift-native"))
 }
