@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.idea.core.formatter;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -147,7 +145,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         String customDefaults = tempSettings.CODE_STYLE_DEFAULTS;
 
         boolean isSuccess = FormatterUtilKt.applyKotlinCodeStyle(customDefaults, this, true);
-        if (!isSuccess && customDefaults == null && FormatterUtilKt.isDefaultOfficialCodeStyle()) {
+        if (!isSuccess && customDefaults == null && FormatterUtilKt.isDefaultOfficialCodeStyle(tempSettings)) {
             // Temporary load settings against previous defaults
             settingsAgainstPreviousDefaults = new KotlinCodeStyleSettings(null, true);
             KotlinObsoleteCodeStyle.Companion.applyToKotlinCustomSettings(settingsAgainstPreviousDefaults, true);
@@ -174,13 +172,5 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         if (settingsAgainstPreviousDefaults != null) {
             copyFrom(settingsAgainstPreviousDefaults);
         }
-    }
-
-    public static KotlinCodeStyleSettings defaultSettings() {
-        return ServiceManager.getService(KotlinCodeStyleSettingsHolder.class).defaultSettings;
-    }
-
-    public static final class KotlinCodeStyleSettingsHolder {
-        private final KotlinCodeStyleSettings defaultSettings = new KotlinCodeStyleSettings(CodeStyleSettingsManager.getInstance().createSettings());
     }
 }

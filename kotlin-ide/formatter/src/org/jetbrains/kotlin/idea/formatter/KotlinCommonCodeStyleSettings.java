@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -68,7 +68,7 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
 
         String customDefaults = tempDeserialize.CODE_STYLE_DEFAULTS;
         boolean isSuccess = FormatterUtilKt.applyKotlinCodeStyle(customDefaults, this, true);
-        if (!isSuccess && customDefaults == null && FormatterUtilKt.isDefaultOfficialCodeStyle()) {
+        if (!isSuccess && customDefaults == null && FormatterUtilKt.isDefaultOfficialCodeStyle(tempDeserialize)) {
             // Temporary load settings against previous defaults
             settingsAgainstPreviousDefaults = createForTempDeserialize();
             KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(settingsAgainstPreviousDefaults, true);

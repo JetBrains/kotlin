@@ -96,9 +96,6 @@
     <predefinedCodeStyle implementation="org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle"/>
     <predefinedCodeStyle implementation="org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle"/>
 
-    <!-- since 192 use light service @Service instead of this declaration -->
-    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"/>
-
     <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Generic"/>
     <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$TopLevel"/>
     <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Statement"/>

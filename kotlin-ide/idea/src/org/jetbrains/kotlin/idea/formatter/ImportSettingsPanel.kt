@@ -1,13 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.application.options.CodeStyleAbstractPanel
-import com.intellij.application.options.ImportLayoutPanel
-import com.intellij.application.options.PackagePanel
 import com.intellij.openapi.application.ApplicationBundle
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -27,7 +25,7 @@ import javax.swing.table.AbstractTableModel
 class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstractPanel(KotlinLanguage.INSTANCE, null, settings) {
     private val importsPanel = ImportSettingsPanel(settings)
 
-    private fun CodeStyleSettings.kotlinSettings() = getCustomSettings(KotlinCodeStyleSettings::class.java)
+    private fun CodeStyleSettings.kotlinSettings(): KotlinCodeStyleSettings = kotlinCustomSettings
 
     override fun getRightMargin() = throw UnsupportedOperationException()
 
@@ -35,7 +33,7 @@ class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstrac
 
     override fun getFileType() = throw UnsupportedOperationException()
 
-    override fun getPreviewText() = null
+    override fun getPreviewText(): String? = null
 
     override fun apply(settings: CodeStyleSettings) = importsPanel.apply(settings.kotlinSettings())
 
@@ -50,19 +48,20 @@ class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstrac
     override fun getTabTitle() = ApplicationBundle.message("title.imports")
 }
 
-class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPanel() {
+class ImportSettingsPanel(commonSettings: CodeStyleSettings) : JPanel() {
     private val cbImportNestedClasses = JCheckBox(KotlinBundle.message("formatter.checkbox.text.insert.imports.for.nested.classes"))
 
     private val starImportLayoutPanel = KotlinStarImportLayoutPanel()
     private val importOrderLayoutPanel = KotlinImportOrderLayoutPanel()
 
     private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector(
-        KotlinBundle.message("formatter.title.top.level.symbols"), KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT
+        KotlinBundle.message("formatter.title.top.level.symbols"),
+        commonSettings.kotlinCustomSettings.NAME_COUNT_TO_USE_STAR_IMPORT,
     )
 
     private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector(
         KotlinBundle.message("formatter.title.java.statics.and.enum.members"),
-        KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
+        commonSettings.kotlinCustomSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS,
     )
 
     init {
@@ -80,9 +79,9 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             add(nameCountToUseStarImportForMembersSelector.createPanel(), constraints.apply { gridy++ })
 
             add(
-                OptionGroup(
-                    KotlinBundle.message("formatter.title.other")).apply { add(cbImportNestedClasses) }.createPanel(),
-                constraints.apply { gridy++ })
+                OptionGroup(KotlinBundle.message("formatter.title.other")).apply { add(cbImportNestedClasses) }.createPanel(),
+                constraints.apply { gridy++ }
+            )
 
             add(starImportLayoutPanel, constraints.apply {
                 gridy++

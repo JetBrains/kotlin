@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
-import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector.KotlinFormatterKind.*
 import org.jetbrains.kotlin.idea.util.isDefaultOfficialCodeStyle
 
@@ -47,32 +46,36 @@ class KotlinFormatterUsageCollector : ProjectUsagesCollector() {
 
     companion object {
 
-        private val KOTLIN_DEFAULT_COMMON = KotlinLanguageCodeStyleSettingsProvider().defaultCommonSettings
-            .also { KotlinStyleGuideCodeStyle.applyToCommonSettings(it) }
-
-        private val KOTLIN_DEFAULT_CUSTOM by lazy {
-            KotlinCodeStyleSettings.defaultSettings().cloneSettings()
-                .also { KotlinStyleGuideCodeStyle.applyToKotlinCustomSettings(it) }
+        private val KOTLIN_DEFAULT_COMMON = CodeStyle.getDefaultSettings().kotlinCommonSettings.also {
+            KotlinStyleGuideCodeStyle.applyToCommonSettings(it)
         }
 
-        private val KOTLIN_OBSOLETE_DEFAULT_COMMON = KotlinLanguageCodeStyleSettingsProvider().defaultCommonSettings
-            .also { KotlinObsoleteCodeStyle.applyToCommonSettings(it) }
+        private val KOTLIN_DEFAULT_CUSTOM by lazy {
+            CodeStyle.getDefaultSettings().kotlinCustomSettings.cloneSettings().also {
+                KotlinStyleGuideCodeStyle.applyToKotlinCustomSettings(it)
+            }
+        }
+
+        private val KOTLIN_OBSOLETE_DEFAULT_COMMON = KotlinLanguageCodeStyleSettingsProvider().defaultCommonSettings.also {
+            KotlinObsoleteCodeStyle.applyToCommonSettings(it)
+        }
 
         private val KOTLIN_OBSOLETE_DEFAULT_CUSTOM by lazy {
-            KotlinCodeStyleSettings.defaultSettings().cloneSettings()
-                .also { KotlinObsoleteCodeStyle.applyToKotlinCustomSettings(it) }
+            CodeStyle.getDefaultSettings().kotlinCustomSettings.cloneSettings().also {
+                KotlinObsoleteCodeStyle.applyToKotlinCustomSettings(it)
+            }
         }
 
         fun getKotlinFormatterKind(project: Project): KotlinFormatterKind {
             val isProject = CodeStyleSettingsManager.getInstance(project).USE_PER_PROJECT_SETTINGS
-            val isDefaultOfficialCodeStyle = isDefaultOfficialCodeStyle
 
             val settings = CodeStyle.getSettings(project)
             val kotlinCommonSettings = settings.kotlinCommonSettings
             val kotlinCustomSettings = settings.kotlinCustomSettings
+            val isDefaultOfficialCodeStyle = kotlinCommonSettings.isDefaultOfficialCodeStyle && kotlinCustomSettings.isDefaultOfficialCodeStyle
 
-            val isDefaultKotlinCommonSettings = kotlinCommonSettings == KotlinLanguageCodeStyleSettingsProvider().defaultCommonSettings
-            val isDefaultKotlinCustomSettings = kotlinCustomSettings == KotlinCodeStyleSettings.defaultSettings()
+            val isDefaultKotlinCommonSettings = kotlinCommonSettings == CodeStyle.getDefaultSettings().kotlinCommonSettings
+            val isDefaultKotlinCustomSettings = kotlinCustomSettings == CodeStyle.getDefaultSettings().kotlinCustomSettings
 
             if (isDefaultKotlinCommonSettings && isDefaultKotlinCustomSettings) {
                 return if (isDefaultOfficialCodeStyle) {
@@ -90,14 +93,14 @@ class KotlinFormatterUsageCollector : ProjectUsagesCollector() {
                 return paired(IDEA_KOTLIN, isProject)
             }
 
-            val isKotlinOfficialLikeSettings = settings == settings.clone().also {
+            val isKotlinOfficialLikeSettings = settings == CodeStyleSettingsManager.getInstance(project).cloneSettings(settings).also {
                 KotlinStyleGuideCodeStyle.apply(it)
             }
             if (isKotlinOfficialLikeSettings) {
                 return paired(IDEA_OFFICIAL_KOTLIN_WITH_CUSTOM, isProject)
             }
 
-            val isKotlinObsoleteLikeSettings = settings == settings.clone().also {
+            val isKotlinObsoleteLikeSettings = settings == CodeStyleSettingsManager.getInstance(project).cloneSettings(settings).also {
                 KotlinObsoleteCodeStyle.apply(it)
             }
             if (isKotlinObsoleteLikeSettings) {

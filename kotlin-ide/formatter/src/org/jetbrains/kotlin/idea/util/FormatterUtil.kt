@@ -16,6 +16,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.KotlinCommonCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -31,7 +32,8 @@ fun ASTBlock.requireNode() = node ?: error("ASTBlock.getNode() returned null")
 /**
  * Can be removed with all usages after moving master to 1.3 with new default code style settings.
  */
-val isDefaultOfficialCodeStyle by lazy { !KotlinCodeStyleSettings.defaultSettings().CONTINUATION_INDENT_FOR_CHAINED_CALLS }
+val KotlinCodeStyleSettings.isDefaultOfficialCodeStyle: Boolean get() = CODE_STYLE_DEFAULTS == null && CONTINUATION_INDENT_FOR_CHAINED_CALLS
+val KotlinCommonCodeStyleSettings.isDefaultOfficialCodeStyle: Boolean get() = CODE_STYLE_DEFAULTS == null && !METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE
 
 // Copied from idea-core
 fun PsiElement.getLineCount(): Int {
