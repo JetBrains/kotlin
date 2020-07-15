@@ -165,7 +165,7 @@ class OptimizedImportsBuilder(
         // now check that there are no conflicts and all classes are really imported
         addExplicitImportsForClassesWhenRequired(classNamesToCheck, descriptorsByParentFqName, importsToGenerate, file)
 
-        val sortedImportsToGenerate = importsToGenerate.sortedWith(importInsertHelper.importSortComparator)
+        val sortedImportsToGenerate = importsToGenerate.sortedWith(importInsertHelper.getImportSortComparator(file))
 
         // check if no changes to imports required
         val oldImports = file.importDirectives

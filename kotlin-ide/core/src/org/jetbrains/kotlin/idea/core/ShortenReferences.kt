@@ -91,7 +91,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
         private fun mayImport(descriptor: DeclarationDescriptor, file: KtFile): Boolean {
             return descriptor.canBeReferencedViaImport()
-                    && ImportInsertHelper.getInstance(file.project).mayImportOnShortenReferences(descriptor)
+                    && ImportInsertHelper.getInstance(file.project).mayImportOnShortenReferences(descriptor, file)
         }
     }
 

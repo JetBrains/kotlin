@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.util
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -39,12 +41,11 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
+    private fun getCodeStyleSettings(contextFile: KtFile): KotlinCodeStyleSettings = CodeStyle.getSettings(contextFile).kotlinCustomSettings
 
-    private val codeStyleSettings: KotlinCodeStyleSettings
-        get() = KotlinCodeStyleSettings.getInstance(project)
-
-    override val importSortComparator: Comparator<ImportPath>
-        get() = ImportPathComparator(codeStyleSettings.PACKAGES_IMPORT_LAYOUT)
+    override fun getImportSortComparator(contextFile: KtFile): Comparator<ImportPath> = ImportPathComparator(
+        getCodeStyleSettings(contextFile).PACKAGES_IMPORT_LAYOUT
+    )
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
         val languageVersionSettings = contextFile.getResolutionFacade().frontendService<LanguageVersionSettings>()
@@ -67,17 +68,15 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
         return importPath.isImported(analyzerServices.defaultLowPriorityImports, analyzerServices.excludedImports)
     }
 
-    override fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean {
-        val importable = descriptor.getImportableDescriptor()
-        return when (importable) {
+    override fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor, contextFile: KtFile): Boolean {
+        return when (descriptor.getImportableDescriptor()) {
             is PackageViewDescriptor -> false // now package cannot be imported
 
             is ClassDescriptor -> {
-                importable.containingDeclaration is PackageFragmentDescriptor
-                        || codeStyleSettings.IMPORT_NESTED_CLASSES
+                descriptor.getImportableDescriptor().containingDeclaration is PackageFragmentDescriptor || getCodeStyleSettings(contextFile).IMPORT_NESTED_CLASSES
             }
 
-            else -> importable.containingDeclaration is PackageFragmentDescriptor // do not import members (e.g. java static members)
+            else -> descriptor.getImportableDescriptor().containingDeclaration is PackageFragmentDescriptor // do not import members (e.g. java static members)
         }
     }
 
@@ -151,8 +150,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             val fqName = target.importableFqName!!
             val containerFqName = fqName.parent()
 
-            val tryStarImport = shouldTryStarImport(containerFqName, target, imports)
-                    && when (target) {
+            val tryStarImport = shouldTryStarImport(containerFqName, target, imports) && when (target) {
                 // this check does not give a guarantee that import with * will import the class - for example,
                 // there can be classes with conflicting name in more than one import with *
                 is ClassifierDescriptorWithTypeParameters -> topLevelScope.findClassifier(name, NoLookupLocation.FROM_IDE) == null
@@ -191,23 +189,26 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
         private fun shouldTryStarImport(
             containerFqName: FqName,
             target: DeclarationDescriptor,
-            imports: Collection<KtImportDirective>
+            imports: Collection<KtImportDirective>,
         ): Boolean {
             if (!canImportWithStar(containerFqName, target)) return false
 
             val starImportPath = ImportPath(containerFqName, true)
             if (imports.any { it.importPath == starImportPath }) return false
 
-            if (containerFqName.asString() in codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS) return true
+            val codeStyle = getCodeStyleSettings(file)
+            if (containerFqName.asString() in codeStyle.PACKAGES_TO_USE_STAR_IMPORTS) return true
 
             val importsFromPackage = imports.count {
                 val path = it.importPath
                 path != null && !path.isAllUnder && !path.hasAlias() && path.fqName.parent() == containerFqName
             }
+
             val nameCountToUseStar = if (target.containingDeclaration is ClassDescriptor)
-                codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
+                codeStyle.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
             else
-                codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
+                codeStyle.NAME_COUNT_TO_USE_STAR_IMPORT
+
             return importsFromPackage + 1 >= nameCountToUseStar
         }
 
@@ -408,12 +409,12 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                     importList.add(psiFactory.createNewLine())
                     importList.add(newDirective) as KtImportDirective
                 } else {
-                    val importPathComparator = ImportInsertHelperImpl(project).importSortComparator
-                    val insertAfter = imports
-                        .lastOrNull {
-                            val directivePath = it.importPath
-                            directivePath != null && importPathComparator.compare(directivePath, importPath) <= 0
-                        }
+                    val importPathComparator = ImportInsertHelperImpl(project).getImportSortComparator(file)
+                    val insertAfter = imports.lastOrNull {
+                        val directivePath = it.importPath
+                        directivePath != null && importPathComparator.compare(directivePath, importPath) <= 0
+                    }
+
                     importList.addAfter(newDirective, insertAfter) as KtImportDirective
                 }
             } else {

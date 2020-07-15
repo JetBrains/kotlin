@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.imports
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.idea.caches.project.ScriptModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -257,11 +258,13 @@ class KotlinImportOptimizer : ImportOptimizer {
         }
 
         fun prepareOptimizedImports(file: KtFile, data: OptimizedImportsBuilder.InputData): List<ImportPath>? {
-            val settings = KotlinCodeStyleSettings.getInstance(file.project)
+            val settings = CodeStyle.getSettings(file).kotlinCustomSettings
             val options = OptimizedImportsBuilder.Options(
                 settings.NAME_COUNT_TO_USE_STAR_IMPORT,
                 settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS,
-                isInPackagesToUseStarImport = { fqName -> fqName.asString() in settings.PACKAGES_TO_USE_STAR_IMPORTS })
+                isInPackagesToUseStarImport = { fqName -> fqName.asString() in settings.PACKAGES_TO_USE_STAR_IMPORTS }
+            )
+
             return OptimizedImportsBuilder(file, data, options).buildOptimizedImports()
         }
 

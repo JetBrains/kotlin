@@ -18,9 +18,9 @@ abstract class ImportInsertHelper {
 
     abstract fun isImportedWithLowPriorityDefaultImport(importPath: ImportPath, contextFile: KtFile): Boolean
 
-    abstract fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean
+    abstract fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor, contextFile: KtFile): Boolean
 
-    abstract val importSortComparator: Comparator<ImportPath>
+    abstract fun getImportSortComparator(contextFile: KtFile): Comparator<ImportPath>
 
     abstract fun importDescriptor(
         file: KtFile,
