@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.idea.artifacts
 
 import com.intellij.jarRepository.JarRepositoryManager
+import com.intellij.openapi.application.PathManager
 import com.intellij.util.io.Decompressor
 import org.eclipse.aether.repository.RemoteRepository
 import org.jdom.input.SAXBuilder
@@ -8,9 +9,7 @@ import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.idea.maven.aether.ArtifactRepositoryManager
 import org.jetbrains.idea.maven.aether.ProgressConsumer
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.io.FileNotFoundException
 import java.security.MessageDigest
 
 /**
@@ -19,17 +18,7 @@ import java.security.MessageDigest
 @Suppress("unused")
 private class TestKotlinArtifacts : KotlinArtifacts() {
     override val kotlincDistDir: File by lazy {
-        val classFile = PathUtil.getResourcePathForClass(KotlinArtifacts::class.java)
-        if (!classFile.exists()) {
-            throw FileNotFoundException("Class file not found for class ${KotlinArtifacts::class.java}")
-        }
-        val outDir = run {
-            var outDirMutable = classFile
-            while (outDirMutable.name != "out") {
-                outDirMutable = outDirMutable.parentFile ?: throw FileNotFoundException("`out` directory not found")
-            }
-            outDirMutable
-        }
+        val outDir = File(PathManager.getHomePath(), "out")
         val kotlincDistDir = outDir.resolve("kotlinc-dist")
         val hashFile = outDir.resolve("kotlinc-dist/kotlinc-dist.md5")
         val kotlincJar = findLibrary(
