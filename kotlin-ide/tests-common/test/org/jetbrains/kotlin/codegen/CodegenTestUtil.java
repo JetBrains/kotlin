@@ -57,9 +57,9 @@ public class CodegenTestUtil {
     ) {
         try {
             List<String> classpath = new ArrayList<>();
-            classpath.add(KotlinArtifacts.INSTANCE.getKotlinStdlib().getPath());
-            classpath.add(KotlinArtifacts.INSTANCE.getKotlinReflect().getPath());
-            classpath.add(KotlinArtifacts.INSTANCE.getJetbrainsAnnotations().getPath());
+            classpath.add(KotlinArtifacts.getInstance().getKotlinStdlib().getPath());
+            classpath.add(KotlinArtifacts.getInstance().getKotlinReflect().getPath());
+            classpath.add(KotlinArtifacts.getInstance().getJetbrainsAnnotations().getPath());
             classpath.addAll(additionalClasspath);
 
             List<String> options = new ArrayList<>(Arrays.asList(

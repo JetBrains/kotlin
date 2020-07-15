@@ -89,7 +89,7 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
         mockLibraryModel.addRoot(jarUrl, OrderRootType.CLASSES);
 
         if (withRuntime && !isJsLibrary) {
-            mockLibraryModel.addRoot(getJarUrl(KotlinArtifacts.INSTANCE.getKotlinStdlib()), OrderRootType.CLASSES);
+            mockLibraryModel.addRoot(getJarUrl(KotlinArtifacts.getInstance().getKotlinStdlib()), OrderRootType.CLASSES);
         }
 
         if (isJsLibrary && mockLibraryModel instanceof LibraryEx.ModifiableModelEx) {

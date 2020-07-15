@@ -23,7 +23,7 @@ abstract class AbstractConfigureKotlinInTempDirTest : AbstractConfigureKotlinTes
 
         val kotlinRuntime = File(tempDir, "lib/kotlin-stdlib.jar")
         if (getTestName(true).toLowerCase().contains("latestruntime") && kotlinRuntime.exists()) {
-            KotlinArtifacts.kotlinStdlib.copyTo(kotlinRuntime, overwrite = true)
+            KotlinArtifacts.instance.kotlinStdlib.copyTo(kotlinRuntime, overwrite = true)
         }
 
         val projectRoot = tempDir.path

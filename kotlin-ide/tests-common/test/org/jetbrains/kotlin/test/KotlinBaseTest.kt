@@ -261,7 +261,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                 )
             }
             if (includeCompatExperimentalCoroutines) {
-                configuration.addJvmClasspathRoot(KotlinArtifacts.kotlinCoroutinesExperimentalCompat)
+                configuration.addJvmClasspathRoot(KotlinArtifacts.instance.kotlinCoroutinesExperimentalCompat)
             }
             if (explicitLanguageVersionSettings != null) {
                 configuration.languageVersionSettings = explicitLanguageVersionSettings

@@ -33,7 +33,7 @@ import org.junit.runner.RunWith
 class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor =
-        KotlinJdkAndLibraryProjectDescriptor(KotlinArtifacts.kotlinStdlib)
+        KotlinJdkAndLibraryProjectDescriptor(KotlinArtifacts.instance.kotlinStdlib)
 
     fun testIsHiddenByDeprecated() {
         myFixture.configureByText(

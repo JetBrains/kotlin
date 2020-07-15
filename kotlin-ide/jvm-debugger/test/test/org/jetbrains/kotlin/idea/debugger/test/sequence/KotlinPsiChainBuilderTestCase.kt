@@ -34,7 +34,7 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
         ApplicationManager.getApplication().runWriteAction {
             @Suppress("UnstableApiUsage")
             if (ProjectLibraryTable.getInstance(project).getLibraryByName(stdLibName) == null) {
-                val stdLibPath = KotlinArtifacts.kotlinStdlib
+                val stdLibPath = KotlinArtifacts.instance.kotlinStdlib
                 PsiTestUtil.addLibrary(testRootDisposable, module, stdLibName, stdLibPath.parent, stdLibPath.name)
             }
         }

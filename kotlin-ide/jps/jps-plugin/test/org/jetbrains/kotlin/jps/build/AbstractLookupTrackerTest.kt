@@ -85,7 +85,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
             sourcesToCompile = filesToCompile.toList(),
             commonSources = emptyList(),
             javaSourceRoots = listOf(JvmSourceRoot(srcDir, null)),
-            classpath = listOf(outDir, KotlinArtifacts.kotlinStdlib).filter { it.exists() },
+            classpath = listOf(outDir, KotlinArtifacts.instance.kotlinStdlib).filter { it.exists() },
             friendDirs = emptyList()
         )
 
@@ -166,7 +166,7 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
     }
 
     protected open val jsStdlibFile: File
-        get() = KotlinArtifacts.kotlinStdlibJs
+        get() = KotlinArtifacts.instance.kotlinStdlibJs
 
     protected open fun configureAdditionalArgs(args: K2JSCompilerArguments) {
         args.outputFile = File(outDir, "out.js").canonicalPath

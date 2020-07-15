@@ -59,7 +59,7 @@ class KotlinConsoleKeeper(val project: Project) {
             javaParameters.charset = null
             javaParameters.vmParametersList.add("-Dkotlin.repl.ideMode=true")
 
-            val kotlinArtifacts = KotlinArtifacts
+            val kotlinArtifacts = KotlinArtifacts.instance
             javaParameters.classPath.apply {
                 val classPath = KotlinClassPath.CompilerWithScripting.computeClassPath()
                 addAll(classPath.map {
@@ -87,7 +87,7 @@ class KotlinConsoleKeeper(val project: Project) {
             }
 
             javaParameters.programParametersList.add("-kotlin-home")
-            javaParameters.programParametersList.add(kotlinArtifacts.kotlincDirectory.also {
+            javaParameters.programParametersList.add(KotlinArtifacts.instance.kotlincDirectory.also {
                 check(it.exists()) {
                     "Kotlinc directory does not exist"
                 }

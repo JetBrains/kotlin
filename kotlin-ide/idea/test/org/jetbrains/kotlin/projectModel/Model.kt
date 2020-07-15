@@ -119,14 +119,14 @@ sealed class Stdlib(
 
     object JvmStdlib : Stdlib(
         "stdlib-jvm",
-        KotlinArtifacts.kotlinStdlib,
+        KotlinArtifacts.instance.kotlinStdlib,
         JvmPlatforms.defaultJvmPlatform,
         null
     )
 
     object JsStdlib : Stdlib(
         "stdlib-js",
-        KotlinArtifacts.kotlinStdlibJs,
+        KotlinArtifacts.instance.kotlinStdlibJs,
         JsPlatforms.defaultJsPlatform,
         JSLibraryKind
     )
@@ -141,14 +141,14 @@ sealed class KotlinTest(
 
     object JsKotlinTest : KotlinTest(
         "kotlin-test-js",
-        KotlinArtifacts.kotlinTestJs,
+        KotlinArtifacts.instance.kotlinTestJs,
         JsPlatforms.defaultJsPlatform,
         JSLibraryKind
     )
 
     object JvmKotlinTest : KotlinTest(
         "kotlin-test-jvm",
-        KotlinArtifacts.kotlinTestJunit,
+        KotlinArtifacts.instance.kotlinTestJunit,
         JvmPlatforms.defaultJvmPlatform,
         null
     )

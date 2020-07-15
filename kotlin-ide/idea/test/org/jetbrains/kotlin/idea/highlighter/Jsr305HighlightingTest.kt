@@ -38,7 +38,7 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
 
         return object : KotlinJdkAndLibraryProjectDescriptor(
             listOf(
-              KotlinArtifacts.kotlinStdlib,
+              KotlinArtifacts.instance.kotlinStdlib,
               foreignAnnotationsJar,
               libraryJar
             )

@@ -116,11 +116,11 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             compileJavaFiles(javaFiles, options)
         }
 
-        val kotlinArtifacts = KotlinArtifacts
+        val kotlinArtifacts = KotlinArtifacts.instance
         KotlinCompilerStandalone(
             listOf(baseDir),
             target = outputDir,
-            classpath = listOf(kotlinArtifacts.kotlinScriptRuntime, kotlinArtifacts.jetbrainsAnnotations)
+            classpath = listOf(KotlinArtifacts.instance.kotlinScriptRuntime, KotlinArtifacts.instance.jetbrainsAnnotations)
         ).compile()
 
         PsiTestUtil.setCompilerOutputPath(myFixture.module, outputDir.path, false)
@@ -346,8 +346,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         private val INSTANCE_WITH_KOTLIN_TEST = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
-              KotlinArtifacts.kotlinStdlib,
-              KotlinArtifacts.kotlinTest
+              KotlinArtifacts.instance.kotlinStdlib,
+              KotlinArtifacts.instance.kotlinTest
             )
         ) {
             override fun getSdk() = PluginTestCaseBase.fullJdk()
@@ -359,8 +359,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         private val INSTANCE_WITH_SCRIPT_RUNTIME = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
-              KotlinArtifacts.kotlinStdlib,
-              KotlinArtifacts.kotlinScriptRuntime
+              KotlinArtifacts.instance.kotlinStdlib,
+              KotlinArtifacts.instance.kotlinScriptRuntime
             )
         ) {
             override fun getSdk() = PluginTestCaseBase.fullJdk()

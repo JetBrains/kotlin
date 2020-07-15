@@ -55,7 +55,7 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
     }
 
     protected List<String> jsStdlib() {
-        File stdlibPath = KotlinArtifacts.INSTANCE.getKotlinStdlibJs();
+        File stdlibPath = KotlinArtifacts.getInstance().getKotlinStdlibJs();
         return Collections.singletonList(stdlibPath.getAbsolutePath());
     }
 

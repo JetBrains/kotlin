@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
 class DebuggerTestCompilerFacility(files: List<TestFile>, private val jvmTarget: JvmTarget) {
-    private val kotlinStdlibPath = KotlinArtifacts.kotlinStdlib.absolutePath
+    private val kotlinStdlibPath = KotlinArtifacts.instance.kotlinStdlib.absolutePath
 
     private val mainFiles: TestFilesByLanguage
     private val libraryFiles: TestFilesByLanguage

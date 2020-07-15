@@ -56,7 +56,7 @@ object ConfigLibraryUtil {
 
     fun configureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_JS, KotlinArtifacts.kotlinStdlibJs), module, JSLibraryKind)
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_JS, KotlinArtifacts.instance.kotlinStdlibJs), module, JSLibraryKind)
     }
 
     fun configureKotlinCommonRuntime(module: Module) {
@@ -64,8 +64,8 @@ object ConfigLibraryUtil {
     }
 
     fun configureKotlinRuntime(module: Module) {
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_JAVA_RUNTIME, KotlinArtifacts.kotlinStdlib), module)
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_TEST, KotlinArtifacts.kotlinTest), module)
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_JAVA_RUNTIME, KotlinArtifacts.instance.kotlinStdlib), module)
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_TEST, KotlinArtifacts.instance.kotlinTest), module)
     }
 
     fun unConfigureKotlinRuntime(module: Module) {
