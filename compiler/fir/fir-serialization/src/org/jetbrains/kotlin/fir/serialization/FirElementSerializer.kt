@@ -607,9 +607,11 @@ class FirElementSerializer private constructor(
 
     private fun transformSuspendFunctionToRuntimeFunctionType(type: ConeClassLikeType): ConeClassLikeType {
         val suspendClassId = type.classId!!
-        val runtimeClassId = FunctionClassDescriptor.Kind.Function.let {
-            ClassId(it.packageFqName, Name.identifier(suspendClassId.relativeClassName.asString().drop("Suspend".length)))
-        }
+        val relativeClassName = suspendClassId.relativeClassName.asString()
+        val kind =
+            if (relativeClassName.startsWith("K")) FunctionClassDescriptor.Kind.KFunction
+            else FunctionClassDescriptor.Kind.Function
+        val runtimeClassId = ClassId(kind.packageFqName, Name.identifier(relativeClassName.replaceFirst("Suspend", "")))
         val continuationClassId = CONTINUATION_INTERFACE_CLASS_ID
         return ConeClassLikeLookupTagImpl(runtimeClassId).constructClassType(
             (type.typeArguments.toList() + ConeClassLikeLookupTagImpl(continuationClassId).constructClassType(
@@ -621,7 +623,7 @@ class FirElementSerializer private constructor(
     }
 
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType) {
-        val classifierSymbol = type.lookupTag.toSymbol(session)!!
+        val classifierSymbol = type.lookupTag.toSymbol(session) ?: error("Can't lookup $type")
         val classifier = classifierSymbol.fir
         val classifierId = getClassifierId(classifier)
         builder.className = classifierId
