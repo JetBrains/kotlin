@@ -318,7 +318,12 @@ private fun sshExecutor(project: Project): ExecutorService = object : ExecutorSe
     }
 }
 
-internal data class DeviceTarget(@Expose val name: String, @Expose val udid: String, @Expose val state: String, @Expose val type: String)
+internal data class DeviceTarget(
+        @Expose val name: String,
+        @Expose val udid: String,
+        @Expose val state: String,
+        @Expose val type: String
+)
 
 private fun deviceLauncher(project: Project) = object : ExecutorService {
     private val xcProject = Paths.get(project.testOutputRoot, "launcher")
