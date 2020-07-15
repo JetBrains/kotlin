@@ -550,7 +550,7 @@ class Fir2IrDeclarationStorage(
                 if (irParent != null) {
                     parent = irParent
                 }
-                if (!isFakeOverride && thisReceiverOwner != null) {
+                if (correspondingProperty is Fir2IrLazyProperty && !isFakeOverride && thisReceiverOwner != null) {
                     populateOverriddenSymbols(thisReceiverOwner)
                 }
             }

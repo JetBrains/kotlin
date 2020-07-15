@@ -24,7 +24,8 @@ abstract class AbstractFirUseSiteMemberScope(
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 
     private val functions = hashMapOf<Name, Collection<FirFunctionSymbol<*>>>()
-    private val directOverridden = hashMapOf<FirFunctionSymbol<*>, Collection<FirFunctionSymbol<*>>>()
+    private val directOverriddenFunctions = hashMapOf<FirFunctionSymbol<*>, Collection<FirFunctionSymbol<*>>>()
+    protected val directOverriddenProperties = hashMapOf<FirPropertySymbol, MutableList<FirPropertySymbol>>()
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         functions.getOrPut(name) {
@@ -41,7 +42,7 @@ abstract class AbstractFirUseSiteMemberScope(
         declaredMemberScope.processFunctionsByName(name) {
             if (it.isStatic) return@processFunctionsByName
             val directOverridden = computeDirectOverridden(it)
-            this@AbstractFirUseSiteMemberScope.directOverridden[it] = directOverridden
+            this@AbstractFirUseSiteMemberScope.directOverriddenFunctions[it] = directOverridden
             val symbol = processInheritedDefaultParameters(it, directOverridden)
             overrideCandidates += symbol
             add(symbol)
@@ -106,7 +107,20 @@ abstract class AbstractFirUseSiteMemberScope(
     override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,
         processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
-    ): ProcessorAction = doProcessOverriddenFunctions(functionSymbol, processor, directOverridden, superTypesScope)
+    ): ProcessorAction =
+        doProcessOverriddenCallables(
+            functionSymbol, processor, directOverriddenFunctions, superTypesScope,
+            FirTypeScope::processOverriddenFunctionsWithDepth
+        )
+
+    override fun processOverriddenPropertiesWithDepth(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, Int) -> ProcessorAction
+    ): ProcessorAction =
+        doProcessOverriddenCallables(
+            propertySymbol, processor, directOverriddenProperties, superTypesScope,
+            FirTypeScope::processOverriddenPropertiesWithDepth
+        )
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)

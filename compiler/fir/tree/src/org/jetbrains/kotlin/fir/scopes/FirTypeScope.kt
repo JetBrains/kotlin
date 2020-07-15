@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 abstract class FirTypeScope : FirScope() {
-    // Currently, this function has very weak guarantees
+    // Currently, this function and its property brother both have very weak guarantees
     // - It may silently do nothing on symbols originated from different scope instance
     // - It may return the same overridden symbols more then once in case of substitution
     // - It doesn't guarantee any specific order in which overridden tree will be traversed
@@ -38,32 +39,62 @@ abstract class FirTypeScope : FirScope() {
         }
     }
 
-    // This is just a helper for a common implementation
-    protected fun doProcessOverriddenFunctions(
-        functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction,
-        directOverriddenMap: Map<FirFunctionSymbol<*>, Collection<FirFunctionSymbol<*>>>,
-        baseScope: FirTypeScope
-    ): ProcessorAction {
-        val directOverridden =
-            directOverriddenMap[functionSymbol] ?: return baseScope.processOverriddenFunctionsWithDepth(functionSymbol, processor)
+    // ------------------------------------------------------------------------------------
 
-        for (overridden in directOverridden) {
-            val overriddenDepth = if (overridden is FirNamedFunctionSymbol && overridden.overriddenSymbol != null) 0 else 1
+    abstract fun processOverriddenPropertiesWithDepth(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, Int) -> ProcessorAction
+    ): ProcessorAction
+
+    inline fun processOverriddenProperties(
+        propertySymbol: FirPropertySymbol,
+        crossinline processor: (FirPropertySymbol) -> ProcessorAction
+    ): ProcessorAction = processOverriddenPropertiesWithDepth(propertySymbol) { symbol, _ ->
+        processor(symbol)
+    }
+
+    inline fun processDirectlyOverriddenProperties(
+        propertySymbol: FirPropertySymbol,
+        crossinline processor: (FirPropertySymbol) -> ProcessorAction
+    ): ProcessorAction = processOverriddenPropertiesWithDepth(propertySymbol) { symbol, depth ->
+        if (depth == 1) {
+            processor(symbol)
+        } else {
+            ProcessorAction.NEXT
+        }
+    }
+
+    // ------------------------------------------------------------------------------------
+
+    // This is just a helper for a common implementation
+    protected fun <S : FirCallableSymbol<*>> doProcessOverriddenCallables(
+        callableSymbol: S,
+        processor: (S, Int) -> ProcessorAction,
+        directOverriddenMap: Map<S, Collection<S>>,
+        baseScope: FirTypeScope,
+        processOverriddenCallablesWithDepth: FirTypeScope.(S, (S, Int) -> ProcessorAction) -> ProcessorAction
+    ): ProcessorAction {
+        for (overridden in directOverriddenMap[callableSymbol].orEmpty()) {
+            val overriddenDepth = if (overridden.overriddenSymbol != null) 0 else 1
             if (!processor(overridden, overriddenDepth)) return ProcessorAction.STOP
-            if (!baseScope.processOverriddenFunctionsWithDepth(overridden) { symbol, depth ->
+            if (!baseScope.processOverriddenCallablesWithDepth(overridden) { symbol, depth ->
                     processor(symbol, depth + overriddenDepth)
                 }
             ) return ProcessorAction.STOP
         }
 
-        return baseScope.processOverriddenFunctionsWithDepth(functionSymbol, processor)
+        return baseScope.processOverriddenCallablesWithDepth(callableSymbol, processor)
     }
 
     object Empty : FirTypeScope() {
         override fun processOverriddenFunctionsWithDepth(
             functionSymbol: FirFunctionSymbol<*>,
             processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
+        ): ProcessorAction = ProcessorAction.NEXT
+
+        override fun processOverriddenPropertiesWithDepth(
+            propertySymbol: FirPropertySymbol,
+            processor: (FirPropertySymbol, Int) -> ProcessorAction
         ): ProcessorAction = ProcessorAction.NEXT
     }
 }

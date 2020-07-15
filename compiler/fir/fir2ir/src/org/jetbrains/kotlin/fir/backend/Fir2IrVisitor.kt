@@ -260,7 +260,7 @@ class Fir2IrVisitor(
         if (property.isLocal) return visitLocalVariable(property)
         val irProperty = declarationStorage.getCachedIrProperty(property)!!
         return conversionScope.withProperty(irProperty) {
-            memberGenerator.convertPropertyContent(irProperty, property)
+            memberGenerator.convertPropertyContent(irProperty, property, containingClass = conversionScope.containerFirClass())
         }
     }
 

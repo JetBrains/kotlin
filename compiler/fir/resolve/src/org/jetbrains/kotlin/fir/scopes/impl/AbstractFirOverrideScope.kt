@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirPropertyBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirValueParameterBuilder
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 abstract class AbstractFirOverrideScope(
@@ -90,6 +92,25 @@ abstract class AbstractFirOverrideScope(
             isCrossinline = parameter.isCrossinline
             isNoinline = parameter.isNoinline
             isVararg = parameter.isVararg
+        }
+
+    protected open fun createPropertyCopy(
+        firProperty: FirProperty,
+        newSymbol: FirPropertySymbol
+    ): FirPropertyBuilder =
+        FirPropertyBuilder().apply {
+            source = firProperty.source
+            session = firProperty.session
+            origin = FirDeclarationOrigin.FakeOverride
+            returnTypeRef = firProperty.returnTypeRef
+            receiverTypeRef = firProperty.receiverTypeRef
+            isVar = firProperty.isVar
+            isLocal = firProperty.isLocal
+            getter = firProperty.getter
+            setter = firProperty.setter
+            name = firProperty.name
+            status = firProperty.status
+            symbol = newSymbol
         }
 
 }
