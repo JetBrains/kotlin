@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.projectModel
 
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
-import org.jetbrains.kotlin.idea.artifacts.KotlinTestArtifacts
+import org.jetbrains.kotlin.idea.artifacts.AdditionalKotlinArtifacts
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -111,10 +111,10 @@ sealed class Stdlib(
 ) : ResolveLibrary(name, root, platform, kind) {
 
     object CommonStdlib : Stdlib(
-        "stdlib-common",
-        KotlinTestArtifacts.kotlinStdlibCommon,
-        CommonPlatforms.defaultCommonPlatform,
-        CommonLibraryKind
+      "stdlib-common",
+      AdditionalKotlinArtifacts.kotlinStdlibCommon,
+      CommonPlatforms.defaultCommonPlatform,
+      CommonLibraryKind
     )
 
     object JvmStdlib : Stdlib(

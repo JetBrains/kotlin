@@ -18,7 +18,7 @@ import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
-import org.jetbrains.kotlin.idea.artifacts.KotlinTestArtifacts
+import org.jetbrains.kotlin.idea.artifacts.AdditionalKotlinArtifacts
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -60,7 +60,7 @@ object ConfigLibraryUtil {
     }
 
     fun configureKotlinCommonRuntime(module: Module) {
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_COMMON, KotlinTestArtifacts.kotlinStdlibCommon), module, CommonLibraryKind)
+        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_COMMON, AdditionalKotlinArtifacts.kotlinStdlibCommon), module, CommonLibraryKind)
     }
 
     fun configureKotlinRuntime(module: Module) {
