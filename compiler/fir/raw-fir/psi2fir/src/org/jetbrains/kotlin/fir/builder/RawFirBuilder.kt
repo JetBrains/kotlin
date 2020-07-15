@@ -1632,7 +1632,7 @@ class RawFirBuilder(
                         (this as KtExpression).toFirExpression("Incorrect expression in assignment: ${expression.text}")
                     }
                 } else {
-                    buildOperatorCall {
+                    buildEqualityOperatorCall {
                         this.source = source
                         operation = firOperation
                         argumentList = buildBinaryArgumentList(leftArgument, rightArgument)

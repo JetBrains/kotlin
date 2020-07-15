@@ -270,7 +270,7 @@ class ExpressionsConverter(
             if (firOperation in FirOperation.ASSIGNMENTS) {
                 return leftArgNode.generateAssignment(binaryExpression.toFirSourceElement(), rightArg, rightArgAsFir, firOperation) { getAsFirExpression(this) }
             } else {
-                buildOperatorCall {
+                buildEqualityOperatorCall {
                     source = binaryExpression.toFirSourceElement()
                     operation = firOperation
                     argumentList = buildBinaryArgumentList(leftArgAsFir, rightArgAsFir)
@@ -704,7 +704,7 @@ class ExpressionsConverter(
             }
         }
         return if (whenRefWithSubject != null) {
-            buildOperatorCall {
+            buildEqualityOperatorCall {
                 source = whenCondition.toFirSourceElement()
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(

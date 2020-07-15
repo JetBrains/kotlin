@@ -32,7 +32,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
     }
     return when (this) {
         is KtWhenConditionWithExpression -> {
-            buildOperatorCall {
+            buildEqualityOperatorCall {
                 source = expression?.toFirPsiSourceElement(FirFakeSourceElementKind.WhenCondition)
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(
