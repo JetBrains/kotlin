@@ -140,6 +140,20 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformTypeOperatorCall(typeOperatorCall, data)
     }
 
+    override fun transformAssignmentOperatorStatement(
+        assignmentOperatorStatement: FirAssignmentOperatorStatement,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformAssignmentOperatorStatement(assignmentOperatorStatement, data)
+    }
+
+    override fun transformEqualityOperatorCall(
+        equalityOperatorCall: FirEqualityOperatorCall,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformEqualityOperatorCall(equalityOperatorCall, data)
+    }
+
     override fun transformCheckNotNullCall(
         checkNotNullCall: FirCheckNotNullCall,
         data: ResolutionMode

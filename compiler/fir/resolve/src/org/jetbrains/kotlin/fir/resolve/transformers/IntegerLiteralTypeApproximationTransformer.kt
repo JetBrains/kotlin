@@ -120,22 +120,6 @@ class IntegerLiteralTypeApproximationTransformer(
     }
 
     override fun transformOperatorCall(operatorCall: FirOperatorCall, data: ConeKotlinType?): CompositeTransformResult<FirStatement> {
-        if (operatorCall.operation !in FirOperation.BOOLEANS) return operatorCall.compose()
-        val leftArgument = operatorCall.arguments[0]
-        val rightArgument = operatorCall.arguments[1]
-
-        val leftIsIlt = leftArgument.typeRef.coneTypeSafe<ConeIntegerLiteralType>() != null
-        val rightIsIlt = rightArgument.typeRef.coneTypeSafe<ConeIntegerLiteralType>() != null
-
-        val expectedType: ConeKotlinType? = when {
-            !leftIsIlt && !rightIsIlt -> return operatorCall.compose()
-            leftIsIlt && rightIsIlt -> null
-            leftIsIlt -> rightArgument.typeRef.coneType
-            rightIsIlt -> leftArgument.typeRef.coneType
-            else -> throw IllegalStateException()
-        }
-
-        operatorCall.argumentList.transformArguments(this, expectedType)
         return operatorCall.compose()
     }
 
@@ -146,6 +130,28 @@ class IntegerLiteralTypeApproximationTransformer(
     ): CompositeTransformResult<FirStatement> {
         typeOperatorCall.argumentList.transformArguments(this, null)
         return typeOperatorCall.compose()
+    }
+
+    override fun transformEqualityOperatorCall(
+        equalityOperatorCall: FirEqualityOperatorCall,
+        data: ConeKotlinType?
+    ): CompositeTransformResult<FirStatement> {
+        val leftArgument = equalityOperatorCall.arguments[0]
+        val rightArgument = equalityOperatorCall.arguments[1]
+
+        val leftIsIlt = leftArgument.typeRef.coneTypeSafe<ConeIntegerLiteralType>() != null
+        val rightIsIlt = rightArgument.typeRef.coneTypeSafe<ConeIntegerLiteralType>() != null
+
+        val expectedType: ConeKotlinType? = when {
+            !leftIsIlt && !rightIsIlt -> return equalityOperatorCall.compose()
+            leftIsIlt && rightIsIlt -> null
+            leftIsIlt -> rightArgument.typeRef.coneType
+            rightIsIlt -> leftArgument.typeRef.coneType
+            else -> throw IllegalStateException()
+        }
+
+        equalityOperatorCall.argumentList.transformArguments(this, expectedType)
+        return equalityOperatorCall.compose()
     }
 
     override fun transformCheckedSafeCallSubject(

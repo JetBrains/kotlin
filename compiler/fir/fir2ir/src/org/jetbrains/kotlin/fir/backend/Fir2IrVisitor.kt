@@ -869,6 +869,10 @@ class Fir2IrVisitor(
         }
     }
 
+    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Any?): IrElement {
+        return operatorGenerator.convertEqualityOperatorCall(equalityOperatorCall)
+    }
+
     override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: Any?): IrElement {
         return checkNotNullCall.convertWithOffsets { startOffset, endOffset ->
             IrCallImpl(

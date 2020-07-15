@@ -64,7 +64,7 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
 
     override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Map<Int, FirExpression>): FirExpression? {
         val argument = isNullPredicate.arg.accept(this, data) ?: return null
-        return buildOperatorCall {
+        return buildEqualityOperatorCall {
             operation = if (isNullPredicate.isNegated) {
                 FirOperation.NOT_EQ
             } else {

@@ -334,99 +334,102 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }.transformSingle(integerLiteralTypeApproximator, null).also(dataFlowAnalyzer::exitComparisonExpressionCall).compose()
     }
 
-    override fun transformOperatorCall(operatorCall: FirOperatorCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        if (operatorCall.operation in FirOperation.BOOLEANS) {
-            // TODO: add approximation of integer literals
-            val result = (operatorCall.transformChildren(transformer, ResolutionMode.ContextIndependent) as FirOperatorCall).also {
-                it.resultType = operatorCall.typeRef.resolvedTypeFromPrototype(builtinTypes.booleanType.type)
-            }.transformSingle(integerLiteralTypeApproximator, null)
-            dataFlowAnalyzer.exitOperatorCall(result)
-            return result.compose()
+    override fun transformAssignmentOperatorStatement(
+        assignmentOperatorStatement: FirAssignmentOperatorStatement,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        require(assignmentOperatorStatement.operation != FirOperation.ASSIGN)
+
+        assignmentOperatorStatement.annotations.forEach { it.accept(this, data) }
+        val leftArgument = assignmentOperatorStatement.leftArgument.transformSingle(transformer, ResolutionMode.ContextIndependent)
+        val rightArgument = assignmentOperatorStatement.rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
+
+        fun createFunctionCall(name: Name) = buildFunctionCall {
+            source = assignmentOperatorStatement.source?.fakeElement(FirFakeSourceElementKind.DesugaredCompoundAssignment)
+            explicitReceiver = leftArgument
+            argumentList = buildUnaryArgumentList(rightArgument)
+            calleeReference = buildSimpleNamedReference {
+                source = assignmentOperatorStatement.source
+                this.name = name
+                candidateSymbol = null
+            }
         }
 
-        if (operatorCall.operation in FirOperation.ASSIGNMENTS) {
-            require(operatorCall.operation != FirOperation.ASSIGN)
+        // x.plusAssign(y)
+        val assignmentOperatorName = FirOperationNameConventions.ASSIGNMENTS.getValue(assignmentOperatorStatement.operation)
+        val assignOperatorCall = createFunctionCall(assignmentOperatorName)
+        val resolvedAssignCall = resolveCandidateForAssignmentOperatorCall {
+            assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
+        }
+        val assignCallReference = resolvedAssignCall.calleeReference as? FirNamedReferenceWithCandidate
+        val assignIsError = assignCallReference?.isError ?: true
+        // x = x + y
+        val simpleOperatorName = FirOperationNameConventions.ASSIGNMENTS_TO_SIMPLE_OPERATOR.getValue(assignmentOperatorStatement.operation)
+        val simpleOperatorCall = createFunctionCall(simpleOperatorName)
+        val resolvedOperatorCall = resolveCandidateForAssignmentOperatorCall {
+            simpleOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
+        }
+        val operatorCallReference = resolvedOperatorCall.calleeReference as? FirNamedReferenceWithCandidate
+        val operatorIsError = operatorCallReference?.isError ?: true
 
-            operatorCall.annotations.forEach { it.accept(this, data) }
-            var (leftArgument, rightArgument) = operatorCall.arguments
-            @Suppress("NAME_SHADOWING")
-            leftArgument = leftArgument.transformSingle(transformer, ResolutionMode.ContextIndependent)
-            rightArgument = rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
-
-            fun createFunctionCall(name: Name) = buildFunctionCall {
-                source = operatorCall.source?.fakeElement(FirFakeSourceElementKind.DesugaredCompoundAssignment)
-                explicitReceiver = leftArgument
-                argumentList = buildUnaryArgumentList(rightArgument)
-                calleeReference = buildSimpleNamedReference {
-                    source = operatorCall.source
-                    this.name = name
-                    candidateSymbol = null
-                }
+        val lhsReference = leftArgument.toResolvedCallableReference()
+        val lhsVariable = (lhsReference?.resolvedSymbol as? FirVariableSymbol<*>)?.fir
+        val lhsIsVar = lhsVariable?.isVar == true
+        return when {
+            operatorIsError || (!lhsIsVar && !assignIsError) -> {
+                callCompleter.completeCall(resolvedAssignCall, noExpectedType)
+                dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
+                resolvedAssignCall.compose()
             }
-
-            // x.plusAssign(y)
-            val assignmentOperatorName = FirOperationNameConventions.ASSIGNMENTS.getValue(operatorCall.operation)
-            val assignOperatorCall = createFunctionCall(assignmentOperatorName)
-            val resolvedAssignCall = resolveCandidateForAssignmentOperatorCall {
-                assignOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
-            }
-            val assignCallReference = resolvedAssignCall.calleeReference as? FirNamedReferenceWithCandidate
-            val assignIsError = assignCallReference?.isError ?: true
-            // x = x + y
-            val simpleOperatorName = FirOperationNameConventions.ASSIGNMENTS_TO_SIMPLE_OPERATOR.getValue(operatorCall.operation)
-            val simpleOperatorCall = createFunctionCall(simpleOperatorName)
-            val resolvedOperatorCall = resolveCandidateForAssignmentOperatorCall {
-                simpleOperatorCall.transformSingle(this, ResolutionMode.ContextDependent)
-            }
-            val operatorCallReference = resolvedOperatorCall.calleeReference as? FirNamedReferenceWithCandidate
-            val operatorIsError = operatorCallReference?.isError ?: true
-
-            val lhsReference = leftArgument.toResolvedCallableReference()
-            val lhsVariable = (lhsReference?.resolvedSymbol as? FirVariableSymbol<*>)?.fir
-            val lhsIsVar = lhsVariable?.isVar == true
-            return when {
-                operatorIsError || (!lhsIsVar && !assignIsError) -> {
-                    callCompleter.completeCall(resolvedAssignCall, noExpectedType)
-                    dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
-                    resolvedAssignCall.compose()
-                }
-                assignIsError -> {
-                    callCompleter.completeCall(resolvedOperatorCall, lhsVariable?.returnTypeRef ?: noExpectedType)
-                    dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
-                    val assignment =
-                        buildVariableAssignment {
-                            source = operatorCall.source
-                            rValue = resolvedOperatorCall
-                            calleeReference = if (lhsIsVar)
-                                lhsReference!!
-                            else
-                                buildErrorNamedReference {
-                                    source = operatorCall.argument.source
-                                    diagnostic = ConeVariableExpectedError()
-                                }
-                            (leftArgument as? FirQualifiedAccess)?.let {
-                                dispatchReceiver = it.dispatchReceiver
-                                extensionReceiver = it.extensionReceiver
+            assignIsError -> {
+                callCompleter.completeCall(resolvedOperatorCall, lhsVariable?.returnTypeRef ?: noExpectedType)
+                dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
+                val assignment =
+                    buildVariableAssignment {
+                        source = assignmentOperatorStatement.source
+                        rValue = resolvedOperatorCall
+                        calleeReference = when {
+                            lhsIsVar -> lhsReference!!
+                            else -> buildErrorNamedReference {
+                                source = assignmentOperatorStatement.leftArgument.source
+                                diagnostic = ConeVariableExpectedError()
                             }
                         }
-                    assignment.transform(transformer, ResolutionMode.ContextIndependent)
-                }
-                else -> {
-                    val operatorCallSymbol = operatorCallReference?.candidateSymbol
-                    val assignmentCallSymbol = assignCallReference?.candidateSymbol
+                        (leftArgument as? FirQualifiedAccess)?.let {
+                            dispatchReceiver = it.dispatchReceiver
+                            extensionReceiver = it.extensionReceiver
+                        }
+                    }
+                assignment.transform(transformer, ResolutionMode.ContextIndependent)
+            }
+            else -> {
+                val operatorCallSymbol = operatorCallReference?.candidateSymbol
+                val assignmentCallSymbol = assignCallReference?.candidateSymbol
 
-                    requireNotNull(operatorCallSymbol)
-                    requireNotNull(assignmentCallSymbol)
+                requireNotNull(operatorCallSymbol)
+                requireNotNull(assignmentCallSymbol)
 
-                    buildErrorExpression {
-                        source = operatorCall.source
-                        diagnostic =
-                            ConeOperatorAmbiguityError(listOf(operatorCallSymbol, assignmentCallSymbol))
-                    }.compose()
-                }
+                buildErrorExpression {
+                    source = assignmentOperatorStatement.source
+                    diagnostic = ConeOperatorAmbiguityError(listOf(operatorCallSymbol, assignmentCallSymbol))
+                }.compose()
             }
         }
+    }
 
+    override fun transformEqualityOperatorCall(
+        equalityOperatorCall: FirEqualityOperatorCall,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        // TODO: add approximation of integer literals
+        val result = (equalityOperatorCall.transformChildren(transformer, ResolutionMode.ContextIndependent) as FirEqualityOperatorCall)
+            .also { it.resultType = equalityOperatorCall.typeRef.resolvedTypeFromPrototype(builtinTypes.booleanType.type) }
+            .transformSingle(integerLiteralTypeApproximator, null)
+        dataFlowAnalyzer.exitEqualityOperatorCall(result)
+        return result.compose()
+    }
+
+    override fun transformOperatorCall(operatorCall: FirOperatorCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         throw IllegalArgumentException(operatorCall.render())
     }
 
