@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
+import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.elements.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.findAnnotationEntryOnFileNoResolve
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.SpecialNames.NO_NAME_PROVIDED
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -39,25 +40,32 @@ class KtUltraLightClassForFacade(
 
     override val javaFileStub: PsiJavaFileStub? = null
 
-    private val _modifierList: PsiModifierList =
-        KtUltraLightSimpleModifierList(owner = this, modifiers = setOf(PsiModifier.PUBLIC, PsiModifier.FINAL))
+    private val _modifierList: PsiModifierList by lazyPub {
+        if (isMultiFileClass)
+            LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
+        else
+            KtUltraLightSimpleModifierList(owner = this, modifiers = setOf(PsiModifier.PUBLIC, PsiModifier.FINAL))
+    }
+
+    private val isMultiFileClass: Boolean by lazyPub {
+        files.size > 1 || files.any { findAnnotationEntryOnFileNoResolve(it, JVM_MULTIFILE_CLASS_SHORT) != null }
+    }
 
     private val _givenAnnotations: List<KtLightAbstractAnnotation>? by lazyPub {
         files.flatMap { file ->
-            file.annotationEntries.mapNotNull { entry ->
-                entry.analyzeAnnotation()?.fqName?.let { fqName ->
-                    KtLightAnnotationForSourceEntry(
-                        qualifiedName = fqName.asString(),
-                        kotlinOrigin = entry,
-                        parent = _modifierList,
-                        lazyClsDelegate = null
-                    )
-                }
+            file.annotationEntries.map { entry ->
+                KtLightAnnotationForSourceEntry(
+                    lazyQualifiedName = { entry.analyzeAnnotation()?.fqName?.asString() },
+                    kotlinOrigin = entry,
+                    parent = _modifierList,
+                    lazyClsDelegate = null
+                )
             }
         }
     }
 
-    override val givenAnnotations: List<KtLightAbstractAnnotation>? get() = _givenAnnotations
+    override val givenAnnotations: List<KtLightAbstractAnnotation>?
+        get() = if (isMultiFileClass) emptyList() else _givenAnnotations
 
     override fun getModifierList(): PsiModifierList = _modifierList
 

@@ -233,7 +233,9 @@ fun fastCheckIsNullabilityApplied(lightElement: KtLightElement<*, PsiModifierLis
     // all data-class generated members are not-null
     if (annotatedElement is KtClass && annotatedElement.isData()) return true
 
-    if (annotatedElement is KtParameter && lightElement !is PsiField) { //KtParameter but not it's backing field
+    if (lightElement is PsiField && lightElement.hasModifierProperty(PsiModifier.PRIVATE)) return false
+
+    if (annotatedElement is KtParameter) {
         val containingClassOrObject = annotatedElement.containingClassOrObject
         if (containingClassOrObject?.isAnnotation() == true) return false
         if ((containingClassOrObject as? KtClass)?.isEnum() == true) {

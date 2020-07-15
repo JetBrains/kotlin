@@ -181,7 +181,7 @@ private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>
                     }
                 } else null
 
-                KtLightAnnotationForSourceEntry(fqName, entry, lightModifierList, lazyClsDelegate)
+                KtLightAnnotationForSourceEntry({ fqName }, entry, lightModifierList, lazyClsDelegate)
             }
         }
 }

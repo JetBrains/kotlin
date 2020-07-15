@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.light.LightIdentifier
-import com.intellij.psi.meta.PsiMetaData
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -49,8 +48,6 @@ class KtUltraLightSimpleAnnotation(
     parent: PsiElement
 ) : KtLightAbstractAnnotation(parent, computeDelegate = null) {
     override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = null
-
-    override fun getMetaData(): PsiMetaData? = null
 
     private val parameterList = ParameterListImpl()
 
@@ -134,11 +131,4 @@ private class KtUltraLightPsiArrayInitializerMemberValue(
     override fun isPhysical(): Boolean = false
 
     override fun getText(): String = "{" + initializers.joinToString { it.text } + "}"
-}
-
-fun PsiModifierListOwner.isPrivateOrParameterInPrivateMethod(): Boolean {
-    if (hasModifier(JvmModifier.PRIVATE)) return true
-    if (this !is PsiParameter) return false
-    val parentMethod = declarationScope as? PsiMethod ?: return false
-    return parentMethod.hasModifier(JvmModifier.PRIVATE)
 }
