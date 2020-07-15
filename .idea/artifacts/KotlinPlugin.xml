@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="ArtifactManager">
-  <artifact name="KotlinPluginForDebugIde">
-    <output-path>$PROJECT_DIR$/out/artifacts/KotlinPluginForDebugIde</output-path>
+  <artifact name="KotlinPlugin">
+    <output-path>$PROJECT_DIR$/out/artifacts/KotlinPlugin</output-path>
     <root id="root">
       <element id="directory" name="lib">
         <element id="library" level="project" name="kotlinc.android-extensions-compiler-plugin" />
@@ -161,6 +162,9 @@
         <element id="archive" name="kotlin-frontend-independent.jar">
           <element id="module-output" name="kotlin.fir.frontend-independent" />
         </element>
+      </element>
+      <element id="directory" name="kotlinc">
+        <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.20-dev-1959/kotlin-dist-for-ide-1.4.20-dev-1959.jar" path-in-jar="/" />
       </element>
     </root>
   </artifact>
