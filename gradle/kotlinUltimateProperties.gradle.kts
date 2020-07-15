@@ -44,7 +44,7 @@ val clionRepo: String = rootProject.extra["versions.clion.repo"] as String
 val clionUnscrambledJarArtifact: String by rootProject.extra("$clionRepo:$clionVersion:unscrambled/clion.jar")
 val clionUnscrambledJarDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "clion-unscrambled-$clionVersion"))
 val clionJavaPluginDownloadUrl: URL by rootProject.extra(
-            URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$clionRepo/$clionVersion/CL-plugins/java.zip")
+            URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$clionRepo/$clionVersion/CL-plugins/java${if (clionVersion.substringBefore('.').toInt() >= 202) "-$clionVersion" else ""}.zip")
 )
 
 val kotlinNativeBackendVersion: String by rootProject.extra(rootProject.extra["versions.kotlinNativeBackend"] as String)
@@ -56,7 +56,7 @@ val appcodeRepo: String = rootProject.extra["versions.appcode.repo"] as String
 val appcodeUnscrambledJarArtifact: String by rootProject.extra("$appcodeRepo:$appcodeVersion:unscrambled/appcode.jar")
 val appcodeUnscrambledJarDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "appcode-unscrambled-$appcodeVersion"))
 val appcodeJavaPluginDownloadUrl: URL by rootProject.extra(
-            URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$appcodeRepo/$appcodeVersion/OC-plugins/java.zip")
+            URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$appcodeRepo/$appcodeVersion/OC-plugins/java${if (appcodeVersion.substringBefore('.').toInt() >= 202) "-$appcodeVersion" else ""}.zip")
 )
 val xCodeCompatPluginVersion by rootProject.extra(rootProject.extra["versions.xcode-compat"] as String)
 
