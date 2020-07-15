@@ -28,8 +28,9 @@ import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.isInvoke
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -209,7 +210,7 @@ class FirCallsEffectAnalyzer {
     }
 
     private fun isFunctionalTypeRef(session: FirSession, typeRef: FirTypeRef?): Boolean {
-        return typeRef?.coneType?.isBuiltinFunctionalType(session) == true
+        return typeRef?.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
     }
 
     private fun FirFunction<*>?.getParameterCallsEffectDeclaration(index: Int): ConeCallsEffectDeclaration? {
