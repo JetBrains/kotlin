@@ -144,8 +144,9 @@ private fun substitutePathVariables(path: String): String {
         return projectDir.absolutePath + path.drop(RepoLocation.PROJECT_DIR.toString().length)
     }
     else if (path.startsWith("${RepoLocation.MAVEN_REPOSITORY}/")) {
-        val userHomeDir = System.getProperty("user.home", null) ?: error("Unable to get the user home directory")
-        val repoDir = File(userHomeDir, ".m2/repository")
+        val m2 = System.getenv("M2_HOME")?.let { File(it) }
+                 ?: File(System.getProperty("user.home", null) ?: error("Unable to get the user home directory"), ".m2")
+        val repoDir = m2.resolve("repository")
         return repoDir.absolutePath + path.drop(RepoLocation.MAVEN_REPOSITORY.toString().length)
     }
 
