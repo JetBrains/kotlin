@@ -13684,6 +13684,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inference/lastExpressionOfLambdaWithNothingConstraint.kt");
         }
 
+        @TestMetadata("noNothingValueInsideSpecialCall.kt")
+        public void testNoNothingValueInsideSpecialCall() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/noNothingValueInsideSpecialCall.kt");
+        }
+
         @TestMetadata("plusAssignInsideLambda.kt")
         public void testPlusAssignInsideLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inference/plusAssignInsideLambda.kt");

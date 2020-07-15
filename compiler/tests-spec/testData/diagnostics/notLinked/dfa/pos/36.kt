@@ -121,7 +121,7 @@ fun case_8(x: Any?, z: Any) {
 // TESTCASE NUMBER: 9
 fun case_9(x: Any?, z: Any) {
     var y = select(x) ?: <!UNREACHABLE_CODE!>return<!> null!!
-    z == y || <!UNREACHABLE_CODE!>throw<!> null!!
+    z == y || throw null!!
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)

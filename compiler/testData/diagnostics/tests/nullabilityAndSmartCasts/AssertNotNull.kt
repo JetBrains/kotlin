@@ -34,6 +34,6 @@ fun main() {
         }
     }
 
-    val <!UNUSED_VARIABLE!>f<!> : String = <!NI;TYPE_MISMATCH!><!OI;TYPE_MISMATCH!>a<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>
+    val <!UNUSED_VARIABLE!>f<!> : String = <!TYPE_MISMATCH!>a<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     checkSubtype<String>(<!NI;TYPE_MISMATCH!><!OI;TYPE_MISMATCH!>a<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>)
 }
