@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
 import groovy.lang.Closure
+import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
@@ -54,6 +55,15 @@ interface KotlinJsTargetDsl : KotlinTarget {
     fun useCommonJs()
 
     val binaries: KotlinJsBinaryContainer
+
+    @Deprecated(
+        message = "produceExecutable() was changed on binaries.executable()",
+        replaceWith = ReplaceWith("binaries.executable()"),
+        level = DeprecationLevel.ERROR
+    )
+    fun produceExecutable() {
+        throw GradleException("Please change produceExecutable() on binaries.executable()")
+    }
 
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
 
