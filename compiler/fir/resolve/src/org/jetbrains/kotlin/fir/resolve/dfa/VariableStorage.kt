@@ -26,7 +26,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 @OptIn(DfaInternals::class)
-class VariableStorage(private val session: FirSession) {
+class VariableStorage(val session: FirSession) {
     private var counter = 1
     private val realVariables: MutableMap<Identifier, RealVariable> = HashMap()
     private val syntheticVariables: MutableMap<FirElement, SyntheticVariable> = HashMap()
@@ -137,12 +137,6 @@ class VariableStorage(private val session: FirSession) {
     fun removeSyntheticVariable(variable: DataFlowVariable) {
         if (variable !is SyntheticVariable) return
         syntheticVariables.remove(variable.fir)
-    }
-
-    fun reset() {
-        counter = 0
-        realVariables.clear()
-        syntheticVariables.clear()
     }
 
     @OptIn(ExperimentalContracts::class)
