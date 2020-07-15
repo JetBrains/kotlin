@@ -12,7 +12,7 @@ abstract class KotlinArtifacts {
             // ApplicationManager may absent in JPS process so we need to check it presence firstly
             if (doesClassExist("com.intellij.openapi.application.ApplicationManager")) {
                 // This isUnitTestMode is for reliability in case when Application is already initialized. This check isn't mandatory
-                ApplicationManager.getApplication()?.isUnitTestMode?.let {
+                if (ApplicationManager.getApplication()?.isUnitTestMode == true) {
                     return@lazy getTestKotlinArtifacts() ?: error("""
                         We are in unit test mode! TestKotlinArtifacts must be available in such mode. Probably class was renamed or broken classpath
                     """.trimIndent())
