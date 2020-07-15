@@ -39,6 +39,7 @@
                               implementationClass="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunLineMarkerProvider"/>
 
     <stepsBeforeRunProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanBuildBeforeRunTaskProvider"/>
+    <postStartupActivity implementation="org.jetbrains.konan.KonanPluginDeprecationStartupActivity" />
   </extensions>
 
   <extensions defaultExtensionNs="clion">
