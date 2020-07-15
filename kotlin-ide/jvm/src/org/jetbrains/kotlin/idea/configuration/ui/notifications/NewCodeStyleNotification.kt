@@ -17,7 +17,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.formatter.*
-import org.jetbrains.kotlin.idea.util.isDefaultOfficialCodeStyle
+import org.jetbrains.kotlin.idea.util.isDefaultIntellijObsoleteCodeStyle
 
 private const val KOTLIN_UPDATE_CODE_STYLE_GROUP_ID = "Update Kotlin code style"
 private const val KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME = "update.kotlin.code.style.notified"
@@ -26,7 +26,7 @@ fun notifyKotlinStyleUpdateIfNeeded(project: Project) {
     val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
     if (modulesWithFacet.isEmpty()) return
     val codeStyle = CodeStyle.getSettings(project)
-    if (!codeStyle.kotlinCommonSettings.isDefaultOfficialCodeStyle) return
+    if (!codeStyle.kotlinCommonSettings.isDefaultIntellijObsoleteCodeStyle) return
 
     val isProjectSettings = CodeStyle.usesOwnSettings(project)
     val settingsComponent: PropertiesComponent = if (isProjectSettings) {

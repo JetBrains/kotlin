@@ -145,7 +145,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         String customDefaults = tempSettings.CODE_STYLE_DEFAULTS;
 
         boolean isSuccess = FormatterUtilKt.applyKotlinCodeStyle(customDefaults, this, true);
-        if (!isSuccess && customDefaults == null && FormatterUtilKt.isDefaultOfficialCodeStyle(tempSettings)) {
+        if (!isSuccess && customDefaults == null && FormatterUtilKt.isDefaultIntellijObsoleteCodeStyle(tempSettings)) {
             // Temporary load settings against previous defaults
             settingsAgainstPreviousDefaults = new KotlinCodeStyleSettings(null, true);
             KotlinObsoleteCodeStyle.Companion.applyToKotlinCustomSettings(settingsAgainstPreviousDefaults, true);
