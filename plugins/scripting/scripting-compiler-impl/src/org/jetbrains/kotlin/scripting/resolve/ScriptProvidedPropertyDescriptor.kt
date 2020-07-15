@@ -30,7 +30,7 @@ class ScriptProvidedPropertyDescriptor(
     /* isDelegated = */ false
 ) {
     init {
-        setType(typeDescriptor.defaultType, emptyList(), receiver, null)
+        setType(typeDescriptor.defaultType, emptyList(), receiver, null, emptyList())
         // TODO: consider delegation instead
         initialize(null, null, null, null)
     }

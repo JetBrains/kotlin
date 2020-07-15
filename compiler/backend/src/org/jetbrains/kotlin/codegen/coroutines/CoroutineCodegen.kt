@@ -73,6 +73,7 @@ abstract class AbstractCoroutineCodegen(
                 null,
                 classDescriptor.thisAsReceiverParameter,
                 emptyList(),
+                emptyList(),
                 listOf(
                     ValueParameterDescriptorImpl(
                         this, null, 0, Annotations.EMPTY, Name.identifier(SUSPEND_CALL_RESULT_NAME),
@@ -188,6 +189,7 @@ class CoroutineCodegenForLambda private constructor(
         it.initialize(
             funDescriptor.extensionReceiverParameter?.copy(it),
             funDescriptor.dispatchReceiverParameter,
+            funDescriptor.contextReceiverParameters.map { p -> p.copy(it) },
             funDescriptor.typeParameters,
             funDescriptor.valueParameters,
             funDescriptor.module.getContinuationOfTypeOrAny(

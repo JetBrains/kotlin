@@ -88,6 +88,7 @@ private fun copyTypesFromExtensionAccessor(
             null,
             extensionAccessorDescriptor.extensionReceiverParameter?.copy(this),
             emptyList(),
+            emptyList(),
             extensionAccessorDescriptor.valueParameters.map { it.copy(this, it.name, it.index) },
             extensionAccessorDescriptor.returnType,
             accessorFunctionDescriptor.modality,

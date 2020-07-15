@@ -70,7 +70,7 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
             @NotNull List<TypeParameterDescriptor> typeParameterDescriptors
     ) {
         super.initialize(
-                null, calculateDispatchReceiverParameter(),
+                null, calculateDispatchReceiverParameter(), Collections.<ReceiverParameterDescriptor>emptyList(),
                 typeParameterDescriptors,
                 unsubstitutedValueParameters, null,
                 Modality.FINAL, visibility);

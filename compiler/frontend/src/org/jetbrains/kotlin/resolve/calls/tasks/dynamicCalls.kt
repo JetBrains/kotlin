@@ -105,7 +105,8 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             dynamicType,
             createTypeParameters(propertyDescriptor, call),
             createDynamicDispatchReceiverParameter(propertyDescriptor),
-            null
+            null,
+            emptyList()
         )
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
@@ -128,6 +129,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
         functionDescriptor.initialize(
             null,
             createDynamicDispatchReceiverParameter(functionDescriptor),
+            emptyList(),
             createTypeParameters(functionDescriptor, call),
             createValueParameters(functionDescriptor, call),
             dynamicType,

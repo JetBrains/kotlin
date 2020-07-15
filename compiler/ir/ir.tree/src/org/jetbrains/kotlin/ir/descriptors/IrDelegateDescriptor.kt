@@ -67,7 +67,7 @@ abstract class IrDelegateDescriptorBase(
         /* isDelegated = */ true
     ) {
     init {
-        setType(delegateType, emptyList(), (containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter, null)
+        setType(delegateType, emptyList(), (containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter, null, emptyList())
     }
 
     final override fun setOutType(outType: KotlinType?) {

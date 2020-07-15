@@ -132,7 +132,7 @@ fun createFreeFakeLocalPropertyDescriptor(descriptor: LocalVariableDescriptor, t
     )
     property.setType(
         descriptor.type, descriptor.typeParameters,
-        descriptor.dispatchReceiverParameter, descriptor.extensionReceiverParameter
+        descriptor.dispatchReceiverParameter, descriptor.extensionReceiverParameter, descriptor.contextReceiverParameters
     )
 
     property.initialize(

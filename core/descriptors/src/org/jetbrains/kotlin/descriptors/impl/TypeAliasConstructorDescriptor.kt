@@ -83,6 +83,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
             typeAliasConstructor.initialize(
                 null,
                 underlyingConstructorDescriptor.dispatchReceiverParameter?.substitute(substitutorForUnderlyingClass),
+                emptyList(),
                 typeAliasDescriptor.declaredTypeParameters,
                 valueParameters,
                 returnType,
@@ -205,6 +206,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
             typeAliasConstructor.initialize(
                 receiverParameter,
                 null,
+                emptyList(),
                 typeAliasDescriptor.declaredTypeParameters,
                 valueParameters,
                 returnType,

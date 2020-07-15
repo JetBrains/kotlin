@@ -98,7 +98,7 @@ open class AccessorForPropertyDescriptor private constructor(
     init {
         setType(
             propertyType, emptyList<TypeParameterDescriptorImpl>(), dispatchReceiverParameter,
-            DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverType, Annotations.EMPTY)
+            DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverType, Annotations.EMPTY), emptyList() // TODO: Pass context receivers
         )
 
         val getterDescriptor =

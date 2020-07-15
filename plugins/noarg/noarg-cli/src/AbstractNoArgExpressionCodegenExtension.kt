@@ -100,6 +100,7 @@ abstract class AbstractNoArgExpressionCodegenExtension(val invokeInitializers: B
                     calculateDispatchReceiverParameter(),
                     emptyList(),
                     emptyList(),
+                    emptyList(),
                     containingClass.builtIns.unitType,
                     Modality.OPEN,
                     DescriptorVisibilities.PUBLIC
