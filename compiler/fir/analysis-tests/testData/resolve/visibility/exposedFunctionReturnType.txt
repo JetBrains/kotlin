@@ -5,7 +5,7 @@ FILE: exposedFunctionReturnType.kt
         }
 
         private final class InnerA : R|kotlin/Any| {
-            public[private] constructor(): R|A.InnerA| {
+            public constructor(): R|A.InnerA| {
                 super<R|kotlin/Any|>()
             }
 
@@ -20,4 +20,3 @@ FILE: exposedFunctionReturnType.kt
         public final fun foo(str: R|kotlin/String|): R|A.InnerA|
 
     }
-

@@ -17,7 +17,7 @@ FILE: exposedSupertype.kt
         }
 
         protected final class BProtected : R|kotlin/Any| {
-            public[protected] constructor(): R|B.BProtected| {
+            public constructor(): R|B.BProtected| {
                 super<R|kotlin/Any|>()
             }
 
@@ -32,18 +32,18 @@ FILE: exposedSupertype.kt
 
     }
     private final class C : R|kotlin/Any| {
-        public[private] constructor(): R|C| {
+        public constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
 
-        public[private] final class CPublic : R|kotlin/Any| {
-            public[private] constructor(): R|C.CPublic| {
+        public final class CPublic : R|kotlin/Any| {
+            public constructor(): R|C.CPublic| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public[private] abstract interface CPublicI : R|kotlin/Any| {
+        public abstract interface CPublicI : R|kotlin/Any| {
         }
 
     }

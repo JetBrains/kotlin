@@ -2,26 +2,26 @@ FILE: first.kt
     private final fun foo(): R|kotlin/Unit| {
     }
     private final class Private : R|kotlin/Any| {
-        public[private] constructor(): R|Private| {
+        public constructor(): R|Private| {
             super<R|kotlin/Any|>()
         }
 
         private final fun bar(): R|kotlin/Unit| {
         }
 
-        public[private] final fun baz(): R|kotlin/Unit| {
+        public final fun baz(): R|kotlin/Unit| {
             this@R|/Private|.R|/Private.bar|()
             R|/Private.Nested.Nested|()
             this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
             Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
         }
 
-        public[private] final inner class Inner : R|kotlin/Any| {
-            public[private] constructor(): R|Private.Inner| {
+        public final inner class Inner : R|kotlin/Any| {
+            public constructor(): R|Private.Inner| {
                 super<R|kotlin/Any|>()
             }
 
-            public[private] final fun foo(): R|kotlin/Unit| {
+            public final fun foo(): R|kotlin/Unit| {
                 this@R|/Private|.R|/Private.bar|()
                 this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
                 Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
@@ -30,18 +30,18 @@ FILE: first.kt
         }
 
         private final class Nested : R|kotlin/Any| {
-            public[private] constructor(): R|Private.Nested| {
+            public constructor(): R|Private.Nested| {
                 super<R|kotlin/Any|>()
             }
 
-            public[private] final fun foo(): R|kotlin/Unit| {
+            public final fun foo(): R|kotlin/Unit| {
                 this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
                 Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
             }
 
         }
 
-        public[private] final companion object Companion : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
             private constructor(): R|Private.Companion| {
                 super<R|kotlin/Any|>()
             }
@@ -51,7 +51,7 @@ FILE: first.kt
 
         }
 
-        public[private] final object NotCompanion : R|kotlin/Any| {
+        public final object NotCompanion : R|kotlin/Any| {
             private constructor(): R|Private.NotCompanion| {
                 super<R|kotlin/Any|>()
             }
@@ -64,23 +64,23 @@ FILE: first.kt
     }
     public final fun withLocals(): R|kotlin/Unit| {
         local final class Local : R|kotlin/Any| {
-            public[local] constructor(): R|Local| {
+            public constructor(): R|Local| {
                 super<R|kotlin/Any|>()
             }
 
-            private[local] final fun bar(): R|kotlin/Unit|
+            private final fun bar(): R|kotlin/Unit|
 
-            public[local] final fun baz(): R|kotlin/Unit| {
+            public final fun baz(): R|kotlin/Unit| {
                 this@R|/Local|.R|/Local.bar|()
                 this@R|/Local|.R|/Local.Inner.Inner|()
             }
 
             local final inner class Inner : R|kotlin/Any| {
-                public[local] constructor(): R|Local.Inner| {
+                public constructor(): R|Local.Inner| {
                     super<R|kotlin/Any|>()
                 }
 
-                public[local] final fun foo(): R|kotlin/Unit| {
+                public final fun foo(): R|kotlin/Unit| {
                     this@R|/Local|.R|/Local.bar|()
                 }
 

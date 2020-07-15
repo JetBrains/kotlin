@@ -14,7 +14,7 @@ FILE: objectDerivedFromInnerClass.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lval x: R|<anonymous>| = object : R|Outer.Inner| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|Outer.Inner|>()
             }
 

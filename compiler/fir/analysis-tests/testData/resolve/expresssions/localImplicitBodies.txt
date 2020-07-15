@@ -1,15 +1,15 @@
 FILE: localImplicitBodies.kt
     public final fun foo(): R|kotlin/Unit| {
         lval x: R|<anonymous>| = object : R|kotlin/Any| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
-            public[local] final fun sss(): R|kotlin/Int| {
+            public final fun sss(): R|kotlin/Int| {
                 ^sss this@R|/<anonymous>|.R|/<anonymous>.abc|()
             }
 
-            public[local] final fun abc(): R|kotlin/Int| {
+            public final fun abc(): R|kotlin/Int| {
                 ^abc Int(1)
             }
 

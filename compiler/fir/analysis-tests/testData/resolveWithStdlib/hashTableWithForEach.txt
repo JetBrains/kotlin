@@ -27,17 +27,17 @@ FILE: hashTableWithForEach.kt
             }
 
         private final class Entry<K, V> : R|kotlin/collections/MutableMap.MutableEntry<K, V>| {
-            public[private] constructor<K, V>(key: R|K|, value: R|V|): R|SomeHashTable.Entry<K, V>| {
+            public constructor<K, V>(key: R|K|, value: R|V|): R|SomeHashTable.Entry<K, V>| {
                 super<R|kotlin/Any|>()
             }
 
-            public[private] final override val key: R|K| = R|<local>/key|
+            public final override val key: R|K| = R|<local>/key|
                 public get(): R|K|
 
-            public[private] final override val value: R|V| = R|<local>/value|
+            public final override val value: R|V| = R|<local>/value|
                 public get(): R|V|
 
-            public[private] final override fun setValue(newValue: R|V|): R|V| {
+            public final override fun setValue(newValue: R|V|): R|V| {
                 ^setValue throw R|java/lang/UnsupportedOperationException.UnsupportedOperationException|()
             }
 

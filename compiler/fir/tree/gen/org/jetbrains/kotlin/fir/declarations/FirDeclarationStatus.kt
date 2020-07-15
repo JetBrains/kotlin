@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirDeclarationStatus : FirElement {
     override val source: FirSourceElement?
     val visibility: Visibility
-    val effectiveVisibility: FirEffectiveVisibility
     val modality: Modality?
     val isExpect: Boolean
     val isActual: Boolean

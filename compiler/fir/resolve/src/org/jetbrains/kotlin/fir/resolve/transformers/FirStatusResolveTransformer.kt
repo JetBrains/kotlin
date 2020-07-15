@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 @OptIn(AdapterForResolveProcessor::class)
-class FirStatusResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+class FirStatusResolveProcessor(session: FirSession, scopeSession: ScopeSession) :
+    FirTransformerBasedResolveProcessor(session, scopeSession) {
     override val transformer = FirStatusResolveTransformer(session)
 }
 
@@ -170,13 +171,6 @@ class FirStatusResolveTransformer(
     }
 }
 
-private val <F : FirClass<F>> FirClass<F>.effectiveVisibility: FirEffectiveVisibility
-    get() = when (this) {
-        is FirRegularClass -> status.effectiveVisibility
-        is FirAnonymousObject -> FirEffectiveVisibilityImpl.Local
-        else -> error("Unknown kind of class: ${this::class}")
-    }
-
 private val <F : FirClass<F>> FirClass<F>.modality: Modality?
     get() = when (this) {
         is FirRegularClass -> status.modality
@@ -189,9 +183,7 @@ fun FirDeclaration.resolveStatus(
     containingClass: FirClass<*>?,
     isLocal: Boolean
 ): FirDeclarationStatus {
-    if (status.visibility == Visibilities.UNKNOWN || status.modality == null ||
-        status.effectiveVisibility == FirEffectiveVisibility.Default
-    ) {
+    if (status.visibility == Visibilities.UNKNOWN || status.modality == null) {
         val visibility = when (status.visibility) {
             Visibilities.UNKNOWN -> when {
                 isLocal -> Visibilities.LOCAL
@@ -201,11 +193,7 @@ fun FirDeclaration.resolveStatus(
             else -> status.visibility
         }
         val modality = status.modality ?: resolveModality(containingClass)
-        val containerEffectiveVisibility = containingClass?.effectiveVisibility?.takeIf { it !is FirEffectiveVisibility.Default }
-            ?: FirEffectiveVisibilityImpl.Public
-        val effectiveVisibility =
-            visibility.firEffectiveVisibility(session, this as? FirMemberDeclaration).lowerBound(containerEffectiveVisibility)
-        return (status as FirDeclarationStatusImpl).resolved(visibility, effectiveVisibility, modality)
+        return (status as FirDeclarationStatusImpl).resolved(visibility, modality)
     }
     return status
 }

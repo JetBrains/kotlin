@@ -20,8 +20,6 @@ open class FirDeclarationStatusImpl(
     override val modality: Modality?
 ) : FirPureAbstractElement(), FirDeclarationStatus {
     override val source: FirSourceElement? get() = null
-    override val effectiveVisibility: FirEffectiveVisibility
-        get() = FirEffectiveVisibility.Default
     protected var flags: Int = 0
 
     private operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0
@@ -169,7 +167,7 @@ open class FirDeclarationStatusImpl(
         return this
     }
 
-    fun resolved(visibility: Visibility, effectiveVisibility: FirEffectiveVisibility, modality: Modality): FirDeclarationStatus {
-        return FirResolvedDeclarationStatusImpl(visibility, effectiveVisibility, modality, flags)
+    fun resolved(visibility: Visibility, modality: Modality): FirDeclarationStatus {
+        return FirResolvedDeclarationStatusImpl(visibility, modality, flags)
     }
 }

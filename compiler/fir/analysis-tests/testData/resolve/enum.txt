@@ -22,22 +22,22 @@ FILE: enum.kt
             public get(): R|Some|
 
         public final static enum entry FIRST: R|SomeEnum| = object : R|SomeEnum| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|SomeEnum|>(Q|O1|)
             }
 
-            public[local] final override fun check(y: R|Some|): R|kotlin/Boolean| {
+            public final override fun check(y: R|Some|): R|kotlin/Boolean| {
                 ^check Boolean(true)
             }
 
         }
 
         public final static enum entry SECOND: R|SomeEnum| = object : R|SomeEnum| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|SomeEnum|>(Q|O2|)
             }
 
-            public[local] final override fun check(y: R|Some|): R|kotlin/Boolean| {
+            public final override fun check(y: R|Some|): R|kotlin/Boolean| {
                 ^check ==(R|<local>/y|, Q|O2|)
             }
 
@@ -71,28 +71,28 @@ FILE: enum.kt
         }
 
         public final static enum entry E1: R|EnumClass| = object : R|EnumClass| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|EnumClass|>()
             }
 
-            public[local] final override fun foo(): R|kotlin/Int| {
+            public final override fun foo(): R|kotlin/Int| {
                 ^foo Int(1)
             }
 
-            public[local] final override val bar: R|kotlin/String| = String(a)
+            public final override val bar: R|kotlin/String| = String(a)
                 public get(): R|kotlin/String|
 
         }
 
         public final static enum entry E2: R|EnumClass| = object : R|EnumClass| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|EnumClass|>()
             }
 
         }
 
         public final static enum entry E3: R|EnumClass| = object : R|EnumClass| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|EnumClass|>()
             }
 

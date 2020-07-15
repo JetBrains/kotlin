@@ -11,12 +11,12 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val declarationCheckers: List<FirBasicDeclarationChecker> = listOf(
         FirAnnotationClassDeclarationChecker,
         FirModifierChecker,
-        RedundantVisibilityModifierChecker
+        RedundantVisibilityModifierChecker,
     )
 
     override val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = listOf(
         FirInfixFunctionDeclarationChecker,
-        FirExposedVisibilityChecker
+        FirExposedVisibilityDeclarationChecker,
     )
 
     override val constructorCheckers: List<FirConstructorChecker> = listOf(

@@ -1,12 +1,12 @@
 FILE: exposedTypeParameters.kt
     private open class A : R|kotlin/Any| {
-        public[private] constructor(): R|A| {
+        public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
     internal open class B : R|kotlin/Any| {
-        public[internal] constructor(): R|B| {
+        public constructor(): R|B| {
             super<R|kotlin/Any|>()
         }
 
@@ -17,7 +17,7 @@ FILE: exposedTypeParameters.kt
         }
 
         protected open class D : R|kotlin/Any| {
-            public[protected] constructor(): R|C.D| {
+            public constructor(): R|C.D| {
                 super<R|kotlin/Any|>()
             }
 
@@ -49,13 +49,13 @@ FILE: exposedTypeParameters.kt
 
     }
     internal final class Test4<T : R|B|> : R|kotlin/Any| {
-        public[internal] constructor<T : R|B|>(): R|Test4<T>| {
+        public constructor<T : R|B|>(): R|Test4<T>| {
             super<R|kotlin/Any|>()
         }
 
     }
     private final class Test5<T : R|B|> : R|kotlin/Any| {
-        public[private] constructor<T : R|B|>(): R|Test5<T>| {
+        public constructor<T : R|B|>(): R|Test5<T>| {
             super<R|kotlin/Any|>()
         }
 
@@ -66,14 +66,14 @@ FILE: exposedTypeParameters.kt
         }
 
         protected final class Test6<T : R|C.D|> : R|kotlin/Any| {
-            public[protected] constructor<T : R|C.D|>(): R|Container.Test6<T>| {
+            public constructor<T : R|C.D|>(): R|Container.Test6<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
         protected final class Test7<T : R|B|> : R|kotlin/Any| {
-            public[protected] constructor<T : R|B|>(): R|Container.Test7<T>| {
+            public constructor<T : R|B|>(): R|Container.Test7<T>| {
                 super<R|kotlin/Any|>()
             }
 

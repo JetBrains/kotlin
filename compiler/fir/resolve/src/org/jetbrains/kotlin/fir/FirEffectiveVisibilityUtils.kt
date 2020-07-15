@@ -14,9 +14,13 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
+import org.jetbrains.kotlin.load.java.JavaVisibilities
 
 fun firEffectiveVisibility(
     session: FirSession,
@@ -31,21 +35,13 @@ fun FirRegularClass.firEffectiveVisibility(session: FirSession, checkPublishedAp
 fun Visibility.firEffectiveVisibility(session: FirSession, declaration: FirMemberDeclaration?): FirEffectiveVisibility =
     firEffectiveVisibility(session, normalize(), declaration)
 
-fun ConeKotlinType.leastPermissiveDescriptor(session: FirSession, base: FirEffectiveVisibility): DeclarationWithRelation? =
-    dependentDeclarations(session).leastPermissive(session, base)
-
-fun FirMemberDeclaration.firEffectiveVisibility(
-    session: FirSession, visibility: Visibility = this.visibility, checkPublishedApi: Boolean = false
-): FirEffectiveVisibility {
-    val containing = this.containingClass(session)
-    return lowerBound(
-        visibility.firEffectiveVisibility(session, this),
-        this.effectiveVisibility,
-        containing?.firEffectiveVisibility(session, checkPublishedApi) ?: Public,
-        containing?.effectiveVisibility ?: Public
-    )
+fun Visibility.firEffectiveVisibility(session: FirSession, containerSymbol: FirClassLikeSymbol<*>?): FirEffectiveVisibility = when (this) {
+    JavaVisibilities.PACKAGE_VISIBILITY -> forVisibility(session, containerSymbol)
+    else -> normalize().forVisibility(session, containerSymbol)
 }
 
+fun ConeKotlinType.leastPermissiveDescriptor(session: FirSession, base: FirEffectiveVisibility): DeclarationWithRelation? =
+    dependentDeclarations(session).leastPermissive(session, base)
 
 private fun lowerBound(vararg elements: FirEffectiveVisibility): FirEffectiveVisibility {
     if (elements.size < 2) {
@@ -69,17 +65,32 @@ private fun FirMemberDeclaration.containingClass(session: FirSession): FirRegula
         ?: (session.declaredMemberScopeProvider.getClassByClassId(classId) as? FirRegularClass)
 }
 
+private fun FirClassLikeSymbol<*>.containingClass(session: FirSession): FirRegularClass? {
+    val classId = when (this) {
+        is FirRegularClassSymbol -> classId.outerClassId
+        is FirCallableSymbol<*> -> callableId.classId
+        else -> null
+    } ?: return null
+    if (classId.isLocal) return null
+    return (session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass)
+        ?: (session.declaredMemberScopeProvider.getClassByClassId(classId) as? FirRegularClass)
+}
+
+private fun Visibility.forVisibility(session: FirSession, declaration: FirMemberDeclaration?) =
+    forVisibility(session, declaration?.containingClass(session)?.symbol)
+
 private fun Visibility.forVisibility(
-    session: FirSession, declaration: FirMemberDeclaration?
+    session: FirSession, containerSymbol: FirClassLikeSymbol<*>?
 ): FirEffectiveVisibility =
     when (this) {
         Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS, Visibilities.INVISIBLE_FAKE -> Private
-        Visibilities.PROTECTED -> Protected(declaration?.containingClass(session))
+        Visibilities.PROTECTED -> Protected(containerSymbol, session)
         Visibilities.INTERNAL -> Internal
         Visibilities.PUBLIC -> Public
         Visibilities.LOCAL -> Local
         // NB: visibility must be already normalized here, so e.g. no JavaVisibilities are possible at this point
         // TODO: else -> throw AssertionError("Visibility $name is not allowed in forVisibility")
+        JavaVisibilities.PACKAGE_VISIBILITY -> PackagePrivate
         else -> Private
     }
 

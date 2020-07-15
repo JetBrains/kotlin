@@ -3,20 +3,20 @@ FILE: localInnerClass.kt
     }
     public final fun bar(): R|kotlin/Unit| {
         object : R|Foo| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
-            public[local] final fun foo(): R|Foo| {
+            public final fun foo(): R|Foo| {
                 ^foo this@R|/<anonymous>|.R|/<anonymous>.Derived.Derived|(Int(42))
             }
 
             local final inner class Derived : R|Foo| {
-                public[local] constructor(x: R|kotlin/Int|): R|<anonymous>.Derived| {
+                public constructor(x: R|kotlin/Int|): R|<anonymous>.Derived| {
                     super<R|kotlin/Any|>()
                 }
 
-                public[local] final val x: R|kotlin/Int| = R|<local>/x|
+                public final val x: R|kotlin/Int| = R|<local>/x|
                     public get(): R|kotlin/Int|
 
             }

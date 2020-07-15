@@ -10,11 +10,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProvider
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.types.Variance.INVARIANT
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class JavaSymbolProvider(
     val session: FirSession,
@@ -178,6 +180,16 @@ class JavaSymbolProvider(
                             buildOuterClassTypeParameterRef { symbol = it.symbol }
                         }
                     }
+                    status = FirResolvedDeclarationStatusImpl(
+                        javaClass.visibility,
+                        javaClass.modality
+                    ).apply {
+                        this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
+                        isCompanion = false
+                        isData = false
+                        isInline = false
+                        isFun = classKind == ClassKind.INTERFACE
+                    }
                     addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
                     // TODO: may be we can process fields & methods later.
                     // However, they should be built up to override resolve stage
@@ -191,7 +203,10 @@ class JavaSymbolProvider(
                                 session = this@JavaSymbolProvider.session
                                 symbol = FirVariableSymbol(fieldId)
                                 name = fieldName
-                                status = FirDeclarationStatusImpl(javaField.visibility, javaField.modality).apply {
+                                status = FirResolvedDeclarationStatusImpl(
+                                    javaField.visibility,
+                                    javaField.modality
+                                ).apply {
                                     isStatic = javaField.isStatic
                                     isExpect = false
                                     isActual = false
@@ -207,6 +222,15 @@ class JavaSymbolProvider(
                                 session = this@JavaSymbolProvider.session
                                 symbol = FirFieldSymbol(fieldId)
                                 name = fieldName
+                                status = FirResolvedDeclarationStatusImpl(
+                                    javaField.visibility,
+                                    javaField.modality
+                                ).apply {
+                                    isStatic = javaField.isStatic
+                                    isExpect = false
+                                    isActual = false
+                                    isOverride = false
+                                }
                                 visibility = javaField.visibility
                                 modality = javaField.modality
                                 returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
@@ -238,6 +262,23 @@ class JavaSymbolProvider(
                                     this@JavaSymbolProvider.session, index, javaTypeParameterStack,
                                 )
                             }
+                            status = FirResolvedDeclarationStatusImpl(
+                                javaMethod.visibility,
+                                javaMethod.modality
+                            ).apply {
+                                isStatic = javaMethod.isStatic
+                                isExpect = false
+                                isActual = false
+                                isOverride = false
+                                // Approximation: all Java methods with name that allows to use it in operator form are considered operators
+                                // We need here more detailed checks (see modifierChecks.kt)
+                                isOperator = name in ALL_JAVA_OPERATION_NAMES || OperatorNameConventions.COMPONENT_REGEX.matches(name.asString())
+                                isInfix = false
+                                isInline = false
+                                isTailRec = false
+                                isExternal = false
+                                isSuspend = false
+                            }
                         }
                         declarations += firJavaMethod
                     }
@@ -254,9 +295,19 @@ class JavaSymbolProvider(
                             source = psi?.toFirPsiSourceElement()
                             session = this@JavaSymbolProvider.session
                             symbol = constructorSymbol
+                            isInner = javaClass.outerClass != null && !javaClass.isStatic
+                            val isThisInner = this.isInner
+                            status = FirResolvedDeclarationStatusImpl(
+                                visibility,
+                                Modality.FINAL
+                            ).apply {
+                                isExpect = false
+                                isActual = false
+                                isOverride = false
+                                isInner = isThisInner
+                            }
                             this.visibility = visibility
                             this.isPrimary = isPrimary
-                            isInner = javaClass.outerClass != null && !javaClass.isStatic
                             returnTypeRef = buildResolvedTypeRef {
                                 type = firSymbol.constructType(
                                     this@buildJavaClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
@@ -274,7 +325,8 @@ class JavaSymbolProvider(
                     }
                     for (javaConstructor in javaClassDeclaredConstructors) {
                         declarations += prepareJavaConstructor(
-                            visibility = javaConstructor.visibility, psi = (javaConstructor as? JavaElementImpl<*>)?.psi,
+                            visibility = javaConstructor.visibility,
+                            psi = (javaConstructor as? JavaElementImpl<*>)?.psi,
                         ).apply {
                             this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack)
                             addAnnotationsFrom(this@JavaSymbolProvider.session, javaConstructor, javaTypeParameterStack)

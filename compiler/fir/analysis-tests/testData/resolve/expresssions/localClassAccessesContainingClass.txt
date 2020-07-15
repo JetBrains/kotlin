@@ -6,11 +6,11 @@ FILE: localClassAccessesContainingClass.kt
 
         public final fun foo(): R|kotlin/Unit| {
             local final class Local : R|kotlin/Any| {
-                public[local] constructor(): R|Outer.Local| {
+                public constructor(): R|Outer.Local| {
                     super<R|kotlin/Any|>()
                 }
 
-                public[local] final fun bar(): R|kotlin/Unit| {
+                public final fun bar(): R|kotlin/Unit| {
                     lval x: R|kotlin/String| = this@R|/Outer|.R|/Outer.y|
                 }
 

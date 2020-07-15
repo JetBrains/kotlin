@@ -24,11 +24,11 @@ FILE: protectedVisibility.kt
         }
 
         protected open class Nested : R|kotlin/Any| {
-            public[protected] constructor(): R|Protected.Nested| {
+            public constructor(): R|Protected.Nested| {
                 super<R|kotlin/Any|>()
             }
 
-            public[protected] final fun foo(): R|kotlin/Unit| {
+            public final fun foo(): R|kotlin/Unit| {
                 this@R|/Protected.Nested|.R|/Protected.Nested.bar|()
             }
 
@@ -42,7 +42,7 @@ FILE: protectedVisibility.kt
                 super<R|kotlin/Any|>()
             }
 
-            public[protected] final fun fromCompanion(): R|kotlin/Unit| {
+            public final fun fromCompanion(): R|kotlin/Unit| {
             }
 
             protected final fun protectedFromCompanion(): R|kotlin/Unit| {
@@ -65,11 +65,11 @@ FILE: protectedVisibility.kt
         }
 
         private final class NestedDerived : R|Protected.Nested| {
-            public[private] constructor(): R|Derived.NestedDerived| {
+            public constructor(): R|Derived.NestedDerived| {
                 super<R|Protected.Nested|>()
             }
 
-            public[private] final fun use(): R|kotlin/Unit| {
+            public final fun use(): R|kotlin/Unit| {
                 this@R|/Derived.NestedDerived|.R|/Protected.Nested.bar|()
             }
 

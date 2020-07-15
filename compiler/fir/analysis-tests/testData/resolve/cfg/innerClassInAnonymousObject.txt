@@ -1,15 +1,15 @@
 FILE: innerClassInAnonymousObject.kt
     public final val x: R|<anonymous>| = object : R|kotlin/Any| {
-        private[local] constructor(): R|<anonymous>| {
+        private constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 
         local final class Nested : R|kotlin/Any| {
-            public[local] constructor(): R|<anonymous>.Nested| {
+            public constructor(): R|<anonymous>.Nested| {
                 super<R|kotlin/Any|>()
             }
 
-            public[local] final fun foo(): R|kotlin/Unit| {
+            public final fun foo(): R|kotlin/Unit| {
             }
 
         }

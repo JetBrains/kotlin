@@ -323,7 +323,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         declarationStatus.configure {
             +visibility
-            +effectiveVisibility
             +modality
             generateBooleanFields(
                 "expect", "actual", "override", "operator", "infix", "inline", "tailRec",
