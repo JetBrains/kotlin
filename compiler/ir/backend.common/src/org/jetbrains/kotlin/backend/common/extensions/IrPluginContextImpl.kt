@@ -28,7 +28,7 @@ open class IrPluginContextImpl(
     private val st: ReferenceSymbolTable,
     override val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
-    private val linker: IrDeserializer,
+    val linker: IrDeserializer,
     override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, irBuiltIns.builtIns, st)
 ) : IrPluginContext {
 
