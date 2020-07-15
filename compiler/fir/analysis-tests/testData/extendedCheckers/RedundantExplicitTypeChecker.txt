@@ -1,0 +1,62 @@
+FILE: RedundantExplicitTypeChecker.kt
+    public abstract interface Point : R|kotlin/Any| {
+        public abstract val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract val y: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public final class PointImpl : R|Point| {
+        public constructor(x: R|kotlin/Int|, y: R|kotlin/Int|): R|PointImpl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final override val y: R|kotlin/Int| = R|<local>/y|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval p: R|Point| = R|/PointImpl.PointImpl|(Int(1), Int(2))
+        lval a: R|kotlin/Boolean| = Boolean(true)
+        lval i: R|kotlin/Int| = Int(2).R|kotlin/Int.times|(Int(2))
+        lval l: R|kotlin/Long| = Long(1234567890123)
+        lval s: R|kotlin/String?| = Null(null)
+        lval sh: R|kotlin/Short| = Short(42)
+    }
+    public final class My : R|kotlin/Any| {
+        public constructor(): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+    }
+    public final object Obj : R|kotlin/Any| {
+        private constructor(): R|Obj| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun bar(): R|kotlin/Unit| {
+        lval o: R|Obj| = Q|Obj|
+    }
+    public final fun doo(): R|kotlin/Unit| {
+        lval i: R|kotlin/Int| = Int(42)
+        lval pi: R|kotlin/Float| = Float(3.14)
+        lval pi2: R|kotlin/Double| = Double(3.14)
+        lval ch: R|kotlin/Char| = Char(z)
+    }
+    public final fun soo(): R|kotlin/Unit| {
+        lval s: R|kotlin/String| = <strcat>(String(Hello ), Int(10).R|kotlin/Int.plus|(Int(1)).R|kotlin/Any.toString|())
+    }
+    public final val ZERO: R|kotlin/Int| = Int(0)
+        public get(): R|kotlin/Int|
+    public final fun main(): R|kotlin/Unit| {
+        lval id: R|Id| = Int(11)
+    }
+    public final typealias Id = R|kotlin/Int|

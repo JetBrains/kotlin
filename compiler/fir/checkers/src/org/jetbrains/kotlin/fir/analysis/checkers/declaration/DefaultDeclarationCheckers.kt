@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantExplicitTypeChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantVisibilityModifierChecker
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
@@ -16,7 +17,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = listOf(
         FirInfixFunctionDeclarationChecker,
-        FirExposedVisibilityChecker
+        FirExposedVisibilityChecker,
+        RedundantExplicitTypeChecker
     )
 
     override val constructorCheckers: List<FirConstructorChecker> = listOf(
