@@ -9,10 +9,6 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-//class KtContractEffectList(node: ASTNode): KtDeclarationImpl(node) {
-//
-//}
-
 class KtContractEffectList : KtElementImplStub<KotlinPlaceHolderStub<KtContractEffectList>> { // TODO: check constructors
     public constructor(node: ASTNode): super(node)
     public constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>): super(stub, KtStubElementTypes.CONTRACT_EFFECT_LIST)

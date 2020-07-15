@@ -9,10 +9,6 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-//class KtContractEffect(node: ASTNode) : KtDeclarationImpl(node) {
-//
-//}
-
 class KtContractEffect: KtElementImplStub<KotlinContractEffectStub> { // TODO: check constructors
     public constructor(node: ASTNode): super(node)
     public constructor(stub: KotlinContractEffectStub): super(stub, KtStubElementTypes.CONTRACT_EFFECT)
