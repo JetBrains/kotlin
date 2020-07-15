@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.returnType
 import org.jetbrains.kotlin.fir.resolve.propagateTypeFromQualifiedAccessAfterNullCheck
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArgumentsWithVararg
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
@@ -169,24 +170,7 @@ class FirCallCompletionResultsWriterTransformer(
             // Create a FirVarargArgumentExpression for the vararg arguments
             val varargParameterTypeRef = varargParameter.returnTypeRef
             val resolvedArrayType = varargParameterTypeRef.substitute(this)
-            val resolvedElementType = resolvedArrayType.arrayElementType()
-            var firstIndex = argumentList.arguments.size
-            val newArgumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
-            val varargArgument = buildVarargArgumentsExpression {
-                varargElementType = varargParameterTypeRef.withReplacedConeType(resolvedElementType)
-                this.typeRef = varargParameterTypeRef.withReplacedConeType(resolvedArrayType)
-                for ((i, arg) in argumentList.arguments.withIndex()) {
-                    val valueParameter = argumentMapping[arg] ?: continue
-                    if (valueParameter.isVararg) {
-                        firstIndex = min(firstIndex, i)
-                        arguments += arg
-                    } else {
-                        newArgumentMapping[arg] = valueParameter
-                    }
-                }
-            }
-            newArgumentMapping[varargArgument] = varargParameter
-            this.argumentMapping = newArgumentMapping
+            this.argumentMapping = remapArgumentsWithVararg(varargParameter, resolvedArrayType, argumentList, argumentMapping)
         }
     }
 

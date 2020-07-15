@@ -700,26 +700,9 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     if (varargParameter == null) {
                         it.replaceArgumentList(buildResolvedArgumentList(argumentMapping))
                     } else {
-                        // TODO: refactor/reuse [Candidate#handleVarargs] in [FirCallCompletionResultsWriterTransformer]
                         val varargParameterTypeRef = varargParameter.returnTypeRef
                         val arrayType = varargParameterTypeRef.coneType
-                        val elementType = arrayType.arrayElementType()
-                        var firstIndex = it.argumentList.arguments.size
-                        val newArgumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
-                        val varargArgument = buildVarargArgumentsExpression {
-                            varargElementType = varargParameterTypeRef.withReplacedConeType(elementType)
-                            this@buildVarargArgumentsExpression.typeRef = varargParameterTypeRef
-                            for ((i, arg) in it.argumentList.arguments.withIndex()) {
-                                val valueParameter = argumentMapping[arg] ?: continue
-                                if (valueParameter.isVararg) {
-                                    firstIndex = min(firstIndex, i)
-                                    arguments += arg
-                                } else {
-                                    newArgumentMapping[arg] = valueParameter
-                                }
-                            }
-                        }
-                        newArgumentMapping[varargArgument] = varargParameter
+                        val newArgumentMapping = remapArgumentsWithVararg(varargParameter, arrayType, it.argumentList, argumentMapping)
                         it.replaceArgumentList(buildResolvedArgumentList(newArgumentMapping))
                     }
                 }
