@@ -1,21 +1,19 @@
 buildscript {
     repositories {
-        maven("https://dl.bintray.com/kotlin/kotlin-dev") // TODO: use the Gradle plugin from the current build
-        mavenCentral()
+        {{kts_kotlin_plugin_repositories}}
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0-dev-7568") // TODO: use the Gradle plugin from the current build
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}")
     }
 }
 
 plugins {
-    kotlin("multiplatform")
+    kotlin("multiplatform").version("{{kotlin_plugin_version}}")
 }
 
 repositories {
-    maven("https://dl.bintray.com/kotlin/kotlin-dev") // TODO: use the Gradle plugin from the current build
-    mavenCentral()
+    {{kts_kotlin_plugin_repositories}}
 }
 
 kotlin {

@@ -18,9 +18,6 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 
-// TODO: run this test on the Gradle plugin from the current build
-//  1. specify appropriate 'pluginVersion' in [PluginTargetVersions]
-//  2. avoid using fixed Gradle plugin version in testdata
 class ImportAndCheckNavigation : MultiplePluginVersionGradleImportingTestCase() {
 
     @Test
