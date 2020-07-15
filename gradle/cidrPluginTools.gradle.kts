@@ -700,7 +700,10 @@ fun patchFileTemplates(project: Project, originalPluginJar: Configuration): Copy
 fun patchGradleXml(project: Project, originalPluginJar: Configuration): Copy = with(project) {
     task<Copy>("patchGradleXml") {
         val gradleXmlPath = "META-INF/gradle.xml"
-        val filteredItems = listOf("implementation=\"org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner\"")
+        val filteredItems = listOf(
+                "implementation=\"org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner\"",
+                "implementation=\"org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelContributor\""
+        )
 
         from(zipTree(originalPluginJar.singleFile).matching { include(gradleXmlPath) })
         destinationDir = file("$buildDir/$name")
