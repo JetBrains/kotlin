@@ -128,7 +128,7 @@ public class KotlinTestUtils {
 
     @NotNull
     public static Ref<Disposable> allowProjectRootAccess(@NotNull UsefulTestCase testCase) {
-        return allowRootAccess(testCase, new File(getHomeDirectory(), "..").getAbsolutePath());
+        return allowRootAccess(testCase, Paths.get(getHomeDirectory(), "..").toAbsolutePath().normalize().toString());
     }
 
     @NotNull
