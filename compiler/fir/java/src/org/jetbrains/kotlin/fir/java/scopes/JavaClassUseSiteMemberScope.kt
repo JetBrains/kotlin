@@ -109,6 +109,9 @@ class JavaClassUseSiteMemberScope(
             when (val overriddenBy = it.getOverridden(overrideCandidates)) {
                 null -> processor(it)
                 is FirAccessorSymbol -> processor(overriddenBy)
+                is FirPropertySymbol -> if (it is FirPropertySymbol) {
+                    directOverriddenProperties.getOrPut(overriddenBy) { mutableListOf() }.add(it)
+                }
             }
         }
     }

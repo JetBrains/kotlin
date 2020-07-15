@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -188,17 +189,23 @@ internal class ClassMemberGenerator(
         return irFunction
     }
 
-    fun convertPropertyContent(irProperty: IrProperty, property: FirProperty): IrProperty {
+    fun convertPropertyContent(irProperty: IrProperty, property: FirProperty, containingClass: FirClass<*>?): IrProperty {
         val initializer = property.initializer
         val delegate = property.delegate
         val propertyType = property.returnTypeRef.toIrType()
         irProperty.initializeBackingField(property, initializerExpression = initializer ?: delegate)
         irProperty.getter?.setPropertyAccessorContent(
-            property, property.getter, irProperty, propertyType, property.getter is FirDefaultPropertyGetter
+            property, property.getter, irProperty, propertyType,
+            property.getter is FirDefaultPropertyGetter,
+            isGetter = true,
+            containingClass = containingClass
         )
         if (property.isVar) {
             irProperty.setter?.setPropertyAccessorContent(
-                property, property.setter, irProperty, propertyType, property.setter is FirDefaultPropertySetter
+                property, property.setter, irProperty, propertyType,
+                property.setter is FirDefaultPropertySetter,
+                isGetter = false,
+                containingClass = containingClass
             )
         }
         annotationGenerator.generate(irProperty, property)
@@ -221,12 +228,14 @@ internal class ClassMemberGenerator(
         annotationGenerator.generate(irField, property)
     }
 
-    private fun IrFunction.setPropertyAccessorContent(
+    private fun IrSimpleFunction.setPropertyAccessorContent(
         property: FirProperty,
         propertyAccessor: FirPropertyAccessor?,
         correspondingProperty: IrProperty,
         propertyType: IrType,
-        isDefault: Boolean
+        isDefault: Boolean,
+        isGetter: Boolean,
+        containingClass: FirClass<*>?
     ) {
         conversionScope.withFunction(this) {
             applyParentFromStackTo(this)
@@ -258,6 +267,28 @@ internal class ClassMemberGenerator(
                     declarationStorage.leaveScope(this)
                 }
             }
+            if (containingClass != null) {
+                val scope = containingClass.unsubstitutedScope(session, scopeSession)
+                scope.processPropertiesByName(property.name) {}
+                val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
+                scope.processDirectlyOverriddenProperties(property.symbol) {
+                    if (it.fir.visibility == Visibilities.PRIVATE) {
+                        return@processDirectlyOverriddenProperties ProcessorAction.NEXT
+                    }
+                    val overridden = declarationStorage.getIrPropertyOrFieldSymbol(it)
+                    if (overridden is IrPropertySymbol) {
+                        val accessorSymbol =
+                            if (isGetter) overridden.owner.getter?.symbol
+                            else overridden.owner.setter?.symbol
+                        if (accessorSymbol != null) {
+                            overriddenSet += accessorSymbol
+                        }
+                    }
+                    ProcessorAction.NEXT
+                }
+                this.overriddenSymbols = overriddenSet.toList()
+            }
+
         }
         annotationGenerator.generate(this, property)
     }

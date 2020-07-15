@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isStatic
 import org.jetbrains.kotlin.name.Name
@@ -30,6 +31,8 @@ class FirClassUseSiteMemberScope(
             val overriddenBy = it.getOverridden(seen)
             if (overriddenBy == null) {
                 processor(it)
+            } else if (overriddenBy is FirPropertySymbol && it is FirPropertySymbol) {
+                directOverriddenProperties.getOrPut(overriddenBy) { mutableListOf() }.add(it)
             }
         }
     }

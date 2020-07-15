@@ -102,6 +102,22 @@ class FirClassSubstitutionScope(
         }
     }
 
+    override fun processOverriddenPropertiesWithDepth(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, Int) -> ProcessorAction
+    ): ProcessorAction {
+        if (!useSiteMemberScope.processOverriddenPropertiesWithDepth(propertySymbol, processor)) {
+            return ProcessorAction.STOP
+        }
+        val unwrapped = propertySymbol.overriddenSymbol ?: return ProcessorAction.NEXT
+        if (!processor(unwrapped, 1)) {
+            return ProcessorAction.STOP
+        }
+        return useSiteMemberScope.processOverriddenPropertiesWithDepth(unwrapped) { symbol, depth ->
+            processor(symbol, depth + 1)
+        }
+    }
+
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         useSiteMemberScope.processClassifiersByNameWithSubstitution(name) { symbol, substitutor ->
             processor(symbol, substitutor.chain(this.substitutor))
