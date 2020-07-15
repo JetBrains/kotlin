@@ -99,7 +99,7 @@ open class CocoapodsExtension(private val project: Project) {
      * Add a CocoaPods dependency to the pod built from this project.
      */
     @JvmOverloads
-    fun pod(name: String, version: String? = null, podspec: File? = null, moduleName: String = name.split("/")[0]) {
+    fun pod(name: String, version: String? = null, podspec: File? = null, moduleName: String = name.asModuleName()) {
         check(_pods.findByName(name) == null) { "Project already has a CocoaPods dependency with name $name" }
         _pods.add(CocoapodsDependency(name, version, podspec, moduleName))
     }
@@ -121,5 +121,11 @@ open class CocoapodsExtension(private val project: Project) {
 
         @Input
         override fun getName(): String = name
+    }
+
+    companion object {
+        private fun String.asModuleName() = this
+            .split("/")[0]     // Pick the module name from a subspec name.
+            .replace('-', '_') // Support pods with dashes in names (see https://github.com/JetBrains/kotlin-native/issues/2884).
     }
 }
