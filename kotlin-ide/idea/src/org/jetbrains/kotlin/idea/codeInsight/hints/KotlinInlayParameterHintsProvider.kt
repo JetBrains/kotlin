@@ -44,7 +44,7 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
     override fun getHintInfo(element: PsiElement): HintInfo? {
         if (!(HintType.PARAMETER_HINT.isApplicable(element))) return null
         val parent: PsiElement = (element as? KtValueArgumentList)?.parent ?: return null
-        return getMethodInfo(parent as KtCallElement)
+        return (parent as? KtCallElement)?.let { getMethodInfo(it) }
     }
 
     override fun getParameterHints(element: PsiElement): List<InlayInfo> {
