@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 
 class UnsafeCastFromDynamicInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor =
@@ -28,7 +29,9 @@ class UnsafeCastFromDynamicInspection : AbstractKotlinInspection() {
             val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, expression] ?: return
             val actualType = expression.getType(context) ?: return
 
-            if (actualType.isDynamic() && !expectedType.isDynamic() && !TypeUtils.noExpectedType(expectedType)) {
+            if (actualType.isDynamic() && !expectedType.isDynamic() && !expectedType.isNullableAny() &&
+                !TypeUtils.noExpectedType(expectedType)
+            ) {
                 holder.registerProblem(
                     expression,
                     KotlinBundle.message("implicit.unsafe.cast.from.dynamic.to.0", expectedType),

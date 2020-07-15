@@ -13623,6 +13623,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unsafeCastFromDynamic/nullable.kt");
         }
 
+        @TestMetadata("nullableAny.kt")
+        public void testNullableAny() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unsafeCastFromDynamic/nullableAny.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/inspectionsLocal/unsafeCastFromDynamic/simple.kt");
