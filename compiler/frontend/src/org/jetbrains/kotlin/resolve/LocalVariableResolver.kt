@@ -186,7 +186,7 @@ class LocalVariableResolver(
             )
 
             val receiverParameter = (containingDeclaration as ScriptDescriptor).thisAsReceiverParameter
-            propertyDescriptor.setType(type, emptyList<TypeParameterDescriptor>(), receiverParameter, null)
+            propertyDescriptor.setType(type, emptyList<TypeParameterDescriptor>(), receiverParameter, null, emptyList<ReceiverParameterDescriptor>())
             initializeWithDefaultGetterSetter(propertyDescriptor)
             trace.record(BindingContext.VARIABLE, variable, propertyDescriptor)
             result = propertyDescriptor

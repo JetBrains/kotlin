@@ -65,6 +65,12 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
         return visitor.visitReceiverParameterDescriptor(this, data);
     }
 
+    @NotNull
+    @Override
+    public List<ReceiverParameterDescriptor> getContextReceiverParameters() {
+        return Collections.emptyList();
+    }
+
     @Nullable
     @Override
     public ReceiverParameterDescriptor getExtensionReceiverParameter() {

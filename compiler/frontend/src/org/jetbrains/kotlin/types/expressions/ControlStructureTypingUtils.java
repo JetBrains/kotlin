@@ -226,6 +226,7 @@ public class ControlStructureTypingUtils {
         function.initialize(
                 null,
                 null,
+                Collections.emptyList(),
                 Lists.newArrayList(typeParameter),
                 valueParameters,
                 returnType,

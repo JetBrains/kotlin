@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.sam;
 
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
@@ -75,8 +76,7 @@ public class JavaSingleAbstractMethodUtils {
                     @NotNull KotlinType returnType
             ) {
                 result.initialize(
-                        null,
-                        original.getDispatchReceiverParameter(),
+                        null, original.getDispatchReceiverParameter(), CollectionsKt.emptyList(),
                         typeParameters,
                         valueParameters,
                         returnType,

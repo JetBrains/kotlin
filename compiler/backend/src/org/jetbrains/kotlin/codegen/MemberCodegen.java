@@ -487,7 +487,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     private SimpleFunctionDescriptorImpl createClInitFunctionDescriptor(@NotNull DeclarationDescriptor descriptor) {
         SimpleFunctionDescriptorImpl clInit = SimpleFunctionDescriptorImpl.create(descriptor, Annotations.Companion.getEMPTY(),
                 Name.special("<clinit>"), SYNTHESIZED, KotlinSourceElementKt.toSourceElement(element));
-        clInit.initialize(null, null, Collections.emptyList(), Collections.emptyList(),
+        clInit.initialize(null, null, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
                           DescriptorUtilsKt.getModule(descriptor).getBuiltIns().getUnitType(),
                           Modality.FINAL, DescriptorVisibilities.PRIVATE);
         return clInit;

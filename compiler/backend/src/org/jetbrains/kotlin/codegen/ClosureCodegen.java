@@ -261,6 +261,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         descriptorForBridges
                 .initialize(erasedInterfaceFunction.getExtensionReceiverParameter(), erasedInterfaceFunction.getDispatchReceiverParameter(),
+                            erasedInterfaceFunction.getContextReceiverParameters(),
                             erasedInterfaceFunction.getTypeParameters(), erasedInterfaceFunction.getValueParameters(),
                             erasedInterfaceFunction.getReturnType(), Modality.OPEN, erasedInterfaceFunction.getVisibility());
 

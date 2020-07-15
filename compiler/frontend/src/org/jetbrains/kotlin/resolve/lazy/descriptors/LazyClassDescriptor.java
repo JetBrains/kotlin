@@ -319,7 +319,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE
         ) {
             {
-                initialize(null, null, Collections.emptyList(), Collections.emptyList(),
+                initialize(null, null, CollectionsKt.emptyList(), Collections.emptyList(), Collections.emptyList(),
                            null, Modality.FINAL, DescriptorVisibilities.PRIVATE);
             }
 

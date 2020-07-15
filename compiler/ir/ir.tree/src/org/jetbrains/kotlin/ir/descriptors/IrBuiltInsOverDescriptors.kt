@@ -155,7 +155,7 @@ class IrBuiltInsOverDescriptors(
             returnKotlinType = typeParameterDescriptor.typeConstructor.makeNonNullType()
 
             initialize(
-                null, null, listOf(typeParameterDescriptor), listOf(valueParameterDescriptor), returnKotlinType,
+                null, null, listOf(), listOf(typeParameterDescriptor), listOf(valueParameterDescriptor), returnKotlinType,
                 Modality.FINAL, DescriptorVisibilities.PUBLIC
             )
         }
