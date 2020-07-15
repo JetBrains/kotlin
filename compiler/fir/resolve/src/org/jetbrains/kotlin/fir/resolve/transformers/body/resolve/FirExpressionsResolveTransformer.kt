@@ -139,8 +139,41 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 superReferenceContainer.resultType = superTypeRef
             }
             !is FirImplicitTypeRef -> {
-                superReference.transformChildren(transformer, ResolutionMode.ContextIndependent)
-                superReferenceContainer.resultType = superReference.superTypeRef
+                components.typeResolverTransformer.withAllowedBareTypes {
+                    superReference.transformChildren(transformer, ResolutionMode.ContextIndependent)
+                }
+
+                val actualSuperType = (superReference.superTypeRef.coneType as? ConeClassLikeType)
+                    ?.fullyExpandedType(session)?.let { superType ->
+                        val classId = superType.lookupTag.classId
+                        val superTypeRefs = implicitReceiver?.boundSymbol?.phasedFir?.superTypeRefs
+                        val correspondingDeclaredSuperType = superTypeRefs?.firstOrNull {
+                            it.coneType.fullyExpandedType(session).classId == classId
+                        }?.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session) ?: return@let superType
+
+                        if (superType.typeArguments.isEmpty() && correspondingDeclaredSuperType.typeArguments.isNotEmpty()) {
+                            superType.withArguments(correspondingDeclaredSuperType.typeArguments)
+                        } else {
+                            superType
+                        }
+                    }
+                /*
+                 * See tests:
+                 *   DiagnosticsTestGenerated$Tests$ThisAndSuper.testGenericQualifiedSuperOverridden
+                 *   DiagnosticsTestGenerated$Tests$ThisAndSuper.testQualifiedSuperOverridden
+                 */
+                val actualSuperTypeRef = actualSuperType?.let {
+                    buildResolvedTypeRef {
+                        source = superTypeRef.source
+                        type = it
+                    }
+                } ?: buildErrorTypeRef {
+                    source = superTypeRef.source
+                    diagnostic = ConeSimpleDiagnostic("Not a super type", DiagnosticKind.Other)
+                }
+                superReference.replaceSuperTypeRef(actualSuperTypeRef)
+
+                superReferenceContainer.resultType = actualSuperTypeRef
             }
             else -> {
                 val superTypeRefs = implicitReceiver?.boundSymbol?.phasedFir?.superTypeRefs
