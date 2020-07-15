@@ -251,7 +251,7 @@ digraph nullability_kt {
                     76 [label="Enter when branch condition "];
                     77 [label="Access variable R|<local>/x|"];
                     78 [label="Const: Null(null)"];
-                    79 [label="Operator !="];
+                    79 [label="Equality operator !="];
                     80 [label="Exit when branch condition"];
                 }
                 subgraph cluster_32 {
@@ -326,7 +326,7 @@ digraph nullability_kt {
                     103 [label="Enter when branch condition "];
                     104 [label="Access variable R|<local>/x|"];
                     105 [label="Const: Null(null)"];
-                    106 [label="Operator =="];
+                    106 [label="Equality operator =="];
                     107 [label="Exit when branch condition"];
                 }
                 subgraph cluster_39 {
@@ -437,7 +437,7 @@ digraph nullability_kt {
                     146 [label="Function call: $subj$.R|/A.getA|()"];
                     147 [label="Exit safe call"];
                     148 [label="Const: Null(null)"];
-                    149 [label="Operator =="];
+                    149 [label="Equality operator =="];
                     150 [label="Exit when branch condition"];
                 }
                 151 [label="Synthetic else branch"];
@@ -505,7 +505,7 @@ digraph nullability_kt {
                     175 [label="Function call: $subj$.R|kotlin/Int.inc|()"];
                     176 [label="Exit safe call"];
                     177 [label="Const: Null(null)"];
-                    178 [label="Operator !="];
+                    178 [label="Equality operator !="];
                     179 [label="Exit when branch condition"];
                 }
                 180 [label="Synthetic else branch"];
@@ -653,7 +653,7 @@ digraph nullability_kt {
                     238 [label="Function call: $subj$.R|kotlin/Int.inc|()"];
                     239 [label="Exit safe call"];
                     240 [label="Const: Null(null)"];
-                    241 [label="Operator !="];
+                    241 [label="Equality operator !="];
                     242 [label="Exit when branch condition"];
                 }
                 243 [label="Synthetic else branch"];
@@ -727,7 +727,7 @@ digraph nullability_kt {
                     263 [label="Enter when branch condition "];
                     264 [label="Access variable R|<local>/b|"];
                     265 [label="Const: Boolean(true)"];
-                    266 [label="Operator =="];
+                    266 [label="Equality operator =="];
                     267 [label="Exit when branch condition"];
                 }
                 268 [label="Synthetic else branch"];
@@ -778,7 +778,7 @@ digraph nullability_kt {
                     281 [label="Enter when branch condition "];
                     282 [label="Access variable R|<local>/a|"];
                     283 [label="Access variable R|<local>/b|"];
-                    284 [label="Operator =="];
+                    284 [label="Equality operator =="];
                     285 [label="Exit when branch condition"];
                 }
                 286 [label="Synthetic else branch"];
@@ -803,7 +803,7 @@ digraph nullability_kt {
                     297 [label="Enter when branch condition "];
                     298 [label="Access variable R|<local>/a|"];
                     299 [label="Access variable R|<local>/b|"];
-                    300 [label="Operator ==="];
+                    300 [label="Equality operator ==="];
                     301 [label="Exit when branch condition"];
                 }
                 302 [label="Synthetic else branch"];
@@ -828,7 +828,7 @@ digraph nullability_kt {
                     313 [label="Enter when branch condition "];
                     314 [label="Access variable R|<local>/b|"];
                     315 [label="Access variable R|<local>/a|"];
-                    316 [label="Operator =="];
+                    316 [label="Equality operator =="];
                     317 [label="Exit when branch condition"];
                 }
                 318 [label="Synthetic else branch"];
@@ -853,7 +853,7 @@ digraph nullability_kt {
                     329 [label="Enter when branch condition "];
                     330 [label="Access variable R|<local>/b|"];
                     331 [label="Access variable R|<local>/a|"];
-                    332 [label="Operator ==="];
+                    332 [label="Equality operator ==="];
                     333 [label="Exit when branch condition"];
                 }
                 334 [label="Synthetic else branch"];
@@ -956,7 +956,7 @@ digraph nullability_kt {
                     349 [label="Enter when branch condition "];
                     350 [label="Access variable R|<local>/a|"];
                     351 [label="Access variable R|<local>/b|"];
-                    352 [label="Operator =="];
+                    352 [label="Equality operator =="];
                     353 [label="Exit when branch condition"];
                 }
                 354 [label="Synthetic else branch"];
@@ -981,7 +981,7 @@ digraph nullability_kt {
                     365 [label="Enter when branch condition "];
                     366 [label="Access variable R|<local>/a|"];
                     367 [label="Access variable R|<local>/b|"];
-                    368 [label="Operator ==="];
+                    368 [label="Equality operator ==="];
                     369 [label="Exit when branch condition"];
                 }
                 370 [label="Synthetic else branch"];
@@ -1006,7 +1006,7 @@ digraph nullability_kt {
                     381 [label="Enter when branch condition "];
                     382 [label="Access variable R|<local>/b|"];
                     383 [label="Access variable R|<local>/a|"];
-                    384 [label="Operator =="];
+                    384 [label="Equality operator =="];
                     385 [label="Exit when branch condition"];
                 }
                 386 [label="Synthetic else branch"];
@@ -1031,7 +1031,7 @@ digraph nullability_kt {
                     397 [label="Enter when branch condition "];
                     398 [label="Access variable R|<local>/b|"];
                     399 [label="Access variable R|<local>/a|"];
-                    400 [label="Operator ==="];
+                    400 [label="Equality operator ==="];
                     401 [label="Exit when branch condition"];
                 }
                 402 [label="Synthetic else branch"];
@@ -1143,7 +1143,7 @@ digraph nullability_kt {
                     426 [label="Function call: $subj$.R|kotlin/Int.inc|()"];
                     427 [label="Exit safe call"];
                     428 [label="Const: Null(null)"];
-                    429 [label="Operator !="];
+                    429 [label="Equality operator !="];
                     430 [label="Exit when branch condition"];
                 }
                 431 [label="Synthetic else branch"];
@@ -1178,7 +1178,7 @@ digraph nullability_kt {
                             454 [label="Access variable R|<local>/q2|"];
                             455 [label="Access variable R|/QImpl.data|"];
                             456 [label="Const: Null(null)"];
-                            457 [label="Operator !="];
+                            457 [label="Equality operator !="];
                             458 [label="Exit when branch condition"];
                         }
                         459 [label="Synthetic else branch"];
@@ -1293,7 +1293,7 @@ digraph nullability_kt {
                     489 [label="Function call: $subj$.R|kotlin/Int.inc|()"];
                     490 [label="Exit safe call"];
                     491 [label="Const: Null(null)"];
-                    492 [label="Operator !="];
+                    492 [label="Equality operator !="];
                     493 [label="Exit when branch condition"];
                 }
                 494 [label="Synthetic else branch"];
@@ -1376,7 +1376,7 @@ digraph nullability_kt {
                     523 [label="Function call: $subj$.R|kotlin/Int.inc|()"];
                     524 [label="Exit safe call"];
                     525 [label="Const: Null(null)"];
-                    526 [label="Operator !="];
+                    526 [label="Equality operator !="];
                     527 [label="Exit when branch condition"];
                 }
                 528 [label="Synthetic else branch"];

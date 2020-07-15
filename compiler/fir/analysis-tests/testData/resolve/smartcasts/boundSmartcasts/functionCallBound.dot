@@ -90,7 +90,7 @@ digraph functionCallBound_kt {
                     29 [label="Function call: $subj$.R|/isOk|()"];
                     30 [label="Exit safe call"];
                     31 [label="Const: Boolean(true)"];
-                    32 [label="Operator =="];
+                    32 [label="Equality operator =="];
                     33 [label="Exit when branch condition"];
                 }
                 subgraph cluster_12 {

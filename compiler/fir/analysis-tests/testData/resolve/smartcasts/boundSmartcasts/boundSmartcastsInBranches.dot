@@ -73,7 +73,7 @@ digraph boundSmartcastsInBranches_kt {
                                 28 [label="Enter when branch condition "];
                                 29 [label="Access variable R|<local>/goodA|"];
                                 30 [label="Const: Null(null)"];
-                                31 [label="Operator =="];
+                                31 [label="Equality operator =="];
                                 32 [label="Exit when branch condition"];
                             }
                             33 [label="Synthetic else branch"];
@@ -576,7 +576,7 @@ digraph boundSmartcastsInBranches_kt {
                     210 [label="Enter when branch condition "];
                     211 [label="Access variable R|<local>/x|"];
                     212 [label="Const: Null(null)"];
-                    213 [label="Operator !="];
+                    213 [label="Equality operator !="];
                     214 [label="Exit when branch condition"];
                 }
                 215 [label="Synthetic else branch"];
@@ -603,7 +603,7 @@ digraph boundSmartcastsInBranches_kt {
                     228 [label="Enter when branch condition "];
                     229 [label="Access variable R|<local>/y|"];
                     230 [label="Const: Null(null)"];
-                    231 [label="Operator !="];
+                    231 [label="Equality operator !="];
                     232 [label="Exit when branch condition"];
                 }
                 233 [label="Synthetic else branch"];
@@ -630,7 +630,7 @@ digraph boundSmartcastsInBranches_kt {
                     246 [label="Enter when branch condition "];
                     247 [label="Access variable R|<local>/z|"];
                     248 [label="Const: Null(null)"];
-                    249 [label="Operator !="];
+                    249 [label="Equality operator !="];
                     250 [label="Exit when branch condition"];
                 }
                 251 [label="Synthetic else branch"];
@@ -659,7 +659,7 @@ digraph boundSmartcastsInBranches_kt {
                     266 [label="Enter when branch condition "];
                     267 [label="Access variable R|<local>/x|"];
                     268 [label="Const: Null(null)"];
-                    269 [label="Operator !="];
+                    269 [label="Equality operator !="];
                     270 [label="Exit when branch condition"];
                 }
                 271 [label="Synthetic else branch"];
@@ -686,7 +686,7 @@ digraph boundSmartcastsInBranches_kt {
                     284 [label="Enter when branch condition "];
                     285 [label="Access variable R|<local>/y|"];
                     286 [label="Const: Null(null)"];
-                    287 [label="Operator !="];
+                    287 [label="Equality operator !="];
                     288 [label="Exit when branch condition"];
                 }
                 289 [label="Synthetic else branch"];
@@ -713,7 +713,7 @@ digraph boundSmartcastsInBranches_kt {
                     302 [label="Enter when branch condition "];
                     303 [label="Access variable R|<local>/z|"];
                     304 [label="Const: Null(null)"];
-                    305 [label="Operator !="];
+                    305 [label="Equality operator !="];
                     306 [label="Exit when branch condition"];
                 }
                 307 [label="Synthetic else branch"];

@@ -31,7 +31,7 @@ digraph equalsAndIdentity_kt {
                     7 [label="Enter when branch condition "];
                     8 [label="Access variable R|<local>/x|"];
                     9 [label="Access variable R|<local>/y|"];
-                    10 [label="Operator =="];
+                    10 [label="Equality operator =="];
                     11 [label="Exit when branch condition"];
                 }
                 12 [label="Synthetic else branch"];
@@ -56,7 +56,7 @@ digraph equalsAndIdentity_kt {
                     23 [label="Enter when branch condition "];
                     24 [label="Access variable R|<local>/x|"];
                     25 [label="Access variable R|<local>/y|"];
-                    26 [label="Operator ==="];
+                    26 [label="Equality operator ==="];
                     27 [label="Exit when branch condition"];
                 }
                 28 [label="Synthetic else branch"];
@@ -127,7 +127,7 @@ digraph equalsAndIdentity_kt {
                     43 [label="Enter when branch condition "];
                     44 [label="Access variable R|<local>/x|"];
                     45 [label="Access variable R|<local>/y|"];
-                    46 [label="Operator =="];
+                    46 [label="Equality operator =="];
                     47 [label="Exit when branch condition"];
                 }
                 48 [label="Synthetic else branch"];
@@ -152,7 +152,7 @@ digraph equalsAndIdentity_kt {
                     59 [label="Enter when branch condition "];
                     60 [label="Access variable R|<local>/x|"];
                     61 [label="Access variable R|<local>/y|"];
-                    62 [label="Operator ==="];
+                    62 [label="Equality operator ==="];
                     63 [label="Exit when branch condition"];
                 }
                 64 [label="Synthetic else branch"];
@@ -223,7 +223,7 @@ digraph equalsAndIdentity_kt {
                     79 [label="Enter when branch condition "];
                     80 [label="Access variable R|<local>/y|"];
                     81 [label="Const: Null(null)"];
-                    82 [label="Operator =="];
+                    82 [label="Equality operator =="];
                     83 [label="Exit when branch condition"];
                 }
                 84 [label="Synthetic else branch"];
@@ -246,7 +246,7 @@ digraph equalsAndIdentity_kt {
                     93 [label="Enter when branch condition "];
                     94 [label="Access variable R|<local>/x|"];
                     95 [label="Access variable R|<local>/y|"];
-                    96 [label="Operator =="];
+                    96 [label="Equality operator =="];
                     97 [label="Exit when branch condition"];
                 }
                 98 [label="Synthetic else branch"];
@@ -271,7 +271,7 @@ digraph equalsAndIdentity_kt {
                     109 [label="Enter when branch condition "];
                     110 [label="Access variable R|<local>/x|"];
                     111 [label="Access variable R|<local>/y|"];
-                    112 [label="Operator ==="];
+                    112 [label="Equality operator ==="];
                     113 [label="Exit when branch condition"];
                 }
                 114 [label="Synthetic else branch"];

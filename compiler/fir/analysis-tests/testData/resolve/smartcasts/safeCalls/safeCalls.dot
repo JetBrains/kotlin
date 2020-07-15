@@ -49,7 +49,7 @@ digraph safeCalls_kt {
             15 [label="Access variable R|<local>/x|"];
             16 [label="Access variable R|kotlin/String.length|"];
             17 [label="Const: Int(1)"];
-            18 [label="Operator =="];
+            18 [label="Equality operator =="];
             19 [label="Function call: $subj$.R|/foo|(...)"];
             20 [label="Exit safe call"];
             21 [label="Access variable R|<local>/x|"];

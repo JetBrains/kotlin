@@ -640,7 +640,7 @@ digraph when_kt {
                     color=blue
                     238 [label="Enter when branch condition "];
                     239 [label="Const: Int(1)"];
-                    240 [label="Operator =="];
+                    240 [label="Equality operator =="];
                     241 [label="Exit when branch condition"];
                 }
                 242 [label="Synthetic else branch"];

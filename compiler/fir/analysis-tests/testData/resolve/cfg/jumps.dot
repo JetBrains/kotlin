@@ -17,7 +17,7 @@ digraph jumps_kt {
                     3 [label="Enter when branch condition "];
                     4 [label="Access variable R|<local>/x|"];
                     5 [label="Const: Null(null)"];
-                    6 [label="Operator =="];
+                    6 [label="Equality operator =="];
                     7 [label="Exit when branch condition"];
                 }
                 subgraph cluster_4 {
@@ -99,7 +99,7 @@ digraph jumps_kt {
                     33 [label="Enter when branch condition "];
                     34 [label="Access variable R|<local>/x|"];
                     35 [label="Const: Null(null)"];
-                    36 [label="Operator =="];
+                    36 [label="Equality operator =="];
                     37 [label="Exit when branch condition"];
                 }
                 subgraph cluster_11 {

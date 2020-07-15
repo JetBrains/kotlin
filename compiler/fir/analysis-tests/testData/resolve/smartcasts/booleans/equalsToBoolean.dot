@@ -38,9 +38,9 @@ digraph equalsToBoolean_kt {
                     9 [label="Enter when branch condition "];
                     10 [label="Access variable R|<local>/b|"];
                     11 [label="Const: Boolean(true)"];
-                    12 [label="Operator =="];
+                    12 [label="Equality operator =="];
                     13 [label="Const: Boolean(true)"];
-                    14 [label="Operator =="];
+                    14 [label="Equality operator =="];
                     15 [label="Exit when branch condition"];
                 }
                 subgraph cluster_7 {
@@ -113,9 +113,9 @@ digraph equalsToBoolean_kt {
                     36 [label="Enter when branch condition "];
                     37 [label="Access variable R|<local>/b|"];
                     38 [label="Const: Boolean(true)"];
-                    39 [label="Operator =="];
+                    39 [label="Equality operator =="];
                     40 [label="Const: Boolean(true)"];
-                    41 [label="Operator !="];
+                    41 [label="Equality operator !="];
                     42 [label="Exit when branch condition"];
                 }
                 subgraph cluster_14 {
@@ -188,9 +188,9 @@ digraph equalsToBoolean_kt {
                     63 [label="Enter when branch condition "];
                     64 [label="Access variable R|<local>/b|"];
                     65 [label="Const: Boolean(true)"];
-                    66 [label="Operator =="];
+                    66 [label="Equality operator =="];
                     67 [label="Const: Boolean(false)"];
-                    68 [label="Operator =="];
+                    68 [label="Equality operator =="];
                     69 [label="Exit when branch condition"];
                 }
                 subgraph cluster_21 {
@@ -263,9 +263,9 @@ digraph equalsToBoolean_kt {
                     90 [label="Enter when branch condition "];
                     91 [label="Access variable R|<local>/b|"];
                     92 [label="Const: Boolean(true)"];
-                    93 [label="Operator =="];
+                    93 [label="Equality operator =="];
                     94 [label="Const: Boolean(false)"];
-                    95 [label="Operator !="];
+                    95 [label="Equality operator !="];
                     96 [label="Exit when branch condition"];
                 }
                 subgraph cluster_28 {
@@ -338,9 +338,9 @@ digraph equalsToBoolean_kt {
                     117 [label="Enter when branch condition "];
                     118 [label="Access variable R|<local>/b|"];
                     119 [label="Const: Boolean(true)"];
-                    120 [label="Operator !="];
+                    120 [label="Equality operator !="];
                     121 [label="Const: Boolean(true)"];
-                    122 [label="Operator =="];
+                    122 [label="Equality operator =="];
                     123 [label="Exit when branch condition"];
                 }
                 subgraph cluster_35 {
@@ -413,9 +413,9 @@ digraph equalsToBoolean_kt {
                     144 [label="Enter when branch condition "];
                     145 [label="Access variable R|<local>/b|"];
                     146 [label="Const: Boolean(true)"];
-                    147 [label="Operator !="];
+                    147 [label="Equality operator !="];
                     148 [label="Const: Boolean(true)"];
-                    149 [label="Operator !="];
+                    149 [label="Equality operator !="];
                     150 [label="Exit when branch condition"];
                 }
                 subgraph cluster_42 {
@@ -488,9 +488,9 @@ digraph equalsToBoolean_kt {
                     171 [label="Enter when branch condition "];
                     172 [label="Access variable R|<local>/b|"];
                     173 [label="Const: Boolean(true)"];
-                    174 [label="Operator !="];
+                    174 [label="Equality operator !="];
                     175 [label="Const: Boolean(false)"];
-                    176 [label="Operator =="];
+                    176 [label="Equality operator =="];
                     177 [label="Exit when branch condition"];
                 }
                 subgraph cluster_49 {
@@ -563,9 +563,9 @@ digraph equalsToBoolean_kt {
                     198 [label="Enter when branch condition "];
                     199 [label="Access variable R|<local>/b|"];
                     200 [label="Const: Boolean(true)"];
-                    201 [label="Operator !="];
+                    201 [label="Equality operator !="];
                     202 [label="Const: Boolean(false)"];
-                    203 [label="Operator !="];
+                    203 [label="Equality operator !="];
                     204 [label="Exit when branch condition"];
                 }
                 subgraph cluster_56 {
