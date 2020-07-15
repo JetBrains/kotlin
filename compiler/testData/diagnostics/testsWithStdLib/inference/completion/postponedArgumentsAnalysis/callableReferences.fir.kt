@@ -31,27 +31,27 @@ fun foo6(x: Float) {}
 fun foo6(x: Number) {}
 
 fun main() {
-    select(::foo, { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> })
+    select(::foo, { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })
     select(id(::foo), { x: Number -> }, { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })
 
-    val x1 = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>id(::foo)<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Number, kotlin.Number>")!>id { x: Number -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!> }<!>)
+    val x1 = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>id(::foo)<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Number>")!>id { x: Number -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!> }<!>)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>x1<!>
 
-    val x11 = select(id(::foo), id { x: Number -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> })
+    val x11 = select(id(::foo), id { x: Number -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>x11<!>
 
-    select(id(::foo2), id { x: Int -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> })
+    select(id(::foo2), id { x: Int -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>it<!> })
 
-    select(id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>::foo3<!>), id { x: Int -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> })
-    select(id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>::foo3<!>), id { x: Number -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> })
-    select(id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>::foo3<!>), id { x: Number -> }, id { x: Int -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> })
+    select(id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>::foo3<!>), id { x: Int -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })
+    select(id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>::foo3<!>), id { x: Number -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })
+    select(id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>::foo3<!>), id { x: Number -> }, id { x: Int -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })
 
     select(id(<!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown"), UNRESOLVED_REFERENCE!>::foo4<!>), id { x: A -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> })
     select(id(<!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown"), UNRESOLVED_REFERENCE!>::foo4<!>), id { x: B -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> })
     // Expected ambiguity
     select(id(<!UNRESOLVED_REFERENCE!>::foo4<!>), id { x: A -> }, id { x: B -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> })
 
-    select(id(::foo5), id { x: A -> }, id { x: B -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> })
+    select(id(::foo5), id { x: A -> }, id { x: B -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> })
 
     val x2: (Int) -> Unit = selectNumber(id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Number, kotlin.Unit>")!>::foo6<!>), id { x -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> })
 }
