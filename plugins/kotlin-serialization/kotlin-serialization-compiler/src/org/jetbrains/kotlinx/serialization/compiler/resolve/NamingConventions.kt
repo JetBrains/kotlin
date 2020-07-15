@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.name.Name
 object SerializationPackages {
     internal val packageFqName = FqName("kotlinx.serialization")
     internal val internalPackageFqName = FqName("kotlinx.serialization.internal")
+    internal val encodingPackageFqName = FqName("kotlinx.serialization.encoding")
+    internal val descriptorsPackageFqName = FqName("kotlinx.serialization.descriptors")
     internal val builtinsPackageFqName = FqName("kotlinx.serialization.builtins")
+
+    val allPublicPackages = listOf(packageFqName, encodingPackageFqName, descriptorsPackageFqName, builtinsPackageFqName)
 }
 
 object SerializationAnnotations {
@@ -89,7 +93,7 @@ object SpecialBuiltins {
     const val enumSerializer = "EnumSerializer"
     const val polymorphicSerializer = "PolymorphicSerializer"
     const val sealedSerializer = "SealedClassSerializer"
-    const val contextSerializer = "ContextSerializer"
+    const val contextSerializer = "ContextualSerializer"
     const val nullableSerializer = "NullableSerializer"
 }
 
