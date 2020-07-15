@@ -1680,9 +1680,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 parseTypeRef();
             }
 
-            parseTypeConstraintsGuarded(typeParameterListOccurred);
-
             parseFunctionContract();
+
+            parseTypeConstraintsGuarded(typeParameterListOccurred);
 
             if (at(SEMICOLON)) {
                 advance(); // SEMICOLON
