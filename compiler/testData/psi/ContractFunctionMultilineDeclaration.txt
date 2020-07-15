@@ -1,0 +1,130 @@
+KtFile: ContractFunctionMultilineDeclaration.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    MODIFIER_LIST
+      PsiElement(contract)('contract')
+    PsiWhiteSpace(' ')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('myContractFunction')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('str')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+            PsiElement(QUEST)('?')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('arg')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('MyClass')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('block')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CONTRACT_EFFECT_LIST
+      PsiElement(LBRACKET)('[')
+      PsiWhiteSpace('\n    ')
+      CONTRACT_EFFECT
+        BINARY_EXPRESSION
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('returns')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('implies')
+          PsiWhiteSpace(' ')
+          PARENTHESIZED
+            PsiElement(LPAR)('(')
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('str')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(EXCLEQ)('!=')
+              PsiWhiteSpace(' ')
+              NULL
+                PsiElement(null)('null')
+            PsiElement(RPAR)(')')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      CONTRACT_EFFECT
+        BINARY_EXPRESSION
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('returns')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('implies')
+          PsiWhiteSpace(' ')
+          PARENTHESIZED
+            PsiElement(LPAR)('(')
+            IS_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('arg')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(is)('is')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('MySubClass')
+            PsiElement(RPAR)(')')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      CONTRACT_EFFECT
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('callsInPlace')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('block')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            VALUE_ARGUMENT
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('EXACTLY_ONCE')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACKET)(']')

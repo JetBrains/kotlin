@@ -1,0 +1,60 @@
+KtFile: SimpleFunctionWithContract.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('s')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+            PsiElement(QUEST)('?')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(contract)('contract')
+    PsiWhiteSpace(' ')
+    CONTRACT_EFFECT_LIST
+      PsiElement(LBRACKET)('[')
+      CONTRACT_EFFECT
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('s')
+            PsiElement(RPAR)(')')
+      PsiElement(RBRACKET)(']')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('s')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(ELVIS)('?:')
+        PsiWhiteSpace(' ')
+        THROW
+          PsiElement(throw)('throw')
+          PsiWhiteSpace(' ')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('NullArgumentException')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

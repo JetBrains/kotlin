@@ -1,0 +1,64 @@
+KtFile: ContractFunctionDeclaration.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    MODIFIER_LIST
+      PsiElement(contract)('contract')
+    PsiWhiteSpace(' ')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('bar')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('s')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+            PsiElement(QUEST)('?')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CONTRACT_EFFECT_LIST
+      PsiElement(LBRACKET)('[')
+      CONTRACT_EFFECT
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('returnsNotNull')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      CONTRACT_EFFECT
+        BINARY_EXPRESSION
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('returns')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('implies')
+          PsiWhiteSpace(' ')
+          PARENTHESIZED
+            PsiElement(LPAR)('(')
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('s')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(EXCLEQ)('!=')
+              PsiWhiteSpace(' ')
+              NULL
+                PsiElement(null)('null')
+            PsiElement(RPAR)(')')
+      PsiElement(RBRACKET)(']')
