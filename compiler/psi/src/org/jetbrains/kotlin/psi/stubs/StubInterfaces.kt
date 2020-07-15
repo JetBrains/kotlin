@@ -64,6 +64,8 @@ interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T
     fun isSpread(): Boolean
 }
 
+interface KotlinContractEffectStub : KotlinPlaceHolderStub<KtContractEffect> {}
+
 interface KotlinAnnotationEntryStub : StubElement<KtAnnotationEntry> {
     fun getShortName(): String?
     fun hasValueArguments(): Boolean
