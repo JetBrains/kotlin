@@ -16,16 +16,13 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectStubImpl
 class KtContractEffectElementType(debugName: String, psiClass: Class<KtContractEffect>) :
     KtStubElementType<KotlinContractEffectStub, KtContractEffect>(debugName, psiClass, KotlinContractEffectStub::class.java) {
     override fun serialize(stub: KotlinContractEffectStub, dataStream: StubOutputStream) {
-//        TODO("Not yet implemented")
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>?): KotlinContractEffectStub {
-//        TODO("Not yet implemented")
         return KotlinContractEffectStubImpl(parentStub, this)
     }
 
     override fun createStub(psi: KtContractEffect, parentStub: StubElement<PsiElement>?): KotlinContractEffectStub {
-//        TODO("Not yet implemented")
         return KotlinContractEffectStubImpl(parentStub, this)
     }
 }
