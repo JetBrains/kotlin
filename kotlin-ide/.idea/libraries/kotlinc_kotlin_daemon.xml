@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="kotlinc.kotlin-daemon" type="repository">
+    <properties maven-id="org.jetbrains.kotlin:kotlin-daemon:1.4.20-dev-1680" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-daemon/1.4.20-dev-1680/kotlin-daemon-1.4.20-dev-1680.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-daemon/1.4.20-dev-1680/kotlin-daemon-1.4.20-dev-1680-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="jetCheck" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.jetbrains:jetCheck:0.2.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/jetCheck/0.2.2/jetCheck-0.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/jetCheck/0.2.2/jetCheck-0.2.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

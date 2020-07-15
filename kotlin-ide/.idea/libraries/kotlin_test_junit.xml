@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="kotlin-test-junit" type="repository">
+    <properties maven-id="org.jetbrains.kotlin:kotlin-test-junit:1.3.70">
+      <exclude>
+        <dependency maven-id="junit:junit" />
+        <dependency maven-id="org.hamcrest:hamcrest-core" />
+        <dependency maven-id="org.jetbrains:annotations" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-common" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-test-annotations-common" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-test-common" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-test" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-test-junit/1.3.70/kotlin-test-junit-1.3.70.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-test-junit/1.3.70/kotlin-test-junit-1.3.70-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

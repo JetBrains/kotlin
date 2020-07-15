@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="flexmark" type="repository">
+    <properties maven-id="com.vladsch.flexmark:flexmark:0.34.16" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark/0.34.16/flexmark-0.34.16.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util/0.34.16/flexmark-util-0.34.16.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark/0.34.16/flexmark-0.34.16-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/vladsch/flexmark/flexmark-util/0.34.16/flexmark-util-0.34.16-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

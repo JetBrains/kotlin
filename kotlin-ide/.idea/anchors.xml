@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="KotlinIdeAnchorService">
+    <option name="moduleNameToAnchorName">
+      <map>
+        <entry key="kotlinc.kotlin-compiler" value="kotlin.util.compiler-classpath" />
+        <entry key="kotlinc.kotlin-scripting-compiler-impl" value="kotlin.util.compiler-classpath" />
+      </map>
+    </option>
+  </component>
+  <component name="LibraryToSourceAnalysisState">
+    <option name="isEnabled" value="true" />
+  </component>
+</project>

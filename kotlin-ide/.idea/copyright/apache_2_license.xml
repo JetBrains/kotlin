@@ -1,0 +1,9 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="Copyright 2000-&amp;#36;today.year JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file." />
+    <option name="keyword" value="Copyright" />
+    <option name="allowReplaceKeyword" value="JetBrains" />
+    <option name="myName" value="apache 2 license" />
+    <option name="myLocal" value="true" />
+  </copyright>
+</component>

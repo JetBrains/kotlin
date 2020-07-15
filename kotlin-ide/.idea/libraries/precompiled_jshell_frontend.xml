@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="precompiled_jshell-frontend">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij-community/lib/jshell-frontend.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

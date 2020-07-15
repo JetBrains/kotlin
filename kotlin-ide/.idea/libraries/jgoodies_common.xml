@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="jgoodies-common" type="repository">
+    <properties maven-id="com.jgoodies:jgoodies-common:1.4.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jgoodies/jgoodies-common/1.4.0/jgoodies-common-1.4.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jgoodies/jgoodies-common/1.4.0/jgoodies-common-1.4.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

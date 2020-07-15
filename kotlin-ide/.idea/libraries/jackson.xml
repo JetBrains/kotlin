@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="jackson" type="repository">
+    <properties maven-id="com.fasterxml.jackson.core:jackson-core:2.11.0" />
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/jackson" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-core/2.11.0/jackson-core-2.11.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-core/2.11.0/jackson-core-2.11.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

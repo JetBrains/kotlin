@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteRepositoriesConfiguration">
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Maven Central repository" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/maven-central" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="intellij-third-party-dependencies" />
+      <option name="name" value="IntelliJ Dependencies on Bintray" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/intellij-third-party-dependencies" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jcenter" />
+      <option name="name" value="JCenter on Bintray" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jcenter" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="18c13506-e994-44b4-9eef-4e6ec3262e15" />
+      <option name="name" value="18c13506-e994-44b4-9eef-4e6ec3262e15" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="5ddb844f-da77-4dd2-9c71-ab1484ec2e60" />
+      <option name="name" value="5ddb844f-da77-4dd2-9c71-ab1484ec2e60" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/repo.jenkins-ci.org/releases" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="groovy" />
+      <option name="name" value="Groovy Bintray Repository" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/dl.bintray.com/groovy/maven/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="8e0b07ff-f7c3-4a77-a62b-ab464737b720" />
+      <option name="name" value="8e0b07ff-f7c3-4a77-a62b-ab464737b720" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/jediterm/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="a93311a0-6b4a-43ad-94e7-90f6ea1986ee" />
+      <option name="name" value="a93311a0-6b4a-43ad-94e7-90f6ea1986ee" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/markdown" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="e585af2a-f558-424b-a8e6-3a1365d5b046" />
+      <option name="name" value="e585af2a-f558-424b-a8e6-3a1365d5b046" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/markdown" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="7f849d18-5038-490f-a93d-226871e8f98c" />
+      <option name="name" value="7f849d18-5038-490f-a93d-226871e8f98c" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/www.myget.org/F/rd-snapshots/maven" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="36870030-7a21-4052-b93a-010aa4c33366" />
+      <option name="name" value="36870030-7a21-4052-b93a-010aa4c33366" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/download.jetbrains.com/teamcity-repository" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="b7513459-458a-4892-b2b4-eca932d3c82a" />
+      <option name="name" value="b7513459-458a-4892-b2b4-eca932d3c82a" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-plugin/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="905ce807-c0fe-49c0-822b-33d31d6616e4" />
+      <option name="name" value="905ce807-c0fe-49c0-822b-33d31d6616e4" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/space" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="caeb020e-2153-45d1-b752-f56d66968d08" />
+      <option name="name" value="caeb020e-2153-45d1-b752-f56d66968d08" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-ide-plugin-dependencies" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="550d8dde-346b-4007-864a-5305c03fcf0d" />
+      <option name="name" value="550d8dde-346b-4007-864a-5305c03fcf0d" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-bootstrap" />
+    </remote-repository>
+  </component>
+</project>

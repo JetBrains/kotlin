@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaProjectCodeInsightSettings">
+    <excluded-names>
+      <name>com.sun.istack</name>
+      <name>com.sun.media.jfxmediaimpl.MediaDisposer.Disposable</name>
+      <name>com.sun.tools.javac.util.List</name>
+      <name>com.sun.xml.internal</name>
+      <name>io.netty.util.concurrent.Promise</name>
+      <name>io.netty.util.internal</name>
+      <name>java.awt.List</name>
+      <name>kotlin.reflect.jvm.internal</name>
+      <name>org.jetbrains.concurrency.InternalPromiseUtil</name>
+      <name>sun.reflect.generics.reflectiveObjects.NotImplementedException</name>
+    </excluded-names>
+  </component>
+</project>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="http-client-3.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij-community/lib/commons-httpclient-3.1-patched.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/intellij-community/lib/src/commons-httpclient-3.1-src-patched.zip!/commons-httpclient-3.1/docs" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/intellij-community/lib/src/commons-httpclient-3.1-src-patched.zip!/commons-httpclient-3.1/src/contrib" />
+      <root url="jar://$PROJECT_DIR$/intellij-community/lib/src/commons-httpclient-3.1-src-patched.zip!/commons-httpclient-3.1/src/java" />
+    </SOURCES>
+  </library>
+</component>

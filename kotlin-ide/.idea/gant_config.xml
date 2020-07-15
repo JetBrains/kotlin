@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GantSettings">
+    <option name="SDK_HOME" value="$PROJECT_DIR$/intellij-community/build/lib/gant" />
+  </component>
+</project>

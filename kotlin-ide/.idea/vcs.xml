@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CommitMessageInspectionProfile">
+    <profile version="1.0">
+      <inspection_tool class="BodyLimit" enabled="false" level="WARNING" enabled_by_default="false">
+        <option name="RIGHT_MARGIN" value="120" />
+      </inspection_tool>
+      <inspection_tool class="SubjectBodySeparation" enabled="true" level="WARNING" enabled_by_default="true" />
+      <inspection_tool class="SubjectLimit" enabled="true" level="WARNING" enabled_by_default="true">
+        <option name="RIGHT_MARGIN" value="120" />
+      </inspection_tool>
+    </profile>
+  </component>
+  <component name="GitSharedSettings">
+    <option name="FORCE_PUSH_PROHIBITED_PATTERNS">
+      <list>
+        <option value="master" />
+        <option value="\d{3}" />
+        <option value="\d{3}.\d+" />
+      </list>
+    </option>
+  </component>
+  <component name="GithubSharedProjectSettings">
+    <option name="pullRequestMergeForbidden" value="true" />
+  </component>
+  <component name="IssueNavigationConfiguration">
+    <option name="links">
+      <list>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="[A-Z]+\-\d+" />
+          <option name="linkRegexp" value="http://youtrack.jetbrains.com/issue/$0" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="EA\-(\d+)" />
+          <option name="linkRegexp" value="http://ea.jetbrains.com/browser/ea_problems/$1" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="ZD\-(\d+)" />
+          <option name="linkRegexp" value="https://jetbrains.zendesk.com/agent/#/tickets/$1" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="IDEA-COMMUNITY-CR-\d+" />
+          <option name="linkRegexp" value="https://upsource.jetbrains.com/idea-community/review/$0" />
+        </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="JDK\-\d+" />
+          <option name="linkRegexp" value="https://bugs.openjdk.java.net/browse/$0" />
+        </IssueNavigationLink>
+      </list>
+    </option>
+  </component>
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/intellij-community/android" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/intellij-community" vcs="Git" />
+  </component>
+</project>

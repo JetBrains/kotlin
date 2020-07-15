@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="kotlinx-collections-immutable-jvm" type="repository">
+    <properties maven-id="org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1">
+      <exclude>
+        <dependency maven-id="org.jetbrains:annotations" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-common" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-collections-immutable-jvm/0.3.1/kotlinx-collections-immutable-jvm-0.3.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-collections-immutable-jvm/0.3.1/kotlinx-collections-immutable-jvm-0.3.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

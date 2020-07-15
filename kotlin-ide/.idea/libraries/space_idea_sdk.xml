@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="space-idea-sdk" type="repository">
+    <properties maven-id="com.jetbrains:space-idea-sdk:1.0.51354" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/space-idea-sdk/1.0.51354/space-idea-sdk-1.0.51354.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

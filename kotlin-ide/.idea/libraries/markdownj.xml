@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="markdownj">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij-community/lib/markdownj-core-0.4.2-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

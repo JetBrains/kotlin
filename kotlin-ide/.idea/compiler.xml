@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BuildJarProjectSettings">
+    <option name="BUILD_JARS_ON_MAKE" value="false" />
+  </component>
+  <component name="CompilerConfiguration">
+    <option name="BUILD_PROCESS_HEAP_SIZE" value="4000" />
+    <excludeFromCompile>
+      <file url="file://$PROJECT_DIR$/intellij-community/java/execution/jshell-frontend/src/com/intellij/execution/jshell/frontend/Main.java" />
+      <file url="file://$PROJECT_DIR$/intellij-community/android/tools-base/sdk-common/src/test/java/com/android/ide/common/blame/parser/SourceFragmentPositionRangeJsonTest.java" />
+      <file url="file://$PROJECT_DIR$/intellij-community/android/uitest-framework/testSrc/com/android/tools/idea/tests/gui/framework/fixture/RecordingDialogFixture.java" />
+      <file url="file://$PROJECT_DIR$/intellij-community/android/uitest-framework/testSrc/com/android/tools/idea/tests/gui/framework/fixture/TestClassNameInputDialogFixture.java" />
+      <file url="file://$PROJECT_DIR$/intellij-community/android/android-uitests/testSrc/com/android/tools/idea/tests/gui/espresso/EspressoRecorderTest.java" />
+      <file url="file://$PROJECT_DIR$/intellij-community/plugins/javaFX/javaFX-CE/testSrc/org/jetbrains/plugins/javaFX/fxml/JavaFxGenerateDefaultPropertyValuesScript.java" />
+    </excludeFromCompile>
+    <resourceExtensions>
+      <entry name=".+\.(properties|gif|png|jpeg|jpg|xml|dtd|tld|xsd|ft|html|template)" />
+    </resourceExtensions>
+    <wildcardResourcePatterns>
+      <entry name="!*.form" />
+      <entry name="!*.java" />
+      <entry name="!*.class" />
+      <entry name="!*.groovy" />
+      <entry name="!*.flex" />
+      <entry name="!*.kt" />
+      <entry name="!*.iml" />
+      <entry name="!*.gant" />
+    </wildcardResourcePatterns>
+  </component>
+  <component name="EclipseCompilerSettings">
+    <option name="GENERATE_NO_WARNINGS" value="true" />
+    <option name="DEPRECATION" value="false" />
+  </component>
+  <component name="EclipseEmbeddedCompilerSettings">
+    <option name="GENERATE_NO_WARNINGS" value="true" />
+    <option name="DEPRECATION" value="false" />
+  </component>
+  <component name="JavacSettings">
+    <option name="PREFER_TARGET_JDK_COMPILER" value="false" />
+    <option name="MAXIMUM_HEAP_SIZE" value="400" />
+  </component>
+</project>

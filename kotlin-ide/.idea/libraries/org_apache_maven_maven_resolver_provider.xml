@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="org.apache.maven:maven-resolver-provider" type="repository">
+    <properties maven-id="org.apache.maven:maven-resolver-provider:3.6.1">
+      <exclude>
+        <dependency maven-id="org.slf4j:slf4j-api" />
+        <dependency maven-id="javax.inject:javax.inject" />
+        <dependency maven-id="org.apache.commons:commons-lang3" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-resolver-provider/3.6.1/maven-resolver-provider-3.6.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/3.6.1/maven-model-3.6.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model-builder/3.6.1/maven-model-builder-3.6.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-interpolation/1.25/plexus-interpolation-1.25.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-component-annotations/1.7.1/plexus-component-annotations-1.7.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-artifact/3.6.1/maven-artifact-3.6.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-builder-support/3.6.1/maven-builder-support-3.6.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-repository-metadata/3.6.1/maven-repository-metadata-3.6.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-api/1.3.3/maven-resolver-api-1.3.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-spi/1.3.3/maven-resolver-spi-1.3.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-util/1.3.3/maven-resolver-util-1.3.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-impl/1.3.3/maven-resolver-impl-1.3.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/3.2.0/plexus-utils-3.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

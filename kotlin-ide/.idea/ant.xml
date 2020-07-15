@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AntConfiguration">
+    <buildFile url="file://$PROJECT_DIR$/intellij-community/build/update.xml">
+      <properties>
+        <property name="work.idea.home" value="$APPLICATION_HOME_DIR$" />
+      </properties>
+    </buildFile>
+  </component>
+  <component name="GantSettings">
+    <option name="SDK_HOME" value="$PROJECT_DIR$/intellij-community/build/lib/gant" />
+  </component>
+</project>

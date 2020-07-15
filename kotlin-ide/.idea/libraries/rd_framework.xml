@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="rd-framework" type="repository">
+    <properties include-transitive-deps="false" maven-id="com.jetbrains.rd:rd-framework:0.202.100" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-framework/0.202.100/rd-framework-0.202.100.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-framework/0.202.100/rd-framework-0.202.100-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/rd/rd-framework/0.202.100/rd-framework-0.202.100-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

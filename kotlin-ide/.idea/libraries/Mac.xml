@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="Mac">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij-community/lib/eawtstub.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/intellij-community/lib/src/eawtstub_src.zip!/src" />
+    </SOURCES>
+  </library>
+</component>

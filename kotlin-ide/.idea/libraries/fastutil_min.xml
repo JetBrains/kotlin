@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="fastutil-min" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil:8.3.1-2" />
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/fastutil" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/fastutil/intellij-deps-fastutil/8.3.1-2/intellij-deps-fastutil-8.3.1-2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/fastutil/intellij-deps-fastutil/8.3.1-2/intellij-deps-fastutil-8.3.1-2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

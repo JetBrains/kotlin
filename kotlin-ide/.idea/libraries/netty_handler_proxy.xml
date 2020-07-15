@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="netty-handler-proxy" type="repository">
+    <properties maven-id="io.netty:netty-handler-proxy:4.1.50.Final">
+      <exclude>
+        <dependency maven-id="io.netty:netty-common" />
+        <dependency maven-id="io.netty:netty-buffer" />
+        <dependency maven-id="io.netty:netty-transport" />
+        <dependency maven-id="io.netty:netty-codec" />
+        <dependency maven-id="io.netty:netty-codec-http" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/netty/netty-handler-proxy/4.1.50.Final/netty-handler-proxy-4.1.50.Final.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/netty/netty-codec-socks/4.1.50.Final/netty-codec-socks-4.1.50.Final.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/netty/netty-handler-proxy/4.1.50.Final/netty-handler-proxy-4.1.50.Final-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/netty/netty-codec-socks/4.1.50.Final/netty-codec-socks-4.1.50.Final-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
