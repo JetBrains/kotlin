@@ -229,11 +229,11 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    open fun visitOperatorCallNode(node: OperatorCallNode, data: D): R {
+    open fun visitComparisonExpressionNode(node: ComparisonExpressionNode, data: D): R {
         return visitNode(node, data)
     }
 
-    open fun visitComparisonExpressionNode(node: ComparisonExpressionNode, data: D): R {
+    open fun visitEqualityOperatorCallNode(node: EqualityOperatorCallNode, data: D): R {
         return visitNode(node, data)
     }
 

@@ -27,8 +27,8 @@ fun ControlFlowGraphBuilder.createInitBlockExitNode(fir: FirAnonymousInitializer
 fun ControlFlowGraphBuilder.createTypeOperatorCallNode(fir: FirTypeOperatorCall): TypeOperatorCallNode =
     TypeOperatorCallNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createOperatorCallNode(fir: FirOperatorCall): OperatorCallNode =
-    OperatorCallNode(currentGraph, fir, levelCounter, createId())
+fun ControlFlowGraphBuilder.createEqualityOperatorCallNode(fir: FirEqualityOperatorCall): EqualityOperatorCallNode =
+    EqualityOperatorCallNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createWhenBranchConditionExitNode(fir: FirWhenBranch): WhenBranchConditionExitNode =
     WhenBranchConditionExitNode(currentGraph, fir, levelCounter, createId())

@@ -40,9 +40,9 @@ fun CFGNode<*>.render(): String =
 
                 is QualifiedAccessNode -> "Access variable ${fir.calleeReference.render(CfgRenderMode)}"
                 is ResolvedQualifierNode -> "Access qualifier ${fir.classId}"
-                is OperatorCallNode -> "Operator ${fir.operation.operator}"
                 is ComparisonExpressionNode -> "Comparison ${fir.operation.operator}"
                 is TypeOperatorCallNode -> "Type operator: \"${fir.render(CfgRenderMode)}\""
+                is EqualityOperatorCallNode -> "Equality operator ${fir.operation.operator}"
                 is JumpNode -> "Jump: ${fir.render()}"
                 is StubNode -> "Stub"
                 is CheckNotNullCallNode -> "Check not null: ${fir.render(CfgRenderMode)}"

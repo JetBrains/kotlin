@@ -495,12 +495,12 @@ class ControlFlowGraphBuilder {
         return createTypeOperatorCallNode(typeOperatorCall).also { addNewSimpleNode(it) }
     }
 
-    fun exitOperatorCall(operatorCall: FirOperatorCall): OperatorCallNode {
-        return createOperatorCallNode(operatorCall).also { addNewSimpleNode(it) }
-    }
-
     fun exitComparisonExpression(comparisonExpression: FirComparisonExpression): ComparisonExpressionNode {
         return createComparisonExpressionNode(comparisonExpression).also { addNewSimpleNode(it) }
+    }
+
+    fun exitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall): EqualityOperatorCallNode {
+        return createEqualityOperatorCallNode(equalityOperatorCall).also { addNewSimpleNode(it) }
     }
 
     // ----------------------------------- Jump -----------------------------------
