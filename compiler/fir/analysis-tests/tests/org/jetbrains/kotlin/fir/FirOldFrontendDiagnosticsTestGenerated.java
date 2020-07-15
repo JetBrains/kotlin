@@ -13889,6 +13889,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/j+k/sam/recursiveSamsAndInvoke.kt");
             }
 
+            @TestMetadata("referenceToSamFunctionAgainstExpectedType.kt")
+            public void testReferenceToSamFunctionAgainstExpectedType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/sam/referenceToSamFunctionAgainstExpectedType.kt");
+            }
+
             @TestMetadata("samOnTypeParameter.kt")
             public void testSamOnTypeParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/sam/samOnTypeParameter.kt");

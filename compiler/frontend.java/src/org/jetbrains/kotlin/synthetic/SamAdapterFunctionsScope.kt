@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.synthetic.FunctionInterfaceAdapterExtensionFunctionDescriptor
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.record
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.callUtil.isCallableReference
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
@@ -108,7 +110,7 @@ class SamAdapterFunctionsScope(
         for (type in receiverTypes) {
             for (function in type.memberScope.getContributedFunctions(name, location)) {
                 if (samViaSyntheticScopeDisabled && !function.hasNothingTypeInParameters) {
-                    if (!function.shouldGenerateCandidateForVarargAfterSamAndHasVararg) continue
+                    if (!function.shouldGenerateCandidateForVarargAfterSamAndHasVararg && !location.isCallableReference()) continue
                 }
 
                 val extension = extensionForFunction(function.original)?.substituteForReceiverType(type)
@@ -126,6 +128,12 @@ class SamAdapterFunctionsScope(
             result.size > 1 -> result.toSet()
             else -> result
         }
+    }
+
+    // TODO: replace this logic with a proper conversion in SamTypeConversions
+    private fun LookupLocation.isCallableReference(): Boolean {
+        if (this !is KotlinLookupLocation) return false
+        return element.isCallableReference()
     }
 
     private fun recordSamLookupsForParameters(function: FunctionDescriptor, location: LookupLocation) {
