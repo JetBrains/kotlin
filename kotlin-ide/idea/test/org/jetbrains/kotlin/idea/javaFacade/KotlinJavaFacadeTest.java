@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass;
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.junit.internal.runners.JUnit38ClassRunner;
@@ -299,11 +298,5 @@ public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase 
             // No exception/error should happen here
             lightClass.getClsDelegate();
         }
-    }
-
-    @NotNull
-    @Override
-    protected String fileName() {
-        return getTestName(true) + ".kt";
     }
 }
