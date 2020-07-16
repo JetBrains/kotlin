@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.*
 
 class DeclarationCheckersDiagnosticComponent(
-    collector: AbstractDiagnosticCollector,
-    private val checkExtended: Boolean
+    collector: AbstractDiagnosticCollector
 ) : AbstractDiagnosticCollectorComponent(collector) {
     private val checkers = session.checkersComponent.declarationCheckers
 
@@ -72,9 +71,7 @@ class DeclarationCheckersDiagnosticComponent(
         reporter: DiagnosticReporter
     ) {
         for (checker in this) {
-            if (!checker.isExtended || checkExtended) {
-                checker.check(declaration, context, reporter)
-            }
+            checker.check(declaration, context, reporter)
         }
     }
 }
