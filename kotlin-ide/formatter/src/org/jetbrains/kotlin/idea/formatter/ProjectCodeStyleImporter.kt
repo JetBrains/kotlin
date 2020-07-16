@@ -26,14 +26,13 @@ object ProjectCodeStyleImporter {
     }
 
     fun apply(project: Project, predefinedCodeStyle: KotlinPredefinedCodeStyle) {
-        val settingsManager = CodeStyleSettingsManager.getInstance(project)
-
         val customSettings = CodeStyle.getSettings(project)
         if (predefinedCodeStyle.codeStyleId == customSettings.kotlinCodeStyleDefaults()) {
             // Don't bother user that already have correct code style
             return
         }
 
+        val settingsManager = CodeStyleSettingsManager.getInstance(project)
         val projectSettingsUpdated: CodeStyleSettings = if (CodeStyle.usesOwnSettings(project)) {
             settingsManager.cloneSettings(customSettings)
         } else {

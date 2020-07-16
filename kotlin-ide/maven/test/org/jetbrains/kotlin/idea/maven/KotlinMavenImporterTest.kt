@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.oldFashionedDescription
 import org.jetbrains.kotlin.psi.KtFile
-import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Assert
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import java.io.File
 
@@ -269,8 +269,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
     }
 
     fun testImportObsoleteCodeStyle() {
-        Assert.assertNull(CodeStyle.getSettings(myProject).kotlinCodeStyleDefaults())
-
         importProject(
             """
             <groupId>test</groupId>
@@ -290,8 +288,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
     }
 
     fun testImportOfficialCodeStyle() {
-        Assert.assertNull(CodeStyle.getSettings(myProject).kotlinCodeStyleDefaults())
-
         importProject(
             """
             <groupId>test</groupId>
