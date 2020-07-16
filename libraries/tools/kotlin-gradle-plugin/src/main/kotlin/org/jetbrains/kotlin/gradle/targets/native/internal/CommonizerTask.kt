@@ -35,6 +35,9 @@ internal data class CommonizerSubtaskParams(
     // (common first, then platforms in the same order as in 'orderedTargetNames').
     @get:OutputDirectories val resultingLibsDirs: List<File>,
 
+    // Only for up-to-date checker. The file exists if and only if a commonizer subtask was successfully accomplished.
+    @get:OutputFile val successMarker: File,
+
     @get:Internal val destinationDir: File
 )
 
@@ -61,6 +64,9 @@ internal data class CommonizerTaskParams(
     lateinit var failurePostActions: List<() -> Unit>
 
     companion object {
+        private const val SUCCESS_MARKER = ".commonized"
+        private const val SUCCESS_MARKER_CONTENT = "1"
+
         fun build(
             kotlinVersion: String,
             targetGroups: List<Set<KonanTarget>>,
@@ -77,9 +83,11 @@ internal data class CommonizerTaskParams(
                 val orderedTargetNames = targets.map { it.name }.sorted()
                 if (orderedTargetNames.size == 1) {
                     // no need to commonize, just use the libraries from the distribution
+                    val successMarker = successMarker(distributionLibsDir).also(::writeSuccess)
                     buildSubtask(
                         destinationDir = distributionLibsDir,
-                        orderedTargetNames = orderedTargetNames
+                        orderedTargetNames = orderedTargetNames,
+                        successMarker = successMarker
                     )
                 } else {
                     val discriminator = buildString {
@@ -89,7 +97,11 @@ internal data class CommonizerTaskParams(
                     }
 
                     val destinationDir = baseDestinationDir.resolve(discriminator)
-                    if (!destinationDir.isDirectory) {
+                    val successMarker = successMarker(destinationDir)
+
+                    if (!isSuccess(successMarker)) {
+                        successMarker.delete()
+
                         val parentDir = destinationDir.parentFile
                         parentDir.mkdirs()
 
@@ -107,13 +119,20 @@ internal data class CommonizerTaskParams(
                         commandLineArguments += "-targets"
                         commandLineArguments += orderedTargetNames.joinToString(separator = ",")
 
-                        successPostActions.add { renameDirectory(destinationTmpDir, destinationDir) }
-                        failurePostActions.add { renameToTempAndDelete(destinationTmpDir) }
+                        successPostActions.add {
+                            renameDirectory(destinationTmpDir, destinationDir)
+                            writeSuccess(successMarker)
+                        }
+
+                        failurePostActions.add {
+                            renameToTempAndDelete(destinationTmpDir)
+                        }
                     }
 
                     buildSubtask(
                         destinationDir = destinationDir,
-                        orderedTargetNames = orderedTargetNames
+                        orderedTargetNames = orderedTargetNames,
+                        successMarker = successMarker
                     )
                 }
             }
@@ -146,11 +165,31 @@ internal data class CommonizerTaskParams(
             }
         }
 
-        private fun buildSubtask(destinationDir: File, orderedTargetNames: List<String>) = CommonizerSubtaskParams(
+        private fun buildSubtask(
+            destinationDir: File,
+            orderedTargetNames: List<String>,
+            successMarker: File
+        ) = CommonizerSubtaskParams(
             orderedTargetNames = orderedTargetNames,
             resultingLibsDirs = resultingLibsDirs(destinationDir, orderedTargetNames),
+            successMarker = successMarker,
             destinationDir = destinationDir
         )
+
+        private fun successMarker(destinationDir: File) = destinationDir.resolve(SUCCESS_MARKER)
+        private fun isSuccess(successMarker: File) = successMarker.isFile && successMarker.readText() == SUCCESS_MARKER_CONTENT
+
+        private fun writeSuccess(successMarker: File) {
+            if (successMarker.exists()) {
+                when {
+                    successMarker.isDirectory -> renameToTempAndDelete(successMarker)
+                    isSuccess(successMarker) -> return
+                    else -> successMarker.delete()
+                }
+            }
+
+            successMarker.writeText(SUCCESS_MARKER_CONTENT)
+        }
     }
 }
 
