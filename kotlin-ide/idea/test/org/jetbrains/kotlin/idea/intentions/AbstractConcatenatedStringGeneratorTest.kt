@@ -26,6 +26,9 @@ abstract class AbstractConcatenatedStringGeneratorTest : KotlinLightCodeInsightF
 
         val generatedString = ConcatenatedStringGenerator().create(expression!!)
 
-        KotlinTestUtils.assertEqualsToFile(File("${testPath()}.result"), generatedString)
+        val testFile = testDataFile()
+        val resultFile = File(testFile.parent, testFile.name + ".result")
+
+        KotlinTestUtils.assertEqualsToFile(resultFile, generatedString)
     }
 }

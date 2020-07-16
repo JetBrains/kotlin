@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import kotlin.test.assertTrue
 
-internal fun KtCodeFragment.checkImports(testPath: String) {
+internal fun KtCodeFragment.checkImports(file: File) {
     val importList = importsAsImportList()
     val importsText = StringUtil.convertLineSeparators(importList?.text ?: "")
-    val fragmentAfterFile = File("$testPath.after.imports")
+    val fragmentAfterFile = File(file.parent, file.name + ".after.imports")
 
     if (fragmentAfterFile.exists()) {
         KotlinTestUtils.assertEqualsToFile(fragmentAfterFile, importsText)

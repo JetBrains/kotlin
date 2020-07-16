@@ -22,8 +22,10 @@ abstract class AbstractStubBuilderTest : KotlinLightCodeInsightFixtureTestCase()
         val ktStubBuilder = KtFileStubBuilder()
         val lighterTree = ktStubBuilder.buildStubTree(file)
         val stubTree = serializeStubToString(lighterTree)
-        val expectedFile = testPath().replace(".kt", ".expected")
-        KotlinTestUtils.assertEqualsToFile(File(expectedFile), stubTree)
+
+        val testFile = testDataFile()
+        val expectedFile = File(testFile.parent, testFile.nameWithoutExtension + ".expected")
+        KotlinTestUtils.assertEqualsToFile(expectedFile, stubTree)
     }
 
     companion object {

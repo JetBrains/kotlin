@@ -55,7 +55,8 @@ abstract class AbstractTextJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopy
             if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested"
         )
 
-        val expectedFile = File(testPath().replace(".txt", ".expected.kt"))
+        val testFile = testDataFile()
+        val expectedFile = File(testFile.parent, testFile.nameWithoutExtension + ".expected.kt")
         KotlinTestUtils.assertEqualsToFile(expectedFile, myFixture.file.text)
     }
 }

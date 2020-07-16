@@ -8,16 +8,17 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest
 import org.jetbrains.kotlin.psi.KtCodeFragment
+import java.io.File
 
 abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractCompletionHandlerTest(CompletionType.BASIC) {
     override fun setUpFixture(testPath: String) {
-        myFixture.configureByCodeFragment(testPath(testPath))
+        myFixture.configureByCodeFragment(testDataFile(testPath).path)
     }
 
     override fun doTest(testPath: String) {
         super.doTest(testPath)
 
         val fragment = myFixture.file as KtCodeFragment
-        fragment.checkImports(testPath)
+        fragment.checkImports(File(testPath))
     }
 }

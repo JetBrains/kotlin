@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractLiteralKotlinToKotlinCopyPasteTest : AbstractCopyPasteTest() {
-
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     fun doTest(unused: String) {
         val fileName = fileName()
-        val testPath = testPath()
-        val expectedPath = File(testPath.replace(".kt", ".expected.kt"))
+
+        val testFile = testDataFile()
+        val expectedFile = File(testFile.parent, testFile.nameWithoutExtension + ".expected.kt")
 
         myFixture.configureByFile(fileName)
 
@@ -27,6 +27,6 @@ abstract class AbstractLiteralKotlinToKotlinCopyPasteTest : AbstractCopyPasteTes
         configureTargetFile(fileName.replace(".kt", ".to.kt"))
 
         myFixture.performEditorAction(IdeActions.ACTION_PASTE)
-        KotlinTestUtils.assertEqualsToFile(expectedPath, myFixture.file.text)
+        KotlinTestUtils.assertEqualsToFile(expectedFile, myFixture.file.text)
     }
 }

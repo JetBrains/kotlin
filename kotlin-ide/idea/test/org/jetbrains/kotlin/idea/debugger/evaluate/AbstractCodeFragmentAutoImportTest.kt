@@ -22,7 +22,7 @@ abstract class AbstractCodeFragmentAutoImportTest : AbstractPsiCheckerTest() {
         myFixture.checkResultByFile("${fileName()}.after")
 
         val fragment = myFixture.file as KtCodeFragment
-        fragment.checkImports(testPath())
+        fragment.checkImports(testDataFile())
 
         val fixAfter = myFixture.availableIntentions.firstOrNull { it.familyName == "Import" }
         assertNull(fixAfter, "No import fix should be available after")

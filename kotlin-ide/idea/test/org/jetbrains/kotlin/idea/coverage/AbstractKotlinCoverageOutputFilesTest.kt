@@ -14,18 +14,24 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractKotlinCoverageOutputFilesTest : KotlinLightCodeInsightFixtureTestCase() {
-    fun doTest(path: String) {
+    fun doTest(unused: String) {
         val kotlinFile = myFixture.configureByFile(fileName()) as KtFile
         val outDir = myFixture.tempDirFixture.findOrCreateDir("coverageTestOut")
+
+        val testFile = testDataFile()
+
         try {
-            FileUtil.loadLines(File(testPath().replace(".kt", ".classes.txt"))).forEach {
+            val classesFile = File(testFile.parent, testFile.nameWithoutExtension + ".classes.txt")
+            val expectedFile = File(testFile.parent, testFile.nameWithoutExtension + ".expected.txt")
+
+            for (line in FileUtil.loadLines(classesFile)) {
                 runWriteAction {
-                    createEmptyFile(outDir, it)
+                    createEmptyFile(outDir, line)
                 }
             }
 
             val actualClasses = KotlinCoverageExtension.collectGeneratedClassQualifiedNames(outDir, kotlinFile)
-            KotlinTestUtils.assertEqualsToFile(File(testPath().replace(".kt", ".expected.txt")), actualClasses!!.joinToString("\n"))
+            KotlinTestUtils.assertEqualsToFile(expectedFile, actualClasses!!.joinToString("\n"))
         } finally {
             runWriteAction {
                 outDir.delete(null)
