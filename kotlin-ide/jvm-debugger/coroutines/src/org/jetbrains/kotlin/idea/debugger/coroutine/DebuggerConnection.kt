@@ -33,8 +33,7 @@ class DebuggerConnection(
     val configuration: RunConfigurationBase<*>,
     val params: JavaParameters?,
     modifyArgs: Boolean = true
-) : XDebuggerManagerListener {
-    var disposable: Disposable? = null
+) : XDebuggerManagerListener, Disposable {
     var connection: MessageBusConnection? = null
     private val log by logger
 
@@ -85,21 +84,15 @@ class DebuggerConnection(
     override fun processStarted(debugProcess: XDebugProcess) {
         DebuggerInvocationUtil.swingInvokeLater(project) {
             if (debugProcess is JavaDebugProcess) {
-                disposable = registerXCoroutinesPanel(debugProcess.session)
+                registerXCoroutinesPanel(debugProcess.session)?.let {
+                    Disposer.register(this, it)
+                }
             }
         }
     }
 
     override fun processStopped(debugProcess: XDebugProcess) {
-        val rootDisposable = disposable
-        if (rootDisposable is Disposable && debugProcess is JavaDebugProcess && debugProcess.session.suspendContext is SuspendContextImpl) {
-            ManagerThreadExecutor(debugProcess).on(debugProcess.session.suspendContext).invoke {
-                Disposer.dispose(rootDisposable)
-                disposable = null
-            }
-        }
-        connection?.disconnect()
-        connection = null
+        Disposer.dispose(this)
     }
 
     private fun registerXCoroutinesPanel(session: XDebugSession): Disposable? {
@@ -116,6 +109,11 @@ class DebuggerConnection(
     private fun createContent(ui: RunnerLayoutUi, createContentParamProvider: CreateContentParamsProvider): Content {
         val param = createContentParamProvider.createContentParams()
         return ui.createContent(param.id, param.component, param.displayName, param.icon, param.parentComponent)
+    }
+
+    override fun dispose() {
+        connection?.disconnect()
+        connection = null
     }
 }
 
