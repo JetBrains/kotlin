@@ -13,7 +13,7 @@ import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesColle
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector.KotlinFormatterKind.*
-import org.jetbrains.kotlin.idea.util.isDefaultIntellijObsoleteCodeStyle
+import org.jetbrains.kotlin.idea.util.isDefaultIntellijOrObsoleteCodeStyle
 
 class KotlinFormatterUsageCollector : ProjectUsagesCollector() {
 
@@ -72,13 +72,13 @@ class KotlinFormatterUsageCollector : ProjectUsagesCollector() {
             val settings = CodeStyle.getSettings(project)
             val kotlinCommonSettings = settings.kotlinCommonSettings
             val kotlinCustomSettings = settings.kotlinCustomSettings
-            val isDefaultIntellijObsoleteCodeStyle = kotlinCommonSettings.isDefaultIntellijObsoleteCodeStyle && kotlinCustomSettings.isDefaultIntellijObsoleteCodeStyle
+            val isDefaultIntellijOrObsoleteCodeStyle = kotlinCommonSettings.isDefaultIntellijOrObsoleteCodeStyle && kotlinCustomSettings.isDefaultIntellijOrObsoleteCodeStyle
 
             val isDefaultKotlinCommonSettings = kotlinCommonSettings == CodeStyle.getDefaultSettings().kotlinCommonSettings
             val isDefaultKotlinCustomSettings = kotlinCustomSettings == CodeStyle.getDefaultSettings().kotlinCustomSettings
 
             if (isDefaultKotlinCommonSettings && isDefaultKotlinCustomSettings) {
-                return if (isDefaultIntellijObsoleteCodeStyle) {
+                return if (isDefaultIntellijOrObsoleteCodeStyle) {
                     paired(IDEA_OFFICIAL_DEFAULT, isProject)
                 } else {
                     paired(IDEA_DEFAULT, isProject)

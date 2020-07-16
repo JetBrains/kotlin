@@ -68,7 +68,7 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
 
         String customDefaults = tempDeserialize.CODE_STYLE_DEFAULTS;
         boolean isSuccess = FormatterUtilKt.applyKotlinCodeStyle(customDefaults, this, true);
-        if (!isSuccess && customDefaults == null && FormatterUtilKt.isDefaultIntellijObsoleteCodeStyle(tempDeserialize)) {
+        if (!isSuccess && customDefaults == null && FormatterUtilKt.isDefaultIntellijOrObsoleteCodeStyle(tempDeserialize)) {
             // Temporary load settings against previous defaults
             settingsAgainstPreviousDefaults = createForTempDeserialize();
             KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(settingsAgainstPreviousDefaults, true);

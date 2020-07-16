@@ -32,11 +32,7 @@ fun KtCodeStyleSettings.restore() {
 
 fun ktCodeStyleSettings(project: Project): KtCodeStyleSettings? {
     val settings = CodeStyle.getSettings(project)
-
-    val ktCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE) as KotlinCommonCodeStyleSettings
-    val ktCustomSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)
-
-    return KtCodeStyleSettings(ktCustomSettings, ktCommonSettings, settings)
+    return KtCodeStyleSettings(settings.kotlinCustomSettings, settings.kotlinCommonSettings, settings)
 }
 
 val CodeStyleSettings.kotlinCommonSettings: KotlinCommonCodeStyleSettings

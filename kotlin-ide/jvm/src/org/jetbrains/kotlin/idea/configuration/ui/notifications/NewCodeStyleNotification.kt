@@ -17,7 +17,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.formatter.*
-import org.jetbrains.kotlin.idea.util.isDefaultIntellijObsoleteCodeStyle
+import org.jetbrains.kotlin.idea.util.isDefaultIntellijOrObsoleteCodeStyle
 
 private const val KOTLIN_UPDATE_CODE_STYLE_GROUP_ID = "Update Kotlin code style"
 private const val KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME = "update.kotlin.code.style.notified"
@@ -26,7 +26,7 @@ fun notifyKotlinStyleUpdateIfNeeded(project: Project) {
     val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
     if (modulesWithFacet.isEmpty()) return
     val codeStyle = CodeStyle.getSettings(project)
-    if (!codeStyle.kotlinCommonSettings.isDefaultIntellijObsoleteCodeStyle) return
+    if (!codeStyle.kotlinCommonSettings.isDefaultIntellijOrObsoleteCodeStyle) return
 
     val isProjectSettings = CodeStyle.usesOwnSettings(project)
     val settingsComponent: PropertiesComponent = if (isProjectSettings) {
@@ -57,7 +57,7 @@ fun notifyKotlinStyleUpdateIfNeeded(project: Project) {
 private class KotlinCodeStyleChangedNotification(val project: Project, isProjectSettings: Boolean) : Notification(
     KOTLIN_UPDATE_CODE_STYLE_GROUP_ID,
     KotlinJvmBundle.message("kotlin.code.style"),
-    "<html>${KotlinJvmBundle.message("default.code.style.was.updated.to.kotlin.coding.conventions")}</html>",
+    KotlinJvmBundle.htmlMessage("default.code.style.was.updated.to.kotlin.coding.conventions"),
     NotificationType.WARNING,
     null
 ) {

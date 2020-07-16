@@ -32,8 +32,8 @@ fun ASTBlock.requireNode() = node ?: error("ASTBlock.getNode() returned null")
 /**
  * Can be removed with all usages after moving master to 1.3 with new default code style settings.
  */
-val KotlinCodeStyleSettings.isDefaultIntellijObsoleteCodeStyle: Boolean get() = CODE_STYLE_DEFAULTS == null && CONTINUATION_INDENT_FOR_CHAINED_CALLS
-val KotlinCommonCodeStyleSettings.isDefaultIntellijObsoleteCodeStyle: Boolean get() = CODE_STYLE_DEFAULTS == null && !METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE
+val KotlinCodeStyleSettings.isDefaultIntellijOrObsoleteCodeStyle: Boolean get() = CODE_STYLE_DEFAULTS != KotlinStyleGuideCodeStyle.CODE_STYLE_ID
+val KotlinCommonCodeStyleSettings.isDefaultIntellijOrObsoleteCodeStyle: Boolean get() = CODE_STYLE_DEFAULTS != KotlinStyleGuideCodeStyle.CODE_STYLE_ID
 
 // Copied from idea-core
 fun PsiElement.getLineCount(): Int {
