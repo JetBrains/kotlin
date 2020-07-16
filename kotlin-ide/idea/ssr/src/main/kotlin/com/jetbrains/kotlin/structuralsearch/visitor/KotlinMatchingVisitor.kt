@@ -11,9 +11,11 @@ import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.util.containers.reverse
 import com.jetbrains.kotlin.structuralsearch.binaryExprOpName
 import com.jetbrains.kotlin.structuralsearch.getCommentText
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.fir.builder.toUnaryName
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocImpl
@@ -340,6 +342,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitUserType(type: KtUserType) {
         val other = myMatchingVisitor.element
+
         myMatchingVisitor.result = when (other) {
             is KtUserType -> {
                 type.qualifier?.let { typeQualifier -> // if query has fq type
@@ -377,7 +380,32 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitTypeReference(typeReference: KtTypeReference) {
         val other = getTreeElementDepar<KtTypeReference>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchSons(typeReference, other)
+
+        // TODO: This solution works for the test funFqReceiverTypeReference, however there is still a problem with type args
+        val handler = getHandler(typeReference)
+        val fqMatch = try {
+            ((other.parent as? KtDeclaration)?.descriptor as? FunctionDescriptor)?.extensionReceiverParameter?.let {
+                val type = it.value.type
+                if (handler is SubstitutionHandler) {
+                    if (handler.findRegExpPredicate()
+                            ?.doMatch(
+                                DescriptorRenderer.DEBUG_TEXT.renderType(type),
+                                myMatchingVisitor.matchContext,
+                                other
+                            ) == true
+                    ) {
+                        handler.addResult(other, myMatchingVisitor.matchContext)
+                        true
+                    } else false
+                } else {
+                    myMatchingVisitor.matchText(typeReference.text, DescriptorRenderer.DEBUG_TEXT.renderType(type))
+                }
+            } ?: false
+        } catch (e: Throwable) {
+            false
+        }
+
+        myMatchingVisitor.result = fqMatch || myMatchingVisitor.matchSons(typeReference, other)
     }
 
     override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
