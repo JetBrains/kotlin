@@ -140,6 +140,7 @@ class FirContractResolveTransformer(
                         effects += effect
                     }
                 }
+                this.source = owner.contractDescription.source
             }
             owner.replaceContractDescription(resolvedContractDescription)
             dataFlowAnalyzer.exitContractDescription()
