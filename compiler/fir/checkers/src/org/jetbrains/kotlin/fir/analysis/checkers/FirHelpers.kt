@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.psiUtil.toVisibility
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
@@ -229,4 +232,43 @@ fun FirClass<*>.modality(): Modality? {
         is FirRegularClass -> modality
         else -> Modality.FINAL
     }
+}
+
+/**
+ * returns implicit modality by FirMemberDeclaration
+ */
+fun FirMemberDeclaration.implicitModality(context: CheckerContext): KtModifierKeywordToken {
+    if (this is FirRegularClass && (this.classKind == ClassKind.CLASS || this.classKind == ClassKind.OBJECT)) {
+        if (this.classKind == ClassKind.INTERFACE) return KtTokens.ABSTRACT_KEYWORD
+        return KtTokens.FINAL_KEYWORD
+    }
+
+    val klass = context.findClosestClassOrObject() ?: return KtTokens.FINAL_KEYWORD
+    val modifiers = this.modifierListOrNull() ?: return KtTokens.FINAL_KEYWORD
+    if (modifiers.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+        val klassModifiers = klass.modifierListOrNull()
+        if (klassModifiers != null && klassModifiers.run {
+                hasModifier(KtTokens.ABSTRACT_KEYWORD) || hasModifier(KtTokens.OPEN_KEYWORD) || hasModifier(KtTokens.SEALED_KEYWORD)
+            }) {
+            return KtTokens.OPEN_KEYWORD
+        }
+    }
+
+    if (
+        klass is FirRegularClass
+        && klass.classKind == ClassKind.INTERFACE
+        && !modifiers.hasModifier(KtTokens.PRIVATE_KEYWORD)
+    ) {
+        return if (this.hasBody()) KtTokens.OPEN_KEYWORD else KtTokens.ABSTRACT_KEYWORD
+    }
+
+    return KtTokens.FINAL_KEYWORD
+}
+
+private fun FirDeclaration.modifierListOrNull() = (this.source.getModifierList() as? FirPsiModifierList)?.modifierList
+
+private fun FirDeclaration.hasBody(): Boolean = when (this) {
+    is FirSimpleFunction -> this.body != null && this.body !is FirSingleExpressionBlock
+    is FirProperty -> this.setter != null || this.getter != null
+    else -> false
 }

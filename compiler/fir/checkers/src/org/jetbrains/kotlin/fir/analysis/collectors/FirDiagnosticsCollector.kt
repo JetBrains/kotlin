@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.extensions.extensionService
 
 object FirDiagnosticsCollector {
-    fun create(session: FirSession, checkExtended: Boolean = false): AbstractDiagnosticCollector {
+    fun create(session: FirSession): AbstractDiagnosticCollector {
         session.registerAdditionalCheckers()
         val collector = SimpleDiagnosticsCollector(session)
-        collector.registerAllComponents(checkExtended)
+        collector.registerAllComponents()
         return collector
     }
 

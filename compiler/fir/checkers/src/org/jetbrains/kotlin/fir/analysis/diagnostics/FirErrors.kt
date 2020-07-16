@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiTypeElement
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -83,6 +84,9 @@ object FirErrors {
 
     // Extended checkers group
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, PsiElement>()
+    val REDUNDANT_EXPLICIT_TYPE by warning0<FirSourceElement, PsiElement>()
+    val REDUNDANT_MODALITY_MODIFIER by warning0<FirSourceElement, PsiElement>()
+    val REDUNDANT_RETURN_UNIT_TYPE by warning0<FirSourceElement, PsiTypeElement>()
 }
 
 
