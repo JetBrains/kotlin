@@ -49,6 +49,8 @@ class KotlinSSPropertyTest : KotlinSSResourceInspectionTest() {
     fun testReturnTypeReference() { doTest("val '_ : ('_) -> Unit") }
 
     fun testNullableFunctionType() { doTest("val '_ : '_ ?") }
-    
+
     fun testReceiverTypeReference() { doTest("val Int.'_ : '_") }
+
+    fun testReceiverFqTypeReference() { doTest("val kotlin.Int.'_ : '_") }
 }

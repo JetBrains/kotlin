@@ -12,6 +12,7 @@ import com.intellij.util.containers.reverse
 import com.jetbrains.kotlin.structuralsearch.binaryExprOpName
 import com.jetbrains.kotlin.structuralsearch.getCommentText
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.fir.builder.toUnaryName
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
@@ -70,7 +71,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             else normalizeExpressions(element, element2, returnExpr)
 
         val impossible = e1?.let {
-            val handler = getHandler(it);
+            val handler = getHandler(it)
             e2 !is KtBlockExpression && handler is SubstitutionHandler && handler.minOccurs > 1
         } ?: false
 
@@ -381,28 +382,32 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitTypeReference(typeReference: KtTypeReference) {
         val other = getTreeElementDepar<KtTypeReference>() ?: return
 
-        // TODO: This solution works for the test funFqReceiverTypeReference, however there is still a problem with type args
-        val handler = getHandler(typeReference)
-        val fqMatch = try {
-            ((other.parent as? KtDeclaration)?.descriptor as? FunctionDescriptor)?.extensionReceiverParameter?.let {
-                val type = it.value.type
-                if (handler is SubstitutionHandler) {
-                    if (handler.findRegExpPredicate()
-                            ?.doMatch(
-                                DescriptorRenderer.DEBUG_TEXT.renderType(type),
-                                myMatchingVisitor.matchContext,
-                                other
-                            ) == true
-                    ) {
-                        handler.addResult(other, myMatchingVisitor.matchContext)
-                        true
-                    } else false
-                } else {
-                    myMatchingVisitor.matchText(typeReference.text, DescriptorRenderer.DEBUG_TEXT.renderType(type))
-                }
-            } ?: false
-        } catch (e: Throwable) {
-            false
+        var fqMatch = false
+
+        val parent = other.parent
+        val type = try {
+            when {
+                parent is KtDeclaration && parent.descriptor is FunctionDescriptor ->
+                    (parent.descriptor as FunctionDescriptor).extensionReceiverParameter?.value?.type
+                parent is KtDeclaration && parent.descriptor is PropertyDescriptorImpl ->
+                    (parent.descriptor as PropertyDescriptorImpl).extensionReceiverParameter?.value?.type
+                else -> null
+            }
+        } catch (t: Throwable) { null }
+        
+        if (type != null) {
+            val handler = getHandler(typeReference)
+            fqMatch = if (handler is SubstitutionHandler) {
+                if (handler.findRegExpPredicate()?.doMatch(
+                        DescriptorRenderer.DEBUG_TEXT.renderType(type), myMatchingVisitor.matchContext, other
+                    ) == true
+                ) {
+                    handler.addResult(other, myMatchingVisitor.matchContext)
+                    true
+                } else false
+            } else {
+                myMatchingVisitor.matchText(typeReference.text, DescriptorRenderer.DEBUG_TEXT.renderType(type))
+            }
         }
 
         myMatchingVisitor.result = fqMatch || myMatchingVisitor.matchSons(typeReference, other)
