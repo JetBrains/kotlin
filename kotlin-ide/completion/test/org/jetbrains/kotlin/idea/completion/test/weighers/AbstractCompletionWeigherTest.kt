@@ -12,11 +12,15 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
+import java.io.File
 
 abstract class AbstractCompletionWeigherTest(val completionType: CompletionType, val relativeTestDataPath: String) :
     KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
-        myFixture.configureWithExtraFile(getLocalPath(path), ".Data", ".Data1", ".Data2", ".Data3", ".Data4", ".Data5", ".Data6")
+        myFixture.configureWithExtraFile(
+            File(path).toRelativeString(File(testDataPath)),
+            ".Data", ".Data1", ".Data2", ".Data3", ".Data4", ".Data5", ".Data6"
+        )
 
         val text = myFixture.editor.document.text
 
