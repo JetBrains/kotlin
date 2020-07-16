@@ -115,10 +115,14 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             // replace source keys for start group calls
             .replace(
                 Regex(
-                    "(%composer\\.start(Restart|Movable|Replaceable)Group\\()([-\\d]+)"
+                    "(%composer\\.start(Restart|Movable|Replaceable)Group\\()-?((0b)?[-\\d]+)"
                 )
             ) {
-                val key = it.groupValues[3].toInt()
+                val stringKey = it.groupValues[3]
+                val key = if (stringKey.startsWith("0b"))
+                    Integer.parseInt(stringKey.drop(2), 2)
+                else
+                    stringKey.toInt()
                 if (key in keySet) {
                     "${it.groupValues[1]}<!DUPLICATE KEY: $key!>"
                 } else {
