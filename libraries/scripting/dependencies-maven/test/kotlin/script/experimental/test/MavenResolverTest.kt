@@ -14,16 +14,21 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.valueOrThrow
-import kotlin.script.experimental.dependencies.DependsOn
-import kotlin.script.experimental.dependencies.Repository
-import kotlin.script.experimental.dependencies.resolveFromAnnotations
+import kotlin.script.experimental.dependencies.*
+import kotlin.script.experimental.dependencies.impl.DependenciesResolverOptionsName
+import kotlin.script.experimental.dependencies.impl.makeExternalDependenciesResolverOptions
+import kotlin.script.experimental.dependencies.impl.set
 
 @ExperimentalContracts
 class MavenResolverTest : ResolversTestBase() {
 
-    fun resolveAndCheck(coordinates: String, checkBody: (Iterable<File>) -> Boolean = { true }) {
+    fun resolveAndCheck(
+        coordinates: String,
+        options: ExternalDependenciesResolver.Options = ExternalDependenciesResolver.Options.Empty,
+        checkBody: (Iterable<File>) -> Boolean = { true }
+    ) {
         val resolver = MavenDependenciesResolver()
-        val result = runBlocking { resolver.resolve(coordinates) }
+        val result = runBlocking { resolver.resolve(coordinates, options) }
         if (result is ResultWithDiagnostics.Failure) {
             Assert.fail(result.reports.joinToString("\n") { it.exception?.toString() ?: it.message })
         }
@@ -38,6 +43,32 @@ class MavenResolverTest : ResolversTestBase() {
         resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:1.3.50") { files ->
             files.any { it.name.startsWith("kotlin-annotations-jvm") }
         }
+    }
+
+    @ExperimentalStdlibApi
+    fun testResolveWithRuntime() {
+        val compileOnly = "compile"
+        val compileRuntime = "compile,runtime"
+        val resolvedFilesCount = mutableMapOf<String, Int>()
+
+        listOf(compileOnly, compileRuntime).forEach { scopes ->
+            resolveAndCheck(
+                "org.uberfire:uberfire-io:7.39.0.Final",
+                makeExternalDependenciesResolverOptions(buildMap {
+                    this[DependenciesResolverOptionsName.SCOPE] = scopes
+                })
+            ) { files ->
+                resolvedFilesCount[scopes] = files.count()
+                files.any { it.name.startsWith("uberfire-commons") }
+            }
+        }
+
+        val compileOnlyCount = resolvedFilesCount[compileOnly]!!
+        val compileRuntimeCount = resolvedFilesCount[compileRuntime]!!
+        assertTrue(
+            "Compile only ($compileOnlyCount) dependencies count should be less than compile/runtime ($compileRuntimeCount) one",
+            compileOnlyCount < compileRuntimeCount
+        )
     }
 
     fun testResolveVersionsRange() {

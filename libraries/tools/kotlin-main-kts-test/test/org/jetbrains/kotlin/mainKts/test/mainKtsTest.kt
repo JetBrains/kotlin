@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.mainKts.test
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
 import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.mainKts.MainKtsScript
+import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.*
 import java.util.*
@@ -58,6 +60,16 @@ class MainKtsTest {
             resErr is ResultWithDiagnostics.Failure &&
                     resErr.reports.any { it.message == "Unresolved reference: hamcrest" }
         )
+    }
+
+    @Test
+    fun testResolveRuntimeDeps() {
+        val resOk = evalFile(File("$TEST_DATA_ROOT/resolve-with-runtime.main.kts"))
+        assertSucceeded(resOk)
+
+        val resultValue = resOk.valueOrThrow().returnValue
+        assertTrue(resultValue is ResultValue.Value) { "Result value should be of type Value" }
+        assertEquals("John Smith", (resultValue as ResultValue.Value).value)
     }
 
 //    @Test
