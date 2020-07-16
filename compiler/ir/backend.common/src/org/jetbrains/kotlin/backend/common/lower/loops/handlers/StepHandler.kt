@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
 import org.jetbrains.kotlin.backend.common.lower.matchers.singleArgumentExtension
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irConcat
-import org.jetbrains.kotlin.ir.builders.irIfThenElse
-import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -59,15 +57,16 @@ internal class StepHandler(
             }
 
             // To reduce local variable usage, we create and use temporary variables only if necessary.
-            val (stepArgVar, stepArgExpression) = createTemporaryVariableIfNecessary(stepArg, "stepArg")
+            // This temporary variable for step needs to be mutable for certain cases (see below).
+            val (stepArgVar, stepArgExpression) = createTemporaryVariableIfNecessary(stepArg, "stepArg", isMutable = true)
 
             // The `step` standard library function only accepts positive values, and performs the following check:
             //
             //   if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
             //
-            // We insert this check in the lowered form only if necessary.
+            // We insert a similar check in the lowered form only if necessary.
             val stepType = data.stepClass.defaultType
-            val stepGreaterFun = context.irBuiltIns.greaterFunByOperandType.getValue(data.stepClass.symbol)
+            val stepCompFun = context.irBuiltIns.lessOrEqualFunByOperandType.getValue(data.stepClass.symbol)
             val zeroStep = data.run { zeroStepExpression() }
             val throwIllegalStepExceptionCall = {
                 irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
@@ -79,26 +78,25 @@ internal class StepHandler(
                 }
             }
             val stepArgValueAsLong = stepArgExpression.constLongValue
-            val checkedStepExpression = when {
+            val stepCheck: IrStatement? = when {
                 stepArgValueAsLong == null -> {
-                    // Step argument is not a constant.
-                    val stepPositiveCheck = irCall(stepGreaterFun).apply {
+                    // Step argument is not a constant. In this case, we check if step <= 0.
+                    val stepNonPositiveCheck = irCall(stepCompFun).apply {
                         putValueArgument(0, stepArgExpression.deepCopyWithSymbols())
                         putValueArgument(1, zeroStep.deepCopyWithSymbols())
                     }
-                    irIfThenElse(
-                        stepType,
-                        stepPositiveCheck,
-                        stepArgExpression.deepCopyWithSymbols(),
+                    irIfThen(
+                        context.irBuiltIns.unitType,
+                        stepNonPositiveCheck,
                         throwIllegalStepExceptionCall()
                     )
                 }
-                stepArgValueAsLong > 0L ->
-                    // Step argument is a positive constant and is valid.
-                    stepArgExpression.deepCopyWithSymbols()
-                else ->
+                stepArgValueAsLong <= 0L ->
                     // Step argument is a non-positive constant and is invalid, directly throw the exception.
                     throwIllegalStepExceptionCall()
+                else ->
+                    // Step argument is a positive constant and is valid. No check is needed.
+                    null
             }
 
             // While the `step` function accepts positive values, the "step" value in the progression depends on the direction of the
@@ -108,24 +106,49 @@ internal class StepHandler(
             // If we don't know the direction of the nested progression (e.g., `someProgression() step 2`) then we have to check its value
             // first to determine whether to negate.
             var nestedStepVar: IrVariable? = null
-            var checkedStepVar: IrVariable? = null
-            val checkedAndMaybeNegatedStep = when (nestedInfo.direction) {
-                ProgressionDirection.INCREASING -> checkedStepExpression
-                ProgressionDirection.DECREASING -> checkedStepExpression.negate()
+            var stepNegation: IrStatement? = null
+            val finalStepExpression = when (nestedInfo.direction) {
+                ProgressionDirection.INCREASING -> stepArgExpression
+                ProgressionDirection.DECREASING -> {
+                    if (stepArgVar == null) {
+                        stepArgExpression.negate()
+                    } else {
+                        // Step is already stored in a variable, just negate it.
+                        stepNegation = irSetVar(stepArgVar.symbol, irGet(stepArgVar).negate())
+                        irGet(stepArgVar)
+                    }
+                }
                 ProgressionDirection.UNKNOWN -> {
-                    // Check value of nested step and negate step arg if needed: `if (nestedStep > 0) checkedStep else -checkedStep`
+                    // Check value of nested step and negate step arg if needed: `if (nestedStep <= 0) -step else step`
                     // A temporary variable is created only if necessary, so we can preserve the evaluation order.
                     val nestedStep = nestedInfo.step
                     val (tmpNestedStepVar, nestedStepExpression) = createTemporaryVariableIfNecessary(nestedStep, "nestedStep")
                     nestedStepVar = tmpNestedStepVar
-                    val nestedStepPositiveCheck = irCall(stepGreaterFun).apply {
+                    val nestedStepNonPositiveCheck = irCall(stepCompFun).apply {
                         putValueArgument(0, nestedStepExpression)
                         putValueArgument(1, zeroStep.deepCopyWithSymbols())
                     }
-
-                    val (tmpCheckedStepVar, checkedStepOrGet) = createTemporaryVariableIfNecessary(checkedStepExpression, "checkedStep")
-                    checkedStepVar = tmpCheckedStepVar
-                    irIfThenElse(stepType, nestedStepPositiveCheck, checkedStepOrGet, checkedStepOrGet.deepCopyWithSymbols().negate())
+                    if (stepArgVar == null) {
+                        // Create a temporary variable for the possibly-negated step, so we don't have to re-check every time step is used.
+                        stepNegation = scope.createTmpVariable(
+                            irIfThenElse(
+                                stepType,
+                                nestedStepNonPositiveCheck,
+                                stepArgExpression.deepCopyWithSymbols().negate(),
+                                stepArgExpression.deepCopyWithSymbols()
+                            ),
+                            nameHint = "maybeNegatedStep"
+                        )
+                        irGet(stepNegation)
+                    } else {
+                        // Step is already stored in a variable, just negate it.
+                        stepNegation = irIfThen(
+                            context.irBuiltIns.unitType,
+                            nestedStepNonPositiveCheck,
+                            irSetVar(stepArgVar.symbol, irGet(stepArgVar).negate())
+                        )
+                        irGet(stepArgVar)
+                    }
                 }
             }
 
@@ -133,7 +156,6 @@ internal class StepHandler(
             // evaluation order.
             val (nestedFirstVar, nestedFirstExpression) = createTemporaryVariableIfNecessary(nestedInfo.first, "nestedFirst")
             val (nestedLastVar, nestedLastExpression) = createTemporaryVariableIfNecessary(nestedInfo.last, "nestedLast")
-            val (newStepVar, newStepExpression) = createTemporaryVariableIfNecessary(checkedAndMaybeNegatedStep, "newStep")
 
             // Creating a progression with a step value != 1 may result in a "last" value that is smaller than the given "last". The new
             // "last" value is such that iterating over the progression (by incrementing by "step") does not go over the "last" value.
@@ -161,7 +183,7 @@ internal class StepHandler(
             //         3),
             //       2)
             val recalculatedLast =
-                callGetProgressionLastElementIfNecessary(data, nestedFirstExpression, nestedLastExpression, newStepExpression)
+                callGetProgressionLastElementIfNecessary(data, nestedFirstExpression, nestedLastExpression, finalStepExpression)
 
             // Consider the following for-loop:
             //
@@ -176,29 +198,26 @@ internal class StepHandler(
             //   val innerNestedLast = B
             //   // No nested step var because step for `A..B` is a constant 1
             //   val innerStepArg = C
-            //   val innerNewStep = if (innerStepArg > 0) innerStepArg
-            //                      else throw IllegalArgumentException("Step must be positive, was: $innerStepArg.")
+            //   if (innerStepArg <= 0) throw IllegalArgumentException("Step must be positive, was: $innerStepArg.")
             //
             //   // Additional variables for outer step progression `(A..B step C) step D`:
             //   // No nested first var because `innerNestedFirst` is a local variable get (cannot have side-effects)
             //   val outerNestedLast =   // "last" for `A..B step C`
-            //       getProgressionLastElement(innerNestedFirst, innerNestedLast, innerNewStep)
-            //   // No nested step var because nested step `innerNewStep` is a local variable get (cannot have side-effects)
+            //       getProgressionLastElement(innerNestedFirst, innerNestedLast, innerStepArg)
+            //   // No nested step var because nested step `innerStepArg` is a local variable get (cannot have side-effects)
             //   val outerStepArg = D
-            //   val outerNewStep = if (outerStepArg > 0) outerStepArg
-            //                      else throw IllegalArgumentException("Step must be positive, was: $outerStepArg.")
+            //   if (outerStepArg <= 0) throw IllegalArgumentException("Step must be positive, was: $outerStepArg.")
             //
             //   // Standard form of loop over progression
             //   var inductionVar = innerNestedFirst
             //   val last =   // "last" for `(A..B step C) step D`
             //       getProgressionLastElement(innerNestedFirst,   // "Passed through" from inner step progression
-            //                                 outerNestedLast, outerNewStep)
-            //   val step = outerNewStep
+            //                                 outerNestedLast, outerStepArg)
             //   if (inductionVar <= last) {
             //     // Loop is not empty
             //     do {
             //       val i = inductionVar
-            //       inductionVar += step
+            //       inductionVar += outerStepArg
             //       // Loop body
             //     } while (i != last)
             //   }
@@ -214,21 +233,19 @@ internal class StepHandler(
             //   val nestedFirst = progression.first
             //   val nestedLast = progression.last
             //   val nestedStep = progression.step
-            //   val stepArg = C
-            //   val checkedStep = if (stepArg > 0) stepArg
-            //                     else throw IllegalArgumentException("Step must be positive, was: $stepArg.")
-            //   val newStep =   // Direction of P is unknown so we check its step to determine whether to negate
-            //       if (nestedStep > 0) checkedStep else -checkedStep
+            //   var stepArg = C
+            //   if (stepArg <= 0) throw IllegalArgumentException("Step must be positive, was: $stepArg.")
+            //   // Direction of P is unknown so we check its step to determine whether to negate
+            //   if (nestedStep <= 0) stepArg = -stepArg
             //
             //   // Standard form of loop over progression
             //   var inductionVar = nestedFirst
-            //   val last = getProgressionLastElement(nestedFirst, nestedLast, newStep)
-            //   val step = newStep
-            //   if ((step > 0 && inductionVar <= last) || (step < 0 && last <= inductionVar)) {
+            //   val last = getProgressionLastElement(nestedFirst, nestedLast, stepArg)
+            //   if ((stepArg > 0 && inductionVar <= last) || (stepArg < 0 && last <= inductionVar)) {
             //     // Loop is not empty
             //     do {
             //       val i = inductionVar
-            //       inductionVar += step
+            //       inductionVar += stepArg
             //       // Loop body
             //     } while (i != last)
             //   }
@@ -239,19 +256,19 @@ internal class StepHandler(
             //
             // ...in the nested HeaderInfo, "first" is `B` and "last" is `A` (the progression goes from `B` to `A`). Therefore in this case,
             // the nested "last" variable must come before the nested "first" variable (if both variables are necessary).
-            val additionalVariables = nestedInfo.additionalVariables + if (nestedInfo.isReversed) {
-                listOfNotNull(nestedLastVar, nestedFirstVar, nestedStepVar, stepArgVar, checkedStepVar, newStepVar)
+            val additionalStatements = nestedInfo.additionalStatements + if (nestedInfo.isReversed) {
+                listOfNotNull(nestedLastVar, nestedFirstVar, nestedStepVar, stepArgVar, stepCheck, stepNegation)
             } else {
-                listOfNotNull(nestedFirstVar, nestedLastVar, nestedStepVar, stepArgVar, checkedStepVar, newStepVar)
+                listOfNotNull(nestedFirstVar, nestedLastVar, nestedStepVar, stepArgVar, stepCheck, stepNegation)
             }
 
             return ProgressionHeaderInfo(
                 data,
                 first = nestedFirstExpression,
                 last = recalculatedLast,
-                step = newStepExpression,
+                step = finalStepExpression,
                 isReversed = nestedInfo.isReversed,
-                additionalVariables = additionalVariables,
+                additionalStatements = additionalStatements,
                 additionalNotEmptyCondition = nestedInfo.additionalNotEmptyCondition,
                 direction = nestedInfo.direction
             )

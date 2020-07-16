@@ -13,20 +13,18 @@ fun box(): String {
 //
 // Expected lowered form of loop:
 //
-//   // Additional variables:
-//   val stepArg = one()
-//   val newStep = if (stepArg > 0) stepArg
-//                 else throw IllegalArgumentException("Step must be positive, was: $stepArg.")
+//   // Additional statements:
+//   var stepArg = one()
+//   if (stepArg <= 0) throw IllegalArgumentException("Step must be positive, was: $stepArg.")
 //
 //   // Standard form of loop over progression
 //   var inductionVar = 1
-//   val last = getProgressionLastElement(1, 7, newStep)
-//   val step = newStep
+//   val last = getProgressionLastElement(1, 7, stepArg)
 //   if (inductionVar <= last) {
 //     // Loop is not empty
 //     do {
 //       val i = inductionVar
-//       inductionVar += step
+//       inductionVar += stepArg
 //       // Loop body
 //     } while (i != last)
 //   }
@@ -42,5 +40,5 @@ fun box(): String {
 // 1 ATHROW
 // 1 IF_ICMPGT
 // 1 IF_ICMPNE
-// 1 IFLE
+// 1 IFGT
 // 3 IF

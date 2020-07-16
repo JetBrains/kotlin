@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for Iterables not handled by more specialized handlers. */
 internal open class DefaultIterableHandler(private val context: CommonBackendContext) :
@@ -28,7 +29,7 @@ internal open class DefaultIterableHandler(private val context: CommonBackendCon
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             val iteratorFun =
-                iterableClassSymbol.getSimpleFunction(org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR.asString())!!.owner
+                iterableClassSymbol.getSimpleFunction(OperatorNameConventions.ITERATOR.asString())!!.owner
             IterableHeaderInfo(
                 scope.createTmpVariable(irCall(iteratorFun).apply { dispatchReceiver = expression }, nameHint = "iterator")
             )

@@ -120,7 +120,7 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
                     last = last,
                     step = irInt(1),
                     canOverflow = false,
-                    additionalVariables = additionalVariables,
+                    additionalStatements = additionalVariables,
                     additionalNotEmptyCondition = additionalNotEmptyCondition,
                     direction = ProgressionDirection.INCREASING
                 )

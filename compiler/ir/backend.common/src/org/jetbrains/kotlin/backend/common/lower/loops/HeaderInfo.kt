@@ -9,23 +9,10 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.ArrayIndicesHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.ArrayIterationHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.CharSequenceIndicesHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.CharSequenceIterationHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.CollectionIndicesHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.DefaultIterableHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.DefaultProgressionHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.DownToHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.IndexedGetIterationHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.RangeToHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.ReversedHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.StepHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.StringIterationHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.UntilHandler
-import org.jetbrains.kotlin.backend.common.lower.loops.handlers.WithIndexHandler
+import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
 import org.jetbrains.kotlin.backend.common.lower.matchers.IrCallMatcher
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -79,7 +66,7 @@ internal class ProgressionHeaderInfo(
     canOverflow: Boolean? = null,
     direction: ProgressionDirection,
     additionalNotEmptyCondition: IrExpression? = null,
-    val additionalVariables: List<IrVariable> = listOf()
+    val additionalStatements: List<IrStatement> = listOf()
 ) : NumericHeaderInfo(
     progressionType, first, last, step,
     canCacheLast = true,
@@ -156,7 +143,7 @@ internal class ProgressionHeaderInfo(
         isReversed = !isReversed,
         direction = direction.asReversed(),
         additionalNotEmptyCondition = additionalNotEmptyCondition,
-        additionalVariables = additionalVariables
+        additionalStatements = additionalStatements
     )
 }
 
