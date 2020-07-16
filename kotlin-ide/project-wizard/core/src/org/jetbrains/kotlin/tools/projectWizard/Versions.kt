@@ -29,15 +29,6 @@ object Versions {
         val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.0.0-pre.109-kotlin-$kotlinVersion") }
     }
 
-    object NPM {
-        val REACT = version("16.13.1")
-        val REACT_DOM = REACT
-        val REACT_IS = REACT
-
-        val STYLED_COMPONENTS = version("5.0.0")
-        val INLINE_STYLE_PREFIXER = version("5.1.0")
-    }
-
     object GRADLE_PLUGINS {
         val ANDROID = version("3.5.2")
     }
