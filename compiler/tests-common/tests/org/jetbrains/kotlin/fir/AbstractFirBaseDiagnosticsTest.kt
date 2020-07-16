@@ -90,6 +90,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 moduleFiles.mapNotNull { it.ktFile })
             FirJavaModuleBasedSession.create(info, sessionProvider, scope).also {
                 registerFirExtensions(it.extensionService)
+                configureSession(it)
             }
         }
 
@@ -331,4 +332,6 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         }
         return result
     }
+
+    protected open fun configureSession(session: FirSession) {}
 }
