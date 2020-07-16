@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 
 abstract class FirDeclarationChecker<in D : FirDeclaration> {
     abstract fun check(declaration: D, context: CheckerContext, reporter: DiagnosticReporter)
-    open val isExtended = false
 }
 
 typealias FirBasicDeclarationChecker = FirDeclarationChecker<FirDeclaration>
