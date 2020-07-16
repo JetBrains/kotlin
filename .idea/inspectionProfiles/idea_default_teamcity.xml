@@ -4725,6 +4725,7 @@
     </inspection_tool>
     <inspection_tool class="UnusedProperty" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="android" level="WARNING" enabled="false" />
+      <scope name="Tests" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="UnusedReceiverParameter" enabled="false" level="WARNING" enabled_by_default="false">
       <scope name="android" level="WARNING" enabled="false" />
