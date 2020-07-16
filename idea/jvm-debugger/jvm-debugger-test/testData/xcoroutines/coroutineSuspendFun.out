@@ -17,7 +17,7 @@ CoroutineInfo: 1 coroutine RUNNING
 	CoroutineStackFrame run:!LINE_NUMBER!, DispatchedTask (kotlinx.coroutines)
 		($i$a$-withCoroutineContext-DispatchedTask$run$1, $i$f$withCoroutineContext, context, continuation, countOrElement$iv, delegate, exception, fatalException, job, oldValue$iv, state, taskContext, this)
 	CoroutineStackFrame processNextEvent:!LINE_NUMBER!, EventLoopImplBase (kotlinx.coroutines)
-		(delayed, this)
+		(delayed, task, this)
 	CoroutineStackFrame joinBlocking:!LINE_NUMBER!, BlockingCoroutine (kotlinx.coroutines)
 		(this)
 	CoroutineStackFrame runBlocking:!LINE_NUMBER!, BuildersKt__BuildersKt (kotlinx.coroutines)
