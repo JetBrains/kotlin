@@ -64,6 +64,37 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         }
     }
 
+    protected fun validateBytecode(
+        src: String,
+        dumpClasses: Boolean = false,
+        validate: (String) -> Unit
+    ): Unit = ensureSetup {
+        val className = "Test_REPLACEME_${uniqueNumber++}"
+        val fileName = "$className.kt"
+
+        val loader = classLoader("""
+           @file:OptIn(
+             ExperimentalComposeApi::class,
+             InternalComposeApi::class,
+             ComposeCompilerApi::class
+           )
+           package test
+
+           import androidx.compose.*
+
+           $src
+        """, fileName, dumpClasses)
+
+        val apiString = loader
+            .allGeneratedFiles
+            .filter { it.relativePath.endsWith(".class") }
+            .map {
+                it.asText().replace('$', '%').replace(className, "Test")
+            }.joinToString("\n")
+
+        validate(apiString)
+    }
+
     protected fun classLoader(
         source: String,
         fileName: String,

@@ -19,6 +19,7 @@ package androidx.compose.plugins.kotlin.compiler.lower
 import androidx.compose.plugins.kotlin.ComposeUtils
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.addChild
+import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -26,9 +27,13 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
+import org.jetbrains.kotlin.ir.builders.declarations.addGetter
+import org.jetbrains.kotlin.ir.builders.declarations.addProperty
+import org.jetbrains.kotlin.ir.builders.declarations.addSetter
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -37,6 +42,7 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.builders.irIfNull
 import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.irTemporary
@@ -230,22 +236,74 @@ open class LiveLiteralTransformer(
         val clazz = liveLiteralsClass!!
         val stateType = stateInterface.owner.typeWith(literalType).makeNullable()
         val stateGetValue = stateInterface.getPropertyGetter("value")!!
-        val defaultValueField = clazz.addField(
-            fieldName = key,
-            fieldType = literalType,
-            fieldVisibility = Visibilities.PRIVATE
-        ).apply {
-            initializer = IrExpressionBodyImpl(
-                literalValue.startOffset,
-                literalValue.endOffset,
-                literalValue
-            )
+        val defaultProp = clazz.addProperty {
+            name = Name.identifier(key)
+            visibility = Visibilities.PRIVATE
+        }.also { p ->
+            p.backingField = buildField {
+                name = Name.identifier(key)
+                isStatic = true
+                type = literalType
+                visibility = Visibilities.PRIVATE
+            }.also { f ->
+                f.correspondingPropertySymbol = p.symbol
+                f.parent = clazz
+                f.initializer = IrExpressionBodyImpl(
+                    literalValue.startOffset,
+                    literalValue.endOffset,
+                    literalValue
+                )
+            }
+            p.addGetter {
+                returnType = literalType
+                visibility = Visibilities.PRIVATE
+                origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+            }.also { fn ->
+                val thisParam = clazz.thisReceiver!!.copyTo(fn)
+                fn.dispatchReceiverParameter = thisParam
+                fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                    +irReturn(irGetField(irGet(thisParam), p.backingField!!))
+                }
+            }
         }
-        val stateField = clazz.addField(
-            fieldName = "State\$$key",
-            fieldType = stateType,
-            fieldVisibility = Visibilities.PRIVATE
-        )
+        val stateProp = clazz.addProperty {
+            name = Name.identifier("State\$$key")
+            visibility = Visibilities.PRIVATE
+            isVar = true
+        }.also { p ->
+            p.backingField = buildField {
+                name = Name.identifier("State\$$key")
+                type = stateType
+                visibility = Visibilities.PRIVATE
+                isStatic = true
+            }.also { f ->
+                f.correspondingPropertySymbol = p.symbol
+                f.parent = clazz
+            }
+            p.addGetter {
+                returnType = stateType
+                visibility = Visibilities.PRIVATE
+                origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+            }.also { fn ->
+                val thisParam = clazz.thisReceiver!!.copyTo(fn)
+                fn.dispatchReceiverParameter = thisParam
+                fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                    +irReturn(irGetField(irGet(thisParam), p.backingField!!))
+                }
+            }
+            p.addSetter {
+                returnType = context.irBuiltIns.unitType
+                visibility = Visibilities.PRIVATE
+                origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+            }.also { fn ->
+                val thisParam = clazz.thisReceiver!!.copyTo(fn)
+                fn.dispatchReceiverParameter = thisParam
+                val valueParam = fn.addValueParameter("value", stateType)
+                fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                    +irSetField(irGet(thisParam), p.backingField!!, irGet(valueParam))
+                }
+            }
+        }
         return clazz.addFunction(
             name = key,
             returnType = literalType
@@ -260,18 +318,27 @@ open class LiveLiteralTransformer(
                 //     c
                 // } else a
                 // return b.value
-                val a = irTemporary(irGetField(irGet(thisParam), stateField))
+                val a = irTemporary(irGet(stateType, irGet(thisParam), stateProp.getter!!.symbol))
                 val b = irIfNull(
                     type = stateType,
                     subject = irGet(a),
                     thenPart = irBlock(resultType = stateType) {
                         val liveLiteralCall = irCall(liveLiteral).apply {
                             putValueArgument(0, irString(key))
-                            putValueArgument(1, irGetField(irGet(thisParam), defaultValueField))
+                            putValueArgument(1, irGet(
+                                literalType,
+                                irGet(thisParam),
+                                defaultProp.getter!!.symbol
+                            ))
                             putTypeArgument(0, literalType)
                         }
                         val c = irTemporary(liveLiteralCall)
-                        +irSetField(irGet(thisParam), stateField, irGet(c))
+                        +irSet(
+                            stateType,
+                            irGet(thisParam),
+                            stateProp.setter!!.symbol,
+                            irGet(c)
+                        )
                         +irGet(c)
                     },
                     elsePart = irGet(a)
