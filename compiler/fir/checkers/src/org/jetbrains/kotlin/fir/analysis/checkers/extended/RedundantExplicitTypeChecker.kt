@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.fir.FirFakeSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -30,6 +31,9 @@ object RedundantExplicitTypeChecker : FirMemberDeclarationChecker() {
 
         val initializer = declaration.initializer ?: return
         val typeReference = declaration.returnTypeRef
+
+        if (typeReference.source is FirFakeSourceElement<*>) return
+
         val type = declaration.returnTypeRef.coneType
 
         if (typeReference is FirTypeAlias) return
