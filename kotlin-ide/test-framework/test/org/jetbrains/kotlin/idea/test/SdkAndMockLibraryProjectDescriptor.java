@@ -109,7 +109,7 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
     private File compileLibrary() {
         List<String> extraOptions = allowKotlinPackage ? Collections.singletonList("-Xallow-kotlin-package") : emptyList();
         KotlinCompilerStandalone.Platform platform = isJsLibrary
-            ? KotlinCompilerStandalone.Platform.JavaScript.INSTANCE
+            ? new KotlinCompilerStandalone.Platform.JavaScript(MOCK_LIBRARY_NAME, "test")
             : new KotlinCompilerStandalone.Platform.Jvm();
         List<File> sources = Collections.singletonList(new File(sourcesPath));
         List<File> classpath = isJsLibrary ? emptyList() : CollectionsKt.map(this.classpath, File::new);

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -256,7 +257,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         val lib = KotlinCompilerStandalone(
             sources,
-            platform = KotlinCompilerStandalone.Platform.JavaScript,
+            platform = KotlinCompilerStandalone.Platform.JavaScript(SdkAndMockLibraryProjectDescriptor.MOCK_LIBRARY_NAME, "lib"),
             options = extraOptions
         ).compile()
 
