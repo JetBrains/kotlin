@@ -58,11 +58,11 @@ private fun <I : ControlFlowInfo<I, K, V>, K : Any, V : Any> ControlFlowGraph.co
     val nodes = getNodesInOrder(direction)
     for (node in nodes) {
         if (!(node.isEnterNode(direction) && node.owner.owner == null)) {
-            val nextNodes = when (direction) {
+            val previousNodes = when (direction) {
                 TraverseDirection.Forward -> node.previousCfgNodes
                 TraverseDirection.Backward -> node.followingCfgNodes
             }
-            val previousData = nextNodes.mapNotNull { nodeMap[it] }
+            val previousData = previousNodes.mapNotNull { nodeMap[it] }
             val data = nodeMap[node]
             val newData = node.accept(visitor, previousData)
             val hasChanged = newData != data
