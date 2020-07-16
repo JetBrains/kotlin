@@ -4698,6 +4698,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
+            @TestMetadata("suspendInvokeInsideTry.kt")
+            public void testSuspendInvokeInsideTry() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/coroutines/suspendInvokeInsideTry.kt");
+            }
+
+            @TestMetadata("suspendInvokeInsideWhen.kt")
+            public void testSuspendInvokeInsideWhen() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/coroutines/suspendInvokeInsideWhen.kt");
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/coroutines/callableReference")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
