@@ -156,6 +156,8 @@ class KotlinImportOptimizer : ImportOptimizer {
 
             for (reference in references) {
                 if (reference !is KtReference) continue
+
+                ProgressIndicatorProvider.checkCanceled()
                 abstractRefs.add(AbstractReferenceImpl(reference))
 
                 val names = reference.resolvesByNames
