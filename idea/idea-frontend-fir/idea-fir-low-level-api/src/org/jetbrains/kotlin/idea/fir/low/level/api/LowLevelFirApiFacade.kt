@@ -12,27 +12,28 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.idea.util.getElementTextInContext
 
 object LowLevelFirApiFacade {
     fun getResolveStateFor(element: KtElement): FirModuleResolveState =
         element.firResolveState()
 
-    fun getResolveStateForCompletion(element: KtElement, mainState: FirModuleResolveStateImpl): FirModuleResolveStateForCompletion {
-        return FirModuleResolveStateForCompletion(mainState)
+    fun getResolveStateForCompletion(element: KtElement, originalState: FirModuleResolveState): FirModuleResolveState {
+        check(originalState is FirModuleResolveStateImpl)
+        return FirModuleResolveStateForCompletion(originalState)
     }
 
-    fun getSessionFor(element: KtElement, resolveState: FirModuleResolveState): FirSession =
-        resolveState.getSession(element)
+    fun getSessionFor(element: KtElement): FirSession =
+        getResolveStateFor(element).getSessionFor(element.getModuleInfo())
 
     fun getOrBuildFirFor(element: KtElement, resolveState: FirModuleResolveState, phase: FirResolvePhase): FirElement =
-        element.getOrBuildFir(resolveState, phase)
-
-
-    fun getFirOfClosestParent(element: KtElement): FirElement? = element.getFirOfClosestParent(element.firResolveState())?.second
+        resolveState.getOrBuildFirFor(element, phase)
 
     class FirCompletionContext internal constructor(
         val session: FirSession,
@@ -42,7 +43,7 @@ object LowLevelFirApiFacade {
         fun getTowerDataContext(element: KtElement): FirTowerDataContext {
             var current: PsiElement? = element
             while (current is KtElement) {
-                val mappedFir = state.getCachedMapping(current)
+                val mappedFir = state.getCachedMappingForCompletion(current)
 
                 if (mappedFir is FirStatement) {
                     towerDataContextForStatement[mappedFir]?.let { return it }
@@ -56,7 +57,7 @@ object LowLevelFirApiFacade {
                 current = current.parent
             }
 
-            error("No context for $element")
+            error("No context for ${element.getElementTextInContext()}")
         }
     }
 
@@ -71,10 +72,8 @@ object LowLevelFirApiFacade {
         val towerDataContextForStatement = mutableMapOf<FirStatement, FirTowerDataContext>()
 
         val function = builtFunction.apply {
-            runResolve(firFile, firIdeProvider, phase, state, towerDataContextForStatement)
-
-            // TODO this PSI caching should be somewhere else
-            state.recordElementsFrom(this)
+            state.lazyResolveFunctionForCompletion(this, firFile, firIdeProvider, phase, towerDataContextForStatement)
+            state.recordPsiToFirMappingsForCompletionFrom(this, firFile, element.containingKtFile)
         }
 
         return FirCompletionContext(
@@ -85,8 +84,6 @@ object LowLevelFirApiFacade {
     }
 
     fun getDiagnosticsFor(element: KtElement, resolveState: FirModuleResolveState): Collection<Diagnostic> {
-        val file = element.containingKtFile
-        file.getOrBuildFirWithDiagnostics(resolveState)
         return resolveState.getDiagnostics(element)
     }
 }

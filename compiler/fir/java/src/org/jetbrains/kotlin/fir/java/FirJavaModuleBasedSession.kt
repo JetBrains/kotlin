@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -65,7 +65,7 @@ class FirJavaModuleBasedSession private constructor(
 
 
     init {
-        sessionProvider.sessionCache[moduleInfo] = this
+        sessionProvider.registerSession(moduleInfo, this)
     }
 }
 
@@ -118,14 +118,18 @@ class FirLibrarySession private constructor(
     }
 
     init {
-        sessionProvider.sessionCache[moduleInfo] = this
+        sessionProvider.registerSession(moduleInfo, this)
     }
 }
 
-class FirProjectSessionProvider(override val project: Project) : FirSessionProvider {
+open class FirProjectSessionProvider(override val project: Project) : FirSessionProvider {
     override fun getSession(moduleInfo: ModuleInfo): FirSession? {
         return sessionCache[moduleInfo]
     }
 
-    val sessionCache = mutableMapOf<ModuleInfo, FirSession>()
+    fun registerSession(moduleInfo: ModuleInfo, session: FirSession) {
+        sessionCache[moduleInfo] = session
+    }
+
+    protected open val sessionCache: MutableMap<ModuleInfo, FirSession> = mutableMapOf()
 }

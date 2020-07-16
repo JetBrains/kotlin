@@ -76,12 +76,6 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         klass.accept(FirRecorder, state to owner.file)
     }
 
-    override fun getAllCallableNamesInPackage(): Set<Name> {
-        return state.callableMap.keys.asSequence()
-            .filter { it.className == null }
-            .mapTo(mutableSetOf()) { it.callableName }
-    }
-
     private val FirAnnotatedDeclaration.file: FirFile
         get() = when (this) {
             is FirFile -> this
@@ -92,7 +86,6 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
     private fun recordFile(file: FirFile, state: State) {
         val packageName = file.packageFqName
         state.fileMap.merge(packageName, listOf(file)) { a, b -> a + b }
-
         file.acceptChildren(FirRecorder, state to file)
     }
 

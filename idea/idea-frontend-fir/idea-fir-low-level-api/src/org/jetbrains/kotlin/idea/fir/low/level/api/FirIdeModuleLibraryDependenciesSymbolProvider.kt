@@ -14,18 +14,20 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirDependenciesSymbolProv
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
+import javax.annotation.concurrent.NotThreadSafe
 
 
+@NotThreadSafe
+//todo make thread safe
 internal class FirIdeModuleLibraryDependenciesSymbolProvider(
     session: FirIdeJavaModuleBasedSession
 ) : FirDependenciesSymbolProviderImpl(session) {
-    //todo invalidate cache on libraries changed
     override val dependencyProviders: List<FirSymbolProvider> by lazy {
         val moduleInfo = session.moduleInfo
         val sessionProvider = session.sessionProvider ?: error("No session provider found")
         val project = sessionProvider.project
 
-        moduleInfo.dependenciesWithoutSelf()
+        val dependencies = moduleInfo.dependenciesWithoutSelf()
             .filterIsInstance<IdeaModuleInfo>()
             .mapNotNull { dependencyInfo ->
                 val dependencySession = if (dependencyInfo.isLibraryClasses()) {
@@ -37,6 +39,7 @@ internal class FirIdeModuleLibraryDependenciesSymbolProvider(
                 } else null
                 dependencySession?.firSymbolProvider
             }.toList()
+        dependencies
     }
 }
 

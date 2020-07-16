@@ -46,8 +46,4 @@ class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSy
     override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
         return providers.flatMapTo(mutableSetOf()) { it.getNestedClassesNamesInClass(classId) }
     }
-
-    override fun getAllCallableNamesInPackage(): Set<Name> {
-        return providers.flatMapTo(mutableSetOf()) { it.getAllCallableNamesInPackage() }
-    }
 }

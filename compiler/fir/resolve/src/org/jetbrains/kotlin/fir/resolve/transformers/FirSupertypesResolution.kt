@@ -237,7 +237,7 @@ private class FirSupertypeResolverVisitor(
                 val outerClassFir = classId.outerClassId?.let(session.firProvider::getFirClassifierByFqName) as? FirRegularClass
                 prepareScopeForNestedClasses(outerClassFir ?: return ImmutableList.empty())
             }
-            else -> prepareFileScopes(session.firProvider.getFirClassifierContainerFile(classId))
+            else -> prepareFileScopes(session.firProvider.getFirClassifierContainerFile(classLikeDeclaration.symbol))
         }
 
         return result.pushIfNotNull(classLikeDeclaration.typeParametersScope())
