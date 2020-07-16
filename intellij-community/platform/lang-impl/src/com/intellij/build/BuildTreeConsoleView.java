@@ -784,7 +784,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     ComponentUtil.putClientProperty(tree, AUTO_EXPAND_ALLOWED, false);
     tree.setRootVisible(false);
     EditSourceOnDoubleClickHandler.install(tree);
-    EditSourceOnEnterKeyHandler.install(tree, null);
+    EditSourceOnEnterKeyHandler.install(tree);
     new TreeSpeedSearch(tree).setComparator(new SpeedSearchComparator(false));
     TreeUtil.installActions(tree);
     tree.setCellRenderer(new MyNodeRenderer());

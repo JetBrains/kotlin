@@ -39,7 +39,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.impl.UsagePreviewPanel;
 import com.intellij.util.Alarm;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
-import com.intellij.util.OpenSourceUtil;
+import com.intellij.util.EditSourceOnEnterKeyHandler;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.tree.TreeModelAdapter;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -54,8 +54,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -169,6 +167,7 @@ public abstract class TodoPanel extends SimpleToolWindowPanel implements Occuren
     myTree.setRowHeight(0); // enable variable-height rows
     myTree.setCellRenderer(new TodoCompositeRenderer());
     EditSourceOnDoubleClickHandler.install(myTree);
+    EditSourceOnEnterKeyHandler.install(myTree);
     new TreeSpeedSearch(myTree);
 
     DefaultActionGroup group = new DefaultActionGroup();
@@ -179,26 +178,6 @@ public abstract class TodoPanel extends SimpleToolWindowPanel implements Occuren
     group.addSeparator();
     group.add(ActionManager.getInstance().getAction(IdeActions.GROUP_VERSION_CONTROLS));
     PopupHandler.installPopupHandler(myTree, group, ActionPlaces.TODO_VIEW_POPUP, ActionManager.getInstance());
-
-    myTree.addKeyListener(
-      new KeyAdapter() {
-        @Override
-        public void keyPressed(KeyEvent e) {
-          if (!e.isConsumed() && KeyEvent.VK_ENTER == e.getKeyCode()) {
-            TreePath path = myTree.getSelectionPath();
-            if (path == null) {
-              return;
-            }
-            final Object userObject = ((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject();
-            if (!((userObject instanceof NodeDescriptor ? (NodeDescriptor)userObject : null) instanceof TodoItemNode)) {
-              return;
-            }
-            OpenSourceUtil.openSourcesFrom(DataManager.getInstance().getDataContext(TodoPanel.this), false);
-          }
-        }
-      }
-    );
-
 
     myUsagePreviewPanel = new UsagePreviewPanel(myProject, FindInProjectUtil.setupViewPresentation(false, new FindModel()));
     Disposer.register(this, myUsagePreviewPanel);

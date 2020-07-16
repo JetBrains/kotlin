@@ -2,7 +2,6 @@
 
 package com.intellij.ide.projectView.impl;
 
-import com.intellij.ide.DataManager;
 import com.intellij.ide.PsiCopyPasteManager;
 import com.intellij.ide.projectView.BaseProjectTreeBuilder;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
@@ -10,7 +9,6 @@ import com.intellij.ide.ui.customization.CustomizationUtil;
 import com.intellij.ide.util.treeView.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -27,9 +25,8 @@ import com.intellij.ui.stripe.ErrorStripe;
 import com.intellij.ui.stripe.ErrorStripePainter;
 import com.intellij.ui.stripe.TreeUpdater;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
-import com.intellij.util.OpenSourceUtil;
+import com.intellij.util.EditSourceOnEnterKeyHandler;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.util.ui.accessibility.ScreenReader;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.intellij.util.ui.update.Activatable;
 import com.intellij.util.ui.update.UiNotifyConnector;
@@ -142,6 +139,7 @@ public abstract class AbstractProjectViewPSIPane extends AbstractProjectViewPane
     myTree.expandPath(new TreePath(myTree.getModel().getRoot()));
 
     EditSourceOnDoubleClickHandler.install(myTree);
+    EditSourceOnEnterKeyHandler.install(myTree);
 
     ToolTipManager.sharedInstance().registerComponent(myTree);
     TreeUtil.installActions(myTree);
@@ -151,16 +149,7 @@ public abstract class AbstractProjectViewPSIPane extends AbstractProjectViewPane
     myTree.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
-        if (KeyEvent.VK_ENTER == e.getKeyCode()) {
-          TreePath path = getSelectedPath();
-          if (path != null && !myTree.getModel().isLeaf(path.getLastPathComponent())) {
-            return;
-          }
-
-          DataContext dataContext = DataManager.getInstance().getDataContext(myTree);
-          OpenSourceUtil.openSourcesFrom(dataContext, ScreenReader.isActive());
-        }
-        else if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
+        if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
           if (e.isConsumed()) return;
           PsiCopyPasteManager copyPasteManager = PsiCopyPasteManager.getInstance();
           boolean[] isCopied = new boolean[1];

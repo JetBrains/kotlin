@@ -285,15 +285,12 @@ public class StructureViewComponent extends SimpleToolWindowPanel implements Tre
   }
 
   private void addTreeKeyListener() {
+    EditSourceOnEnterKeyHandler.install(getTree());
     getTree().addKeyListener(
       new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
-          if (KeyEvent.VK_ENTER == e.getKeyCode()) {
-            DataContext dataContext = DataManager.getInstance().getDataContext(getTree());
-            OpenSourceUtil.openSourcesFrom(dataContext, false);
-          }
-          else if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
+          if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
             if (e.isConsumed()) return;
             PsiCopyPasteManager copyPasteManager = PsiCopyPasteManager.getInstance();
             boolean[] isCopied = new boolean[1];

@@ -36,9 +36,8 @@ import com.intellij.ui.tree.RestoreSelectionListener;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
-import com.intellij.util.OpenSourceUtil;
+import com.intellij.util.EditSourceOnEnterKeyHandler;
 import com.intellij.util.PlatformUtils;
-import com.intellij.util.ui.accessibility.ScreenReader;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -46,8 +45,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Objects;
@@ -172,19 +169,10 @@ public final class ScopeViewPane extends AbstractProjectViewPane {
       myTree.setRootVisible(false);
       myTree.setShowsRootHandles(true);
       myTree.addTreeSelectionListener(new RestoreSelectionListener());
-      myTree.addKeyListener(new KeyAdapter() {
-        @Override
-        public void keyPressed(KeyEvent event) {
-          if (event.isConsumed()) return;
-          if (KeyEvent.VK_ENTER == event.getKeyCode()) {
-            OpenSourceUtil.openSourcesFrom(ScopeViewPane.this, ScreenReader.isActive());
-            event.consume();
-          }
-        }
-      });
       TreeUtil.installActions(myTree);
       ToolTipManager.sharedInstance().registerComponent(myTree);
       EditSourceOnDoubleClickHandler.install(myTree);
+      EditSourceOnEnterKeyHandler.install(myTree);
       CustomizationUtil.installPopupHandler(myTree, IdeActions.GROUP_SCOPE_VIEW_POPUP, ActionPlaces.SCOPE_VIEW_POPUP);
       new TreeSpeedSearch(myTree);
       enableDnD();

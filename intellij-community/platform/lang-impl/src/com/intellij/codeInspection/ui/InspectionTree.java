@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInspection.ui;
 
@@ -37,6 +37,7 @@ import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.EditSourceOnEnterKeyHandler;
 import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
@@ -51,8 +52,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.TreePath;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.stream.Stream;
@@ -88,17 +87,7 @@ public class InspectionTree extends Tree {
       });
 
       EditSourceOnDoubleClickHandler.install(this);
-
-      addKeyListener(new KeyAdapter() {
-        @Override
-        public void keyPressed(KeyEvent e) {
-          if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            if (!myView.isDisposed()) {
-              OpenSourceUtil.openSourcesFrom(DataManager.getInstance().getDataContext(myView), false);
-            }
-          }
-        }
-      });
+      EditSourceOnEnterKeyHandler.install(this);
       TreeUtil.installActions(this);
       PopupHandler.installPopupHandler(this, IdeActions.INSPECTION_TOOL_WINDOW_TREE_POPUP, ActionPlaces.CODE_INSPECTION);
       new TreeSpeedSearch(this, o -> InspectionsConfigTreeComparator.getDisplayTextToSort(o.getLastPathComponent().toString()));

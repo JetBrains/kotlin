@@ -56,8 +56,8 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.*;
 import com.intellij.ui.popup.HintUpdateSupply;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.EditSourceOnEnterKeyHandler;
 import com.intellij.util.Function;
-import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.intellij.util.ui.update.MergingUpdateQueue;
@@ -74,8 +74,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -233,24 +231,11 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
     myTree.setShowsRootHandles(true);
     TreeUtil.installActions(myTree);
     EditSourceOnDoubleClickHandler.install(myTree);
+    EditSourceOnEnterKeyHandler.install(myTree);
     new TreeSpeedSearch(myTree);
     myCopyPasteDelegator = new CopyPasteDelegator(myProject, this);
     myTreeExpansionMonitor = PackageTreeExpansionMonitor.install(myTree, myProject);
     myTree.addTreeWillExpandListener(new SortingExpandListener());
-    myTree.addKeyListener(new KeyAdapter() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        if (KeyEvent.VK_ENTER == e.getKeyCode()) {
-          final Object component = myTree.getLastSelectedPathComponent();
-          if (component instanceof DefaultMutableTreeNode) {
-            final DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)component;
-            if (selectedNode.isLeaf()) {
-              OpenSourceUtil.openSourcesFrom(DataManager.getInstance().getDataContext(myTree), false);
-            }
-          }
-        }
-      }
-    });
   }
 
   private PsiElement @NotNull [] getSelectedPsiElements() {
