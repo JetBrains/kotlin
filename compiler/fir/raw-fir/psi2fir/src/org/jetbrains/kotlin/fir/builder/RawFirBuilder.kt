@@ -653,12 +653,12 @@ class RawFirBuilder(
                     isExpect = containingClassOrObject?.hasExpectModifier() == true
                 }
                 symbol = FirVariableSymbol(callableIdForName(nameAsSafeName))
-                // NB: not sure should annotations be on enum entry itself, or on its corresponding object
                 if (ownerClassHasDefaultConstructor && ktEnumEntry.initializerList == null &&
                     ktEnumEntry.annotationEntries.isEmpty() && ktEnumEntry.body == null
                 ) {
                     return@buildEnumEntry
                 }
+                extractAnnotationsTo(this)
                 initializer = withChildClassName(nameAsSafeName) {
                     buildAnonymousObject {
                         source = toFirSourceElement(FirFakeSourceElementKind.EnumInitializer)
