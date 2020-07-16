@@ -603,7 +603,8 @@ class ComposableFunctionBodyTransformer(
         val isLambda = declaration.isLambda()
 
         // we use != false because a null value is treated as "tracked"
-        val isTracked = declaration.descriptor.composableTrackedContract() != false
+        val isTracked = declaration.descriptor.composableTrackedContract() != false &&
+                declaration.returnType.isUnit()
 
         if (declaration.body == null) return declaration
 
@@ -752,7 +753,7 @@ class ComposableFunctionBodyTransformer(
                     irStartReplaceableGroup(
                         body,
                         scope.sourceInformation,
-                        irGet(scope.keyParameter!!)
+                        irXor(declaration.irSourceKey(), irGet(scope.keyParameter!!))
                     )
                 else
                     null,
@@ -1065,7 +1066,7 @@ class ComposableFunctionBodyTransformer(
                 irStartRestartGroup(
                     body,
                     scope.sourceInformation,
-                    irGet(scope.keyParameter!!)
+                    irXor(declaration.irSourceKey(), irGet(scope.keyParameter!!))
                 ),
                 *skipPreamble.statements.toTypedArray(),
                 transformedBody,
@@ -1606,7 +1607,7 @@ class ComposableFunctionBodyTransformer(
 
                     putValueArgument(
                         keyIndex,
-                        irGet(fn.valueParameters[1])
+                        irGet(scope.keyParameter!!)
                     )
 
                     // the call in updateScope needs to *always* have the low bit set to 1.

@@ -108,6 +108,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
+import kotlin.math.abs
 import java.util.Locale
 
 fun IrElement.dumpSrc(): String {
@@ -925,14 +926,14 @@ private class IrSourcePrinterVisitor(
 
     private fun intAsBinaryString(value: Int): String {
         if (value == 0) return "0"
-        var current = value
+        var current = abs(value)
         var result = ""
         while (current != 0 || result.length % 4 != 0) {
             val nextBit = current and 1 != 0
             current = current shr 1
             result = "${if (nextBit) "1" else "0"}$result"
         }
-        return "0b$result"
+        return "${if (value < 0) "-" else ""}0b$result"
     }
 
     override fun <T> visitConst(expression: IrConst<T>) {

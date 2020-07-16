@@ -57,6 +57,17 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    fun testMoveFromIssue(): Unit = ensureSetup {
+        compose("""
+        """,
+            "Button(id=1, onClick=invalidate)"
+        ).then { activity ->
+            val tv = activity.findViewById<Button>(1)
+            tv.performClick()
+        }.then { }
+    }
+
+    @Test
     fun testSimpleInlining(): Unit = ensureSetup {
         compose("""
             @Composable

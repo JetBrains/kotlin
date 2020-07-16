@@ -33,7 +33,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(%key, "C")
+              %composer.startRestartGroup(<> xor %key, "C")
               if (%changed !== 0 || !%composer.skipping) {
                 A(a, %composer, <>, 0)
                 A(b, %composer, <>, 0)
@@ -59,7 +59,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             private fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(%key)
+              %composer.startRestartGroup(<> xor %key)
               if (%changed !== 0 || !%composer.skipping) {
                 A(a, %composer, <>, 0)
                 A(b, %composer, <>, 0)
@@ -86,7 +86,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(%key, "C")
+              %composer.startRestartGroup(<> xor %key, "C")
               if (%changed !== 0 || !%composer.skipping) {
                 W(composableLambda(%composer, <>, true, null) { %composer: Composer<*>?, %key: Int, %changed: Int ->
                   if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
@@ -118,7 +118,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(%key, "C")
+              %composer.startRestartGroup(<> xor %key, "C")
               if (%changed !== 0 || !%composer.skipping) {
                 IW({ %composer: Composer<*>?, %key: Int, %changed: Int ->
                   if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
