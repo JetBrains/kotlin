@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 
 object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
-    override val isExtended = true
-
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirConstructor && declaration.source is FirFakeSourceElement<*>) return
         if (declaration.source is FirFakeSourceElement<*>) return

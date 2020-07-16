@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.types.isUnit
 
 object RedundantReturnUnitType : FirBasicDeclarationChecker() {
-    override val isExtended = true
-
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirSimpleFunction) return
         if (declaration.body is FirSingleExpressionBlock) return
