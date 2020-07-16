@@ -13166,6 +13166,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/surroundWithNullCheck/in.kt");
         }
 
+        @TestMetadata("inLambda.kt")
+        public void testInLambda() throws Exception {
+            runTest("idea/testData/quickfix/surroundWithNullCheck/inLambda.kt");
+        }
+
+        @TestMetadata("inLambda2.kt")
+        public void testInLambda2() throws Exception {
+            runTest("idea/testData/quickfix/surroundWithNullCheck/inLambda2.kt");
+        }
+
+        @TestMetadata("inLambda3.kt")
+        public void testInLambda3() throws Exception {
+            runTest("idea/testData/quickfix/surroundWithNullCheck/inLambda3.kt");
+        }
+
         @TestMetadata("infixUnsafeCall.kt")
         public void testInfixUnsafeCall() throws Exception {
             runTest("idea/testData/quickfix/surroundWithNullCheck/infixUnsafeCall.kt");

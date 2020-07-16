@@ -26,6 +26,10 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
@@ -33,6 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
 
 class SurroundWithNullCheckFix(
@@ -77,12 +82,17 @@ class SurroundWithNullCheckFix(
             if (!nullableExpression.isStableSimpleExpression(context)) return null
 
             val expressionTarget = expressionParent.getParentOfTypesAndPredicate(
-                strict = false, parentClasses = *arrayOf(KtExpression::class.java)
+                strict = false, parentClasses = arrayOf(KtExpression::class.java)
             ) {
                 !it.isUsedAsExpression(context) && it.hasAcceptableParent()
             } ?: return null
             // Surround declaration (even of local variable) with null check is generally a bad idea
             if (expressionTarget is KtDeclaration) return null
+
+            val declaration = nullableExpression.mainReference.resolveToDescriptors(context).singleOrNull() ?: return null
+            val variable =
+                expressionTarget.getResolutionScope(context)?.findVariable(declaration.name, NoLookupLocation.FROM_IDE) ?: return null
+            if (declaration != variable) return null
 
             return SurroundWithNullCheckFix(expressionTarget, nullableExpression)
         }
@@ -106,8 +116,7 @@ class SurroundWithNullCheckFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val typeMismatch = Errors.TYPE_MISMATCH.cast(diagnostic)
             val nullableExpression = typeMismatch.psiElement as? KtReferenceExpression ?: return null
-            val parent = nullableExpression.parent
-            val root = when (parent) {
+            val root = when (val parent = nullableExpression.parent) {
                 is KtValueArgument -> {
                     val call = parent.getParentOfType<KtCallExpression>(true) ?: return null
                     call.getLastParentOfTypeInRow<KtQualifiedExpression>() ?: call
