@@ -12,7 +12,7 @@ versions.appcode.strict=true
 versions.appcode.repo=ijplatform_IjPlatform202_CIDR_AppCode_PublicInstallers
 versions.xcode-compat=0.2.5
 
-versions.clion=202.6250.12
+versions.clion=202.6397.12
 versions.clion.strict=true
 versions.clion.repo=ijplatform_IjPlatform202_CIDR_CLion_PublicInstallers
 
