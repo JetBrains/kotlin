@@ -13,9 +13,6 @@
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.framework.CreateKotlinSdkActivity"/>
     <facetType implementation="org.jetbrains.kotlin.idea.facet.KotlinFacetTypeImpl"/>
     <library.type implementation="org.jetbrains.kotlin.idea.framework.CommonLibraryType"/>
-    <applicationService
-        serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"
-        serviceImplementation="org.jetbrains.kotlin.platform.impl.IdeaDefaultIdeTargetPlatformKindProvider"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.config.KotlinFacetSettingsProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.facet.KotlinFacetSettingsProviderImpl"/>
