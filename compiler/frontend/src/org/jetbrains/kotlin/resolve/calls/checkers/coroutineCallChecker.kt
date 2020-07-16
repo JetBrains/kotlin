@@ -64,10 +64,10 @@ fun findEnclosingSuspendFunction(context: CallCheckerContext, checkingCall: KtEl
     val scope = if (context.resolutionContext !is CallResolutionContext<*> || context.resolutionContext.call.callElement == checkingCall) {
         context.scope
     } else {
-        context.trace.get(BindingContext.LEXICAL_SCOPE, checkingCall)
+        context.trace.get(BindingContext.LEXICAL_SCOPE, checkingCall) ?: context.scope
     }
 
-    return scope?.parentsWithSelf?.firstOrNull {
+    return scope.parentsWithSelf.firstOrNull {
         it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS && it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
     }?.cast<LexicalScope>()?.ownerDescriptor?.cast()
 }
