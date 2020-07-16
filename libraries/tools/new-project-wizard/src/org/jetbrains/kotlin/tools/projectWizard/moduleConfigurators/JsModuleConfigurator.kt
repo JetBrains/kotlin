@@ -43,7 +43,11 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
                 if (reader.isApplication(module)) {
                     applicationCssSupport()
                 }
-                testCssSupport()
+            }
+            if (this@JSConfigurator is ModuleConfiguratorWithTests
+                && reader.settingValue(module, ModuleConfiguratorWithTests.testFramework) != KotlinTestFramework.NONE
+            ) {
+                testTask(cssSupport = reader.hasCssSupport(module))
             }
         }
     }
@@ -132,11 +136,13 @@ fun GradleIRListBuilder.applicationCssSupport() {
     }
 }
 
-fun GradleIRListBuilder.testCssSupport() {
+fun GradleIRListBuilder.testTask(cssSupport: Boolean) {
     "testTask" {
         "useKarma" {
             +"useChromeHeadless()"
-            +"webpackConfig.cssSupport.enabled = true"
+            if (cssSupport) {
+                +"webpackConfig.cssSupport.enabled = true"
+            }
         }
     }
 }
