@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 
 abstract class KotlinSSResourceInspectionTest : BasePlatformTestCase() {
     private var myInspection: SSBasedInspection? = null
+    private val myConfiguration = SearchConfiguration().apply {
+        name = "SSR"
+        matchOptions.fileType = KotlinFileType.INSTANCE
+    }
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinLightProjectDescriptor()
 
@@ -29,17 +33,14 @@ abstract class KotlinSSResourceInspectionTest : BasePlatformTestCase() {
 
     protected fun doTest(pattern: String, context: PatternContext = KotlinStructuralSearchProfile.DEFAULT_CONTEXT) {
         myFixture.configureByFile(getTestName(true) + ".kt")
-        val configuration = SearchConfiguration()
-        configuration.name = "SSR"
-        val options = configuration.matchOptions.apply {
-            fileType = KotlinFileType.INSTANCE
+        val options = myConfiguration.matchOptions.apply {
             fillSearchCriteria(pattern)
             patternContext = context
         }
         Matcher.validate(project, options)
         val message = checkApplicableConstraints(options, PatternCompiler.compilePattern(project, options, true, false))
         assertNull("Constraint applicability error: $message\n", message)
-        StructuralSearchProfileActionProvider.createNewInspection(configuration, project)
+        StructuralSearchProfileActionProvider.createNewInspection(myConfiguration, project)
         myFixture.testHighlighting(true, false, false)
     }
 
@@ -59,10 +60,8 @@ abstract class KotlinSSResourceInspectionTest : BasePlatformTestCase() {
                 if (!StringUtil.isEmpty(constraint.nameOfExprType)) usedConstraints.add(UIUtil.TYPE)
                 if (!StringUtil.isEmpty(constraint.nameOfFormalArgType)) usedConstraints.add(UIUtil.EXPECTED_TYPE)
                 if (!StringUtil.isEmpty(constraint.referenceConstraint)) usedConstraints.add(UIUtil.REFERENCE)
-                for (usedConstraint in usedConstraints) {
-                    if (!profile.isApplicableConstraint(usedConstraint, nodes, false, constraint.isPartOfSearchResults)) {
-                        return "$usedConstraint not applicable for $varName"
-                    }
+                usedConstraints.firstOrNull { !profile.isApplicableConstraint(it, nodes, false, constraint.isPartOfSearchResults) }?.let {
+                    return@checkApplicableConstraints "$it not applicable for $varName"
                 }
             }
             return null
