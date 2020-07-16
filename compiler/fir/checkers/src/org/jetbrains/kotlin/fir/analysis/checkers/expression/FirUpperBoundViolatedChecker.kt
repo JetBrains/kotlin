@@ -57,12 +57,9 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             parameterPairs.mapValues { it.value.type }
         )
 
-        val canBeSkip = mutableSetOf<FirTypeParameterSymbol>()
-
         parameterPairs.forEach { (proto, actual) ->
             if (actual.source == null) {
-//                canBeSkip.add(proto) // inferred types report INAPPLICABLE_CANDIDATE in case of an error
-                // inferred types don't report INAPPLICABLE_CANDIDATE for typealiases!
+                // inferred types don't report INAPPLICABLE_CANDIDATE for type aliases!
                 return@forEach
             }
 
@@ -91,7 +88,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         // typealias A<G> = B<List<G>>
         // val a = A<Int>()
         when (calleeFir) {
-            is FirConstructor -> analyzeConstructorCall(functionCall, substitutor, typeCheckerContext, reporter, canBeSkip)
+            is FirConstructor -> analyzeConstructorCall(functionCall, substitutor, typeCheckerContext, reporter)
         }
     }
 
@@ -99,8 +96,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         functionCall: FirQualifiedAccessExpression,
         callSiteSubstitutor: ConeSubstitutor,
         typeCheckerContext: AbstractTypeCheckerContext,
-        reporter: DiagnosticReporter,
-        canBeSkip: MutableSet<FirTypeParameterSymbol>
+        reporter: DiagnosticReporter
     ) {
         // holds Collection<Number> bound.
         // note that if B used another type parameter here,
@@ -128,9 +124,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         for (it in 0 until count) {
             actualConstructor.typeArguments[it].safeAs<ConeSimpleKotlinType>()
                 ?.let { that ->
-//                    if (!canBeSkip.contains(protoConstructor.typeParameters[it].symbol)) {
                     constructorsParameterPairs[protoConstructor.typeParameters[it].symbol] = that
-//                    }
                 }
         }
 
@@ -228,15 +222,6 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         intersection = substitutor.substituteOrSelf(intersection)
         return AbstractTypeChecker.isSubtypeOf(typeCheckerContext, target, intersection)
     }
-
-    /**
-     * Removes the entries where either A? or B?
-     * is null and constructs a Map<A, B>.
-     */
-    private fun <A, B> List<Pair<A?, B?>>.toMapWithoutNulls() = this
-        .filter { it.first != null && it.second != null }
-        .map { it.first!! to it.second!! }
-        .toMap()
 
     private fun DiagnosticReporter.report(source: FirSourceElement?) {
         source?.let {
