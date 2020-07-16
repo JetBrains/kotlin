@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.providers.getNestedClassifierScope
@@ -15,14 +18,10 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirNestedClassifierScope
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.name.Name
 
 abstract class FirAbstractTreeTransformerWithSuperTypes(
     phase: FirResolvePhase
@@ -56,12 +55,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
             ).asReversed()
             for (superType in superTypes) {
                 session.getNestedClassifierScope(superType.lookupTag)?.let { nestedClassifierScope ->
-                    val scope = if (nestedClassifierScope is FirNestedClassifierScope) {
-                        val substitutor = createSubstitutionForSupertype(superType, session)
-                        FirNestedClassifierScopeWithSubstitution(nestedClassifierScope, substitutor)
-                    } else {
-                        nestedClassifierScope
-                    }
+                    val scope = nestedClassifierScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(superType, session)
                     scopes.add(scope)
                 }
             }
@@ -83,17 +77,6 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
         if (typeParameters.isNotEmpty()) {
             scopes.add(FirMemberTypeParameterScope(this))
         }
-    }
-}
-
-private class FirNestedClassifierScopeWithSubstitution(
-    private val scope: FirNestedClassifierScope,
-    private val substitutor: ConeSubstitutor
-) : FirScope() {
-    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        val matchedClass = scope.getClassifierByName(name) ?: return
-        val substitutor = substitutor.takeIf { matchedClass.fir.isInner } ?: ConeSubstitutor.Empty
-        processor(matchedClass, substitutor)
     }
 }
 
