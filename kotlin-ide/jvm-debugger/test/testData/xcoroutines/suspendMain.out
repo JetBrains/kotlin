@@ -9,7 +9,7 @@ CoroutineInfo: -1 coroutine UNKNOWN
 	CoroutineStackFrame startUndispatchedOrReturn:!LINE_NUMBER!, UndispatchedKt (kotlinx.coroutines.intrinsics)
 		($i$a$-undispatchedResult-UndispatchedKt$startUndispatchedOrReturn$2, $i$f$undispatchedResult, $this$startUndispatchedOrReturn, $this$undispatchedResult$iv, block, receiver)
 	CoroutineStackFrame coroutineScope:!LINE_NUMBER!, CoroutineScopeKt (kotlinx.coroutines)
-		($completion, $i$a$-suspendCoroutineUninterceptedOrReturn-CoroutineScopeKt$coroutineScope$2, block, coroutine, uCont)
+		($completion, $i$a$-suspendCoroutineUninterceptedOrReturn-CoroutineScopeKt$coroutineScope$3, block, coroutine, uCont)
 	CoroutineStackFrame main:!LINE_NUMBER!, SuspendMainKt (continuation)
 		($completion)
 	CoroutineStackFrame invokeSuspend:!LINE_NUMBER!, IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$$inlined$createCoroutineFromSuspendFunction$IntrinsicsKt__IntrinsicsJvmKt$1 (kotlin.coroutines.intrinsics)
