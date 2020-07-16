@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -82,6 +83,9 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
 
 fun createSubstitutionForSupertype(superType: ConeLookupTagBasedType, session: FirSession): ConeSubstitutor {
     val klass = superType.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return ConeSubstitutor.Empty
-    val mapping = klass.typeParameters.map { it.symbol }.zip(superType.typeArguments.map { it as ConeKotlinType }).toMap()
+    val arguments = superType.typeArguments.map {
+        it as? ConeKotlinType ?: ConeClassErrorType("illegal projection usage")
+    }
+    val mapping = klass.typeParameters.map { it.symbol }.zip(arguments).toMap()
     return ConeSubstitutorByMap(mapping)
 }
