@@ -17,7 +17,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -46,11 +46,11 @@ import static com.intellij.ide.util.gotoByName.GotoActionModel.*;
 public final class GotoActionItemProvider implements ChooseByNameWeightedItemProvider {
   private final ActionManager myActionManager = ActionManager.getInstance();
   private final GotoActionModel myModel;
-  private final NotNullLazyValue<Map<String, ApplyIntentionAction>> myIntentions;
+  private final ClearableLazyValue<Map<String, ApplyIntentionAction>> myIntentions;
 
   public GotoActionItemProvider(GotoActionModel model) {
     myModel = model;
-    myIntentions = NotNullLazyValue.createValue(() -> ReadAction.compute(() -> myModel.getAvailableIntentions()));
+    myIntentions = ClearableLazyValue.create(() -> ReadAction.compute(() -> myModel.getAvailableIntentions()));
   }
 
   @Override
@@ -234,6 +234,10 @@ public final class GotoActionItemProvider implements ChooseByNameWeightedItemPro
       return new ActionWrapper(action, myModel.getGroupMapping(action), mode, dataContext, myModel);
     });
     return processItems(pattern, actionWrappers, consumer);
+  }
+
+  public void clearIntentions() {
+    myIntentions.drop();
   }
 
   @NotNull
