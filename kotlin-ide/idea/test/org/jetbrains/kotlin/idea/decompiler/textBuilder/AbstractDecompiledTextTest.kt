@@ -28,6 +28,11 @@ abstract class AbstractDecompiledTextTest(baseDirectory: String, allowKotlinPack
 
     private val CUSTOM_PACKAGE_FILE = "package.txt"
 
+    override fun fileName(): String {
+        val testName = getTestName(false)
+        return "$testName/$testName.kt"
+    }
+
     override fun getFileToDecompile(): VirtualFile {
         val className = getTestName(false)
 
