@@ -19,10 +19,9 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
-fun descriptorByFileDirective(testDataFile: File, isAllFilesPresentInTest: Boolean) =
-    object : KotlinWithJdkAndRuntimeLightProjectDescriptor() {
+fun descriptorByFileDirective(testDataFile: File): KotlinWithJdkAndRuntimeLightProjectDescriptor {
+    return object : KotlinWithJdkAndRuntimeLightProjectDescriptor() {
         private fun projectDescriptorByFileDirective(): LightProjectDescriptor {
-            if (isAllFilesPresentInTest) return INSTANCE
             val fileText = FileUtil.loadFile(testDataFile, true)
             return if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_FULL_JDK"))
                 INSTANCE_FULL_JDK
@@ -44,4 +43,5 @@ fun descriptorByFileDirective(testDataFile: File, isAllFilesPresentInTest: Boole
             model.getModuleExtension(LanguageLevelModuleExtension::class.java).languageLevel = LanguageLevel.JDK_1_8
         }
     }
+}
 

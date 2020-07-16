@@ -82,8 +82,6 @@ abstract class AbstractRenameTest : KotlinLightCodeInsightFixtureTestCase() {
     )
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        if (KotlinTestUtils.isAllFilesPresentTest(getTestName(false))) return super.getProjectDescriptor()
-
         val testConfigurationFile = File(testDataPath, fileName())
         val renameObject = loadTestConfiguration(testConfigurationFile)
         val withRuntime = renameObject.getNullableString("withRuntime")

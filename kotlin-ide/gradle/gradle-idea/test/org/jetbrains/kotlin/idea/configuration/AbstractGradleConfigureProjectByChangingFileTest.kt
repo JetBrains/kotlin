@@ -70,15 +70,14 @@ abstract class AbstractGradleConfigureProjectByChangingFileTest :
     }
 
     override fun getProjectJDK(): Sdk {
-        if (!isAllFilesPresentTest(getTestName(false))) {
-            val beforeAfterFiles = beforeAfterFiles()
-            val (before, _) = beforeAfterFiles
-            val gradleFile = File(testDataPath, before)
-            if (gradleFile.readText().contains("1.9")) {
-                return PluginTestCaseBase.mockJdk9()
-            }
-        }
+        val beforeAfterFiles = beforeAfterFiles()
+        val (before, _) = beforeAfterFiles
+        val gradleFile = File(testDataPath, before)
 
-        return super.getProjectJDK()
+        if (gradleFile.readText().contains("1.9")) {
+            return PluginTestCaseBase.mockJdk9()
+        } else {
+            return super.getProjectJDK()
+        }
     }
 }

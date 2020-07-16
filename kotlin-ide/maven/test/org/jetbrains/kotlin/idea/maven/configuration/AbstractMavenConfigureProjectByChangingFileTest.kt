@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangin
 import org.jetbrains.kotlin.idea.configuration.NotificationMessageCollector
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils.isAllFilesPresentTest
 import java.io.File
 
 abstract class AbstractMavenConfigureProjectByChangingFileTest : AbstractConfigureProjectByChangingFileTest<KotlinMavenConfigurator>() {
@@ -52,16 +51,15 @@ abstract class AbstractMavenConfigureProjectByChangingFileTest : AbstractConfigu
     }
 
     override fun getProjectJDK(): Sdk {
-        if (!isAllFilesPresentTest(getTestName(false))) {
-            val root = KotlinTestUtils.getTestsRoot(this::class.java)
-            val dir = KotlinTestUtils.getTestDataFileName(this::class.java, name)
+        val root = KotlinTestUtils.getTestsRoot(this::class.java)
+        val dir = KotlinTestUtils.getTestDataFileName(this::class.java, name)
 
-            val pomFile = File("$root/$dir", MavenConstants.POM_XML)
-            if (pomFile.readText().contains("<target>9</target>")) {
-                return PluginTestCaseBase.mockJdk9()
-            }
+        val pomFile = File("$root/$dir", MavenConstants.POM_XML)
+
+        if (pomFile.readText().contains("<target>9</target>")) {
+            return PluginTestCaseBase.mockJdk9()
+        } else {
+            return super.getProjectJDK()
         }
-
-        return super.getProjectJDK()
     }
 }

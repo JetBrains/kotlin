@@ -77,6 +77,5 @@ abstract class AbstractMutabilityInferenceTest : AbstractConstraintCollectorTest
         deleteComments()
     }
 
-    override fun getProjectDescriptor() =
-        descriptorByFileDirective(File(testDataPath, fileName()), isAllFilesPresentInTest())
+    override fun getProjectDescriptor() = descriptorByFileDirective(File(testDataPath, fileName()))
 }

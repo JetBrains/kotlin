@@ -161,10 +161,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     }
 
     private fun getProjectDescriptorFromFileDirective(): LightProjectDescriptor {
-        if (isAllFilesPresentInTest()) {
-            return KotlinLightProjectDescriptor.INSTANCE
-        }
-
         val file = File(testDataPath, fileName())
         if (!file.exists()) {
             return KotlinLightProjectDescriptor.INSTANCE
@@ -217,8 +213,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     }
 
     protected open fun getDefaultProjectDescriptor(): KotlinLightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
-
-    protected fun isAllFilesPresentInTest(): Boolean = KotlinTestUtils.isAllFilesPresentTest(getTestName(false))
 
     protected fun performNotWriteEditorAction(actionId: String): Boolean {
         val dataContext = (myFixture.editor as EditorEx).dataContext

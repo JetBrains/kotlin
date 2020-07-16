@@ -121,10 +121,6 @@ public class PluginTestCaseBase {
         }
     }
 
-    public static boolean isAllFilesPresentTest(@NotNull String testName) {
-        return StringUtil.startsWithIgnoreCase(testName, "allFilesPresentIn");
-    }
-
     @TestOnly
     public static void clearSdkTable(@NotNull Disposable disposable) {
         Disposer.register(disposable, () -> ApplicationManager.getApplication().runWriteAction(() -> {

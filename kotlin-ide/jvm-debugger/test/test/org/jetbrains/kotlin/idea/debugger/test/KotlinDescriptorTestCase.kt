@@ -223,10 +223,6 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     }
 
     override fun checkTestOutput() {
-        if (isAllFilesPresentTest(getTestName(false))) {
-            return
-        }
-
         try {
             super.checkTestOutput()
         } catch (e: ComparisonFailure) {

@@ -26,7 +26,6 @@ import java.io.File
 
 abstract class AbstractMultiFileLocalInspectionTest : AbstractLocalInspectionTest() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        if (KotlinTestUtils.isAllFilesPresentTest(getTestName(false))) return super.getProjectDescriptor()
         val testFile = File(testDataPath, fileName())
         val config = JsonParser().parse(FileUtil.loadFile(testFile, true)) as JsonObject
         val withRuntime = config["withRuntime"]?.asBoolean ?: false

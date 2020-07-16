@@ -55,6 +55,5 @@ abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKo
         File(javaPath.replace(".java", ".new.kt")).takeIf { it.exists() }
             ?: super.provideExpectedFile(javaPath)
 
-    override fun getProjectDescriptor() =
-        descriptorByFileDirective(File(testDataPath, fileName()), isAllFilesPresentInTest())
+    override fun getProjectDescriptor() = descriptorByFileDirective(File(testDataPath, fileName()))
 }

@@ -97,7 +97,6 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
         super.setUp()
 
         val testName = getTestName(false)
-        if (KotlinTestUtils.isAllFilesPresentTest(testName)) return
 
         val testDataDir = TestMetadataUtil.getTestData(this::class.java)
         val testFile = listOf(File(testDataDir, "$testName.kt"), File(testDataDir, "$testName.kts")).first { it.exists() }
