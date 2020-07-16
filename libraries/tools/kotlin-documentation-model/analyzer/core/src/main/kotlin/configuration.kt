@@ -2,10 +2,8 @@
 
 package org.jetbrains.dokka
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.UnstableDefault
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
+import org.jetbrains.dokka.utilities.toJsonString
+import org.jetbrains.dokka.utilities.parseJson
 import java.io.File
 import java.net.URL
 
@@ -52,7 +50,6 @@ enum class Platform(val key: String) {
     }
 }
 
-@Serializable
 data class DokkaSourceSetID(
     val moduleName: String,
     val sourceSetName: String
@@ -62,10 +59,12 @@ data class DokkaSourceSetID(
     }
 }
 
-@OptIn(UnstableDefault::class)
-fun DokkaConfigurationImpl(input: String): DokkaConfigurationImpl {
-    val json = Json(JsonConfiguration.Default.copy(ignoreUnknownKeys = true))
-    return json.parse(DokkaConfigurationImpl.serializer(), input)
+fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl {
+    return parseJson(json)
+}
+
+fun DokkaConfiguration.toJsonString(): String {
+    return toJsonString(this)
 }
 
 interface DokkaConfiguration {

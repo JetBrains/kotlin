@@ -18,7 +18,11 @@ allprojects {
     val language_version: String by project
     tasks.withType(KotlinCompile::class).all {
         kotlinOptions {
-            freeCompilerArgs += "-Xjsr305=strict -Xskip-metadata-version-check -Xopt-in=kotlin.RequiresOptIn."
+            freeCompilerArgs = freeCompilerArgs + listOf(
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xskip-metadata-version-check",
+                "-Xjsr305=strict"
+            )
             languageVersion = language_version
             apiVersion = language_version
             jvmTarget = "1.8"
