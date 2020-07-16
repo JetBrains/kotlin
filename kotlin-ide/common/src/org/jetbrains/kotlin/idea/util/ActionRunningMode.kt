@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.util
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
 
 enum class ActionRunningMode {
     RUN_IN_CURRENT_THREAD,
@@ -19,7 +20,9 @@ inline fun <T> ActionRunningMode.runAction(crossinline action: () -> T): T = whe
     ActionRunningMode.RUN_IN_EDT -> {
         var result: T? = null
         ApplicationManager.getApplication().invokeAndWait {
-            result = ApplicationManager.getApplication().runWriteAction<T> { action() }
+            CommandProcessor.getInstance().runUndoTransparentAction {
+                result = ApplicationManager.getApplication().runWriteAction<T> { action() }
+            }
         }
         result!!
     }

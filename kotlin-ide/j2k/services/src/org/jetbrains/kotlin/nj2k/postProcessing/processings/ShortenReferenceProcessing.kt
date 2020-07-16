@@ -28,20 +28,18 @@ class ShortenReferenceProcessing : FileBasedPostProcessing() {
     }
 
     override fun runProcessing(file: KtFile, allFiles: List<KtFile>, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
-        CommandProcessor.getInstance().runUndoTransparentAction {
-            if (rangeMarker != null) {
-                if (rangeMarker.isValid) {
-                    ShortenReferences.DEFAULT.process(
-                        file,
-                        rangeMarker.startOffset,
-                        rangeMarker.endOffset,
-                        filter,
-                        actionRunningMode = ActionRunningMode.RUN_IN_EDT
-                    )
-                }
-            } else {
-                ShortenReferences.DEFAULT.process(file, filter, actionRunningMode = ActionRunningMode.RUN_IN_EDT)
+        if (rangeMarker != null) {
+            if (rangeMarker.isValid) {
+                ShortenReferences.DEFAULT.process(
+                    file,
+                    rangeMarker.startOffset,
+                    rangeMarker.endOffset,
+                    filter,
+                    actionRunningMode = ActionRunningMode.RUN_IN_EDT
+                )
             }
+        } else {
+            ShortenReferences.DEFAULT.process(file, filter, actionRunningMode = ActionRunningMode.RUN_IN_EDT)
         }
     }
 }
