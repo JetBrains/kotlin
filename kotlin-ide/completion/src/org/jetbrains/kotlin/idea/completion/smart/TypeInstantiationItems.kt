@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.completion.smart
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.Tail
 import org.jetbrains.kotlin.idea.core.multipleFuzzyTypes
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
-import org.jetbrains.kotlin.idea.formatter.ktCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -186,15 +187,15 @@ class TypeInstantiationItems(
             insertHandler = InsertHandler<LookupElement> { context, _ ->
                 val startOffset = context.startOffset
 
-                val settings = ktCodeStyleSettings(context.project)?.custom
-                val spaceBefore = if (settings?.SPACE_BEFORE_EXTEND_COLON == true) " " else ""
-                val spaceAfter = if (settings?.SPACE_AFTER_EXTEND_COLON == true) " " else ""
+                val settings = CodeStyle.getSettings(context.file).kotlinCustomSettings
+                val spaceBefore = if (settings.SPACE_BEFORE_EXTEND_COLON) " " else ""
+                val spaceAfter = if (settings.SPACE_AFTER_EXTEND_COLON) " " else ""
                 val text1 = "object$spaceBefore:$spaceAfter$typeText"
                 val text2 = "$constructorParenthesis {}"
                 val text = if (allTypeArgsKnown)
                     text1 + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgsToUse) + text2
                 else
-                    text1 + "<>" + text2
+                    "$text1<>$text2"
 
                 context.document.replaceString(startOffset, context.tailOffset, text)
 

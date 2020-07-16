@@ -13,7 +13,6 @@ import com.intellij.testFramework.EditorTestUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
-import org.jetbrains.kotlin.idea.formatter.ktCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
@@ -1157,7 +1156,6 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     private val enableKotlinOfficialCodeStyle: () -> Unit = {
-        val settings = ktCodeStyleSettings(project)?.all ?: error("No Settings")
-        KotlinStyleGuideCodeStyle.apply(settings)
+        KotlinStyleGuideCodeStyle.apply(CodeStyle.getSettings(project))
     }
 }
