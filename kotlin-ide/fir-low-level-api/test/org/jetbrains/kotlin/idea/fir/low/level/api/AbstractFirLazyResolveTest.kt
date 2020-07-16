@@ -13,11 +13,13 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
@@ -63,7 +65,7 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
         } as KtExpression
 
         val resolveState = expressionToResolve.firResolveState()
-        val resultsDump = when (val firElement = expressionToResolve.getOrBuildFir(resolveState)) {
+        val resultsDump = when (val firElement = resolveState.getOrBuildFirFor(expressionToResolve, FirResolvePhase.BODY_RESOLVE)) {
             is FirResolvedImport -> buildString {
                 append("import ")
                 append(firElement.packageFqName)
@@ -99,9 +101,9 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
         val files = FileTypeIndex.getFiles(KotlinFileType.INSTANCE, contentScope)
         for (file in files) {
             val psiFile = psiManager.findFile(file) as KtFile
-            val session = resolveState.getSession(psiFile)
+            val session = resolveState.firSession
             val firProvider = session.firIdeProvider
-            val firFile = firProvider.getFile(psiFile) ?: continue
+            val firFile = firProvider.cache.getCachedFirFile(psiFile) ?: continue
             KotlinTestUtils.assertEqualsToFile(File(expectedTxtPath(file)), firFile.render())
         }
     }

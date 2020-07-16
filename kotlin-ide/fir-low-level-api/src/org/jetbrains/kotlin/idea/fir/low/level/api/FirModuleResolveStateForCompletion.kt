@@ -5,27 +5,63 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.PsiToFirCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 
-class FirModuleResolveStateForCompletion(
-    mainState: FirModuleResolveStateImpl
-) : FirModuleResolveStateImpl(mainState.sessionProvider) {
-    override val cache: PsiToFirCache = PsiToFirCacheForCompletion(mainState.cache)
-}
+internal class FirModuleResolveStateForCompletion(
+    private val originalState: FirModuleResolveStateImpl
+) : FirModuleResolveState() {
+    override val moduleInfo: IdeaModuleInfo get() = originalState.moduleInfo
+    override val firSession: FirSession get() = originalState.firSession
 
-private class PsiToFirCacheForCompletion(private val delegate: PsiToFirCache) : PsiToFirCache() {
-    private val cache = mutableMapOf<KtElement, FirElement>()
+    private val psiToFirCache = PsiToFirCache(originalState.fileCache)
 
-    override fun get(psi: KtElement): FirElement? =
-        cache[psi] ?: delegate[psi]
+    override fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession =
+        originalState.getSessionFor(moduleInfo)
 
-    override fun set(psi: KtElement, fir: FirElement) {
-        cache[psi] = fir
+    override fun getOrBuildFirFor(element: KtElement, toPhase: FirResolvePhase): FirElement {
+        getCachedMappingForCompletion(element)?.let { return it }
+        return originalState.elementBuilder.getOrBuildFirFor(
+            element,
+            originalState.fileCache,
+            psiToFirCache,
+            toPhase
+        )
     }
 
-    override fun remove(psi: PsiElement) {
-        cache.remove(psi)
+    override fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile) {
+        psiToFirCache.recordElementsForCompletionFrom(fir, firFile, ktFile)
+    }
+
+    override fun getCachedMappingForCompletion(element: KtElement): FirElement? {
+        psiToFirCache.getCachedMapping(element)?.let { return it }
+        originalState.psiToFirCache.getCachedMapping(element)?.let { return it }
+        return null
+    }
+
+    override fun lazyResolveFunctionForCompletion(
+        firFunction: FirFunction<*>,
+        containerFirFile: FirFile,
+        firIdeProvider: FirIdeProvider,
+        toPhase: FirResolvePhase,
+        towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>
+    ) {
+        originalState.lazyResolveFunctionForCompletion(firFunction, containerFirFile, firIdeProvider, toPhase, towerDataContextForStatement)
+    }
+
+    override fun getDiagnostics(element: KtElement): List<Diagnostic> {
+        error("Diagnostics should not be retrieved in completion")
     }
 }

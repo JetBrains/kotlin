@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirScopeProvider
@@ -126,7 +125,7 @@ private constructor(
 
     override fun createContextDependentCopy(): KtAnalysisSession {
         check(!isContextSession) { "Cannot create context-dependent copy of KtAnalysis session from a context dependent one" }
-        val contextResolveState = LowLevelFirApiFacade.getResolveStateForCompletion(element, firResolveState as FirModuleResolveStateImpl)
+        val contextResolveState = LowLevelFirApiFacade.getResolveStateForCompletion(element, firResolveState)
         return KtFirAnalysisSession(
             element,
             firSession,
@@ -148,7 +147,7 @@ private constructor(
     }
 
     private fun resolveCall(firCall: FirFunctionCall, callExpression: KtExpression): CallInfo? {
-        val session = LowLevelFirApiFacade.getSessionFor(callExpression, firResolveState)
+        val session = firResolveState.firSession
         val resolvedFunctionSymbol = firCall.calleeReference.toTargetSymbol(session, firSymbolBuilder)
         val resolvedCalleeSymbol = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
         return when {
@@ -203,7 +202,7 @@ private constructor(
         @Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
         fun createForElement(element: KtElement): KtFirAnalysisSession {
             val firResolveState = LowLevelFirApiFacade.getResolveStateFor(element)
-            val firSession = LowLevelFirApiFacade.getSessionFor(element, firResolveState)
+            val firSession = firResolveState.firSession
             val project = element.project
             val typeContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = true, isStubTypeEqualsToAnything = true, firSession)
             val token = ReadActionConfinementValidityToken(project)
