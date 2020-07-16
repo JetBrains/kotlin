@@ -32,6 +32,9 @@
     <editorFloatingToolbarProvider implementation="com.intellij.openapi.externalSystem.autoimport.ProjectRefreshFloatingProvider"/>
     <projectConfigurable groupId="build" id="build.tools" groupWeight="1000"
                          instance="com.intellij.openapi.externalSystem.service.settings.ExternalSystemGroupConfigurable"/>
+    <search.optionContributor
+      implementation="com.intellij.openapi.externalSystem.service.settings.ExternalSystemGroupSearchableContributor"/>
+
 
     <!--Project structure management services-->
     <applicationService serviceInterface="com.intellij.openapi.externalSystem.service.project.ProjectDataManager"
