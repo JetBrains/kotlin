@@ -1,0 +1,75 @@
+FILE fqName:<root> fileName:/MetadataProperty.kt
+  CLASS CLASS name:MetadataProperty modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty>
+    TYPE_PARAMETER name:T index:0 variance:in superTypes:[<root>.HasMetadata]
+    TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (default:R of <root>.MetadataProperty) returnType:<root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty> [primary]
+      VALUE_PARAMETER name:default index:0 type:R of <root>.MetadataProperty
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MetadataProperty modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:default visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:default type:R of <root>.MetadataProperty visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'default: R of <root>.MetadataProperty declared in <root>.MetadataProperty.<init>' type=R of <root>.MetadataProperty origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-default> visibility:public modality:FINAL <> ($this:<root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty>) returnType:R of <root>.MetadataProperty
+        correspondingProperty: PROPERTY name:default visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-default> (): R of <root>.MetadataProperty declared in <root>.MetadataProperty'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:default type:R of <root>.MetadataProperty visibility:private [final]' type=R of <root>.MetadataProperty origin=null
+              receiver: GET_VAR '<this>: <root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty> declared in <root>.MetadataProperty.<get-default>' type=<root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty> origin=null
+    FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty>, thisRef:T of <root>.MetadataProperty, desc:IrErrorType) returnType:R of <root>.MetadataProperty [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty>
+      VALUE_PARAMETER name:thisRef index:0 type:T of <root>.MetadataProperty
+      VALUE_PARAMETER name:desc index:1 type:IrErrorType
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=IF
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+              $this: CALL 'public final fun hasData (key: kotlin.String): kotlin.Boolean declared in <root>.HasMetadata' type=kotlin.Boolean origin=null
+                $this: GET_VAR 'thisRef: T of <root>.MetadataProperty declared in <root>.MetadataProperty.getValue' type=T of <root>.MetadataProperty origin=null
+                key: ERROR_CALL 'Unresolved reference: <Unresolved name: name>#' type=IrErrorType
+            then: RETURN type=kotlin.Nothing from='public final fun getValue (thisRef: T of <root>.MetadataProperty, desc: IrErrorType): R of <root>.MetadataProperty [operator] declared in <root>.MetadataProperty'
+              CALL 'public final fun <get-default> (): R of <root>.MetadataProperty declared in <root>.MetadataProperty' type=R of <root>.MetadataProperty origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty> declared in <root>.MetadataProperty.getValue' type=<root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty> origin=null
+        RETURN type=kotlin.Nothing from='public final fun getValue (thisRef: T of <root>.MetadataProperty, desc: IrErrorType): R of <root>.MetadataProperty [operator] declared in <root>.MetadataProperty'
+          CALL 'public final fun getData <T> (key: kotlin.String): T of <root>.HasMetadata.getData declared in <root>.HasMetadata' type=R of <root>.MetadataProperty origin=null
+            <T>: R of <root>.MetadataProperty
+            $this: GET_VAR 'thisRef: T of <root>.MetadataProperty declared in <root>.MetadataProperty.getValue' type=T of <root>.MetadataProperty origin=null
+            key: ERROR_CALL 'Unresolved reference: <Unresolved name: name>#' type=IrErrorType
+    FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty>, thisRef:T of <root>.MetadataProperty, desc:IrErrorType, value:R of <root>.MetadataProperty) returnType:kotlin.Unit [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty>
+      VALUE_PARAMETER name:thisRef index:0 type:T of <root>.MetadataProperty
+      VALUE_PARAMETER name:desc index:1 type:IrErrorType
+      VALUE_PARAMETER name:value index:2 type:R of <root>.MetadataProperty
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'value: R of <root>.MetadataProperty declared in <root>.MetadataProperty.setValue' type=R of <root>.MetadataProperty origin=null
+              arg1: CALL 'public final fun <get-default> (): R of <root>.MetadataProperty declared in <root>.MetadataProperty' type=R of <root>.MetadataProperty origin=GET_PROPERTY
+                $this: GET_VAR '<this>: <root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty> declared in <root>.MetadataProperty.setValue' type=<root>.MetadataProperty<T of <root>.MetadataProperty, R of <root>.MetadataProperty> origin=null
+            then: CALL 'public final fun removeData (key: kotlin.String): kotlin.Unit declared in <root>.HasMetadata' type=kotlin.Unit origin=null
+              $this: GET_VAR 'thisRef: T of <root>.MetadataProperty declared in <root>.MetadataProperty.setValue' type=T of <root>.MetadataProperty origin=null
+              key: ERROR_CALL 'Unresolved reference: <Unresolved name: name>#' type=IrErrorType
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CALL 'public final fun setData <T> (key: kotlin.String, value: T of <root>.HasMetadata.setData): kotlin.Unit declared in <root>.HasMetadata' type=kotlin.Unit origin=null
+              <T>: R of <root>.MetadataProperty
+              $this: GET_VAR 'thisRef: T of <root>.MetadataProperty declared in <root>.MetadataProperty.setValue' type=T of <root>.MetadataProperty origin=null
+              key: ERROR_CALL 'Unresolved reference: <Unresolved name: name>#' type=IrErrorType
+              value: GET_VAR 'value: R of <root>.MetadataProperty declared in <root>.MetadataProperty.setValue' type=R of <root>.MetadataProperty origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
