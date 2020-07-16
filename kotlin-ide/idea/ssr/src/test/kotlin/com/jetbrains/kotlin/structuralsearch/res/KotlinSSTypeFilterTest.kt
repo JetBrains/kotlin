@@ -17,6 +17,8 @@ class KotlinSSTypeFilterTest : KotlinSSResourceInspectionTest() {
     fun testNullableType() { doTest("'_('_:[exprtype(Int?)])") }
 
     fun testNullableTypeHierarchy() { doTest("val '_:[exprtype(*A)]") }
+    
+    fun testNull() { doTest("'_('_:[exprtype(null)])") }
 
     // Elements where type filter is enabled
 

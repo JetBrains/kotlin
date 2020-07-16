@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateEntry
+import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 
@@ -25,6 +26,7 @@ class KotlinExprTypePredicate(
     private val ignoreCase: Boolean
 ) : MatchPredicate() {
     override fun match(matchedNode: PsiElement, start: Int, end: Int, context: MatchContext): Boolean {
+        if (matchedNode is KtExpression && matchedNode.isNull() && searchedTypeNames.contains("null")) return true
         val node = StructuralSearchUtil.getParentIfIdentifier(matchedNode)
         val type = when {
             node is KtDeclaration -> node.type()
@@ -42,6 +44,7 @@ class KotlinExprTypePredicate(
         val scope = project.allScope()
 
         for (searchedType in searchedTypeNames) {
+            if (searchedType == "null") continue
             val searchNameCorrected = searchedType.substringBefore("<").substringBefore("?")
 
             val index =
