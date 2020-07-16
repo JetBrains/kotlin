@@ -46,7 +46,7 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
                 first,
                 last,
                 step,
-                additionalVariables = listOfNotNull(progressionVar),
+                additionalStatements = listOfNotNull(progressionVar),
                 direction = ProgressionDirection.UNKNOWN
             )
         }
