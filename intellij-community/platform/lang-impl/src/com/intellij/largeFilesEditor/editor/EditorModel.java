@@ -987,6 +987,8 @@ public class EditorModel {
   }
 
   public void fireLocalScrollBarValueChanged() {
+    if (editor.isDisposed()) return;  // to avoid DisposalException: Editor is already disposed
+
     if (isLocalScrollBarStabilized) {
       reflectLocalScrollBarStateToTargetPosition();
     }
