@@ -8,7 +8,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemBundle.message
 class ExternalSystemGroupSearchableContributor: SearchableOptionContributor() {
 
   private val buildToolsId = "build.tools"
-  private val buildToolsName = "Build Tools"
+  private val buildToolsName = message("settings.build.tools.display.name")
 
   override fun processOptions(processor: SearchableOptionProcessor) {
     processor.addOptions(
