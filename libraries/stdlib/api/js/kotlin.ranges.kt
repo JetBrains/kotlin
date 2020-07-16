@@ -113,11 +113,13 @@ public inline operator fun <T : kotlin.Any, R : kotlin.collections.Iterable<T>> 
 @kotlin.internal.InlineOnly
 public inline operator fun kotlin.ranges.CharRange.contains(element: kotlin.Char?): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "byteRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Byte>.contains(value: kotlin.Double): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "byteRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Byte>.contains(value: kotlin.Float): kotlin.Boolean
 
@@ -130,52 +132,62 @@ public operator fun kotlin.ranges.ClosedRange<kotlin.Byte>.contains(value: kotli
 @kotlin.jvm.JvmName(name = "byteRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Byte>.contains(value: kotlin.Short): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "doubleRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Double>.contains(value: kotlin.Byte): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "doubleRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Double>.contains(value: kotlin.Float): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "doubleRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Double>.contains(value: kotlin.Int): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "doubleRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Double>.contains(value: kotlin.Long): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "doubleRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Double>.contains(value: kotlin.Short): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "floatRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Float>.contains(value: kotlin.Byte): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "floatRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Float>.contains(value: kotlin.Double): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "floatRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Float>.contains(value: kotlin.Int): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "floatRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Float>.contains(value: kotlin.Long): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "floatRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Float>.contains(value: kotlin.Short): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "intRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Int>.contains(value: kotlin.Byte): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "intRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Int>.contains(value: kotlin.Double): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "intRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Int>.contains(value: kotlin.Float): kotlin.Boolean
 
@@ -188,11 +200,13 @@ public operator fun kotlin.ranges.ClosedRange<kotlin.Int>.contains(value: kotlin
 @kotlin.jvm.JvmName(name = "longRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Long>.contains(value: kotlin.Byte): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "longRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Long>.contains(value: kotlin.Double): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "longRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Long>.contains(value: kotlin.Float): kotlin.Boolean
 
@@ -205,11 +219,13 @@ public operator fun kotlin.ranges.ClosedRange<kotlin.Long>.contains(value: kotli
 @kotlin.jvm.JvmName(name = "shortRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Short>.contains(value: kotlin.Byte): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "shortRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Short>.contains(value: kotlin.Double): kotlin.Boolean
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.Deprecated(message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", warningSince = "1.3")
 @kotlin.jvm.JvmName(name = "shortRangeContains")
 public operator fun kotlin.ranges.ClosedRange<kotlin.Short>.contains(value: kotlin.Float): kotlin.Boolean
 

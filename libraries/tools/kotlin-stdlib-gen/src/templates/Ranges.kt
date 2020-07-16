@@ -159,7 +159,8 @@ object RangeOps : TemplateGroupBase() {
 
         check(rangeType.isNumeric() == itemType.isNumeric()) { "Required rangeType and itemType both to be numeric or both not, got: $rangeType, $itemType" }
         if (rangeType.isIntegral() != itemType.isIntegral()) {
-            deprecate(Deprecation("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR))
+            val message = "This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed."
+            deprecate(Deprecation(message, warningSince = "1.3", errorSince = "1.4"))
         }
 
         platformName("${rangeType.name.decapitalize()}RangeContains")
