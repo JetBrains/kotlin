@@ -27,13 +27,17 @@ private const val CHECK_PACKAGE_DIRECTIVE = "CHECK_PACKAGE"
 
 abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) :
     AbstractDecompiledTextBaseTest(baseDirectory, true, withRuntime = true) {
-    override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, module!!)
+    override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, module)
 
-    override fun checkPsiFile(psiFile: PsiFile) =
+    override fun checkPsiFile(psiFile: PsiFile) {
         assertTrue(psiFile is KtDecompiledFile, "Expecting decompiled kotlin javascript file, was: " + psiFile::class.java)
+    }
 
     override fun textToCheck(psiFile: PsiFile): String {
-        if (psiFile !is KtFile) return psiFile.text
+        if (psiFile !is KtFile) {
+            return psiFile.text
+        }
+
         val singleClass = findSingleClassToCheck(psiFile) ?: return psiFile.text
 
         // Take top-comments and spaces after them, package directive with space after it, and single class element
@@ -71,6 +75,7 @@ abstract class AbstractJsDecompiledTextFromJsMetadataTest : AbstractDecompiledTe
 fun getKjsmFile(packageName: String, module: Module): VirtualFile {
     val root = findTestLibraryRoot(module)!!
     root.refresh(false, true)
-    val packageDir = root.findFileByRelativePath(SdkAndMockLibraryProjectDescriptor.MOCK_LIBRARY_NAME + "/" + packageName.replace(".", "/"))!!
+    val packagePath = SdkAndMockLibraryProjectDescriptor.MOCK_LIBRARY_NAME + "/" + packageName.replace(".", "/")
+    val packageDir = root.findFileByRelativePath(packagePath)!!
     return packageDir.findChild(JsSerializerProtocol.getKjsmFilePath(FqName(packageName)).substringAfterLast('/'))!!
 }

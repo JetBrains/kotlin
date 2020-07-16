@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -31,7 +30,11 @@ class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         val sources = listOf(File(testDataPath, getTestName(true) + "/library"))
         // -Xallow-kotlin-package to avoid "require kotlin.stdlib" in module-info.java
         val extraOptions = listOf("-jdk-home", KotlinTestUtils.getJdk9Home().path, "-Xallow-kotlin-package")
-        val libraryJar = KotlinCompilerStandalone(sources, platform = JdkPlatform(JvmTarget.JVM_9), options = extraOptions).compile()
+        val libraryJar = KotlinCompilerStandalone(
+            sources,
+            platform = KotlinCompilerStandalone.Platform.Jvm(JvmTarget.JVM_9),
+            options = extraOptions
+        ).compile()
 
         module("main").addLibrary(libraryJar, "library")
         checkHighlightingInProject()

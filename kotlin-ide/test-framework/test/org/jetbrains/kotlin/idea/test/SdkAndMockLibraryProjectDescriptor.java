@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts;
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind;
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType;
-import org.jetbrains.kotlin.platform.SimplePlatform;
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone;
 
 import java.io.File;
@@ -109,7 +108,9 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
 
     private File compileLibrary() {
         List<String> extraOptions = allowKotlinPackage ? Collections.singletonList("-Xallow-kotlin-package") : emptyList();
-        SimplePlatform platform = isJsLibrary ? KotlinCompilerStandalone.getJsPlatform() : KotlinCompilerStandalone.getJvmPlatform();
+        KotlinCompilerStandalone.Platform platform = isJsLibrary
+            ? KotlinCompilerStandalone.Platform.JavaScript.INSTANCE
+            : new KotlinCompilerStandalone.Platform.Jvm();
         List<File> sources = Collections.singletonList(new File(sourcesPath));
         List<File> classpath = isJsLibrary ? emptyList() : CollectionsKt.map(this.classpath, File::new);
         File libraryJar = KotlinCompilerStandalone.defaultTargetJar();

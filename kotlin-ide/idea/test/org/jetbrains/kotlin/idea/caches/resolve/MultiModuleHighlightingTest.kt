@@ -254,7 +254,11 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             "-Xexperimental=lib.ExperimentalAPI"
         )
 
-        val lib = KotlinCompilerStandalone(sources, platform = KotlinCompilerStandalone.jsPlatform, options = extraOptions).compile()
+        val lib = KotlinCompilerStandalone(
+            sources,
+            platform = KotlinCompilerStandalone.Platform.JavaScript,
+            options = extraOptions
+        ).compile()
 
         val usageModule = module("usage")
         usageModule.makeJsModule()

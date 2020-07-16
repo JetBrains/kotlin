@@ -24,10 +24,6 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
-import org.jetbrains.kotlin.platform.SimplePlatform
-import org.jetbrains.kotlin.platform.js.JsPlatform
-import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.junit.Assert.assertEquals
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -38,24 +34,23 @@ import java.net.URLClassLoader
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.reflect.KClass
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone.Platform.Jvm
+import org.jetbrains.kotlin.test.KotlinCompilerStandalone.Platform.JavaScript
 
 class KotlinCompilerStandalone @JvmOverloads constructor(
     private val sources: List<File>,
     private val target: File = defaultTargetJar(),
-    private val platform: SimplePlatform = jvmPlatform,
+    private val platform: Platform = Jvm(),
     private val options: List<String> = emptyList(),
     classpath: List<File> = emptyList(),
     includeKotlinStdlib: Boolean = true
 ) {
+    sealed class Platform {
+        class JavaScript(val packageName: String) : Platform()
+        class Jvm(val target: JvmTarget = JvmTarget.DEFAULT) : Platform()
+    }
+
     companion object {
-        @JvmStatic
-        val jsPlatform: SimplePlatform
-            get() = JsPlatforms.defaultJsPlatform.componentPlatforms.single()
-
-        @JvmStatic
-        val jvmPlatform: SimplePlatform
-            get() = JdkPlatform(JvmTarget.DEFAULT)
-
         @JvmStatic
         fun defaultTargetJar(): File {
             return File.createTempFile("kt-lib", ".jar")
@@ -68,14 +63,12 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
     private val classpath: List<File>
 
     init {
-        assert(platform is JdkPlatform || platform is JsPlatform) { "Only JVM and JS targets are supported" }
-
         val completeClasspath = classpath.toMutableList()
 
         if (includeKotlinStdlib) {
             when (platform) {
-                is JdkPlatform -> completeClasspath += listOf(KotlinArtifacts.instance.kotlinStdlib, KotlinArtifacts.instance.jetbrainsAnnotations)
-                is JsPlatform -> completeClasspath += KotlinArtifacts.instance.kotlinStdlibJs
+                is Jvm -> completeClasspath += listOf(KotlinArtifacts.instance.kotlinStdlib, KotlinArtifacts.instance.jetbrainsAnnotations)
+                is JavaScript -> completeClasspath += KotlinArtifacts.instance.kotlinStdlibJs
             }
         }
 
@@ -98,7 +91,7 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
         }
 
         assert(ktFiles.isNotEmpty() || javaFiles.isNotEmpty()) { "Sources not found" }
-        assert(platform is JdkPlatform || javaFiles.isEmpty()) { "Java source compilation is only available in JVM target" }
+        assert(platform is Jvm || javaFiles.isEmpty()) { "Java source compilation is only available in JVM target" }
 
         val compilerTargets = mutableListOf<File>()
 
@@ -108,9 +101,9 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
             compilerTargets += targetForKotlin
         }
 
-        if (javaFiles.isNotEmpty() && platform is JdkPlatform) {
+        if (javaFiles.isNotEmpty() && platform is Jvm) {
             val targetForJava = KotlinTestUtils.tmpDirForReusableFolder("java-lib")
-            compileJava(javaFiles, compilerTargets, targetForJava, useJava9 = platform.targetVersion >= JvmTarget.JVM_9)
+            compileJava(javaFiles, compilerTargets, targetForJava, useJava9 = platform.target >= JvmTarget.JVM_9)
             compilerTargets += targetForJava
         }
 
@@ -126,9 +119,8 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
         args += files.map { it.absolutePath }
         if (classpath.isNotEmpty()) {
             when (platform) {
-                is JdkPlatform -> args += "-classpath"
-                is JsPlatform -> args += "-libraries"
-                else -> error("Unexpected platform $platform")
+                is Jvm -> args += "-classpath"
+                is JavaScript -> args += "-libraries"
             }
 
             args += classpath.joinToString(File.pathSeparator) { it.absolutePath }
@@ -143,19 +135,19 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
         args += options
 
         val kotlincFun = when (platform) {
-            is JdkPlatform -> {
+            is Jvm -> {
                 args += listOf("-d", target.absolutePath)
                 if (hasJavaFiles) {
                     args += "-Xjava-source-roots=" + sources.joinToString(File.pathSeparator) { it.absolutePath }
                 }
                 KotlinCliCompilerFacade::runJvmCompiler
             }
-            is JsPlatform -> {
+            is JavaScript -> {
                 args += listOf("-meta-info", "-output", target.absolutePath)
                 KotlinCliCompilerFacade::runJsCompiler
             }
-            else -> error("Unexpected platform $platform")
         }
+
         kotlincFun(args)
     }
 
