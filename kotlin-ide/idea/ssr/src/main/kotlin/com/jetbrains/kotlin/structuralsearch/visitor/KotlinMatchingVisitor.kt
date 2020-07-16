@@ -887,6 +887,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         ))
                 && myMatchingVisitor.match(property.getter, other.getter)
                 && myMatchingVisitor.match(property.setter, other.setter)
+                && myMatchingVisitor.match(property.receiverTypeReference, other.receiverTypeReference)
         val handler = getHandler(property.nameIdentifier!!)
         if (myMatchingVisitor.result && handler is SubstitutionHandler) {
             handler.handle(other.nameIdentifier, myMatchingVisitor.matchContext)
