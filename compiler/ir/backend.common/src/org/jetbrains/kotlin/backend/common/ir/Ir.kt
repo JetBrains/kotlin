@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
@@ -111,9 +110,6 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
     val longProgression = progression("LongProgression")
     val progressionClasses = listOfNotNull(charProgression, intProgression, longProgression, uIntProgression, uLongProgression)
 
-    @ObsoleteDescriptorBasedAPI
-    val progressionClassesTypes = progressionClasses.map { it.descriptor.defaultType }.toSet()
-
     val getProgressionLastElementByReturnType = builtInsPackage("kotlin", "internal")
         .getContributedFunctions(Name.identifier("getProgressionLastElement"), NoLookupLocation.FROM_BACKEND)
         .filter { it.containingDeclaration !is BuiltInsPackageFragment }
@@ -154,9 +150,6 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
     val long = symbolTable.referenceClass(builtIns.long)
 
     val integerClasses = listOf(byte, short, int, long)
-
-    @ObsoleteDescriptorBasedAPI
-    val integerClassesTypes = integerClasses.map { it.descriptor.defaultType }
 
     val arrayOf = getSimpleFunction(Name.identifier("arrayOf")) {
         it.extensionReceiverParameter == null && it.dispatchReceiverParameter == null && it.valueParameters.size == 1 &&

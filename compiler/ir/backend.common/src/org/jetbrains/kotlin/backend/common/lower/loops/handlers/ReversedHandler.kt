@@ -10,18 +10,16 @@ import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoFromCallHandler
 import org.jetbrains.kotlin.backend.common.lower.matchers.Quantifier
 import org.jetbrains.kotlin.backend.common.lower.matchers.createIrCallMatcher
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for calls to reverse an iterable. */
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class ReversedHandler(context: CommonBackendContext, private val visitor: HeaderInfoBuilder) :
     HeaderInfoFromCallHandler<Nothing?> {
 
-    private val symbols = context.ir.symbols
+    private val progressionClassesTypes = context.ir.symbols.progressionClasses.map { it.defaultType }.toSet()
 
     // Use Quantifier.ANY so we can handle all reversed iterables in the same manner.
     override val matcher =
@@ -29,7 +27,7 @@ internal class ReversedHandler(context: CommonBackendContext, private val visito
             // Matcher for reversed progression.
             callee {
                 fqName { it == FqName("kotlin.ranges.reversed") }
-                extensionReceiver { it != null && it.type.toKotlinType() in symbols.progressionClassesTypes }
+                extensionReceiver { it != null && it.type in progressionClassesTypes }
                 parameterCount { it == 0 }
             }
 
