@@ -1,0 +1,453 @@
+FILE fqName:<root> fileName:/samWithReceiver.kt
+  CLASS CLASS name:CliOption modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CliOption
+    CONSTRUCTOR visibility:public <> (optionName:kotlin.String, valueDescription:kotlin.String, description:kotlin.String, required:kotlin.Boolean, allowMultipleOccurrences:kotlin.Boolean) returnType:<root>.CliOption [primary]
+      VALUE_PARAMETER name:optionName index:0 type:kotlin.String
+      VALUE_PARAMETER name:valueDescription index:1 type:kotlin.String
+      VALUE_PARAMETER name:description index:2 type:kotlin.String
+      VALUE_PARAMETER name:required index:3 type:kotlin.Boolean
+        EXPRESSION_BODY
+          CONST Boolean type=kotlin.Boolean value=true
+      VALUE_PARAMETER name:allowMultipleOccurrences index:4 type:kotlin.Boolean
+        EXPRESSION_BODY
+          CONST Boolean type=kotlin.Boolean value=false
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CliOption modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:optionName visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:optionName type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'optionName: kotlin.String declared in <root>.CliOption.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-optionName> visibility:public modality:FINAL <> ($this:<root>.CliOption) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:optionName visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.CliOption
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-optionName> (): kotlin.String declared in <root>.CliOption'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:optionName type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.CliOption declared in <root>.CliOption.<get-optionName>' type=<root>.CliOption origin=null
+    PROPERTY name:valueDescription visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:valueDescription type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'valueDescription: kotlin.String declared in <root>.CliOption.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-valueDescription> visibility:public modality:FINAL <> ($this:<root>.CliOption) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:valueDescription visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.CliOption
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-valueDescription> (): kotlin.String declared in <root>.CliOption'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:valueDescription type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.CliOption declared in <root>.CliOption.<get-valueDescription>' type=<root>.CliOption origin=null
+    PROPERTY name:description visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:description type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'description: kotlin.String declared in <root>.CliOption.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-description> visibility:public modality:FINAL <> ($this:<root>.CliOption) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:description visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.CliOption
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-description> (): kotlin.String declared in <root>.CliOption'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:description type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.CliOption declared in <root>.CliOption.<get-description>' type=<root>.CliOption origin=null
+    PROPERTY name:required visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:required type:kotlin.Boolean visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'required: kotlin.Boolean declared in <root>.CliOption.<init>' type=kotlin.Boolean origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-required> visibility:public modality:FINAL <> ($this:<root>.CliOption) returnType:kotlin.Boolean
+        correspondingProperty: PROPERTY name:required visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.CliOption
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-required> (): kotlin.Boolean declared in <root>.CliOption'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:required type:kotlin.Boolean visibility:private [final]' type=kotlin.Boolean origin=null
+              receiver: GET_VAR '<this>: <root>.CliOption declared in <root>.CliOption.<get-required>' type=<root>.CliOption origin=null
+    PROPERTY name:allowMultipleOccurrences visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:allowMultipleOccurrences type:kotlin.Boolean visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'allowMultipleOccurrences: kotlin.Boolean declared in <root>.CliOption.<init>' type=kotlin.Boolean origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-allowMultipleOccurrences> visibility:public modality:FINAL <> ($this:<root>.CliOption) returnType:kotlin.Boolean
+        correspondingProperty: PROPERTY name:allowMultipleOccurrences visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.CliOption
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-allowMultipleOccurrences> (): kotlin.Boolean declared in <root>.CliOption'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:allowMultipleOccurrences type:kotlin.Boolean visibility:private [final]' type=kotlin.Boolean origin=null
+              receiver: GET_VAR '<this>: <root>.CliOption declared in <root>.CliOption.<get-allowMultipleOccurrences>' type=<root>.CliOption origin=null
+    PROPERTY name:name visibility:public modality:FINAL [val]
+      annotations:
+        Deprecated(message = 'Use optionName instead.', replaceWith = ReplaceWith(expression = 'optionName', imports = <null>), level = <null>)
+      FUN name:<get-name> visibility:public modality:FINAL <> ($this:<root>.CliOption) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:name visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.CliOption
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-name> (): kotlin.String declared in <root>.CliOption'
+            CALL 'public final fun <get-optionName> (): kotlin.String declared in <root>.CliOption' type=kotlin.String origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.CliOption declared in <root>.CliOption.<get-name>' type=<root>.CliOption origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:SamWithReceiverCommandLineProcessor modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SamWithReceiverCommandLineProcessor
+    CONSTRUCTOR visibility:public <> () returnType:<root>.SamWithReceiverCommandLineProcessor [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SamWithReceiverCommandLineProcessor modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SamWithReceiverCommandLineProcessor.Companion
+      CONSTRUCTOR visibility:private <> () returnType:<root>.SamWithReceiverCommandLineProcessor.Companion [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]'
+      PROPERTY name:SUPPORTED_PRESETS visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:SUPPORTED_PRESETS type:kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>> visibility:private [final]
+          EXPRESSION_BODY
+            CALL 'public final fun emptyMap <K, V> (): kotlin.collections.Map<K of kotlin.collections.emptyMap, V of kotlin.collections.emptyMap> declared in kotlin.collections' type=kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>> origin=null
+              <K>: kotlin.String
+              <V>: kotlin.collections.List<kotlin.String>
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-SUPPORTED_PRESETS> visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverCommandLineProcessor.Companion) returnType:kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>>
+          correspondingProperty: PROPERTY name:SUPPORTED_PRESETS visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverCommandLineProcessor.Companion
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-SUPPORTED_PRESETS> (): kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>> declared in <root>.SamWithReceiverCommandLineProcessor.Companion'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:SUPPORTED_PRESETS type:kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>> visibility:private [final]' type=kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>> origin=null
+                receiver: GET_VAR '<this>: <root>.SamWithReceiverCommandLineProcessor.Companion declared in <root>.SamWithReceiverCommandLineProcessor.Companion.<get-SUPPORTED_PRESETS>' type=<root>.SamWithReceiverCommandLineProcessor.Companion origin=null
+      PROPERTY name:ANNOTATION_OPTION visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:ANNOTATION_OPTION type:<root>.CliOption visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> (optionName: kotlin.String, valueDescription: kotlin.String, description: kotlin.String, required: kotlin.Boolean, allowMultipleOccurrences: kotlin.Boolean) [primary] declared in <root>.CliOption' type=<root>.CliOption origin=null
+              optionName: CONST String type=kotlin.String value="annotation"
+              valueDescription: CONST String type=kotlin.String value="<fqname>"
+              description: CONST String type=kotlin.String value="Annotation qualified names"
+              required: CONST Boolean type=kotlin.Boolean value=false
+              allowMultipleOccurrences: CONST Boolean type=kotlin.Boolean value=true
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ANNOTATION_OPTION> visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverCommandLineProcessor.Companion) returnType:<root>.CliOption
+          correspondingProperty: PROPERTY name:ANNOTATION_OPTION visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverCommandLineProcessor.Companion
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-ANNOTATION_OPTION> (): <root>.CliOption declared in <root>.SamWithReceiverCommandLineProcessor.Companion'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ANNOTATION_OPTION type:<root>.CliOption visibility:private [final]' type=<root>.CliOption origin=null
+                receiver: GET_VAR '<this>: <root>.SamWithReceiverCommandLineProcessor.Companion declared in <root>.SamWithReceiverCommandLineProcessor.Companion.<get-ANNOTATION_OPTION>' type=<root>.SamWithReceiverCommandLineProcessor.Companion origin=null
+      PROPERTY name:PRESET_OPTION visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:PRESET_OPTION type:<root>.CliOption visibility:private [final]
+          EXPRESSION_BODY
+            CONSTRUCTOR_CALL 'public constructor <init> (optionName: kotlin.String, valueDescription: kotlin.String, description: kotlin.String, required: kotlin.Boolean, allowMultipleOccurrences: kotlin.Boolean) [primary] declared in <root>.CliOption' type=<root>.CliOption origin=null
+              optionName: CONST String type=kotlin.String value="preset"
+              valueDescription: CONST String type=kotlin.String value="<name>"
+              description: STRING_CONCATENATION type=kotlin.String
+                CONST String type=kotlin.String value="Preset name ("
+                CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+                  $this: CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections' type=kotlin.String origin=null
+                    <T>: kotlin.String
+                    $receiver: CALL 'public abstract fun <get-keys> (): kotlin.collections.Set<K of kotlin.collections.Map> declared in kotlin.collections.Map' type=kotlin.collections.Set<kotlin.String> origin=GET_PROPERTY
+                      $this: CALL 'public final fun <get-SUPPORTED_PRESETS> (): kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>> declared in <root>.SamWithReceiverCommandLineProcessor.Companion' type=kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>> origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: <root>.SamWithReceiverCommandLineProcessor.Companion declared in <root>.SamWithReceiverCommandLineProcessor.Companion' type=<root>.SamWithReceiverCommandLineProcessor.Companion origin=null
+                CONST String type=kotlin.String value=")"
+              required: CONST Boolean type=kotlin.Boolean value=false
+              allowMultipleOccurrences: CONST Boolean type=kotlin.Boolean value=true
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-PRESET_OPTION> visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverCommandLineProcessor.Companion) returnType:<root>.CliOption
+          correspondingProperty: PROPERTY name:PRESET_OPTION visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverCommandLineProcessor.Companion
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-PRESET_OPTION> (): <root>.CliOption declared in <root>.SamWithReceiverCommandLineProcessor.Companion'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:PRESET_OPTION type:<root>.CliOption visibility:private [final]' type=<root>.CliOption origin=null
+                receiver: GET_VAR '<this>: <root>.SamWithReceiverCommandLineProcessor.Companion declared in <root>.SamWithReceiverCommandLineProcessor.Companion.<get-PRESET_OPTION>' type=<root>.SamWithReceiverCommandLineProcessor.Companion origin=null
+      PROPERTY name:PLUGIN_ID visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:PLUGIN_ID type:kotlin.String visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=kotlin.String value="org.jetbrains.kotlin.samWithReceiver"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-PLUGIN_ID> visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverCommandLineProcessor.Companion) returnType:kotlin.String
+          correspondingProperty: PROPERTY name:PLUGIN_ID visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverCommandLineProcessor.Companion
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-PLUGIN_ID> (): kotlin.String declared in <root>.SamWithReceiverCommandLineProcessor.Companion'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:PLUGIN_ID type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                receiver: GET_VAR '<this>: <root>.SamWithReceiverCommandLineProcessor.Companion declared in <root>.SamWithReceiverCommandLineProcessor.Companion.<get-PLUGIN_ID>' type=<root>.SamWithReceiverCommandLineProcessor.Companion origin=null
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY name:pluginId visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:pluginId type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'public final fun <get-PLUGIN_ID> (): kotlin.String declared in <root>.SamWithReceiverCommandLineProcessor.Companion' type=kotlin.String origin=GET_PROPERTY
+            $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.SamWithReceiverCommandLineProcessor.Companion
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-pluginId> visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverCommandLineProcessor) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:pluginId visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverCommandLineProcessor
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-pluginId> (): kotlin.String declared in <root>.SamWithReceiverCommandLineProcessor'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pluginId type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.SamWithReceiverCommandLineProcessor declared in <root>.SamWithReceiverCommandLineProcessor.<get-pluginId>' type=<root>.SamWithReceiverCommandLineProcessor origin=null
+    PROPERTY name:pluginOptions visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:pluginOptions type:kotlin.collections.List<<root>.CliOption> visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<<root>.CliOption> origin=null
+            <T>: <root>.CliOption
+            element: CALL 'public final fun <get-ANNOTATION_OPTION> (): <root>.CliOption declared in <root>.SamWithReceiverCommandLineProcessor.Companion' type=<root>.CliOption origin=GET_PROPERTY
+              $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.SamWithReceiverCommandLineProcessor.Companion
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-pluginOptions> visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverCommandLineProcessor) returnType:kotlin.collections.List<<root>.CliOption>
+        correspondingProperty: PROPERTY name:pluginOptions visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverCommandLineProcessor
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-pluginOptions> (): kotlin.collections.List<<root>.CliOption> declared in <root>.SamWithReceiverCommandLineProcessor'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pluginOptions type:kotlin.collections.List<<root>.CliOption> visibility:private [final]' type=kotlin.collections.List<<root>.CliOption> origin=null
+              receiver: GET_VAR '<this>: <root>.SamWithReceiverCommandLineProcessor declared in <root>.SamWithReceiverCommandLineProcessor.<get-pluginOptions>' type=<root>.SamWithReceiverCommandLineProcessor origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:PluginOption modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PluginOption
+    CONSTRUCTOR visibility:public <> (name:kotlin.String, annotation:kotlin.String) returnType:<root>.PluginOption [primary]
+      VALUE_PARAMETER name:name index:0 type:kotlin.String
+      VALUE_PARAMETER name:annotation index:1 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PluginOption modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:name visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'name: kotlin.String declared in <root>.PluginOption.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:FINAL <> ($this:<root>.PluginOption) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:name visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.PluginOption
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-name> (): kotlin.String declared in <root>.PluginOption'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.PluginOption declared in <root>.PluginOption.<get-name>' type=<root>.PluginOption origin=null
+    PROPERTY name:annotation visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:annotation type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'annotation: kotlin.String declared in <root>.PluginOption.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-annotation> visibility:public modality:FINAL <> ($this:<root>.PluginOption) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:annotation visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.PluginOption
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-annotation> (): kotlin.String declared in <root>.PluginOption'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:annotation type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.PluginOption declared in <root>.PluginOption.<get-annotation>' type=<root>.PluginOption origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:SamWithReceiverMavenProjectImportHandler modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SamWithReceiverMavenProjectImportHandler
+    CONSTRUCTOR visibility:public <> () returnType:<root>.SamWithReceiverMavenProjectImportHandler [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SamWithReceiverMavenProjectImportHandler modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    CLASS OBJECT name:Companion modality:FINAL visibility:private [companion] superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SamWithReceiverMavenProjectImportHandler.Companion
+      CONSTRUCTOR visibility:private <> () returnType:<root>.SamWithReceiverMavenProjectImportHandler.Companion [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:private [companion] superTypes:[kotlin.Any]'
+      PROPERTY name:ANNOTATION_PARAMETER_PREFIX visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:ANNOTATION_PARAMETER_PREFIX type:kotlin.String visibility:private [final]
+          EXPRESSION_BODY
+            STRING_CONCATENATION type=kotlin.String
+              CONST String type=kotlin.String value="sam-with-receiver:"
+              CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+                $this: CALL 'public final fun <get-optionName> (): kotlin.String declared in <root>.CliOption' type=kotlin.String origin=GET_PROPERTY
+                  $this: CALL 'public final fun <get-ANNOTATION_OPTION> (): <root>.CliOption declared in <root>.SamWithReceiverCommandLineProcessor.Companion' type=<root>.CliOption origin=GET_PROPERTY
+                    $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.SamWithReceiverCommandLineProcessor.Companion
+              CONST String type=kotlin.String value="="
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ANNOTATION_PARAMETER_PREFIX> visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverMavenProjectImportHandler.Companion) returnType:kotlin.String
+          correspondingProperty: PROPERTY name:ANNOTATION_PARAMETER_PREFIX visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverMavenProjectImportHandler.Companion
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-ANNOTATION_PARAMETER_PREFIX> (): kotlin.String declared in <root>.SamWithReceiverMavenProjectImportHandler.Companion'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ANNOTATION_PARAMETER_PREFIX type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                receiver: GET_VAR '<this>: <root>.SamWithReceiverMavenProjectImportHandler.Companion declared in <root>.SamWithReceiverMavenProjectImportHandler.Companion.<get-ANNOTATION_PARAMETER_PREFIX>' type=<root>.SamWithReceiverMavenProjectImportHandler.Companion origin=null
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY name:compilerPluginId visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:compilerPluginId type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'public final fun <get-PLUGIN_ID> (): kotlin.String declared in <root>.SamWithReceiverCommandLineProcessor.Companion' type=kotlin.String origin=GET_PROPERTY
+            $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.SamWithReceiverCommandLineProcessor.Companion
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-compilerPluginId> visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverMavenProjectImportHandler) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:compilerPluginId visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverMavenProjectImportHandler
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-compilerPluginId> (): kotlin.String declared in <root>.SamWithReceiverMavenProjectImportHandler'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:compilerPluginId type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.SamWithReceiverMavenProjectImportHandler declared in <root>.SamWithReceiverMavenProjectImportHandler.<get-compilerPluginId>' type=<root>.SamWithReceiverMavenProjectImportHandler origin=null
+    PROPERTY name:pluginName visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:pluginName type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="samWithReceiver"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-pluginName> visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverMavenProjectImportHandler) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:pluginName visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverMavenProjectImportHandler
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-pluginName> (): kotlin.String declared in <root>.SamWithReceiverMavenProjectImportHandler'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pluginName type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.SamWithReceiverMavenProjectImportHandler declared in <root>.SamWithReceiverMavenProjectImportHandler.<get-pluginName>' type=<root>.SamWithReceiverMavenProjectImportHandler origin=null
+    PROPERTY name:mavenPluginArtifactName visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:mavenPluginArtifactName type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="kotlin-maven-sam-with-receiver"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-mavenPluginArtifactName> visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverMavenProjectImportHandler) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:mavenPluginArtifactName visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverMavenProjectImportHandler
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-mavenPluginArtifactName> (): kotlin.String declared in <root>.SamWithReceiverMavenProjectImportHandler'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:mavenPluginArtifactName type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.SamWithReceiverMavenProjectImportHandler declared in <root>.SamWithReceiverMavenProjectImportHandler.<get-mavenPluginArtifactName>' type=<root>.SamWithReceiverMavenProjectImportHandler origin=null
+    PROPERTY name:pluginJarFileFromIdea visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:pluginJarFileFromIdea type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="PathUtil.kotlinPathsForIdeaPlugin.samWithReceiverJarPath"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-pluginJarFileFromIdea> visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverMavenProjectImportHandler) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:pluginJarFileFromIdea visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverMavenProjectImportHandler
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-pluginJarFileFromIdea> (): kotlin.String declared in <root>.SamWithReceiverMavenProjectImportHandler'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:pluginJarFileFromIdea type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.SamWithReceiverMavenProjectImportHandler declared in <root>.SamWithReceiverMavenProjectImportHandler.<get-pluginJarFileFromIdea>' type=<root>.SamWithReceiverMavenProjectImportHandler origin=null
+    FUN name:getOptions visibility:public modality:FINAL <> ($this:<root>.SamWithReceiverMavenProjectImportHandler, enabledCompilerPlugins:kotlin.collections.List<kotlin.String>, compilerPluginOptions:kotlin.collections.List<kotlin.String>) returnType:kotlin.collections.List<<root>.PluginOption>?
+      $this: VALUE_PARAMETER name:<this> type:<root>.SamWithReceiverMavenProjectImportHandler
+      VALUE_PARAMETER name:enabledCompilerPlugins index:0 type:kotlin.collections.List<kotlin.String>
+      VALUE_PARAMETER name:compilerPluginOptions index:1 type:kotlin.collections.List<kotlin.String>
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=IF
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+              $this: CALL 'public abstract fun contains (element: E of kotlin.collections.List): kotlin.Boolean [operator] declared in kotlin.collections.List' type=kotlin.Boolean origin=null
+                $this: GET_VAR 'enabledCompilerPlugins: kotlin.collections.List<kotlin.String> declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.collections.List<kotlin.String> origin=null
+                element: CONST String type=kotlin.String value="sam-with-receiver"
+            then: RETURN type=kotlin.Nothing from='public final fun getOptions (enabledCompilerPlugins: kotlin.collections.List<kotlin.String>, compilerPluginOptions: kotlin.collections.List<kotlin.String>): kotlin.collections.List<<root>.PluginOption>? declared in <root>.SamWithReceiverMavenProjectImportHandler'
+              CONST Null type=kotlin.Nothing? value=null
+        VAR name:annotations type:kotlin.collections.MutableList<kotlin.String> [val]
+          CALL 'public final fun mutableListOf <T> (): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> [inline] declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.String> origin=null
+            <T>: kotlin.String
+        BLOCK type=kotlin.Unit origin=FOR_LOOP
+          VAR FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.Iterator<kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>>> [val]
+            CALL 'public final fun iterator <K, V> (): kotlin.collections.Iterator<kotlin.collections.Map.Entry<K of kotlin.collections.iterator, V of kotlin.collections.iterator>> [inline,operator] declared in kotlin.collections' type=kotlin.collections.Iterator<kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>>> origin=FOR_LOOP_ITERATOR
+              <K>: kotlin.String
+              <V>: kotlin.collections.List<kotlin.String>
+              $receiver: CALL 'public final fun <get-SUPPORTED_PRESETS> (): kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>> declared in <root>.SamWithReceiverCommandLineProcessor.Companion' type=kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>> origin=GET_PROPERTY
+                $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.SamWithReceiverCommandLineProcessor.Companion
+          WHILE label=null origin=FOR_LOOP_INNER_WHILE
+            condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=FOR_LOOP_HAS_NEXT
+              $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>>> [val] declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.collections.Iterator<kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>>> origin=null
+            body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
+              VAR FOR_LOOP_VARIABLE name:<destruct> type:kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>> [val]
+                CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>> origin=FOR_LOOP_NEXT
+                  $this: GET_VAR 'val tmp_0: kotlin.collections.Iterator<kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>>> [val] declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.collections.Iterator<kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>>> origin=null
+              VAR name:presetName type:kotlin.String [val]
+                CALL 'public final fun component1 <K, V> (): K of kotlin.collections.component1 [inline,operator] declared in kotlin.collections' type=kotlin.String origin=null
+                  <K>: kotlin.String
+                  <V>: kotlin.collections.List<kotlin.String>
+                  $receiver: GET_VAR 'val <destruct>: kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>> [val] declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>> origin=null
+              VAR name:presetAnnotations type:kotlin.collections.List<kotlin.String> [val]
+                CALL 'public final fun component2 <K, V> (): V of kotlin.collections.component2 [inline,operator] declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
+                  <K>: kotlin.String
+                  <V>: kotlin.collections.List<kotlin.String>
+                  $receiver: GET_VAR 'val <destruct>: kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>> [val] declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.collections.Map.Entry<kotlin.String, kotlin.collections.List<kotlin.String>> origin=null
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'public abstract fun contains (element: E of kotlin.collections.List): kotlin.Boolean [operator] declared in kotlin.collections.List' type=kotlin.Boolean origin=null
+                    $this: GET_VAR 'enabledCompilerPlugins: kotlin.collections.List<kotlin.String> declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.collections.List<kotlin.String> origin=null
+                    element: GET_VAR 'val presetName: kotlin.String [val] declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.String origin=null
+                  then: CALL 'public abstract fun addAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableList>): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
+                    $this: GET_VAR 'val annotations: kotlin.collections.MutableList<kotlin.String> [val] declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.collections.MutableList<kotlin.String> origin=null
+                    elements: GET_VAR 'val presetAnnotations: kotlin.collections.List<kotlin.String> [val] declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.collections.List<kotlin.String> origin=null
+        CALL 'public abstract fun addAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableList>): kotlin.Boolean declared in kotlin.collections.MutableList' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'val annotations: kotlin.collections.MutableList<kotlin.String> [val] declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.collections.MutableList<kotlin.String> origin=null
+          elements: CALL 'public final fun mapNotNull <T, R> (transform: kotlin.Function1<T of kotlin.collections.mapNotNull, R of kotlin.collections.mapNotNull?>): kotlin.collections.List<R of kotlin.collections.mapNotNull> [inline] declared in kotlin.collections' type=kotlin.collections.List<kotlin.String> origin=null
+            <T>: kotlin.String
+            <R>: kotlin.String
+            $receiver: GET_VAR 'compilerPluginOptions: kotlin.collections.List<kotlin.String> declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.collections.List<kotlin.String> origin=null
+            transform: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String?> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (text:kotlin.String) returnType:kotlin.String?
+                VALUE_PARAMETER name:text index:0 type:kotlin.String
+                BLOCK_BODY
+                  WHEN type=kotlin.Unit origin=IF
+                    BRANCH
+                      if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                        $this: CALL 'public final fun startsWith (prefix: kotlin.String, ignoreCase: kotlin.Boolean): kotlin.Boolean declared in kotlin.text' type=kotlin.Boolean origin=null
+                          $receiver: GET_VAR 'text: kotlin.String declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions.<anonymous>' type=kotlin.String origin=null
+                          prefix: CALL 'public final fun <get-ANNOTATION_PARAMETER_PREFIX> (): kotlin.String declared in <root>.SamWithReceiverMavenProjectImportHandler.Companion' type=kotlin.String origin=GET_PROPERTY
+                            $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:private [companion] superTypes:[kotlin.Any]' type=<root>.SamWithReceiverMavenProjectImportHandler.Companion
+                      then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (text: kotlin.String): kotlin.String? declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions'
+                        CONST Null type=kotlin.Nothing? value=null
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (text: kotlin.String): kotlin.String? declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions'
+                    CALL 'public final fun substring (startIndex: kotlin.Int): kotlin.String [inline] declared in kotlin.text' type=kotlin.String origin=null
+                      $receiver: GET_VAR 'text: kotlin.String declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions.<anonymous>' type=kotlin.String origin=null
+                      startIndex: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+                        $this: CALL 'public final fun <get-ANNOTATION_PARAMETER_PREFIX> (): kotlin.String declared in <root>.SamWithReceiverMavenProjectImportHandler.Companion' type=kotlin.String origin=GET_PROPERTY
+                          $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:private [companion] superTypes:[kotlin.Any]' type=<root>.SamWithReceiverMavenProjectImportHandler.Companion
+        RETURN type=kotlin.Nothing from='public final fun getOptions (enabledCompilerPlugins: kotlin.collections.List<kotlin.String>, compilerPluginOptions: kotlin.collections.List<kotlin.String>): kotlin.collections.List<<root>.PluginOption>? declared in <root>.SamWithReceiverMavenProjectImportHandler'
+          CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.map, R of kotlin.collections.map>): kotlin.collections.List<R of kotlin.collections.map> [inline] declared in kotlin.collections' type=kotlin.collections.List<<root>.PluginOption> origin=null
+            <T>: kotlin.String
+            <R>: <root>.PluginOption
+            $receiver: GET_VAR 'val annotations: kotlin.collections.MutableList<kotlin.String> [val] declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions' type=kotlin.collections.MutableList<kotlin.String> origin=null
+            transform: FUN_EXPR type=kotlin.Function1<kotlin.String, <root>.PluginOption> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:<root>.PluginOption
+                VALUE_PARAMETER name:it index:0 type:kotlin.String
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): <root>.PluginOption declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions'
+                    CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, annotation: kotlin.String) [primary] declared in <root>.PluginOption' type=<root>.PluginOption origin=null
+                      name: CALL 'public final fun <get-optionName> (): kotlin.String declared in <root>.CliOption' type=kotlin.String origin=GET_PROPERTY
+                        $this: CALL 'public final fun <get-ANNOTATION_OPTION> (): <root>.CliOption declared in <root>.SamWithReceiverCommandLineProcessor.Companion' type=<root>.CliOption origin=GET_PROPERTY
+                          $this: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.SamWithReceiverCommandLineProcessor.Companion
+                      annotation: GET_VAR 'it: kotlin.String declared in <root>.SamWithReceiverMavenProjectImportHandler.getOptions.<anonymous>' type=kotlin.String origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
