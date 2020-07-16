@@ -213,7 +213,8 @@ public operator fun ClosedRange<Short>.contains(value: Byte): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("doubleRangeContains")
 public operator fun ClosedRange<Double>.contains(value: Byte): Boolean {
     return contains(value.toDouble())
@@ -222,7 +223,8 @@ public operator fun ClosedRange<Double>.contains(value: Byte): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("floatRangeContains")
 public operator fun ClosedRange<Float>.contains(value: Byte): Boolean {
     return contains(value.toFloat())
@@ -231,7 +233,8 @@ public operator fun ClosedRange<Float>.contains(value: Byte): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun ClosedRange<Int>.contains(value: Double): Boolean {
     return value.toIntExactOrNull().let { if (it != null) contains(it) else false }
@@ -240,7 +243,8 @@ public operator fun ClosedRange<Int>.contains(value: Double): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun ClosedRange<Long>.contains(value: Double): Boolean {
     return value.toLongExactOrNull().let { if (it != null) contains(it) else false }
@@ -249,7 +253,8 @@ public operator fun ClosedRange<Long>.contains(value: Double): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun ClosedRange<Byte>.contains(value: Double): Boolean {
     return value.toByteExactOrNull().let { if (it != null) contains(it) else false }
@@ -258,7 +263,8 @@ public operator fun ClosedRange<Byte>.contains(value: Double): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun ClosedRange<Short>.contains(value: Double): Boolean {
     return value.toShortExactOrNull().let { if (it != null) contains(it) else false }
@@ -275,7 +281,8 @@ public operator fun ClosedRange<Float>.contains(value: Double): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun ClosedRange<Int>.contains(value: Float): Boolean {
     return value.toIntExactOrNull().let { if (it != null) contains(it) else false }
@@ -284,7 +291,8 @@ public operator fun ClosedRange<Int>.contains(value: Float): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun ClosedRange<Long>.contains(value: Float): Boolean {
     return value.toLongExactOrNull().let { if (it != null) contains(it) else false }
@@ -293,7 +301,8 @@ public operator fun ClosedRange<Long>.contains(value: Float): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun ClosedRange<Byte>.contains(value: Float): Boolean {
     return value.toByteExactOrNull().let { if (it != null) contains(it) else false }
@@ -302,7 +311,8 @@ public operator fun ClosedRange<Byte>.contains(value: Float): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun ClosedRange<Short>.contains(value: Float): Boolean {
     return value.toShortExactOrNull().let { if (it != null) contains(it) else false }
@@ -343,7 +353,8 @@ public operator fun ClosedRange<Short>.contains(value: Int): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("doubleRangeContains")
 public operator fun ClosedRange<Double>.contains(value: Int): Boolean {
     return contains(value.toDouble())
@@ -352,7 +363,8 @@ public operator fun ClosedRange<Double>.contains(value: Int): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("floatRangeContains")
 public operator fun ClosedRange<Float>.contains(value: Int): Boolean {
     return contains(value.toFloat())
@@ -385,7 +397,8 @@ public operator fun ClosedRange<Short>.contains(value: Long): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("doubleRangeContains")
 public operator fun ClosedRange<Double>.contains(value: Long): Boolean {
     return contains(value.toDouble())
@@ -394,7 +407,8 @@ public operator fun ClosedRange<Double>.contains(value: Long): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("floatRangeContains")
 public operator fun ClosedRange<Float>.contains(value: Long): Boolean {
     return contains(value.toFloat())
@@ -427,7 +441,8 @@ public operator fun ClosedRange<Byte>.contains(value: Short): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("doubleRangeContains")
 public operator fun ClosedRange<Double>.contains(value: Short): Boolean {
     return contains(value.toDouble())
@@ -436,7 +451,8 @@ public operator fun ClosedRange<Double>.contains(value: Short): Boolean {
 /**
  * Checks if the specified [value] belongs to this range.
  */
-@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.ERROR)
+@Deprecated("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.")
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.4")
 @kotlin.jvm.JvmName("floatRangeContains")
 public operator fun ClosedRange<Float>.contains(value: Short): Boolean {
     return contains(value.toFloat())

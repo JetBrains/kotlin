@@ -40,7 +40,8 @@ object Elements : TemplateGroupBase() {
         typeParam("@kotlin.internal.OnlyInputTypes T")
         if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
             val replacement = "any { it == element }"
-            deprecate(Deprecation(floatingSearchDeprecationMessage(signature, replacement), replacement, DeprecationLevel.WARNING))
+            val message = floatingSearchDeprecationMessage(signature, replacement)
+            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
             annotation("""@Suppress("DEPRECATION")""")
         }
         returns("Boolean")
@@ -68,7 +69,8 @@ object Elements : TemplateGroupBase() {
         }
         if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
             val replacement = "indexOfFirst { it == element }"
-            deprecate(Deprecation(floatingSearchDeprecationMessage(signature, replacement), replacement, DeprecationLevel.WARNING))
+            val message = floatingSearchDeprecationMessage(signature, replacement)
+            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
         }
         returns("Int")
         body {
@@ -132,7 +134,8 @@ object Elements : TemplateGroupBase() {
         }
         if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
             val replacement = "indexOfLast { it == element }"
-            deprecate(Deprecation(floatingSearchDeprecationMessage(signature, replacement), replacement, DeprecationLevel.WARNING))
+            val message = floatingSearchDeprecationMessage(signature, replacement)
+            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
         }
         returns("Int")
         body {
