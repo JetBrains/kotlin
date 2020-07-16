@@ -1,23 +1,20 @@
 package org.jetbrains.dokka
 
-import kotlinx.serialization.*
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import java.io.File
 import java.net.URL
 
-@Serializable
 data class DokkaConfigurationImpl(
     override val outputDir: String = DokkaDefaults.outputDir,
     override val cacheRoot: String? = DokkaDefaults.cacheRoot,
     override val offlineMode: Boolean = DokkaDefaults.offlineMode,
     override val sourceSets: List<DokkaSourceSetImpl> = emptyList(),
-    override val pluginsClasspath: List<@Serializable(with = FileSerializer::class) File> = emptyList(),
+    override val pluginsClasspath: List<File> = emptyList(),
     override val pluginsConfiguration: Map<String, String> = emptyMap(),
     override val modules: List<DokkaModuleDescriptionImpl> = emptyList(),
     override val failOnWarning: Boolean = DokkaDefaults.failOnWarning
 ) : DokkaConfiguration
 
-@Serializable
 data class DokkaSourceSetImpl(
     override val moduleDisplayName: String,
     override val displayName: String = DokkaDefaults.sourceSetDisplayName,
@@ -44,19 +41,16 @@ data class DokkaSourceSetImpl(
     override val analysisPlatform: Platform = DokkaDefaults.analysisPlatform
 ) : DokkaSourceSet
 
-@Serializable
 data class DokkaModuleDescriptionImpl(
     override val name: String,
     override val path: String,
     override val docFile: String
 ) : DokkaConfiguration.DokkaModuleDescription
 
-@Serializable
 data class SourceRootImpl(
     override val path: String
 ) : DokkaConfiguration.SourceRoot
 
-@Serializable
 data class SourceLinkDefinitionImpl(
     override val path: String,
     override val url: String,
@@ -73,7 +67,6 @@ data class SourceLinkDefinitionImpl(
     }
 }
 
-@Serializable
 data class PackageOptionsImpl(
     override val prefix: String,
     override val includeNonPublic: Boolean,
@@ -82,28 +75,8 @@ data class PackageOptionsImpl(
     override val suppress: Boolean
 ) : DokkaConfiguration.PackageOptions
 
-@Serializable
+
 data class ExternalDocumentationLinkImpl(
-    @Serializable(with = URLSerializer::class) override val url: URL,
-    @Serializable(with = URLSerializer::class) override val packageListUrl: URL
+    override val url: URL,
+    override val packageListUrl: URL
 ) : DokkaConfiguration.ExternalDocumentationLink
-
-private object FileSerializer : KSerializer<File> {
-    override val descriptor: SerialDescriptor = PrimitiveDescriptor("File", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: File) {
-        encoder.encodeString(value.path)
-    }
-
-    override fun deserialize(decoder: Decoder): File = File(decoder.decodeString())
-}
-
-private object URLSerializer : KSerializer<URL> {
-    override val descriptor: SerialDescriptor = PrimitiveDescriptor("URL", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: URL) {
-        encoder.encodeString(value.toString())
-    }
-
-    override fun deserialize(decoder: Decoder): URL = URL(decoder.decodeString())
-}

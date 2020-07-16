@@ -1,7 +1,8 @@
 package org.jetbrains.dokka.plugability
 
-import com.google.gson.Gson
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.utilities.parseJson
+import org.jetbrains.dokka.utilities.toJsonString
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
@@ -15,13 +16,12 @@ abstract class DokkaPlugin {
 
     protected inline fun <reified T : DokkaPlugin> plugin(): T = context?.plugin(T::class) ?: throwIllegalQuery()
 
-    protected fun <T : Any> extensionPoint() =
-        object : ReadOnlyProperty<DokkaPlugin, ExtensionPoint<T>> {
-            override fun getValue(thisRef: DokkaPlugin, property: KProperty<*>) = ExtensionPoint<T>(
-                thisRef::class.qualifiedName ?: throw AssertionError("Plugin must be named class"),
-                property.name
-            )
-        }
+    protected fun <T : Any> extensionPoint() = ReadOnlyProperty<DokkaPlugin, ExtensionPoint<T>> { thisRef, property ->
+        ExtensionPoint(
+            thisRef::class.qualifiedName ?: throw AssertionError("Plugin must be named class"),
+            property.name
+        )
+    }
 
     protected fun <T : Any> extending(definition: ExtendingDSL.() -> Extension<T, *, *>) = ExtensionProvider(definition)
 
@@ -58,7 +58,7 @@ inline fun <reified P : DokkaPlugin, reified T : ConfigurableBlock> Configurable
     val instance = T::class.createInstance().apply(block)
 
     val mutablePluginsConfiguration = pluginsConfiguration as MutableMap<String, String>
-    mutablePluginsConfiguration[P::class.qualifiedName!!] = Gson().toJson(instance, T::class.java)
+    mutablePluginsConfiguration[P::class.qualifiedName!!] = toJsonString(instance)
 }
 
 inline fun <reified P : DokkaPlugin, reified E : Any> P.query(extension: P.() -> ExtensionPoint<E>): List<E> =
@@ -71,12 +71,10 @@ fun throwIllegalQuery(): Nothing =
     throw IllegalStateException("Querying about plugins is only possible with dokka context initialised")
 
 inline fun <reified T : DokkaPlugin, reified R : ConfigurableBlock> configuration(context: DokkaContext): ReadOnlyProperty<Any?, R> {
-    return object : ReadOnlyProperty<Any?, R> {
-        override fun getValue(thisRef: Any?, property: KProperty<*>): R {
-            return context.configuration.pluginsConfiguration[T::class.qualifiedName
-                ?: throw AssertionError("Plugin must be named class")].let {
-                    Gson().fromJson(it, R::class.java)
-            }
-        }
+    return ReadOnlyProperty { _, _ ->
+        val configuration = context.configuration.pluginsConfiguration[
+                T::class.qualifiedName ?: throw AssertionError("Plugin must be named class")
+        ]
+        parseJson(checkNotNull(configuration))
     }
 }
