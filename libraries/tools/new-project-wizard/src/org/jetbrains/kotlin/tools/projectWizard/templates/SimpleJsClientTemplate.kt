@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.library.NpmArtifact
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserTargetConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsSingleplatformModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
@@ -29,7 +27,9 @@ import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.Templa
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.interceptTemplate
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
+import org.jetbrains.kotlin.tools.projectWizard.templates.withSettingsOf
 
 class SimpleJsClientTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.js.simple.title")
@@ -40,9 +40,20 @@ class SimpleJsClientTemplate : Template() {
     @NonNls
     override val id: String = "simpleJsClient"
 
-    override fun isApplicableTo(module: Module): Boolean =
-        module.configurator == JsBrowserTargetConfigurator
-                || module.configurator == JsSingleplatformModuleConfigurator
+    override fun isApplicableTo(
+        reader: Reader,
+        module: Module
+    ): Boolean = when (module.configurator) {
+        JsBrowserTargetConfigurator -> true
+        JsSingleplatformModuleConfigurator -> {
+            with(reader) {
+                withSettingsOf(module, module.configurator) {
+                    JSConfigurator.kind.reference.notRequiredSettingValue == JsTargetKind.APPLICATION
+                }
+            }
+        }
+        else -> false
+    }
 
     val renderEngine by enumSetting<RenderEngine>(
         KotlinNewProjectWizardBundle.message("module.template.js.simple.setting.rendering.engine"),
