@@ -21,23 +21,23 @@ import java.io.StringWriter
 
 @Suppress("MemberVisibilityCanBePrivate")
 data class KotlinWebpackConfig(
-    val mode: Mode = Mode.DEVELOPMENT,
-    val entry: File? = null,
-    val output: KotlinWebpackOutput? = null,
-    val outputPath: File? = null,
-    val outputFileName: String? = entry?.name,
-    val configDirectory: File? = null,
-    val bundleAnalyzerReportDir: File? = null,
-    val reportEvaluatedConfigFile: File? = null,
-    val devServer: DevServer? = null,
-    val cssSupport: KotlinWebpackCssSupport = KotlinWebpackCssSupport(),
-    val devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
-    val showProgress: Boolean = false,
-    val sourceMaps: Boolean = false,
-    val export: Boolean = true,
-    val progressReporter: Boolean = false,
-    val progressReporterPathFilter: String? = null,
-    val resolveFromModulesFirst: Boolean = false
+    var mode: Mode = Mode.DEVELOPMENT,
+    var entry: File? = null,
+    var output: KotlinWebpackOutput? = null,
+    var outputPath: File? = null,
+    var outputFileName: String? = entry?.name,
+    var configDirectory: File? = null,
+    var bundleAnalyzerReportDir: File? = null,
+    var reportEvaluatedConfigFile: File? = null,
+    var devServer: DevServer? = null,
+    var cssSupport: KotlinWebpackCssSupport = KotlinWebpackCssSupport(),
+    var devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
+    var showProgress: Boolean = false,
+    var sourceMaps: Boolean = false,
+    var export: Boolean = true,
+    var progressReporter: Boolean = false,
+    var progressReporterPathFilter: String? = null,
+    var resolveFromModulesFirst: Boolean = false
 ) {
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableSetOf<RequiredKotlinJsDependency>().also {
@@ -145,7 +145,7 @@ data class KotlinWebpackConfig(
     private fun Appendable.appendEvaluatedFileReport() {
         if (reportEvaluatedConfigFile == null) return
 
-        val filePath = reportEvaluatedConfigFile.canonicalPath.jsQuoted()
+        val filePath = reportEvaluatedConfigFile!!.canonicalPath.jsQuoted()
 
         //language=JavaScript 1.8
         appendln(
@@ -163,10 +163,10 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendFromConfigDir() {
-        if (configDirectory == null || !configDirectory.isDirectory) return
+        if (configDirectory == null || !configDirectory!!.isDirectory) return
 
         appendln()
-        appendConfigsFromDir(configDirectory)
+        appendConfigsFromDir(configDirectory!!)
         appendln()
     }
 
@@ -175,7 +175,7 @@ data class KotlinWebpackConfig(
 
         entry ?: error("Entry should be defined for report")
 
-        val reportBasePath = "${bundleAnalyzerReportDir.canonicalPath}/${entry.name}"
+        val reportBasePath = "${bundleAnalyzerReportDir!!.canonicalPath}/${entry!!.name}"
         val config = BundleAnalyzerPlugin(
             "static",
             "$reportBasePath.report.html",
@@ -200,7 +200,7 @@ data class KotlinWebpackConfig(
         if (devServer == null) return
 
         appendln("// dev server")
-        appendln("config.devServer = ${json(devServer)};")
+        appendln("config.devServer = ${json(devServer!!)};")
         appendln()
     }
 
@@ -241,19 +241,19 @@ data class KotlinWebpackConfig(
             """
                 // entry
                 config.entry = {
-                    main: [${entry.canonicalPath.jsQuoted()}]
+                    main: [${entry!!.canonicalPath.jsQuoted()}]
                 };
                 
                 config.output = {
-                    path: ${outputPath.canonicalPath.jsQuoted()},
+                    path: ${outputPath!!.canonicalPath.jsQuoted()},
                     filename: (chunkData) => {
                         return chunkData.chunk.name === 'main'
-                            ? ${outputFileName.jsQuoted()}
+                            ? ${outputFileName!!.jsQuoted()}
                             : ${multiEntryOutput.jsQuoted()};
                     },
-                    library: "${output.library}",
-                    libraryTarget: "${output.libraryTarget}",
-                    globalObject: "${output.globalObject}"
+                    library: "${output!!.library}",
+                    libraryTarget: "${output!!.libraryTarget}",
+                    globalObject: "${output!!.globalObject}"
                 };
                 
             """.trimIndent()
@@ -382,13 +382,13 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendResolveModules() {
-        if (!resolveFromModulesFirst || entry == null || entry.parent == null) return
+        if (!resolveFromModulesFirst || entry == null || entry!!.parent == null) return
 
         //language=JavaScript 1.8
         appendln(
             """
                 // resolve modules
-                config.resolve.modules.unshift(${entry.parent.jsQuoted()})
+                config.resolve.modules.unshift(${entry!!.parent.jsQuoted()})
                 
             """.trimIndent()
         )
@@ -409,7 +409,7 @@ data class KotlinWebpackConfig(
                         let msg = `${"$"}{Math.trunc(p / 10)}${"$"}{Math.trunc(p % 10)}% ${"$"}{message} ${"$"}{args.join(' ')}`;
                         ${
                 if (progressReporterPathFilter == null) "" else """
-                            msg = msg.replace(new RegExp(${progressReporterPathFilter.jsQuoted()}, 'g'), '');
+                            msg = msg.replace(new RegExp(${progressReporterPathFilter!!.jsQuoted()}, 'g'), '');
                         """.trimIndent()
             };
                         console.log(msg);

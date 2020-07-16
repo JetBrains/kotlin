@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.Task
-import org.gradle.api.file.RegularFile
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
@@ -35,8 +35,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
-    private val commonWebpackConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
-    private val commonRunConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
+    private val webpackTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
+    private val runTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
     private val distribution: Distribution = BrowserDistribution(project)
 
@@ -49,8 +49,24 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         }
     }
 
+    override fun commonWebpackConfig(body: KotlinWebpackConfig.() -> Unit) {
+        webpackTaskConfigurations.add {
+            webpackConfigAppliers.add(body)
+        }
+        runTaskConfigurations.add {
+            webpackConfigAppliers.add(body)
+        }
+        testTask {
+            onTestFrameworkSet {
+                if (it is KotlinKarma) {
+                    it.webpackConfig.body()
+                }
+            }
+        }
+    }
+
     override fun runTask(body: KotlinWebpack.() -> Unit) {
-        commonRunConfigurations.add(body)
+        runTaskConfigurations.add(body)
     }
 
     @ExperimentalDistributionDsl
@@ -59,7 +75,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     }
 
     override fun webpackTask(body: KotlinWebpack.() -> Unit) {
-        commonWebpackConfigurations.add(body)
+        webpackTaskConfigurations.add(body)
     }
 
     @ExperimentalDceDsl
@@ -126,7 +142,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         dceTaskProvider = dceTaskProvider,
                         devDceTaskProvider = devDceTaskProvider,
                         mode = type,
-                        configurationActions = commonRunConfigurations,
+                        configurationActions = runTaskConfigurations,
                         nodeJs = nodeJs
                     )
                 }
@@ -186,7 +202,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         dceTaskProvider = dceTaskProvider,
                         devDceTaskProvider = devDceTaskProvider,
                         mode = type,
-                        configurationActions = commonWebpackConfigurations,
+                        configurationActions = webpackTaskConfigurations,
                         nodeJs = nodeJs
                     )
                 }
