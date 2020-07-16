@@ -51,6 +51,10 @@ abstract class UIComponent<V : Any>(
         validate(value)
     }
 
+    protected fun forceValueUpdate(newValue: V) {
+        onValueUpdate(newValue)
+    }
+
     override fun onInit() {
         super.onInit()
         getUiValue()?.let(::validate)

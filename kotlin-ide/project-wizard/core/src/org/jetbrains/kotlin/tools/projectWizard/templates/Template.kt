@@ -77,7 +77,10 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
 
     override val text: String get() = title
 
-    open fun isApplicableTo(module: Module): Boolean = true
+    open fun isApplicableTo(
+        reader: Reader,
+        module: Module
+    ): Boolean = true
 
     open val settings: List<TemplateSetting<*, *>> = emptyList()
     open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()

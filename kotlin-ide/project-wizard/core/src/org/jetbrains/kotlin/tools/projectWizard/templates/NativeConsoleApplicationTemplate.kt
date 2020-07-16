@@ -25,7 +25,10 @@ class NativeConsoleApplicationTemplate : Template() {
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.native)
     override val id: String = "nativeConsoleApp"
 
-    override fun isApplicableTo(module: Module): Boolean =
+    override fun isApplicableTo(
+        reader: Reader,
+        module: Module
+    ): Boolean =
         module.configurator.safeAs<NativeTargetConfigurator>()?.isDesktopTarget == true
 
     override fun updateTargetIr(module: ModuleIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =

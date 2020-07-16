@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.SimpleTextAttributes
@@ -13,13 +14,14 @@ import java.awt.event.ItemEvent
 import javax.swing.DefaultComboBoxModel
 import javax.swing.Icon
 import javax.swing.JList
+import javax.swing.SwingUtilities
 
 class DropDownComponent<T : DisplayableSettingItem>(
     context: Context,
-    initialValues: List<T> = emptyList(),
+    private val initialValues: List<T> = emptyList(),
     initiallySelectedValue: T? = null,
     labelText: String? = null,
-    filter: (T) -> Boolean = { true },
+    private val filter: (T) -> Boolean = { true },
     private val validator: SettingValidator<T> = settingValidator { ValidationResult.OK },
     private val iconProvider: (T) -> Icon? = { null },
     onValueUpdate: (T) -> Unit = {}
@@ -67,6 +69,32 @@ class DropDownComponent<T : DisplayableSettingItem>(
             }
         }
     }
+
+    fun filterValues() {
+        val selectedItem = model.selectedItem
+
+        safeUpdateUi {
+            model.removeAllElements()
+            initialValues.filter(filter).forEach(model::addElement)
+            when {
+                model.getIndexOf(selectedItem) != -1 -> {
+                    model.selectedItem = selectedItem
+                }
+                model.size != 0 -> {
+                    uiComponent.selectedIndex = 0
+                    uiComponent.selectedItem?.let {
+                        ApplicationManager.getApplication().invokeLater {
+                            @Suppress("UNCHECKED_CAST")
+                            forceValueUpdate(it as T)
+                        }
+                    }
+                }
+            }
+        }
+        uiComponent.repaint()
+    }
+
+    private val model get() = uiComponent.model as DefaultComboBoxModel
 
     val valuesCount
         get() = uiComponent.model.size
