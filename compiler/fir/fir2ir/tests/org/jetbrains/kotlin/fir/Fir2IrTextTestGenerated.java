@@ -1702,6 +1702,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/jsHasMetadata.kt");
         }
 
+        @TestMetadata("kaptContext.kt")
+        public void testKaptContext() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/kaptContext.kt");
+        }
+
         @TestMetadata("samWithReceiver.kt")
         public void testSamWithReceiver() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/samWithReceiver.kt");
