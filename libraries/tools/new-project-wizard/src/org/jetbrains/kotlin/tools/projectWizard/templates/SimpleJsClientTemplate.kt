@@ -91,13 +91,8 @@ class SimpleJsClientTemplate : Template() {
             if (renderEngine.reference.settingValue != RenderEngine.KOTLINX_HTML) {
                 +Dependencies.KOTLIN_REACT(kotlinVersion.version)
                 +Dependencies.KOTLIN_REACT_DOM(kotlinVersion.version)
-                +Dependencies.NPM_REACT
-                +Dependencies.NPM_REACT_DOM
                 if (renderEngine.reference.settingValue == RenderEngine.REACT_WITH_STYLED) {
-                    +Dependencies.NPM_REACT_IS
                     +Dependencies.KOTLIN_STYLED(kotlinVersion.version)
-                    +Dependencies.NPM_STYLED_COMPONENTS
-                    +Dependencies.NPM_INLINE_STYLE_PREFIXER
                 }
             }
         }
@@ -279,32 +274,6 @@ class SimpleJsClientTemplate : Template() {
                 DependencyType.MAIN
             )
         }
-
-        val NPM_REACT = ArtifactBasedLibraryDependencyIR(
-            NpmArtifact("react"),
-            Versions.NPM.REACT,
-            DependencyType.MAIN
-        )
-        val NPM_REACT_DOM = ArtifactBasedLibraryDependencyIR(
-            NpmArtifact("react-dom"),
-            Versions.NPM.REACT_DOM,
-            DependencyType.MAIN
-        )
-        val NPM_REACT_IS = ArtifactBasedLibraryDependencyIR(
-            NpmArtifact("react-is"),
-            Versions.NPM.REACT_IS,
-            DependencyType.MAIN
-        )
-        val NPM_STYLED_COMPONENTS = ArtifactBasedLibraryDependencyIR(
-            NpmArtifact("styled-components"),
-            Versions.NPM.STYLED_COMPONENTS,
-            DependencyType.MAIN
-        )
-        val NPM_INLINE_STYLE_PREFIXER = ArtifactBasedLibraryDependencyIR(
-            NpmArtifact("inline-style-prefixer"),
-            Versions.NPM.INLINE_STYLE_PREFIXER,
-            DependencyType.MAIN
-        )
     }
 
     enum class RenderEngine(@Nls override val text: String) : DisplayableSettingItem {
