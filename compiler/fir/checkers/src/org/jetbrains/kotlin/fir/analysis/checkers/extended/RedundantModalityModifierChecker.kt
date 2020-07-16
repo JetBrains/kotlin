@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 
 object RedundantModalityModifierChecker : FirMemberDeclarationChecker() {
-    override val isExtended = true
-
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source is FirFakeSourceElement<*>) return
 

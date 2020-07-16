@@ -10,18 +10,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantModalityModi
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantReturnUnitType
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantVisibilityModifierChecker
 
-object CommonDeclarationCheckers : DeclarationCheckers() {
-    override val declarationCheckers: List<FirBasicDeclarationChecker> = listOf(
-        FirAnnotationClassDeclarationChecker,
-        FirModifierChecker
+object ExtendedDeclarationCheckers : DeclarationCheckers() {
+    override val declarationCheckers = listOf(
+        RedundantVisibilityModifierChecker,
+        RedundantReturnUnitType
     )
 
-    override val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = listOf(
-        FirInfixFunctionDeclarationChecker,
-        FirExposedVisibilityChecker
-    )
-
-    override val constructorCheckers: List<FirConstructorChecker> = listOf(
-        FirConstructorAllowedChecker
+    override val memberDeclarationCheckers = listOf(
+        RedundantExplicitTypeChecker,
+        RedundantModalityModifierChecker
     )
 }
