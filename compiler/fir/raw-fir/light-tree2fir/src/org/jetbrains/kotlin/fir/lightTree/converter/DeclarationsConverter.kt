@@ -603,6 +603,7 @@ class DeclarationsConverter(
             ) {
                 return@buildEnumEntry
             }
+            annotations += modifiers.annotations
             initializer = withChildClassName(enumEntryName) {
                 buildAnonymousObject {
                     source = this@buildEnumEntry.source
