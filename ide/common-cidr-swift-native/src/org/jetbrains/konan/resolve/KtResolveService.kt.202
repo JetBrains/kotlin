@@ -11,6 +11,7 @@ import com.jetbrains.cidr.lang.symbols.symtable.OCMembersContainer
 import com.jetbrains.swift.codeinsight.resolve.processor.CollectingSymbolProcessor
 import com.jetbrains.swift.codeinsight.resolve.processor.SwiftAbstractSymbolProcessor.ALL_DECLARATION_KINDS
 import com.jetbrains.swift.languageKind.SwiftLanguageKind
+import com.jetbrains.swift.psi.types.SwiftPlace
 import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import org.jetbrains.konan.resolve.konan.KonanConsumer
@@ -71,7 +72,7 @@ private fun OCMembersContainer<*>.findMemberSymbols(offset: Int): Collection<OCS
     }.also { processMembers(null, it) }.results
 
 private fun SwiftTypeSymbol.findMemberSymbols(offset: Int): List<SwiftSymbol> =
-    CollectingSymbolProcessor<SwiftSymbol>(null, null, ALL_DECLARATION_KINDS) {
+    CollectingSymbolProcessor<SwiftSymbol>(null, SwiftPlace.Companion.of(project), ALL_DECLARATION_KINDS) {
         it.offset == offset
     }.also { processMembers(it, ResolveState.initial()) }.collectedSymbols
 
