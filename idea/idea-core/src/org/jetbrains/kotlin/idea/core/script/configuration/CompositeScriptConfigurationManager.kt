@@ -64,6 +64,10 @@ class CompositeScriptConfigurationManager(val project: Project) : ScriptConfigur
         }
     }
 
+    override fun loadPlugins() {
+        plugins
+    }
+
     fun tryGetScriptDefinitionFast(locationId: String): ScriptDefinition? {
         return classpathRoots.getLightScriptInfo(locationId)?.definition
     }
