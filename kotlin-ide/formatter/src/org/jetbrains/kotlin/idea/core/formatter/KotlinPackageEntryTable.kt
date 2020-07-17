@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.idea.core.formatter
 
 import com.intellij.openapi.util.InvalidDataException
-import com.intellij.openapi.util.JDOMExternalizable
 import org.jdom.Element
 
-class KotlinPackageEntryTable(private val entries: MutableList<KotlinPackageEntry>) : JDOMExternalizable, Cloneable {
+class KotlinPackageEntryTable(private val entries: MutableList<KotlinPackageEntry>) :
+    com.intellij.openapi.util.JDOMExternalizable, Cloneable {
     constructor() : this(mutableListOf())
 
     val entryCount: Int get() = entries.size
@@ -89,4 +89,20 @@ class KotlinPackageEntryTable(private val entries: MutableList<KotlinPackageEntr
             element.setAttribute("withSubpackages", entry.withSubpackages.toString())
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is KotlinPackageEntryTable) return false
+
+        if (entryCount != other.entryCount) return false
+        for (i in entries.indices) {
+            if (entries[i] != other.entries[i]) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    override fun hashCode(): Int = entries.firstOrNull()?.hashCode() ?: 0
 }

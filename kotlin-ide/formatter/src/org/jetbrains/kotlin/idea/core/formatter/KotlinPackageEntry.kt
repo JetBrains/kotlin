@@ -37,4 +37,13 @@ class KotlinPackageEntry(
     override fun toString(): String {
         return packageName
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is KotlinPackageEntry) return false
+
+        return withSubpackages == other.withSubpackages && packageName == other.packageName
+    }
+
+    override fun hashCode(): Int = packageName.hashCode()
 }
