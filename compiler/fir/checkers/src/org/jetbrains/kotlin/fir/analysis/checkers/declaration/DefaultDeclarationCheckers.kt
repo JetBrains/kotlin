@@ -5,11 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantExplicitTypeChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantModalityModifierChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantReturnUnitType
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantVisibilityModifierChecker
-
 object CommonDeclarationCheckers : DeclarationCheckers() {
     override val declarationCheckers: List<FirBasicDeclarationChecker> = listOf(
         FirAnnotationClassDeclarationChecker,
