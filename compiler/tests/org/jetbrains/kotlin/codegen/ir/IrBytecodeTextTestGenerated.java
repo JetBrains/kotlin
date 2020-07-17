@@ -1825,6 +1825,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("constructorAccessors.kt")
+        public void testConstructorAccessors() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/constructorAccessors.kt");
+        }
+
         @TestMetadata("enumCheckcasts.kt")
         public void testEnumCheckcasts() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/enum/enumCheckcasts.kt");
