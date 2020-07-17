@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 
 /**
  * Internal logic about finding script root for [GradleBuildRootsManager].
@@ -96,8 +95,8 @@ abstract class GradleBuildRootsLocator {
                 nearest == null -> NotificationKind.outsideAnything
                 importing -> NotificationKind.dontCare
                 else -> when (nearest) {
-                    is Legacy -> when {
-                        root == null -> NotificationKind.legacyOutside
+                    is Legacy -> when (root) {
+                        null -> NotificationKind.legacyOutside
                         else -> NotificationKind.legacy
                     }
                     is New -> NotificationKind.wasNotImportedAfterCreation
@@ -130,24 +129,24 @@ abstract class GradleBuildRootsLocator {
         if (!filePath.endsWith(".gradle.kts")) return null
 
         val scriptInfo = getScriptInfo(filePath)
-        val imported = scriptInfo?.buildRoot
-        if (imported != null) return ScriptUnderRoot(filePath, imported, scriptInfo)
+        scriptInfo?.buildRoot?.let {
+            return ScriptUnderRoot(filePath, it, scriptInfo)
+        }
+
+        // stand-alone scripts: "included", "precompiled" scripts, scripts in unlinked projects,
+        // or just random files with ".gradle.kts" ending OR scripts those Gradle has not provided
+        roots.getStandaloneScriptRoot(filePath)?.let { 
+            return ScriptUnderRoot(filePath, it, standalone = true) 
+        }
 
         if (filePath.endsWith("/build.gradle.kts") ||
             filePath.endsWith("/settings.gradle.kts") ||
             filePath.endsWith("/init.gradle.kts")
         ) {
             // build|settings|init.gradle.kts scripts should be located near gradle project root only
-            val gradleBuild = roots.getBuildByProjectDir(filePath.substringBeforeLast("/"))
-            if (gradleBuild != null) return ScriptUnderRoot(filePath, gradleBuild)
-        }
-
-        // other scripts: "included", "precompiled" scripts, scripts in unlinked projects,
-        // or just random files with ".gradle.kts" ending
-
-        val standaloneScriptRoot = roots.getStandaloneScriptRoot(filePath)
-        if (standaloneScriptRoot != null) {
-            return ScriptUnderRoot(filePath, standaloneScriptRoot, standalone = true)
+            roots.getBuildByProjectDir(filePath.substringBeforeLast("/"))?.let {
+                return ScriptUnderRoot(filePath, it)
+            }
         }
 
         val nearest =
