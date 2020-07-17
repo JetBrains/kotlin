@@ -6,31 +6,41 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -38,31 +48,41 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -75,35 +95,40 @@
           "casesNumber": 0,
           "description": "check value-equality-expression",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.3.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.4.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.5.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "check value-equality-expression",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

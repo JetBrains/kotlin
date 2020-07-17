@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
+import java.nio.file.Paths
 
 inline class ModulePath(val parts: List<String>) {
     constructor(path: String) : this(path.trim().split('.'))
 
     fun asString(separator: String = ".") = parts.joinToString(separator)
+    fun asPath() = Paths.get(parts.first(), *parts.subList(1, parts.size).toTypedArray())
+
     override fun toString(): String = asString()
 
     companion object {

@@ -151,6 +151,24 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
         }
     }
 
+    @TestMetadata("compiler/testData/ir/irJsText/external")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class External extends AbstractIrJsTextTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInExternal() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/external"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
+        }
+
+        @TestMetadata("kt38765.kt")
+        public void testKt38765() throws Exception {
+            runTest("compiler/testData/ir/irJsText/external/kt38765.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/ir/irJsText/native")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

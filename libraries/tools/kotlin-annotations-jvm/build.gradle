@@ -17,12 +17,8 @@ dependencies {
     compileOnly DependenciesKt.kotlinBuiltins(project)
 }
 
-artifacts {
-    archives sourcesJar
-    sources sourcesJar
-}
-
-javadocJar()
+configureSourcesJar()
+configureJavadocJar()
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
     kotlinOptions.jdkHome = JDK_16

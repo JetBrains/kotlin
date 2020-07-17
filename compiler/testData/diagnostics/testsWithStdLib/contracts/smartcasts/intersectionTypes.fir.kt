@@ -23,8 +23,8 @@ fun testDeMorgan(x: Any?) {
        // !(x !is String || x !is Int)
        // x is String && x is Int
     if (!(notIsString(x) || notIsInt(x))) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.length
+        x.inc()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -39,7 +39,7 @@ fun testDeMorgan2(x: Any?) {
         x.<!AMBIGUITY!>inc<!>()
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.length
+        x.inc()
     }
 }

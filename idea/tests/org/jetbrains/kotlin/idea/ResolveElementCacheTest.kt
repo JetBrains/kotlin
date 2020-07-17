@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.psi.PsiDocumentManager
 import junit.framework.TestCase
-import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
@@ -291,12 +291,12 @@ class ResolveElementCacheTest : AbstractResolveElementCacheTest() {
     }
 
     fun testIncompleteFileAnnotationList() {
-        val file = myFixture.configureByText(
-            "Test.kt", """
+        val file = configureWithKotlin(
+            """
         @file
         import some.hello
         """
-        ) as KtFile
+        )
 
         val fileAnnotationList = file.fileAnnotationList!!
         fileAnnotationList.analyze(BodyResolveMode.PARTIAL)
@@ -336,16 +336,12 @@ class ResolveElementCacheTest : AbstractResolveElementCacheTest() {
         assertEmpty(context.diagnostics.all())
     }
 
-    private fun configureWithKotlin(@Language("kotlin") text: String): KtFile {
-        return myFixture.configureByText("Test.kt", text.trimIndent()) as KtFile
-    }
-
     fun testPrimaryConstructorParameterFullAnalysis() {
-        myFixture.configureByText(
-            "Test.kt", """
+        configureWithKotlin(
+            """
         class My(param: Int = <caret>0)
         """
-        ) as KtFile
+        )
 
         val defaultValue = myFixture.elementByOffset.getParentOfType<KtExpression>(true)!!
         // Kept to preserve correct behaviour of analyzeFully() on class internal elements
@@ -355,11 +351,11 @@ class ResolveElementCacheTest : AbstractResolveElementCacheTest() {
     }
 
     fun testPrimaryConstructorAnnotationFullAnalysis() {
-        myFixture.configureByText(
-            "Test.kt", """
+        configureWithKotlin(
+            """
         class My @Deprecated("<caret>xyz") protected constructor(param: Int)
         """
-        ) as KtFile
+        )
 
         val annotationArguments = myFixture.elementByOffset.getParentOfType<KtValueArgumentList>(true)!!
 
@@ -368,14 +364,14 @@ class ResolveElementCacheTest : AbstractResolveElementCacheTest() {
     }
 
     fun testFunctionParameterAnnotation() {
-        val file = myFixture.configureByText(
-            "Test.kt", """
+        val file = configureWithKotlin(
+            """
         annotation class Ann
         fun foo(@<caret>Ann p: Int) {
             bar()
         }
         """
-        ) as KtFile
+        )
 
         val function = (file.declarations[1]) as KtFunction
         val typeRef = myFixture.elementByOffset.getParentOfType<KtTypeReference>(true)!!
@@ -391,12 +387,12 @@ class ResolveElementCacheTest : AbstractResolveElementCacheTest() {
     }
 
     fun testPrimaryConstructorParameterAnnotation() {
-        myFixture.configureByText(
-            "Test.kt", """
+        configureWithKotlin(
+            """
         annotation class Ann
         class X(@set:<caret>Ann var p: Int)
         """
-        ) as KtFile
+        )
 
         val typeRef = myFixture.elementByOffset.getParentOfType<KtTypeReference>(true)!!
 
@@ -408,8 +404,8 @@ class ResolveElementCacheTest : AbstractResolveElementCacheTest() {
     }
 
     fun testSecondaryConstructorParameterAnnotation() {
-        val file = myFixture.configureByText(
-            "Test.kt", """
+        val file = configureWithKotlin(
+            """
         annotation class Ann
         class X {
             constructor(@<caret>Ann p: Int) {
@@ -417,7 +413,7 @@ class ResolveElementCacheTest : AbstractResolveElementCacheTest() {
             }
         }
         """
-        ) as KtFile
+        )
 
         val constructor = ((file.declarations[1]) as KtClass).secondaryConstructors[0]
         val typeRef = myFixture.elementByOffset.getParentOfType<KtTypeReference>(true)!!
@@ -475,16 +471,28 @@ class ResolveElementCacheTest : AbstractResolveElementCacheTest() {
         }
     }
 
+    fun testPartialResolveIsAFullResolveForOpenedFile() {
+        ResolveElementCache.forceFullAnalysisModeInTests = true
+        doTest {
+            val function = members[0] as KtFunction
+            val bindingContextPartial = function.analyze(BodyResolveMode.PARTIAL)
+            val bindingContextFull = function.analyze(BodyResolveMode.FULL)
+            assert(bindingContextPartial === bindingContextFull) {
+                "Partial resolve is forced to FULL resolve for a file currently opened in editor"
+            }
+        }
+    }
+
     fun testKT14376() {
-        val file = myFixture.configureByText("Test.kt", "object Obj(val x: Int)") as KtFile
+        val file = configureWithKotlin("object Obj(val x: Int)")
         val nameRef = file.findDescendantOfType<KtNameReferenceExpression>()!!
         val bindingContext = nameRef.analyze(BodyResolveMode.PARTIAL)
         assert(bindingContext[BindingContext.REFERENCE_TARGET, nameRef]?.fqNameSafe?.asString() == "kotlin.Int")
     }
 
     fun testResolveDefaultValueInPrimaryConstructor() {
-        myFixture.configureByText(
-            "Test.kt", """
+        configureWithKotlin(
+            """
         class ClassA<N> (
                 messenger: ClassB<N> = object : ClassB<N> {
                     override fun methodOne<caret>(param: List<N>) {
@@ -496,7 +504,7 @@ class ResolveElementCacheTest : AbstractResolveElementCacheTest() {
             fun methodOne(param: List<N>)
         }
         """
-        ) as KtFile
+        )
 
         val methodOne = myFixture.elementByOffset.getParentOfType<KtFunction>(true)!!
 

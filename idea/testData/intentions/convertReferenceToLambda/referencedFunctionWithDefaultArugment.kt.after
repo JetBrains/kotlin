@@ -1,0 +1,7 @@
+fun test() {
+    foo1 { convert2(it) }
+}
+
+fun foo1(convert: (Int) -> Unit) {}
+
+fun convert2(i: Int, j: Int = 0) {}

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -64,9 +64,9 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         return worker
     }
 
-    override fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind?) {
+    override fun enterSubroutine(subroutine: KtElement, eventOccurrencesRange: EventOccurrencesRange?) {
         val builder = builder
-        val shouldInlnie = invocationKind != null
+        val shouldInlnie = eventOccurrencesRange != null
         if (builder != null && subroutine is KtFunctionLiteral) {
             pushBuilder(subroutine, builder.returnSubroutine, shouldInlnie)
         } else {
@@ -76,16 +76,16 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         delegateBuilder.enterSubroutine(subroutine)
     }
 
-    override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode {
-        super.exitSubroutine(subroutine, invocationKind)
+    override fun exitSubroutine(subroutine: KtElement, eventOccurrencesRange: EventOccurrencesRange?): Pseudocode {
+        super.exitSubroutine(subroutine, eventOccurrencesRange)
         delegateBuilder.exitBlockScope(subroutine)
         val worker = popBuilder()
         if (!builders.empty()) {
             val builder = builders.peek()
-            if (invocationKind == null) {
+            if (eventOccurrencesRange == null) {
                 builder.declareFunction(subroutine, worker.pseudocode)
             } else {
-                builder.declareInlinedFunction(subroutine, worker.pseudocode, invocationKind)
+                builder.declareInlinedFunction(subroutine, worker.pseudocode, eventOccurrencesRange)
             }
         }
         return worker.pseudocode
@@ -154,7 +154,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         override val currentLoop: KtLoopExpression?
             get() = if (loopInfo.empty()) null else loopInfo.peek().element
 
-        override fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind?) {
+        override fun enterSubroutine(subroutine: KtElement, eventOccurrencesRange: EventOccurrencesRange?) {
             val blockInfo = SubroutineInfo(
                 subroutine,
                 /* entry point */ createUnboundLabel(),
@@ -215,7 +215,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             }
         }
 
-        override fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind?): Pseudocode {
+        override fun exitSubroutine(subroutine: KtElement, eventOccurrencesRange: EventOccurrencesRange?): Pseudocode {
             getSubroutineExitPoint(subroutine)?.let { bindLabel(it) }
             pseudocode.addExitInstruction(SubroutineExitInstruction(subroutine, currentScope, false))
             bindLabel(error)
@@ -273,8 +273,8 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             add(LocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope))
         }
 
-        override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationKind: InvocationKind) {
-            add(InlinedLocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope, invocationKind))
+        override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, eventOccurrencesRange: EventOccurrencesRange) {
+            add(InlinedLocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope, eventOccurrencesRange))
         }
 
         override fun declareEntryOrObject(entryOrObject: KtClassOrObject) {

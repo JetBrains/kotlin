@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_DEPENDENCIES_TASK_NAME
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_GEN_TASK_NAME
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SETUP_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume.assumeTrue
@@ -16,124 +20,244 @@ import kotlin.test.fail
 
 class CocoaPodsIT : BaseGradleIT() {
 
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.FOR_MPP_SUPPORT
+
+
     // We use Kotlin DSL. Earlier Gradle versions fail at accessors codegen.
-    val gradleVersion = GradleVersionRequired.None
+    val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
 
     val PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER = "<import_mode_directive>"
 
-    @Test
-    fun testPodspec() = doTestPodspec()
+    val cocoapodsSingleKtPod = "new-mpp-cocoapods-single"
+    val cocoapodsMultipleKtPods = "new-mpp-cocoapods-multiple"
 
     @Test
-    fun testPodspecCustomFrameworkName() = doTestPodspec("MultiPlatformLibrary")
+    fun testPodspecSingle() = doTestPodspec(
+        cocoapodsSingleKtPod,
+        mapOf("kotlin-library" to null),
+        mapOf("kotlin-library" to kotlinLibraryPodspecContent())
+    )
 
-    private fun doTestPodspec(frameworkName: String? = null) {
+    @Test
+    fun testPodspecCustomFrameworkNameSingle() = doTestPodspec(
+        cocoapodsSingleKtPod,
+        mapOf("kotlin-library" to "MultiplatformLibrary"),
+        mapOf("kotlin-library" to kotlinLibraryPodspecContent("MultiplatformLibrary"))
+    )
+
+    @Test
+    fun testXcodeUseFrameworksSingle() = doTestXcode(
+        cocoapodsSingleKtPod,
+        ImportMode.FRAMEWORKS,
+        "ios-app", mapOf("kotlin-library" to null)
+    )
+
+    @Test
+    fun testXcodeUseFrameworksWithCustomFrameworkNameSingle() = doTestXcode(
+        cocoapodsSingleKtPod,
+        ImportMode.FRAMEWORKS,
+        "ios-app",
+        mapOf("kotlin-library" to "MultiplatformLibrary")
+    )
+
+    @Test
+    fun testXcodeUseModularHeadersSingle() = doTestXcode(
+        cocoapodsSingleKtPod,
+        ImportMode.MODULAR_HEADERS,
+        "ios-app",
+        mapOf("kotlin-library" to null)
+    )
+
+    @Test
+    fun testXcodeUseModularHeadersWithCustomFrameworkNameSingle() = doTestXcode(
+        cocoapodsSingleKtPod,
+        ImportMode.MODULAR_HEADERS,
+        "ios-app",
+        mapOf("kotlin-library" to "MultiplatformLibrary")
+    )
+
+    @Test
+    fun testPodImportUseFrameworksSingle() = doTestPodImport(
+        cocoapodsSingleKtPod,
+        "ios-app",
+        ImportMode.FRAMEWORKS,
+        listOf("kotlin-library")
+    )
+
+    @Test
+    fun testPodImportUseModularHeadersSingle() =
+        doTestPodImport(
+            cocoapodsSingleKtPod,
+            "ios-app",
+            ImportMode.MODULAR_HEADERS,
+            listOf("kotlin-library")
+        )
+
+    @Test
+    fun testPodspecMupltiple() = doTestPodspec(
+        cocoapodsMultipleKtPods,
+        mapOf("kotlin-library" to null, "second-library" to null),
+        mapOf("kotlin-library" to kotlinLibraryPodspecContent(), "second-library" to secondLibraryPodspecContent()),
+    )
+
+    @Test
+    fun testPodspecCustomFrameworkNameMupltiple() = doTestPodspec(
+        cocoapodsMultipleKtPods,
+        mapOf("kotlin-library" to "FirstMultiplatformLibrary", "second-library" to "SecondMultiplatformLibrary"),
+        mapOf(
+            "kotlin-library" to kotlinLibraryPodspecContent("FirstMultiplatformLibrary"),
+            "second-library" to secondLibraryPodspecContent("SecondMultiplatformLibrary")
+        )
+    )
+
+    @Test
+    fun testXcodeUseFrameworksMupltiple() = doTestXcode(
+        cocoapodsMultipleKtPods,
+        ImportMode.FRAMEWORKS,
+        "ios-app",
+        mapOf("kotlin-library" to null, "second-library" to null)
+    )
+
+    @Test
+    fun testXcodeUseFrameworksWithCustomFrameworkNameMupltiple() = doTestXcode(
+        cocoapodsMultipleKtPods,
+        ImportMode.FRAMEWORKS,
+        "ios-app",
+        mapOf("kotlin-library" to "FirstMultiplatformLibrary", "second-library" to "SecondMultiplatformLibrary")
+    )
+
+    @Test
+    fun testXcodeUseModularHeadersMupltiple() = doTestXcode(
+        cocoapodsMultipleKtPods,
+        ImportMode.MODULAR_HEADERS,
+        "ios-app",
+        mapOf("kotlin-library" to null, "second-library" to null)
+    )
+
+    @Test
+    fun testXcodeUseModularHeadersWithCustomFrameworkNameMupltiple() = doTestXcode(
+        cocoapodsMultipleKtPods,
+        ImportMode.MODULAR_HEADERS,
+        "ios-app",
+        mapOf("kotlin-library" to "FirstMultiplatformLibrary", "second-library" to "SecondMultiplatformLibrary")
+    )
+
+    @Test
+    fun testPodImportUseFrameworksMupltiple() = doTestPodImport(
+        cocoapodsMultipleKtPods,
+        "ios-app",
+        ImportMode.FRAMEWORKS,
+        listOf("kotlin-library", "second-library")
+    )
+
+    @Test
+    fun testPodImportUseModularHeadersMupltiple() =
+        doTestPodImport(
+            cocoapodsMultipleKtPods,
+            "ios-app",
+            ImportMode.MODULAR_HEADERS,
+            listOf("kotlin-library", "second-library")
+        )
+
+    private fun doTestPodspec(
+        projectName: String,
+        subprojectsToFrameworkNamesMap: Map<String, String?>,
+        subprojectsToPodspecContentMap: Map<String, String?>
+    ) {
         assumeTrue(HostManager.hostIsMac)
-        val gradleProject = transformProjectWithPluginsDsl("new-mpp-cocoapods", gradleVersion)
+        val gradleProject = transformProjectWithPluginsDsl(projectName, gradleVersion)
 
-        // Check that the podspec task fails if there is no Gradle wrapper in the project.
-        gradleProject.build(":kotlin-library:podspec") {
-            assertFailed()
-            assertContains("The Gradle wrapper is required to run the build from Xcode.")
-            assertContains(
-                "Please run the same command with `-Pkotlin.native.cocoapods.generate.wrapper=true` " +
-                        "or run the `:wrapper` task to generate the wrapper manually."
-            )
+        gradleProject.build(":podspec") {
+            assertSuccessful()
+            assertTasksSkipped(":podspec")
+            assertNoSuchFile("cocoapods.podspec")
         }
 
-        // Check that we can generate the wrapper along with the podspec if the corresponding property specified
-        gradleProject.build(":kotlin-library:podspec", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+        for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
+            frameworkName?.also {
+                gradleProject.gradleBuildScript(subproject).appendText(
+                    """
+                |kotlin {
+                |    cocoapods {
+                |        frameworkName = "$frameworkName"
+                |    }
+                |}
+            """.trimMargin()
+                )
+            }
+
+            // Check that we can generate the wrapper along with the podspec if the corresponding property specified
+            gradleProject.build(":$subproject:podspec", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+                assertSuccessful()
+                assertTasksExecuted(":$subproject:podspec")
+
+                // Check that the podspec file is correctly generated.
+                val podspecFileName = "$subproject/${subproject.validFrameworkName}.podspec"
+
+
+
+                assertFileExists(podspecFileName)
+                val actualPodspecContentWithoutBlankLines = fileInWorkingDir(podspecFileName).readText()
+                    .lineSequence()
+                    .filter { it.isNotBlank() }
+                    .joinToString("\n")
+
+                assertEquals(subprojectsToPodspecContentMap[subproject], actualPodspecContentWithoutBlankLines)
+            }
+        }
+    }
+
+    private fun doTestPodImport(
+        projectName: String,
+        iosAppLocation: String,
+        mode: ImportMode,
+        subprojects: List<String>
+    ) {
+        assumeTrue(HostManager.hostIsMac)
+        assumeTrue(KotlinCocoapodsPlugin.isAvailableToProduceSynthetic())
+
+        val gradleProject = transformProjectWithPluginsDsl(projectName, gradleVersion)
+        with(gradleProject) {
+            preparePodfile(iosAppLocation, mode)
+            podImportAsserts()
+            subprojects.forEach { podImportAsserts(it) }
+        }
+    }
+
+    private fun BaseGradleIT.Project.podImportAsserts(subproject: String? = null) {
+        val buildScriptText = gradleBuildScript(subproject).readText()
+        val taskPrefix = subproject?.let { ":$it" } ?: ""
+        val podImport = "podImport"
+        val podspec = "podspec"
+        val podInstall = "podInstall"
+
+        build("$taskPrefix:$podImport", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
             assertSuccessful()
-            assertTasksExecuted(":kotlin-library:podspec", ":wrapper")
-            assertFileExists("gradlew")
 
-            // Check that the podspec file is correctly generated.
-            val podspecFileName = "kotlin-library/kotlin_library.podspec"
+            if ("noPodspec()" in buildScriptText) {
+                assertTasksSkipped("$taskPrefix:$podspec")
+            }
 
+            if ("podfile" in buildScriptText) {
+                assertTasksExecuted("$taskPrefix:$podInstall")
+            } else {
+                assertTasksSkipped("$taskPrefix:$podInstall")
+            }
+            assertTasksRegisteredByPrefix(listOf("$taskPrefix:$POD_GEN_TASK_NAME"))
+            if (buildScriptText.matches("pod\\(.*\\)".toRegex())) {
+                assertTasksExecutedByPrefix(listOf("$taskPrefix:$POD_GEN_TASK_NAME"))
+            }
 
-            frameworkName?.let {
-                fileInWorkingDir(podspecFileName).modify {
-                    it.replace("build/cocoapods/framework/kotlin_library.framework", "build/cocoapods/framework/$frameworkName.framework")
+            with(listOf(POD_SETUP_BUILD_TASK_NAME, POD_BUILD_DEPENDENCIES_TASK_NAME).map { "$taskPrefix:$it" }) {
+                if (buildScriptText.matches("pod\\(.*\\)".toRegex())) {
+                    assertTasksRegisteredByPrefix(this)
+                    assertTasksExecutedByPrefix(this)
                 }
             }
-
-            val expectedPodspecContent = """
-                Pod::Spec.new do |spec|
-                    spec.name                     = 'kotlin_library'
-                    spec.version                  = '1.0'
-                    spec.homepage                 = 'https://github.com/JetBrains/kotlin'
-                    spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
-                    spec.authors                  = ''
-                    spec.license                  = ''
-                    spec.summary                  = 'CocoaPods test library'
-
-                    spec.static_framework         = true
-                    spec.vendored_frameworks      = "build/cocoapods/framework/${frameworkName ?: "kotlin_library"}.framework"
-                    spec.libraries                = "c++"
-                    spec.module_name              = "#{spec.name}_umbrella"
-
-                    spec.dependency 'pod_dependency', '1.0'
-                    spec.dependency 'subspec_dependency/Core', '1.0'
-
-                    spec.pod_target_xcconfig = {
-                        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
-                        'KOTLIN_TARGET[sdk=iphoneos*]' => 'ios_arm',
-                        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
-                        'KOTLIN_TARGET[sdk=watchos*]' => 'watchos_arm',
-                        'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
-                        'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
-                        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
-                    }
-
-                    spec.script_phases = [
-                        {
-                            :name => 'Build kotlin_library',
-                            :execution_position => :before_compile,
-                            :shell_path => '/bin/sh',
-                            :script => <<-SCRIPT
-                                set -ev
-                                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
-                                "${'$'}REPO_ROOT/../gradlew" -p "${'$'}REPO_ROOT" :kotlin-library:syncFramework \
-                                    -Pkotlin.native.cocoapods.target=${'$'}KOTLIN_TARGET \
-                                    -Pkotlin.native.cocoapods.configuration=${'$'}CONFIGURATION \
-                                    -Pkotlin.native.cocoapods.cflags="${'$'}OTHER_CFLAGS" \
-                                    -Pkotlin.native.cocoapods.paths.headers="${'$'}HEADER_SEARCH_PATHS" \
-                                    -Pkotlin.native.cocoapods.paths.frameworks="${'$'}FRAMEWORK_SEARCH_PATHS"
-                            SCRIPT
-                        }
-                    ]
-                end
-            """.trimIndent()
-
-            assertFileExists(podspecFileName)
-            assertEquals(expectedPodspecContent, fileInWorkingDir(podspecFileName).readText())
         }
     }
 
-    @Test
-    fun testInterop() {
-        assumeTrue(HostManager.hostIsMac)
-        val gradleProject = transformProjectWithPluginsDsl("new-mpp-cocoapods", gradleVersion)
-        with(gradleProject) {
-            // Check that a project with CocoaPods interop fails to be built from command line.
-            build(":kotlin-library:build") {
-                assertFailed()
-                assertContains("Cannot perform cinterop processing for module pod_dependency: cannot determine headers location.")
-            }
-
-            // Check that a project without CocoaPods interop can be built from command line.
-            gradleBuildScript("kotlin-library").modify {
-                it.replace("""pod("pod_dependency", "1.0")""", "").replace("""pod("subspec_dependency/Core", "1.0")""", "")
-            }
-            projectDir.resolve("kotlin-library/src/iosMain/kotlin/A.kt").modify {
-                it.replace("import cocoapods.pod_dependency.*", "").replace("println(foo())", "")
-                    .replace("import cocoapods.subspec_dependency.*", "").replace("println(baz())", "")
-            }
-            build(":kotlin-library:linkReleaseFrameworkIOS") {
-                assertSuccessful()
-            }
-        }
-    }
 
     private enum class ImportMode(val directive: String) {
         FRAMEWORKS("use_frameworks!"),
@@ -174,40 +298,47 @@ class CocoaPodsIT : BaseGradleIT() {
         CommandResult(process.exitValue(), stdOut, stdErr).block()
     }
 
-    private fun doTestXcode(mode: ImportMode, isCustomFrameworkName: Boolean) {
+    private fun doTestXcode(
+        projectName: String,
+        mode: ImportMode,
+        iosAppLocation: String,
+        subprojectsToFrameworkNamesMap: Map<String, String?>
+    ) {
         assumeTrue(HostManager.hostIsMac)
-        val gradleProject = transformProjectWithPluginsDsl("new-mpp-cocoapods", gradleVersion)
+        val gradleProject = transformProjectWithPluginsDsl(projectName, gradleVersion)
 
         with(gradleProject) {
             setupWorkingDir()
 
-            // Add property with custom framework name
-            if (isCustomFrameworkName) {
-                gradleBuildScript("kotlin-library").appendText(
-                    """
-                kotlin {
-                    cocoapods {
-                        frameworkName = "MultiPlatformLibrary"
+            for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
+
+                // Add property with custom framework name
+                frameworkName?.also { name ->
+                    gradleBuildScript(subproject).appendText(
+                        """
+                        kotlin {
+                            cocoapods {
+                                frameworkName = "$name"
+                            }
+                        }
+                        """.trimIndent()
+                    )
+
+                    // Change swift sources import
+                    val iosAppDir = projectDir.resolve(iosAppLocation)
+                    iosAppDir.resolve("ios-app/ViewController.swift").modify {
+                        it.replace("import ${subproject.validFrameworkName}", "import $name")
                     }
                 }
-            """.trimIndent()
-                )
 
-                // Change swift sources import
-                val iosAppDir = projectDir.resolve("ios-app")
-                iosAppDir.resolve("ios-app/ViewController.swift").modify {
-                    it.replace("import kotlin_library", "import MultiPlatformLibrary")
+
+                // Generate podspec.
+                gradleProject.build(":$subproject:podspec", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+                    assertSuccessful()
                 }
-
             }
 
-
-            // Generate podspec.
-            gradleProject.build(":kotlin-library:podspec", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
-                assertSuccessful()
-            }
-
-            val iosAppDir = projectDir.resolve("ios-app")
+            val iosAppDir = projectDir.resolve(iosAppLocation)
 
             // Set import mode for Podfile.
             iosAppDir.resolve("Podfile").modify {
@@ -215,17 +346,8 @@ class CocoaPodsIT : BaseGradleIT() {
             }
 
             // Install pods.
-            runCommand(iosAppDir, "pod", "install") {
-                assertEquals(
-                    0, exitCode, """
-                        |Exit code mismatch for `pod install`.
-                        |stdout:
-                        |$stdOut
-                        |
-                        |stderr:
-                        |$stdErr
-                    """.trimMargin()
-                )
+            gradleProject.build(":podInstall", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+                assertSuccessful()
             }
 
             // Run Xcode build.
@@ -234,8 +356,8 @@ class CocoaPodsIT : BaseGradleIT() {
                 "-sdk", "iphonesimulator",
                 "-arch", "arm64",
                 "-configuration", "Release",
-                "-workspace", "ios-app.xcworkspace",
-                "-scheme", "ios-app",
+                "-workspace", "${iosAppDir.name}.xcworkspace",
+                "-scheme", iosAppDir.name,
                 inheritIO = true // Xcode doesn't finish the process if the PIPE redirect is used.
             ) {
                 assertEquals(
@@ -252,13 +374,102 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testXcodeUseFrameworks() = doTestXcode(ImportMode.FRAMEWORKS, false)
+    private fun Project.preparePodfile(iosAppLocation: String, mode: ImportMode) {
+        val iosAppDir = projectDir.resolve(iosAppLocation)
 
-    @Test
-    fun testXcodeUseModularHeaders() = doTestXcode(ImportMode.MODULAR_HEADERS, false)
+        // Set import mode for Podfile.
+        iosAppDir.resolve("Podfile").modify {
+            it.replace(PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER, mode.directive)
+        }
+    }
 
-    @Test
-    fun testXcodeWithCustomFrameworkName() = doTestXcode(ImportMode.FRAMEWORKS, true)
+    private val String.validFrameworkName: String
+        get() = replace('-', '_')
+
+    private fun kotlinLibraryPodspecContent(frameworkName: String? = null) = """
+                Pod::Spec.new do |spec|
+                    spec.name                     = 'kotlin_library'
+                    spec.version                  = '1.0'
+                    spec.homepage                 = 'https://github.com/JetBrains/kotlin'
+                    spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
+                    spec.authors                  = ''
+                    spec.license                  = ''
+                    spec.summary                  = 'CocoaPods test library'
+                    spec.static_framework         = true
+                    spec.vendored_frameworks      = "build/cocoapods/framework/${frameworkName ?: "kotlin_library"}.framework"
+                    spec.libraries                = "c++"
+                    spec.module_name              = "#{spec.name}_umbrella"
+                    spec.dependency 'pod_dependency', '1.0'
+                    spec.dependency 'subspec_dependency/Core', '1.0'
+                    spec.pod_target_xcconfig = {
+                        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
+                        'KOTLIN_TARGET[sdk=iphoneos*]' => 'ios_arm',
+                        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
+                        'KOTLIN_TARGET[sdk=watchos*]' => 'watchos_arm',
+                        'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
+                        'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
+                        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
+                    }
+                    spec.script_phases = [
+                        {
+                            :name => 'Build kotlin_library',
+                            :execution_position => :before_compile,
+                            :shell_path => '/bin/sh',
+                            :script => <<-SCRIPT
+                                set -ev
+                                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
+                                "${'$'}REPO_ROOT/../gradlew" -p "${'$'}REPO_ROOT" :kotlin-library:syncFramework \
+                                    -Pkotlin.native.cocoapods.target=${'$'}KOTLIN_TARGET \
+                                    -Pkotlin.native.cocoapods.configuration=${'$'}CONFIGURATION \
+                                    -Pkotlin.native.cocoapods.cflags="${'$'}OTHER_CFLAGS" \
+                                    -Pkotlin.native.cocoapods.paths.headers="${'$'}HEADER_SEARCH_PATHS" \
+                                    -Pkotlin.native.cocoapods.paths.frameworks="${'$'}FRAMEWORK_SEARCH_PATHS"
+                            SCRIPT
+                        }
+                    ]
+                end
+            """.trimIndent()
+
+    private fun secondLibraryPodspecContent(frameworkName: String? = null) = """
+                Pod::Spec.new do |spec|
+                    spec.name                     = 'second_library'
+                    spec.version                  = '1.0'
+                    spec.homepage                 = 'https://github.com/JetBrains/kotlin'
+                    spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
+                    spec.authors                  = ''
+                    spec.license                  = ''
+                    spec.summary                  = 'CocoaPods test library'
+                    spec.static_framework         = true
+                    spec.vendored_frameworks      = "build/cocoapods/framework/${frameworkName ?: "second_library"}.framework"
+                    spec.libraries                = "c++"
+                    spec.module_name              = "#{spec.name}_umbrella"
+                    spec.pod_target_xcconfig = {
+                        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
+                        'KOTLIN_TARGET[sdk=iphoneos*]' => 'ios_arm',
+                        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
+                        'KOTLIN_TARGET[sdk=watchos*]' => 'watchos_arm',
+                        'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
+                        'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
+                        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
+                    }
+                    spec.script_phases = [
+                        {
+                            :name => 'Build second_library',
+                            :execution_position => :before_compile,
+                            :shell_path => '/bin/sh',
+                            :script => <<-SCRIPT
+                                set -ev
+                                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
+                                "${'$'}REPO_ROOT/../gradlew" -p "${'$'}REPO_ROOT" :second-library:syncFramework \
+                                    -Pkotlin.native.cocoapods.target=${'$'}KOTLIN_TARGET \
+                                    -Pkotlin.native.cocoapods.configuration=${'$'}CONFIGURATION \
+                                    -Pkotlin.native.cocoapods.cflags="${'$'}OTHER_CFLAGS" \
+                                    -Pkotlin.native.cocoapods.paths.headers="${'$'}HEADER_SEARCH_PATHS" \
+                                    -Pkotlin.native.cocoapods.paths.frameworks="${'$'}FRAMEWORK_SEARCH_PATHS"
+                            SCRIPT
+                        }
+                    ]
+                end
+            """.trimIndent()
 
 }

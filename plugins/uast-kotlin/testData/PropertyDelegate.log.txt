@@ -8,8 +8,7 @@ UFile (package = )
                 ULambdaExpression
                     UBlockExpression
                         UReturnExpression
-                            UPolyadicExpression (operator = +)
-                                ULiteralExpression (value = "/sdcard")
+                            ULiteralExpression (value = "/sdcard")
         UField (name = annotatedDelegate$delegate)
             UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UAnnotation (fqName = kotlin.Suppress)
@@ -33,6 +32,5 @@ UFile (package = )
                             ULambdaExpression
                                 UBlockExpression
                                     UReturnExpression
-                                        UPolyadicExpression (operator = +)
-                                            ULiteralExpression (value = "/sdcard")
+                                        ULiteralExpression (value = "/sdcard")
         UMethod (name = getAnnotatedDelegate)

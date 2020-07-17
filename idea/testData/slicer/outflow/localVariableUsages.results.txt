@@ -1,7 +1,7 @@
-6 val <bold>x = 1</bold>
-8 	val y = <bold>x</bold>
-8 		val <bold>y = x</bold>
-11 	z = <bold>x</bold>
-10 		val <bold>z: Int</bold>
-13 	foo(<bold>x</bold>)
-2 		fun foo(<bold>n: Int</bold>) {
+6 <bold>val x</bold> = 1 (in test())
+8 	val y = <bold>x</bold> (in test())
+8 		<bold>val y</bold> = x (in test())
+11 	z = <bold>x</bold> (in test())
+10 		<bold>val z: Int</bold> (in test())
+13 	foo(<bold>x</bold>) (in test())
+2 		fun foo(<bold>n: Int</bold>) { (in foo(Int))

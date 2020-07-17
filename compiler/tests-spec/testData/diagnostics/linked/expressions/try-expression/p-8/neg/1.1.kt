@@ -6,8 +6,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-296
- * PLACE: expressions, try-expression -> paragraph 8 -> sentence 1
- * RELEVANT PLACES: expressions, try-expression -> paragraph 9 -> sentence 1
+ * MAIN LINK: expressions, try-expression -> paragraph 8 -> sentence 1
+ * PRIMARY LINKS: expressions, try-expression -> paragraph 9 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks
  */
@@ -23,12 +23,12 @@ class B<T>(data: T) : A<T>(data)
 
 fun case1() {
     val tryVal: B<String> =
-    <!TYPE_MISMATCH, TYPE_MISMATCH!>try {
+    try <!TYPE_MISMATCH!>{
         throwExceptionA(false)
         A("")
-    } catch (e: Exception) {
+    }<!> catch (e: Exception) {
         B("")
-    }<!>
+    }
 
 
 }
@@ -37,28 +37,27 @@ fun case1() {
 
 fun case2() {
     val tryVal: A<String> =
-    <!TYPE_MISMATCH, TYPE_MISMATCH!>try {
+    try {
         throwExceptionA(false)
         A("")
-    } catch (e: Exception) {
+    } catch (e: Exception) <!TYPE_MISMATCH!>{
         null
     }<!>
 }
 
 /*
  * TESTCASE NUMBER: 3
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-35494
  */
 fun case3() {
     val tryVal: A<Int> =
-    <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>try {
+    try {
         throwExceptionA(false)
         A(2)
-    } catch (e: ExcA) {
-        A(<!NULL_FOR_NONNULL_TYPE, NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
-    } catch (e: ExcB) {
-        B(<!NULL_FOR_NONNULL_TYPE, NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
+    } catch (e: ExcA) <!TYPE_MISMATCH, TYPE_MISMATCH!>{
+        A(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
+    }<!> catch (e: ExcB) <!TYPE_MISMATCH, TYPE_MISMATCH!>{
+        B(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
     }<!>
 }
 

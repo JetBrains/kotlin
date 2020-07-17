@@ -44,7 +44,11 @@ class StringTrimLowering(val context: CommonBackendContext) : FileLoweringPass, 
         val prefixArgument = call.getValueArgument(0)
         val newString = if (prefixArgument != null) {
             val prefixString = prefixArgument.getConstantString() ?: return call
-            receiverString.trimMargin(prefixString)
+            try {
+                receiverString.trimMargin(prefixString)
+            } catch (e: IllegalArgumentException) {
+                return call
+            }
         } else {
             receiverString.trimMargin()
         }

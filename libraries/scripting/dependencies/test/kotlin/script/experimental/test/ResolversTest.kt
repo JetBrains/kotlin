@@ -9,6 +9,8 @@ import java.io.File
 import kotlin.contracts.ExperimentalContracts
 import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.SourceCode
+import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.dependencies.impl.makeResolveFailureResult
 
 @ExperimentalContracts
@@ -83,14 +85,25 @@ class ResolversTest : ResolversTestBase() {
 
         override fun acceptsArtifact(artifactCoordinates: String): Boolean = acceptsArt(artifactCoordinates)
 
-        override suspend fun resolve(artifactCoordinates: String): ResultWithDiagnostics<List<File>> {
+        override suspend fun resolve(
+            artifactCoordinates: String,
+            options: ExternalDependenciesResolver.Options,
+            sourceCodeLocation: SourceCode.LocationWithId?
+        ): ResultWithDiagnostics<List<File>> {
             if (!acceptsArtifact(artifactCoordinates)) throw Exception("Path is invalid")
-            val file = doResolve(artifactCoordinates) ?: return makeResolveFailureResult("Failed to resolve '$artifactCoordinates'")
+            val file = doResolve(artifactCoordinates)
+                ?: return makeResolveFailureResult("Failed to resolve '$artifactCoordinates'", sourceCodeLocation)
             return ResultWithDiagnostics.Success(listOf(file))
         }
 
-        override fun addRepository(repositoryCoordinates: RepositoryCoordinates) {
+        override fun addRepository(
+            repositoryCoordinates: RepositoryCoordinates,
+            options: ExternalDependenciesResolver.Options,
+            sourceCodeLocation: SourceCode.LocationWithId?
+        ): ResultWithDiagnostics<Boolean> {
+            if (!acceptsRepository(repositoryCoordinates)) return false.asSuccess()
             addRepo(repositoryCoordinates.string)
+            return true.asSuccess()
         }
 
         override fun acceptsRepository(repositoryCoordinates: RepositoryCoordinates): Boolean {

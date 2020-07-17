@@ -130,6 +130,6 @@ class InvokableProperty(val i: Invokable)
 
 fun checkInvokable(ip: InvokableProperty?) {
     if (ip?.i() == "Hello") {
-        ip.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+        ip.hashCode()
     }
 }

@@ -5,7 +5,7 @@
 fun foo(list: List<String>): Int? {
     var index = 0
     return list
-            .filterNot { it.isBlank() }
-            .map { it.length * index++ }
-            .firstOrNull { it * 100 > index * index }
+        .filterNot { it.isBlank() }
+        .map { it.length * index++ }
+        .firstOrNull { it * 100 > index * index }
 }

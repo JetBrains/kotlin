@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,13 +20,13 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringMessageDialog
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
 import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
@@ -119,19 +119,17 @@ internal fun buildCodeToInline(
     isBlockBody: Boolean,
     editor: Editor?
 ): CodeToInline? {
-    val bodyCopy = bodyOrInitializer.copied()
-
-    val expectedType = if (!isBlockBody && isReturnTypeExplicit)
-        returnType ?: TypeUtils.NO_EXPECTED_TYPE
-    else
-        TypeUtils.NO_EXPECTED_TYPE
-
-    fun analyzeBodyCopy(): BindingContext = bodyCopy.analyzeInContext(
-        bodyOrInitializer.getResolutionScope(),
+    val scope by lazy { bodyOrInitializer.getResolutionScope() }
+    fun analyzeExpressionInContext(expression: KtExpression): BindingContext = expression.analyzeInContext(
+        scope = scope,
         contextExpression = bodyOrInitializer,
-        expectedType = expectedType
+        expectedType = if (isReturnTypeExplicit && (!isBlockBody || expression.parent is KtReturnExpression))
+            returnType ?: TypeUtils.NO_EXPECTED_TYPE
+        else
+            TypeUtils.NO_EXPECTED_TYPE
     )
 
+    val bodyCopy = bodyOrInitializer.copied()
     val descriptor = declaration.unsafeResolveToDescriptor()
     val builder = CodeToInlineBuilder(descriptor as CallableDescriptor, declaration.getResolutionFacade())
     if (isBlockBody) {
@@ -141,7 +139,7 @@ internal fun buildCodeToInline(
         val returnStatements = bodyCopy.collectDescendantsOfType<KtReturnExpression> {
             val function = it.getStrictParentOfType<KtFunction>()
             if (function != null && function != declaration) return@collectDescendantsOfType false
-            it.getLabelName().let { it == null || it == declaration.name }
+            it.getLabelName().let { label -> label == null || label == declaration.name }
         }
 
         val lastReturn = statements.lastOrNull() as? KtReturnExpression
@@ -166,10 +164,10 @@ internal fun buildCodeToInline(
 
         return builder.prepareCodeToInline(
             lastReturn?.returnedExpression,
-            statements.dropLast(returnStatements.size), ::analyzeBodyCopy, reformat = true
+            statements.dropLast(returnStatements.size), ::analyzeExpressionInContext, reformat = true
         )
     } else {
-        return builder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeBodyCopy, reformat = true)
+        return builder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeExpressionInContext, reformat = true)
     }
 }
 

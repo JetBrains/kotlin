@@ -55,7 +55,6 @@ object Snapshots : TemplateGroupBase() {
                     1 -> setOf(if (this is List) this[0] else iterator().next())
                     else -> toCollection(LinkedHashSet<T>(mapCapacity(size)))
                 }
-
             }
             return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()
             """
@@ -63,12 +62,13 @@ object Snapshots : TemplateGroupBase() {
         body(Sequences) { "return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()" }
 
         body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
-            val size = if (f == CharSequences) "length" else "size"
+            val size = f.code.size
+            val capacity = if (f == CharSequences || primitive == PrimitiveType.Char) "$size.coerceAtMost(128)" else size
             """
             return when ($size) {
                 0 -> emptySet()
                 1 -> setOf(this[0])
-                else -> toCollection(LinkedHashSet<T>(mapCapacity($size)))
+                else -> toCollection(LinkedHashSet<T>(mapCapacity($capacity)))
             }
             """
         }
@@ -82,8 +82,11 @@ object Snapshots : TemplateGroupBase() {
         returns("HashSet<T>")
         body { "return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(HashSet<T>())" }
-        body(CharSequences) { "return toCollection(HashSet<T>(mapCapacity(length)))" }
-        body(ArraysOfObjects, ArraysOfPrimitives) { "return toCollection(HashSet<T>(mapCapacity(size)))" }
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+            val size = f.code.size
+            val capacity = if (f == CharSequences || primitive == PrimitiveType.Char) "$size.coerceAtMost(128)" else size
+            "return toCollection(HashSet<T>(mapCapacity($capacity)))"
+        }
     }
 
     val f_toSortedSet = fn("toSortedSet()") {
@@ -159,7 +162,7 @@ object Snapshots : TemplateGroupBase() {
         }
         body(CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
             """
-            return when (${ if (f == CharSequences) "length" else "size" }) {
+            return when (${f.code.size}) {
                 0 -> emptyList()
                 1 -> listOf(this[0])
                 else -> this.toMutableList()
@@ -447,7 +450,6 @@ object Snapshots : TemplateGroupBase() {
         since("1.3")
         specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             since("1.4")
-            annotation("@ExperimentalStdlibApi")
         }
         typeParam("K", primary = true)
         typeParam("V")
@@ -467,13 +469,18 @@ object Snapshots : TemplateGroupBase() {
             else -> "samples.collections.Collections.Transformations.associateWith"
         })
         body {
-            val resultMap = when (family) {
-                Iterables -> "LinkedHashMap<K, V>(mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16))"
-                CharSequences -> "LinkedHashMap<K, V>(mapCapacity(length).coerceAtLeast(16))"
-                else -> "LinkedHashMap<K, V>()"
+            val capacity = when (family) {
+                Iterables -> "mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)"
+                CharSequences -> "mapCapacity(length.coerceAtMost(128)).coerceAtLeast(16)"
+                ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned -> if (primitive == PrimitiveType.Char) {
+                    "mapCapacity(size.coerceAtMost(128)).coerceAtLeast(16)"
+                } else {
+                    "mapCapacity(size).coerceAtLeast(16)"
+                }
+                else -> ""
             }
             """
-            val result = $resultMap
+            val result = LinkedHashMap<K, V>($capacity)
             return associateWithTo(result, valueSelector)
             """
         }
@@ -487,7 +494,6 @@ object Snapshots : TemplateGroupBase() {
         since("1.3")
         specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             since("1.4")
-            annotation("@ExperimentalStdlibApi")
         }
         typeParam("K", primary = true)
         typeParam("V")

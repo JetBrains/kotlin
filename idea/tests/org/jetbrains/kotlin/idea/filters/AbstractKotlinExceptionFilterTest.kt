@@ -46,6 +46,7 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
         }
         PsiTestUtil.setCompilerOutputPath(module, outDir.url, false)
 
+        val extraOptions = InTextDirectivesUtils.findListWithPrefixes(fileText, "// !LANGUAGE: ").map { "-XXLanguage:$it" }
         val classLoader: URLClassLoader
         if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// WITH_MOCK_LIBRARY: ") ?: false) {
             if (MOCK_LIBRARY_JAR == null) {
@@ -65,13 +66,13 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
                 }
                 moduleModel.commit()
             }
-            MockLibraryUtil.compileKotlin(path, File(outDir.path), extraClasspath = *arrayOf(mockLibraryPath))
+            MockLibraryUtil.compileKotlin(path, File(outDir.path), extraOptions, mockLibraryPath)
             classLoader = URLClassLoader(
                 arrayOf(URL(outDir.url + "/"), mockLibraryJar.toURI().toURL()),
                 ForTestCompileRuntime.runtimeJarClassLoader()
             )
         } else {
-            MockLibraryUtil.compileKotlin(path, File(outDir.path))
+            MockLibraryUtil.compileKotlin(path, File(outDir.path), extraOptions)
             classLoader = URLClassLoader(
                 arrayOf(URL(outDir.url + "/")),
                 ForTestCompileRuntime.runtimeJarClassLoader()

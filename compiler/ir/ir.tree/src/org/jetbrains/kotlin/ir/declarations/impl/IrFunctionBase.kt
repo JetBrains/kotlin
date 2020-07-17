@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.ir.declarations.impl.carriers.FunctionBaseCarrier
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
-import org.jetbrains.kotlin.ir.util.mapOptimized
+import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
-abstract class IrFunctionBase<T : FunctionBaseCarrier<T>>(
+abstract class IrFunctionBase<T : FunctionBaseCarrier>(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
@@ -40,7 +40,7 @@ abstract class IrFunctionBase<T : FunctionBaseCarrier<T>>(
 ) :
     IrDeclarationBase<T>(startOffset, endOffset, origin),
     IrFunction,
-    FunctionBaseCarrier<T> {
+    FunctionBaseCarrier {
 
     override var returnTypeFieldField: IrType = returnType
 
@@ -144,12 +144,11 @@ abstract class IrFunctionBase<T : FunctionBaseCarrier<T>>(
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-
-        typeParameters = typeParameters.mapOptimized { it.transform(transformer, data) }
+        typeParameters = typeParameters.transformIfNeeded(transformer, data)
 
         dispatchReceiverParameter = dispatchReceiverParameter?.transform(transformer, data)
         extensionReceiverParameter = extensionReceiverParameter?.transform(transformer, data)
-        valueParameters = valueParameters.mapOptimized { it.transform(transformer, data) }
+        valueParameters = valueParameters.transformIfNeeded(transformer, data)
 
         body = body?.transform(transformer, data)
     }

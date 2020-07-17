@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/withAdaptationForSam.kt
-  CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+  CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IFoo, i:kotlin.Int) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.IFoo

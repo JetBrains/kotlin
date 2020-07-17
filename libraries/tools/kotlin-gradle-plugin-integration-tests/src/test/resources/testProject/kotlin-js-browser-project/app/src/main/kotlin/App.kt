@@ -6,5 +6,8 @@
 package com.example
 
 fun main() {
+    require("css/main.css")
     println("Sheldon: ${sheldon()}")
 }
+
+external fun require(o: String)

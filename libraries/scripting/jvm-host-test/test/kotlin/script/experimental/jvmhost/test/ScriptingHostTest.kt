@@ -8,7 +8,7 @@ package kotlin.script.experimental.jvmhost.test
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.CompiledScriptClassLoader
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemory
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -21,7 +21,6 @@ import java.net.URLClassLoader
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import java.util.jar.JarFile
-import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.BasicScriptingHost
 import kotlin.script.experimental.host.FileBasedScriptSource
@@ -55,12 +54,11 @@ class ScriptingHostTest : TestCase() {
         val greeting = "Hello from script!"
         val output = captureOut {
             val basicJvmScriptingHost = BasicJvmScriptingHost()
-            basicJvmScriptingHost.eval(
+            basicJvmScriptingHost.evalWithTemplate<SimpleScript>(
                 "println(\"$greeting\")".toScriptSource("name"),
-                createJvmCompilationConfigurationFromTemplate<SimpleScript>(basicJvmScriptingHost.hostConfiguration) {
+                compilation = {
                     updateClasspath(classpathFromClass<SimpleScript>())
-                },
-                createJvmEvaluationConfigurationFromTemplate<SimpleScript>(basicJvmScriptingHost.hostConfiguration)
+                }
             ).throwOnFailure()
         }
         Assert.assertEquals(greeting, output)
@@ -207,15 +205,19 @@ class ScriptingHostTest : TestCase() {
     fun testSimpleImportWithImplicitReceiver() {
         val greeting = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
         val script = "println(\"Hello from imported \$helloScriptName script!\")"
-        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
-            makeSimpleConfigurationWithTestImport()
-            implicitReceivers(String::class)
-        }
-        val evaluationConfiguration = createJvmEvaluationConfigurationFromTemplate<SimpleScriptTemplate> {
-            implicitReceivers("abc")
-        }
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                makeSimpleConfigurationWithTestImport()
+                implicitReceivers(String::class)
+            },
+            evaluation = {
+                implicitReceivers("abc")
+            }
+        )
         val output = captureOut {
-            BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, evaluationConfiguration).throwOnFailure()
+            BasicJvmScriptingHost().eval(
+                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
+            ).throwOnFailure()
         }.lines()
         Assert.assertEquals(greeting, output)
     }
@@ -284,13 +286,13 @@ class ScriptingHostTest : TestCase() {
 
     @Test
     fun testCompileOptionsLanguageVersion() {
-        val script = "typealias MyInt = Int\nval x: MyInt = 3"
+        val script = "fun interface FunInterface {\n    fun invoke()\n}"
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
-            compilerOptions("-language-version", "1.0")
+            compilerOptions("-language-version", "1.3")
         }
         val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        res.reports.find { it.message.startsWith("The feature \"type aliases\" is only available since language version 1.1") }
+        res.reports.find { it.message.startsWith("The feature \"functional interface conversion\" is only available since language version 1.4") }
             ?: fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
     }
 
@@ -316,6 +318,50 @@ class ScriptingHostTest : TestCase() {
         }
         // -no-stdlib in refined configuration has no effect
         assertTrue(res2 is ResultWithDiagnostics.Success)
+    }
+
+    @Test
+    fun testErrorOnParsingOptions() {
+        val script = "println(\"Hi\")"
+
+        val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            compilerOptions("-jvm-target=1.8")
+        }
+        val res1 = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
+        assertTrue(res1 is ResultWithDiagnostics.Failure)
+        assertNotNull(res1.reports.find { it.message == "Invalid argument: -jvm-target=1.8" })
+
+        val compilationConfiguration2 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            refineConfiguration {
+                beforeCompiling { ctx ->
+                    ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                        compilerOptions.append("-jvm-target=1.6")
+                    }.asSuccess()
+                }
+            }
+        }
+        val res2 = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration2, null)
+        assertTrue(res2 is ResultWithDiagnostics.Failure)
+        assertNotNull(res2.reports.find { it.message == "Invalid argument: -jvm-target=1.6" })
+    }
+
+    @Test
+    fun testInvalidOptionsWarning() {
+        val script = "1"
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
+            compilerOptions("-Xunknown1")
+            refineConfiguration {
+                beforeCompiling { ctx ->
+                    ScriptCompilationConfiguration(ctx.compilationConfiguration) {
+                        compilerOptions.append("-Xunknown2")
+                    }.asSuccess()
+                }
+            }
+        }
+        val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
+        assertTrue(res is ResultWithDiagnostics.Success)
+        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: -Xunknown1" })
+        assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: -Xunknown2" })
     }
 
     @Test
@@ -348,7 +394,7 @@ class ScriptingHostTest : TestCase() {
         assertTrue(compiledScript is ResultWithDiagnostics.Success)
 
         val jvmCompiledScript = compiledScript.valueOrNull()!! as KJvmCompiledScript
-        val jvmCompiledModule = jvmCompiledScript.compiledModule as KJvmCompiledModuleInMemory
+        val jvmCompiledModule = jvmCompiledScript.getCompiledModule() as KJvmCompiledModuleInMemoryImpl
         val bytes = jvmCompiledModule.compilerOutputFiles["SavedScript.class"]!!
 
         var classFileVersion: Int? = null
@@ -377,9 +423,9 @@ class ScriptingHostTest : TestCase() {
         val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration)
         val compiledScript = runBlocking {
             val res = compiler(script.toScriptSource(), scriptCompilationConfiguration).throwOnFailure()
-            (res as ResultWithDiagnostics.Success<CompiledScript<*>>).value
+            (res as ResultWithDiagnostics.Success<CompiledScript>).value
         }
-        val compiledScriptClass = runBlocking { compiledScript.getClass(null).throwOnFailure().valueOrNull()!! as KClass<*> }
+        val compiledScriptClass = runBlocking { compiledScript.getClass(null).throwOnFailure().valueOrNull()!! }
         val classLoader = compiledScriptClass.java.classLoader
 
         Assert.assertTrue(classLoader is CompiledScriptClassLoader)
@@ -394,8 +440,8 @@ class ScriptingHostTest : TestCase() {
         Assert.assertNotNull(classAsResourceUrl)
         Assert.assertNotNull(classAssResourceStream)
 
-        val classAsResourceData = classAsResourceUrl.openConnection().getInputStream().readBytes()
-        val classAsResourceStreamData = classAssResourceStream.readBytes()
+        val classAsResourceData = classAsResourceUrl!!.openConnection().getInputStream().readBytes()
+        val classAsResourceStreamData = classAssResourceStream!!.readBytes()
 
         Assert.assertArrayEquals(classAsResourceData, classAsResourceStreamData)
 

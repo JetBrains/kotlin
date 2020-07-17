@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 // SKIP_TXT
 fun test(b: S) {

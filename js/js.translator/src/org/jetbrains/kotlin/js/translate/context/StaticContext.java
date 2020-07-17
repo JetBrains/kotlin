@@ -111,7 +111,7 @@ public final class StaticContext {
     private final JsImportedModule currentModuleAsImported;
 
     @NotNull
-    private final NameSuggestion nameSuggestion = new NameSuggestion();
+    private final NameSuggestion nameSuggestion;
 
     @NotNull
     private final Map<DeclarationDescriptor, JsName> nameCache = new HashMap<>();
@@ -169,6 +169,7 @@ public final class StaticContext {
         fragment = new JsProgramFragment(rootFunction.getScope(), packageFqn);
 
         this.bindingTrace = bindingTrace;
+        this.nameSuggestion = new NameSuggestion();
         this.namer = Namer.newInstance(program.getRootScope());
         this.intrinsics = new Intrinsics();
         this.rootScope = fragment.getScope();
@@ -270,7 +271,7 @@ public final class StaticContext {
 
     @Nullable
     public SuggestedName suggestName(@NotNull DeclarationDescriptor descriptor) {
-        return nameSuggestion.suggest(descriptor);
+        return nameSuggestion.suggest(descriptor, getBindingContext());
     }
 
     @NotNull
@@ -367,7 +368,7 @@ public final class StaticContext {
             MetadataProperties.setDescriptor(result, descriptor);
             return result;
         }
-        SuggestedName suggested = nameSuggestion.suggest(descriptor);
+        SuggestedName suggested = nameSuggestion.suggest(descriptor, getBindingContext());
         if (suggested == null) {
             throw new IllegalArgumentException("Can't generate name for root declarations: " + descriptor);
         }
@@ -379,7 +380,7 @@ public final class StaticContext {
         JsName name = backingFieldNameCache.get(property);
 
         if (name == null) {
-            SuggestedName fqn = nameSuggestion.suggest(property);
+            SuggestedName fqn = nameSuggestion.suggest(property, getBindingContext());
             assert fqn != null : "Properties are non-root declarations: " + property;
             assert fqn.getNames().size() == 1 : "Private names must always consist of exactly one name";
 
@@ -740,7 +741,7 @@ public final class StaticContext {
 
     @NotNull
     private String getPlainId(@NotNull DeclarationDescriptor declaration) {
-        SuggestedName suggestedName = nameSuggestion.suggest(declaration);
+        SuggestedName suggestedName = nameSuggestion.suggest(declaration, getBindingContext());
         assert suggestedName != null : "Declaration should not be ModuleDescriptor, therefore suggestedName should be non-null";
         return suggestedName.getNames().get(0);
     }
@@ -801,7 +802,7 @@ public final class StaticContext {
 
     public void addInlineCall(@NotNull CallableDescriptor descriptor) {
         descriptor = (CallableDescriptor) JsDescriptorUtils.findRealInlineDeclaration(descriptor);
-        String tag = Namer.getFunctionTag(descriptor, config);
+        String tag = Namer.getFunctionTag(descriptor, config, getBindingContext());
         JsExpression moduleExpression = exportModuleForInline(DescriptorUtils.getContainingModule(descriptor));
         if (moduleExpression == null) {
             moduleExpression = getModuleExpressionFor(descriptor);

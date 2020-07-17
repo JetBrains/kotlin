@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-abstract class IrMemberAccessExpressionBase(
+abstract class IrMemberAccessExpressionBase<S : IrSymbol>(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
@@ -32,7 +33,7 @@ abstract class IrMemberAccessExpressionBase(
     final override val origin: IrStatementOrigin? = null
 ) :
     IrExpressionBase(startOffset, endOffset, type),
-    IrMemberAccessExpression {
+    IrMemberAccessExpression<S> {
 
     override var dispatchReceiver: IrExpression? = null
     override var extensionReceiver: IrExpression? = null

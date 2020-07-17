@@ -38,8 +38,8 @@ fun falseWhenInt(x: Any?): Boolean {
 
 fun truetrue(x: Any?) {
     if (trueWhenString(x) && trueWhenInt(x)) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.length
+        x.inc()
     }
     x.<!UNRESOLVED_REFERENCE!>length<!>
     x.<!AMBIGUITY!>inc<!>()
@@ -47,7 +47,7 @@ fun truetrue(x: Any?) {
 
 fun truefalse(x: Any?) {
     if (trueWhenString(x) && falseWhenInt(x)) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         x.<!AMBIGUITY!>inc<!>()
     }
     else {
@@ -59,7 +59,7 @@ fun truefalse(x: Any?) {
 fun falsetrue(x: Any?) {
     if (falseWhenString(x) && trueWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.inc()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>

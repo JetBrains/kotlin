@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 package test
 
 class C(val s : String) {

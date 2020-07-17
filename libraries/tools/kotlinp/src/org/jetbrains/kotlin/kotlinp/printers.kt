@@ -57,15 +57,15 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         }
 
         override fun visitEnd() {
-            sb.appendln()
+            sb.appendLine()
             if (lambdaClassOriginName != null) {
-                sb.appendln("  // lambda class origin: $lambdaClassOriginName")
+                sb.appendLine("  // lambda class origin: $lambdaClassOriginName")
             }
             for (versionRequirement in versionRequirements) {
-                sb.appendln("  // $versionRequirement")
+                sb.appendLine("  // $versionRequirement")
             }
             if (jvmSignature != null) {
-                sb.appendln("  // signature: $jvmSignature")
+                sb.appendLine("  // signature: $jvmSignature")
             }
             sb.append("  ")
             sb.appendFlags(flags, FUNCTION_FLAGS_MAP)
@@ -82,9 +82,9 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
             if (returnType != null) {
                 sb.append(": ").append(returnType)
             }
-            sb.appendln()
+            sb.appendLine()
             if (contract != null) {
-                sb.appendln("    $contract")
+                sb.appendLine("    $contract")
             }
         }
     }
@@ -141,24 +141,24 @@ private fun visitProperty(
         }
 
         override fun visitEnd() {
-            sb.appendln()
+            sb.appendLine()
             for (versionRequirement in versionRequirements) {
-                sb.appendln("  // $versionRequirement")
+                sb.appendLine("  // $versionRequirement")
             }
             if (jvmFieldSignature != null) {
-                sb.appendln("  // field: $jvmFieldSignature")
+                sb.appendLine("  // field: $jvmFieldSignature")
             }
             if (jvmGetterSignature != null) {
-                sb.appendln("  // getter: $jvmGetterSignature")
+                sb.appendLine("  // getter: $jvmGetterSignature")
             }
             if (jvmSetterSignature != null) {
-                sb.appendln("  // setter: $jvmSetterSignature")
+                sb.appendLine("  // setter: $jvmSetterSignature")
             }
             if (jvmSyntheticMethodForAnnotationsSignature != null) {
-                sb.appendln("  // synthetic method for annotations: $jvmSyntheticMethodForAnnotationsSignature")
+                sb.appendLine("  // synthetic method for annotations: $jvmSyntheticMethodForAnnotationsSignature")
             }
             if (isMovedFromInterfaceCompanion) {
-                sb.appendln("  // is moved from interface companion")
+                sb.appendLine("  // is moved from interface companion")
             }
             sb.append("  ")
             sb.appendFlags(flags, PROPERTY_FLAGS_MAP)
@@ -177,11 +177,11 @@ private fun visitProperty(
             if (Flag.Property.HAS_CONSTANT(flags)) {
                 sb.append(" /* = ... */")
             }
-            sb.appendln()
+            sb.appendLine()
             if (Flag.Property.HAS_GETTER(flags)) {
                 sb.append("    ")
                 sb.appendFlags(getterFlags, PROPERTY_ACCESSOR_FLAGS_MAP)
-                sb.appendln("get")
+                sb.appendLine("get")
             }
             if (Flag.Property.HAS_SETTER(flags)) {
                 sb.append("    ")
@@ -190,7 +190,7 @@ private fun visitProperty(
                 if (setterParameter != null) {
                     sb.append("(").append(setterParameter).append(")")
                 }
-                sb.appendln()
+                sb.appendLine()
             }
         }
     }
@@ -217,18 +217,18 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
         }
 
         override fun visitEnd() {
-            sb.appendln()
+            sb.appendLine()
             for (versionRequirement in versionRequirements) {
-                sb.appendln("  // $versionRequirement")
+                sb.appendLine("  // $versionRequirement")
             }
             if (jvmSignature != null) {
-                sb.appendln("  // signature: $jvmSignature")
+                sb.appendLine("  // signature: $jvmSignature")
             }
             sb.append("  ")
             sb.appendFlags(flags, CONSTRUCTOR_FLAGS_MAP)
             sb.append("constructor(")
             params.joinTo(sb)
-            sb.appendln(")")
+            sb.appendLine(")")
         }
     }
 
@@ -257,12 +257,12 @@ private fun visitTypeAlias(settings: KotlinpSettings, sb: StringBuilder, flags: 
             printVersionRequirement { versionRequirements.add(it) }
 
         override fun visitEnd() {
-            sb.appendln()
+            sb.appendLine()
             for (versionRequirement in versionRequirements) {
-                sb.appendln("  // $versionRequirement")
+                sb.appendLine("  // $versionRequirement")
             }
             for (annotation in annotations) {
-                sb.append("  ").append("@").append(renderAnnotation(annotation)).appendln()
+                sb.append("  ").append("@").append(renderAnnotation(annotation)).appendLine()
             }
             sb.append("  ")
             sb.appendFlags(flags, VISIBILITY_FLAGS_MAP)
@@ -276,7 +276,7 @@ private fun visitTypeAlias(settings: KotlinpSettings, sb: StringBuilder, flags: 
             if (expandedType != null) {
                 sb.append(" /* = ").append(expandedType).append(" */")
             }
-            sb.appendln()
+            sb.appendLine()
         }
     }
 
@@ -537,12 +537,12 @@ private fun StringBuilder.appendDeclarationContainerExtensions(
     moduleName: String?
 ) {
     for ((i, sb) in localDelegatedProperties.withIndex()) {
-        appendln()
-        appendln("  // local delegated property #$i")
+        appendLine()
+        appendLine("  // local delegated property #$i")
         for (line in sb.lineSequence()) {
             if (line.isBlank()) continue
             // Comment all uncommented lines to not make it look like these properties are declared here
-            appendln(
+            appendLine(
                 if (line.startsWith("  ") && !line.startsWith("  //")) line.replaceFirst("  ", "  // ")
                 else line
             )
@@ -550,8 +550,8 @@ private fun StringBuilder.appendDeclarationContainerExtensions(
     }
 
     if (settings.isVerbose && moduleName != null) {
-        appendln()
-        appendln("  // module name: $moduleName")
+        appendLine()
+        appendLine("  // module name: $moduleName")
     }
 }
 
@@ -564,9 +564,9 @@ private fun printContract(output: (String) -> Unit): KmContractVisitor =
 
         override fun visitEnd() {
             output(buildString {
-                appendln("contract {")
+                appendLine("contract {")
                 for (effect in effects) {
-                    appendln("      $effect")
+                    appendLine("      $effect")
                 }
                 append("    }")
             })
@@ -689,7 +689,7 @@ interface AbstractPrinter<in T : KotlinClassMetadata> {
 
 class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), AbstractPrinter<KotlinClassMetadata.Class> {
     private val sb = StringBuilder()
-    private val result = StringBuilder()
+    internal val result = StringBuilder()
 
     private var flags: Flags? = null
     private var name: ClassName? = null
@@ -705,10 +705,10 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
 
     override fun visitEnd() {
         if (anonymousObjectOriginName != null) {
-            result.appendln("// anonymous object origin: $anonymousObjectOriginName")
+            result.appendLine("// anonymous object origin: $anonymousObjectOriginName")
         }
         for (versionRequirement in versionRequirements) {
-            result.appendln("// $versionRequirement")
+            result.appendLine("// $versionRequirement")
         }
         result.appendFlags(flags!!, CLASS_FLAGS_MAP)
         result.append(name)
@@ -719,9 +719,9 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
             result.append(" : ")
             supertypes.joinTo(result)
         }
-        result.appendln(" {")
+        result.appendLine(" {")
         result.append(sb)
-        result.appendln("}")
+        result.appendLine("}")
     }
 
     override fun visitTypeParameter(flags: Flags, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor? =
@@ -743,23 +743,23 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
         visitTypeAlias(settings, sb, flags, name)
 
     override fun visitCompanionObject(name: String) {
-        sb.appendln()
-        sb.appendln("  // companion object: $name")
+        sb.appendLine()
+        sb.appendLine("  // companion object: $name")
     }
 
     override fun visitNestedClass(name: String) {
-        sb.appendln()
-        sb.appendln("  // nested class: $name")
+        sb.appendLine()
+        sb.appendLine("  // nested class: $name")
     }
 
     override fun visitEnumEntry(name: String) {
-        sb.appendln()
-        sb.appendln("  $name,")
+        sb.appendLine()
+        sb.appendLine("  $name,")
     }
 
     override fun visitSealedSubclass(name: ClassName) {
-        sb.appendln()
-        sb.appendln("  // sealed subclass: $name")
+        sb.appendLine()
+        sb.appendLine("  // sealed subclass: $name")
     }
 
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
@@ -799,11 +799,11 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
 
 abstract class PackagePrinter(private val settings: KotlinpSettings) : KmPackageVisitor() {
     internal val sb = StringBuilder().apply {
-        appendln("package {")
+        appendLine("package {")
     }
 
     override fun visitEnd() {
-        sb.appendln("}")
+        sb.appendLine("}")
     }
 
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
@@ -843,14 +843,14 @@ class FileFacadePrinter(settings: KotlinpSettings) : PackagePrinter(settings), A
 
 class LambdaPrinter(private val settings: KotlinpSettings) : KmLambdaVisitor(), AbstractPrinter<KotlinClassMetadata.SyntheticClass> {
     private val sb = StringBuilder().apply {
-        appendln("lambda {")
+        appendLine("lambda {")
     }
 
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
         visitFunction(settings, sb, flags, name)
 
     override fun visitEnd() {
-        sb.appendln("}")
+        sb.appendLine("}")
     }
 
     override fun print(klass: KotlinClassMetadata.SyntheticClass): String {
@@ -863,7 +863,7 @@ class MultiFileClassPartPrinter(
     settings: KotlinpSettings
 ) : PackagePrinter(settings), AbstractPrinter<KotlinClassMetadata.MultiFileClassPart> {
     override fun print(klass: KotlinClassMetadata.MultiFileClassPart): String {
-        sb.appendln("  // facade: ${klass.facadeClassName}")
+        sb.appendLine("  // facade: ${klass.facadeClassName}")
         klass.accept(this)
         return sb.toString()
     }
@@ -872,37 +872,50 @@ class MultiFileClassPartPrinter(
 class MultiFileClassFacadePrinter : AbstractPrinter<KotlinClassMetadata.MultiFileClassFacade> {
     override fun print(klass: KotlinClassMetadata.MultiFileClassFacade): String =
         buildString {
-            appendln("multi-file class {")
+            appendLine("multi-file class {")
             for (part in klass.partClassNames) {
-                appendln("  // $part")
+                appendLine("  // $part")
             }
-            appendln("}")
+            appendLine("}")
         }
 }
 
-class ModuleFilePrinter : KmModuleVisitor() {
+class ModuleFilePrinter(private val settings: KotlinpSettings) : KmModuleVisitor() {
+    private val optionalAnnotations = mutableListOf<ClassPrinter>()
+
     private val sb = StringBuilder().apply {
-        appendln("module {")
+        appendLine("module {")
     }
 
     override fun visitPackageParts(fqName: String, fileFacades: List<String>, multiFileClassParts: Map<String, String>) {
         val presentableFqName = if (fqName.isEmpty()) "<root>" else fqName
-        sb.appendln("  package $presentableFqName {")
+        sb.appendLine("  package $presentableFqName {")
         for (fileFacade in fileFacades) {
-            sb.appendln("    $fileFacade")
+            sb.appendLine("    $fileFacade")
         }
         for ((multiFileClassPart, facade) in multiFileClassParts) {
-            sb.appendln("    $multiFileClassPart ($facade)")
+            sb.appendLine("    $multiFileClassPart ($facade)")
         }
-        sb.appendln("  }")
+        sb.appendLine("  }")
     }
 
     override fun visitAnnotation(annotation: KmAnnotation) {
         // TODO
     }
 
+    override fun visitOptionalAnnotationClass(): KmClassVisitor =
+        ClassPrinter(settings).also(optionalAnnotations::add)
+
     override fun visitEnd() {
-        sb.appendln("}")
+        if (optionalAnnotations.isNotEmpty()) {
+            sb.appendLine()
+            sb.appendLine("  // Optional annotations")
+            sb.appendLine()
+            for (element in optionalAnnotations) {
+                sb.appendLine("  " + element.result.toString().replace("\n", "\n  ").trimEnd())
+            }
+        }
+        sb.appendLine("}")
     }
 
     fun print(metadata: KotlinModuleMetadata): String {
@@ -933,6 +946,7 @@ private val CLASS_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
     Flag.Class.IS_EXTERNAL to "external",
     Flag.Class.IS_EXPECT to "expect",
     Flag.Class.IS_INLINE to "inline",
+    Flag.Class.IS_FUN to "fun",
 
     Flag.Class.IS_CLASS to "class",
     Flag.Class.IS_INTERFACE to "interface",

@@ -276,7 +276,7 @@ public class ModifiersChecker {
             }
             OperatorModifierChecker.INSTANCE.check(declaration, descriptor, trace, languageVersionSettings);
             PublishedApiUsageChecker.INSTANCE.check(declaration, descriptor, trace);
-            OptionalExpectationTargetChecker.INSTANCE.check(declaration, descriptor, trace);
+            OptionalExpectationChecker.INSTANCE.check(declaration, descriptor, trace);
         }
 
         public void checkTypeParametersModifiers(@NotNull KtModifierListOwner modifierListOwner) {

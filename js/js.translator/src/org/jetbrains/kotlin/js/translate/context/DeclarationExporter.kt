@@ -46,7 +46,7 @@ internal class DeclarationExporter(val context: StaticContext) {
         if (isNativeObject(descriptor) || isLibraryObject(descriptor)) return
         if (descriptor.isEffectivelyInlineOnly()) return
 
-        val suggestedName = context.nameSuggestion.suggest(descriptor) ?: return
+        val suggestedName = context.nameSuggestion.suggest(descriptor, context.bindingContext) ?: return
 
         val container = suggestedName.scope
         if (!descriptor.shouldBeExported(force)) return

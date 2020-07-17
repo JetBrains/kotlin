@@ -7,6 +7,8 @@ package kotlin.script.experimental.dependencies
 
 import java.io.File
 import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.SourceCode
+import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.dependencies.impl.makeResolveFailureResult
 import kotlin.script.experimental.dependencies.impl.toRepositoryUrlOrNull
 
@@ -18,13 +20,26 @@ class FileSystemDependenciesResolver(vararg paths: File) : ExternalDependenciesR
     private fun RepositoryCoordinates.toFilePath() =
         (this.toRepositoryUrlOrNull()?.takeIf { it.protocol == "file" }?.path ?: string).toRepositoryFileOrNull()
 
-    override fun addRepository(repositoryCoordinates: RepositoryCoordinates) {
+    override fun addRepository(
+        repositoryCoordinates: RepositoryCoordinates,
+        options: ExternalDependenciesResolver.Options,
+        sourceCodeLocation: SourceCode.LocationWithId?
+    ): ResultWithDiagnostics<Boolean> {
+        if (!acceptsRepository(repositoryCoordinates)) return false.asSuccess()
+
         val repoDir = repositoryCoordinates.toFilePath()
-            ?: throw IllegalArgumentException("Invalid repository location: '${repositoryCoordinates}'")
+            ?: return makeResolveFailureResult("Invalid repository location: '${repositoryCoordinates}'", sourceCodeLocation)
+
         localRepos.add(repoDir)
+
+        return true.asSuccess()
     }
 
-    override suspend fun resolve(artifactCoordinates: String): ResultWithDiagnostics<List<File>> {
+    override suspend fun resolve(
+        artifactCoordinates: String,
+        options: ExternalDependenciesResolver.Options,
+        sourceCodeLocation: SourceCode.LocationWithId?
+    ): ResultWithDiagnostics<List<File>> {
         if (!acceptsArtifact(artifactCoordinates)) throw IllegalArgumentException("Path is invalid")
 
         val messages = mutableListOf<String>()
@@ -38,7 +53,7 @@ class FileSystemDependenciesResolver(vararg paths: File) : ExternalDependenciesR
                 else -> return ResultWithDiagnostics.Success(listOf(file))
             }
         }
-        return makeResolveFailureResult(messages)
+        return makeResolveFailureResult(messages, sourceCodeLocation)
     }
 
     override fun acceptsArtifact(artifactCoordinates: String) =

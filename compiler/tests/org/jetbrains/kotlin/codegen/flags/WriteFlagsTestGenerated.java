@@ -515,6 +515,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/function/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
+            @TestMetadata("deprecatedSinceKotlin.kt")
+            public void testDeprecatedSinceKotlin() throws Exception {
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/deprecatedSinceKotlin.kt");
+            }
+
             @TestMetadata("emptyGetter.kt")
             public void testEmptyGetter() throws Exception {
                 runTest("compiler/testData/writeFlags/function/deprecatedFlag/emptyGetter.kt");
@@ -892,24 +897,6 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestMetadata("lateinitPropertyNoSetter.kt")
         public void testLateinitPropertyNoSetter() throws Exception {
             runTest("compiler/testData/writeFlags/lateinit/lateinitPropertyNoSetter.kt");
-        }
-    }
-
-    @TestMetadata("compiler/testData/writeFlags/multiplatform")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Multiplatform extends AbstractWriteFlagsTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInMultiplatform() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-        }
-
-        @TestMetadata("optionalExpectation.kt")
-        public void testOptionalExpectation() throws Exception {
-            runTest("compiler/testData/writeFlags/multiplatform/optionalExpectation.kt");
         }
     }
 

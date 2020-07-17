@@ -23,26 +23,30 @@ fun JsNode.fixForwardNameReferences() {
         val currentScope = mutableMapOf<String, JsName>()
 
         init {
-            currentScope += collectDefinedNames(this@fixForwardNameReferences).associateBy { it.ident }
+            currentScope += collectDefinedNames(this@fixForwardNameReferences, skipLabelsAndCatches = true).associateBy { it.ident }
+        }
+
+        private fun restore(ident: String, oldName: JsName?) {
+            if (oldName == null) {
+                currentScope -= ident
+            } else {
+                currentScope[ident] = oldName
+            }
         }
 
         override fun visitFunction(x: JsFunction) {
-            val scopeBackup = mutableMapOf<String, JsName?>()
-            val localVars = x.collectLocalVariables()
-            for (localVar in localVars) {
-                scopeBackup[localVar.ident] = currentScope[localVar.ident]
+            val localVars = x.collectLocalVariables(skipLabelsAndCatches = true).toList()
+            val backup = arrayOfNulls<JsName>(localVars.size)
+
+            localVars.forEachIndexed { index, localVar ->
+                backup[index] = currentScope[localVar.ident]
                 currentScope[localVar.ident] = localVar
             }
 
             super.visitFunction(x)
 
-            for ((ident, oldName) in scopeBackup) {
-                if (oldName == null) {
-                    currentScope -= ident
-                }
-                else {
-                    currentScope[ident] = oldName
-                }
+            for (index in localVars.indices.reversed()) {
+                restore(localVars[index].ident, backup[index])
             }
         }
 
@@ -53,12 +57,7 @@ fun JsNode.fixForwardNameReferences() {
 
             super.visitCatch(x)
 
-            if (oldName != null) {
-                currentScope[name.ident] = name
-            }
-            else {
-                currentScope -= name.ident
-            }
+            restore(name.ident, oldName)
         }
 
         override fun visitNameRef(nameRef: JsNameRef) {

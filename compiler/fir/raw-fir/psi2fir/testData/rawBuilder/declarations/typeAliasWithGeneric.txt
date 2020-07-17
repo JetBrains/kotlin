@@ -10,7 +10,7 @@ FILE: typeAliasWithGeneric.kt
     public? final typealias C<T> = B<T, A>
     public? final? class D : C<A> {
         public? constructor(): R|D| {
-            super<R|kotlin/Any|>()
+            super<<implicit>>()
         }
 
     }

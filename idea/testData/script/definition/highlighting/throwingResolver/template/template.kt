@@ -8,11 +8,14 @@ import kotlin.script.experimental.location.*
 
 class TestDependenciesResolver : DependenciesResolver {
     override fun resolve(
-            scriptContents: ScriptContents,
-            environment: Environment
+        scriptContents: ScriptContents,
+        environment: Environment
     ): DependenciesResolver.ResolveResult {
-        error("Exception from resolver")
+        throw ex
     }
+
+    // this is needed for equality of script reports to avoid highlighting restart during test
+    private val ex = IllegalStateException("Exception from resolver")
 }
 
 @ScriptExpectedLocations([ScriptExpectedLocation.Everywhere])

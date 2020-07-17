@@ -25,6 +25,7 @@ internal class FirFunctionTypeRefImpl(
     override var receiverTypeRef: FirTypeRef?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var returnTypeRef: FirTypeRef,
+    override val isSuspend: Boolean,
 ) : FirPureAbstractElement(), FirFunctionTypeRef {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

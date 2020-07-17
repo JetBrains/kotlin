@@ -1,0 +1,102 @@
+package org.w3c.dom.encryptedmedia;
+
+
+// Downloaded from https://www.w3.org/TR/encrypted-media
+partial interface Navigator {
+ [SecureContext] Promise<MediaKeySystemAccess> requestMediaKeySystemAccess(DOMString keySystem, sequence<MediaKeySystemConfiguration> supportedConfigurations);
+};
+enum MediaKeysRequirement {
+    "required",
+    "optional",
+    "not-allowed"
+};
+dictionary MediaKeySystemConfiguration {
+ DOMString label = "";
+ sequence<DOMString> initDataTypes = [];
+ sequence<MediaKeySystemMediaCapability> audioCapabilities = [];
+ sequence<MediaKeySystemMediaCapability> videoCapabilities = [];
+ MediaKeysRequirement distinctiveIdentifier = "optional";
+ MediaKeysRequirement persistentState = "optional";
+ sequence<DOMString> sessionTypes;
+};
+dictionary MediaKeySystemMediaCapability {
+ DOMString contentType = "";
+ DOMString robustness = "";
+};
+[SecureContext]
+interface MediaKeySystemAccess {
+ readonly attribute DOMString keySystem;
+ MediaKeySystemConfiguration getConfiguration();
+ Promise<MediaKeys> createMediaKeys();
+};
+enum MediaKeySessionType {
+    "temporary",
+    "persistent-license"
+};
+[SecureContext]
+interface MediaKeys {
+ MediaKeySession createSession(optional MediaKeySessionType sessionType = "temporary");
+ Promise<boolean> setServerCertificate(BufferSource serverCertificate);
+};
+[SecureContext]
+interface MediaKeySession : EventTarget {
+ readonly attribute DOMString sessionId;
+ readonly attribute unrestricted double expiration;
+ readonly attribute Promise<void> closed;
+ readonly attribute MediaKeyStatusMap keyStatuses;
+ attribute EventHandler onkeystatuseschange;
+ attribute EventHandler onmessage;
+ Promise<void> generateRequest(DOMString initDataType, BufferSource initData);
+ Promise<boolean> load(DOMString sessionId);
+ Promise<void> update(BufferSource response);
+ Promise<void> close();
+ Promise<void> remove();
+};
+[SecureContext]
+interface MediaKeyStatusMap {
+ iterable<BufferSource, MediaKeyStatus>;
+ readonly attribute unsigned long size;
+ boolean has(BufferSource keyId);
+ any get(BufferSource keyId);
+};
+enum MediaKeyStatus {
+    "usable",
+    "expired",
+    "released",
+    "output-restricted",
+    "output-downscaled",
+    "status-pending",
+    "internal-error"
+};
+enum MediaKeyMessageType {
+    "license-request",
+    "license-renewal",
+    "license-release",
+    "individualization-request"
+};
+[SecureContext,
+ Constructor(DOMString type, MediaKeyMessageEventInit eventInitDict)]
+interface MediaKeyMessageEvent : Event {
+ readonly attribute MediaKeyMessageType messageType;
+ readonly attribute ArrayBuffer message;
+};
+dictionary MediaKeyMessageEventInit : EventInit {
+ required MediaKeyMessageType messageType;
+ required ArrayBuffer message;
+};
+partial interface HTMLMediaElement {
+ [SecureContext] readonly attribute MediaKeys? mediaKeys;
+ attribute EventHandler onencrypted;
+ attribute EventHandler onwaitingforkey;
+ [SecureContext] Promise<void> setMediaKeys(MediaKeys? mediaKeys);
+};
+[Constructor(DOMString type, optional MediaEncryptedEventInit eventInitDict)]
+interface MediaEncryptedEvent : Event {
+ readonly attribute DOMString initDataType;
+ readonly attribute ArrayBuffer? initData;
+};
+dictionary MediaEncryptedEventInit : EventInit {
+ DOMString initDataType = "";
+ ArrayBuffer? initData = null;
+};
+

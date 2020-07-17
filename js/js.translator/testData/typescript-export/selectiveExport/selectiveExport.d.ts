@@ -10,17 +10,17 @@ declare namespace JS_TESTS {
     }
     namespace foo {
         const exportedVal: number;
-        function exportedFun(): number
+        function exportedFun(): number;
         class ExportedClass {
-            constructor()
+            constructor();
             readonly value: number;
         }
     }
     namespace foo {
         const fileLevelExportedVal: number;
-        function fileLevelExportedFun(): number
+        function fileLevelExportedFun(): number;
         class FileLevelExportedClass {
-            constructor()
+            constructor();
             readonly value: number;
         }
     }

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.util.declareFieldWithOverrides
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -76,6 +75,8 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 irProperty.setter =
                     FunctionGenerator(declarationGenerator).generateDefaultAccessorForPrimaryConstructorParameter(setter, ktParameter)
             }
+
+            irProperty.linkCorrespondingPropertySymbol()
         }
     }
 
@@ -133,6 +134,8 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
             irProperty.getter = generateGetterIfRequired(ktProperty, propertyDescriptor)
             irProperty.setter = generateSetterIfRequired(ktProperty, propertyDescriptor)
+
+            irProperty.linkCorrespondingPropertySymbol()
         }
 
     fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtPureElement): IrProperty? {
@@ -141,23 +144,14 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val startOffset = ktElement.pureStartOffsetOrUndefined
         val endOffset = ktElement.pureEndOffsetOrUndefined
 
-        val backingField =
-            if (propertyDescriptor.actuallyHasBackingField(context.bindingContext) && propertyDescriptor.fieldVisibility.admitsFakeOverride)
-                context.symbolTable.declareFieldWithOverrides(
-                    startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE,
-                    propertyDescriptor, propertyDescriptor.type.toIrType()
-                ) { it.actuallyHasBackingField(context.bindingContext) }
-            else
-                null
-
         return context.symbolTable.declareProperty(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, propertyDescriptor).apply {
-            this.backingField = backingField
             this.getter = propertyDescriptor.getter?.let {
                 FunctionGenerator(declarationGenerator).generateFakeOverrideFunction(it, ktElement)
             }
             this.setter = propertyDescriptor.setter?.let {
                 FunctionGenerator(declarationGenerator).generateFakeOverrideFunction(it, ktElement)
             }
+            this.linkCorrespondingPropertySymbol()
         }
     }
 
@@ -188,4 +182,11 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 else -> Visibilities.PRIVATE
             }
 }
+
+internal fun IrProperty.linkCorrespondingPropertySymbol() {
+    backingField?.correspondingPropertySymbol = symbol
+    getter?.correspondingPropertySymbol = symbol
+    setter?.correspondingPropertySymbol = symbol
+}
+
 

@@ -55,7 +55,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
     declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForValueDeclaration(it)) }
     functionParams.forEach { function.addParameter(it) }
-    if (declaration.descriptor.isSuspend) {
+    if (declaration.isSuspend) {
         function.addParameter(JsName(Namer.CONTINUATION)) // TODO: Use namer?
     }
 
@@ -201,13 +201,15 @@ fun translateCall(
     }
 }
 
-fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGenerationContext, transformer: IrElementToJsExpressionTransformer): List<JsExpression> {
+fun translateCallArguments(expression: IrMemberAccessExpression<*>, context: JsGenerationContext, transformer: IrElementToJsExpressionTransformer): List<JsExpression> {
     val size = expression.valueArgumentsCount
 
     val arguments = (0 until size).mapTo(ArrayList(size)) { index ->
         val argument = expression.getValueArgument(index)
         val result = argument?.accept(transformer, context)
         if (result == null) {
+            if (context.staticContext.backendContext.es6mode) return@mapTo JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(2))
+
             assert(expression is IrFunctionAccessExpression && expression.symbol.owner.isExternalOrInheritedFromExternal())
             JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
         } else
@@ -228,8 +230,8 @@ fun defineProperty(receiver: JsExpression, name: String, value: () -> JsExpressi
 
 fun defineProperty(receiver: JsExpression, name: String, getter: JsExpression?, setter: JsExpression? = null) =
     defineProperty(receiver, name) {
-        val literal = JsObjectLiteral(true)
-        literal.apply {
+        JsObjectLiteral(true).apply {
+            propertyInitializers += JsPropertyInitializer(JsStringLiteral("configurable"), JsBooleanLiteral(true))
             if (getter != null)
                 propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), getter)
             if (setter != null)

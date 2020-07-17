@@ -33,7 +33,7 @@ fun BasicBlock.dump(builder: StringBuilder = StringBuilder(), indent: String = "
         builder.append(indent)
         builder.append(String.format("%3d ", index + 1))
         val dump = element.cfgDump()
-        builder.appendln(dump.lines().first())
+        builder.appendLine(dump.lines().first())
     }
     return builder.toString()
 }
@@ -41,7 +41,7 @@ fun BasicBlock.dump(builder: StringBuilder = StringBuilder(), indent: String = "
 fun BlockConnector.dump(builder: StringBuilder = StringBuilder(), indent: String = ""): String {
     builder.append(indent)
     val dump = element.cfgDump()
-    builder.appendln(dump.lines().first())
+    builder.appendLine(dump.lines().first())
     return builder.toString()
 }
 
@@ -56,21 +56,21 @@ fun ControlFlowGraph.dump(): String {
     }
     val builder = StringBuilder()
     for ((index, block) in blocks.withIndex()) {
-        builder.appendln("BB $index")
+        builder.appendLine("BB $index")
         val incoming = block.incoming
         if (incoming != null) {
-            builder.appendln(incoming.previousBlocks.joinToString(prefix = "INCOMING <- BB ") { blockIndex[it].toString() })
+            builder.appendLine(incoming.previousBlocks.joinToString(prefix = "INCOMING <- BB ") { blockIndex[it].toString() })
             incoming.dump(builder, "    ")
         }
-        builder.appendln("CONTENT")
+        builder.appendLine("CONTENT")
         block.dump(builder, "    ")
         val outgoing = block.outgoing
         if (outgoing != null) {
             if (outgoing.nextBlocks.isEmpty()) {
-                builder.appendln("OUTGOING -> NONE")
+                builder.appendLine("OUTGOING -> NONE")
             }
             else {
-                builder.appendln(outgoing.nextBlocks.joinToString(prefix = "OUTGOING -> BB ") { blockIndex[it].toString() })
+                builder.appendLine(outgoing.nextBlocks.joinToString(prefix = "OUTGOING -> BB ") { blockIndex[it].toString() })
             }
             outgoing.dump(builder, "    ")
         }

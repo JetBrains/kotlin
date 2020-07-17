@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.ir.types.isPrimitiveType as irTypePredicates_isPrimitiveType
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesContext, TypeSystemCommonBackendContext {
 
     val irBuiltIns: IrBuiltIns
@@ -110,7 +111,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     private fun getTypeParameters(typeConstructor: TypeConstructorMarker): List<IrTypeParameter> {
         return when (typeConstructor) {
             is IrTypeParameterSymbol -> emptyList()
-            is IrClassSymbol -> typeConstructor.owner.typeParameters
+            is IrClassSymbol -> extractTypeParameters(typeConstructor.owner)
             else -> error("unsupported type constructor")
         }
     }
@@ -303,9 +304,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean =
-        // TODO: don't fall back to KotlinType to check annotations. Currently testIdentityEquals fails on JVM without it
-        (this as IrAnnotationContainer).hasAnnotation(fqName) ||
-                (this as IrType).toKotlinType().annotations.hasAnnotation(fqName)
+        (this as IrAnnotationContainer).hasAnnotation(fqName)
 
     override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? =
         (this as? IrType)?.annotations?.firstOrNull { annotation ->
@@ -345,13 +344,21 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
-        // TODO: get rid of descriptor
-        return KotlinBuiltIns.getPrimitiveType((this as IrClassifierSymbol).descriptor as ClassDescriptor)
+        if (this !is IrClassSymbol || !isPublicApi) return null
+
+        val signature = signature.asPublic()
+        if (signature == null || signature.packageFqName != "kotlin") return null
+
+        return PrimitiveType.getByShortName(signature.declarationFqName)
     }
 
     override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? {
-        // TODO: get rid of descriptor
-        return KotlinBuiltIns.getPrimitiveArrayType((this as IrClassifierSymbol).descriptor as ClassDescriptor)
+        if (this !is IrClassSymbol || !isPublicApi) return null
+
+        val signature = signature.asPublic()
+        if (signature == null || signature.packageFqName != "kotlin") return null
+
+        return PrimitiveType.getByShortArrayName(signature.declarationFqName)
     }
 
     override fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean {

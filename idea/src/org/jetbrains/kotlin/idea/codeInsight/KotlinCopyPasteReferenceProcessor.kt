@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight
@@ -19,7 +8,6 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ReadAction.nonBlocking
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
@@ -34,22 +22,22 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInDispatchThread
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.ReviewAddedImports.reviewAddedImports
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.util.end
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils
@@ -62,6 +50,7 @@ import org.jetbrains.kotlin.idea.util.getSourceRoot
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_EXT
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -117,6 +106,11 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         val text = file.text.substring(offsetDelta)
         val ranges = startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }
 
+        val locationFqName = if (startOffsets.size == 1) {
+            val fqName = file.namedDeclarationFqName(startOffsets[0] - 1)
+            fqName?.takeIf { it == file.namedDeclarationFqName(endOffsets[0] + 1) }
+        } else null
+
         return listOf(
             BasicKotlinReferenceTransferableData(
                 sourceFileUrl = file.virtualFile.url,
@@ -124,10 +118,16 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
                 imports = imports,
                 sourceTextOffset = offsetDelta,
                 sourceText = text,
-                textRanges = ranges
+                textRanges = ranges,
+                locationFqName = locationFqName
             )
         )
     }
+
+    private fun KtFile.namedDeclarationFqName(offset: Int): String? =
+        if (offset in 0 until textLength)
+            PsiTreeUtil.getNonStrictParentOfType(this.findElementAt(offset), KtNamedDeclaration::class.java)?.fqName?.asString()
+        else null
 
     private fun collectReferenceData(
         textRanges: List<TextRange>,
@@ -164,7 +164,10 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
             }
         }
 
-        val allElementsToResolve = elements.flatMap { it.collectDescendantsOfType<KtElement>() }
+        val allElementsToResolve = runReadAction {
+            elements.flatMap { it.collectDescendantsOfType<KtElement>() }
+        }
+
         // TODO: allowResolveInDispatchThread could be dropped as soon as
         //  ConvertJavaCopyPasteProcessor will perform it on non UI thread
         val bindingContext = runReadAction {
@@ -267,7 +270,28 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         val file = PsiDocumentManager.getInstance(project).getPsiFile(document)
         if (file !is KtFile) return
 
+        if (isPastedToTheSameOrigin(file, caretOffset, values)) return
+
         processReferenceData(project, editor, file, bounds.startOffset, values.single())
+    }
+
+    private fun isPastedToTheSameOrigin(
+        file: KtFile,
+        caretOffset: Int,
+        values: List<BasicKotlinReferenceTransferableData>
+    ): Boolean {
+        if (values.size == 1 && values[0].sourceFileUrl == file.virtualFile.url &&
+            values[0].locationFqName != null &&
+            // check locationFqName on position before pasted snippet
+            values[0].locationFqName == file.namedDeclarationFqName(caretOffset - 1)
+        ) {
+            val currentImports = file.importDirectives.map { it.text }.toSet()
+            val originalImports = values.flatMap { it.imports }.toSet()
+            if (currentImports == originalImports) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun processReferenceData(
@@ -407,13 +431,30 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
              
             """.trimIndent()
 
+        val sourceFileUrl = transferableData.sourceFileUrl
+        val script = !sourceFileUrl.endsWith(KotlinFileType.EXTENSION)
+        val extension = run {
+            if (!script) return@run KotlinFileType.EXTENSION
+            ScriptDefinitionsManager.getInstance(project).getKnownFilenameExtensions().filter {
+                sourceFileUrl.endsWith(it)
+            }.sortedByDescending { it.length }.firstOrNull() ?: KotlinFileType.EXTENSION
+        }
+
         val dummyOriginalFile = runReadAction {
             KtPsiFactory(project)
                 .createAnalyzableFile(
-                    "dummy-original.kt",
+                    "dummy-original.$extension",
                     "$dummyOrigFileProlog${transferableData.sourceText}",
                     ctxFile
                 )
+        }
+
+        if (script) {
+            val originalFile = runReadAction {
+                val virtualFile = VirtualFileManager.getInstance().findFileByUrl(sourceFileUrl) ?: return@runReadAction null
+                PsiManager.getInstance(project).findFile(virtualFile)
+            } ?: return emptyList()
+            dummyOriginalFile.originalFile = originalFile
         }
 
         val offsetDelta = dummyOrigFileProlog.length - transferableData.sourceTextOffset
@@ -432,12 +473,9 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         // Step 2. Find references to restore in a target file
         return ProgressIndicatorUtils.awaitWithCheckCanceled(
-            nonBlocking<List<ReferenceToRestoreData>> {
-                return@nonBlocking findReferencesToRestore(file, indicator, sourceFileBasedReferences, referencesByRange)
+            submitNonBlocking(project, indicator) {
+                return@submitNonBlocking findReferencesToRestore(file, indicator, sourceFileBasedReferences, referencesByRange)
             }
-                .withDocumentsCommitted(project)
-                //.cancelWith(indicator)
-                .submit(AppExecutorUtil.getAppExecutorService())
         )
     }
 
@@ -458,7 +496,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         // - those source package imports those are not present in a fake package
         // - all rest imports
 
-        val sourceImportPrefix = "import $sourcePkgName"
+        val sourceImportPrefix = "import ${if (sourcePkgName.isEmpty()) fakePkgName else sourcePkgName}"
         val fakeImportPrefix = "import $fakePkgName"
 
         val affectedSourcePkgImports = imports.filter { it.startsWith(sourceImportPrefix) }
@@ -493,7 +531,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         return """
             ${joinLines(dummyFileImports)}
-            import ${sourcePkgName}.*
+            ${if (sourcePkgName.isNotEmpty()) "import ${sourcePkgName}.*" else ""}
             ${joinLines(filteredImports)}
         """
     }

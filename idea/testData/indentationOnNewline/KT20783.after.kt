@@ -1,6 +1,8 @@
 object Test {   // TODO restore correct behavior
 //    some
     fun test() {
-    <caret>
+        <caret>
     }
 }
+
+// IGNORE_FORMATTER

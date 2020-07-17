@@ -78,6 +78,10 @@ dependencies {
     if (Ide.AS36.orHigher()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
     }
+
+    if (Ide.AS41.orHigher()) {
+        testRuntime(intellijPluginDep("platform-images"))
+    }
 }
 
 sourceSets {
@@ -93,3 +97,9 @@ projectTest(parallel = true) {
 }
 
 configureFormInstrumentation()
+
+if (Ide.AS41.orHigher()) {
+    getOrCreateTask<Test>("test") {
+        setExcludes(listOf("**"))
+    }
+}

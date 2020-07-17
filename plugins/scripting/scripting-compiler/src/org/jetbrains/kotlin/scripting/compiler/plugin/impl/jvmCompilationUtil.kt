@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompil
 import org.jetbrains.kotlin.scripting.resolve.ScriptLightVirtualFile
 import org.jetbrains.kotlin.scripting.scriptFileName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import java.io.Serializable
 import java.util.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileBasedScriptSource
@@ -28,12 +29,12 @@ import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 
 internal fun makeCompiledModule(generationState: GenerationState) =
-    KJvmCompiledModuleInMemory(
+    KJvmCompiledModuleInMemoryImpl(
         generationState.factory.asList()
             .associateTo(sortedMapOf<String, ByteArray>()) { it.relativePath to it.asByteArray() }
     )
 
-internal inline fun <T> withMessageCollectorAndDisposable(
+inline fun <T> withMessageCollectorAndDisposable(
     script: SourceCode? = null,
     parentMessageCollector: MessageCollector? = null,
     disposable: Disposable = Disposer.newDisposable(),
@@ -57,7 +58,7 @@ internal inline fun <T> withMessageCollectorAndDisposable(
     }
 }
 
-internal inline fun <T> withMessageCollector(
+inline fun <T> withMessageCollector(
     script: SourceCode? = null,
     parentMessageCollector: MessageCollector? = null,
     body: (ScriptDiagnosticsMessageCollector) -> ResultWithDiagnostics<T>
@@ -99,18 +100,28 @@ internal fun getScriptKtFile(
     }
 }
 
+class SourceCodeImpl(file: KtFile) : SourceCode, Serializable {
+    override val text: String = file.text
+    override val name: String? = file.name
+    override val locationId: String? = file.virtualFilePath
+
+    companion object {
+        private const val serialVersionUID = 1L
+    }
+}
+
 internal fun makeCompiledScript(
     generationState: GenerationState,
     script: SourceCode,
     ktFile: KtFile,
     sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
     getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
-): KJvmCompiledScript<Any> {
+): KJvmCompiledScript {
     val scriptDependenciesStack = ArrayDeque<KtScript>()
     val ktScript = ktFile.declarations.firstIsInstanceOrNull<KtScript>()
         ?: throw IllegalStateException("Expecting script file: KtScript is not found in ${ktFile.name}")
 
-    fun makeOtherScripts(script: KtScript): List<KJvmCompiledScript<*>> {
+    fun makeOtherScripts(script: KtScript): List<KJvmCompiledScript> {
 
         // TODO: ensure that it is caught earlier (as well) since it would be more economical
         if (scriptDependenciesStack.contains(script))
@@ -118,11 +129,11 @@ internal fun makeCompiledScript(
         scriptDependenciesStack.push(script)
 
         val containingKtFile = script.containingKtFile
-        val otherScripts: List<KJvmCompiledScript<*>> =
+        val otherScripts: List<KJvmCompiledScript> =
             sourceDependencies.find { it.scriptFile == containingKtFile }?.sourceDependencies?.valueOrThrow()?.mapNotNull { sourceFile ->
                 sourceFile.declarations.firstIsInstanceOrNull<KtScript>()?.let {
-                    KJvmCompiledScript<Any>(
-                        containingKtFile.virtualFile?.path,
+                    KJvmCompiledScript(
+                        containingKtFile.virtualFilePath,
                         getScriptConfiguration(sourceFile),
                         it.fqName.asString(),
                         null,

@@ -48,8 +48,8 @@ public class Emulator {
 
     private GeneralCommandLine getCreateCommand() {
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        String androidCmdName = SystemInfo.isWindows ? "android.bat" : "android";
-        commandLine.setExePath(pathManager.getToolsFolderInAndroidSdk() + "/" + androidCmdName);
+        String androidCmdName = SystemInfo.isWindows ? "avdmanager.bat" : "avdmanager";
+        commandLine.setExePath(pathManager.getToolsFolderInAndroidSdk() + "/bin/" + androidCmdName);
         commandLine.addParameter("create");
         commandLine.addParameter("avd");
         commandLine.addParameter("--force");

@@ -55,8 +55,10 @@ abstract class AbstractKotlinInlineDialog(
         return "${kind.capitalize()} ${callable.nameAsSafeName} $occurrencesString"
     }
 
-    private fun getInlineText(verb: String) = KotlinBundle.message("text.inline.all.references.and.0.the.1",
+    private fun getInlineText(verb: String) = KotlinBundle.message(
+        "text.inline.all.references.and.verb.0.the.kind.1.occurrences.2",
         verb,
+        kind,
         (occurrencesString?.let { "($it)" } ?: "")
     )
 

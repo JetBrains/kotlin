@@ -17,7 +17,7 @@ enum class ModuleType(val projectTypeName: String) {
     ;
 
     companion object {
-        val ALL = setOf(jvm, js, native, common)
+        val ALL = setOf(jvm, js, native, common, android)
     }
 }
 

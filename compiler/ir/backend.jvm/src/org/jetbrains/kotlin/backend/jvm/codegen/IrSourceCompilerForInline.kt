@@ -6,18 +6,14 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
-import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
@@ -26,15 +22,15 @@ import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -74,7 +70,11 @@ class IrSourceCompilerForInline(
         get() = codegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
 
     override val contextKind: OwnerKind
-        get() = OwnerKind.getMemberOwnerKind(callElement.symbol.descriptor.containingDeclaration)
+        get() = when (val parent = callElement.symbol.owner.parent) {
+            is IrPackageFragment -> OwnerKind.PACKAGE
+            is IrClass -> OwnerKind.IMPLEMENTATION
+            else -> throw AssertionError("Unexpected declaration container: $parent")
+        }
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
@@ -89,15 +89,11 @@ class IrSourceCompilerForInline(
             )
         }
 
-    override val lazySourceMapper: DefaultSourceMapper
-        get() = codegen.smapOverride ?: codegen.classCodegen.getOrCreateSourceMapper()
+    override val lazySourceMapper: SourceMapper
+        get() = codegen.smap
 
-    override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode {
-        val smap = codegen.context.getSourceMapper(codegen.classCodegen.irClass)
-        val node = FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate(smap)
-        node.preprocessSuspendMarkers()
-        return SMAPAndMethodNode(node, SMAP(smap.resultMappings))
-    }
+    override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode =
+        FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate()
 
     override fun doCreateMethodNodeFromSource(
         callableDescriptor: FunctionDescriptor,
@@ -105,11 +101,7 @@ class IrSourceCompilerForInline(
         callDefault: Boolean,
         asmMethod: Method
     ): SMAPAndMethodNode {
-        assert(callableDescriptor == callee.symbol.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
-        val classCodegen = FakeClassCodegen(callee, codegen.classCodegen)
-        val node = FunctionCodegen(callee, classCodegen).generate()
-        node.preprocessSuspendMarkers()
-        return SMAPAndMethodNode(node, SMAP(classCodegen.getOrCreateSourceMapper().resultMappings))
+        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
     }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
@@ -122,7 +114,7 @@ class IrSourceCompilerForInline(
     override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
-            codegen.inlinedInto, codegen.smapOverride
+            codegen.inlinedInto, codegen.smap
         ).also {
             it.finallyDepth = curFinallyDepth
         }
@@ -154,90 +146,5 @@ class IrSourceCompilerForInline(
             .report(SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
     }
 
-    private fun findElement() = (callElement.symbol.descriptor.original as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtElement
-
-    internal val isPrimaryCopy: Boolean
-        get() = codegen.classCodegen !is FakeClassCodegen
-
-    private class FakeClassCodegen(irFunction: IrFunction, codegen: ClassCodegen) :
-        ClassCodegen(irFunction.parent as IrClass, codegen.context) {
-
-        override fun createClassBuilder(): ClassBuilder {
-            return FakeBuilder
-        }
-
-        companion object {
-            val FakeBuilder = object : ClassBuilder {
-                override fun newField(
-                    origin: JvmDeclarationOrigin,
-                    access: Int,
-                    name: String,
-                    desc: String,
-                    signature: String?,
-                    value: Any?
-                ): FieldVisitor {
-                    TODO("not implemented")
-                }
-
-                override fun newMethod(
-                    origin: JvmDeclarationOrigin,
-                    access: Int,
-                    name: String,
-                    desc: String,
-                    signature: String?,
-                    exceptions: Array<out String>?
-                ): MethodVisitor {
-                    TODO("not implemented")
-                }
-
-                override fun getSerializationBindings(): JvmSerializationBindings {
-                    return JvmSerializationBindings()
-                }
-
-                override fun newAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
-                    TODO("not implemented")
-                }
-
-                override fun done() {
-                    TODO("not implemented")
-                }
-
-                override fun getVisitor(): ClassVisitor {
-                    TODO("not implemented")
-                }
-
-                override fun defineClass(
-                    origin: PsiElement?,
-                    version: Int,
-                    access: Int,
-                    name: String,
-                    signature: String?,
-                    superName: String,
-                    interfaces: Array<out String>
-                ) {
-                    TODO("not implemented")
-                }
-
-                override fun visitSource(name: String, debug: String?) {
-                    TODO("not implemented")
-                }
-
-                override fun visitOuterClass(owner: String, name: String?, desc: String?) {
-                    TODO("not implemented")
-                }
-
-                override fun visitSMAP(smap: SourceMapper, backwardsCompatibleSyntax: Boolean) {
-                    TODO("not implemented")
-                }
-
-                override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
-                    TODO("not implemented")
-                }
-
-                override fun getThisName(): String {
-                    TODO("not implemented")
-                }
-            }
-        }
-    }
+    private fun findElement() = callElement.psiElement as? KtElement
 }

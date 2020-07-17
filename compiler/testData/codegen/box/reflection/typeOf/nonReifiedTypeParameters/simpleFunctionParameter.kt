@@ -1,0 +1,26 @@
+// !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
+// IGNORE_BACKEND: NATIVE
+// WITH_REFLECT
+// KJS_WITH_FULL_RUNTIME
+
+package test
+
+import kotlin.reflect.typeOf
+import kotlin.test.assertEquals
+
+class Container<T>
+
+fun <X1> notNull() = typeOf<Container<X1>>()
+fun <X2> nullable() = typeOf<Container<X2?>>()
+
+fun box(): String {
+    val fqn = className("test", "Container")
+    assertEquals("$fqn<X1>", notNull<Any>().toString())
+    assertEquals("$fqn<X2?>", nullable<Any>().toString())
+    return "OK"
+}
+
+fun className(qualifier: String, name: String): String {
+    val isJS = 1 as Any is Double
+    return if (isJS) name else "$qualifier.$name"
+}

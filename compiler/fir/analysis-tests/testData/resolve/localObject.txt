@@ -8,12 +8,12 @@ FILE: localObject.kt
     }
     public final fun tesLambda(x: R|kotlin/Int|): R|kotlin/Int| {
         ^tesLambda R|/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| {
-            lval obj: R|anonymous| = object : R|Foo| {
-                private constructor(): R|anonymous| {
+            lval obj: R|<anonymous>| = object : R|Foo| {
+                private[local] constructor(): R|<anonymous>| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final override fun foo(): R|kotlin/Int| {
+                public[local] final override fun foo(): R|kotlin/Int| {
                     ^foo R|<local>/x|.R|kotlin/Int.plus|(Int(1))
                 }
 
@@ -34,12 +34,12 @@ FILE: localObject.kt
         public final var x: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Int|
             public set(value: R|kotlin/Int|): R|kotlin/Unit| {
-                lval obj: R|anonymous| = object : R|Foo| {
-                    private constructor(): R|anonymous| {
+                lval obj: R|<anonymous>| = object : R|Foo| {
+                    private[local] constructor(): R|<anonymous>| {
                         super<R|kotlin/Any|>()
                     }
 
-                    public final override fun foo(): R|kotlin/Int| {
+                    public[local] final override fun foo(): R|kotlin/Int| {
                         ^foo this@R|/TestProperty|.R|/TestProperty.intConst|.R|kotlin/Int.plus|(Int(1))
                     }
 
@@ -50,12 +50,12 @@ FILE: localObject.kt
 
         public final val y: R|kotlin/Int|
             public get(): R|kotlin/Int| {
-                lval obj: R|anonymous| = object : R|Foo| {
-                    private constructor(): R|anonymous| {
+                lval obj: R|<anonymous>| = object : R|Foo| {
+                    private[local] constructor(): R|<anonymous>| {
                         super<R|kotlin/Any|>()
                     }
 
-                    public final override fun foo(): R|kotlin/Int| {
+                    public[local] final override fun foo(): R|kotlin/Int| {
                         ^foo this@R|/TestProperty|.R|/TestProperty.intConst|.R|kotlin/Int.plus|(Int(1))
                     }
 
@@ -65,12 +65,12 @@ FILE: localObject.kt
             }
 
         public final val z: R|kotlin/Int| = this@R|/TestProperty|.R|kotlin/run|<R|TestProperty|, R|kotlin/Int|>(<L> = run@fun R|TestProperty|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
-            lval obj: R|anonymous| = object : R|Foo| {
-                private constructor(): R|anonymous| {
+            lval obj: R|<anonymous>| = object : R|Foo| {
+                private[local] constructor(): R|<anonymous>| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final override fun foo(): R|kotlin/Int| {
+                public[local] final override fun foo(): R|kotlin/Int| {
                     ^foo this@R|special/anonymous|.R|/TestProperty.x|.R|kotlin/Int.plus|(Int(1))
                 }
 

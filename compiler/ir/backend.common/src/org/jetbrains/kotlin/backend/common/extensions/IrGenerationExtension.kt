@@ -5,33 +5,15 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
-import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 
-class IrPluginContext(
-    val moduleDescriptor: ModuleDescriptor,
-    val bindingContext: BindingContext,
-    val languageVersionSettings: LanguageVersionSettings,
-    val symbolTable: SymbolTable,
-    val typeTranslator: TypeTranslator,
-    override val irBuiltIns: IrBuiltIns,
-    val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns.builtIns, symbolTable)
-) : IrGeneratorContext()
-
-interface IrGenerationExtension {
+interface IrGenerationExtension : IrDeserializer.IrLinkerExtension {
     companion object :
-        ProjectExtensionDescriptor<IrGenerationExtension>("org.jetbrains.kotlin.irGenerationExtension", IrGenerationExtension::class.java)
+        ProjectExtensionDescriptor<IrGenerationExtension>(
+            "org.jetbrains.kotlin.irGenerationExtension", IrGenerationExtension::class.java
+        )
 
-    fun generate(
-        moduleFragment: IrModuleFragment,
-        pluginContext: IrPluginContext
-    )
+    fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext)
 }

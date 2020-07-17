@@ -11,6 +11,14 @@ val builtinsNative = fileFrom(rootDir, "core", "builtins", "native")
 val kotlinReflect = fileFrom(rootDir, "libraries/stdlib/src/kotlin/reflect")
 val builtinsCherryPicked = fileFrom(buildDir, "src")
 
+val runtimeElements by configurations.creating {
+    isCanBeResolved = false
+    isCanBeConsumed = true
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
+
 val prepareSources by tasks.registering(Sync::class) {
     from(kotlinReflect) {
         exclude("typeOf.kt")
@@ -47,7 +55,7 @@ val assemble by tasks.getting {
     dependsOn(serialize)
 }
 
-val builtinsJarArtifact = artifacts.add("default", builtinsJar)
+val builtinsJarArtifact = artifacts.add(runtimeElements.name, builtinsJar)
 
 publishing {
     publications {

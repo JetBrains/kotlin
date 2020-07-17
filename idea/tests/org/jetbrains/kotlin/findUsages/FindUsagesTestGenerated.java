@@ -1759,6 +1759,16 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 runTest("idea/testData/findUsages/java/findJavaMethodUsages/OverriddenMethodSyntheticAccessor.0.java");
             }
 
+            @TestMetadata("OverridenRawGenericSignatureBase.0.java")
+            public void testOverridenRawGenericSignatureBase() throws Exception {
+                runTest("idea/testData/findUsages/java/findJavaMethodUsages/OverridenRawGenericSignatureBase.0.java");
+            }
+
+            @TestMetadata("OverridenRawGenericSignatureBase2.0.java")
+            public void testOverridenRawGenericSignatureBase2() throws Exception {
+                runTest("idea/testData/findUsages/java/findJavaMethodUsages/OverridenRawGenericSignatureBase2.0.java");
+            }
+
             @TestMetadata("SyntheticProperties.0.java")
             public void testSyntheticProperties() throws Exception {
                 runTest("idea/testData/findUsages/java/findJavaMethodUsages/SyntheticProperties.0.java");

@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 class KotlinSliceDereferenceUsage(
     element: PsiElement,
     parent: KotlinSliceUsage,
-    lambdaLevel: Int
-) : KotlinSliceUsage(element, parent, lambdaLevel, false) {
+    mode: KotlinSliceAnalysisMode
+) : KotlinSliceUsage(element, parent, mode, false) {
     override fun processChildren(processor: Processor<in SliceUsage>) {
         // no children
     }

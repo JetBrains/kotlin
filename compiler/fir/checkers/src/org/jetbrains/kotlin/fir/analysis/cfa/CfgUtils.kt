@@ -7,57 +7,34 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitor
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
 
-enum class TraverseDirection {
-    Forward, Backward
+fun ControlFlowGraph.getEnterNode(direction: TraverseDirection): CFGNode<*> = when (direction) {
+    TraverseDirection.Forward -> enterNode
+    TraverseDirection.Backward -> exitNode
 }
 
-@OptIn(ExperimentalStdlibApi::class)
-fun <D> ControlFlowGraph.traverse(
-    direction: TraverseDirection,
-    visitor: ControlFlowGraphVisitor<*, D>,
-    data: D
-) {
-    val visitedNodes = mutableSetOf<CFGNode<*>>()
-    // used to prevent infinite cycle
-    val delayedNodes = mutableSetOf<CFGNode<*>>()
-    val stack = ArrayDeque<CFGNode<*>>()
-    val initialNode = when (direction) {
-        TraverseDirection.Forward -> enterNode
-        TraverseDirection.Backward -> exitNode
-    }
-    stack.addFirst(initialNode)
-    while (stack.isNotEmpty()) {
-        val node = stack.removeFirst()
-        val previousNodes = when (direction) {
-            TraverseDirection.Forward -> node.previousNodes
-            TraverseDirection.Backward -> node.followingNodes
-        }
-        if (!previousNodes.all { it in visitedNodes }) {
-            if (!delayedNodes.add(node)) {
-                throw IllegalArgumentException("Infinite loop")
-            }
-            stack.addLast(node)
-        }
+fun ControlFlowGraph.getNodesInOrder(direction: TraverseDirection): List<CFGNode<*>> = when (direction) {
+    TraverseDirection.Forward -> nodes
+    TraverseDirection.Backward -> nodes.asReversed()
+}
 
-        node.accept(visitor, data)
+fun CFGNode<*>.isEnterNode(direction: TraverseDirection): Boolean = when (direction) {
+    TraverseDirection.Forward -> owner.enterNode == this
+    TraverseDirection.Backward -> owner.exitNode == this
+}
 
-        val followingNodes = when (direction) {
-            TraverseDirection.Forward -> node.followingNodes
-            TraverseDirection.Backward -> node.previousNodes
-        }
-
-        followingNodes.forEach {
-            stack.addFirst(it)
+val CFGNode<*>.previousCfgNodes: List<CFGNode<*>>
+    get() = previousNodes.filter {
+        val kind = incomingEdges.getValue(it)
+        if (this.isDead) {
+            kind.usedInCfa
+        } else {
+            kind.usedInCfa && !kind.isDead
         }
     }
-}
 
-fun ControlFlowGraph.traverse(
-    direction: TraverseDirection,
-    visitor: ControlFlowGraphVisitorVoid
-) {
-    traverse(direction, visitor, null)
-}
+val CFGNode<*>.followingCfgNodes: List<CFGNode<*>>
+    get() = followingNodes.filter {
+        val kind = outgoingEdges.getValue(it)
+        kind.usedInCfa && !kind.isDead
+    }

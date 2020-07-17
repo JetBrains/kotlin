@@ -10,113 +10,69 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.fir.FirModuleBasedSession
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionBase
-import org.jetbrains.kotlin.fir.FirSessionProvider
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.registerCheckersComponent
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
-import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.impl.*
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.calls.jvm.registerJvmCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
-import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
-import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
-class FirJavaModuleBasedSession(
+class FirJavaModuleBasedSession private constructor(
     moduleInfo: ModuleInfo,
     sessionProvider: FirProjectSessionProvider,
-    scope: GlobalSearchScope,
-    dependenciesProvider: FirSymbolProvider? = null
 ) : FirModuleBasedSession(moduleInfo, sessionProvider) {
+    companion object {
+        fun create(
+            moduleInfo: ModuleInfo,
+            sessionProvider: FirProjectSessionProvider,
+            scope: GlobalSearchScope,
+            dependenciesProvider: FirSymbolProvider? = null
+        ): FirJavaModuleBasedSession {
+            return FirJavaModuleBasedSession(moduleInfo, sessionProvider).apply {
+                registerCommonComponents()
+                registerResolveComponents()
+                registerCheckersComponent()
+                registerJvmCallConflictResolverFactory()
+
+                val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+
+                val firProvider = FirProviderImpl(this, kotlinScopeProvider)
+                register(FirProvider::class, firProvider)
+
+                register(
+                    FirSymbolProvider::class,
+                    FirCompositeSymbolProvider(
+                        listOf(
+                            firProvider,
+                            JavaSymbolProvider(this, sessionProvider.project, scope),
+                            dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
+                        )
+                    ) as FirSymbolProvider
+                )
+
+                Extensions.getArea(sessionProvider.project)
+                    .getExtensionPoint(PsiElementFinder.EP_NAME)
+                    .registerExtension(FirJavaElementFinder(this, sessionProvider.project))
+            }
+        }
+    }
 
 
     init {
         sessionProvider.sessionCache[moduleInfo] = this
-
-        val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
-
-        val firProvider = FirProviderImpl(this, kotlinScopeProvider)
-        registerComponent(FirProvider::class, firProvider)
-
-        registerComponent(
-            FirSymbolProvider::class,
-            FirCompositeSymbolProvider(
-                listOf(
-                    firProvider,
-                    JavaSymbolProvider(this, sessionProvider.project, scope),
-                    dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
-                )
-            ) as FirSymbolProvider
-        )
-
-        registerComponent(
-            FirCorrespondingSupertypesCache::class,
-            FirCorrespondingSupertypesCache(this)
-        )
-
-        registerComponent(
-            ConeCallConflictResolverFactory::class,
-            JvmCallConflictResolverFactory
-        )
-
-        Extensions.getArea(sessionProvider.project)
-            .getExtensionPoint(PsiElementFinder.EP_NAME)
-            .registerExtension(FirJavaElementFinder(this, sessionProvider.project))
     }
 }
 
 class FirLibrarySession private constructor(
     moduleInfo: ModuleInfo,
     sessionProvider: FirProjectSessionProvider,
-    scope: GlobalSearchScope,
-    packagePartProvider: PackagePartProvider,
-    kotlinClassFinder: KotlinClassFinder,
-    javaClassFinder: JavaClassFinder
-) : FirSessionBase(sessionProvider) {
-
-
-    init {
-        val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
-
-        val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
-
-        registerComponent(
-            FirSymbolProvider::class,
-            FirCompositeSymbolProvider(
-                listOf(
-                    KotlinDeserializedJvmSymbolsProvider(
-                        this, sessionProvider.project,
-                        packagePartProvider,
-                        javaSymbolProvider,
-                        kotlinClassFinder,
-                        javaClassFinder,
-                        kotlinScopeProvider
-                    ),
-                    FirBuiltinSymbolProvider(this, kotlinScopeProvider),
-                    FirClonableSymbolProvider(this, kotlinScopeProvider),
-                    javaSymbolProvider,
-                    FirDependenciesSymbolProviderImpl(this)
-                )
-            ) as FirSymbolProvider
-        )
-        registerComponent(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
-
-        registerComponent(
-            FirCorrespondingSupertypesCache::class,
-            FirCorrespondingSupertypesCache(this)
-        )
-
-        sessionProvider.sessionCache[moduleInfo] = this
-    }
-
+) : FirSession(sessionProvider) {
     companion object {
         fun create(
             moduleInfo: ModuleInfo,
@@ -130,13 +86,39 @@ class FirLibrarySession private constructor(
                 this.setScope(scope)
             }
 
-            return FirLibrarySession(
-                moduleInfo, sessionProvider, scope,
-                packagePartProvider,
-                VirtualFileFinderFactory.getInstance(project).create(scope),
-                javaClassFinder
-            )
+            val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(scope)
+            return FirLibrarySession(moduleInfo, sessionProvider).apply {
+                registerCommonComponents()
+
+                val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
+
+                val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+
+                register(
+                    FirSymbolProvider::class,
+                    FirCompositeSymbolProvider(
+                        listOf(
+                            KotlinDeserializedJvmSymbolsProvider(
+                                this, sessionProvider.project,
+                                packagePartProvider,
+                                javaSymbolProvider,
+                                kotlinClassFinder,
+                                javaClassFinder,
+                                kotlinScopeProvider
+                            ),
+                            FirBuiltinSymbolProvider(this, kotlinScopeProvider),
+                            FirCloneableSymbolProvider(this, kotlinScopeProvider),
+                            javaSymbolProvider,
+                            FirDependenciesSymbolProviderImpl(this)
+                        )
+                    )
+                )
+            }
         }
+    }
+
+    init {
+        sessionProvider.sessionCache[moduleInfo] = this
     }
 }
 

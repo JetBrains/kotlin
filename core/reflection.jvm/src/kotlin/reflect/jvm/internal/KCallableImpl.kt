@@ -20,7 +20,7 @@ import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 
-internal abstract class KCallableImpl<out R> : KCallable<R> {
+internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwnerImpl {
     abstract val descriptor: CallableMemberDescriptor
 
     // The instance which is used to perform a positional call, i.e. `call`
@@ -82,7 +82,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
         get() = _returnType()
 
     private val _typeParameters = ReflectProperties.lazySoft {
-        descriptor.typeParameters.map(::KTypeParameterImpl)
+        descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(this, descriptor) }
     }
 
     override val typeParameters: List<KTypeParameter>
@@ -132,7 +132,9 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
                     arguments.add(args[parameter])
                 }
                 parameter.isOptional -> {
-                    arguments.add(defaultPrimitiveValue(parameter.type.javaType))
+                    // For inline class types, the javaType refers to the underlying type of the inline class,
+                    // but we have to pass null in order to mark the argument as absent for InlineClassAwareCaller.
+                    arguments.add(if (parameter.type.isInlineClassType) null else defaultPrimitiveValue(parameter.type.javaType))
                     mask = mask or (1 shl (index % Integer.SIZE))
                     anyOptional = true
                 }
@@ -191,22 +193,6 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
             caller.call(arguments.toTypedArray()) as R
         }
     }
-
-    private fun defaultPrimitiveValue(type: Type): Any? =
-        if (type is Class<*> && type.isPrimitive) {
-            when (type) {
-                Boolean::class.java -> false
-                Char::class.java -> 0.toChar()
-                Byte::class.java -> 0.toByte()
-                Short::class.java -> 0.toShort()
-                Int::class.java -> 0
-                Float::class.java -> 0f
-                Long::class.java -> 0L
-                Double::class.java -> 0.0
-                Void.TYPE -> throw IllegalStateException("Parameter with void type is illegal")
-                else -> throw UnsupportedOperationException("Unknown primitive: $type")
-            }
-        } else null
 
     private fun defaultEmptyArray(type: KType): Any =
         type.jvmErasure.java.run {

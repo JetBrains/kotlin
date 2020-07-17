@@ -1,5 +1,6 @@
 // !LANGUAGE: -ProperIeee754Comparisons
 // DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR_ES6
 
 fun greater1(a: Float, b: Float) = a > b
 

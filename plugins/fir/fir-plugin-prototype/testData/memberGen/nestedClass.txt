@@ -1,0 +1,37 @@
+FILE: nestedClass.kt
+    public final fun <T> R|T|.also(block: R|(T) -> kotlin/Unit|): R|T| {
+        ^also this@R|/also|
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/WithNestedFoo|() public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final fun test(): R|A.Foo| {
+            ^test R|/A.Foo.Foo|().R|/also|<R|A.Foo|>(<L> = also@fun <anonymous>(it: R|A.Foo|): R|kotlin/Unit| {
+                ^ R|<local>/it|.R|/A.Foo.hello|()
+            }
+            )
+        }
+
+        private final inner class Foo {
+            public constructor(): R|A.Foo|
+
+            public final fun hello(): R|kotlin/Int|
+
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final fun test(): R|ERROR CLASS: Symbol not found, for `Foo`| {
+            ^test <Unresolved name: Foo>#().<Inapplicable(WRONG_RECEIVER): [/also]>#(<L> = also@fun <anonymous>(): R|ERROR CLASS: Unresolved name: hello| {
+                ^ <Unresolved name: it>#.<Unresolved name: hello>#()
+            }
+            )
+        }
+
+    }

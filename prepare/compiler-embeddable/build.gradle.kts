@@ -6,13 +6,21 @@ plugins {
 }
 
 val testCompilationClasspath by configurations.creating
+val testCompilerClasspath by configurations.creating {
+    isCanBeConsumed = false
+    extendsFrom(configurations["runtimeElements"])
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+    }
+}
 
 dependencies {
-    runtime(kotlinStdlib())
-    runtime(project(":kotlin-script-runtime"))
-    runtime(project(":kotlin-reflect"))
-    runtime(project(":kotlin-daemon-embeddable"))
-    runtime(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    runtimeOnly(kotlinStdlib())
+    runtimeOnly(project(":kotlin-script-runtime"))
+    runtimeOnly(project(":kotlin-reflect"))
+    runtimeOnly(project(":kotlin-daemon-embeddable"))
+    runtimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompilationClasspath(kotlinStdlib())
@@ -44,9 +52,7 @@ javadocJar()
 projectTest {
     dependsOn(runtimeJar)
     doFirst {
-        val runtimeJarConfig = configurations["runtimeJar"]
-        val runtimeConfig = configurations["runtime"]
-        systemProperty("compilerClasspath", "${runtimeJarConfig.allArtifacts.files.files.first().path}${File.pathSeparator}${runtimeConfig.asPath}")
+        systemProperty("compilerClasspath", "${runtimeJar.get().outputs.files.asPath}${File.pathSeparator}${testCompilerClasspath.asPath}")
         systemProperty("compilationClasspath", testCompilationClasspath.asPath)
     }
 }

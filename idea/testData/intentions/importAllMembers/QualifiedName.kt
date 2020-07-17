@@ -1,6 +1,6 @@
-// INTENTION_TEXT: "Import members from 'javax.swing.SwingUtilities'"
+// INTENTION_TEXT: "Import members from 'java.util.regex.Pattern'"
 // WITH_RUNTIME
 
 fun foo() {
-    javax.swing.SwingUtilities<caret>.invokeLater { }
+    java.util.regex.Pattern<caret>.CASE_INSENSITIVE
 }

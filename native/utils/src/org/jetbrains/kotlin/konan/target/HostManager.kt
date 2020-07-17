@@ -8,12 +8,20 @@ package org.jetbrains.kotlin.konan.target
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import java.lang.Exception
 
-open class HostManager(protected val distribution: Distribution = Distribution(), experimental: Boolean = false) {
+// TODO: Consider redesigning experimental targets support (e.g. by getting rid of such separation at all).
+open class HostManager(
+        subTargetProvider: SubTargetProvider = SubTargetProvider.NoSubTargets,
+        private val experimental: Boolean = false
+) {
+
+    constructor(
+            distribution: Distribution,
+            experimental: Boolean = false,
+    ) : this(distribution.subTargetProvider, experimental || distribution.experimentalEnabled)
 
     fun targetManager(userRequest: String? = null): TargetManager = TargetManagerImpl(userRequest, this)
 
-    private val zephyrSubtargets = distribution.availableSubTarget("zephyr").map { ZEPHYR(it) }
-    private val experimentalEnabled = experimental || distribution.experimentalEnabled
+    private val zephyrSubtargets = subTargetProvider.availableSubTarget("zephyr").map { ZEPHYR(it) }
     private val configurableSubtargets = zephyrSubtargets
 
     val targetValues: List<KonanTarget> by lazy { KonanTarget.predefinedTargets.values + configurableSubtargets }
@@ -93,7 +101,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
 
     val enabledByHost: Map<KonanTarget, Set<KonanTarget>> by lazy {
         val result = enabledRegularByHost.toMutableMap()
-        if (experimentalEnabled) {
+        if (experimental) {
             enabledExperimentalByHost.forEach { (k, v) ->
                 result.merge(k, v) { old, new -> old + new }
             }
@@ -110,7 +118,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
     }
 
     val enabled : List<KonanTarget>
-        get() = if (experimentalEnabled) enabledRegular + enabledExperimental else enabledRegular
+        get() = if (experimental) enabledRegular + enabledExperimental else enabledRegular
 
     fun isEnabled(target: KonanTarget) = enabled.contains(target)
 

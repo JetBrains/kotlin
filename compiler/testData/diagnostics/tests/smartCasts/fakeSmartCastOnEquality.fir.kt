@@ -15,11 +15,11 @@ fun check(x1: Derived1, x: Base) {
     }
     if (x1 === x) {
         // OK
-        x.<!UNRESOLVED_REFERENCE!>foo<!>()
+        x.foo()
     }
     if (x1 !== x) {} else {
         // OK
-        x.<!UNRESOLVED_REFERENCE!>foo<!>()
+        x.foo()
     }
 }
 

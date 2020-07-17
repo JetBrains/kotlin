@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -13,23 +14,24 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
+import org.jetbrains.kotlin.config.JvmDefaultMode
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
@@ -38,8 +40,11 @@ import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
 
 /**
  * Perform as much type erasure as is significant for JVM signature generation.
@@ -143,26 +148,35 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
 val IrFunction.propertyIfAccessor: IrDeclaration
     get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
 
+fun IrFunction.isSimpleFunctionCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
+    return (this as? IrSimpleFunction)?.isCompiledToJvmDefault(jvmDefaultMode) == true
+}
+
+fun IrSimpleFunction.isCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
+    assert(!isFakeOverride && parentAsClass.isInterface && modality != Modality.ABSTRACT) {
+        "`isCompiledToJvmDefault` should be called on non-fakeoverrides and non-abstract methods from interfaces ${ir2string(this)}"
+    }
+    if (origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return false
+    if (hasJvmDefault()) return true
+    (parentAsClass as? IrLazyClass)?.classProto?.let {
+        return JvmProtoBufUtil.isNewPlaceForBodyGeneration(it)
+    }
+    return jvmDefaultMode.forAllMethodsWithBody
+}
+
 fun IrFunction.hasJvmDefault(): Boolean = propertyIfAccessor.hasAnnotation(JVM_DEFAULT_FQ_NAME)
+fun IrClass.hasJvmDefaultNoCompatibilityAnnotation(): Boolean = hasAnnotation(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)
 fun IrFunction.hasPlatformDependent(): Boolean = propertyIfAccessor.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
 
 fun IrFunction.getJvmVisibilityOfDefaultArgumentStub() =
     if (Visibilities.isPrivate(visibility) || isInlineOnly()) JavaVisibilities.PACKAGE_VISIBILITY else Visibilities.PUBLIC
 
-fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
-    index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunctionTypeOrSubtype())
-
-val IrType.isBoxedArray: Boolean
-    get() = classOrNull?.owner?.fqNameWhenAvailable == KotlinBuiltIns.FQ_NAMES.array.toSafe()
-
-fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
-    if (isBoxedArray)
-        ((this as IrSimpleType).arguments.single() as IrTypeProjection).type
-    else {
-        val classifier = this.classOrNull!!
-        irBuiltIns.primitiveArrayElementTypes[classifier]
-            ?: throw AssertionError("Primitive array expected: $classifier")
-    }
+fun IrValueParameter.isInlineParameter() =
+    index >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunctionTypeOrSubtype()) &&
+            // Parameters with default values are always nullable, so check the expression too.
+            // Note that the frontend has a diagnostic for nullable inline parameters, so actually
+            // making this return `false` requires using `@Suppress`.
+            (!type.isNullable() || defaultValue?.expression?.type?.isNullable() == false)
 
 val IrStatementOrigin?.isLambda: Boolean
     get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
@@ -197,10 +211,21 @@ fun IrDeclaration.isInCurrentModule(): Boolean =
 // This is needed to pinpoint exceptional treatment of IEEE754 floating point comparisons, where proper IEEE
 // comparisons are used "if values are statically known to be of primitive numeric types", taken to mean as
 // "not learned through smartcasting".
-fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext) =
-    this is IrTypeOperatorCall &&
-            operator == IrTypeOperator.IMPLICIT_CAST &&
-            !this.argument.type.isSubtypeOf(type.makeNullable(), context.irBuiltIns)
+fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext): Boolean {
+    return when (this) {
+        is IrTypeOperatorCall -> operator == IrTypeOperator.IMPLICIT_CAST && !argument.type.isSubtypeOf(
+            type.makeNullable(),
+            context.irBuiltIns
+        )
+        is IrGetValue -> {
+            // Check if the variable initializer is smartcast. In FIR, if the subject of a `when` is smartcast,
+            // the IMPLICIT_CAST is in the initializer of the variable for the subject.
+            val variable = (symbol as? IrVariableSymbol)?.owner ?: return false
+            !variable.isVar && variable.initializer?.isSmartcastFromHigherThanNullable(context) == true
+        }
+        else -> false
+    }
+}
 
 fun IrBody.replaceThisByStaticReference(
     declarationFactory: JvmDeclarationFactory,
@@ -256,14 +281,10 @@ fun createDelegatingCallWithPlaceholderTypeArguments(existingCall: IrCall, redir
         copyFromWithPlaceholderTypeArguments(existingCall, irBuiltIns)
     }
 
-fun IrFunctionAccessExpression.copyFromWithPlaceholderTypeArguments(existingCall: IrFunctionAccessExpression, irBuiltIns: IrBuiltIns) {
-    copyValueArgumentsFrom(
-        existingCall,
-        existingCall.symbol.owner,
-        this.symbol.owner,
-        receiversAsArguments = true,
-        argumentsAsReceivers = false,
-    )
+fun IrMemberAccessExpression<IrFunctionSymbol>.copyFromWithPlaceholderTypeArguments(
+    existingCall: IrMemberAccessExpression<IrFunctionSymbol>, irBuiltIns: IrBuiltIns
+) {
+    copyValueArgumentsFrom(existingCall, this.symbol.owner, receiversAsArguments = true, argumentsAsReceivers = false)
     var offset = 0
     existingCall.symbol.owner.parentAsClass.typeParameters.forEach { _ ->
         putTypeArgument(offset++, createPlaceholderAnyNType(irBuiltIns))
@@ -275,9 +296,52 @@ fun IrFunctionAccessExpression.copyFromWithPlaceholderTypeArguments(existingCall
 
 // Check whether a function maps to an abstract method.
 // For non-interface methods or interface methods coming from Java the modality is correct. Kotlin interface methods
-// are abstract unless they are annotated with @JvmDefault or @PlatformDependent or they override a method with
-// such an annotation.
-val IrSimpleFunction.isJvmAbstract: Boolean
-    get() = (modality == Modality.ABSTRACT) ||
-            (parentAsClass.isJvmInterface && !hasJvmDefault() && !hasPlatformDependent()
-                    && (!isFakeOverride || overriddenSymbols.all { it.owner.isJvmAbstract }))
+// are abstract unless they are annotated @PlatformDependent or compiled to JVM default (with @JvmDefault annotation or without)
+// or they override such method.
+fun IrSimpleFunction.isJvmAbstract(jvmDefaultMode: JvmDefaultMode): Boolean {
+    if (modality == Modality.ABSTRACT) return true
+    if (!parentAsClass.isJvmInterface) return false
+    return resolveFakeOverride()?.run { !isCompiledToJvmDefault(jvmDefaultMode) && !hasPlatformDependent() } != false
+}
+
+fun firstSuperMethodFromKotlin(
+    override: IrSimpleFunction,
+    implementation: IrSimpleFunction
+): IrSimpleFunctionSymbol {
+    return override.overriddenSymbols.first {
+        val owner = it.owner
+        owner.modality != Modality.ABSTRACT && owner.overrides(implementation)
+    }
+}
+
+// MethodSignatureMapper uses the corresponding property of a function to determine correct names
+// for property accessors.
+fun IrSimpleFunction.copyCorrespondingPropertyFrom(source: IrSimpleFunction) {
+    val property = source.correspondingPropertySymbol?.owner ?: return
+    val target = this
+
+    correspondingPropertySymbol = buildProperty(property.symbol.descriptor) {
+        name = property.name
+        updateFrom(property)
+    }.apply {
+        parent = target.parent
+        when {
+            source.isGetter -> getter = target
+            source.isSetter -> setter = target
+            else -> error("Orphaned property getter/setter: ${source.render()}")
+        }
+    }.symbol
+}
+
+fun IrProperty.needsAccessor(accessor: IrSimpleFunction): Boolean = when {
+    // Properties in annotation classes become abstract methods named after the property.
+    (parent as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS -> true
+    // @JvmField properties have no getters/setters
+    resolveFakeOverride()?.backingField?.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME) == true -> false
+    // We do not produce default accessors for private fields
+    else -> accessor.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR || !Visibilities.isPrivate(accessor.visibility)
+}
+
+val IrDeclaration.isStaticInlineClassReplacement: Boolean
+    get() = origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
+            || origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR

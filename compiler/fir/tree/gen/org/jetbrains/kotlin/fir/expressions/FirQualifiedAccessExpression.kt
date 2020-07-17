@@ -20,7 +20,6 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirQualifiedAcces
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val safe: Boolean
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
@@ -28,6 +27,12 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirQualifiedAcces
     abstract override val calleeReference: FirReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccessExpression(this, data)
+
+    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
+    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 

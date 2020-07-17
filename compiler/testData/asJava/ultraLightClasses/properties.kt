@@ -26,6 +26,8 @@ class Foo(a: Int, val b:Foo, var c:Boolean, private val d: List, protected val e
 
   const val SUBSYSTEM_DEPRECATED: String = "This subsystem is deprecated"
 
+  const val CONSTANT_WITH_ESCAPES = "A\tB\nC\rD\'E\"F\\G\$H"
+
   var counter = 0
     set(value) {
         if (value >= 0) field = value

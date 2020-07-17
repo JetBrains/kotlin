@@ -388,28 +388,29 @@ object KotlinCompilerClient {
         isEchoRead.acquire()
 
         val stdoutThread =
-                thread {
-                    try {
-                        daemon.inputStream
-                                .reader()
-                                .forEachLine {
-                                    if (it == COMPILE_DAEMON_IS_READY_MESSAGE) {
-                                        reportingTargets.report(DaemonReportCategory.DEBUG, "Received the message signalling that the daemon is ready")
-                                        isEchoRead.release()
-                                        return@forEachLine
-                                    }
-                                    else {
-                                        reportingTargets.report(DaemonReportCategory.INFO, it, "daemon")
-                                    }
-                                }
-                    }
-                    finally {
-                        daemon.inputStream.close()
-                        daemon.outputStream.close()
-                        daemon.errorStream.close()
-                        isEchoRead.release()
-                    }
+            thread {
+                try {
+                    daemon.inputStream
+                        .reader()
+                        .forEachLine {
+                            if (Thread.currentThread().isInterrupted) return@forEachLine
+                            if (it == COMPILE_DAEMON_IS_READY_MESSAGE) {
+                                reportingTargets.report(DaemonReportCategory.DEBUG, "Received the message signalling that the daemon is ready")
+                                isEchoRead.release()
+                                return@forEachLine
+                            } else {
+                                reportingTargets.report(DaemonReportCategory.INFO, it, "daemon")
+                            }
+                        }
+                } catch (_: Throwable) {
+                    // Ignore, assuming all exceptions as interrupt exceptions
+                } finally {
+                    daemon.inputStream.close()
+                    daemon.outputStream.close()
+                    daemon.errorStream.close()
+                    isEchoRead.release()
                 }
+            }
         try {
             // trying to wait for process
             val daemonStartupTimeout = System.getProperty(COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY)?.let {
@@ -444,7 +445,7 @@ object KotlinCompilerClient {
             // assuming that all important output is already done, the rest should be routed to the log by the daemon itself
             if (stdoutThread.isAlive) {
                 // TODO: find better method to stop the thread, but seems it will require asynchronous consuming of the stream
-                stdoutThread.stop()
+                stdoutThread.interrupt()
             }
             reportingTargets.out?.flush()
         }

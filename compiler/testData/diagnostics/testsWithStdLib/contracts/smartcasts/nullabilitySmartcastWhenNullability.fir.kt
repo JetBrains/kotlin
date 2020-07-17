@@ -14,7 +14,7 @@ fun nullWhenNull(x: Int?): Int? {
 
 fun testNullWhenNull(x: Int?) {
     if (nullWhenNull(x) == null) {
-        x.<!AMBIGUITY!>dec<!>()
+        x.dec()
     }
     else {
         x.<!AMBIGUITY!>dec<!>()
@@ -24,7 +24,7 @@ fun testNullWhenNull(x: Int?) {
         x.<!AMBIGUITY!>dec<!>()
     }
     else {
-        x.<!AMBIGUITY!>dec<!>()
+        x.dec()
     }
 
     x.<!AMBIGUITY!>dec<!>()

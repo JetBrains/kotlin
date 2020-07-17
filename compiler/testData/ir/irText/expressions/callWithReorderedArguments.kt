@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun foo(a: Int, b: Int) {}
 
 fun noReorder1() = 1

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.addExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.native.tasks.NativePerformanceReport
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -68,17 +69,14 @@ open class KotlinPerformancePlugin : Plugin<Project> {
         val timeListener = TaskTimerListener(project)
         project.gradle.addListener(timeListener)
         performanceExtension.trackedBinaries.forEach { binary ->
-            project.tasks.create(
-                binary.target.disambiguateName(lowerCamelCaseName("perfReport", binary.name)),
-                NativePerformanceReport::class.java
-            ) {
+            val perfReport = project.registerTask<NativePerformanceReport>(binary.target.disambiguateName(lowerCamelCaseName("perfReport", binary.name))) {
                 it.binary = binary
                 it.settings = performanceExtension
                 it.timeListener = timeListener
                 it.group = TASK_GROUP
                 it.description = "Report performance measurement results for binary '${binary.name}' of target '${binary.target.name}'."
-                binary.linkTask.finalizedBy(it)
             }
+            binary.linkTaskProvider.configure { linkTask -> linkTask.finalizedBy(perfReport) }
         }
     }
 

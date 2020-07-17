@@ -4,7 +4,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-201
- * PLACE: expressions, when-expression -> paragraph 6 -> sentence 10
+ * MAIN LINK: expressions, when-expression -> paragraph 6 -> sentence 10
  * NUMBER: 1
  * DESCRIPTION: 'When' with enumeration of the different variants of expressions in 'when condition'.
  * HELPERS: typesProvider, classes, functions

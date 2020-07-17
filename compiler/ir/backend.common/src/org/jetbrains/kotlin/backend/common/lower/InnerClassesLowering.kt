@@ -17,13 +17,11 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class InnerClassesLowering(val context: BackendContext) : DeclarationTransformer {
 
@@ -225,7 +223,9 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
 
                 val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(classConstructor)
                 val newCall = IrDelegatingConstructorCallImpl(
-                    expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, newCallee.symbol, expression.typeArgumentsCount
+                    expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, newCallee.symbol,
+                    typeArgumentsCount = expression.typeArgumentsCount,
+                    valueArgumentsCount = newCallee.valueParameters.size
                 ).apply { copyTypeArgumentsFrom(expression) }
 
                 newCall.putValueArgument(0, dispatchReceiver)
@@ -258,9 +258,10 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                         endOffset,
                         type,
                         newCallee.symbol,
-                        typeArgumentsCount,
-                        newReflectionTarget?.symbol,
-                        origin
+                        typeArgumentsCount = typeArgumentsCount,
+                        valueArgumentsCount = newCallee.valueParameters.size,
+                        reflectionTarget = newReflectionTarget?.symbol,
+                        origin = origin
                     )
                 }
 

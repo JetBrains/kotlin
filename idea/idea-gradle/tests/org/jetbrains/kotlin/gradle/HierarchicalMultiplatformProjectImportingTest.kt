@@ -10,6 +10,7 @@ import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -17,6 +18,8 @@ import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+
+const val hmppGradlePluginVersion = "1.3.50+"
 
 class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
 
@@ -36,7 +39,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.50+")
+    @PluginTargetVersions(pluginVersion = hmppGradlePluginVersion, gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testImportHMPPFlag() {
         configureByFiles()
         importProject()
@@ -45,51 +48,51 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             allModules {
                 isHMPP(true)
             }
-            module("project.my-app.commonMain")
-            module("project.my-app.jvmAndJsMain")
+            module("my-app.commonMain")
+            module("my-app.jvmAndJsMain")
         }
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.50+")
+    @PluginTargetVersions(pluginVersion = hmppGradlePluginVersion, gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testImportIntermediateModules() {
         configureByFiles()
         importProject()
 
         checkProjectStructure {
             module("my-app")
-            module("project.my-app.commonMain") {
+            module("my-app.commonMain") {
                 isHMPP(true)
-                targetPlatform(JsPlatforms.defaultJsPlatform, JvmPlatforms.jvm16, NativePlatforms.defaultNativePlatform)
+                targetPlatform(JsPlatforms.defaultJsPlatform, JvmPlatforms.jvm16, NativePlatforms.unspecifiedNativePlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 sourceFolder("src/commonMain/kotlin", SourceKotlinRootType)
                 sourceFolder("src/commonMain/resources", ResourceKotlinRootType)
             }
 
-            module("project.my-app.commonTest") {
+            module("my-app.commonTest") {
                 isHMPP(true)
-                targetPlatform(JsPlatforms.defaultJsPlatform, JvmPlatforms.jvm16, NativePlatforms.defaultNativePlatform)
+                targetPlatform(JsPlatforms.defaultJsPlatform, JvmPlatforms.jvm16, NativePlatforms.unspecifiedNativePlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
+                moduleDependency("my-app.commonMain", DependencyScope.TEST)
                 sourceFolder("src/commonTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("src/commonTest/resources", TestResourceKotlinRootType)
             }
 
-            module("project.my-app.jsMain") {
+            module("my-app.jsMain") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("project.my-app.commonMain", DependencyScope.COMPILE)
-                moduleDependency("project.my-app.jvmAndJsMain", DependencyScope.COMPILE)
-                moduleDependency("project.my-app.linuxAndJsMain", DependencyScope.COMPILE)
+                moduleDependency("my-app.commonMain", DependencyScope.COMPILE)
+                moduleDependency("my-app.jvmAndJsMain", DependencyScope.COMPILE)
+                moduleDependency("my-app.linuxAndJsMain", DependencyScope.COMPILE)
                 sourceFolder("src/jsMain/kotlin", SourceKotlinRootType)
                 sourceFolder("src/jsMain/resources", ResourceKotlinRootType)
             }
 
-            module("project.my-app.jsTest") {
+            module("my-app.jsTest") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
@@ -97,52 +100,52 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-js:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
-                moduleDependency("project.my-app.commonTest", DependencyScope.TEST)
-                moduleDependency("project.my-app.jsMain", DependencyScope.TEST)
-                moduleDependency("project.my-app.jvmAndJsMain", DependencyScope.TEST)
-                moduleDependency("project.my-app.jvmAndJsTest", DependencyScope.TEST)
-                moduleDependency("project.my-app.linuxAndJsMain", DependencyScope.TEST)
-                moduleDependency("project.my-app.linuxAndJsTest", DependencyScope.TEST)
+                moduleDependency("my-app.commonMain", DependencyScope.TEST)
+                moduleDependency("my-app.commonTest", DependencyScope.TEST)
+                moduleDependency("my-app.jsMain", DependencyScope.TEST)
+                moduleDependency("my-app.jvmAndJsMain", DependencyScope.TEST)
+                moduleDependency("my-app.jvmAndJsTest", DependencyScope.TEST)
+                moduleDependency("my-app.linuxAndJsMain", DependencyScope.TEST)
+                moduleDependency("my-app.linuxAndJsTest", DependencyScope.TEST)
                 sourceFolder("src/jsTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("src/jsTest/resources", TestResourceKotlinRootType)
             }
 
-            module("project.my-app.jvmAndJsMain") {
+            module("my-app.jvmAndJsMain") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform, JvmPlatforms.jvm16)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("project.my-app.commonMain", DependencyScope.COMPILE)
+                moduleDependency("my-app.commonMain", DependencyScope.COMPILE)
                 sourceFolder("src/jvmAndJsMain/kotlin", SourceKotlinRootType)
                 sourceFolder("src/jvmAndJsMain/resources", ResourceKotlinRootType)
             }
 
-            module("project.my-app.jvmAndJsTest") {
+            module("my-app.jvmAndJsTest") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform, JvmPlatforms.jvm16)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
-                moduleDependency("project.my-app.commonTest", DependencyScope.TEST)
-                moduleDependency("project.my-app.jvmAndJsMain", DependencyScope.TEST)
+                moduleDependency("my-app.commonMain", DependencyScope.TEST)
+                moduleDependency("my-app.commonTest", DependencyScope.TEST)
+                moduleDependency("my-app.jvmAndJsMain", DependencyScope.TEST)
                 sourceFolder("src/jvmAndJsTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("src/jvmAndJsTest/resources", TestResourceKotlinRootType)
             }
 
-            module("project.my-app.jvmMain") {
+            module("my-app.jvmMain") {
                 isHMPP(true)
                 targetPlatform(JvmPlatforms.jvm16)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
-                moduleDependency("project.my-app.commonMain", DependencyScope.COMPILE)
-                moduleDependency("project.my-app.jvmAndJsMain", DependencyScope.COMPILE)
+                moduleDependency("my-app.commonMain", DependencyScope.COMPILE)
+                moduleDependency("my-app.jvmAndJsMain", DependencyScope.COMPILE)
                 sourceFolder("src/jvmMain/kotlin", JavaSourceRootType.SOURCE)
                 sourceFolder("src/jvmMain/resources", JavaResourceRootType.RESOURCE)
             }
 
-            module("project.my-app.jvmTest") {
+            module("my-app.jvmTest") {
                 isHMPP(true)
                 targetPlatform(JvmPlatforms.jvm16)
                 libraryDependency("Gradle: junit:junit:4.12", DependencyScope.TEST)
@@ -154,40 +157,40 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-junit:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.TEST)
-                moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
-                moduleDependency("project.my-app.commonTest", DependencyScope.TEST)
-                moduleDependency("project.my-app.jvmAndJsMain", DependencyScope.TEST)
-                moduleDependency("project.my-app.jvmAndJsTest", DependencyScope.TEST)
-                moduleDependency("project.my-app.jvmMain", DependencyScope.TEST)
+                moduleDependency("my-app.commonMain", DependencyScope.TEST)
+                moduleDependency("my-app.commonTest", DependencyScope.TEST)
+                moduleDependency("my-app.jvmAndJsMain", DependencyScope.TEST)
+                moduleDependency("my-app.jvmAndJsTest", DependencyScope.TEST)
+                moduleDependency("my-app.jvmMain", DependencyScope.TEST)
                 sourceFolder("src/jvmTest/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("src/jvmTest/resources", JavaResourceRootType.TEST_RESOURCE)
             }
 
-            module("project.my-app.linuxAndJsMain") {
+            module("my-app.linuxAndJsMain") {
                 isHMPP(true)
-                targetPlatform(JsPlatforms.defaultJsPlatform, NativePlatforms.defaultNativePlatform)
+                targetPlatform(JsPlatforms.defaultJsPlatform, NativePlatforms.unspecifiedNativePlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("project.my-app.commonMain", DependencyScope.COMPILE)
+                moduleDependency("my-app.commonMain", DependencyScope.COMPILE)
                 sourceFolder("src/linuxAndJsMain/kotlin", SourceKotlinRootType)
                 sourceFolder("src/linuxAndJsMain/resources", ResourceKotlinRootType)
             }
 
-            module("project.my-app.linuxAndJsTest") {
+            module("my-app.linuxAndJsTest") {
                 isHMPP(true)
-                targetPlatform(JsPlatforms.defaultJsPlatform, NativePlatforms.defaultNativePlatform)
+                targetPlatform(JsPlatforms.defaultJsPlatform, NativePlatforms.unspecifiedNativePlatform)
                 sourceFolder("src/linuxAndJsTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("src/linuxAndJsTest/resources", TestResourceKotlinRootType)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
-                moduleDependency("project.my-app.commonTest", DependencyScope.TEST)
-                moduleDependency("project.my-app.linuxAndJsMain", DependencyScope.TEST)
+                moduleDependency("my-app.commonMain", DependencyScope.TEST)
+                moduleDependency("my-app.commonTest", DependencyScope.TEST)
+                moduleDependency("my-app.linuxAndJsMain", DependencyScope.TEST)
             }
 
-            module("project.my-app.linuxX64Main") {
+            module("my-app.linuxX64Main") {
                 isHMPP(true)
-                targetPlatform(NativePlatforms.defaultNativePlatform)
+                targetPlatform(NativePlatforms.unspecifiedNativePlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - builtin [linux_x64]", DependencyScope.PROVIDED)
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - iconv [linux_x64]", DependencyScope.PROVIDED)
@@ -195,15 +198,15 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - posix [linux_x64]", DependencyScope.PROVIDED)
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - zlib [linux_x64]", DependencyScope.PROVIDED)
-                moduleDependency("project.my-app.commonMain", DependencyScope.COMPILE)
-                moduleDependency("project.my-app.linuxAndJsMain", DependencyScope.COMPILE)
+                moduleDependency("my-app.commonMain", DependencyScope.COMPILE)
+                moduleDependency("my-app.linuxAndJsMain", DependencyScope.COMPILE)
                 sourceFolder("src/linuxX64Main/kotlin", SourceKotlinRootType)
                 sourceFolder("src/linuxX64Main/resources", ResourceKotlinRootType)
             }
 
-            module("project.my-app.linuxX64Test") {
+            module("my-app.linuxX64Test") {
                 isHMPP(true)
-                targetPlatform(NativePlatforms.defaultNativePlatform)
+                targetPlatform(NativePlatforms.unspecifiedNativePlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-annotations-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-test-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
@@ -213,11 +216,11 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - posix [linux_x64]", DependencyScope.PROVIDED)
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - zlib [linux_x64]", DependencyScope.PROVIDED)
-                moduleDependency("project.my-app.commonMain", DependencyScope.TEST)
-                moduleDependency("project.my-app.commonTest", DependencyScope.TEST)
-                moduleDependency("project.my-app.linuxAndJsMain", DependencyScope.TEST)
-                moduleDependency("project.my-app.linuxAndJsTest", DependencyScope.TEST)
-                moduleDependency("project.my-app.linuxX64Main", DependencyScope.TEST)
+                moduleDependency("my-app.commonMain", DependencyScope.TEST)
+                moduleDependency("my-app.commonTest", DependencyScope.TEST)
+                moduleDependency("my-app.linuxAndJsMain", DependencyScope.TEST)
+                moduleDependency("my-app.linuxAndJsTest", DependencyScope.TEST)
+                moduleDependency("my-app.linuxX64Main", DependencyScope.TEST)
                 sourceFolder("src/linuxX64Test/kotlin", TestSourceKotlinRootType)
                 sourceFolder("src/linuxX64Test/resources", TestResourceKotlinRootType)
             }
@@ -225,7 +228,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.50+")
+    @PluginTargetVersions(pluginVersion = hmppGradlePluginVersion, gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testJvmWithJavaOnHMPP() {
         configureByFiles()
         importProject()

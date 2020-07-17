@@ -7,19 +7,14 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.util.ExpectDeclarationRemover
 
 /**
  * This pass removes all declarations with `isExpect == true`.
  */
-class ExpectDeclarationsRemoveLowering(context: BackendContext, keepOptionalAnnotations: Boolean = false) : DeclarationTransformer {
-
-    private val remover = ExpectDeclarationRemover(
-        symbolTable = context.ir.symbols.externalSymbolTable,
-        doRemove = true,
-        keepOptionalAnnotations = keepOptionalAnnotations
-    )
+class ExpectDeclarationsRemoveLowering(context: BackendContext) : DeclarationTransformer {
+    private val remover = ExpectDeclarationRemover(context.ir.symbols.externalSymbolTable, true)
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         return remover.transformFlat(declaration)

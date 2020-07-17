@@ -21,15 +21,16 @@ import com.intellij.openapi.vcs.changes.ChangeListManagerImpl
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.PsiTestUtil
-import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.UsefulTestCase.assertTrue
 import com.intellij.util.io.exists
 import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.runAndMeasure
+import org.jetbrains.kotlin.idea.perf.util.logMessage
+import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import java.io.File
 import java.nio.file.Paths
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 data class OpenProject(val projectPath: String, val projectName: String, val jdk: Sdk, val projectOpenAction: ProjectOpenAction)
@@ -63,7 +64,7 @@ enum class ProjectOpenAction {
             val projectManagerEx = ProjectManagerEx.getInstanceEx()
 
             val project = loadProjectWithName(projectPath, projectName)
-            assertNotNull(project, "project $projectName at $projectPath is not loaded")
+                ?: error("project $projectName at $projectPath is not loaded")
 
             runWriteAction {
                 ProjectRootManager.getInstance(project).projectSdk = jdk
@@ -78,17 +79,16 @@ enum class ProjectOpenAction {
     GRADLE_PROJECT {
         override fun openProject(projectPath: String, projectName: String, jdk: Sdk): Project {
             val project = ProjectManagerEx.getInstanceEx().loadAndOpenProject(projectPath)!!
+            assertTrue(
+                !project.isDisposed,
+                "Gradle project $projectName at $projectPath is accidentally disposed immediately after import"
+            )
 
             runWriteAction {
                 ProjectRootManager.getInstance(project).projectSdk = jdk
             }
 
             refreshGradleProject(projectPath, project)
-
-            assertTrue(
-                ModuleManager.getInstance(project).modules.isNotEmpty(),
-                "Gradle project $projectName at $projectPath has to have at least one module"
-            )
 
             return project
         }
@@ -123,6 +123,7 @@ enum class ProjectOpenAction {
 
     open fun postOpenProject(project: Project, openProject: OpenProject) {
         ApplicationManager.getApplication().executeOnPooledThread {
+            ResolveElementCache.forceFullAnalysisModeInTests = true
             DumbService.getInstance(project).waitForSmartMode()
 
             for (module in getModulesWithKotlinFiles(project)) {
@@ -131,7 +132,7 @@ enum class ProjectOpenAction {
         }.get()
 
         val modules = ModuleManager.getInstance(project).modules
-        UsefulTestCase.assertTrue("project ${openProject.projectName} has to have at least one module", modules.isNotEmpty())
+        assertTrue("project ${openProject.projectName} has to have at least one module", modules.isNotEmpty())
 
         logMessage { "modules of ${openProject.projectName}: ${modules.map { m -> m.name }}" }
 

@@ -1,0 +1,47 @@
+@kotlin.Metadata
+public class A {
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public class B {
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class Base$DefaultImpls {
+    inner class Base$DefaultImpls
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.Nullable method test(@org.jetbrains.annotations.NotNull p0: Base): java.lang.Integer
+}
+
+@kotlin.Metadata
+public interface Base {
+    inner class Base$DefaultImpls
+    public synthetic static method access$test$jd(p0: Base): java.lang.Integer
+    public @org.jetbrains.annotations.Nullable method test(): java.lang.Integer
+}
+
+@kotlin.Metadata
+public final class Derived$DefaultImpls {
+    inner class Derived$DefaultImpls
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Derived): java.lang.Integer
+}
+
+@kotlin.Metadata
+public interface Derived {
+    inner class Derived$DefaultImpls
+    public synthetic static method access$test$jd(p0: Derived): int
+    public @org.jetbrains.annotations.NotNull method test(): java.lang.Integer
+}
+
+@kotlin.Metadata
+public final class Mixed$DefaultImpls {
+    inner class Mixed$DefaultImpls
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Mixed): java.lang.Integer
+}
+
+@kotlin.Metadata
+public interface Mixed {
+    inner class Mixed$DefaultImpls
+    public synthetic static method access$test$jd(p0: Mixed): int
+}

@@ -1,6 +1,6 @@
-4 val <bold>x = when (m) {</bold>
-4 	val x = <bold>when (m) {</bold>
-5 		1 -> <bold>1</bold>
-6 		2 -> <bold>n</bold>
-3 			fun test(m: Int, <bold>n: Int</bold>) {
-7 		else -> <bold>0</bold>
+4 <bold>val x</bold> = when (m) { (in test(Int, Int))
+4 	val x = <bold>when (m) {</bold> (in test(Int, Int))
+5 		1 -> <bold>1</bold> (in test(Int, Int))
+6 		2 -> <bold>n</bold> (in test(Int, Int))
+3 			fun test(m: Int, <bold>n: Int</bold>) { (in test(Int, Int))
+7 		else -> <bold>0</bold> (in test(Int, Int))

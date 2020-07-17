@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_EXPRESSION
 // SKIP_TXT
@@ -6,8 +7,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-296
- * PLACE: expressions, try-expression -> paragraph 8 -> sentence 1
- * RELEVANT PLACES: expressions, try-expression -> paragraph 9 -> sentence 1
+ * MAIN LINK: expressions, try-expression -> paragraph 8 -> sentence 1
+ * PRIMARY LINKS: expressions, try-expression -> paragraph 9 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks
  * HELPERS: checkType

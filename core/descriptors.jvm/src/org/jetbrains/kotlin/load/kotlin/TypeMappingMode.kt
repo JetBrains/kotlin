@@ -19,7 +19,8 @@ class TypeMappingMode private constructor(
     private val genericArgumentMode: TypeMappingMode? = null,
     val kotlinCollectionsToJavaCollections: Boolean = true,
     private val genericContravariantArgumentMode: TypeMappingMode? = genericArgumentMode,
-    private val genericInvariantArgumentMode: TypeMappingMode? = genericArgumentMode
+    private val genericInvariantArgumentMode: TypeMappingMode? = genericArgumentMode,
+    val mapTypeAliases: Boolean = false
 ) {
     companion object {
         /**
@@ -27,6 +28,13 @@ class TypeMappingMode private constructor(
          */
         @JvmField
         val GENERIC_ARGUMENT = TypeMappingMode()
+
+        /**
+         * kotlin.Int is mapped to Ljava/lang/Integer;
+         * Type aliases are mapped to their expanded form
+         */
+        @JvmField
+        val GENERIC_ARGUMENT_UAST = TypeMappingMode(mapTypeAliases = true)
 
         /**
          * see KotlinTypeMapper.forceBoxedReturnType()
@@ -40,6 +48,18 @@ class TypeMappingMode private constructor(
          */
         @JvmField
         val DEFAULT = TypeMappingMode(genericArgumentMode = GENERIC_ARGUMENT, needPrimitiveBoxing = false, needInlineClassWrapping = false)
+
+        /**
+         * kotlin.Int is mapped to I
+         * Type aliases are mapped to their expanded form
+         */
+        @JvmField
+        val DEFAULT_UAST = TypeMappingMode(
+            genericArgumentMode = GENERIC_ARGUMENT_UAST,
+            needPrimitiveBoxing = false,
+            needInlineClassWrapping = false,
+            mapTypeAliases = true
+        )
 
         /**
          * kotlin.Int is mapped to I
@@ -133,12 +153,14 @@ class TypeMappingMode private constructor(
             skipDeclarationSiteWildcards: Boolean,
             isForAnnotationParameter: Boolean,
             needInlineClassWrapping: Boolean,
+            mapTypeAliases: Boolean,
             fallbackMode: TypeMappingMode? = null
         ) = TypeMappingMode(
             isForAnnotationParameter = isForAnnotationParameter,
             skipDeclarationSiteWildcards = skipDeclarationSiteWildcards,
             genericArgumentMode = fallbackMode,
-            needInlineClassWrapping = needInlineClassWrapping
+            needInlineClassWrapping = needInlineClassWrapping,
+            mapTypeAliases = mapTypeAliases
         )
     }
 

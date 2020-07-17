@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyleUpdateIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
-import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils
 import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import java.util.concurrent.Callable
@@ -46,7 +45,7 @@ class KotlinConfigurationCheckerStartupActivity : StartupActivity {
                 NotificationDisplayType.STICKY_BALLOON, true
             )
 
-        val connection = project.messageBus.connect(project)
+        val connection = project.messageBus.connect()
         connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
             notifyOutdatedBundledCompilerIfNecessary(project)
         })

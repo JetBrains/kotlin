@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.serialization.builtins
@@ -62,7 +51,7 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
                 put(CommonConfigurationKeys.MODULE_NAME, "module for built-ins serialization")
             }
 
-            val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             serialize(environment)
 
@@ -78,7 +67,7 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
             PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false),
             false
     ) {
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
             // Only report diagnostics without a particular location because there's plenty of errors in built-in sources
             // (functions without bodies, incorrect combination of modifiers, etc.)
             if (location == null) {
@@ -97,10 +86,10 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
             fqName ->
             val packageView = module.getPackage(fqName)
             PackageSerializer(
-                    packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS) + createCloneable(module),
-                    packageView.fragments.flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) },
-                    packageView.fqName,
-                    File(destDir, BuiltInSerializerProtocol.getBuiltInsFilePath(packageView.fqName))
+                packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS) + createCloneable(module),
+                packageView.fragments.flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) },
+                packageView.fqName,
+                File(destDir, BuiltInSerializerProtocol.getBuiltInsFilePath(packageView.fqName))
             ).run()
         }
     }

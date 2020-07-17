@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
@@ -476,8 +477,21 @@ open class IncrementalJvmCache(
             if (inlineFunctions.isEmpty()) return emptyMap()
 
             val result = HashMap<String, Long>()
-
+            var dummyVersion: Int = -1
             ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+
+                override fun visit(
+                    version: Int,
+                    access: Int,
+                    name: String?,
+                    signature: String?,
+                    superName: String?,
+                    interfaces: Array<out String>?
+                ) {
+                    super.visit(version, access, name, signature, superName, interfaces)
+                    dummyVersion = version
+                }
+
                 override fun visitMethod(
                     access: Int,
                     name: String,
@@ -485,7 +499,8 @@ open class IncrementalJvmCache(
                     signature: String?,
                     exceptions: Array<out String>?
                 ): MethodVisitor? {
-                    val dummyClassWriter = ClassWriter(Opcodes.API_VERSION)
+                    val dummyClassWriter = ClassWriter(0)
+                    dummyClassWriter.visit(dummyVersion, 0, "dummy", null, AsmTypes.OBJECT_TYPE.internalName, null)
 
                     return object : MethodVisitor(Opcodes.API_VERSION, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
                         override fun visitEnd() {
@@ -493,6 +508,7 @@ open class IncrementalJvmCache(
                             if (jvmName !in inlineFunctions) return
 
                             val dummyBytes = dummyClassWriter.toByteArray()!!
+
                             val hash = dummyBytes.md5()
                             result[jvmName] = hash
                         }

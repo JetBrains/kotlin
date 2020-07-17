@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
 import org.jetbrains.kotlin.idea.klib.createKlibPackageFragmentProvider
 import org.jetbrains.kotlin.idea.klib.isKlibLibraryRootForPlatform
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -68,7 +69,7 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
             }
         } else {
             // No klib files <=> old metadata-library <=> create usual LibraryInfo
-            listOf(LibraryInfo(project, library))
+            listOf(CommonMetadataLibraryInfo(project, library))
         }
     }
 
@@ -84,7 +85,8 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
                 storageManager = storageManager,
                 metadataModuleDescriptorFactory = metadataModuleDescriptorFactory,
                 languageVersionSettings = languageVersionSettings,
-                moduleDescriptor = moduleDescriptor
+                moduleDescriptor = moduleDescriptor,
+                lookupTracker = LookupTracker.DO_NOTHING
             )
     }
 
@@ -113,9 +115,16 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
     }
 }
 
-class CommonKlibLibraryInfo(project: Project, library: Library, libraryRoot: String) :
-    AbstractKlibLibraryInfo(project, library, libraryRoot) {
+class CommonKlibLibraryInfo(
+    project: Project,
+    library: Library,
+    libraryRoot: String
+) : AbstractKlibLibraryInfo(project, library, libraryRoot) {
+    override val platform: TargetPlatform
+        get() = CommonPlatforms.defaultCommonPlatform
+}
 
+class CommonMetadataLibraryInfo(project: Project, library: Library) : LibraryInfo(project, library) {
     override val platform: TargetPlatform
         get() = CommonPlatforms.defaultCommonPlatform
 }

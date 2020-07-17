@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.extensions.internal
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -18,7 +19,9 @@ import org.jetbrains.kotlin.resolve.calls.model.CallResolutionResult
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
+import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 
 @OptIn(InternalNonStableExtensionPoints::class)
 class CandidateInterceptor(project: Project) {
@@ -28,7 +31,7 @@ class CandidateInterceptor(project: Project) {
         candidates: Collection<NewResolutionOldInference.MyCandidate>,
         context: BasicCallResolutionContext,
         candidateResolver: CandidateResolver,
-        callResolver: CallResolver?,
+        callResolver: CallResolver,
         name: Name,
         kind: NewResolutionOldInference.ResolutionKind,
         tracing: TracingStrategy
@@ -36,34 +39,58 @@ class CandidateInterceptor(project: Project) {
         extension.interceptCandidates(it, context, candidateResolver, callResolver, name, kind, tracing)
     }
 
-    fun interceptResolvedCandidates(
-        callResolutionResult: CallResolutionResult,
-        context: BasicCallResolutionContext,
-        callResolver: KotlinCallResolver,
-        name: Name,
-        kind: NewResolutionOldInference.ResolutionKind,
-        tracing: TracingStrategy
-    ): CallResolutionResult {
-        var resolutionResult = callResolutionResult
-        for (extension in extensions) {
-            resolutionResult = extension.interceptCandidates(
-                resolutionResult, context, callResolver, name, kind, tracing
-            )
-        }
-
-        return resolutionResult
-    }
-
-    fun interceptCandidates(
+    fun interceptFunctionCandidates(
         candidates: Collection<FunctionDescriptor>,
         scopeTower: ImplicitScopeTower,
         resolutionContext: BasicCallResolutionContext,
         resolutionScope: ResolutionScope,
-        callResolver: CallResolver?,
+        callResolver: CallResolver,
         name: Name,
         location: LookupLocation
     ): Collection<FunctionDescriptor> = extensions.fold(candidates) { it, extension ->
-        extension.interceptCandidates(it, scopeTower, resolutionContext, resolutionScope, callResolver, name, location)
+        extension.interceptFunctionCandidates(it, scopeTower, resolutionContext, resolutionScope, callResolver, name, location)
+    }
+
+    fun interceptFunctionCandidates(
+        candidates: Collection<FunctionDescriptor>,
+        scopeTower: ImplicitScopeTower,
+        resolutionContext: BasicCallResolutionContext,
+        resolutionScope: ResolutionScope,
+        callResolver: PSICallResolver,
+        name: Name,
+        location: LookupLocation,
+        dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<FunctionDescriptor> = extensions.fold(candidates) { it, extension ->
+        extension.interceptFunctionCandidates(
+            it, scopeTower, resolutionContext, resolutionScope, callResolver, name, location, dispatchReceiver, extensionReceiver
+        )
+    }
+
+    fun interceptVariableCandidates(
+        candidates: Collection<VariableDescriptor>,
+        scopeTower: ImplicitScopeTower,
+        resolutionContext: BasicCallResolutionContext,
+        resolutionScope: ResolutionScope,
+        callResolver: CallResolver,
+        name: Name,
+        location: LookupLocation
+    ): Collection<VariableDescriptor> = extensions.fold(candidates) { it, extension ->
+        extension.interceptVariableCandidates(it, scopeTower, resolutionContext, resolutionScope, callResolver, name, location)
+    }
+
+    fun interceptVariableCandidates(
+        candidates: Collection<VariableDescriptor>,
+        scopeTower: ImplicitScopeTower,
+        resolutionContext: BasicCallResolutionContext,
+        resolutionScope: ResolutionScope,
+        callResolver: PSICallResolver,
+        name: Name,
+        location: LookupLocation,
+        dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<VariableDescriptor> = extensions.fold(candidates) { it, extension ->
+        extension.interceptVariableCandidates(it, scopeTower, resolutionContext, resolutionScope, callResolver, name, location, dispatchReceiver, extensionReceiver)
     }
 
     companion object : ProjectExtensionDescriptor<CallResolutionInterceptorExtension>(

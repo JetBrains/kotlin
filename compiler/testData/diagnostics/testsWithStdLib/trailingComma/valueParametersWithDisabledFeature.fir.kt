@@ -60,13 +60,13 @@ open class Foo10(x: Int = 10, y: Float = 0f)
 class Foo11: Foo10 {
     constructor(
         x: Float
-    ): <!INAPPLICABLE_CANDIDATE!>super<!>(1, 1f,)
+    ): super(1, 1f,)
 }
 
 class Foo12: Foo10 {
     constructor(
         x: Float
-    ): <!INAPPLICABLE_CANDIDATE!>super<!>(1, 1f,/**/)
+    ): super(1, 1f,/**/)
 }
 
 fun main() {

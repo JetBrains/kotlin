@@ -267,7 +267,8 @@ fun PsiReference.isCallableOverrideUsage(declaration: KtNamedDeclaration): Boole
                 usageDescriptor != null && OverridingUtil.overrides(
                     usageDescriptor,
                     targetDescriptor,
-                    usageDescriptor.module.isTypeRefinementEnabled()
+                    usageDescriptor.module.isTypeRefinementEnabled(),
+                    false // don't distinguish between expect and non-expect callable descriptors, KT-38298, KT-38589
                 )
             }
             is PsiMethod -> {

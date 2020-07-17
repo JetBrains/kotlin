@@ -14,38 +14,31 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import java.util.*
 
 interface LocalNameProvider {
     fun localName(declaration: IrDeclarationWithName): String =
@@ -117,18 +110,21 @@ class LocalDeclarationsLowering(
         LocalDeclarationsTransformer(irElement, container, classesToLower).lowerLocalDeclarations()
     }
 
-    private class ScopeWithCounter(scope: Scope, irElement: IrElement) : ScopeWithIr(scope, irElement) {
+    internal class ScopeWithCounter(scope: Scope, irElement: IrElement) : ScopeWithIr(scope, irElement) {
         // Continuous numbering across all declarations in the container.
         var counter: Int = 0
+        val usedLocalFunctionNames: MutableSet<Name> = hashSetOf()
     }
 
-    private val scopeMap: MutableMap<IrSymbolOwner, ScopeWithCounter> = mutableMapOf()
+    internal class LocalScopeWithCounterMap {
+        val scopeMap: MutableMap<IrSymbolOwner, ScopeWithCounter> = hashMapOf()
+    }
+
     // Need to keep LocalFunctionContext.index
     private val IrSymbolOwner.scopeWithCounter: ScopeWithCounter
-        get() = scopeMap.getOrPut(this) {
+        get() = context.ir.localScopeWithCounterMap.scopeMap.getOrPut(this) {
             ScopeWithCounter(Scope(symbol), this)
         }
-
 
     private abstract class LocalContext {
         val capturedTypeParameterToTypeParameter: MutableMap<IrTypeParameter, IrTypeParameter> = mutableMapOf()
@@ -223,13 +219,13 @@ class LocalDeclarationsLowering(
             abbreviation.annotations
         )
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private inner class LocalDeclarationsTransformer(
         val irElement: IrElement, val container: IrDeclaration, val classesToLower: Set<IrClass>?
     ) {
         val localFunctions: MutableMap<IrFunction, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<IrClass, LocalClassContext> = LinkedHashMap()
         val localClassConstructors: MutableMap<IrConstructor, LocalClassConstructorContext> = LinkedHashMap()
-        val usedLocalFunctionNames: MutableSet<Name> = mutableSetOf()
 
         val transformedDeclarations = mutableMapOf<IrSymbolOwner, IrDeclaration>()
 
@@ -353,14 +349,15 @@ class LocalDeclarationsLowering(
                     expression.startOffset, expression.endOffset,
                     context.irBuiltIns.unitType,
                     newCallee.symbol,
-                    expression.typeArgumentsCount
+                    typeArgumentsCount = expression.typeArgumentsCount,
+                    valueArgumentsCount = newCallee.valueParameters.size
                 ).also {
                     it.fillArguments2(expression, newCallee)
                     it.copyTypeArgumentsFrom(expression)
                 }
             }
 
-            inline fun <T : IrMemberAccessExpression> T.mapValueParameters(
+            inline fun <T : IrMemberAccessExpression<*>> T.mapValueParameters(
                 newTarget: IrFunction,
                 transform: (IrValueParameter) -> IrExpression?
             ): T =
@@ -370,8 +367,10 @@ class LocalDeclarationsLowering(
                     }
                 }
 
-            private fun <T : IrMemberAccessExpression> T.fillArguments2(oldExpression: IrMemberAccessExpression, newTarget: IrFunction): T {
-
+            private fun <T : IrMemberAccessExpression<*>> T.fillArguments2(
+                oldExpression: IrMemberAccessExpression<*>,
+                newTarget: IrFunction
+            ): T {
                 mapValueParameters(newTarget) { newValueParameterDeclaration ->
                     val oldParameter = newParameterToOld[newValueParameterDeclaration]
 
@@ -411,9 +410,10 @@ class LocalDeclarationsLowering(
                     expression.startOffset, expression.endOffset,
                     expression.type, // TODO functional type for transformed descriptor
                     newCallee.symbol,
-                    newCallee.typeParameters.size,
-                    newReflectionTarget?.symbol,
-                    expression.origin
+                    typeArgumentsCount = newCallee.typeParameters.size,
+                    valueArgumentsCount = newCallee.valueParameters.size,
+                    reflectionTarget = newReflectionTarget?.symbol,
+                    origin = expression.origin
                 ).also {
                     it.fillArguments2(expression, newCallee)
                     it.setLocalTypeArguments(oldCallee)
@@ -514,9 +514,10 @@ class LocalDeclarationsLowering(
                 oldCall.startOffset, oldCall.endOffset,
                 newCallee.returnType,
                 newCallee.symbol,
-                newCallee.typeParameters.size,
-                oldCall.origin,
-                oldCall.superQualifierSymbol
+                typeArgumentsCount = newCallee.typeParameters.size,
+                valueArgumentsCount = newCallee.valueParameters.size,
+                origin = oldCall.origin,
+                superQualifierSymbol = oldCall.superQualifierSymbol
             ).also {
                 it.setLocalTypeArguments(oldCall.symbol.owner)
                 it.copyTypeArgumentsFrom(oldCall, shift = newCallee.typeParameters.size - oldCall.typeArgumentsCount)
@@ -533,7 +534,7 @@ class LocalDeclarationsLowering(
                 it.copyTypeArgumentsFrom(oldCall)
             }
 
-        private fun IrMemberAccessExpression.setLocalTypeArguments(callee: IrFunction) {
+        private fun IrMemberAccessExpression<*>.setLocalTypeArguments(callee: IrFunction) {
             val context = localFunctions[callee] ?: return
             for ((outerTypeParameter, innerTypeParameter) in context.capturedTypeParameterToTypeParameter) {
                 putTypeArgument(innerTypeParameter.index, outerTypeParameter.defaultType) // TODO: remap default type!
@@ -578,38 +579,22 @@ class LocalDeclarationsLowering(
 
         private fun createLiftedDeclaration(localFunctionContext: LocalFunctionContext) {
             val oldDeclaration = localFunctionContext.declaration
-            assert(oldDeclaration.dispatchReceiverParameter == null)
-
-            val memberOwner = localFunctionContext.ownerForLoweredDeclaration
-            val newDescriptor = WrappedSimpleFunctionDescriptor(oldDeclaration.descriptor)
-            val newSymbol = IrSimpleFunctionSymbolImpl(newDescriptor)
-            val newName = generateNameForLiftedDeclaration(oldDeclaration, memberOwner)
-
             if (oldDeclaration.dispatchReceiverParameter != null) {
                 throw AssertionError("local functions must not have dispatch receiver")
             }
 
+            val memberOwner = localFunctionContext.ownerForLoweredDeclaration
+            val newName = generateNameForLiftedDeclaration(oldDeclaration, memberOwner)
+
             // TODO: consider using fields to access the closure of enclosing class.
             val (capturedValues, capturedTypeParameters) = localFunctionContext.closure
 
-            val newDeclaration = IrFunctionImpl(
-                oldDeclaration.startOffset,
-                oldDeclaration.endOffset,
-                oldDeclaration.origin,
-                newSymbol,
-                newName,
-                Visibilities.PRIVATE,
-                Modality.FINAL,
-                returnType = IrUninitializedType,
-                isInline = oldDeclaration.isInline,
-                isExternal = oldDeclaration.isExternal,
-                isTailrec = oldDeclaration.isTailrec,
-                isSuspend = oldDeclaration.isSuspend,
-                isExpect = oldDeclaration.isExpect,
-                isFakeOverride = oldDeclaration.isFakeOverride,
-                isOperator = oldDeclaration.isOperator
-            )
-            newDescriptor.bind(newDeclaration)
+            val newDeclaration = buildFun(oldDeclaration.descriptor) {
+                updateFrom(oldDeclaration)
+                name = newName
+                visibility = Visibilities.PRIVATE
+                modality = Modality.FINAL
+            }
 
             localFunctionContext.transformedDeclaration = newDeclaration
 
@@ -651,23 +636,19 @@ class LocalDeclarationsLowering(
         ) = ArrayList<IrValueParameter>(capturedValues.size + oldDeclaration.valueParameters.size).apply {
             val generatedNames = mutableSetOf<Name>()
             capturedValues.mapIndexedTo(this) { i, capturedValue ->
-                val parameterDescriptor = WrappedValueParameterDescriptor()
                 val p = capturedValue.owner
-                IrValueParameterImpl(
-                    p.startOffset,
-                    p.endOffset,
-                    if (p.descriptor is ReceiverParameterDescriptor && newDeclaration is IrConstructor)
-                        BOUND_RECEIVER_PARAMETER else BOUND_VALUE_PARAMETER,
-                    IrValueParameterSymbolImpl(parameterDescriptor),
-                    suggestNameForCapturedValue(p, generatedNames),
-                    i,
-                    localFunctionContext.remapType(p.type),
-                    null,
-                    isCrossinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isCrossinline == true,
+                buildValueParameter(newDeclaration) {
+                    startOffset = p.startOffset
+                    endOffset = p.endOffset
+                    origin =
+                        if (p.descriptor is ReceiverParameterDescriptor && newDeclaration is IrConstructor) BOUND_RECEIVER_PARAMETER
+                        else BOUND_VALUE_PARAMETER
+                    name = suggestNameForCapturedValue(p, generatedNames)
+                    index = i
+                    type = localFunctionContext.remapType(p.type)
+                    isCrossInline = (capturedValue as? IrValueParameterSymbol)?.owner?.isCrossinline == true
                     isNoinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isNoinline == true
-                ).also {
-                    parameterDescriptor.bind(it)
-                    it.parent = newDeclaration
+                }.also {
                     newParameterToCaptured[it] = capturedValue
                 }
             }
@@ -707,22 +688,11 @@ class LocalDeclarationsLowering(
             val localClassContext = localClasses[oldDeclaration.parent]!!
             val capturedValues = localClassContext.closure.capturedValues
 
-            val newDescriptor = WrappedClassConstructorDescriptor(oldDeclaration.descriptor.annotations, oldDeclaration.descriptor.source)
-            val newSymbol = IrConstructorSymbolImpl(newDescriptor)
-
-            val loweredConstructorVisibility =
-                visibilityPolicy.forConstructor(oldDeclaration, constructorContext.inInlineFunctionScope)
-
-            val newDeclaration = IrConstructorImpl(
-                oldDeclaration.startOffset, oldDeclaration.endOffset, oldDeclaration.origin,
-                newSymbol, oldDeclaration.name, loweredConstructorVisibility, oldDeclaration.returnType,
-                isInline = oldDeclaration.isInline,
-                isExternal = oldDeclaration.isExternal,
-                isPrimary = oldDeclaration.isPrimary,
-                isExpect = oldDeclaration.isExpect
-            )
-
-            newDescriptor.bind(newDeclaration)
+            val newDeclaration = buildConstructor(oldDeclaration.descriptor) {
+                updateFrom(oldDeclaration)
+                visibility = visibilityPolicy.forConstructor(oldDeclaration, constructorContext.inInlineFunctionScope)
+                returnType = oldDeclaration.returnType
+            }
 
             constructorContext.transformedDeclaration = newDeclaration
 
@@ -753,26 +723,20 @@ class LocalDeclarationsLowering(
             parent: IrClass,
             fieldType: IrType,
             isCrossinline: Boolean
-        ): IrField {
-            val descriptor = WrappedFieldDescriptor()
-            val symbol = IrFieldSymbolImpl(descriptor)
-            return IrFieldImpl(
-                startOffset,
-                endOffset,
-                if (isCrossinline) DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE else DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE,
-                symbol,
-                name,
-                fieldType,
-                visibility,
-                isFinal = true,
-                isExternal = false,
-                isStatic = false,
-                isFakeOverride = false
-            ).also {
-                descriptor.bind(it)
+        ): IrField =
+            buildField {
+                this.startOffset = startOffset
+                this.endOffset = endOffset
+                this.origin =
+                    if (isCrossinline) DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE
+                    else DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
+                this.name = name
+                this.type = fieldType
+                this.visibility = visibility
+                this.isFinal = true
+            }.also {
                 it.parent = parent
             }
-        }
 
         private fun createFieldsForCapturedValues(localClassContext: LocalClassContext) {
             val classDeclaration = localClassContext.declaration
@@ -832,19 +796,17 @@ class LocalDeclarationsLowering(
         }
 
         private fun collectLocalDeclarations() {
-            val enclosingFileScope = container.file.scopeWithCounter
-
-            val enclosingClassScope = run {
+            val enclosingFile = container.file
+            val enclosingClass = run {
                 var currentParent = container as? IrClass ?: container.parent
                 while (currentParent is IrDeclaration && currentParent !is IrClass) {
                     currentParent = currentParent.parent
                 }
 
                 currentParent as? IrClass
-            }?.scopeWithCounter
+            }
 
             irElement.acceptVoid(object : IrElementVisitorVoidWithContext() {
-
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }
@@ -866,18 +828,16 @@ class LocalDeclarationsLowering(
                     super.visitSimpleFunction(declaration)
 
                     if (declaration.visibility == Visibilities.LOCAL) {
-                        val scopeWithIr =
-                            (currentClass ?: enclosingClassScope ?: enclosingFileScope /*file is required for K/N cause file declarations are not split by classes*/
-                            ?: error("No scope for ${declaration.dump()}"))
+                        val enclosingScope =
+                            // File is required for K/N because file declarations are not split by classes.
+                            currentClass ?: enclosingClass?.scopeWithCounter ?: enclosingFile.scopeWithCounter
+                        val index =
+                            if (enclosingScope is ScopeWithCounter &&
+                                (declaration.name.isSpecial || declaration.name in enclosingScope.usedLocalFunctionNames)
+                            ) enclosingScope.counter++ else -1
                         localFunctions[declaration] =
-                            LocalFunctionContext(
-                                declaration,
-                                if (declaration.name.isSpecial || declaration.name in usedLocalFunctionNames)
-                                    (scopeWithIr as ScopeWithCounter).counter++
-                                else -1,
-                                scopeWithIr.irElement as IrDeclarationContainer
-                            )
-                        usedLocalFunctionNames.add(declaration.name)
+                            LocalFunctionContext(declaration, index, enclosingScope.irElement as IrDeclarationContainer)
+                        (enclosingScope as? ScopeWithCounter)?.usedLocalFunctionNames?.add(declaration.name)
                     }
                 }
 

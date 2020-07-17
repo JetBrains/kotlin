@@ -310,6 +310,11 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
             runTest("jps-plugin/testData/incremental/pureKotlin/inlineUsedWhereDeclared/");
         }
 
+        @TestMetadata("innerClassesFromSupertypes")
+        public void testInnerClassesFromSupertypes() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/innerClassesFromSupertypes/");
+        }
+
         @TestMetadata("internalClassChanged")
         public void testInternalClassChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/internalClassChanged/");
@@ -741,6 +746,11 @@ public class IncrementalJsCompilerRunnerTestGenerated extends AbstractIncrementa
         @TestMetadata("inferredTypeChanged")
         public void testInferredTypeChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/classHierarchyAffected/inferredTypeChanged/");
+        }
+
+        @TestMetadata("interfaceAnyMethods")
+        public void testInterfaceAnyMethods() throws Exception {
+            runTest("jps-plugin/testData/incremental/classHierarchyAffected/interfaceAnyMethods/");
         }
 
         @TestMetadata("lambdaParameterAffected")

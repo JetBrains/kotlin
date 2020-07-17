@@ -56,8 +56,9 @@ var Project.javaHome: String?
 
 fun Project.generator(fqName: String, sourceSet: SourceSet? = null) = smartJavaExec {
     classpath = (sourceSet ?: testSourceSet).runtimeClasspath
-    main = fqName
+    mainClass.set(fqName)
     workingDir = rootDir
+    systemProperty("line.separator", "\n")
 }
 
 fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {

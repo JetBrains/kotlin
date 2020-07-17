@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.MessageCollectorToOutputItemsCollectorAdapter
@@ -246,6 +246,7 @@ abstract class IncrementalCompilerRunner<
                 val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services).filter { it !in dirtySourcesSet }
                 if (additionalDirtyFiles.isNotEmpty()) {
                     dirtySources.addAll(additionalDirtyFiles)
+                    generatedFiles.forEach { it.outputFile.delete() }
                     continue
                 }
             }
@@ -352,7 +353,7 @@ abstract class IncrementalCompilerRunner<
 }
 
 private class TemporaryMessageCollector(private val delegate: MessageCollector) : MessageCollector {
-    private class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageLocation?)
+    private class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageSourceLocation?)
 
     private val messages = ArrayList<Message>()
 
@@ -360,7 +361,7 @@ private class TemporaryMessageCollector(private val delegate: MessageCollector) 
         messages.clear()
     }
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         messages.add(Message(severity, message, location))
     }
 

@@ -1,6 +1,9 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
 import com.intellij.ide.RecentProjectsManager
+import com.intellij.ide.actions.NewProjectAction
+import com.intellij.ide.impl.NewProjectUtil
+import com.intellij.ide.projectWizard.NewProjectWizard
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.ide.wizard.AbstractWizard
 import com.intellij.openapi.Disposable
@@ -21,21 +24,24 @@ import org.jetbrains.kotlin.idea.projectWizard.ProjectCreationStats
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.buildList
+import org.jetbrains.kotlin.tools.projectWizard.core.div
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
+import org.jetbrains.kotlin.tools.projectWizard.core.isSuccess
+import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaJpsWizardService
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaServices
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.asHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep.FirstWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.runWithProgressBar
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.SecondStepWizardComponent
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import javax.swing.JButton
 import javax.swing.JComponent
@@ -62,7 +68,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         private const val INVALID_PROJECT_NAME_MESSAGE = "Invalid project name"
     }
 
-    override fun isAvailable(): Boolean = ExperimentalFeatures.NewWizard.isEnabled
+    override fun isAvailable(): Boolean = isCreatingNewProject()
 
     private var wizardContext: WizardContext? = null
     private var finishButtonClicked: Boolean = false
@@ -78,14 +84,14 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         return arrayOf(ModuleNewWizardSecondStep(wizard, uiEditorUsagesStats, wizardContext))
     }
 
-    override fun createProject(name: String?, path: String?) =
-        ProjectManager.getInstance().createProject(wizard.projectName, wizard.projectPath.toString())
-
     override fun commit(
         project: Project,
         model: ModifiableModuleModel?,
         modulesProvider: ModulesProvider?
     ): List<IdeaModule>? {
+        runWriteAction {
+            wizard.jdk?.let { jdk -> NewProjectUtil.applyJdkToProject(project, jdk) }
+        }
         val modulesModel = model ?: ModuleManager.getInstance(project).modifiableModel
         val success = wizard.apply(
             services = buildList {
@@ -96,12 +102,12 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
             phases = GenerationPhase.startingFrom(GenerationPhase.FIRST_STEP)
         ).onFailure { errors ->
             val errorMessages = errors.joinToString(separator = "\n") { it.message }
-            Messages.showErrorDialog(project, errorMessages, "The following errors arose during project generation")
+            Messages.showErrorDialog(project, errorMessages, KotlinNewProjectWizardUIBundle.message("error.generation"))
         }.isSuccess
         if (success) {
             val projectCreationStats = ProjectCreationStats(
-                wizard.projectTemplate!!.title,
-                wizard.buildSystemType!!.text
+                wizard.projectTemplate!!.id,
+                wizard.buildSystemType!!.id
             )
             WizardStatsService.logDataOnProjectGenerated(
                 projectCreationStats,
@@ -124,6 +130,10 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     }
 
     override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep? {
+        settingsStep.moduleNameLocationSettings?.apply {
+            moduleName = wizard.projectName!!
+            moduleContentRoot = wizard.projectPath!!.toString()
+        }
         clickFinishButton()
         return null
     }
@@ -140,8 +150,15 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         }
     }
 
+    internal fun selectProjectTemplate(template: ProjectTemplate) {
+        wizard.buildSystemType = BuildSystemType.GradleKotlinDsl
+        wizard.projectTemplate = template
+    }
+
+    private val firstStep = ModuleNewWizardFirstStep(wizard)
+
     override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable?) =
-        ModuleNewWizardFirstStep(wizard)
+        firstStep
 }
 
 abstract class WizardStep(protected val wizard: IdeWizard, private val phase: GenerationPhase) : ModuleWizardStep() {
@@ -237,6 +254,10 @@ class ModuleNewWizardSecondStep(
     override fun handleErrors(error: ValidationResult.ValidationError) {
         component.navigateTo(error)
     }
+}
+
+private fun isCreatingNewProject() = Thread.currentThread().stackTrace.any { element ->
+    element.className == NewProjectAction::class.java.name
 }
 
 private fun WizardContext.getNextButton() = try {

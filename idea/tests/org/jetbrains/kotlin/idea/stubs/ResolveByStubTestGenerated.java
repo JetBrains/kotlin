@@ -604,6 +604,11 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             runTest("compiler/testData/loadJava/compiledKotlin/class/EnumWithPrimitiveConstructorParameter.kt");
         }
 
+        @TestMetadata("FunInterface.kt")
+        public void testFunInterface() throws Exception {
+            runTest("compiler/testData/loadJava/compiledKotlin/class/FunInterface.kt");
+        }
+
         @TestMetadata("InheritClassSimple.kt")
         public void testInheritClassSimple() throws Exception {
             runTest("compiler/testData/loadJava/compiledKotlin/class/InheritClassSimple.kt");

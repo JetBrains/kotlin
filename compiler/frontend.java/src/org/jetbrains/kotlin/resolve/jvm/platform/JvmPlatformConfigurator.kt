@@ -39,7 +39,8 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         BadInheritedJavaSignaturesChecker,
         JvmMultifileClassStateChecker,
         SynchronizedOnInlineMethodChecker,
-        DefaultCheckerInTailrec
+        DefaultCheckerInTailrec,
+        FunctionDelegateMemberNameClashChecker,
     ),
 
     additionalCallCheckers = listOf(
@@ -102,7 +103,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<InlinePlatformCompatibilityChecker>()
         container.useImpl<JvmModuleAccessibilityChecker>()
         container.useImpl<JvmModuleAccessibilityChecker.ClassifierUsage>()
-        container.useImpl<JvmTypeSpecificityComparator>()
+        container.useImpl<JvmTypeSpecificityComparatorDelegate>()
         container.useImpl<JvmPlatformOverloadsSpecificityComparator>()
         container.useImpl<JvmDefaultSuperCallChecker>()
         container.useImpl<JvmSamConversionOracle>()

@@ -10,5 +10,5 @@ fun test(t: Tr<*>) {
     t.v = null!!
     t.v = ""
     t.v = null
-    t.v checkType { <!UNRESOLVED_REFERENCE!>_<!><Any?>() }
+    t.v checkType { _<Any?>() }
 }

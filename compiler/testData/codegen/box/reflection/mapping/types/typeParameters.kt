@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 
 // WITH_REFLECT
@@ -8,7 +7,7 @@ import java.lang.reflect.TypeVariable
 import kotlin.reflect.jvm.*
 import kotlin.test.assertEquals
 
-class A<T> {
+class A<T : CharSequence> {
     fun foo(t: T) {}
 }
 
@@ -19,6 +18,9 @@ fun box(): String {
 
     assertEquals("T", t.name)
     assertEquals(A::class.java, (t.genericDeclaration as Class<*>))
+
+    val tp = A::class.typeParameters
+    assertEquals(CharSequence::class.java, tp.single().upperBounds.single().javaType)
 
     return "OK"
 }

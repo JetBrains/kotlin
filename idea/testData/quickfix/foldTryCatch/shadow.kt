@@ -10,8 +10,7 @@ fun foo() {
     try {
         val x = 2
         x = 3
-    }
-    catch(e: Exception) {
+    } catch(e: Exception) {
         <caret>x = 4
     }
 }

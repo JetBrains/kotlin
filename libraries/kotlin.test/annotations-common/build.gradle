@@ -4,6 +4,8 @@ apply plugin: 'kotlin-platform-common'
 
 configurePublishing(project)
 
+jvmTarget = "1.6"
+
 dependencies {
     compile kotlinStdlib("common")
     testCompile project(":kotlin-test:kotlin-test-common")
@@ -17,13 +19,5 @@ jar {
     manifestAttributes(manifest, project, 'Test')
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.kotlin
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-javadocJar()
+configureSourcesJar()
+configureJavadocJar()

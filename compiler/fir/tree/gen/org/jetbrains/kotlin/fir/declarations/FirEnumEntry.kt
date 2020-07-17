@@ -25,6 +25,8 @@ abstract class FirEnumEntry : FirVariable<FirEnumEntry>(), FirCallableMemberDecl
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
+    abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val name: Name
@@ -37,11 +39,17 @@ abstract class FirEnumEntry : FirVariable<FirEnumEntry>(), FirCallableMemberDecl
     abstract override val getter: FirPropertyAccessor?
     abstract override val setter: FirPropertyAccessor?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
     abstract override val containerSource: DeserializedContainerSource?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEnumEntry(this, data)
+
+    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirEnumEntry
 

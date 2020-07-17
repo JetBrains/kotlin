@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotate
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
-import kotlin.script.experimental.host.createEvaluationConfigurationFromTemplate
+import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 
@@ -43,6 +41,11 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
     open val isDefault = false
 
+    // Store IDE-related settings in script definition
+    var order: Int = Integer.MAX_VALUE
+    open val canAutoReloadScriptConfigurationsBeSwitchedOff: Boolean get() = true
+    open val canDefinitionBeSwitchedOff: Boolean get() = true
+
     abstract val baseClassType: KotlinType
     abstract val compilerOptions: Iterable<String>
     abstract val annotationsForSamWithReceivers: List<String>
@@ -61,7 +64,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         override val legacyDefinition: KotlinScriptDefinition
     ) : ScriptDefinition() {
 
-        override val compilationConfiguration by lazy {
+        override val compilationConfiguration: ScriptCompilationConfiguration by lazy {
             ScriptCompilationConfigurationFromDefinition(
                 hostConfiguration,
                 legacyDefinition
@@ -180,14 +183,24 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         override val evaluationConfiguration: ScriptEvaluationConfiguration?
     ) : FromConfigurationsBase()
 
+    open class FromNewDefinition(
+        private val baseHostConfiguration: ScriptingHostConfiguration,
+        private val definition: kotlin.script.experimental.host.ScriptDefinition
+    ) : FromConfigurationsBase() {
+        override val hostConfiguration: ScriptingHostConfiguration
+            get() = definition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: baseHostConfiguration
+
+        override val compilationConfiguration: ScriptCompilationConfiguration get() = definition.compilationConfiguration
+        override val evaluationConfiguration: ScriptEvaluationConfiguration get() = definition.evaluationConfiguration
+    }
+
     open class FromTemplate(
-        hostConfiguration: ScriptingHostConfiguration,
+        baseHostConfiguration: ScriptingHostConfiguration,
         template: KClass<*>,
         contextClass: KClass<*> = ScriptCompilationConfiguration::class
-    ) : FromConfigurations(
-        hostConfiguration,
-        createCompilationConfigurationFromTemplate(KotlinType(template), hostConfiguration, contextClass),
-        createEvaluationConfigurationFromTemplate(KotlinType(template), hostConfiguration, contextClass)
+    ) : FromNewDefinition(
+        baseHostConfiguration,
+        createScriptDefinitionFromTemplate(KotlinType(template), baseHostConfiguration, contextClass)
     )
 
     companion object {

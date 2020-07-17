@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.addToStdlib.foldMap
 
 enum class ProjectionKind {
     STAR, IN, OUT, INVARIANT;
@@ -50,9 +51,7 @@ data class ConeKotlinTypeProjectionOut(override val type: ConeKotlinType) : Cone
 
 // We assume type IS an invariant type projection to prevent additional wrapper here
 // (more exactly, invariant type projection contains type)
-sealed class ConeKotlinType : ConeKotlinTypeProjection(),
-    KotlinTypeMarker,
-    TypeArgumentListMarker {
+sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, TypeArgumentListMarker {
     override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
@@ -63,9 +62,14 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(),
 
     abstract val nullability: ConeNullability
 
+    abstract val attributes: ConeAttributes
+
     final override fun toString(): String {
         return render()
     }
+
+    abstract override fun equals(other: Any?): Boolean
+    abstract override fun hashCode(): Int
 }
 
 sealed class ConeSimpleKotlinType : ConeKotlinType(), SimpleTypeMarker
@@ -87,6 +91,12 @@ class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
 
     override val nullability: ConeNullability
         get() = ConeNullability.UNKNOWN
+
+    override val attributes: ConeAttributes
+        get() = ConeAttributes.Empty
+
+    override fun equals(other: Any?) = this === other
+    override fun hashCode(): Int = System.identityHashCode(this)
 }
 
 abstract class ConeLookupTagBasedType : ConeSimpleKotlinType() {
@@ -97,8 +107,10 @@ abstract class ConeClassLikeType : ConeLookupTagBasedType() {
     abstract override val lookupTag: ConeClassLikeLookupTag
 }
 
-open class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),
-    FlexibleTypeMarker {
+open class ConeFlexibleType(
+    val lowerBound: ConeKotlinType,
+    val upperBound: ConeKotlinType
+) : ConeKotlinType(), FlexibleTypeMarker {
 
     init {
         val message = { "Bounds violation: $lowerBound, $upperBound" }
@@ -111,6 +123,9 @@ open class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: Cone
 
     override val nullability: ConeNullability
         get() = lowerBound.nullability.takeIf { it == upperBound.nullability } ?: ConeNullability.UNKNOWN
+
+    override val attributes: ConeAttributes
+        get() = lowerBound.attributes
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -145,7 +160,8 @@ data class ConeCapturedType(
     val captureStatus: CaptureStatus,
     val lowerType: ConeKotlinType?,
     override val nullability: ConeNullability = ConeNullability.NOT_NULL,
-    val constructor: ConeCapturedTypeConstructor
+    val constructor: ConeCapturedTypeConstructor,
+    override val attributes: ConeAttributes = ConeAttributes.Empty
 ) : ConeSimpleKotlinType(), CapturedTypeMarker {
     constructor(
         captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeTypeProjection,
@@ -161,6 +177,29 @@ data class ConeCapturedType(
 
     override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeCapturedType
+
+        if (lowerType != other.lowerType) return false
+        if (constructor != other.constructor) return false
+        if (captureStatus != other.captureStatus) return false
+        if (nullability != other.nullability) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = 0
+        result = 31 * result + (lowerType?.hashCode() ?: 0)
+        result = 31 * result + constructor.hashCode()
+        result = 31 * result + captureStatus.hashCode()
+        result = 31 * result + nullability.hashCode()
+        return result
+    }
 }
 
 data class ConeTypeVariableType(
@@ -168,13 +207,19 @@ data class ConeTypeVariableType(
     override val lookupTag: ConeClassifierLookupTag
 ) : ConeLookupTagBasedType() {
     override val typeArguments: Array<out ConeTypeProjection> get() = emptyArray()
+
+    override val attributes: ConeAttributes get() = ConeAttributes.Empty
 }
 
 data class ConeDefinitelyNotNullType(val original: ConeKotlinType) : ConeSimpleKotlinType(), DefinitelyNotNullTypeMarker {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = original.typeArguments
+
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
+
+    override val attributes: ConeAttributes
+        get() = ConeAttributes.Empty
 
     companion object
 }
@@ -195,6 +240,30 @@ class ConeIntersectionType(
 
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
+
+    override val attributes: ConeAttributes = intersectedTypes.foldMap(
+        { it.attributes },
+        { a, b -> a.intersect(b) }
+    )
+
+    private var hashCode = 0
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeIntersectionType
+
+        if (intersectedTypes != other.intersectedTypes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        if (hashCode != 0) return hashCode
+        return intersectedTypes.hashCode().also { hashCode = it }
+    }
+
 }
 
 fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
@@ -204,6 +273,28 @@ fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): Con
 class ConeStubType(val variable: ConeTypeVariable, override val nullability: ConeNullability) : StubTypeMarker, ConeSimpleKotlinType() {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
+
+    override val attributes: ConeAttributes
+        get() = ConeAttributes.Empty
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeStubType
+
+        if (variable != other.variable) return false
+        if (nullability != other.nullability) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = 0
+        result = 31 * result + variable.hashCode()
+        result = 31 * result + nullability.hashCode()
+        return result
+    }
 }
 
 open class ConeTypeVariable(name: String) : TypeVariableMarker {

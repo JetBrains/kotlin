@@ -7,22 +7,22 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.NAME_FOR_BACKING_FIELD
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.resolve.PersistentMultimap
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
-class FirLocalScope(
-    properties: PersistentMap<Name, FirVariableSymbol<*>>,
-    functions: PersistentMultimap<Name, FirFunctionSymbol<*>>,
-    classes: PersistentMap<Name, FirRegularClassSymbol>
+class FirLocalScope private constructor(
+    val properties: PersistentMap<Name, FirVariableSymbol<*>>,
+    val functions: PersistentMultimap<Name, FirFunctionSymbol<*>>,
+    val classes: PersistentMap<Name, FirRegularClassSymbol>
 ) : FirScope() {
-    val properties: PersistentMap<Name, FirVariableSymbol<*>> = properties
-    val functions: PersistentMultimap<Name, FirFunctionSymbol<*>> = functions
-    val classes: PersistentMap<Name, FirRegularClassSymbol> = classes
-
     constructor() : this(persistentMapOf(), PersistentMultimap(), persistentMapOf())
 
     fun storeClass(klass: FirRegularClass): FirLocalScope {
@@ -62,10 +62,12 @@ class FirLocalScope(
         }
     }
 
-    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> Unit) {
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         val klass = classes[name]
         if (klass != null) {
-            processor(klass)
+            processor(klass, ConeSubstitutor.Empty)
         }
     }
+
+    override fun mayContainName(name: Name) = properties.containsKey(name) || functions[name].isNotEmpty() || classes.containsKey(name)
 }

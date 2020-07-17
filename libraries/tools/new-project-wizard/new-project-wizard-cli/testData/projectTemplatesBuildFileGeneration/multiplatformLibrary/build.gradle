@@ -1,13 +1,16 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
 
 plugins {
-    id 'org.jetbrains.kotlin.multiplatform' version '1.3.70'
+    id 'org.jetbrains.kotlin.multiplatform' version 'KOTLIN_VERSION'
 }
 group = 'me.user'
 version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://dl.bintray.com/kotlin/kotlin-dev'
+    }
 }
 kotlin {
     jvm {
@@ -17,7 +20,12 @@ kotlin {
     }
     js {
         browser {
-
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                    webpackConfig.cssSupport.enabled = true
+                }
+            }
         }
     }
     def hostOs = System.getProperty("os.name")
@@ -31,9 +39,7 @@ kotlin {
 
     sourceSets {
         commonMain {
-            dependencies {
-                implementation kotlin('stdlib-common')
-            }
+
         }
         commonTest {
             dependencies {
@@ -42,9 +48,7 @@ kotlin {
             }
         }
         jvmMain {
-            dependencies {
-                implementation kotlin('stdlib-jdk8')
-            }
+
         }
         jvmTest {
             dependencies {
@@ -52,9 +56,7 @@ kotlin {
             }
         }
         jsMain {
-            dependencies {
-                implementation kotlin('stdlib-js')
-            }
+
         }
         jsTest {
             dependencies {

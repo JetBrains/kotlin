@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses +UseGetterNameForPropertyAnnotationsMethodOnJvm
-// IGNORE_BACKEND: JVM_IR
 
 interface IFoo {
     fun overridingFun()

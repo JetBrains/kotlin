@@ -28,28 +28,28 @@ fun wrong(a: String = "", b: Int = 1) {}
 
 fun test() {
     val a = simple()
-    a checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    a checkType { _<Int>() }
 
     val b = simple(1)
-    b checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    b checkType { _<String>() }
 
     val c = twoDefault()
-    c checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    c checkType { _<Int>() }
 
     val d = twoDefault(1)
-    d checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    d checkType { _<Int>() }
 
     val e = twoDefault(1, "")
-    e checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    e checkType { _<String>() }
 
     val f = withGeneric(3)
-    f checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    f checkType { _<Int>() }
 
     val g = discriminateGeneric(1)
-    g checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    g checkType { _<String>() }
 
     val h = withDefaultGeneric("")
-    h checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    h checkType { _<Int>() }
 
     withDefaults(1)
 

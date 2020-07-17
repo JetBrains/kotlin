@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -161,19 +161,18 @@ object ComparableOps : TemplateGroupBase() {
         typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
+        val isFloat = primitive?.isFloatingPoint() == true
         doc {
-            """
-            Returns the smaller of two values.
-            If values are equal, returns the first one.
-            """
+            val lines = listOfNotNull(
+                "Returns the smaller of two values.",
+                "",
+                "If values are equal, returns the first one.".takeIf { primitive == null },
+                "If either value is `NaN`, returns `NaN`.".takeIf { isFloat }
+            )
+            lines.joinToString("\n")
         }
         val defaultImpl = "if (a <= b) a else b"
         body { "return $defaultImpl" }
-
-        specialFor(Primitives, Unsigned) {
-            doc { "Returns the smaller of two values." }
-        }
-        // TODO: Add a note about NaN propagation for floats.
         specialFor(Primitives) {
             inlineOnly()
             var convertBack = "to$primitive()"
@@ -197,7 +196,7 @@ object ComparableOps : TemplateGroupBase() {
                     body { "return minOf(a.toInt(), b.toInt()).$convertBack" }
                 }
             }
-            if (primitive?.isFloatingPoint() == true) {
+            if (isFloat) {
                 on(Platform.Native) {
                     body {
                         """
@@ -227,11 +226,15 @@ object ComparableOps : TemplateGroupBase() {
         returns("T")
         receiver("")
         specialFor(Primitives, Unsigned) { inlineOnly() }
-        // TODO: Add a note about NaN propagation for floats.
+        val isFloat = primitive?.isFloatingPoint() == true
         doc {
-            """
-            Returns the smaller of three values.
-            """
+            val lines = listOfNotNull(
+                "Returns the smaller of three values.",
+                "",
+                "If there are multiple equal minimal values, returns the first of them.".takeIf { primitive == null },
+                "If any value is `NaN`, returns `NaN`.".takeIf { isFloat }
+            )
+            lines.joinToString("\n")
         }
         body {
             "return minOf(a, minOf(b, c))"
@@ -269,11 +272,15 @@ object ComparableOps : TemplateGroupBase() {
         typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
-        // TODO: Add a note about NaN propagation for floats.
+        val isFloat = primitive?.isFloatingPoint() == true
         doc {
-            """
-            Returns the smaller of given values.
-            """
+            val lines = listOfNotNull(
+                "Returns the smaller of the given values.",
+                "",
+                "If there are multiple equal minimal values, returns the first of them.".takeIf { primitive == null },
+                "If any value is `NaN`, returns `NaN`.".takeIf { isFloat }
+            )
+            lines.joinToString("\n")
         }
         body {
             """
@@ -297,6 +304,7 @@ object ComparableOps : TemplateGroupBase() {
         doc {
             """
             Returns the smaller of two values according to the order specified by the given [comparator].
+            
             If values are equal, returns the first one.
             """
         }
@@ -315,6 +323,8 @@ object ComparableOps : TemplateGroupBase() {
         doc {
             """
             Returns the smaller of three values according to the order specified by the given [comparator].
+            
+            If there are multiple equal minimal values, returns the first of them.
             """
         }
         body {
@@ -331,7 +341,9 @@ object ComparableOps : TemplateGroupBase() {
         receiver("")
         doc {
             """
-            Returns the smaller of given values according to the order specified by the given [comparator].
+            Returns the smaller of the given values according to the order specified by the given [comparator].
+
+            If there are multiple equal minimal values, returns the first of them.
             """
         }
         body {
@@ -353,19 +365,18 @@ object ComparableOps : TemplateGroupBase() {
         typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
+        val isFloat = primitive?.isFloatingPoint() == true
         doc {
-            """
-            Returns the greater of two values.
-            If values are equal, returns the first one.
-            """
+            val lines = listOfNotNull(
+                "Returns the greater of two values.",
+                "",
+                "If values are equal, returns the first one.".takeIf { primitive == null },
+                "If either value is `NaN`, returns `NaN`.".takeIf { isFloat }
+            )
+            lines.joinToString("\n")
         }
         val defaultImpl = "if (a >= b) a else b"
         body { "return $defaultImpl" }
-
-        specialFor(Primitives, Unsigned) {
-            doc { "Returns the greater of two values." }
-        }
-        // TODO: Add a note about NaN propagation for floats.
         specialFor(Primitives) {
             inlineOnly()
             var convertBack = "to$primitive()"
@@ -389,7 +400,7 @@ object ComparableOps : TemplateGroupBase() {
                     body { "return maxOf(a.toInt(), b.toInt()).$convertBack" }
                 }
             }
-            if (primitive?.isFloatingPoint() == true) {
+            if (isFloat) {
                 on(Platform.Native) {
                     body {
                         """
@@ -415,11 +426,15 @@ object ComparableOps : TemplateGroupBase() {
         returns("T")
         receiver("")
         specialFor(Primitives, Unsigned) { inlineOnly() }
-        // TODO: Add a note about NaN propagation for floats.
+        val isFloat = primitive?.isFloatingPoint() == true
         doc {
-            """
-            Returns the greater of three values.
-            """
+            val lines = listOfNotNull(
+                "Returns the greater of three values.",
+                "",
+                "If there are multiple equal maximal values, returns the first of them.".takeIf { primitive == null },
+                "If any value is `NaN`, returns `NaN`.".takeIf { isFloat }
+            )
+            lines.joinToString("\n")
         }
         body {
             "return maxOf(a, maxOf(b, c))"
@@ -457,11 +472,15 @@ object ComparableOps : TemplateGroupBase() {
         typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
-        // TODO: Add a note about NaN propagation for floats.
+        val isFloat = primitive?.isFloatingPoint() == true
         doc {
-            """
-            Returns the greater of given values.
-            """
+            val lines = listOfNotNull(
+                "Returns the greater of the given values.",
+                "",
+                "If there are multiple equal maximal values, returns the first of them.".takeIf { primitive == null },
+                "If any value is `NaN`, returns `NaN`.".takeIf { isFloat }
+            )
+            lines.joinToString("\n")
         }
         body {
             """
@@ -485,6 +504,7 @@ object ComparableOps : TemplateGroupBase() {
         doc {
             """
             Returns the greater of two values according to the order specified by the given [comparator].
+            
             If values are equal, returns the first one.
             """
         }
@@ -503,7 +523,9 @@ object ComparableOps : TemplateGroupBase() {
         doc {
             """
             Returns the greater of three values according to the order specified by the given [comparator].
-            """
+             
+            If there are multiple equal maximal values, returns the first of them.
+           """
         }
         body {
             "return maxOf(a, maxOf(b, c, comparator), comparator)"
@@ -519,7 +541,9 @@ object ComparableOps : TemplateGroupBase() {
         receiver("")
         doc {
             """
-            Returns the greater of given values according to the order specified by the given [comparator].
+            Returns the greater of the given values according to the order specified by the given [comparator].
+            
+            If there are multiple equal maximal values, returns the first of them.
             """
         }
         body {

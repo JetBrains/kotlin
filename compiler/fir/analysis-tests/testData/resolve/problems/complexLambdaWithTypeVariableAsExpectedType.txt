@@ -10,7 +10,7 @@ FILE: complexLambdaWithTypeVariableAsExpectedType.kt
             ^ R|<local>/it|.R|kotlin/Int.inv|()
         }
         ), R|/id|<R|(kotlin/Int) -> kotlin/Unit|>(<L> = id@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| {
-            Unit
+            ^@id Unit
         }
         ))
     }

@@ -11,17 +11,18 @@ import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.*
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.inlineClassFieldName
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -36,13 +37,18 @@ import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val jvmInlineClassPhase = makeIrFilePhase(
     ::JvmInlineClassLowering,
     name = "Inline Classes",
-    description = "Lower inline classes"
+    description = "Lower inline classes",
+    // forLoopsPhase may produce UInt and ULong which are inline classes.
+    // standard library replacements are done on the unmangled names for UInt and ULong classes.
+    prerequisite = setOf(forLoopsPhase, jvmStandardLibraryBuiltInsPhase)
 )
 
 /**
@@ -62,9 +68,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
     }
 
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid()
-    }
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         // The arguments to the primary constructor are in scope in the initializers of IrFields.
@@ -114,17 +118,6 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
     }
 
-    private fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction) {
-        source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
-            irExprBody(irCall(target).apply {
-                passTypeArgumentsFrom(source)
-                for ((parameter, newParameter) in source.explicitParameters.zip(target.explicitParameters)) {
-                    putArgument(newParameter, irGet(parameter))
-                }
-            })
-        }
-    }
-
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach { it.transformChildrenVoid() }
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
@@ -134,15 +127,26 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         if (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
             return listOf(replacement)
 
-        // If the original function has value parameters which need mangling we still need to replace
-        // it with a mangled version.
-        val bridgeFunction = if (!function.isFakeOverride && function.fullValueParameterList.any { it.type.requiresMangling }) {
-            context.inlineClassReplacements.createMethodReplacement(function)
-        } else {
-            // Update the overridden symbols to point to their inline class replacements
-            function.overriddenSymbols = replacement.overriddenSymbols
-            function
-        }
+        val bridgeFunction = createBridgeDeclaration(
+            function,
+            when {
+                // If the original function has value parameters which need mangling we still need to replace
+                // it with a mangled version.
+                !function.isFakeOverride && function.fullValueParameterList.any { it.type.requiresMangling } ->
+                    replacement.name
+                // Since we remove the corresponding property symbol from the bridge we need to resolve getter/setter
+                // names at this point.
+                replacement.isGetter ->
+                    Name.identifier(JvmAbi.getterName(replacement.correspondingPropertySymbol!!.owner.name.asString()))
+                replacement.isSetter ->
+                    Name.identifier(JvmAbi.setterName(replacement.correspondingPropertySymbol!!.owner.name.asString()))
+                else ->
+                    function.name
+            }
+        )
+
+        // Update the overridden symbols to point to their inline class replacements
+        bridgeFunction.overriddenSymbols = replacement.overriddenSymbols
 
         // Replace the function body with a wrapper
         if (!bridgeFunction.isFakeOverride || !bridgeFunction.parentAsClass.isInline) {
@@ -153,6 +157,35 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
 
         return listOf(replacement, bridgeFunction)
+    }
+
+    // We may need to add a bridge method for inline class methods with static replacements. Ideally, we'd do this in BridgeLowering,
+    // but unfortunately this is a special case in the old backend. The bridge method is not marked as such and does not follow the normal
+    // visibility rules for bridge methods.
+    private fun createBridgeDeclaration(source: IrSimpleFunction, mangledName: Name) =
+        buildFun {
+            updateFrom(source)
+            name = mangledName
+            returnType = source.returnType
+        }.apply {
+            copyParameterDeclarationsFrom(source)
+            annotations += source.annotations
+            parent = source.parent
+            // We need to ensure that this bridge has the same attribute owner as its static inline class replacement, since this
+            // is used in [CoroutineCodegen.isStaticInlineClassReplacementDelegatingCall] to identify the bridge and avoid generating
+            // a continuation class.
+            copyAttributes(source)
+        }
+
+    private fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction) {
+        source.body = context.createIrBuilder(source.symbol, source.startOffset, source.endOffset).run {
+            irExprBody(irCall(target).apply {
+                passTypeArgumentsFrom(source)
+                for ((parameter, newParameter) in source.explicitParameters.zip(target.explicitParameters)) {
+                    putArgument(newParameter, irGet(parameter))
+                }
+            })
+        }
     }
 
     // Secondary constructors for boxed types get translated to static functions returning
@@ -217,15 +250,15 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         return listOf(replacement)
     }
 
-    private fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression) =
+    private fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression<*>) =
         listOfNotNull(
             function.dispatchReceiverParameter?.let { it to expression.dispatchReceiver },
             function.extensionReceiverParameter?.let { it to expression.extensionReceiver }
         ) + function.valueParameters.map { it to expression.getValueArgument(it.index) }
 
-    private fun IrMemberAccessExpression.buildReplacement(
+    private fun IrMemberAccessExpression<*>.buildReplacement(
         originalFunction: IrFunction,
-        original: IrMemberAccessExpression,
+        original: IrMemberAccessExpression<*>,
         replacement: IrSimpleFunction
     ) {
         copyTypeArgumentsFrom(original)
@@ -238,6 +271,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        if (expression.origin == InlineClassAbi.UNMANGLED_FUNCTION_REFERENCE)
+            return super.visitFunctionReference(expression)
+
         val function = context.inlineClassReplacements.getReplacementFunction(expression.symbol.owner)
             ?: return super.visitFunctionReference(expression)
 
@@ -255,7 +291,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
             ?: return super.visitFunctionAccess(expression)
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
-            .irCall(replacement).apply {
+            .irCall(replacement, expression.origin, expression.safeAs<IrCall>()?.superQualifierSymbol).apply {
                 buildReplacement(function, expression, replacement)
             }
     }
@@ -438,6 +474,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             // Don't create a default argument stub for the primary constructor
             irConstructor.valueParameters.forEach { it.defaultValue = null }
             copyParameterDeclarationsFrom(irConstructor)
+            annotations += irConstructor.annotations
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
                 +irSetField(

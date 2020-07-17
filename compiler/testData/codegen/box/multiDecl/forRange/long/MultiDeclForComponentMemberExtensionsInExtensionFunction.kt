@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class M {
   operator fun Long.component1() = this + 1
   operator fun Long.component2() = this + 2

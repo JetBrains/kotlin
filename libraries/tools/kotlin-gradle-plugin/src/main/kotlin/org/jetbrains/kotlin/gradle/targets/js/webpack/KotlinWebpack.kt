@@ -1,14 +1,17 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Incubating
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
 import org.gradle.deployment.internal.DeploymentHandle
@@ -23,11 +26,17 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.injected
+import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
 
-open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
+open class KotlinWebpack
+@Inject
+constructor(
+    @Internal
+    override val compilation: KotlinJsCompilation
+) : DefaultTask(), RequiresNpmDependencies {
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
 
@@ -39,9 +48,6 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     open val execHandleFactory: ExecHandleFactory
         get() = injected
 
-    @Internal
-    override lateinit var compilation: KotlinJsCompilation
-
     @Suppress("unused")
     val compilationId: String
         @Input get() = compilation.let {
@@ -52,9 +58,16 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Input
     var mode: Mode = Mode.DEVELOPMENT
 
+    @get:Internal
+    var entry: File
+        get() = entryProperty.asFile.get()
+        set(value) {
+            entryProperty.set(value)
+        }
+
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
-    var entry: File by property {
+    val entryProperty: RegularFileProperty = project.newFileProperty {
         compilation.compileKotlinTask.outputFile
     }
 
@@ -80,7 +93,8 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Nested
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
         library = baseConventions?.archivesBaseName,
-        libraryTarget = KotlinWebpackOutput.Target.UMD
+        libraryTarget = KotlinWebpackOutput.Target.UMD,
+        globalObject = "this"
     )
 
     @get:Internal
@@ -95,8 +109,11 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     internal var _destinationDirectory: File? = null
 
     @get:Internal
-    val destinationDirectory: File
+    var destinationDirectory: File
         get() = _destinationDirectory ?: project.buildDir.resolve(baseConventions!!.distsDirName)
+        set(value) {
+            _destinationDirectory = value
+        }
 
     @get:Internal
     var outputFileName: String by property {
@@ -114,16 +131,35 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     var report: Boolean = false
 
     open val reportDir: File
-        @OutputDirectory get() = project.reportsDir.resolve("webpack").resolve(entry.nameWithoutExtension)
+        @Internal get() = reportDirProvider.get()
+
+    open val reportDirProvider: Provider<File>
+        @OutputDirectory get() = entryProperty
+            .map { it.asFile.nameWithoutExtension }
+            .map {
+                project.reportsDir.resolve("webpack").resolve(it)
+            }
 
     open val evaluatedConfigFile: File
-        @OutputFile get() = reportDir.resolve("webpack.config.evaluated.js")
+        @Internal get() = evaluatedConfigFileProvider.get()
+
+    open val evaluatedConfigFileProvider: Provider<File>
+        @OutputFile get() = reportDirProvider.map { it.resolve("webpack.config.evaluated.js") }
 
     @Input
     var bin: String = "webpack/bin/webpack.js"
 
     @Input
+    var args: MutableList<String> = mutableListOf()
+
+    @Input
+    var nodeArgs: MutableList<String> = mutableListOf()
+
+    @Input
     var sourceMaps: Boolean = true
+
+    @Nested
+    val cssSupport: KotlinWebpackCssSupport = KotlinWebpackCssSupport()
 
     @Input
     @Optional
@@ -132,11 +168,17 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Input
     var devtool: String = WebpackDevtool.EVAL_SOURCE_MAP
 
+    @Incubating
+    @Internal
+    var generateConfigOnly: Boolean = false
+
     private fun createRunner() = KotlinWebpackRunner(
         compilation.npmProject,
         configFile,
         execHandleFactory,
         bin,
+        args,
+        nodeArgs,
         KotlinWebpackConfig(
             mode = mode,
             entry = entry,
@@ -146,6 +188,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             outputFileName = outputFileName,
             configDirectory = configDirectory,
             bundleAnalyzerReportDir = if (report) reportDir else null,
+            cssSupport = cssSupport,
             devServer = devServer,
             devtool = devtool,
             sourceMaps = sourceMaps,
@@ -156,7 +199,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     override val nodeModulesRequired: Boolean
         @Internal get() = true
 
-    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = createRunner().config.getRequiredDependencies(versions)
 
     @TaskAction
@@ -164,6 +207,11 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         nodeJs.npmResolutionManager.checkRequiredDependencies(this)
 
         val runner = createRunner()
+
+        if (generateConfigOnly) {
+            runner.config.save(configFile)
+            return
+        }
 
         if (project.gradle.startParameter.isContinuous) {
             val continuousRunner = runner

@@ -45,6 +45,12 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
     completion: Continuation<T>
 ): Any? = this.asDynamic()(receiver, completion, false)
 
+@InlineOnly
+internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturn(
+    receiver: R,
+    param: P,
+    completion: Continuation<T>
+): Any? = this.asDynamic()(receiver, param, completion, false)
 
 /**
  * Creates unintercepted coroutine without receiver and with result type [T].

@@ -20,14 +20,12 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.19")
     }
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
 def projectVersions = file("../gradle/versions.properties").text
-
-BuildCacheKt.setupBuildCache(settings)
 
 include "prepare-deps"
 

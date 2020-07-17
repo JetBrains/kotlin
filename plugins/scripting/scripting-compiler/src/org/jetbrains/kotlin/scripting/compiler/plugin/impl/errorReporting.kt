@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.scripting.definitions.MessageReporter
@@ -18,7 +18,7 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asErrorDiagnostics
 
-internal class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: MessageCollector?) : MessageCollector {
+class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: MessageCollector?) : MessageCollector {
 
     private val _diagnostics = arrayListOf<ScriptDiagnostic>()
 
@@ -32,15 +32,25 @@ internal class ScriptDiagnosticsMessageCollector(private val parentMessageCollec
     override fun hasErrors(): Boolean =
         _diagnostics.any { it.severity == ScriptDiagnostic.Severity.ERROR } || parentMessageCollector?.hasErrors() == true
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         val mappedSeverity = severity.toScriptingSeverity()
         if (mappedSeverity != null) {
             val mappedLocation = location?.let {
                 if (it.line < 0 && it.column < 0) null // special location created by CompilerMessageLocation.create
+                else if (it.lineEnd < 0 && it.columnEnd < 0) SourceCode.Location(
+                    SourceCode.Position(
+                        it.line,
+                        it.column
+                    )
+                )
                 else SourceCode.Location(
                     SourceCode.Position(
                         it.line,
                         it.column
+                    ),
+                    SourceCode.Position(
+                        it.lineEnd,
+                        it.columnEnd
                     )
                 )
             }
@@ -68,17 +78,17 @@ private fun ScriptDiagnostic.Severity.toCompilerMessageSeverity(): CompilerMessa
     ScriptDiagnostic.Severity.FATAL -> CompilerMessageSeverity.EXCEPTION
 }
 
-internal fun failure(
+fun failure(
     messageCollector: ScriptDiagnosticsMessageCollector, vararg diagnostics: ScriptDiagnostic
 ): ResultWithDiagnostics.Failure =
     ResultWithDiagnostics.Failure(*messageCollector.diagnostics.toTypedArray(), *diagnostics)
 
-internal fun failure(
+fun failure(
     script: SourceCode, messageCollector: ScriptDiagnosticsMessageCollector, message: String
 ): ResultWithDiagnostics.Failure =
     failure(messageCollector, message.asErrorDiagnostics(path = script.locationId))
 
-internal class IgnoredOptionsReportingState {
+class IgnoredOptionsReportingState {
     var currentArguments = K2JVMCompilerArguments()
 }
 
@@ -105,7 +115,6 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::disableStandardScript,
         K2JVMCompilerArguments::disableDefaultScriptingPlugin,
         K2JVMCompilerArguments::pluginClasspaths,
-        K2JVMCompilerArguments::pluginOptions,
         K2JVMCompilerArguments::useJavac,
         K2JVMCompilerArguments::compileJava,
         K2JVMCompilerArguments::reportPerf,

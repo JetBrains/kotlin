@@ -1,0 +1,32 @@
+FILE: blockLocalScopes.kt
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun append(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val message: R|B| = R|/B.B|()
+            public get(): R|B|
+
+        public final fun foo(w: R|kotlin/Boolean|): R|kotlin/Unit| {
+            when () {
+                R|<local>/w| ->  {
+                    lval message: R|kotlin/String| = String()
+                    R|<local>/message|.R|kotlin/Any.toString|()
+                }
+                else ->  {
+                    this@R|/A|.R|/A.message|.R|/B.append|()
+                }
+            }
+
+        }
+
+    }

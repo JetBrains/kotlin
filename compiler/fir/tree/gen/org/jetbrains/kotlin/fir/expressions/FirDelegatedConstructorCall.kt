@@ -22,12 +22,21 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val argumentList: FirArgumentList
     abstract val constructedTypeRef: FirTypeRef
+    abstract val dispatchReceiver: FirExpression
     abstract val isThis: Boolean
     abstract val isSuper: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDelegatedConstructorCall(this, data)
 
+    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
+    abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
+
+    abstract fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef)
+
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
+
+    abstract fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
 }

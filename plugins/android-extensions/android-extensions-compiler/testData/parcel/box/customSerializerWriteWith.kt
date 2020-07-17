@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JVM
+// See KT-38107
+// The JVM backend is missing support for custom parcelers in List<String>
 // WITH_RUNTIME
 
 @file:JvmName("TestKt")
@@ -30,7 +33,7 @@ data class Test(
         val c: List<@WriteWith<Parceler1> String>,
         val d: @WriteWith<Parceler2> List<String>,
         val e: @WriteWith<Parceler2> List<@WriteWith<Parceler1> String>
-)
+) : Parcelable
 
 fun box() = parcelTest { parcel ->
     val test = Test("Abc", "Abc", listOf("A", "bc"), listOf("A", "bc"), listOf("A", "bc"))
@@ -38,6 +41,7 @@ fun box() = parcelTest { parcel ->
 
     val bytes = parcel.marshall()
     parcel.unmarshall(bytes, 0, bytes.size)
+    parcel.setDataPosition(0)
 
     val test2 = readFromParcel<Test>(parcel)
 
@@ -46,6 +50,6 @@ fun box() = parcelTest { parcel ->
     }
 
     with (test2) {
-        assert(a == "Abc" && b == "3" && c == listOf("A", "bc") && d == listOf("A,bc") && e == listOf("A,bc"))
+        assert(a == "Abc" && b == "3" && c == listOf("1", "2") && d == listOf("A,bc") && e == listOf("A,bc"))
     }
 }

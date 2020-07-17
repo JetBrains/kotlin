@@ -42,8 +42,7 @@ UFile (package = )
                 UAnnotation (fqName = org.jetbrains.annotations.Nullable)
                 UAnnotation (fqName = kotlin.Suppress)
                     UNamedExpression (name = names)
-                        UPolyadicExpression (operator = +)
-                            ULiteralExpression (value = "s")
+                        ULiteralExpression (value = "s")
             UBlockExpression
                 UReturnExpression
                     USimpleNameReferenceExpression (identifier = t)
@@ -52,8 +51,7 @@ UFile (package = )
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
                 UAnnotation (fqName = kotlin.Suppress)
                     UNamedExpression (name = names)
-                        UPolyadicExpression (operator = +)
-                            ULiteralExpression (value = "s")
+                        ULiteralExpression (value = "s")
             UBlockExpression
                 UReturnExpression
                     USimpleNameReferenceExpression (identifier = t)

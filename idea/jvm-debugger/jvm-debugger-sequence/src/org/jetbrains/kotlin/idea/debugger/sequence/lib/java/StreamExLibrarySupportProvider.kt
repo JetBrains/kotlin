@@ -23,15 +23,14 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFact
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.KotlinTraceExpressionBuilder
 
 class StreamExLibrarySupportProvider : LibrarySupportProvider {
-    private companion object {
-        val streamChainBuilder = TerminatedChainBuilder(
+    private val streamChainBuilder =
+        TerminatedChainBuilder(
             KotlinChainTransformerImpl(JavaStreamChainTypeExtractor()),
             StreamExCallChecker(PackageBasedCallChecker("one.util.streamex"))
         )
-        val support = StreamExLibrarySupport()
-        val dsl = DslImpl(KotlinStatementFactory(JavaPeekCallFactory()))
-        val expressionBuilder = KotlinTraceExpressionBuilder(dsl, support.createHandlerFactory(dsl))
-    }
+
+    private val support by lazy { StreamExLibrarySupport() }
+    private val dsl by lazy { DslImpl(KotlinStatementFactory(JavaPeekCallFactory())) }
 
     override fun getLanguageId(): String = KotlinLanguage.INSTANCE.id
 
@@ -39,5 +38,6 @@ class StreamExLibrarySupportProvider : LibrarySupportProvider {
 
     override fun getLibrarySupport(): LibrarySupport = support
 
-    override fun getExpressionBuilder(project: Project): TraceExpressionBuilder = expressionBuilder
+    override fun getExpressionBuilder(project: Project): TraceExpressionBuilder =
+        KotlinTraceExpressionBuilder(dsl, support.createHandlerFactory(dsl))
 }

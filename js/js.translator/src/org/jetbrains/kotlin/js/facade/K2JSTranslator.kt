@@ -167,6 +167,7 @@ class K2JSTranslator @JvmOverloads constructor(
             reporter,
             config,
             analysisResult.bindingTrace,
+            bindingTrace.bindingContext,
             translationResult
         ).process()
         if (hasError(diagnostics)) return TranslationResult.Fail(diagnostics)

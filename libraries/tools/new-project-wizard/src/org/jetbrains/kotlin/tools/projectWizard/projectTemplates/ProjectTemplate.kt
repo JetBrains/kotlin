@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.tools.projectWizard.projectTemplates
 
 import org.jetbrains.annotations.NonNls
@@ -19,8 +24,7 @@ sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val description: String
     abstract val suggestedProjectName: String
     abstract val projectKind: ProjectKind
-    open val id: String
-        get() = this::class.simpleName.toString().removeSuffix("Template").removeSuffix("Project")
+    abstract val id: String
 
     private val setsDefaultValues: List<SettingWithValue<*, *>>
         get() = listOf(KotlinPlugin::projectKind.reference withValue projectKind)
@@ -65,15 +69,15 @@ sealed class ProjectTemplate : DisplayableSettingItem {
 
     companion object {
         val ALL = listOf(
-            EmptySingleplatformProjectTemplate,
-            JvmConsoleApplication,
-            MPPMobileApplication,
-            MultiplatformMobileLibrary,
-            EmptyMultiplatformProjectTemplate,
-            MultiplatformLibrary,
-            NativeConsoleApplication,
-            JsBrowserApplication,
-            JvmServerJsClient
+            BackendApplicationProjectTemplate,
+            ConsoleApplicationProjectTemplate,
+            MultiplatformMobileApplicationProjectTemplate,
+            MultiplatformMobileLibraryProjectTemplate,
+            MultiplatformApplicationProjectTemplate,
+            MultiplatformLibraryProjectTemplate,
+            NativeApplicationProjectTemplate,
+            FrontendApplicationProjectTemplate,
+            FullStackWebApplicationProjectTemplate
         )
 
         fun byId(id: String): ProjectTemplate? = ALL.firstOrNull {
@@ -134,9 +138,10 @@ private fun ModuleType.createDefaultTarget(
     name: String = this.name
 ) = MultiplatformTargetModule(name, defaultTarget, createDefaultSourcesets())
 
-object EmptySingleplatformProjectTemplate : ProjectTemplate() {
+object BackendApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.empty.singleplatform.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.empty.singleplatform.description")
+    override val id = "backendApplication"
 
     @NonNls
     override val suggestedProjectName = "myKotlinJvmProject"
@@ -150,9 +155,10 @@ object EmptySingleplatformProjectTemplate : ProjectTemplate() {
         )
 }
 
-object EmptyMultiplatformProjectTemplate : ProjectTemplate() {
+object MultiplatformApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.empty.mpp.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.empty.mpp.description")
+    override val id = "multiplatformApplication"
 
     @NonNls
     override val suggestedProjectName = "myKotlinMultiplatformProject"
@@ -166,9 +172,10 @@ object EmptyMultiplatformProjectTemplate : ProjectTemplate() {
         )
 }
 
-object JvmConsoleApplication : ProjectTemplate() {
+object ConsoleApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.empty.jvm.console.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.empty.jvm.console.description")
+    override val id = "consoleApplication"
 
     @NonNls
     override val suggestedProjectName = "myConsoleApplication"
@@ -187,9 +194,10 @@ object JvmConsoleApplication : ProjectTemplate() {
         )
 }
 
-object MultiplatformLibrary : ProjectTemplate() {
+object MultiplatformLibraryProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.lib.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.lib.description")
+    override val id = "multiplatformLibrary"
 
     @NonNls
     override val suggestedProjectName = "myMultiplatformLibrary"
@@ -203,7 +211,9 @@ object MultiplatformLibrary : ProjectTemplate() {
                     listOf(
                         ModuleType.common.createDefaultTarget(),
                         ModuleType.jvm.createDefaultTarget(),
-                        ModuleType.js.createDefaultTarget(),
+                        ModuleType.js.createDefaultTarget().withConfiguratorSettings(JsBrowserTargetConfigurator) {
+                            JSConfigurator.kind withValue JsTargetKind.LIBRARY
+                        },
                         ModuleType.native.createDefaultTarget()
                     )
                 )
@@ -211,9 +221,10 @@ object MultiplatformLibrary : ProjectTemplate() {
         )
 }
 
-object JvmServerJsClient : ProjectTemplate() {
+object FullStackWebApplicationProjectTemplate : ProjectTemplate() {
     override val title: String = KotlinNewProjectWizardBundle.message("project.template.full.stack.title")
     override val description: String = KotlinNewProjectWizardBundle.message("project.template.full.stack.description")
+    override val id = "fullStackWebApplication"
 
     @NonNls
     override val suggestedProjectName: String = "myFullStackApplication"
@@ -223,6 +234,7 @@ object JvmServerJsClient : ProjectTemplate() {
             MultiplatformModule(
                 "application",
                 listOf(
+                    ModuleType.common.createDefaultTarget(),
                     ModuleType.jvm.createDefaultTarget().apply {
                         withTemplate(KtorServerTemplate()) {
                             template.serverEngine withValue KtorServerEngine.Netty
@@ -237,9 +249,10 @@ object JvmServerJsClient : ProjectTemplate() {
     )
 }
 
-object NativeConsoleApplication : ProjectTemplate() {
+object NativeApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.native.console.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.native.console.description")
+    override val id = "nativeApplication"
 
     @NonNls
     override val suggestedProjectName = "myNativeConsoleApp"
@@ -263,9 +276,10 @@ object NativeConsoleApplication : ProjectTemplate() {
         )
 }
 
-object JsBrowserApplication : ProjectTemplate() {
+object FrontendApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.frontend.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.frontend.description")
+    override val id = "frontendApplication"
 
     @NonNls
     override val suggestedProjectName = "myKotlinJsApplication"
@@ -287,9 +301,10 @@ object JsBrowserApplication : ProjectTemplate() {
         )
 }
 
-object MPPMobileApplication : ProjectTemplate() {
+object MultiplatformMobileApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.description")
+    override val id = "multiplatformMobileApplication"
 
     @NonNls
     override val suggestedProjectName = "myIOSApplication"
@@ -338,9 +353,10 @@ object MPPMobileApplication : ProjectTemplate() {
     }
 }
 
-object MultiplatformMobileLibrary : ProjectTemplate() {
+object MultiplatformMobileLibraryProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.description")
+    override val id = "multiplatformMobileLibrary"
 
     @NonNls
     override val suggestedProjectName = "myMppMobileLibrary"

@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl
 import com.intellij.util.io.*
+import org.jetbrains.kotlin.idea.perf.util.ProfileTools.Companion.initDefaultProfile
+import org.jetbrains.kotlin.idea.testFramework.GRADLE_JDK_NAME
 import org.jetbrains.kotlin.idea.testFramework.OpenProject
 import org.jetbrains.kotlin.idea.testFramework.ProjectOpenAction
 import java.nio.file.Files
@@ -148,6 +150,7 @@ class KotlinFileSource : AbstractSource() {
 class ProjectBuilder {
     internal var buildGradle: String? = null
     internal lateinit var name: String
+    internal var initDefaultProfile: Boolean = true
     private val kotlinFiles = mutableListOf<Pair<String, KotlinFileSource>>()
 
     fun buildGradle(buildGradle: String) {
@@ -156,6 +159,14 @@ class ProjectBuilder {
 
     fun name(name: String) {
         this.name = name
+    }
+
+    fun initDefaultProfile() {
+        this.initDefaultProfile = true
+    }
+
+    fun initDefaultProfile(initDefaultProfile: Boolean) {
+        this.initDefaultProfile = initDefaultProfile
     }
 
     fun kotlinFile(name: String, kotlinFileSource: KotlinFileSource.() -> Unit) {
@@ -200,28 +211,54 @@ class ProjectBuilder {
         //
         return targetDirectory.toAbsolutePath().toFile().absolutePath
     }
+
+    fun openProjectOperation(): OpenProjectOperation {
+        val builder = this
+        val projectPath = generateFiles()
+
+        val jdkTableImpl = JavaAwareProjectJdkTableImpl.getInstanceEx()
+        val homePath = if (jdkTableImpl.internalJdk.homeDirectory!!.name == "jre") {
+            jdkTableImpl.internalJdk.homeDirectory!!.parent.path
+        } else {
+            jdkTableImpl.internalJdk.homePath!!
+        }
+        val javaSdk = JavaSdk.getInstance()
+        val jdk18 = javaSdk.createJdk("1.8", homePath)
+
+        val openAction = if (buildGradle != null) ProjectOpenAction.GRADLE_PROJECT else ProjectOpenAction.SIMPLE_JAVA_MODULE
+        val openProject = OpenProject(
+            projectPath = projectPath,
+            projectName = name,
+            jdk = jdk18,
+            projectOpenAction = openAction
+        )
+
+        return object : OpenProjectOperation {
+
+            override fun openProject() = ProjectOpenAction.openProject(openProject)
+
+            override fun postOpenProject(project: Project) {
+                openAction.postOpenProject(project = project, openProject = openProject)
+                if (builder.initDefaultProfile) {
+                    project.initDefaultProfile()
+                }
+            }
+
+        }
+    }
+}
+
+interface OpenProjectOperation {
+    fun openProject(): Project
+
+    fun postOpenProject(project: Project)
 }
 
 fun openProject(initializer: ProjectBuilder.() -> Unit): Project {
     val projectBuilder = ProjectBuilder().apply(initializer)
-    val projectPath = projectBuilder.generateFiles()
+    val openProject = projectBuilder.openProjectOperation()
 
-    val jdkTableImpl = JavaAwareProjectJdkTableImpl.getInstanceEx()
-    val homePath = if (jdkTableImpl.internalJdk.homeDirectory!!.name == "jre") {
-        jdkTableImpl.internalJdk.homeDirectory!!.parent.path
-    } else {
-        jdkTableImpl.internalJdk.homePath!!
+    return openProject.openProject().also {
+        openProject.postOpenProject(it)
     }
-    val javaSdk = JavaSdk.getInstance()
-    val jdk18 = javaSdk.createJdk("1.8", homePath)
-    val openAction = if (projectBuilder.buildGradle != null) ProjectOpenAction.GRADLE_PROJECT else ProjectOpenAction.SIMPLE_JAVA_MODULE
-    val openProject = OpenProject(
-        projectPath = projectPath,
-        projectName = projectBuilder.name,
-        jdk = jdk18,
-        projectOpenAction = openAction
-    )
-    val project = ProjectOpenAction.openProject(openProject)
-    openAction.postOpenProject(project = project, openProject = openProject)
-    return project
 }

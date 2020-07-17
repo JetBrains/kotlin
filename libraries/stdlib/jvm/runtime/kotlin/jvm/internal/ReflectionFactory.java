@@ -10,6 +10,7 @@ import kotlin.reflect.*;
 
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 public class ReflectionFactory {
     private static final String KOTLIN_JVM_FUNCTIONS = "kotlin.jvm.functions.";
 
@@ -81,5 +82,15 @@ public class ReflectionFactory {
     @SinceKotlin(version = "1.4")
     public KType typeOf(KClassifier klass, List<KTypeProjection> arguments, boolean isMarkedNullable) {
         return new TypeReference(klass, arguments, isMarkedNullable);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public KTypeParameter typeParameter(Object container, String name, KVariance variance, boolean isReified) {
+        return new TypeParameterReference(container, name, variance, isReified);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public void setUpperBounds(KTypeParameter typeParameter, List<KType> bounds) {
+        ((TypeParameterReference) typeParameter).setUpperBounds(bounds);
     }
 }

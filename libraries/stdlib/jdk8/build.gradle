@@ -4,6 +4,9 @@ apply plugin: 'kotlin'
 
 configureJvm6Project(project)
 configurePublishing(project)
+configureSourcesJar()
+configureJavadocJar()
+
 ext.javaHome = JDK_18
 ext.jvmTarget = "1.8"
 
@@ -39,20 +42,16 @@ sourceSets {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main' /*true*/)
-    // TODO: enable as soon as this doesn't cause D8/DX to crash
-    // from sourceSets.java9.output
-}
-
-task modularJar(type: Jar) {
-    dependsOn(jar)
     manifestAttributes(manifest, project, 'Main', true)
-    classifier = 'modular'
-
-    from zipTree(jar.outputs.files.singleFile)
     from sourceSets.java9.output
 }
 
+configureModularJar {
+    dependsOn(jar)
+    manifestAttributes(manifest, project, 'Main', true)
+
+    from zipTree(jar.outputs.files.singleFile)
+}
 
 artifacts {
     archives sourcesJar
@@ -60,8 +59,6 @@ artifacts {
 
     archives modularJar
 }
-
-javadocJar()
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
     kotlinOptions.jdkHome = JDK_18

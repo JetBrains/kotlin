@@ -10,21 +10,29 @@
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
         <scriptDiagnosticFixProvider implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDiagnosticFixProvider"/>
+        <experimentalFeature implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptConfigurationsImportingFeature"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin.scripting.idea">
         <listener order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListener"/>
-        <loader order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptConfigurationLoader"/>
+
+        <loader order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptConfigurationLoader"/>
+
+        <scriptingSupport implementation="org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
         <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinGradleOrderEnumerationHandler$Factory" order="first"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinMPPGradleProjectResolver"/>
         <testTasksProvider implementation="org.jetbrains.kotlin.idea.run.KotlinMPPGradleTestTasksProvider"/>
+
+        <projectModelContributor implementation="org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelContributor"/>
+        <executionEnvironmentProvider implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinGradleAppEnvProvider"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectTaskRunner implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner" order="first, before gradle"/>
+        <projectTaskRunner implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner"
+                           id="gradle.mpp" order="first, before gradle"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectSettingsDataService"/>
 
@@ -34,12 +42,21 @@
                      defaultValue="true"
                      restartRequired="false"/>
 
-        <projectService serviceImplementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher"/>
+        <registryKey key="kotlin.gradle.scripts.scriptConfigurationsNeedToBeUpdatedFloatingNotification"
+                     description="Show floating notification in the editor when script configuration need to be updated"
+                     defaultValue="true"
+                     restartRequired="false"/>
+
+        <projectService serviceImplementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActionsManager"/>
     </extensions>
 
     <actions>
         <action id="Kotlin.Gradle.ShowDslLogs" class="org.jetbrains.kotlin.idea.actions.ShowKotlinGradleDslLogs"
                 text="Show Kotlin Gradle DSL Logs" description="Show Kotlin Gradle DSL logs">
+        </action>
+
+        <action id="LoadConfigurationAction" class="org.jetbrains.kotlin.idea.scripting.gradle.LoadConfigurationAction">
+            <add-to-group group-id="ExternalSystem.ProjectRefreshActionGroup" anchor="first"/>
         </action>
     </actions>
 </idea-plugin>

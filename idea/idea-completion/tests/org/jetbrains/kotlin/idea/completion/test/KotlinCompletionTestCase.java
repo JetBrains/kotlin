@@ -10,7 +10,9 @@ import com.intellij.codeInsight.completion.CompletionTestCase;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
 
+@WithMutedInDatabaseRunTest
 abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     @Override
     protected void setUp() throws Exception {

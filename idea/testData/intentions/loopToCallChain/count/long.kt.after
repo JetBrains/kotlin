@@ -4,7 +4,7 @@
 fun foo(list: List<String>): Long {
     var count = 0L
     list
-            .filter { it.length > 10 }
-            .forEach { count++ }
+        .filter { it.length > 10 }
+        .forEach { count++ }
     return count
 }

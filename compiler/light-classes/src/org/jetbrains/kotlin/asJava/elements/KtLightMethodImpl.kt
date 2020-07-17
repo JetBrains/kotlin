@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.builder.MemberIndex
 import org.jetbrains.kotlin.asJava.builder.memberIndex
+import org.jetbrains.kotlin.asJava.checkIsMangled
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -89,12 +90,7 @@ open class KtLightMethodImpl protected constructor(
         }
     }
 
-    override val isMangled: Boolean
-        get() {
-            val demangledName = KotlinTypeMapper.InternalNameMapper.demangleInternalName(name) ?: return false
-            val originalName = propertyNameByAccessor(demangledName, this) ?: demangledName
-            return originalName == kotlinOrigin?.name
-        }
+    override val isMangled: Boolean get() = checkIsMangled()
 
     override fun setName(name: String): PsiElement? {
         val jvmNameAnnotation = modifierList.findAnnotation(DescriptorUtils.JVM_NAME.asString())

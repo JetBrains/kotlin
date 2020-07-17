@@ -14,41 +14,43 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 
 abstract class FirInferenceSession {
     companion object {
-        val DEFAULT: FirInferenceSession = object : FirInferenceSession() {
-            override fun shouldRunCompletion(candidate: Candidate): Boolean = true
-
-            override val currentConstraintSystem: ConstraintStorage
-                get() = ConstraintStorage.Empty
-
-            override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {}
-            override fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement {}
-            override fun <T> addCompetedCall(call: T) where T : FirResolvable, T : FirStatement {}
-
-            override fun inferPostponedVariables(
-                lambda: ResolvedLambdaAtom,
-                initialStorage: ConstraintStorage
-            ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType> = emptyMap()
-
-            override fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement = false
-            override fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement = true
-        }
+        val DEFAULT: FirInferenceSession = object : FirStubInferenceSession() {}
     }
 
-    abstract fun shouldRunCompletion(candidate: Candidate): Boolean
+    abstract fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement
     abstract val currentConstraintSystem: ConstraintStorage
 
     abstract fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement
     abstract fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement
-    abstract fun <T> addCompetedCall(call: T) where T : FirResolvable, T : FirStatement
+    abstract fun <T> addCompetedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
 
     abstract fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage,
         // TODO: diagnostic holder
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>
+    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>?
 
-//    TODO: do we need this?
-//    abstract fun writeOnlyStubs(): Boolean
+    abstract fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement
     abstract fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement
     abstract fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement
+}
+
+abstract class FirStubInferenceSession : FirInferenceSession() {
+    override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
+
+    override val currentConstraintSystem: ConstraintStorage
+        get() = ConstraintStorage.Empty
+
+    override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {}
+    override fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement {}
+    override fun <T> addCompetedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
+
+    override fun inferPostponedVariables(
+        lambda: ResolvedLambdaAtom,
+        initialStorage: ConstraintStorage
+    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
+
+    override fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement = false
+    override fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement = false
+    override fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement = true
 }

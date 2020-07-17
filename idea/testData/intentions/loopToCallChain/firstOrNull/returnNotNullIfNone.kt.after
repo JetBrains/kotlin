@@ -3,5 +3,5 @@
 // IS_APPLICABLE_2: false
 fun foo(list: List<String>): String {
     <caret>return list.firstOrNull { it.isNotEmpty() }
-            ?: ""
+        ?: ""
 }

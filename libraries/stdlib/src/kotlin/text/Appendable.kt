@@ -42,16 +42,15 @@ expect interface Appendable {
 /**
  * Appends a subsequence of the specified character sequence [value] to this Appendable and returns this instance.
  *
- * @param value the character sequence from which a subsequence is appended. If [value] is `null`,
- *  then characters are appended as if [value] contained the four characters `"null"`.
+ * @param value the character sequence from which a subsequence is appended.
  * @param startIndex the beginning (inclusive) of the subsequence to append.
  * @param endIndex the end (exclusive) of the subsequence to append.
  *
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public fun <T : Appendable> T.appendRange(value: CharSequence?, startIndex: Int, endIndex: Int): T {
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+public fun <T : Appendable> T.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): T {
     @Suppress("UNCHECKED_CAST")
     return append(value, startIndex, endIndex) as T
 }
@@ -64,6 +63,21 @@ public fun <T : Appendable> T.append(vararg value: CharSequence?): T {
         append(item)
     return this
 }
+
+/** Appends a line feed character (`\n`) to this Appendable. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun Appendable.appendLine(): Appendable = append('\n')
+
+/** Appends value to the given Appendable and a line feed character (`\n`) after it. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun Appendable.appendLine(value: CharSequence?): Appendable = append(value).appendLine()
+
+/** Appends value to the given Appendable and a line feed character (`\n`) after it. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun Appendable.appendLine(value: Char): Appendable = append(value).appendLine()
 
 
 internal fun <T> Appendable.appendElement(element: T, transform: ((T) -> CharSequence)?) {

@@ -5,7 +5,7 @@ import dependency.extFun
 import java.io.File
 import java.util.*
 
-fun foo(c: C) {
+fun foo(c: Int) {
     val v = HashMap<File, ArrayList<Int>>()
     "".extFun()
     "".extFun(1)

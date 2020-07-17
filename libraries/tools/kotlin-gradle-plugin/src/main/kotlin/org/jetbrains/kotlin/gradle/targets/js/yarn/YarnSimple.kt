@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonUpToDateCheck
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import java.io.File
 
 class YarnSimple : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) {
@@ -27,9 +28,17 @@ class YarnSimple : YarnBasics() {
         }
     }
 
+    override fun preparedFiles(project: Project): Collection<File> =
+        emptyList()
+
+    override fun prepareRootProject(
+        rootProject: Project,
+        subProjects: Collection<KotlinCompilationNpmResolution>
+    ) = Unit
+
     override fun resolveRootProject(
         rootProject: Project,
-        subProjects: Collection<KotlinCompilationNpmResolution>,
+        npmProjects: Collection<KotlinCompilationNpmResolution>,
         skipExecution: Boolean,
         cliArgs: List<String>
     ) = Unit

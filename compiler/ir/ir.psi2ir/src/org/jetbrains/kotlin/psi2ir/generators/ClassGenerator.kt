@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.referenceFunction
@@ -80,11 +81,16 @@ class ClassGenerator(
         val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationOrNull() ?: ktClassOrObject.pureStartOffset
         val endOffset = ktClassOrObject.pureEndOffset
         val visibility = visibility_ ?: classDescriptor.visibility
+        val modality = getEffectiveModality(ktClassOrObject, classDescriptor)
 
-        return context.symbolTable.declareClass(
-            startOffset, endOffset, IrDeclarationOrigin.DEFINED, classDescriptor,
-            getEffectiveModality(ktClassOrObject, classDescriptor), visibility
-        ).buildWithScope { irClass ->
+        return context.symbolTable.declareClass(classDescriptor) {
+            createIrClassFromDescriptor(
+                startOffset, endOffset, IrDeclarationOrigin.DEFINED, it, classDescriptor,
+                context.symbolTable.nameProvider.nameForDeclaration(classDescriptor), visibility, modality
+            ).apply {
+                metadata = MetadataSource.Class(it.descriptor)
+            }
+        }.buildWithScope { irClass ->
             declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
 
             irClass.superTypes = classDescriptor.typeConstructor.supertypes.map {
@@ -275,6 +281,9 @@ class ClassGenerator(
         if (delegatedDescriptor.isVar) {
             irProperty.setter = generateDelegatedFunction(irDelegate, delegatedDescriptor.setter!!, delegateToDescriptor.setter!!)
         }
+
+        irProperty.linkCorrespondingPropertySymbol()
+
         return irProperty
     }
 

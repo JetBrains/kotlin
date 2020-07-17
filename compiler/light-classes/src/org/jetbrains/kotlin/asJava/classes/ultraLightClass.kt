@@ -462,9 +462,16 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun getInitializers(): Array<PsiClassInitializer> = emptyArray()
 
     override fun getContainingClass(): PsiClass? {
+
         val containingBody = classOrObject.parent as? KtClassBody
         val containingClass = containingBody?.parent as? KtClassOrObject
-        return containingClass?.let { create(it) }
+        containingClass?.let { return create(it) }
+
+        val containingBlock = classOrObject.parent as? KtBlockExpression
+        val containingScript = containingBlock?.parent as? KtScript
+        containingScript?.let { return KtLightClassForScript.create(it) }
+
+        return null
     }
 
     override fun getParent(): PsiElement? = containingClass ?: containingFile

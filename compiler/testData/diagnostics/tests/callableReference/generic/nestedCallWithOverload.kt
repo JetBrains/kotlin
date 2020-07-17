@@ -19,6 +19,4 @@ fun test() {
     baz<(Int) -> Unit>(id(::foo), id(id(::foo)))
     baz(id(::foo), id(id<(Int) -> Unit>(::foo)))
     baz(id(::foo), id<(Int) -> Unit>(id(::foo)))
-
-    baz(id { it.inv() }, id<(Int) -> Unit> { })
 }

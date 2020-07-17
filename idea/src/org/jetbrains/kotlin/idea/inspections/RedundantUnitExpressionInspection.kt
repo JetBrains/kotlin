@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
 import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
@@ -27,45 +26,50 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return referenceExpressionVisitor(fun(expression) {
-            if (expression.isRedundantUnit()) {
-                holder.registerProblem(
-                    expression,
-                    KotlinBundle.message("redundant.unit"),
-                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                    RemoveRedundantUnitFix()
-                )
-            }
-        })
-    }
-}
-
-private fun KtReferenceExpression.isRedundantUnit(): Boolean {
-    if (!isUnitLiteral()) return false
-    val parent = this.parent ?: return false
-    if (parent is KtReturnExpression) {
-        val expectedReturnType = parent.expectedReturnType() ?: return false
-        return expectedReturnType.nameIfStandardType != KotlinBuiltIns.FQ_NAMES.any.shortName() && !expectedReturnType.isMarkedNullable
-    }
-    if (parent is KtBlockExpression) {
-        // Do not report just 'Unit' in function literals (return@label Unit is OK even in literals)
-        if (parent.getParentOfType<KtFunctionLiteral>(strict = true) != null) return false
-
-        if (this == parent.lastBlockStatementOrThis()) {
-            val prev = this.previousStatement() ?: return true
-            if (prev.isUnitLiteral()) return true
-            val prevType = prev.resolveToCall(BodyResolveMode.FULL)?.resultingDescriptor?.returnType
-            if (prevType != null) {
-                return prevType.isUnit()
-            }
-            if (prev !is KtDeclaration) return false
-            if (prev !is KtFunction) return true
-            return parent.getParentOfTypesAndPredicate(true, KtIfExpression::class.java, KtWhenExpression::class.java) { true } == null
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = referenceExpressionVisitor(fun(expression) {
+        if (isRedundantUnit(expression)) {
+            holder.registerProblem(
+                expression,
+                KotlinBundle.message("redundant.unit"),
+                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                RemoveRedundantUnitFix()
+            )
         }
-        return true
+    })
+
+    companion object {
+        fun isRedundantUnit(referenceExpression: KtReferenceExpression): Boolean {
+            if (!referenceExpression.isUnitLiteral()) return false
+            val parent = referenceExpression.parent ?: return false
+            if (parent is KtReturnExpression) {
+                val expectedReturnType = parent.expectedReturnType() ?: return false
+                return expectedReturnType.nameIfStandardType != KotlinBuiltIns.FQ_NAMES.any.shortName() && !expectedReturnType.isMarkedNullable
+            }
+
+            if (parent is KtBlockExpression) {
+                if (referenceExpression == parent.lastBlockStatementOrThis()) {
+                    val prev = referenceExpression.previousStatement() ?: return true
+                    if (prev.isUnitLiteral()) return true
+                    val prevType = prev.analyze(BodyResolveMode.PARTIAL).getType(prev)
+                    if (prevType != null) {
+                        return prevType.isUnit()
+                    }
+
+                    if (prev !is KtDeclaration) return false
+                    if (prev !is KtFunction) return true
+                    return parent.getParentOfTypesAndPredicate(
+                        true,
+                        KtIfExpression::class.java,
+                        KtWhenExpression::class.java
+                    ) { true } == null
+                }
+
+                return true
+            }
+
+            return false
+        }
     }
-    return false
 }
 
 private fun KtExpression.isUnitLiteral(): Boolean =

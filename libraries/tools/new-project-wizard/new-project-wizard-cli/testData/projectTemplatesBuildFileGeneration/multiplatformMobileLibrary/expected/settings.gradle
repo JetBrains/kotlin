@@ -1,8 +1,12 @@
 pluginManagement {
     repositories {
+        mavenCentral()
         gradlePluginPortal()
         google()
         jcenter()
+        maven {
+            url 'https://dl.bintray.com/kotlin/kotlin-dev'
+        }
     }
     resolutionStrategy {
         eachPlugin {
@@ -12,5 +16,4 @@ pluginManagement {
         }
     }
 }
-rootProject.name = 'MultiplatformMobileLibrary'
-
+rootProject.name = 'multiplatformMobileLibrary'

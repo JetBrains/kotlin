@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -41,16 +43,18 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
     override var source: FirSourceElement? = null
     override lateinit var session: FirSession
     open var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override lateinit var origin: FirDeclarationOrigin
     override lateinit var returnTypeRef: FirTypeRef
     open var receiverTypeRef: FirTypeRef? = null
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     open lateinit var status: FirDeclarationStatus
     open var containerSource: DeserializedContainerSource? = null
+    open var contractDescription: FirContractDescription = FirEmptyContractDescription
     open lateinit var name: Name
     open lateinit var symbol: FirFunctionSymbol<FirSimpleFunction>
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirSimpleFunction {
@@ -58,16 +62,18 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
             source,
             session,
             resolvePhase,
+            origin,
             returnTypeRef,
             receiverTypeRef,
-            typeParameters,
             valueParameters,
             body,
             status,
             containerSource,
+            contractDescription,
             name,
             symbol,
             annotations,
+            typeParameters,
         )
     }
 

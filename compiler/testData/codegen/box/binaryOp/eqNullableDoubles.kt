@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperIeee754Comparisons
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun eq_double_doubleN(a: Double, b: Double?) = a == b
 

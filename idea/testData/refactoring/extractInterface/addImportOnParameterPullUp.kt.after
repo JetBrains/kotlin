@@ -4,5 +4,5 @@ import foo.Z
 
 class C(
     // INFO: {checked: "true", toAbstract: "true"}
-        override val z: Z
+    override val z: Z
 ) : ISomething

@@ -31,7 +31,7 @@ fun String.parseKotlinAbiVersion(): KotlinAbiVersion {
 data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
     constructor(single: Int) : this(0, single, 0)
     companion object {
-        val CURRENT = KotlinAbiVersion(1, 4, 0)
+        val CURRENT = KotlinAbiVersion(1, 4, 1)
     }
 
     override fun toString() = "$major.$minor.$patch"

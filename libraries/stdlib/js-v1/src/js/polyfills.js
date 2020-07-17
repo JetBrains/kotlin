@@ -1,24 +1,28 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors. 
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 if (typeof String.prototype.startsWith === "undefined") {
-    String.prototype.startsWith = function(searchString, position) {
-        position = position || 0;
-        return this.lastIndexOf(searchString, position) === position;
-    };
+    Object.defineProperty(String.prototype, "startsWith", {
+        value: function (searchString, position) {
+            position = position || 0;
+            return this.lastIndexOf(searchString, position) === position;
+        }
+    });
 }
 if (typeof String.prototype.endsWith === "undefined") {
-    String.prototype.endsWith = function(searchString, position) {
-        var subjectString = this.toString();
-        if (position === undefined || position > subjectString.length) {
-            position = subjectString.length;
+    Object.defineProperty(String.prototype, "endsWith", {
+        value: function (searchString, position) {
+            var subjectString = this.toString();
+            if (position === undefined || position > subjectString.length) {
+                position = subjectString.length;
+            }
+            position -= searchString.length;
+            var lastIndex = subjectString.indexOf(searchString, position);
+            return lastIndex !== -1 && lastIndex === position;
         }
-        position -= searchString.length;
-        var lastIndex = subjectString.indexOf(searchString, position);
-        return lastIndex !== -1 && lastIndex === position;
-    };
+    });
 }
 // ES6 Math polyfills
 if (typeof Math.sign === "undefined") {
@@ -251,45 +255,48 @@ if (typeof ArrayBuffer.isView === "undefined") {
 
 if (typeof Array.prototype.fill === "undefined") {
     // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
-    Array.prototype.fill = function() {
-      // Steps 1-2.
-      if (this == null) {
-        throw new TypeError('this is null or not defined');
-      }
+    Object.defineProperty(Array.prototype, 'fill', {
+        value: function (value) {
 
-      var O = Object(this);
+            // Steps 1-2.
+            if (this == null) {
+                throw new TypeError('this is null or not defined');
+            }
 
-      // Steps 3-5.
-      var len = O.length >>> 0;
+            var O = Object(this);
 
-      // Steps 6-7.
-      var start = arguments[1];
-      var relativeStart = start >> 0;
+            // Steps 3-5.
+            var len = O.length >>> 0;
 
-      // Step 8.
-      var k = relativeStart < 0 ?
-        Math.max(len + relativeStart, 0) :
-        Math.min(relativeStart, len);
+            // Steps 6-7.
+            var start = arguments[1];
+            var relativeStart = start >> 0;
 
-      // Steps 9-10.
-      var end = arguments[2];
-      var relativeEnd = end === undefined ?
-        len : end >> 0;
+            // Step 8.
+            var k = relativeStart < 0 ?
+                    Math.max(len + relativeStart, 0) :
+                    Math.min(relativeStart, len);
 
-      // Step 11.
-      var final = relativeEnd < 0 ?
-        Math.max(len + relativeEnd, 0) :
-        Math.min(relativeEnd, len);
+            // Steps 9-10.
+            var end = arguments[2];
+            var relativeEnd = end === undefined ?
+                              len : end >> 0;
 
-      // Step 12.
-      while (k < final) {
-        O[k] = value;
-        k++;
-      }
+            // Step 11.
+            var finalValue = relativeEnd < 0 ?
+                             Math.max(len + relativeEnd, 0) :
+                             Math.min(relativeEnd, len);
 
-      // Step 13.
-      return O;
-    };
+            // Step 12.
+            while (k < finalValue) {
+                O[k] = value;
+                k++;
+            }
+
+            // Step 13.
+            return O;
+        }
+    });
 }
 
 (function() {
@@ -310,7 +317,9 @@ if (typeof Array.prototype.fill === "undefined") {
     for (var i = 0; i < arrays.length; ++i) {
         var TypedArray = arrays[i];
         if (typeof TypedArray.prototype.fill === "undefined") {
-            TypedArray.prototype.fill = Array.prototype.fill;
+            Object.defineProperty(TypedArray.prototype, 'fill', {
+                value: Array.prototype.fill
+            });
         }
         if (typeof TypedArray.prototype.slice === "undefined") {
             Object.defineProperty(TypedArray.prototype, 'slice', {

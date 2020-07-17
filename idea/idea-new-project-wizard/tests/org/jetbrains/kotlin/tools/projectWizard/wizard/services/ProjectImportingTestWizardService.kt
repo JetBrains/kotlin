@@ -16,14 +16,12 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.framework.MAVEN_SYSTEM_ID
 import org.jetbrains.kotlin.tools.projectWizard.cli.TestWizardService
-import org.jetbrains.kotlin.tools.projectWizard.core.Failure
-import org.jetbrains.kotlin.tools.projectWizard.core.ProjectImportingError
-import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
-import org.jetbrains.kotlin.tools.projectWizard.core.UNIT_SUCCESS
+import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.nio.file.Path
 
@@ -32,6 +30,7 @@ class GradleProjectImportingTestWizardService(private val project: Project) : Pr
         buildSystemType.isGradle || buildSystemType == BuildSystemType.Maven
 
     override fun importProject(
+        reader: Reader,
         path: Path,
         modulesIrs: List<ModuleIR>,
         buildSystem: BuildSystemType
@@ -46,7 +45,8 @@ class GradleProjectImportingTestWizardService(private val project: Project) : Pr
                         if (externalProject == null) {
                             importingErrorMessage = "Got null External project after import"
                         } else {
-                            ServiceManager.getService(ProjectDataManager::class.java).importData(externalProject, project, true)
+                            ServiceManager.getService(ProjectDataManager::class.java).importData(externalProject,
+                                                                                                 project, true)
                         }
                     }
 
@@ -56,7 +56,14 @@ class GradleProjectImportingTestWizardService(private val project: Project) : Pr
                 }).forceWhenUptodate()
         )
 
-        return importingErrorMessage?.let { Failure(ProjectImportingError(it)) } ?: UNIT_SUCCESS
+        return importingErrorMessage?.let { message ->
+            Failure(
+                ProjectImportingError(
+                    reader { KotlinPlugin::version.propertyValue.version.toString() },
+                    message,
+                )
+            )
+        } ?: UNIT_SUCCESS
     }
 
     private fun BuildSystemType.externalSystemId() = when (this) {

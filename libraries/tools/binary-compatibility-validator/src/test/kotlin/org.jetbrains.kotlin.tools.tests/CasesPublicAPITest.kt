@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.tools.tests
 
-import org.jetbrains.kotlin.tools.*
+import kotlinx.validation.api.*
 import org.junit.*
 import org.junit.rules.TestName
 import java.io.File
@@ -58,7 +58,7 @@ class CasesPublicAPITest {
 
         val testClassStreams = testClasses.asSequence().filter { it.name.endsWith(".class") }.map { it.inputStream() }
 
-        val api = getBinaryAPI(testClassStreams).filterOutNonPublic()
+        val api = testClassStreams.loadApiFromJvmClasses().filterOutNonPublic()
 
         val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
 

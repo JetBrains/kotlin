@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.SourceManager
-import org.jetbrains.kotlin.ir.SourceRangeInfo
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -146,6 +145,7 @@ val IrDeclaration.isLocal: Boolean
         return false
     }
 
+@ObsoleteDescriptorBasedAPI
 val IrDeclaration.module get() = this.descriptor.module
 
 const val SYNTHETIC_OFFSET = -2
@@ -205,3 +205,29 @@ class NaiveSourceBasedFileEntryImpl(override val name: String, val lineStartOffs
 
     }
 }
+
+private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
+    val properties = declarations.filterIsInstance<IrProperty>().filter { it.name.asString() == name }
+    if (properties.size > 1) {
+        error(
+            "More than one property with name $name in class $fqNameWhenAvailable:\n" +
+                    properties.joinToString("\n", transform = IrProperty::render)
+        )
+    }
+    return properties.firstOrNull()
+}
+
+private fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
+    findDeclaration<IrSimpleFunction> { it.name.asString() == name }?.symbol
+
+fun IrClass.getPropertyGetter(name: String): IrSimpleFunctionSymbol? =
+    getPropertyDeclaration(name)?.getter?.symbol
+        ?: getSimpleFunction("<get-$name>").also { assert(it?.owner?.correspondingPropertySymbol?.owner?.name?.asString() == name) }
+
+fun IrClass.getPropertySetter(name: String): IrSimpleFunctionSymbol? =
+    getPropertyDeclaration(name)?.setter?.symbol
+        ?: getSimpleFunction("<set-$name>").also { assert(it?.owner?.correspondingPropertySymbol?.owner?.name?.asString() == name) }
+
+fun IrClassSymbol.getSimpleFunction(name: String): IrSimpleFunctionSymbol? = owner.getSimpleFunction(name)
+fun IrClassSymbol.getPropertyGetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertyGetter(name)
+fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertySetter(name)

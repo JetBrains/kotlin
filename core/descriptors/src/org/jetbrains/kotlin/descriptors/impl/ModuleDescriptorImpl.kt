@@ -38,7 +38,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     // May be null in compiler context, should be not-null in IDE context
     override val platform: TargetPlatform? = null,
     capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
-    override val stableName: Name? = null
+    override val stableName: Name? = null,
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
 

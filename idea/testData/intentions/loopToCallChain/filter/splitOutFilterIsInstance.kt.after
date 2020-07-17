@@ -3,6 +3,6 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filterIsInstance<>().filterTo(){}'"
 fun foo(list: List<Any>, out: MutableList<String>){
     list
-            .filterIsInstance<String>()
-            .filterTo(out) { it.length > 0 }
+        .filterIsInstance<String>()
+        .filterTo(out) { it.length > 0 }
 }

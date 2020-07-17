@@ -118,6 +118,23 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
             }
         }
 
+        /**
+         * Invokes provided collector if the reporting service is initialised.
+         * The duration of collector's wall time is reported into overall overhead metric.
+         */
+        fun applyIfInitialised(collector: (IStatisticsValuesConsumer) -> Unit) {
+            getInstance()?.apply {
+                try {
+                    val duration = measureTimeMillis {
+                        collector.invoke(this)
+                    }
+                    this.report(NumericalMetrics.STATISTICS_COLLECT_METRICS_OVERHEAD, duration)
+                } catch (e: Throwable) {
+                    logException("Could collect statistics metrics", e)
+                }
+            }
+        }
+
         @JvmStatic
         internal fun getLogger() = Logging.getLogger(KotlinBuildStatsService::class.java)
 
@@ -252,10 +269,12 @@ internal class DefaultKotlinBuildStatsService internal constructor(
             gradle.rootProject.properties["kotlin.code.style"] == "official"
         ) // constants are saved in IDEA plugin and could not be accessed directly
 
-        val executedTaskNames = gradle.taskGraph.allTasks.map { it.name }.distinct()
-        report(BooleanMetrics.COMPILATION_STARTED, executedTaskNames.contains("compileKotlin"))
-        report(BooleanMetrics.TESTS_EXECUTED, executedTaskNames.contains("compileTestKotlin"))
-        report(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
+        gradle.taskGraph.whenReady() { taskExecutionGraph ->
+            val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
+            report(BooleanMetrics.COMPILATION_STARTED, executedTaskNames.contains("compileKotlin"))
+            report(BooleanMetrics.TESTS_EXECUTED, executedTaskNames.contains("compileTestKotlin"))
+            report(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
+        }
 
         fun buildSrcExists(project: Project) = File(project.projectDir, "buildSrc").exists()
         if (buildSrcExists(gradle.rootProject)) {

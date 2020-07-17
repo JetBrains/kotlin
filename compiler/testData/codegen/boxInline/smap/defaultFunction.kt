@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
+
 // FILE: 1.kt
 
 package test
@@ -15,18 +15,6 @@ fun box(): String {
 }
 
 // FILE: 1.smap
-//TODO maybe do smth with default method body mapping
-SMAP
-1.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 1.kt
-test/_1Kt
-*L
-1#1,9:1
-*E
-
 SMAP
 1.kt
 Kotlin

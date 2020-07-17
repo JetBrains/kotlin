@@ -211,6 +211,7 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe longRange = rangesFqName("LongRange");
 
         public final FqName deprecated = fqName("Deprecated");
+        public final FqName deprecatedSinceKotlin = fqName("DeprecatedSinceKotlin");
         public final FqName deprecationLevel = fqName("DeprecationLevel");
         public final FqName replaceWith = fqName("ReplaceWith");
         public final FqName extensionFunctionType = fqName("ExtensionFunctionType");
@@ -443,6 +444,11 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
+    private static FqNameUnsafe getKFunctionFqName(int parameterCount) {
+        return FqNames.reflect(FunctionClassDescriptor.Kind.KFunction.getClassNamePrefix() + parameterCount);
+    }
+
+    @NotNull
     public static ClassId getFunctionClassId(int parameterCount) {
         return new ClassId(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(getFunctionName(parameterCount)));
     }
@@ -453,8 +459,28 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
+    public static String getSuspendFunctionName(int parameterCount) {
+        return FunctionClassDescriptor.Kind.SuspendFunction.getClassNamePrefix() + parameterCount;
+    }
+
+    @NotNull
+    public static ClassId getSuspendFunctionClassId(int parameterCount) {
+        return new ClassId(COROUTINES_PACKAGE_FQ_NAME_RELEASE, Name.identifier(getSuspendFunctionName(parameterCount)));
+    }
+
+    @NotNull
     public ClassDescriptor getSuspendFunction(int parameterCount) {
-        Name name = Name.identifier(FunctionClassDescriptor.Kind.SuspendFunction.getClassNamePrefix() + parameterCount);
+        return getBuiltInClassByFqName(COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier(getSuspendFunctionName(parameterCount))));
+    }
+
+    @NotNull
+    public ClassDescriptor getKFunction(int parameterCount) {
+        return getBuiltInClassByFqName(getKFunctionFqName(parameterCount).toSafe());
+    }
+
+    @NotNull
+    public ClassDescriptor getKSuspendFunction(int parameterCount) {
+        Name name = Name.identifier(FunctionClassDescriptor.Kind.KSuspendFunction.getClassNamePrefix() + parameterCount);
         return getBuiltInClassByFqName(COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(name));
     }
 
@@ -1091,6 +1117,8 @@ public abstract class KotlinBuiltIns {
         return classFqNameEquals(descriptor, FQ_NAMES.cloneable);
     }
 
+    // This function only checks presence of Deprecated annotation at declaration-site, it doesn't take into account @DeprecatedSinceKotlin
+    // To check that a referenced descriptor is actually deprecated at call-site, use DeprecationResolver
     public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor.getOriginal().getAnnotations().hasAnnotation(FQ_NAMES.deprecated)) return true;
 

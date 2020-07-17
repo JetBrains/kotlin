@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
-import org.jetbrains.kotlin.cli.common.repl.ReplCompiler
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -64,9 +63,10 @@ abstract class AbstractJsReplTest : Closeable {
         configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, collector)
         configuration.put(CommonConfigurationKeys.MODULE_NAME, "repl.kts")
+        val stdlibPath = System.getProperty("kotlin.js.full.stdlib.path")
         val scriptConfiguration = ScriptCompilationConfiguration {
             baseClass("kotlin.Any")
-            dependencies.append(JsDependency("libraries/stdlib/js-ir/build/fullRuntime/klib"))
+            dependencies.append(JsDependency(stdlibPath))
             platform.put("JS")
         }
         configuration.add(

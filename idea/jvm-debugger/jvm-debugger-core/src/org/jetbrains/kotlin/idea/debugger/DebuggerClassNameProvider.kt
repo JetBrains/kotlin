@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.idea.debugger
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.engine.DebuggerUtils
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ObjectCollectedException
@@ -47,7 +49,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
 class DebuggerClassNameProvider(
-    private val debugProcess: DebugProcess,
+    val project: Project, val searchScope: GlobalSearchScope,
     val findInlineUseSites: Boolean = true,
     val alwaysReturnLambdaParentClass: Boolean = true
 ) {
@@ -78,17 +80,13 @@ class DebuggerClassNameProvider(
         }
     }
 
-    private val inlineUsagesSearcher = InlineCallableUsagesSearcher(debugProcess)
+    private val inlineUsagesSearcher = InlineCallableUsagesSearcher(project, searchScope)
 
     /**
      * Returns classes in which the given line number *is* present.
      */
-    fun getClassesForPosition(position: SourcePosition): List<ReferenceType> = with(debugProcess) {
-        val lineNumber = runReadAction { position.line }
-
+    fun getClassesForPosition(position: SourcePosition): Set<String> {
         return doGetClassesForPosition(position)
-            .flatMap { className -> virtualMachineProxy.classesByName(className) }
-            .flatMap { referenceType -> findTargetClasses(referenceType, lineNumber) }
     }
 
     /**
@@ -292,54 +290,3 @@ class DebuggerClassNameProvider(
 
 private fun String.toJdiName() = replace('/', '.')
 
-private fun DebugProcess.findTargetClasses(outerClass: ReferenceType, lineAt: Int): List<ReferenceType> {
-    val vmProxy = virtualMachineProxy
-
-    try {
-        if (!outerClass.isPrepared) {
-            return emptyList()
-        }
-    } catch (e: ObjectCollectedException) {
-        return emptyList()
-    }
-
-    val targetClasses = ArrayList<ReferenceType>(1)
-
-    try {
-        for (location in outerClass.safeAllLineLocations()) {
-            val locationLine = location.lineNumber() - 1
-            if (locationLine < 0) {
-                // such locations are not correspond to real lines in code
-                continue
-            }
-
-            if (lineAt == locationLine) {
-                val method = location.method()
-                if (method == null || DebuggerUtils.isSynthetic(method) || method.isBridge) {
-                    // skip synthetic methods
-                    continue
-                }
-
-                targetClasses += outerClass
-                break
-            }
-        }
-
-        // The same line number may appear in different classes so we have to scan nested classes as well.
-        // For example, in the next example line 3 appears in both Foo and Foo$Companion.
-
-        /* class Foo {
-            companion object {
-                val a = Foo() /* line 3 */
-            }
-        } */
-
-        val nestedTypes = vmProxy.nestedTypes(outerClass)
-        for (nested in nestedTypes) {
-            targetClasses += findTargetClasses(nested, lineAt)
-        }
-    } catch (_: AbsentInformationException) {
-    }
-
-    return targetClasses
-}

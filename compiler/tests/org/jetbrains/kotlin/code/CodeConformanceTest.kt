@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.code
@@ -29,72 +18,72 @@ class CodeConformanceTest : TestCase() {
         private val SOURCES_BUNCH_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)(\\.\\w+)?")
         private const val MAX_STEPS_COUNT = 100
         private val EXCLUDED_FILES_AND_DIRS = listOf(
+            "build/js",
             "buildSrc",
-            "core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections",
-            "js/js.tests/.gradle",
-            "js/js.translator/testData/node_modules",
-            "libraries/kotlin.test/js/it/.gradle",
-            "libraries/kotlin.test/js/it/node_modules",
-            "libraries/stdlib/js-v1/.gradle",
-            "libraries/stdlib/js-v1/build",
-            "libraries/stdlib/js-ir/.gradle",
-            "libraries/stdlib/js-ir/build",
-            "libraries/reflect/build",
-            "libraries/reflect/api/src/java9/java/kotlin/reflect/jvm/internal/impl",
-            "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
-            "dependencies",
-            "js/js.translator/qunit/qunit.js",
-            "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
-            "out",
-            "dist",
-            "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
-            "libraries/tools/kotlin-maven-plugin/target",
-            "libraries/tools/kotlinp/src",
-            "libraries/tools/kotlin-test-js-runner/node_modules",
-            "libraries/tools/kotlin-test-js-runner/.gradle",
-            "libraries/tools/kotlin-test-js-runner/lib",
-            "libraries/tools/kotlin-test-nodejs-runner/node_modules",
-            "libraries/tools/kotlin-test-nodejs-runner/.gradle",
-            "libraries/tools/kotlin-source-map-loader/node_modules",
-            "libraries/tools/kotlin-source-map-loader/.gradle",
-            "libraries/tools/kotlin-source-map-loader/lib",
+            "compiler/fir/lightTree/testData",
             "compiler/testData/psi/kdoc",
             "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
             "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
+            "core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections",
+            "dependencies",
             "dependencies/protobuf/protobuf-relocated/build",
-            "compiler/fir/lightTree/testData",
-            "idea/testData/codeInsight/renderingKDoc"
+            "dist",
+            "idea/testData/codeInsight/renderingKDoc",
+            "js/js.tests/.gradle",
+            "js/js.translator/qunit/qunit.js",
+            "js/js.translator/testData/node_modules",
+            "libraries/kotlin.test/js/it/.gradle",
+            "libraries/kotlin.test/js/it/node_modules",
+            "libraries/reflect/api/src/java9/java/kotlin/reflect/jvm/internal/impl",
+            "libraries/reflect/build",
+            "libraries/stdlib/js-ir/.gradle",
+            "libraries/stdlib/js-ir/build",
+            "libraries/stdlib/js-ir-minimal-for-test/.gradle",
+            "libraries/stdlib/js-ir-minimal-for-test/build",
+            "libraries/stdlib/js-v1/.gradle",
+            "libraries/stdlib/js-v1/build",
+            "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
+            "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
+            "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
+            "libraries/tools/kotlin-maven-plugin/target",
+            "libraries/tools/kotlin-test-js-runner/.gradle",
+            "libraries/tools/kotlin-test-js-runner/lib",
+            "libraries/tools/kotlin-test-js-runner/node_modules",
+            "libraries/tools/kotlin-test-nodejs-runner/.gradle",
+            "libraries/tools/kotlin-test-nodejs-runner/node_modules",
+            "libraries/tools/kotlinp/src",
+            "out"
         ).map(::File)
 
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
+            "build",
+            "buildSrc/prepare-deps/build",
+            "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
             "dependencies",
-            "out",
-            "dist",
             "dependencies/android-sdk/build",
             "dependencies/protobuf/protobuf-relocated/build",
-            "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+            "dist",
             "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
             "js/js.tests/.gradle",
             "js/js.translator/testData/node_modules",
-            "libraries/stdlib/common/build",
-            "libraries/stdlib/js-v1/.gradle",
-            "libraries/stdlib/js-v1/build",
-            "libraries/stdlib/js-ir/.gradle",
-            "libraries/stdlib/js-ir/build",
-            "libraries/stdlib/js-ir/runtime/longjs.kt",
             "libraries/kotlin.test/js/it/.gradle",
             "libraries/kotlin.test/js/it/node_modules",
+            "libraries/stdlib/common/build",
+            "libraries/stdlib/js-ir/.gradle",
+            "libraries/stdlib/js-ir/build",
+            "libraries/stdlib/js-ir/build/",
+            "libraries/stdlib/js-ir/runtime/longjs.kt",
+            "libraries/stdlib/js-ir-minimal-for-test/.gradle",
+            "libraries/stdlib/js-ir-minimal-for-test/build",
+            "libraries/stdlib/js-v1/.gradle",
+            "libraries/stdlib/js-v1/build",
             "libraries/stdlib/js-v1/node_modules",
-            "libraries/tools/kotlin-maven-plugin-test/target",
             "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
-            "libraries/tools/kotlin-test-js-runner/node_modules",
+            "libraries/tools/kotlin-maven-plugin-test/target",
             "libraries/tools/kotlin-test-js-runner/.gradle",
             "libraries/tools/kotlin-test-js-runner/lib",
-            "libraries/tools/kotlin-source-map-loader/node_modules",
-            "libraries/tools/kotlin-source-map-loader/.gradle",
-            "libraries/tools/kotlin-source-map-loader/lib",
-            "buildSrc/prepare-deps/build",
-            "libraries/stdlib/js-ir/build/"
+            "libraries/tools/kotlin-test-js-runner/node_modules",
+            "out"
         )
     }
 
@@ -132,7 +121,7 @@ class CodeConformanceTest : TestCase() {
         for (sourceFile in FileUtil.findFilesByMask(SOURCES_BUNCH_FILE_PATTERN, root)) {
             if (EXCLUDED_FILES_AND_DIRS.any { FileUtil.isAncestor(it, sourceFile, false) }) continue
 
-            val matches = Regex("BUNCH: (\\w+)").findAll(sourceFile.readText())
+            val matches = Regex("BUNCH (\\w+)").findAll(sourceFile.readText())
                 .map { it.groupValues[1] }.toSet().filterNot { it in extensions }
             for (bunch in matches) {
                 val filename = FileUtil.toSystemIndependentName(sourceFile.absoluteFile.toRelativeString(root))
@@ -217,8 +206,8 @@ class CodeConformanceTest : TestCase() {
                 for (test in tests) {
                     if (test.result.isNotEmpty()) {
                         append(test.message.format(test.result.size, test.result.joinToString("\n")))
-                        appendln()
-                        appendln()
+                        appendLine()
+                        appendLine()
                     }
                 }
             })

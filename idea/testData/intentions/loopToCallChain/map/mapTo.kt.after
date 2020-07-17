@@ -3,6 +3,6 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filter{}.mapTo(){}'"
 fun foo(list: List<String>, target: MutableList<Int>) {
     <caret>list
-            .filter { it.length > 0 }
-            .mapTo(target) { it.hashCode() }
+        .filter { it.length > 0 }
+        .mapTo(target) { it.hashCode() }
 }

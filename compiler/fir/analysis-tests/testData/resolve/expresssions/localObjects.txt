@@ -20,8 +20,8 @@ FILE: localObjects.kt
     }
     public final fun test(): R|kotlin/Unit| {
         Q|A|.R|/A.x|
-        lval b: R|anonymous| = object : R|Foo| {
-            private constructor(): R|anonymous| {
+        lval b: R|<anonymous>| = object : R|Foo| {
+            private[local] constructor(): R|<anonymous>| {
                 super<R|Foo|>()
             }
 
@@ -29,7 +29,7 @@ FILE: localObjects.kt
 
         R|<local>/b|.R|/Foo.foo|()
         local final object B : R|kotlin/Any| {
-            private constructor(): R|B| {
+            private[local] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 

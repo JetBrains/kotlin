@@ -21,9 +21,15 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
-import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.Versions
+import org.jetbrains.kotlin.tools.projectWizard.WizardGradleRunConfiguration
+import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
 class KtorServerTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.ktor.server.title")
@@ -35,12 +41,13 @@ class KtorServerTemplate : Template() {
 
     override fun Writer.getRequiredLibraries(module: ModuleIR): List<DependencyIR> =
         withSettingsOf(module.originalModule) {
+            val kotlinVersion = KotlinPlugin::version.propertyValue.version
             buildList {
-                +ktorArtifactDependency(serverEngine.reference.settingValue.dependencyName)
-                +ktorArtifactDependency("ktor-html-builder")
+                +ktorArtifactDependency(serverEngine.reference.settingValue.dependencyName, kotlinVersion)
+                +ktorArtifactDependency("ktor-html-builder", kotlinVersion)
                 +ArtifactBasedLibraryDependencyIR(
-                    MavenArtifact(DefaultRepository.JCENTER, "org.jetbrains.kotlinx", "kotlinx-html-jvm"),
-                    Version.fromString("0.6.12"),
+                    MavenArtifact(Repositories.KOTLINX, "org.jetbrains.kotlinx", "kotlinx-html-jvm"),
+                    Versions.KOTLINX.KOTLINX_HTML(KotlinPlugin::version.propertyValue.version),
                     DependencyType.MAIN
                 )
             }
@@ -52,10 +59,14 @@ class KtorServerTemplate : Template() {
         +runTaskIrs(mainClass = "ServerKt")
     }
 
+    override fun Reader.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = buildList {
+        +WizardGradleRunConfiguration("Run", "run", emptyList())
+    }
+
     override fun updateTargetIr(module: ModuleIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
         targetConfigurationIR.addWithJavaIntoJvmTarget()
 
-    override fun Writer.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = listOf(
+    override fun Reader.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = listOf(
         FileTemplateDescriptor("$id/server.kt.vm", "server.kt".asPath()) asSrcOf SourcesetType.main
     )
 
@@ -72,9 +83,9 @@ class KtorServerTemplate : Template() {
     override val settings: List<TemplateSetting<*, *>> = listOf(serverEngine)
 }
 
-private fun ktorArtifactDependency(@NonNls name: String) = ArtifactBasedLibraryDependencyIR(
+private fun ktorArtifactDependency(@NonNls name: String, kotlinVersion: Version) = ArtifactBasedLibraryDependencyIR(
     MavenArtifact(Repositories.KTOR_BINTRAY, "io.ktor", name),
-    Version.fromString("1.2.6"),
+    Versions.KTOR(kotlinVersion),
     DependencyType.MAIN
 )
 

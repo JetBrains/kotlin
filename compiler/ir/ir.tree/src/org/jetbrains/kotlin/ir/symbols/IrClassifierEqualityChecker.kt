@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.symbols
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
@@ -22,6 +23,7 @@ interface IrClassifierEqualityChecker {
     fun getHashCode(symbol: IrClassifierSymbol): Int
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 object FqNameEqualityChecker : IrClassifierEqualityChecker {
     override fun areEqual(left: IrClassifierSymbol, right: IrClassifierSymbol): Boolean {
         if (left === right) return true
@@ -57,12 +59,24 @@ object FqNameEqualityChecker : IrClassifierEqualityChecker {
             return parentFqName?.child(name)
         }
 
+    private fun areFqNamesEqual(c1: IrDeclarationWithName, c2: IrDeclarationWithName): Boolean {
+        if (c1.name != c2.name) return false
+
+        val parent1 = c1.parent
+        val parent2 = c2.parent
+        return when (parent1) {
+            is IrPackageFragment -> parent2 is IrPackageFragment && parent1.fqName == parent2.fqName
+            is IrDeclarationWithName -> parent2 is IrDeclarationWithName && areFqNamesEqual(parent1, parent2)
+            else -> false
+        }
+    }
+
     private fun checkViaDeclarations(c1: IrSymbolOwner, c2: IrSymbolOwner): Boolean {
         if (c1 is IrClass && c2 is IrClass) {
             if (c1.isLocalClass() || c2.isLocalClass())
                 return c1 === c2 // Local declarations should be identical
 
-            return c1.fqName == c2.fqName
+            return areFqNamesEqual(c1, c2)
         }
 
         return c1 == c2

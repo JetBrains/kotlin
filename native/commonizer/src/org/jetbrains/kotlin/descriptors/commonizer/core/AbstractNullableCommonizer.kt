@@ -34,7 +34,7 @@ abstract class AbstractNullableCommonizer<T : Any, R : Any, WT, WR>(
 
     final override fun commonizeWith(next: T?): Boolean {
         state = when (state) {
-            State.ERROR -> State.ERROR
+            State.ERROR -> return false
             State.EMPTY -> next?.let {
                 wrapped = wrappedCommonizerFactory()
                 doCommonizeWith(next)

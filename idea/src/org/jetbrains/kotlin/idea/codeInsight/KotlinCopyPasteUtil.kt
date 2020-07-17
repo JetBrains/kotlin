@@ -11,12 +11,16 @@ import com.intellij.codeInsight.hint.HintManagerImpl
 import com.intellij.codeInsight.hint.HintUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.ReadAction.nonBlocking
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.ui.LightweightHint
 import com.intellij.util.ArrayUtil
+import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.concurrency.CancellablePromise
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.name.Name
@@ -26,6 +30,7 @@ import java.util.*
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 
+// FIX ME WHEN BUNCH 192 REMOVED
 object ReviewAddedImports {
     @get:TestOnly
     var importsToBeReviewed: Collection<String> = emptyList()
@@ -103,5 +108,13 @@ object ReviewAddedImports {
             KotlinImportOptimizer.replaceImports(file, newImports)
         })
     }
-
 }
+
+internal fun <T> submitNonBlocking(project: Project, indicator: ProgressIndicator, block: () -> T): CancellablePromise<T> =
+    nonBlocking<T> {
+        return@nonBlocking block()
+    }
+        .withDocumentsCommitted(project)
+        .cancelWith(indicator)
+        .expireWith(project)
+        .submit(AppExecutorUtil.getAppExecutorService())

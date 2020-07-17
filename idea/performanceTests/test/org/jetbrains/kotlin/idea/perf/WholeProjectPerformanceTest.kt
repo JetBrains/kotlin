@@ -28,8 +28,8 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.psi.xml.XmlFileNSInfoProvider
 import com.intellij.xml.XmlSchemaProvider
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
-import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
-import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcTest
+import org.jetbrains.kotlin.idea.perf.util.TeamCity
+import org.jetbrains.kotlin.idea.testFramework.TestApplicationManager
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import java.io.File
 
@@ -95,7 +95,7 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
 
     fun testWholeProjectPerformance() {
 
-        tcSuite(this::class.simpleName ?: "Unknown") {
+        TeamCity.suite(this::class.simpleName ?: "Unknown") {
             val totals = mutableMapOf<String, Long>()
 
             fun appendInspectionResult(file: String, id: String, nanoTime: Long) {
@@ -104,7 +104,7 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
                 perfStats.append(file, id, nanoTime)
             }
 
-            tcSuite("TotalPerFile") {
+            TeamCity.suite("TotalPerFile") {
                 // TODO: [VD] temp to limit number of files (and total time to run)
                 val files = provideFiles(project).sortedBy { it.name }.take(10)
 
@@ -120,7 +120,7 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
                 }
             }
 
-            tcSuite("Total") {
+            TeamCity.suite("Total") {
                 totals.forEach { (k, v) ->
                     tcTest(k) {
                         v.nsToMs to emptyList()
@@ -139,6 +139,11 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
 
     companion object {
         val Long.nsToMs get() = (this * 1e-6).toLong()
+
+        inline fun tcTest(name: String, block: () -> Pair<Long, List<Throwable>>) {
+            val (time, errors) = block()
+            TeamCity.test(name, time, errors = errors) {}
+        }
     }
 
 }

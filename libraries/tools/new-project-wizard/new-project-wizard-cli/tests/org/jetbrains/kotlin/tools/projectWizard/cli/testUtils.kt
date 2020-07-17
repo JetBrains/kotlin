@@ -28,7 +28,8 @@ internal fun Path.listFiles(filter: (Path) -> Boolean) =
 
 internal fun compareFilesAndGenerateMissing(
     expectedFiles: List<Path>, expectedDir: Path,
-    actualFiles: List<Path>, actualDir: Path
+    actualFiles: List<Path>, actualDir: Path,
+    readActualFile: (Path) -> String
 ) {
     val expectedFilesSorted = expectedFiles.sorted()
     val actualFilesSorted = actualFiles.sorted()
@@ -46,7 +47,7 @@ internal fun compareFilesAndGenerateMissing(
     }
 
     for ((actualFile, expectedFile) in actualFilesSorted zip expectedFilesSorted) {
-        KotlinTestUtils.assertEqualsToFile(expectedFile.toFile(), actualFile.readFile())
+        KotlinTestUtils.assertEqualsToFile(expectedFile.toFile(), readActualFile(actualFile))
     }
 }
 
@@ -71,16 +72,14 @@ enum class BuildSystem(
         additionalFileNames = listOf("settings.gradle.kts"),
         yaml = """buildSystem:
                             type: GradleKotlinDsl
-                            gradle:
-                              version: 5.4.1""".trimIndent()
+                            """.trimIndent()
     ),
     GRADLE_GROOVY_DSL(
         buildFileName = "build.gradle",
         additionalFileNames = listOf("settings.gradle"),
         yaml = """buildSystem:
                             type: GradleGroovyDsl
-                            gradle:
-                              version: 5.4.1""".trimIndent()
+                            """.trimIndent()
     ),
     MAVEN(
         buildFileName = "pom.xml",

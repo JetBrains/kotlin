@@ -12,8 +12,8 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.TextComponentAccessor;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.*;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.idea.PluginStartupService;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
-import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent;
 import org.jetbrains.kotlin.idea.roots.RootUtilsKt;
 import org.jetbrains.kotlin.idea.util.CidrUtil;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
@@ -50,6 +49,7 @@ import org.jetbrains.kotlin.platform.jvm.JdkPlatform;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.List;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<>();
@@ -110,7 +110,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     private JLabel labelForSourceMapPrefix;
     private JComboBox sourceMapEmbedSources;
     private JPanel coroutinesPanel;
-    private ThreeStateCheckBox enableNewInferenceInIDECheckBox;
     private boolean isEnabled = true;
 
     public KotlinCompilerConfigurableTab(
@@ -151,7 +150,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         }
 
         reportWarningsCheckBox.setThirdStateEnabled(isMultiEditor);
-        enableNewInferenceInIDECheckBox.setThirdStateEnabled(isMultiEditor);
 
         if (isProjectSettings) {
             List<String> modulesOverridingProjectSettings = ArraysKt.mapNotNull(
@@ -209,7 +207,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
             keepAliveCheckBox.setVisible(false);
             k2jvmPanel.setVisible(false);
             enableIncrementalCompilationForJsCheckBox.setVisible(false);
-            enableNewInferenceInIDECheckBox.setVisible(false);
         }
 
         updateOutputDirEnabled();
@@ -328,7 +325,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         return VersionComparatorUtil.compare(version.getVersionString(), upperBound.getVersionString()) <= 0;
     }
 
-    public void onLanguageLevelChanged(VersionView languageLevel) {
+    public void onLanguageLevelChanged(@Nullable VersionView languageLevel) {
+        if (languageLevel == null) return;
         restrictAPIVersions(languageLevel);
         coroutinesPanel.setVisible(languageLevel.getVersion().compareTo(LanguageVersion.KOTLIN_1_3) < 0);
     }
@@ -360,7 +358,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     @SuppressWarnings("unchecked")
     private void fillJvmVersionList() {
         for (TargetPlatform jvm : JvmIdePlatformKind.INSTANCE.getPlatforms()) {
-            jvmVersionComboBox.addItem(PlatformUtilKt.subplatformOfType(jvm, JdkPlatform.class).getTargetVersion().getDescription());
+            jvmVersionComboBox.addItem(PlatformUtilKt.subplatformsOfType(jvm, JdkPlatform.class).get(0).getTargetVersion().getDescription());
         }
     }
 
@@ -441,7 +439,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     @Override
     public boolean isModified() {
         return isModified(reportWarningsCheckBox, !commonCompilerArguments.getSuppressWarnings()) ||
-               isModified(enableNewInferenceInIDECheckBox, NewInferenceForIDEAnalysisComponent.isEnabled(project)) ||
                !getSelectedLanguageVersionView().equals(KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments)) ||
                !getSelectedAPIVersionView().equals(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments)) ||
                !getSelectedCoroutineState().equals(commonCompilerArguments.getCoroutinesState()) ||
@@ -523,8 +520,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
                     !getSelectedLanguageVersionView().equals(KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments)) ||
                     !getSelectedAPIVersionView().equals(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments)) ||
                     !getSelectedCoroutineState().equals(commonCompilerArguments.getCoroutinesState()) ||
-                    !additionalArgsOptionsField.getText().equals(compilerSettings.getAdditionalArguments()) ||
-                    enableNewInferenceInIDECheckBox.isSelected() != NewInferenceForIDEAnalysisComponent.isEnabled(project);
+                    !additionalArgsOptionsField.getText().equals(compilerSettings.getAdditionalArguments());
 
             if (shouldInvalidateCaches) {
                 ApplicationUtilsKt.runWriteAction(
@@ -540,7 +536,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         }
 
         commonCompilerArguments.setSuppressWarnings(!reportWarningsCheckBox.isSelected());
-        NewInferenceForIDEAnalysisComponent.setEnabled(project, enableNewInferenceInIDECheckBox.isSelected());
         KotlinFacetSettingsKt.setLanguageVersionView(commonCompilerArguments, getSelectedLanguageVersionView());
         KotlinFacetSettingsKt.setApiVersionView(commonCompilerArguments, getSelectedAPIVersionView());
 
@@ -594,10 +589,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     @Override
     public void reset() {
         reportWarningsCheckBox.setSelected(!commonCompilerArguments.getSuppressWarnings());
-        enableNewInferenceInIDECheckBox.setSelected(NewInferenceForIDEAnalysisComponent.isEnabled(project));
-        languageVersionComboBox.setSelectedItem(KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments));
-        onLanguageLevelChanged(getSelectedLanguageVersionView());
-        apiVersionComboBox.setSelectedItem(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments));
+        setSelectedItem(languageVersionComboBox, KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments));
+        onLanguageLevelChanged((VersionView) languageVersionComboBox.getSelectedItem()); // getSelectedLanguageVersionView() replaces null
+        setSelectedItem(apiVersionComboBox, KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments));
         coroutineSupportComboBox.setSelectedItem(CoroutineSupport.byCompilerArguments(commonCompilerArguments));
         additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
         scriptTemplatesField.setText(compilerSettings.getScriptTemplates());
@@ -623,6 +617,15 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         jvmVersionComboBox.setSelectedItem(getJvmVersionOrDefault(k2jvmCompilerArguments.getJvmTarget()));
     }
 
+    private static void setSelectedItem(JComboBox<VersionView> comboBox, VersionView versionView) {
+        // Imported projects might have outdated language/api versions - we display them as well (see createVersionValidator() for details)
+        int index = ((DefaultComboBoxModel<VersionView>) comboBox.getModel()).getIndexOf(versionView);
+        if (index == -1)
+            comboBox.addItem(versionView);
+
+        comboBox.setSelectedItem(versionView);
+    }
+
     @Override
     public void disposeUIResources() {
     }
@@ -645,10 +648,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
 
     public ThreeStateCheckBox getReportWarningsCheckBox() {
         return reportWarningsCheckBox;
-    }
-
-    public ThreeStateCheckBox getEnableNewInferenceInIDECheckBox() {
-        return enableNewInferenceInIDECheckBox;
     }
 
     public RawCommandLineEditor getAdditionalArgsOptionsField() {
@@ -741,6 +740,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     }
 
     private void createUIComponents() {
+        // Explicit use of DefaultComboBoxModel guarantees that setSelectedItem() can make safe cast.
+        languageVersionComboBox = new ComboBox<>(new DefaultComboBoxModel<>());
+        apiVersionComboBox = new ComboBox<>(new DefaultComboBoxModel<>());
+
+        createVersionValidator(languageVersionComboBox, "configuration.warning.text.language.version.unsupported");
+        createVersionValidator(apiVersionComboBox, "configuration.warning.text.api.version.unsupported");
+
         // Workaround: ThreeStateCheckBox doesn't send suitable notification on state change
         // TODO: replace with PropertyChangerListener after fix is available in IDEA
         copyRuntimeFilesCheckBox = new ThreeStateCheckBox() {
@@ -750,5 +756,20 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
                 updateOutputDirEnabled();
             }
         };
+    }
+
+    private static void createVersionValidator(JComboBox<VersionView> component, String messageKey) {
+        new ComponentValidator(Disposer.newDisposable())
+                .withValidator(() -> {
+                    VersionView selectedItem = (VersionView) component.getSelectedItem();
+                    if (selectedItem == null) return null;
+
+                    LanguageVersion version = selectedItem.getVersion();
+                    if (version.isUnsupported())
+                        return new ValidationInfo(KotlinBundle.message(messageKey, version.getVersionString()), component);
+
+                    return null;
+                }).installOn(component);
+        component.addActionListener(e -> ComponentValidator.getInstance(component).ifPresent(ComponentValidator::revalidate));
     }
 }

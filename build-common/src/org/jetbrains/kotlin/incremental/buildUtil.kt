@@ -33,36 +33,37 @@ import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
 import java.util.*
 import kotlin.collections.HashSet
+import kotlin.collections.LinkedHashSet
 
 const val DELETE_MODULE_FILE_PROPERTY = "kotlin.delete.module.file.after.build"
 
 fun makeModuleFile(
-        name: String,
-        isTest: Boolean,
-        outputDir: File,
-        sourcesToCompile: Iterable<File>,
-        commonSources: Iterable<File>,
-        javaSourceRoots: Iterable<JvmSourceRoot>,
-        classpath: Iterable<File>,
-        friendDirs: Iterable<File>
+    name: String,
+    isTest: Boolean,
+    outputDir: File,
+    sourcesToCompile: Iterable<File>,
+    commonSources: Iterable<File>,
+    javaSourceRoots: Iterable<JvmSourceRoot>,
+    classpath: Iterable<File>,
+    friendDirs: Iterable<File>
 ): File {
     val builder = KotlinModuleXmlBuilder()
     builder.addModule(
-            name,
-            outputDir.absolutePath,
-            // important to transform file to absolute paths,
-            // otherwise compiler will use module file's parent as base path (a temporary file; see below)
-            // (see org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.getAbsolutePaths)
-            sourcesToCompile.map { it.absoluteFile },
-            javaSourceRoots,
-            classpath,
-            commonSources.map { it.absoluteFile },
-            null,
-            "java-production",
-            isTest,
-            // this excludes the output directories from the class path, to be removed for true incremental compilation
-            setOf(outputDir),
-            friendDirs
+        name,
+        outputDir.absolutePath,
+        // important to transform file to absolute paths,
+        // otherwise compiler will use module file's parent as base path (a temporary file; see below)
+        // (see org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.getAbsolutePaths)
+        sourcesToCompile.map { it.absoluteFile },
+        javaSourceRoots,
+        classpath,
+        commonSources.map { it.absoluteFile },
+        null,
+        "java-production",
+        isTest,
+        // this excludes the output directories from the class path, to be removed for true incremental compilation
+        setOf(outputDir),
+        friendDirs
     )
 
     val scriptFile = File.createTempFile("kjps", sanitizeJavaIdentifier(name) + ".script.xml")
@@ -83,9 +84,9 @@ private fun sanitizeJavaIdentifier(string: String) =
     }
 
 fun makeCompileServices(
-        incrementalCaches: Map<TargetId, IncrementalCache>,
-        lookupTracker: LookupTracker,
-        compilationCanceledStatus: CompilationCanceledStatus?
+    incrementalCaches: Map<TargetId, IncrementalCache>,
+    lookupTracker: LookupTracker,
+    compilationCanceledStatus: CompilationCanceledStatus?
 ): Services =
     with(Services.Builder()) {
         register(LookupTracker::class.java, lookupTracker)
@@ -105,12 +106,14 @@ fun updateIncrementalCache(
     for (generatedFile in generatedFiles) {
         when {
             generatedFile is GeneratedJvmClass -> cache.saveFileToCache(generatedFile, changesCollector)
-            generatedFile.outputFile.isModuleMappingFile() -> cache.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
+            generatedFile.outputFile.isModuleMappingFile() -> cache.saveModuleMappingToCache(
+                generatedFile.sourceFiles,
+                generatedFile.outputFile
+            )
         }
     }
 
-    javaChangesTracker?.javaClassesUpdates?.forEach {
-        (source, serializedJavaClass) ->
+    javaChangesTracker?.javaClassesUpdates?.forEach { (source, serializedJavaClass) ->
         cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
     }
 
@@ -118,9 +121,9 @@ fun updateIncrementalCache(
 }
 
 fun LookupStorage.update(
-        lookupTracker: LookupTracker,
-        filesToCompile: Iterable<File>,
-        removedFiles: Iterable<File>
+    lookupTracker: LookupTracker,
+    filesToCompile: Iterable<File>,
+    removedFiles: Iterable<File>
 ) {
     if (lookupTracker !is LookupTrackerImpl) throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker::class.java}")
 
@@ -130,8 +133,8 @@ fun LookupStorage.update(
 }
 
 data class DirtyData(
-        val dirtyLookupSymbols: Collection<LookupSymbol> = emptyList(),
-        val dirtyClassesFqNames: Collection<FqName> = emptyList()
+    val dirtyLookupSymbols: Collection<LookupSymbol> = emptyList(),
+    val dirtyClassesFqNames: Collection<FqName> = emptyList()
 )
 
 fun ChangesCollector.getDirtyData(
@@ -213,19 +216,21 @@ fun mapClassesFqNamesToFiles(
 }
 
 fun withSubtypes(
-        typeFqName: FqName,
-        caches: Iterable<IncrementalCacheCommon>
+    typeFqName: FqName,
+    caches: Iterable<IncrementalCacheCommon>
 ): Set<FqName> {
-    val types = LinkedList(listOf(typeFqName))
+    val types = LinkedHashSet(listOf(typeFqName))
     val subtypes = hashSetOf<FqName>()
 
     while (types.isNotEmpty()) {
-        val unprocessedType = types.pollFirst()
+        val iterator = types.iterator()
+        val unprocessedType = iterator.next()
+        iterator.remove()
 
         caches.asSequence()
-              .flatMap { it.getSubtypesOf(unprocessedType) }
-              .filter { it !in subtypes }
-              .forEach { types.addLast(it) }
+            .flatMap { it.getSubtypesOf(unprocessedType) }
+            .filter { it !in subtypes }
+            .forEach { types.add(it) }
 
         subtypes.add(unprocessedType)
     }

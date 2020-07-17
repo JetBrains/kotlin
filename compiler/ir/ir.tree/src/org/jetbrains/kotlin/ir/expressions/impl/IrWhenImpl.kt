@@ -79,6 +79,12 @@ open class IrBranchImpl(
     constructor(condition: IrExpression, result: IrExpression) :
             this(condition.startOffset, condition.endOffset, condition, result)
 
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitBranch(this, data)
+
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBranch =
+        transformer.visitBranch(this, data)
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         condition.accept(visitor, data)
         result.accept(visitor, data)
@@ -88,7 +94,6 @@ open class IrBranchImpl(
         condition = condition.transform(transformer, data)
         result = result.transform(transformer, data)
     }
-
 }
 
 class IrElseBranchImpl(
@@ -101,4 +106,10 @@ class IrElseBranchImpl(
     IrElseBranch {
 
     constructor(condition: IrExpression, result: IrExpression) : this(condition.startOffset, condition.endOffset, condition, result)
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitElseBranch(this, data)
+
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElseBranch =
+        transformer.visitElseBranch(this, data)
 }

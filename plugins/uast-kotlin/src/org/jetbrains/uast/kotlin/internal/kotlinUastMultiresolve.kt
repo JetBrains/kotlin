@@ -11,29 +11,25 @@ import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.infos.CandidateInfo
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UMultiResolvable
 import org.jetbrains.uast.UResolvable
 import org.jetbrains.uast.kotlin.KotlinUastResolveProviderService
-import org.jetbrains.uast.kotlin.getMaybeLightElement
-import org.jetbrains.uast.kotlin.toSource
+import org.jetbrains.uast.kotlin.resolveToDeclaration
 
 
-internal fun getReferenceVariants(ktElement: KtElement, nameHint: String): Sequence<DeclarationDescriptor> =
-    ServiceManager.getService(ktElement.project, KotlinUastResolveProviderService::class.java).getReferenceVariants(ktElement, nameHint)
+internal fun getReferenceVariants(ktElement: KtExpression, nameHint: String): Sequence<PsiElement> =
+    ServiceManager.getService(ktElement.project, KotlinUastResolveProviderService::class.java)
+        .getReferenceVariants(ktElement, nameHint)
+        .mapNotNull { resolveToDeclaration(ktElement, it) }
 
-internal fun UElement.getResolveResultVariants(ktExpression: KtExpression?): Iterable<ResolveResult> {
+internal fun getResolveResultVariants(ktExpression: KtExpression?): Iterable<ResolveResult> {
     ktExpression ?: return emptyList()
 
     val referenceVariants = getReferenceVariants(ktExpression, ktExpression.name ?: ktExpression.text)
 
-    fun asCandidateInfo(descriptor: DeclarationDescriptor): CandidateInfo? =
-        descriptor.toSource()?.getMaybeLightElement()?.let { CandidateInfo(it, PsiSubstitutor.EMPTY) }
-
-    return referenceVariants.mapNotNull(::asCandidateInfo).asIterable()
+    return referenceVariants.mapNotNull {CandidateInfo(it, PsiSubstitutor.EMPTY) }.asIterable()
 }
 
 

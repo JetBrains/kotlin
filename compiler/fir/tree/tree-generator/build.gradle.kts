@@ -27,7 +27,7 @@ dependencies {
     Platform[192].orHigher {
         runtimeOnly(intellijCoreDep()) { includeJars("jdom") }
     }
-    implementation(kotlin("reflect"))
+    implementation(project(":kotlin-reflect"))
 }
 
 val writeCopyright by task<WriteCopyrightToFile> {

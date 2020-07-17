@@ -1,0 +1,12 @@
+// WITH_RUNTIME
+package org.slf4j
+
+class Foo {
+    private val logger = LoggerFactory.getLogger(Foo::class.java)
+}
+
+class Bar
+
+object LoggerFactory {
+    fun getLogger(clazz: Class<*>) {}
+}

@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
@@ -21,10 +22,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.hasNoSideEffects
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -116,6 +114,10 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
         }
 
         override fun applyFix(ifExpression: KtIfExpression) {
+            val parent = ifExpression.parent
+            if (parent.node.elementType == KtNodeTypes.ELSE) {
+                (parent.parent as? KtIfExpression)?.elseKeyword?.delete()
+            }
             ifExpression.delete()
         }
     }
@@ -128,6 +130,7 @@ private fun KtExpression.constantBooleanValue(context: BindingContext): Boolean?
     if (enumEntriesComparison != null) {
         return enumEntriesComparison
     }
+    if (anyDescendantOfType<KtNameReferenceExpression> { true }) return null
     val type = getType(context) ?: return null
     val constantValue = ConstantExpressionEvaluator.getConstant(this, context)?.toConstantValue(type)
     return constantValue?.value as? Boolean

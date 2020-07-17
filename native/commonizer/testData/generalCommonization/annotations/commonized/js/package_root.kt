@@ -16,14 +16,6 @@ annotation class JsAnnotationForAnnotationClassesOnly(val text: String)
 @CommonAnnotationForAnnotationClassesOnly("annotation-class")
 annotation class JsAnnotation(val text: String)
 
-//@Target(AnnotationTarget.CLASS)
-//actual annotation class CommonOuterAnnotation(actual val inner: CommonInnerAnnotation)
-//actual annotation class CommonInnerAnnotation(actual val text: String)
-
-//@Target(AnnotationTarget.CLASS)
-//annotation class JsOuterAnnotation(val inner: JsInnerAnnotation)
-//annotation class JsInnerAnnotation(val text: String)
-
 @JsAnnotation("property")
 @CommonAnnotation("property")
 actual var propertyWithoutBackingField
@@ -47,16 +39,16 @@ actual fun function1(@JsAnnotation("parameter") @CommonAnnotation("parameter") t
 
 @JsAnnotation("function")
 @CommonAnnotation("function")
-actual fun <@JsAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : @JsAnnotation("type1") @CommonAnnotation("type1") Number> @receiver:JsAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): @JsAnnotation("type2") @CommonAnnotation("type2") Q = this
+actual fun <@JsAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : Number> @receiver:JsAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): Q = this
 
 @JsAnnotation("class")
 @CommonAnnotation("class")
 actual class AnnotatedClass @JsAnnotation("constructor") @CommonAnnotation("constructor") actual constructor(actual val value: String)
 
-@JsAnnotation("type-alias")
-@CommonAnnotation("type-alias")
-actual typealias AnnotatedTypeAlias = AnnotatedClass
+@JsAnnotation("js-only-class")
+@CommonAnnotation("js-only-class")
+class JsOnlyAnnotatedClass @JsAnnotation("js-only-constructor") @CommonAnnotation("js-only-constructor") constructor(val value: String)
 
-//@JsOuterAnnotation(inner = JsInnerAnnotation("nested-annotations"))
-//@CommonOuterAnnotation(inner = CommonInnerAnnotation("nested-annotations"))
-//actual object ObjectWithNestedAnnotations
+@JsAnnotation("non-lifted-up-type-alias")
+@CommonAnnotation("non-lifted-up-type-alias")
+actual typealias AnnotatedNonLiftedUpTypeAlias = JsOnlyAnnotatedClass

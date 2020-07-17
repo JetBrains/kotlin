@@ -11,15 +11,14 @@ import java.io.File
 import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.dependencies
+import kotlin.script.experimental.api.with
 import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
 import kotlin.script.experimental.jvm.JvmScriptCompilationConfigurationBuilder
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
-import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
-import kotlin.script.experimental.jvmhost.createJvmEvaluationConfigurationFromTemplate
+import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
 
 /**
@@ -31,13 +30,12 @@ const val KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY = "kotlin.jsr223.exper
 
 class KotlinJsr223DefaultScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
 
-    private val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<KotlinJsr223DefaultScript>()
-    private val evaluationConfiguration = createJvmEvaluationConfigurationFromTemplate<KotlinJsr223DefaultScript>()
+    private val scriptDefinition = createJvmScriptDefinitionFromTemplate<KotlinJsr223DefaultScript>()
     private var lastClassLoader: ClassLoader? = null
     private var lastClassPath: List<File>? = null
 
     @Synchronized
-    protected fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext() {
+    private fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext() {
         val currentClassLoader = Thread.currentThread().contextClassLoader
         val classPath = if (lastClassLoader == null || lastClassLoader != currentClassLoader) {
             scriptCompilationClasspathFromContext(
@@ -55,7 +53,7 @@ class KotlinJsr223DefaultScriptEngineFactory : KotlinJsr223JvmScriptEngineFactor
     override fun getScriptEngine(): ScriptEngine =
         KotlinJsr223ScriptEngineImpl(
             this,
-            ScriptCompilationConfiguration(compilationConfiguration) {
+            scriptDefinition.compilationConfiguration.with {
                 jvm {
                     if (System.getProperty(KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY) == "true") {
                         dependencies(JvmDependencyFromClassLoader { Thread.currentThread().contextClassLoader })
@@ -64,7 +62,7 @@ class KotlinJsr223DefaultScriptEngineFactory : KotlinJsr223JvmScriptEngineFactor
                     }
                 }
             },
-            evaluationConfiguration
+            scriptDefinition.evaluationConfiguration
         ) { ScriptArgsWithTypes(arrayOf(it.getBindings(ScriptContext.ENGINE_SCOPE).orEmpty()), arrayOf(Bindings::class)) }
 }
 

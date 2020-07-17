@@ -2,7 +2,7 @@
  * KOTLIN PSI SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, constant-literals, integer-literals, binary-integer-literals -> paragraph 1 -> sentence 2
+ * MAIN LINK: expressions, constant-literals, integer-literals, binary-integer-literals -> paragraph 1 -> sentence 2
  * NUMBER: 3
  * DESCRIPTION: Binary integer literals with underscore symbol after the last digit.
  */

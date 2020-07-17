@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
+import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
+
 class Parameters(
-    val statsCollector: StatsCollector? = null
+    val statsCollector: StatsCollector? = null,
+    val progressLogger: ((String) -> Unit)? = null
 ) {
     // use linked hash map to preserve order
     private val _targetProviders = LinkedHashMap<InputTarget, TargetProvider>()

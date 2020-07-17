@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -34,7 +35,9 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class Scope(val scopeOwnerSymbol: IrSymbol) {
+    @ObsoleteDescriptorBasedAPI
     val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
 
     fun getLocalDeclarationParent(): IrDeclarationParent {
@@ -53,6 +56,11 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     private var lastTemporaryIndex: Int = 0
     private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
 
+    fun inventNameForTemporary(prefix: String = "tmp", nameHint: String? = null): String {
+        val index = nextTemporaryIndex()
+        return if (nameHint != null) "$prefix${index}_$nameHint" else "$prefix$index"
+    }
+
     private fun createDescriptorForTemporaryVariable(
         type: KotlinType,
         nameHint: String? = null,
@@ -60,10 +68,8 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
     ): IrTemporaryVariableDescriptor =
         IrTemporaryVariableDescriptorImpl(scopeOwner, Name.identifier(getNameForTemporary(nameHint)), type, isMutable)
 
-    private fun getNameForTemporary(nameHint: String?): String {
-        val index = nextTemporaryIndex()
-        return if (nameHint != null) "tmp${index}_$nameHint" else "tmp$index"
-    }
+    private fun getNameForTemporary(nameHint: String?): String =
+        inventNameForTemporary("tmp", nameHint)
 
     fun createTemporaryVariableDeclaration(
         irType: IrType,
@@ -75,13 +81,10 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         endOffset: Int = UNDEFINED_OFFSET
     ): IrVariable {
         val originalKotlinType = type ?: irType.toKotlinType()
+        val descriptor = createDescriptorForTemporaryVariable(originalKotlinType, nameHint, isMutable)
         return IrVariableImpl(
-            startOffset, endOffset, origin,
-            createDescriptorForTemporaryVariable(
-                originalKotlinType,
-                nameHint, isMutable
-            ),
-            irType
+            startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), descriptor.name,
+            irType, isMutable, isConst = false, isLateinit = false
         ).apply {
             parent = getLocalDeclarationParent()
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,9 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -16,23 +19,24 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
-import org.jetbrains.kotlin.fir.references.builder.*
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
+import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
-import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -136,40 +140,12 @@ fun IElementType.toFirOperation(): FirOperation =
     }
 
 fun FirExpression.generateNotNullOrOther(
-    session: FirSession, other: FirExpression, caseId: String, baseSource: FirSourceElement?,
-): FirWhenExpression {
-    val subjectName = Name.special("<$caseId>")
-    val subjectVariable = generateTemporaryVariable(session, baseSource, subjectName, this)
-    val subject = FirWhenSubject()
-    val subjectExpression = buildWhenSubjectExpression {
+    other: FirExpression, baseSource: FirSourceElement?,
+): FirElvisExpression {
+    return buildElvisExpression {
         source = baseSource
-        whenSubject = subject
-    }
-
-    return buildWhenExpression {
-        source = baseSource
-        this.subject = this@generateNotNullOrOther
-        this.subjectVariable = subjectVariable
-        branches += buildWhenBranch {
-            source = baseSource
-            condition = buildOperatorCall {
-                source = baseSource
-                operation = FirOperation.EQ
-                argumentList = buildBinaryArgumentList(
-                    subjectExpression, buildConstExpression(baseSource, FirConstKind.Null, null)
-                )
-            }
-            result = buildSingleExpressionBlock(other)
-        }
-        branches += buildWhenBranch {
-            source = other.source
-            condition = buildElseIfTrueCondition {
-                source = baseSource
-            }
-            result = buildSingleExpressionBlock(generateResolvedAccessExpression(baseSource, subjectVariable))
-        }
-    }.also {
-        subject.bind(it)
+        lhs = this@generateNotNullOrOther
+        rhs = other
     }
 }
 
@@ -194,9 +170,9 @@ fun FirExpression.generateContainsOperation(
     if (!inverted) return containsCall
 
     return buildFunctionCall {
-        source = baseSource
+        source = baseSource?.withKind(FirFakeSourceElementKind.DesugaredInvertedContains)
         calleeReference = buildSimpleNamedReference {
-            source = operationReferenceSource
+            source = operationReferenceSource?.withKind(FirFakeSourceElementKind.DesugaredInvertedContains)
             name = OperatorNameConventions.NOT
         }
         explicitReceiver = containsCall
@@ -213,7 +189,12 @@ fun FirExpression.generateComparisonExpression(
         "$operatorToken is not in ${OperatorConventions.COMPARISON_OPERATIONS}"
     }
 
-    val compareToCall = createConventionCall(operationReferenceSource, baseSource, argument, OperatorNameConventions.COMPARE_TO)
+    val compareToCall = createConventionCall(
+        operationReferenceSource,
+        baseSource?.withKind(FirFakeSourceElementKind.GeneratedCompararisonExpression),
+        argument,
+        OperatorNameConventions.COMPARE_TO
+    )
 
     val firOperation = when (operatorToken) {
         KtTokens.LT -> FirOperation.LT
@@ -274,6 +255,7 @@ fun generateTemporaryVariable(
     buildProperty {
         this.source = source
         this.session = session
+        origin = FirDeclarationOrigin.Source
         returnTypeRef = typeRef ?: buildImplicitTypeRef {
             this.source = source
         }
@@ -303,7 +285,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     }
     val ownerSymbol = when (ownerClassBuilder) {
         is FirAnonymousObjectBuilder -> ownerClassBuilder.symbol
-        is AbstractFirRegularClassBuilder -> ownerClassBuilder.symbol
+        is FirRegularClassBuilder -> ownerClassBuilder.symbol
         else -> null
     }
     val isMember = ownerSymbol != null
@@ -316,7 +298,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     boundSymbol = ownerSymbol
                 }
                 typeRef = buildResolvedTypeRef {
-                    val typeParameterNumber = (ownerClassBuilder as? AbstractFirRegularClassBuilder)?.typeParameters?.size ?: 0
+                    val typeParameterNumber = (ownerClassBuilder as? FirRegularClassBuilder)?.typeParameters?.size ?: 0
                     type = ownerSymbol.constructStarProjectedType(typeParameterNumber)
                 }
             }
@@ -380,6 +362,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         val returnTarget = FirFunctionTarget(null, isLambda = false)
         getter = buildPropertyAccessor {
             this.session = session
+            origin = FirDeclarationOrigin.Source
             returnTypeRef = buildImplicitTypeRef()
             isGetter = true
             status = FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
@@ -406,11 +389,13 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     if (isVar && (setter == null || setter is FirDefaultPropertyAccessor)) {
         setter = buildPropertyAccessor {
             this.session = session
+            origin = FirDeclarationOrigin.Source
             returnTypeRef = session.builtinTypes.unitType
             isGetter = false
             status = FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
             val parameter = buildValueParameter {
                 this.session = session
+                origin = FirDeclarationOrigin.Source
                 returnTypeRef = buildImplicitTypeRef()
                 name = DELEGATED_SETTER_PARAM
                 symbol = FirVariableSymbol(this@generateAccessorsByDelegate.name)
@@ -442,19 +427,62 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     }
 }
 
-fun FirTypeRef.convertToArrayType(): FirUserTypeRef = buildUserTypeRef {
-    source = this@convertToArrayType.source
-    isMarkedNullable = false
-    qualifier += FirQualifierPartImpl(StandardClassIds.Array.shortClassName).apply {
-        typeArguments += buildTypeProjectionWithVariance {
-            source = this@convertToArrayType.source
-            typeRef = this@convertToArrayType
-            variance = Variance.OUT_VARIANCE
-        }
-    }
-}
-
 private val GET_VALUE = Name.identifier("getValue")
 private val SET_VALUE = Name.identifier("setValue")
 private val PROVIDE_DELEGATE = Name.identifier("provideDelegate")
 private val DELEGATED_SETTER_PARAM = Name.special("<set-?>")
+
+fun FirBlock?.extractContractDescriptionIfPossible(): Pair<FirBlock?, FirContractDescription?> {
+    if (this == null) return null to null
+    if (!isContractPresentFirCheck()) return this to null
+    val contractCall = replaceFirstStatement(FirStubStatement) as FirFunctionCall
+    return this to buildRawContractDescription {
+        source = contractCall.source
+        this.contractCall = contractCall
+    }
+}
+
+fun FirBlock.isContractPresentFirCheck(): Boolean {
+    val firstStatement = statements.firstOrNull() ?: return false
+    val contractCall = firstStatement as? FirFunctionCall ?: return false
+    if (contractCall.calleeReference.name.asString() != "contract") return false
+    val receiver = contractCall.explicitReceiver as? FirQualifiedAccessExpression ?: return true
+    if (!contractCall.checkReceiver("contracts")) return false
+    if (!receiver.checkReceiver("kotlin")) return false
+    val receiverOfReceiver = receiver.explicitReceiver as? FirQualifiedAccessExpression ?: return false
+    if (receiverOfReceiver.explicitReceiver != null) return false
+    return true
+}
+
+private fun FirExpression.checkReceiver(name: String?): Boolean {
+    if (this !is FirQualifiedAccessExpression) return false
+    val receiver = explicitReceiver as? FirQualifiedAccessExpression ?: return false
+    val receiverName = (receiver.calleeReference as? FirNamedReference)?.name?.asString() ?: return false
+    return receiverName == name
+}
+
+
+fun FirModifiableQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExpression {
+    // TODO: Refactor tree to make FirModifiableQualifiedAccess inherit FirQualifiedAccess
+    require(this is FirQualifiedAccess) {
+        "Safe-call instances are expected to be FirQualifiedAccess, but ${this::class} was found"
+    }
+
+    val checkedSafeCallSubject = buildCheckedSafeCallSubject {
+        @OptIn(FirContractViolation::class)
+        this.originalReceiverRef = FirExpressionRef<FirExpression>().apply {
+            bind(receiver)
+        }
+    }
+
+    explicitReceiver = checkedSafeCallSubject
+    return buildSafeCallExpression {
+        this.receiver = receiver
+        @OptIn(FirContractViolation::class)
+        this.checkedSubjectRef = FirExpressionRef<FirCheckedSafeCallSubject>().apply {
+            bind(checkedSafeCallSubject)
+        }
+        this.regularQualifiedAccess = this@wrapWithSafeCall
+        this.source = this@wrapWithSafeCall.source?.withKind(FirFakeSourceElementKind.DesugaredSafeCallExpression)
+    }
+}

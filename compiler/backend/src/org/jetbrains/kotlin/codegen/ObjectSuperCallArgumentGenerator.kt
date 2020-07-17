@@ -53,7 +53,8 @@ internal class ObjectSuperCallArgumentGenerator(
             valueArgumentsByIndex: List<ResolvedValueArgument>,
             actualArgs: List<ResolvedValueArgument>,
             calleeDescriptor: CallableDescriptor?
-    ): DefaultCallArgs = super.generate(valueArgumentsByIndex, valueArgumentsByIndex, calleeDescriptor)
+    ): DefaultCallArgs =
+        super.generate(valueArgumentsByIndex, valueArgumentsByIndex, calleeDescriptor)
 
     public override fun generateExpression(i: Int, argument: ExpressionValueArgument) {
         generateSuperCallArgument(i)

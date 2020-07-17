@@ -9,13 +9,15 @@ import com.intellij.ProjectTopics
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.*
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction.nonBlocking
-import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
+import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.util.PathUtilRt
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -23,13 +25,30 @@ import org.jetbrains.concurrency.CancellablePromise
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.isGradleLibraryName
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.parseIDELibraryName
+import org.jetbrains.kotlin.idea.klib.KlibCompatibilityInfo.IncompatibleMetadata
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.idea.klib.KlibCompatibilityInfo.IncompatibleMetadata
 
+// FIX ME WHEN BUNCH 192 REMOVED
 /** TODO: merge [KotlinNativeABICompatibilityChecker] in the future with [UnsupportedAbiVersionNotificationPanelProvider], KT-34525 */
-class KotlinNativeABICompatibilityChecker(private val project: Project) : ProjectComponent, Disposable {
+class KotlinNativeABICompatibilityChecker : StartupActivity {
+    override fun runActivity(project: Project) {
+        val service = KotlinNativeABICompatibilityCheckerService.getInstance(project)
+        project.messageBus.connect().subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
+            override fun rootsChanged(event: ModuleRootEvent) {
+                // run when project roots are changes, e.g. on project import
+                service.validateKotlinNativeLibraries()
+            }
+        })
+
+        service.validateKotlinNativeLibraries()
+    }
+}
+
+class KotlinNativeABICompatibilityCheckerService(private val project: Project) {
 
     private sealed class LibraryGroup(private val ordinal: Int) : Comparable<LibraryGroup> {
 
@@ -44,49 +63,39 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
         object User : LibraryGroup(2)
     }
 
-    private val cachedIncompatibleLibraries = HashSet<String>()
+    private val cachedIncompatibleLibraries = mutableSetOf<String>()
 
-    @Volatile
-    private var backgroundJob: CancellablePromise<*>? = null
+    internal fun validateKotlinNativeLibraries() {
+        if (isUnitTestMode() || project.isDisposed) return
 
-    init {
-        project.messageBus.connect().subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent) {
-                // run when project roots are changes, e.g. on project import
-                validateKotlinNativeLibraries()
-            }
-        })
-    }
-
-    override fun projectOpened() {
-        // run when project is opened
-        validateKotlinNativeLibraries()
-    }
-
-    private fun validateKotlinNativeLibraries() {
-        if (ApplicationManager.getApplication().isUnitTestMode || project.isDisposed)
-            return
-
-        backgroundJob = nonBlocking<List<Notification>> {
-            val librariesToNotify = getLibrariesToNotifyAbout()
-            prepareNotifications(librariesToNotify)
+        val backgroundJob: Ref<CancellablePromise<*>> = Ref()
+        val disposable = Disposable {
+            backgroundJob.get()?.let(CancellablePromise<*>::cancel)
         }
-            .finishOnUiThread(ModalityState.defaultModalityState()) { notifications ->
-                notifications.forEach {
-                    it.notify(project)
+        Disposer.register(project, disposable)
+
+        backgroundJob.set(
+            nonBlocking<List<Notification>> {
+                val librariesToNotify = getLibrariesToNotifyAbout()
+                prepareNotifications(librariesToNotify)
+            }
+                .finishOnUiThread(ModalityState.defaultModalityState()) { notifications ->
+                    notifications.forEach {
+                        it.notify(project)
+                    }
                 }
-            }
-            .expireWith(project) // cancel job when project is disposed
-            .coalesceBy(this@KotlinNativeABICompatibilityChecker) // cancel previous job when new one is submitted
-            .withDocumentsCommitted(project)
-            .submit(AppExecutorUtil.getAppExecutorService())
-            .onProcessed {
-                backgroundJob = null
-            }
+                .expireWith(project) // cancel job when project is disposed
+                .coalesceBy(this@KotlinNativeABICompatibilityCheckerService) // cancel previous job when new one is submitted
+                .withDocumentsCommitted(project)
+                .submit(AppExecutorUtil.getAppExecutorService())
+                .onProcessed {
+                    backgroundJob.set(null)
+                    Disposer.dispose(disposable)
+                })
     }
 
     private fun getLibrariesToNotifyAbout(): Map<String, NativeKlibLibraryInfo> {
-        val incompatibleLibraries = getModuleInfosFromIdeaModel(project).asSequence()
+        val incompatibleLibraries = getModuleInfosFromIdeaModel(project)
             .filterIsInstance<NativeKlibLibraryInfo>()
             .filter { !it.compatibilityInfo.isCompatible }
             .associateBy { it.libraryRoot }
@@ -200,13 +209,6 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
         return (ideLibraryName ?: PathUtilRt.getFileName(libraryInfo.libraryRoot)) to LibraryGroup.User
     }
 
-    override fun dispose() {
-        backgroundJob?.let(CancellablePromise<*>::cancel)
-        backgroundJob = null
-
-        cachedIncompatibleLibraries.clear()
-    }
-
     companion object {
         private val LIBRARY_NAME_COMPARATOR = Comparator<String> { libraryName1, libraryName2 ->
             when {
@@ -221,5 +223,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
 
         private val NOTIFICATION_TITLE get() = KotlinGradleNativeBundle.message("error.incompatible.libraries.title")
         private const val NOTIFICATION_GROUP_ID = "Incompatible Kotlin/Native libraries"
+
+        fun getInstance(project: Project): KotlinNativeABICompatibilityCheckerService = project.getServiceSafe()
     }
 }

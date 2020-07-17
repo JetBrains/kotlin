@@ -27,8 +27,10 @@ private fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean? =
 fun IrClassifierSymbol.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
     this is IrClassSymbol && classFqNameEquals(this, fqName)
 
-private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Boolean =
-    if (symbol.isBound) classFqNameEquals(symbol.owner, fqName) else classFqNameEquals(symbol.descriptor, fqName)
+private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Boolean {
+    assert(symbol.isBound)
+    return classFqNameEquals(symbol.owner, fqName)
+}
 
 private fun classFqNameEquals(declaration: IrClass, fqName: FqNameUnsafe): Boolean =
     declaration.name == fqName.shortName() && fqName == declaration.fqNameWhenAvailable?.toUnsafe()

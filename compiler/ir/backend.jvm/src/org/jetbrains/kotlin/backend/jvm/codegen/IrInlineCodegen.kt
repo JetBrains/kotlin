@@ -17,12 +17,11 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -43,12 +42,10 @@ class IrInlineCodegen(
     IrCallGenerator {
 
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
-        if (info.generateAssertField && (sourceCompiler as IrSourceCompilerForInline).isPrimaryCopy) {
-            codegen.classCodegen.generateAssertFieldIfNeeded()?.run {
-                // Generating <clinit> right now, so no longer can insert the initializer into it.
-                // Instead, ask ExpressionCodegen to generate the code for it directly.
-                accept(codegen, BlockInfo()).discard()
-            }
+        if (info.generateAssertField) {
+            // May be inlining code into `<clinit>`, in which case it's too late to modify the IR and
+            // `generateAssertFieldIfNeeded` will return a statement for which we need to emit bytecode.
+            codegen.classCodegen.generateAssertFieldIfNeeded()?.accept(codegen, BlockInfo())?.discard()
         }
     }
 
@@ -81,8 +78,7 @@ class IrInlineCodegen(
             super.genValueAndPut(irValueParameter, argumentExpression, parameterType, codegen, blockInfo)
         }
 
-        // after transformation inlinable lambda parameter with default value would have nullable type: check default value type first
-        val isInlineParameter = irValueParameter.isInlineParameter(irValueParameter.defaultValue?.expression?.type ?: irValueParameter.type)
+        val isInlineParameter = irValueParameter.isInlineParameter()
         if (isInlineParameter && isInlineIrExpression(argumentExpression)) {
             val irReference: IrFunctionReference =
                 (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
@@ -162,7 +158,8 @@ class IrInlineCodegen(
                 function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
                 false,
                 codegen.typeMapper.typeSystem,
-                false
+                registerLineNumberAfterwards = false,
+                isCallOfFunctionInCorrespondingDefaultDispatch = codegen.irFunction == codegen.context.mapping.defaultArgumentsDispatchFunction[function]
             )
         } finally {
             state.globalInlineContext.exitFromInlining()
@@ -250,7 +247,7 @@ class IrExpressionLambdaImpl(
 
     override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor = function.descriptor
 
-    override fun isCapturedSuspend(desc: CapturedParamDesc, inliningContext: InliningContext): Boolean =
+    override fun isCapturedSuspend(desc: CapturedParamDesc): Boolean =
         capturedParameters[desc]?.let { it.isInlineParameter() && it.type.isSuspendFunctionTypeOrSubtype() } == true
 }
 
@@ -267,12 +264,17 @@ class IrDefaultLambda(
             irValueParameter.type.classOrNull!!.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "invoke" }
         return (sourceCompiler as IrSourceCompilerForInline).codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(invoke).asmMethod
     }
+
+    override fun findInvokeMethodDescriptor(): FunctionDescriptor =
+        (irValueParameter.type.classifierOrFail.owner as IrClass).functions.single {
+            it.name == OperatorNameConventions.INVOKE
+        }.descriptor
 }
 
 fun isInlineIrExpression(argumentExpression: IrExpression) =
     when (argumentExpression) {
         is IrBlock -> argumentExpression.isInlineIrBlock()
-        is IrCallableReference -> true.also {
+        is IrCallableReference<*> -> true.also {
             assert((0 until argumentExpression.valueArgumentsCount).count { argumentExpression.getValueArgument(it) != null } == 0) {
                 "Expecting 0 value arguments for bounded callable reference: ${argumentExpression.dump()}"
             }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin
@@ -19,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
-import org.jetbrains.kotlin.gradle.dsl.NativeDistributionType
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -43,6 +31,7 @@ internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinComp
 
     if (task is Kotlin2JsCompile) {
         incrementalJs?.let { task.incremental = it }
+        incrementalJsKlib?.let { task.incrementalJsKlib = it }
     }
 }
 
@@ -76,6 +65,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val incrementalJs: Boolean?
         get() = booleanProperty("kotlin.incremental.js")
 
+    val incrementalJsKlib: Boolean?
+        get() = booleanProperty("kotlin.incremental.js.klib")
+
     val incrementalMultiplatform: Boolean?
         get() = booleanProperty("kotlin.incremental.multiplatform")
 
@@ -103,6 +95,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
 
+    val ignoreIncorrectNativeDependencies: Boolean?
+        get() = booleanProperty(KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES)
+
     /**
      * Enables parallel tasks execution within a project with Workers API.
      * Does not enable using actual worker proccesses
@@ -122,27 +117,17 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     /**
      * Allow a user to choose distribution type. The following distribution types are available:
-     *  - regular - The default distribution. Includes all platform libraries in 1.3 and generates them at the user side in 1.4.
-     *  - restricted - Doesn't include Apple platform libraries. Available for MacOS only and in 1.3 only.
-     *  - prebuilt - Includes all platform libraries. Available in 1.4 only. Used to workaround possible problems with library generation at the use side.
+     *  - light - Doesn't include platform libraries and generates them at the user side. For 1.3 corresponds to the restricted distribution.
+     *  - prebuilt - Includes all platform libraries.
      */
-    val nativeDistributionType: NativeDistributionType?
-        get() {
-            var result = property("kotlin.native.distribution.type")?.let {
-                NativeDistributionType.byCompilerArgument(it)
-            }
+    val nativeDistributionType: String?
+        get() = property("kotlin.native.distribution.type")
 
-            val deprecatedRestricted = booleanProperty("kotlin.native.restrictedDistribution")
-            if (result == null && deprecatedRestricted != null) {
-                SingleWarningPerBuild.show(
-                    project,
-                    "Project property 'kotlin.native.restrictedDistribution' is deprecated. Please use 'kotlin.native.distribution.type=restricted' instead"
-                )
-                result = if (deprecatedRestricted) NativeDistributionType.RESTRICTED else NativeDistributionType.REGULAR
-            }
-
-            return result
-        }
+    /**
+     * A property that was used to choose a restricted distribution in 1.3.
+     */
+    val nativeDeprecatedRestricted: Boolean?
+        get() = booleanProperty("kotlin.native.restrictedDistribution")
 
     /**
      * Allows a user to force a particular cinterop mode for platform libraries generation. Available modes: sourcecode, metadata.
@@ -188,6 +173,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.native.disableCompilerDaemon")
 
     /**
+     * Allows a user to specify additional arguments of a JVM executing KLIB commonizer.
+     */
+    val commonizerJvmArgs: String?
+        get() = property("kotlin.commonizer.jvmArgs")
+
+    /**
      * Dependencies caching strategy. The default is static.
      */
     val nativeCacheKind: NativeCacheKind
@@ -196,8 +187,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     /**
      * Generate kotlin/js external declarations from all .d.ts files found in npm modules
      */
-    val jsGenerateExternals: Boolean?
-        get() = booleanProperty("kotlin.js.experimental.generateKotlinExternals")
+    val jsGenerateExternals: Boolean
+        get() = booleanProperty("kotlin.js.generate.externals") ?: DEFAULT_GENERATE_EXTERNALS
 
     /**
      * Automaticaly discover external .d.ts declarations
@@ -209,7 +200,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Use Kotlin/JS backend compiler type
      */
     val jsCompiler: KotlinJsCompilerType
-        get() = property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgument(it) } ?: KotlinJsCompilerType.LEGACY
+        get() = property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgumentOrNull(it) } ?: KotlinJsCompilerType.LEGACY
+
+    val stdlibDefaultDependency: Boolean
+        get() = booleanProperty("kotlin.stdlib.default.dependency") ?: true
 
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
@@ -233,6 +227,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         internal const val KOTLIN_NATIVE_HOME = "kotlin.native.home"
 
         private const val CACHED_PROVIDER_EXT_NAME = "kotlin.properties.provider"
+
+        internal const val KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES = "kotlin.native.ignoreIncorrectDependencies"
 
         operator fun invoke(project: Project): PropertiesProvider =
             with(project.extensions.extraProperties) {

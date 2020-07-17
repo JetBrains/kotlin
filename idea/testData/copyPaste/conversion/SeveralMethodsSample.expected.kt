@@ -5,16 +5,17 @@ class A {
         var element = element
         element = JetPsiUtil.ascendIfPropertyAccessor(element)
         if (element is JetNamedFunction || element is JetProperty) {
-            val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(element.getContainingJetFile()).getBindingContext()
+            val bindingContext =
+                AnalyzerFacadeWithCache.analyzeFileWithCache(element.getContainingJetFile()).getBindingContext()
 
             val declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
             if (declarationDescriptor is CallableMemberDescriptor) {
                 val containingDescriptor = declarationDescriptor.getContainingDeclaration()
                 if (containingDescriptor is ClassDescriptor) {
                     return JetBundle.message(
-                            "override.declaration.x.in.y",
-                            DescriptorRenderer.COMPACT.render(declarationDescriptor),
-                            IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(containingDescriptor)
+                        "override.declaration.x.in.y",
+                        DescriptorRenderer.COMPACT.render(declarationDescriptor),
+                        IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(containingDescriptor)
                     )
                 }
             }

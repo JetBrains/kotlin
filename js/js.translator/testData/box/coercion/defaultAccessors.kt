@@ -1,10 +1,10 @@
 // EXPECTED_REACHABLE_NODES: 1288
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 interface I {
     val a: Char
 }
 
-@JsExport
 object X : I {
     override var a = '#'
 }

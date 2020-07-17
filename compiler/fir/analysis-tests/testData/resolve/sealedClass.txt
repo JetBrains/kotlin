@@ -35,7 +35,7 @@ FILE: sealedClass.kt
     }
     public final object Second : R|WithPrivateConstructor| {
         private constructor(): R|Second| {
-            super<R|WithPrivateConstructor|>(IntegerLiteral(0))
+            super<R|WithPrivateConstructor|>(Int(0))
         }
 
     }

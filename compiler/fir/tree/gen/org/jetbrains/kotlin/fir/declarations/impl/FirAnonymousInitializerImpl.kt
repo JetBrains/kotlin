@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -24,9 +26,11 @@ internal class FirAnonymousInitializerImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
+    override val origin: FirDeclarationOrigin,
     override var body: FirBlock?,
     override val symbol: FirAnonymousInitializerSymbol,
 ) : FirAnonymousInitializer() {
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
 
     init {
@@ -34,13 +38,13 @@ internal class FirAnonymousInitializerImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        body?.accept(visitor, data)
         controlFlowGraphReference.accept(visitor, data)
+        body?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousInitializerImpl {
-        body = body?.transformSingle(transformer, data)
         transformControlFlowGraphReference(transformer, data)
+        body = body?.transformSingle(transformer, data)
         return this
     }
 

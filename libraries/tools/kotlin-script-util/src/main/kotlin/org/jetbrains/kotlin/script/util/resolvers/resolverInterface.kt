@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.script.util.DependsOn
 import org.jetbrains.kotlin.script.util.Repository
 import java.io.File
 
+@Deprecated("Use new resolving classes from kotlin-scripting-dependencies")
 interface Resolver {
     fun tryResolve(dependsOn: DependsOn): Iterable<File>?
     fun tryAddRepo(annotation: Repository): Boolean

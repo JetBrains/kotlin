@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// TODO KT-36646 Don't box primitive values in equality comparison with objects in JVM_IR
-
 fun testInt(i: Int?) =
     when (i) {
         0 -> "zero"

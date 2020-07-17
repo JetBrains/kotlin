@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirField : FirVariable<FirField>(), FirCallableMemberDeclaration<FirField> {
+abstract class FirField : FirVariable<FirField>(), FirTypeParametersOwner, FirCallableMemberDeclaration<FirField> {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
+    abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
     abstract override val name: Name
@@ -42,6 +44,12 @@ abstract class FirField : FirVariable<FirField>(), FirCallableMemberDeclaration<
     abstract override val containerSource: DeserializedContainerSource?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitField(this, data)
+
+    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField
 

@@ -55,3 +55,39 @@ public fun <T> Sequence<T>.toSortedSet(comparator: Comparator<in T>): java.util.
     return toCollection(java.util.TreeSet<T>(comparator))
 }
 
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("sumOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.sumOf(selector: (T) -> java.math.BigDecimal): java.math.BigDecimal {
+    var sum: java.math.BigDecimal = 0.toBigDecimal()
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("sumOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.sumOf(selector: (T) -> java.math.BigInteger): java.math.BigInteger {
+    var sum: java.math.BigInteger = 0.toBigInteger()
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+

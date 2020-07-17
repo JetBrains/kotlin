@@ -5,6 +5,7 @@ class A {
     <caret>class C {
 
     }
+
     // class B
     class B {
     }

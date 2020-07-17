@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
+import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories
 import org.jetbrains.kotlin.descriptors.commonizer.utils.createKotlinNativeForwardDeclarationsModule
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.storage.StorageManager
+import java.io.File
 
 internal class NativeDistributionModulesProvider(
     private val storageManager: StorageManager,
@@ -31,7 +34,16 @@ internal class NativeDistributionModulesProvider(
         return stdlib.builtIns
     }
 
-    override fun loadModules(): Collection<ModuleDescriptor> {
+    override fun loadModuleInfos(): Map<String, ModuleInfo> {
+        return libraries.platformLibs.associate { library ->
+            val name = library.manifestData.uniqueName
+            val location = File(library.library.libraryFile.path)
+
+            name to ModuleInfo(name, location)
+        }
+    }
+
+    override fun loadModules(): Map<String, ModuleDescriptor> {
         val builtIns = loadBuiltIns()
         val stdlib = builtIns.builtInsModule
 
@@ -42,7 +54,8 @@ internal class NativeDistributionModulesProvider(
                 languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
                 storageManager = storageManager,
                 builtIns = builtIns,
-                packageAccessHandler = null
+                packageAccessHandler = null,
+                lookupTracker = LookupTracker.DO_NOTHING
             )
 
             name to module
@@ -54,15 +67,13 @@ internal class NativeDistributionModulesProvider(
         )
 
         platformModulesMap.forEach { (name, module) ->
-            val dependencies = libraries.index
-                .getValue(name)
-                .manifestData
+            val dependencies = libraries.getManifest(name)
                 .dependencies
                 .map { if (it == KONAN_STDLIB_NAME) stdlib else platformModulesMap.getValue(it) }
 
             module.setDependencies(listOf(module) + dependencies + forwardDeclarations)
         }
 
-        return platformModulesMap.values
+        return platformModulesMap
     }
 }

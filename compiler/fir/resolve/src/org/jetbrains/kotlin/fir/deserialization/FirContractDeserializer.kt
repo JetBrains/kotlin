@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.builder.buildContractDescription
+import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
+import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.isBoolean
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class FirContractDeserializer(private val c: FirDeserializationContext) {
     fun loadContract(proto: ProtoBuf.Contract, owner: FirContractDescriptionOwner): FirContractDescription? {
         val effects = proto.effectList.map { loadPossiblyConditionalEffect(it, owner) ?: return null }
-        return buildContractDescription {
+        return buildResolvedContractDescription {
             this.effects += effects
         }
     }
@@ -60,7 +61,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
                 val invocationKind = if (proto.hasKind())
                     proto.kind.toDescriptorInvocationKind() ?: return null
                 else
-                    InvocationKind.UNKNOWN
+                    EventOccurrencesRange.UNKNOWN
                 ConeCallsEffectDeclaration(callable, invocationKind)
             }
         }
@@ -125,26 +126,30 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
 
         val valueParameterIndex = proto.valueParameterReference - 1
 
+        val name: String
         val typeRef = if (valueParameterIndex < 0) {
+            name = "this"
             ownerFunction.receiverTypeRef
         } else {
-            ownerFunction.valueParameters.getOrNull(valueParameterIndex)?.returnTypeRef
+            val parameter = ownerFunction.valueParameters.getOrNull(valueParameterIndex) ?: return null
+            name = parameter.name.asString()
+            parameter.returnTypeRef
         } ?: return null
 
         return if (!typeRef.isBoolean)
-            ConeValueParameterReference(valueParameterIndex)
+            ConeValueParameterReference(valueParameterIndex, name)
         else
-            ConeBooleanValueParameterReference(valueParameterIndex)
+            ConeBooleanValueParameterReference(valueParameterIndex, name)
     }
 
-    private fun ProtoBuf.Effect.InvocationKind.toDescriptorInvocationKind(): InvocationKind? = when (this) {
-        ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE -> InvocationKind.AT_MOST_ONCE
-        ProtoBuf.Effect.InvocationKind.EXACTLY_ONCE -> InvocationKind.EXACTLY_ONCE
-        ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE -> InvocationKind.AT_LEAST_ONCE
+    private fun ProtoBuf.Effect.InvocationKind.toDescriptorInvocationKind(): EventOccurrencesRange? = when (this) {
+        ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE -> EventOccurrencesRange.AT_MOST_ONCE
+        ProtoBuf.Effect.InvocationKind.EXACTLY_ONCE -> EventOccurrencesRange.EXACTLY_ONCE
+        ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE -> EventOccurrencesRange.AT_LEAST_ONCE
     }
 
     private fun extractType(proto: ProtoBuf.Expression): ConeKotlinType? {
-        return c.typeDeserializer.type(proto.isInstanceType(c.typeTable) ?: return null)
+        return c.typeDeserializer.type(proto.isInstanceType(c.typeTable) ?: return null, ConeAttributes.Empty)
     }
 
     private fun loadConstant(value: ProtoBuf.Expression.ConstantValue): ConeConstantReference? = when (value) {

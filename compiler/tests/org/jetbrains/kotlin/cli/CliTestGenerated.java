@@ -475,6 +475,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/jvm8Target.args");
         }
 
+        @TestMetadata("jvmDefaultAll.args")
+        public void testJvmDefaultAll() throws Exception {
+            runTest("compiler/testData/cli/jvm/jvmDefaultAll.args");
+        }
+
         @TestMetadata("kotlinHomeWithoutStdlib.args")
         public void testKotlinHomeWithoutStdlib() throws Exception {
             runTest("compiler/testData/cli/jvm/kotlinHomeWithoutStdlib.args");
@@ -533,6 +538,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             runTest("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
+        }
+
+        @TestMetadata("newInferenceImpliesProgressiveModeForNI.args")
+        public void testNewInferenceImpliesProgressiveModeForNI() throws Exception {
+            runTest("compiler/testData/cli/jvm/newInferenceImpliesProgressiveModeForNI.args");
         }
 
         @TestMetadata("newInferenceImpliesSamConversions.args")
@@ -613,6 +623,21 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("releaseCoroutinesApiVersion1.2.args")
         public void testReleaseCoroutinesApiVersion1_2() throws Exception {
             runTest("compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.args");
+        }
+
+        @TestMetadata("resultInReturnTypeUnsupportedByDefault14.args")
+        public void testResultInReturnTypeUnsupportedByDefault14() throws Exception {
+            runTest("compiler/testData/cli/jvm/resultInReturnTypeUnsupportedByDefault14.args");
+        }
+
+        @TestMetadata("resultInReturnTypeWithEnabledInlineClasses.args")
+        public void testResultInReturnTypeWithEnabledInlineClasses() throws Exception {
+            runTest("compiler/testData/cli/jvm/resultInReturnTypeWithEnabledInlineClasses.args");
+        }
+
+        @TestMetadata("resultInReturnTypeWithEnabledInlineClassesXX.args")
+        public void testResultInReturnTypeWithEnabledInlineClassesXX() throws Exception {
+            runTest("compiler/testData/cli/jvm/resultInReturnTypeWithEnabledInlineClassesXX.args");
         }
 
         @TestMetadata("returnAsWhenKey.args")

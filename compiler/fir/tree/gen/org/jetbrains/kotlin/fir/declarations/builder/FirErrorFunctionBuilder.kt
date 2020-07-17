@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -35,22 +37,24 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    lateinit var origin: FirDeclarationOrigin
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
     lateinit var symbol: FirErrorFunctionSymbol
+    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
     override fun build(): FirErrorFunction {
         return FirErrorFunctionImpl(
             source,
             session,
             resolvePhase,
+            origin,
             annotations,
-            typeParameters,
             valueParameters,
             diagnostic,
             symbol,
+            typeParameters,
         )
     }
 

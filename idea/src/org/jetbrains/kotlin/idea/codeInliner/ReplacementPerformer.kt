@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInliner
@@ -19,9 +8,11 @@ package org.jetbrains.kotlin.idea.codeInliner
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiTreeChangeAdapter
 import com.intellij.psi.PsiTreeChangeEvent
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.canDropBraces
 import org.jetbrains.kotlin.idea.core.dropBraces
+import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.psi.*
@@ -42,29 +33,82 @@ internal abstract class ReplacementPerformer<TElement : KtElement>(
     abstract fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): TElement?
 }
 
-internal class AnnotationEntryReplacementPerformer(
+internal abstract class AbstractSimpleReplacementPerformer<TElement : KtElement>(
     codeToInline: MutableCodeToInline,
-    elementToBeReplaced: KtAnnotationEntry
-) : ReplacementPerformer<KtAnnotationEntry>(codeToInline, elementToBeReplaced) {
+    elementToBeReplaced: TElement
+) : ReplacementPerformer<TElement>(codeToInline, elementToBeReplaced) {
+    protected abstract fun createDummyElement(mainExpression: KtExpression): TElement
 
-    override fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): KtAnnotationEntry {
-        assert(codeToInline.mainExpression != null)
+    protected open fun rangeToElement(range: PsiChildRange): TElement {
+        assert(range.first == range.last)
+
+        @Suppress("UNCHECKED_CAST")
+        return range.first as TElement
+    }
+
+    final override fun doIt(postProcessing: (PsiChildRange) -> PsiChildRange): TElement {
         assert(codeToInline.statementsBefore.isEmpty())
+        val mainExpression = codeToInline.mainExpression ?: error("mainExpression mustn't be null")
 
-        val dummyAnnotationEntry = createByPattern("@Dummy($0)", codeToInline.mainExpression!!) { psiFactory.createAnnotationEntry(it) }
-        val replaced = elementToBeReplaced.replace(dummyAnnotationEntry)
+        val dummyElement = createDummyElement(mainExpression)
+        val replaced = elementToBeReplaced.replace(dummyElement)
 
         codeToInline.performPostInsertionActions(listOf(replaced))
 
-        var range = PsiChildRange.singleElement(replaced)
-        range = postProcessing(range)
+        return rangeToElement(postProcessing(PsiChildRange.singleElement(replaced)))
+    }
+}
+
+internal class AnnotationEntryReplacementPerformer(
+    codeToInline: MutableCodeToInline,
+    elementToBeReplaced: KtAnnotationEntry
+) : AbstractSimpleReplacementPerformer<KtAnnotationEntry>(codeToInline, elementToBeReplaced) {
+    private val useSiteTarget = elementToBeReplaced.useSiteTarget?.getAnnotationUseSiteTarget()
+
+    override fun createDummyElement(mainExpression: KtExpression): KtAnnotationEntry =
+        createByPattern("@Dummy($0)", mainExpression) { psiFactory.createAnnotationEntry(it) }
+
+    override fun rangeToElement(range: PsiChildRange): KtAnnotationEntry {
+        val useSiteTargetText = useSiteTarget?.renderName?.let { "$it:" } ?: ""
+        val isFileUseSiteTarget = useSiteTarget == AnnotationUseSiteTarget.FILE
 
         assert(range.first == range.last)
         assert(range.first is KtAnnotationEntry)
         val annotationEntry = range.first as KtAnnotationEntry
         val text = annotationEntry.valueArguments.single().getArgumentExpression()!!.text
-        return annotationEntry.replaced(psiFactory.createAnnotationEntry("@$text"))
+        val newAnnotationEntry = if (isFileUseSiteTarget)
+            psiFactory.createFileAnnotation(text)
+        else
+            psiFactory.createAnnotationEntry("@$useSiteTargetText$text")
+        return annotationEntry.replaced(newAnnotationEntry)
     }
+}
+
+internal class SuperTypeCallEntryReplacementPerformer(
+    codeToInline: MutableCodeToInline,
+    elementToBeReplaced: KtSuperTypeCallEntry
+) : AbstractSimpleReplacementPerformer<KtSuperTypeCallEntry>(codeToInline, elementToBeReplaced) {
+    override fun createDummyElement(mainExpression: KtExpression): KtSuperTypeCallEntry {
+        val text = if (mainExpression is KtCallElement && mainExpression.lambdaArguments.isNotEmpty()) {
+            callWithoutLambdaArguments(mainExpression)
+        } else {
+            mainExpression.text
+        }
+
+        return psiFactory.createSuperTypeCallEntry(text)
+    }
+}
+
+private fun callWithoutLambdaArguments(callExpression: KtCallElement): String {
+    val copy = callExpression.copy() as KtCallElement
+    val lambdaArgument = copy.lambdaArguments.first()
+
+    val argumentExpression = lambdaArgument.getArgumentExpression() ?: return callExpression.text
+    return lambdaArgument.moveInsideParenthesesAndReplaceWith(
+        replacement = argumentExpression,
+        functionLiteralArgumentName = null,
+        withNameCheck = false
+    ).text ?: callExpression.text
 }
 
 internal class ExpressionReplacementPerformer(
@@ -72,7 +116,7 @@ internal class ExpressionReplacementPerformer(
     expressionToBeReplaced: KtExpression
 ) : ReplacementPerformer<KtExpression>(codeToInline, expressionToBeReplaced) {
 
-    fun KtExpression.replacedWithStringTemplate(templateExpression: KtStringTemplateExpression): KtExpression? {
+    private fun KtExpression.replacedWithStringTemplate(templateExpression: KtStringTemplateExpression): KtExpression? {
         val parent = this.parent
 
         return if (parent is KtStringTemplateEntryWithExpression
@@ -221,7 +265,9 @@ internal class ExpressionReplacementPerformer(
     private fun <TElement : KtElement> withElementToBeReplacedPreserved(action: () -> TElement): TElement {
         elementToBeReplaced.putCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY, Unit)
         val result = action()
-        elementToBeReplaced = result.findDescendantOfType { it.getCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY) != null }!!
+        elementToBeReplaced = result.findDescendantOfType { it.getCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY) != null }
+            ?: error("Element `elementToBeReplaced` not found")
+
         elementToBeReplaced.putCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY, null)
         return result
     }

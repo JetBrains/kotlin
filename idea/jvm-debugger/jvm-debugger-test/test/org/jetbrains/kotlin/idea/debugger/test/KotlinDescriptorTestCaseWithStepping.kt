@@ -8,17 +8,14 @@ package org.jetbrains.kotlin.idea.debugger.test
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.engine.*
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.debugger.engine.events.SuspendContextCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.JvmSteppingCommandProvider
 import com.intellij.debugger.impl.PositionUtil
 import com.intellij.execution.process.ProcessOutputTypes
 import com.sun.jdi.request.StepRequest
 import org.jetbrains.kotlin.idea.debugger.stepping.*
-import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinOrdinaryMethodFilter
-import org.jetbrains.kotlin.idea.debugger.stepping.filter.KotlinLambdaMethodFilter
-import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinLambdaSmartStepTarget
-import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinMethodSmartStepTarget
-import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinSmartStepIntoHandler
+import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.*
 import org.jetbrains.kotlin.idea.debugger.test.util.SteppingInstruction
 import org.jetbrains.kotlin.idea.debugger.test.util.SteppingInstructionKind
 import org.jetbrains.kotlin.idea.debugger.test.util.renderSourcePosition
@@ -89,8 +86,10 @@ abstract class KotlinDescriptorTestCaseWithStepping : KotlinDescriptorTestCase()
     }
 
     private fun SuspendContextImpl.doStepOver(ignoreBreakpoints: Boolean = false) {
-        val stepOverCommand = runReadAction { commandProvider.getStepOverCommand(this, ignoreBreakpoints, debuggerContext) }
-            ?: dp.createStepOverCommand(this, ignoreBreakpoints)
+        val stepOverCommand = runReadAction {
+            val sourcePosition = debuggerContext.sourcePosition
+            commandProvider.getStepOverCommand(this, ignoreBreakpoints, sourcePosition)
+        } ?: dp.createStepOverCommand(this, ignoreBreakpoints)
 
         dp.managerThread.schedule(stepOverCommand)
     }
@@ -155,6 +154,21 @@ abstract class KotlinDescriptorTestCaseWithStepping : KotlinDescriptorTestCase()
                 is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.method, stepTarget.getCallingExpressionLines())
                 else -> null
             }
+        }
+    }
+
+    protected fun SuspendContextImpl.runActionInSuspendCommand(action: SuspendContextImpl.() -> Unit) {
+        if (myInProgress) {
+            action()
+        } else {
+            val command = object : SuspendContextCommandImpl(this) {
+                override fun contextAction(suspendContext: SuspendContextImpl) {
+                    action(suspendContext)
+                }
+            }
+
+            // Try to execute the action inside a command if we aren't already inside it.
+            debuggerSession.process.managerThread?.invoke(command) ?: command.contextAction(this)
         }
     }
 }

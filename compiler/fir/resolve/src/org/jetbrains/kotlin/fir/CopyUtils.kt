@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -18,10 +20,8 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCallBuilder
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
 fun FirFunctionCall.copy(
@@ -32,7 +32,6 @@ fun FirFunctionCall.copy(
     dispatchReceiver: FirExpression = this.dispatchReceiver,
     extensionReceiver: FirExpression = this.extensionReceiver,
     source: FirSourceElement? = this.source,
-    safe: Boolean = this.safe,
     typeArguments: List<FirTypeProjection> = this.typeArguments,
     resultType: FirTypeRef = this.typeRef
 ): FirFunctionCall {
@@ -47,7 +46,6 @@ fun FirFunctionCall.copy(
     }
     builder.apply {
         this.source = source
-        this.safe = safe
         this.annotations.addAll(annotations)
         this.argumentList = argumentList
         this.explicitReceiver = explicitReceiver
@@ -63,6 +61,7 @@ fun FirAnonymousFunction.copy(
     receiverTypeRef: FirTypeRef? = this.receiverTypeRef,
     source: FirSourceElement? = this.source,
     session: FirSession = this.session,
+    origin: FirDeclarationOrigin = this.origin,
     returnTypeRef: FirTypeRef = this.returnTypeRef,
     valueParameters: List<FirValueParameter> = this.valueParameters,
     body: FirBlock? = this.body,
@@ -70,11 +69,12 @@ fun FirAnonymousFunction.copy(
     typeRef: FirTypeRef = this.typeRef,
     label: FirLabel? = this.label,
     controlFlowGraphReference: FirControlFlowGraphReference = this.controlFlowGraphReference,
-    invocationKind: InvocationKind? = this.invocationKind
+    invocationKind: EventOccurrencesRange? = this.invocationKind
 ): FirAnonymousFunction {
     return buildAnonymousFunction {
         this.source = source
         this.session = session
+        this.origin = origin
         this.returnTypeRef = returnTypeRef
         this.receiverTypeRef = receiverTypeRef
         symbol = this@copy.symbol
@@ -97,6 +97,15 @@ fun FirTypeRef.resolvedTypeFromPrototype(
         source = this@resolvedTypeFromPrototype.source
         this.type = type
         annotations += this@resolvedTypeFromPrototype.annotations
+    }
+}
+
+fun FirTypeRef.errorTypeFromPrototype(
+    diagnostic: ConeDiagnostic
+): FirErrorTypeRef {
+    return buildErrorTypeRef {
+        source = this@errorTypeFromPrototype.source
+        this.diagnostic = diagnostic
     }
 }
 

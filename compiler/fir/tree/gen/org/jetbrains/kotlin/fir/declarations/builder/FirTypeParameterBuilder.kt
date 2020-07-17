@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
@@ -30,6 +32,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    lateinit var origin: FirDeclarationOrigin
     lateinit var name: Name
     lateinit var symbol: FirTypeParameterSymbol
     lateinit var variance: Variance
@@ -42,6 +45,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
             source,
             session,
             resolvePhase,
+            origin,
             name,
             symbol,
             variance,

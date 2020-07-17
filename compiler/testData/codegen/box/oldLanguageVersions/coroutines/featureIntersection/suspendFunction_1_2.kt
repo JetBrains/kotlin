@@ -1,8 +1,12 @@
 // !LANGUAGE: -ReleaseCoroutines
 // IGNORE_BACKEND: JS_IR, JS
+// IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+
+// some classes are moved from stdlib to compatibility package
+// IGNORE_BACKEND: ANDROID
 
 import helpers.*
 import kotlin.coroutines.*

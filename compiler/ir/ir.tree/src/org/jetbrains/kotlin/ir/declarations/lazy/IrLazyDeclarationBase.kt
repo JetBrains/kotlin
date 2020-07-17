@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class IrLazyDeclarationBase(
     startOffset: Int,
     endOffset: Int,
@@ -28,8 +31,8 @@ abstract class IrLazyDeclarationBase(
 
     protected fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
         IrValueParameterImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, this,
-            type.toIrType(), null
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrValueParameterSymbolImpl(this),
+            name, -1, type.toIrType(), null, isCrossinline = false, isNoinline = false
         )
 
     protected fun generateMemberStubs(memberScope: MemberScope, container: MutableList<IrDeclaration>) {
@@ -52,10 +55,6 @@ abstract class IrLazyDeclarationBase(
     override var annotations: List<IrConstructorCall> by lazyVar {
         descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationConstructorCall).toMutableList()
     }
-
-    override var metadata: Nothing?
-        get() = null
-        set(_) = error("We should never need to store metadata of external declarations.")
 
     private fun createLazyParent(): IrDeclarationParent? {
         val currentDescriptor = descriptor

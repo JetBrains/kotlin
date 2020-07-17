@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.android.parcel;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -21,11 +22,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ParcelBytecodeListingTestGenerated extends AbstractParcelBytecodeListingTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
     }
 
     public void testAllFilesPresentInCodegen() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
 
     @TestMetadata("customDescribeContents.kt")
@@ -63,6 +64,11 @@ public class ParcelBytecodeListingTestGenerated extends AbstractParcelBytecodeLi
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/duplicatingClinit.kt");
     }
 
+    @TestMetadata("efficientParcelable.kt")
+    public void testEfficientParcelable() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/efficientParcelable.kt");
+    }
+
     @TestMetadata("IBinderIInterface.kt")
     public void testIBinderIInterface() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/IBinderIInterface.kt");
@@ -91,6 +97,11 @@ public class ParcelBytecodeListingTestGenerated extends AbstractParcelBytecodeLi
     @TestMetadata("serializable.kt")
     public void testSerializable() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/serializable.kt");
+    }
+
+    @TestMetadata("serializeValue.kt")
+    public void testSerializeValue() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/serializeValue.kt");
     }
 
     @TestMetadata("simple.kt")

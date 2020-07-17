@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.PostponableKotlinCallArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
 import org.jetbrains.kotlin.types.KotlinType
@@ -79,7 +80,15 @@ class TypeVariableFromCallableDescriptor(
 }
 
 class TypeVariableForLambdaReturnType(
-    val lambdaArgument: LambdaKotlinCallArgument,
+    builtIns: KotlinBuiltIns,
+    name: String
+) : NewTypeVariable(builtIns, name) {
+    override fun hasOnlyInputTypesAnnotation(): Boolean = false
+}
+
+class TypeVariableForLambdaParameterType(
+    val atom: PostponableKotlinCallArgument,
+    val index: Int,
     builtIns: KotlinBuiltIns,
     name: String
 ) : NewTypeVariable(builtIns, name) {
@@ -87,6 +96,13 @@ class TypeVariableForLambdaReturnType(
 }
 
 class TypeVariableForCallableReferenceReturnType(
+    builtIns: KotlinBuiltIns,
+    name: String
+) : NewTypeVariable(builtIns, name) {
+    override fun hasOnlyInputTypesAnnotation(): Boolean = false
+}
+
+class TypeVariableForCallableReferenceParameterType(
     builtIns: KotlinBuiltIns,
     name: String
 ) : NewTypeVariable(builtIns, name) {

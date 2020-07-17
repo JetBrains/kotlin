@@ -7,11 +7,11 @@ Connected to the target VM
 smartStepIntoFunWithDefaultArgs.kt:17
 smartStepIntoFunWithDefaultArgs.kt:4
 smartStepIntoFunWithDefaultArgs.kt:22
-smartStepIntoFunWithDefaultArgs.kt:4
+smartStepIntoFunWithDefaultArgs.kt:3
 smartStepIntoFunWithDefaultArgs.kt:27
 smartStepIntoFunWithDefaultArgs.kt:8
 smartStepIntoFunWithDefaultArgs.kt:32
-smartStepIntoFunWithDefaultArgs.kt:8
+smartStepIntoFunWithDefaultArgs.kt:7
 Disconnected from the target VM
 
 Process finished with exit code 0

@@ -11,7 +11,6 @@ import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
-import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.ModificationTracker
@@ -38,7 +37,9 @@ import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleOutOfCodeBlockModif
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
-import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
+import org.jetbrains.kotlin.idea.framework.effectiveKind
+import org.jetbrains.kotlin.idea.framework.platform
+import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.getStableName
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
+import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -55,11 +57,14 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.NativePlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.types.typeUtil.closure
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.lang.StringBuilder
 import java.util.*
 
 internal val LOG = Logger.getInstance(IdeaModuleInfo::class.java)
@@ -89,7 +94,7 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, for
         }
         is ModuleOrderEntry -> {
             val module = orderEntry.module ?: return emptyList()
-            if (forProduction && orderEntry is ModuleOrderEntryImpl && orderEntry.isProductionOnTestDependency) {
+            if (forProduction && orderEntry.isProductionOnTestDependency) {
                 listOfNotNull(module.testSourceInfo())
             } else {
                 module.toInfos()
@@ -109,22 +114,26 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, for
     }
 }
 
-val Project.libraryInfoCache: MutableMap<Library, List<LibraryInfo>>
+private val Project.libraryInfoCache: MutableMap<Library, List<LibraryInfo>>
     get() = cacheInvalidatingOnRootModifications { ContainerUtil.createConcurrentWeakMap() }
 
-fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> {
-    val cache = project.libraryInfoCache
+fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> =
+    project.libraryInfoCache.getOrPut(library) {
+        val approximatePlatform = if (library is LibraryEx && !library.isDisposed) {
+            // for Native returns 'unspecifiedNativePlatform', thus "approximate"
+            library.effectiveKind(project).platform
+        } else {
+            DefaultIdeTargetPlatformKindProvider.defaultPlatform
+        }
 
-    return cache.getOrPut(library) {
-        getLibraryPlatform(project, library).idePlatformKind.resolution.createLibraryInfo(project, library)
+        approximatePlatform.idePlatformKind.resolution.createLibraryInfo(project, library)
     }
-}
 
 private fun OrderEntry.acceptAsDependency(forProduction: Boolean): Boolean {
     return this !is ExportableOrderEntry
             || !forProduction
             // this is needed for Maven/Gradle projects with "production-on-test" dependency
-            || this is ModuleOrderEntryImpl && isProductionOnTestDependency
+            || this is ModuleOrderEntry && isProductionOnTestDependency
             || scope.isForProductionCompile
 }
 
@@ -133,16 +142,11 @@ private fun ideaModelDependencies(
     forProduction: Boolean,
     platform: TargetPlatform
 ): List<IdeaModuleInfo> {
-    fun TargetPlatform.canDependOn(other: TargetPlatform): Boolean {
-        return if (module.isHMPPEnabled) {
-            other.componentPlatforms.containsAll(this.componentPlatforms)
-        } else {
-            this.isJvm() && other.isJvm() ||
-                    this.isJs() && other.isJs() ||
-                    this.isNative() && other.isNative() ||
-                    this.isCommon() && other.isCommon()
-        }
-    }
+    // Use StringBuilder so that all lines are written into the log atomically (otherwise
+    // logs of call to ideaModelDependencies for several different modules interleave, leading
+    // to unreadable mess)
+    val debugString: StringBuilder? = if (LOG.isDebugEnabled) StringBuilder() else null
+    debugString?.appendLine("Building idea model dependencies for module $module, platform=${platform}, forProduction=$forProduction")
 
     //NOTE: lib dependencies can be processed several times during recursive traversal
     val result = LinkedHashSet<IdeaModuleInfo>()
@@ -150,13 +154,46 @@ private fun ideaModelDependencies(
     if (forProduction && module.getBuildSystemType() == BuildSystemType.JPS) {
         dependencyEnumerator.productionOnly()
     }
+
+    debugString?.append("    IDEA dependencies: [")
     dependencyEnumerator.forEach { orderEntry ->
+        debugString?.append("${orderEntry.presentableName} ")
         if (orderEntry.acceptAsDependency(forProduction)) {
             result.addAll(orderEntryToModuleInfo(module.project, orderEntry!!, forProduction))
+            debugString?.append("OK; ")
+        } else {
+            debugString?.append("SKIP; ")
         }
         true
     }
-    return result.filterNot { it is LibraryInfo && !platform.canDependOn(it.platform) }
+    debugString?.appendLine("]")
+
+    // Some dependencies prohibited (e.g. common can not depend on a platform)
+    val correctedResult = result.filterNot { it is LibraryInfo && !platform.canDependOn(it, module.isHMPPEnabled) }
+    debugString?.appendLine("    Corrected result: ${correctedResult.joinToString(prefix = "[", postfix = "]", separator = ";") { it.displayedName }}")
+
+    LOG.debug(debugString?.toString())
+
+    return correctedResult
+}
+
+private fun TargetPlatform.canDependOn(other: IdeaModuleInfo, isHmppEnabled: Boolean): Boolean {
+    if (isHmppEnabled) {
+        // HACK: allow depending on stdlib even if platforms do not match
+        if (isNative() && other is AbstractKlibLibraryInfo && other.libraryRoot.endsWith(KONAN_STDLIB_NAME)) return true
+
+        val platformsWhichAreNotContainedInOther = this.componentPlatforms - other.platform.componentPlatforms
+        if (platformsWhichAreNotContainedInOther.isEmpty()) return true
+
+        // unspecifiedNativePlatform is effectively a wildcard for NativePlatform
+        return platformsWhichAreNotContainedInOther.all { it is NativePlatform } &&
+                NativePlatforms.unspecifiedNativePlatform.componentPlatforms.single() in other.platform.componentPlatforms
+    } else {
+        return this.isJvm() && other.platform.isJvm() ||
+                this.isJs() && other.platform.isJs() ||
+                this.isNative() && other.platform.isNative() ||
+                this.isCommon() && other.platform.isCommon()
+    }
 }
 
 interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
@@ -208,7 +245,7 @@ data class ModuleProductionSourceInfo internal constructor(
 
     override val name = Name.special("<production sources for module ${module.name}>")
 
-    override val stableName: Name = module.getStableName()
+    override val stableName: Name by lazy { module.getStableName() }
 
     override fun contentScope(): GlobalSearchScope {
         return enlargedSearchScope(ModuleProductionSourceScope(module), module, isTestScope = false)
@@ -224,7 +261,7 @@ data class ModuleTestSourceInfo internal constructor(override val module: Module
 
     override val displayedName get() = KotlinIdeaAnalysisBundle.message("module.name.0.test", module.name)
 
-    override val stableName: Name = module.getStableName()
+    override val stableName: Name by lazy { module.getStableName() }
 
     override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleTestSourceScope(module), module, isTestScope = true)
 
@@ -300,7 +337,7 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
     override fun toString() = "ModuleTestSourceScope($module)"
 }
 
-open class LibraryInfo(override val project: Project, val library: Library) : IdeaModuleInfo, LibraryModuleInfo, BinaryModuleInfo {
+abstract class LibraryInfo(override val project: Project, val library: Library) : IdeaModuleInfo, LibraryModuleInfo, BinaryModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
@@ -315,18 +352,15 @@ open class LibraryInfo(override val project: Project, val library: Library) : Id
         val result = LinkedHashSet<IdeaModuleInfo>()
         result.add(this)
 
-        val (libraries, sdks) = LibraryDependenciesCache.getInstance(project).getLibrariesAndSdksUsedWith(library)
+        val (libraries, sdks) = LibraryDependenciesCache.getInstance(project).getLibrariesAndSdksUsedWith(this)
 
-        sdks.mapTo(result) { SdkInfo(project, it) }
-        libraries.filter { it is LibraryEx && !it.isDisposed }.flatMapTo(result) {
-            createLibraryInfo(project, it)
-        }
+        result.addAll(sdks)
+        result.addAll(libraries)
 
         return result.toList()
     }
 
-    override val platform: TargetPlatform
-        get() = getLibraryPlatform(project, library)
+    abstract override val platform: TargetPlatform // must override
 
     override val analyzerServices: PlatformDependentAnalyzerServices
         get() = platform.findAnalyzerServices(project)
@@ -337,7 +371,7 @@ open class LibraryInfo(override val project: Project, val library: Library) : Id
     override fun getLibraryRoots(): Collection<String> =
         library.getFiles(OrderRootType.CLASSES).mapNotNull(PathUtil::getLocalPath)
 
-    override fun toString() = "LibraryInfo(libraryName=${library.name})"
+    override fun toString() = "${this::class.simpleName}(libraryName=${library.name}, libraryRoots=${getLibraryRoots()})"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -345,7 +379,6 @@ open class LibraryInfo(override val project: Project, val library: Library) : Id
     }
 
     override fun hashCode(): Int = 43 * library.hashCode()
-
 }
 
 data class LibrarySourceInfo(override val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) :

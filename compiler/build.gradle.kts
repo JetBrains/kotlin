@@ -30,8 +30,6 @@ fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
 
 val antLauncherJar by configurations.creating
 
-val ktorExcludesForDaemon : List<Pair<String, String>> by rootProject.extra
-
 dependencies {
     testRuntime(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
 
@@ -40,7 +38,6 @@ dependencies {
     
     testCompile(kotlinStdlib())
 
-    testCompile(project(":kotlin-daemon"))
     testCompile(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
@@ -55,14 +52,7 @@ dependencies {
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":kotlin-script-util"))
-    testCompileOnly(projectRuntimeJar(":kotlin-daemon-client-new"))
     testCompileOnly(project(":kotlin-reflect-api"))
-    testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    testCompile(commonDep("io.ktor", "ktor-network")) {
-        ktorExcludesForDaemon.forEach { (group, module) ->
-            exclude(group = group, module = module)
-        }
-    }
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
     }
@@ -77,18 +67,6 @@ dependencies {
     }
 
     testRuntime(project(":kotlin-reflect"))
-    testRuntime(project(":kotlin-daemon-client-new"))
-    testRuntime(project(":kotlin-daemon")) // +
-    testRuntime(project(":daemon-common-new")) // +
-    testRuntime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
-        isTransitive = false
-    }
-    testRuntime(commonDep("io.ktor", "ktor-network")) {
-        ktorExcludesForDaemon.forEach { (group, module) ->
-            exclude(group = group, module = module)
-        }
-
-    }
     testRuntime(androidDxJar())
     testRuntime(toolsJar())
 
@@ -113,7 +91,6 @@ projectTest(parallel = true) {
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
 }
-
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt")
 

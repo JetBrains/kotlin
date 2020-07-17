@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
-  CLASS INTERFACE name:KRunnable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+  CLASS INTERFACE name:KRunnable modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KRunnable
     FUN name:run visibility:public modality:ABSTRACT <> ($this:<root>.KRunnable) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.KRunnable
@@ -76,7 +76,8 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
           then: CALL 'public final fun run2 (r1: <root>.KRunnable, r2: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             r1: TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
               GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
-            r2: GET_VAR 'b: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
+            r2: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+              GET_VAR 'b: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
@@ -107,16 +108,19 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
       TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
         GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
       CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        r: TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
-          GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
+        r: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+          TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
+            GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
   FUN name:test8 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
       CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        r: CALL 'public final fun id <T> (x: T of <root>.id): T of <root>.id declared in <root>' type=kotlin.Function0<kotlin.Unit> origin=null
-          <T>: kotlin.Function0<kotlin.Unit>
-          x: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test8' type=kotlin.Function0<kotlin.Unit> origin=null
+        r: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+          CALL 'public final fun id <T> (x: T of <root>.id): T of <root>.id declared in <root>' type=kotlin.Function0<kotlin.Unit> origin=null
+            <T>: kotlin.Function0<kotlin.Unit>
+            x: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test8' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test9 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        r: FUNCTION_REFERENCE 'public final fun test9 (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
+        r: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+          FUNCTION_REFERENCE 'public final fun test9 (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>

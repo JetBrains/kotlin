@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.fir.builder
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.FirWhenSubject
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -18,24 +17,23 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi.*
 
 internal fun KtWhenCondition.toFirWhenCondition(
-    subject: FirWhenSubject,
+    whenRefWithSibject: FirExpressionRef<FirWhenExpression>,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
-    val baseSource = this.toFirPsiSourceElement()
+    val firSubjectSource = this.toFirPsiSourceElement(FirFakeSourceElementKind.WhenGeneratedSubject)
     val firSubjectExpression = buildWhenSubjectExpression {
-        source = baseSource
-        whenSubject = subject
+        source = firSubjectSource
+        whenRef = whenRefWithSibject
     }
     return when (this) {
         is KtWhenConditionWithExpression -> {
             buildOperatorCall {
-                source = expression?.toFirPsiSourceElement()
+                source = expression?.toFirPsiSourceElement(FirFakeSourceElementKind.WhenCondition)
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(
                     firSubjectExpression, expression.convert("No expression in condition with expression")
@@ -47,27 +45,26 @@ internal fun KtWhenCondition.toFirWhenCondition(
             firRange.generateContainsOperation(
                 firSubjectExpression,
                 isNegated,
-                rangeExpression?.toFirPsiSourceElement(),
+                rangeExpression?.toFirPsiSourceElement(FirFakeSourceElementKind.WhenCondition),
                 operationReference.toFirPsiSourceElement()
             )
         }
         is KtWhenConditionIsPattern -> {
             buildTypeOperatorCall {
-                source = typeReference?.toFirPsiSourceElement()
+                source = this@toFirWhenCondition.toFirPsiSourceElement()
                 operation = if (isNegated) FirOperation.NOT_IS else FirOperation.IS
                 conversionTypeRef = typeReference.toFirOrErrorTypeRef()
                 argumentList = buildUnaryArgumentList(firSubjectExpression)
             }
         }
         else -> {
-            buildErrorExpression(baseSource, ConeSimpleDiagnostic("Unsupported when condition: ${this.javaClass}", DiagnosticKind.Syntax))
+            buildErrorExpression(firSubjectSource, ConeSimpleDiagnostic("Unsupported when condition: ${this.javaClass}", DiagnosticKind.Syntax))
         }
     }
 }
 
 internal fun Array<KtWhenCondition>.toFirWhenCondition(
-    baseSource: FirSourceElement?,
-    subject: FirWhenSubject,
+    subject: FirExpressionRef<FirWhenExpression>,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
@@ -77,7 +74,7 @@ internal fun Array<KtWhenCondition>.toFirWhenCondition(
         firCondition = when (firCondition) {
             null -> firConditionElement
             else -> firCondition.generateLazyLogicalOperation(
-                firConditionElement, false, baseSource,
+                firConditionElement, false, condition.toFirPsiSourceElement(FirFakeSourceElementKind.WhenCondition),
             )
         }
     }
@@ -104,11 +101,13 @@ internal fun generateDestructuringBlock(
             statements += buildProperty {
                 source = entrySource
                 this.session = session
+                origin = FirDeclarationOrigin.Source
                 returnTypeRef = entry.typeReference.toFirOrImplicitTypeRef()
                 this.name = name
                 initializer = buildComponentCall {
-                    source = entrySource
-                    explicitReceiver = generateResolvedAccessExpression(entrySource, container)
+                    val componentCallSource = entrySource.withKind(FirFakeSourceElementKind.DesugaredComponentFunctionCall)
+                    source = componentCallSource
+                    explicitReceiver = generateResolvedAccessExpression(componentCallSource, container)
                     componentIndex = index + 1
                 }
                 this.isVar = isVar

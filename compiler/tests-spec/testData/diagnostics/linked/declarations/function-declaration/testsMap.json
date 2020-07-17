@@ -7,7 +7,8 @@
           "casesNumber": 0,
           "description": "Kt10809",
           "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     },
@@ -18,7 +19,8 @@
           "casesNumber": 0,
           "description": "When with nothing and lambdas",
           "path": "compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "2": [
@@ -27,7 +29,8 @@
           "casesNumber": 0,
           "description": "When with nothing and lambdas",
           "path": "compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }
@@ -40,7 +43,8 @@
           "casesNumber": 0,
           "description": "When with nothing and lambdas",
           "path": "compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

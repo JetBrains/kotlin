@@ -223,6 +223,11 @@ public class MoveTestGenerated extends AbstractMoveTest {
         runTest("idea/testData/refactoring/move/kotlin/changePackage/headerClasses/headerClasses.test");
     }
 
+    @TestMetadata("kotlin/changePackage/longName/longName.test")
+    public void testKotlin_changePackage_longName_LongName() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/changePackage/longName/longName.test");
+    }
+
     @TestMetadata("kotlin/moveDirectory/moveDirectoryWithPackageDirectiveChange/moveDirectoryWithPackageDirectiveChange.test")
     public void testKotlin_moveDirectory_moveDirectoryWithPackageDirectiveChange_MoveDirectoryWithPackageDirectiveChange() throws Exception {
         runTest("idea/testData/refactoring/move/kotlin/moveDirectory/moveDirectoryWithPackageDirectiveChange/moveDirectoryWithPackageDirectiveChange.test");
@@ -251,6 +256,11 @@ public class MoveTestGenerated extends AbstractMoveTest {
     @TestMetadata("kotlin/moveFile/keepImportAliasRefs/keepImportAliasRefs.test")
     public void testKotlin_moveFile_keepImportAliasRefs_KeepImportAliasRefs() throws Exception {
         runTest("idea/testData/refactoring/move/kotlin/moveFile/keepImportAliasRefs/keepImportAliasRefs.test");
+    }
+
+    @TestMetadata("kotlin/moveFile/longName/longName.test")
+    public void testKotlin_moveFile_longName_LongName() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveFile/longName/longName.test");
     }
 
     @TestMetadata("kotlin/moveFile/moveFileAndDirWithJavaFileReferringToPackageFragementWithUnmatchedDir/moveFileAndDirWithJavaFileReferringToPackageFragementWithUnmatchedDir.test")
@@ -676,6 +686,11 @@ public class MoveTestGenerated extends AbstractMoveTest {
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveClassToPackage/moveClassToPackage.test")
     public void testKotlin_moveTopLevelDeclarations_moveClassToPackage_MoveClassToPackage() throws Exception {
         runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveClassToPackage/moveClassToPackage.test");
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveClassWithLongFunction/moveClassWithLongFunction.test")
+    public void testKotlin_moveTopLevelDeclarations_moveClassWithLongFunction_MoveClassWithLongFunction() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveClassWithLongFunction/moveClassWithLongFunction.test");
     }
 
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveExtensionFunctionToFil/moveExtensionFunctionToFile.test")

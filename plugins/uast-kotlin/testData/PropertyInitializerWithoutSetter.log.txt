@@ -2,8 +2,7 @@ UFile (package = )
     UClass (name = PropertyInitializerWithoutSetterKt)
         UField (name = withoutSetter)
             UAnnotation (fqName = org.jetbrains.annotations.NotNull)
-            UPolyadicExpression (operator = +)
-                ULiteralExpression (value = "/sdcard")
+            ULiteralExpression (value = "/sdcard")
         UMethod (name = getWithoutSetter)
             UBlockExpression
                 UReturnExpression

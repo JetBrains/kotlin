@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,11 +21,15 @@ open class KotlinJsIrTargetPreset(
 ) {
     internal var mixedMode: Boolean? = null
 
+    open val isMpp: Boolean
+        get() = true
+
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.js
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
         return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType, mixedMode).apply {
+            this.isMpp = this@KotlinJsIrTargetPreset.isMpp
             if (!mixedMode) {
                 project.whenEvaluated {
                     if (!isBrowserConfigured && !isNodejsConfigured) {
@@ -55,7 +59,7 @@ open class KotlinJsIrTargetPreset(
 
     //TODO[Ilya Goncharov] remove public morozov
     public override fun createCompilationFactory(
-        forTarget: KotlinOnlyTarget<KotlinJsIrCompilation>
+        forTarget: KotlinJsIrTarget
     ): KotlinCompilationFactory<KotlinJsIrCompilation> =
         KotlinJsIrCompilationFactory(project, forTarget)
 
@@ -74,6 +78,9 @@ class KotlinJsIrSingleTargetPreset(
     project,
     kotlinPluginVersion
 ) {
+    override val isMpp: Boolean
+        get() = false
+
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? {
         return if (mixedMode!!) {

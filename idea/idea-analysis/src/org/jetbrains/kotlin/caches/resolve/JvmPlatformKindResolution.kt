@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.caches.resolve
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analyzer.ModuleInfo
@@ -15,10 +17,12 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
@@ -39,6 +43,9 @@ class JvmPlatformKindResolution : IdePlatformKindResolution {
     override val libraryKind: PersistentLibraryKind<*>?
         get() = null
 
+    override fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> =
+        listOf(JvmLibraryInfo(project, library))
+
     override val kind get() = JvmIdePlatformKind
 
     override fun getKeyForBuiltIns(moduleInfo: ModuleInfo, sdkInfo: SdkInfo?): BuiltInsCacheKey {
@@ -53,4 +60,9 @@ class JvmPlatformKindResolution : IdePlatformKindResolution {
     }
 
     data class CacheKeyBySdk(val sdk: Sdk) : BuiltInsCacheKey
+}
+
+class JvmLibraryInfo(project: Project, library: Library) : LibraryInfo(project, library) {
+    override val platform: TargetPlatform
+        get() = JvmPlatforms.defaultJvmPlatform
 }

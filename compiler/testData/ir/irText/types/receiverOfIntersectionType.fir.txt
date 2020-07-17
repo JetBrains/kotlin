@@ -53,6 +53,8 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.I; <root>.J]'
     FUN name:ff visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Unit
+      overridden:
+        public abstract fun ff (): kotlin.Unit declared in <root>.I
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -75,6 +77,8 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.I; <root>.J]'
     FUN name:ff visibility:public modality:FINAL <> ($this:<root>.B) returnType:kotlin.Unit
+      overridden:
+        public abstract fun ff (): kotlin.Unit declared in <root>.I
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

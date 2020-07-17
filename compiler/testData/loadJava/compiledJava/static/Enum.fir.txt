@@ -1,10 +1,7 @@
 public final enum class Enum : R|kotlin/Enum<ft<test/Enum, test/Enum?>!>| {
-    public final static field A: R|test/Enum|
-
-    public final static field B: R|test/Enum|
-
-    public final static field C: R|test/Enum|
-
+    public final static enum entry A: R|test/Enum|
+    public final static enum entry B: R|test/Enum|
+    public final static enum entry C: R|test/Enum|
     public final static fun values(): R|kotlin/Array<test/Enum>| {
     }
 

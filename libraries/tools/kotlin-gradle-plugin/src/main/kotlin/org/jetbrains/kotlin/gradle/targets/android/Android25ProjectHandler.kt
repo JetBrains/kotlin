@@ -6,23 +6,24 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin
 
-import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.BasePlugin
+import com.android.build.api.attributes.BuildTypeAttr
+import com.android.build.gradle.*
 import com.android.build.gradle.api.*
 import com.android.build.gradle.tasks.MergeResources
-import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
-import org.jetbrains.kotlin.gradle.internal.KaptTask
-import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.thisTaskProvider
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import java.io.File
 import java.util.concurrent.Callable
@@ -37,25 +38,30 @@ class Android25ProjectHandler(
         androidPlugin: BasePlugin,
         androidExt: BaseExtension,
         variantData: BaseVariant,
-        javaTask: AbstractCompile,
-        kotlinTask: KotlinCompile
+        javaTask: TaskProvider<out AbstractCompile>,
+        kotlinTask: TaskProvider<out KotlinCompile>
     ) {
-        val preJavaKotlinOutputFiles = mutableListOf<File>().apply {
-            add(kotlinTask.destinationDir)
-            if (Kapt3GradleSubplugin.isEnabled(project)) {
-                // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
-                val kaptClasssesDir = Kapt3GradleSubplugin.getKaptGeneratedClassesDir(project, getVariantName(variantData))
-                add(kaptClasssesDir)
+        val preJavaKotlinOutput = project.files(project.provider {
+            mutableListOf<File>().apply {
+                add(kotlinTask.get().destinationDir)
+                if (Kapt3GradleSubplugin.isEnabled(project)) {
+                    // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
+                    val kaptClasssesDir = Kapt3GradleSubplugin.getKaptGeneratedClassesDir(project, getVariantName(variantData))
+                    add(kaptClasssesDir)
+                }
             }
-        }
-        val preJavaKotlinOutput = project.files(*preJavaKotlinOutputFiles.toTypedArray()).builtBy(kotlinTask)
+        }).builtBy(kotlinTask)
 
         val preJavaClasspathKey = variantData.registerPreJavacGeneratedBytecode(preJavaKotlinOutput)
-        kotlinTask.dependsOn(variantData.getSourceFolders(SourceKind.JAVA))
+        kotlinTask.configure { kotlinTaskInstance ->
+            kotlinTaskInstance.inputs.files(variantData.getSourceFolders(SourceKind.JAVA)).withPathSensitivity(PathSensitivity.RELATIVE)
 
-        kotlinTask.mapClasspath {
-            val kotlinClasspath = variantData.getCompileClasspath(preJavaClasspathKey)
-            kotlinClasspath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
+            kotlinTaskInstance.mapClasspath {
+                val kotlinClasspath = variantData.getCompileClasspath(preJavaClasspathKey)
+                kotlinClasspath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
+            }
+
+            kotlinTaskInstance.javaOutputDir = javaTask.get().destinationDir
         }
 
         // Find the classpath entries that come from the tested variant and register them as the friend paths, lazily
@@ -76,48 +82,15 @@ class Android25ProjectHandler(
             )
         )
 
-        kotlinTask.javaOutputDir = javaTask.destinationDir
-
-        compilation.output.classesDirs.run {
-            from(project.files(kotlinTask.taskData.destinationDir).builtBy(kotlinTask))
-            from(project.files(project.provider { javaTask.destinationDir }).builtBy(javaTask))
-        }
+        compilation.output.classesDirs.from(
+            kotlinTask.map { it.destinationDir },
+            javaTask.map { it.destinationDir }
+        )
     }
-
-    override fun getSourceProviders(variantData: BaseVariant): Iterable<SourceProvider> =
-        variantData.sourceSets
-
-    override fun getAllJavaSources(variantData: BaseVariant): Iterable<File> =
-        variantData.getSourceFolders(SourceKind.JAVA).map { it.dir }
 
     override fun getFlavorNames(variant: BaseVariant): List<String> = variant.productFlavors.map { it.name }
 
     override fun getBuildTypeName(variant: BaseVariant): String = variant.buildType.name
-
-    override fun getJavaTask(variantData: BaseVariant): AbstractCompile? {
-        @Suppress("DEPRECATION") // There is always a Java compile task -- the deprecation was for Jack
-        return variantData::class.java.methods.firstOrNull { it.name == "getJavaCompileProvider" }
-            ?.invoke(variantData)
-            ?.let { taskProvider ->
-                // org.gradle.api.tasks.TaskProvider is added in Gradle 4.8
-                taskProvider::class.java.methods.firstOrNull { it.name == "get" }?.invoke(taskProvider) as AbstractCompile?
-            } ?: variantData.javaCompile
-    }
-
-    override fun addJavaSourceDirectoryToVariantModel(variantData: BaseVariant, javaSourceDirectory: File) =
-        variantData.addJavaSourceFoldersToModel(javaSourceDirectory)
-
-    override fun getResDirectories(variantData: BaseVariant): FileCollection {
-        val getAllResourcesMethod =
-            variantData::class.java.methods.firstOrNull { it.name == "getAllRawAndroidResources" }
-        if (getAllResourcesMethod != null) {
-            val allResources = getAllResourcesMethod.invoke(variantData) as FileCollection
-            return allResources
-        }
-
-        val project = variantData.mergeResources.project
-        return project.files(Callable { variantData.mergeResources?.computeResourceSetList0() ?: emptyList() })
-    }
 
     // TODO the return type is actually `AbstractArchiveTask | TaskProvider<out AbstractArchiveTask>`;
     //      change the signature once the Android Gradle plugin versions that don't support task providers are dropped
@@ -148,6 +121,11 @@ class Android25ProjectHandler(
             project.addExtendsFromRelation(name, compilation.runtimeDependencyConfigurationName)
         }
 
+        val buildTypeAttrValue = project.objects.named(BuildTypeAttr::class.java, variant.buildType.name)
+        listOf(compilation.compileDependencyConfigurationName, compilation.runtimeDependencyConfigurationName).forEach {
+            project.configurations.findByName(it)?.attributes?.attribute(Attribute.of(BuildTypeAttr::class.java), buildTypeAttrValue)
+        }
+
         // TODO this code depends on the convention that is present in the Android plugin as there's no public API
         // We should request such API in the Android plugin
         val apiElementsConfigurationName = "${variant.name}ApiElements"
@@ -166,71 +144,6 @@ class Android25ProjectHandler(
             project.configurations.findByName(outputConfigurationName)?.usesPlatformOf(compilation.target)
         }
     }
-
-    private inner class KaptVariant(variantData: BaseVariant) : KaptVariantData<BaseVariant>(variantData) {
-        override val name: String = getVariantName(variantData)
-        override val sourceProviders: Iterable<SourceProvider> = getSourceProviders(variantData)
-        override fun addJavaSourceFoldersToModel(generatedFilesDir: File) =
-            addJavaSourceDirectoryToVariantModel(variantData, generatedFilesDir)
-
-        override val annotationProcessorOptions: Map<String, String>? =
-            variantData.javaCompileOptions.annotationProcessorOptions.arguments
-
-        override fun registerGeneratedJavaSource(
-            project: Project,
-            kaptTask: KaptTask,
-            javaTask: AbstractCompile
-        ) {
-            val kaptSourceOutput = project.fileTree(kaptTask.destinationDir).builtBy(kaptTask)
-            kaptSourceOutput.include("**/*.java")
-            variantData.registerExternalAptJavaOutput(kaptSourceOutput)
-            variantData.dataBindingDependencyArtifactsIfSupported?.let { kaptTask.dependsOn(it) }
-        }
-
-        override val annotationProcessorOptionProviders: List<*>
-            get() = try {
-                // Public API added in Android Gradle Plugin 3.2.0-alpha15:
-                val apOptions = variantData.javaCompileOptions.annotationProcessorOptions
-                apOptions.javaClass.getMethod("getCompilerArgumentProviders").invoke(apOptions) as List<*>
-            } catch (e: NoSuchMethodException) {
-                emptyList<Any>()
-            }
-    }
-
-    //TODO A public API is expected for this purpose. Once it is available, use the public API
-    private fun MergeResources.computeResourceSetList0(): List<File>? {
-        val computeResourceSetListMethod = MergeResources::class.java.declaredMethods
-            .firstOrNull { it.name == "computeResourceSetList" && it.parameterCount == 0 } ?: return null
-
-        val oldIsAccessible = computeResourceSetListMethod.isAccessible
-        try {
-            computeResourceSetListMethod.isAccessible = true
-
-            val resourceSets = computeResourceSetListMethod.invoke(this) as? Iterable<*>
-
-            return resourceSets
-                ?.mapNotNull { resourceSet ->
-                    val getSourceFiles = resourceSet?.javaClass?.methods?.find { it.name == "getSourceFiles" && it.parameterCount == 0 }
-                    val files = getSourceFiles?.invoke(resourceSet)
-                    @Suppress("UNCHECKED_CAST")
-                    files as? Iterable<File>
-                }
-                ?.flatten()
-
-        } finally {
-            computeResourceSetListMethod.isAccessible = oldIsAccessible
-        }
-    }
-
-    //TODO once the Android plugin reaches its 3.0.0 release, consider compiling against it (remove the reflective call)
-    private val BaseVariant.dataBindingDependencyArtifactsIfSupported: FileCollection?
-        get() = this::class.java.methods
-            .find { it.name == "getDataBindingDependencyArtifacts" }
-            ?.also { it.isAccessible = true }
-            ?.invoke(this) as? FileCollection
-
-    override fun wrapVariantDataForKapt(variantData: BaseVariant): KaptVariantData<BaseVariant> =
-        KaptVariant(variantData)
 }
 
 internal fun getTestedVariantData(variantData: BaseVariant): BaseVariant? = when (variantData) {
@@ -240,3 +153,64 @@ internal fun getTestedVariantData(variantData: BaseVariant): BaseVariant? = when
 }
 
 internal fun getVariantName(variant: BaseVariant): String = variant.name
+
+@Suppress("UNCHECKED_CAST")
+internal fun BaseVariant.getJavaTaskProvider(): TaskProvider<out JavaCompile> =
+    this::class.java.methods.firstOrNull { it.name == "getJavaCompileProvider" }
+        ?.invoke(this) as? TaskProvider<JavaCompile>
+        ?: @Suppress("DEPRECATION") javaCompile.thisTaskProvider
+
+internal fun forEachVariant(project: Project, action: (BaseVariant) -> Unit) {
+    val androidExtension = project.extensions.getByName("android")
+    when (androidExtension) {
+        is AppExtension -> androidExtension.applicationVariants.all(action)
+        is LibraryExtension -> {
+            androidExtension.libraryVariants.all(action)
+            if (androidExtension is FeatureExtension) {
+                androidExtension.featureVariants.all(action)
+            }
+        }
+        is TestExtension -> androidExtension.applicationVariants.all(action)
+    }
+    if (androidExtension is TestedExtension) {
+        androidExtension.testVariants.all(action)
+        androidExtension.unitTestVariants.all(action)
+    }
+}
+
+internal fun BaseVariant.getResDirectories(): FileCollection {
+    val getAllResourcesMethod =
+        this::class.java.methods.firstOrNull { it.name == "getAllRawAndroidResources" }
+    if (getAllResourcesMethod != null) {
+        val allResources = getAllResourcesMethod.invoke(this) as FileCollection
+        return allResources
+    }
+
+    val project = mergeResources.project
+    return project.files(Callable { mergeResources?.computeResourceSetList0() ?: emptyList() })
+}
+
+//TODO A public API is expected for this purpose. Once it is available, use the public API
+private fun MergeResources.computeResourceSetList0(): List<File>? {
+    val computeResourceSetListMethod = MergeResources::class.java.declaredMethods
+        .firstOrNull { it.name == "computeResourceSetList" && it.parameterCount == 0 } ?: return null
+
+    val oldIsAccessible = computeResourceSetListMethod.isAccessible
+    try {
+        computeResourceSetListMethod.isAccessible = true
+
+        val resourceSets = computeResourceSetListMethod.invoke(this) as? Iterable<*>
+
+        return resourceSets
+            ?.mapNotNull { resourceSet ->
+                val getSourceFiles = resourceSet?.javaClass?.methods?.find { it.name == "getSourceFiles" && it.parameterCount == 0 }
+                val files = getSourceFiles?.invoke(resourceSet)
+                @Suppress("UNCHECKED_CAST")
+                files as? Iterable<File>
+            }
+            ?.flatten()
+
+    } finally {
+        computeResourceSetListMethod.isAccessible = oldIsAccessible
+    }
+}

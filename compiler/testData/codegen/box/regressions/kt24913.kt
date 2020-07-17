@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// IGNORE_BACKEND_FIR: JVM_IR
 
 class Outer<T> (val v: T) {
     val prop: Any?

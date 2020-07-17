@@ -16,12 +16,13 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessorHelper
-import com.intellij.psi.util.PsiUtil.getElementType
-import org.jetbrains.kotlin.idea.formatter.TrailingCommaHelper.findInvalidCommas
-import org.jetbrains.kotlin.idea.formatter.TrailingCommaHelper.needComma
-import org.jetbrains.kotlin.idea.formatter.TrailingCommaHelper.trailingCommaAllowedInModule
-import org.jetbrains.kotlin.idea.formatter.TrailingCommaHelper.trailingCommaOrLastElement
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaContext
+import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.findInvalidCommas
+import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.trailingCommaOrLastElement
+import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaState
+import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedFor
+import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespace
+import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -38,8 +39,8 @@ class TrailingCommaPostFormatProcessor : PostFormatProcessor {
 private class TrailingCommaPostFormatVisitor(val settings: CodeStyleSettings) : TrailingCommaVisitor() {
     private val myPostProcessor = PostFormatProcessorHelper(settings.kotlinCommonSettings)
 
-    override fun process(commaOwner: KtElement) = processIfInRange(commaOwner) {
-        processCommaOwner(commaOwner)
+    override fun process(trailingCommaContext: TrailingCommaContext) = processIfInRange(trailingCommaContext.ktElement) {
+        processCommaOwner(trailingCommaContext)
     }
 
     private fun processIfInRange(element: KtElement, block: () -> Unit = {}) {
@@ -48,39 +49,42 @@ private class TrailingCommaPostFormatVisitor(val settings: CodeStyleSettings) : 
         }
     }
 
-    private fun processCommaOwner(parent: KtElement) {
-        if (!postFormatIsEnable(parent)) return
-        parent.putUserData(IS_INSIDE, true)
+    private fun processCommaOwner(trailingCommaContext: TrailingCommaContext) {
+        val ktElement = trailingCommaContext.ktElement
+        if (!postFormatIsEnable(ktElement)) return
 
-        val lastElement = trailingCommaOrLastElement(parent) ?: return
-        val elementType = getElementType(lastElement)
-        updatePsi(parent) {
+        val lastElementOrComma = trailingCommaOrLastElement(ktElement) ?: return
+        updatePsi(ktElement) {
+            val state = trailingCommaContext.state
             when {
-                needComma(parent, settings, false) -> {
+                state == TrailingCommaState.MISSING && settings.kotlinCustomSettings.addTrailingCommaIsAllowedFor(ktElement) -> {
                     // add a missing comma
-                    if (elementType != KtTokens.COMMA && trailingCommaAllowedInModule(parent)) {
-                        lastElement.addCommaAfter(KtPsiFactory(parent))
+                    if (trailingCommaAllowedInModule(ktElement)) {
+                        lastElementOrComma.addCommaAfter(KtPsiFactory(ktElement))
                     }
 
-                    correctCommaPosition(parent)
+                    correctCommaPosition(ktElement)
                 }
-                needComma(parent, settings) -> {
-                    correctCommaPosition(parent)
+                state == TrailingCommaState.EXISTS -> {
+                    correctCommaPosition(ktElement)
                 }
-                elementType == KtTokens.COMMA -> {
+                state == TrailingCommaState.REDUNDANT -> {
                     // remove redundant comma
-                    lastElement.delete()
+                    lastElementOrComma.delete()
                 }
+                else -> Unit
             }
         }
     }
 
     private fun updatePsi(element: KtElement, block: () -> Unit) {
+        element.putUserData(IS_INSIDE, true)
         val oldLength = element.parent.textLength
         block()
 
         val resultElement = CodeStyleManager.getInstance(element.project).reformat(element)
         myPostProcessor.updateResultRange(oldLength, resultElement.parent.textLength)
+        element.putUserData(IS_INSIDE, false)
     }
 
     private fun correctCommaPosition(parent: KtElement) {
@@ -109,7 +113,7 @@ private class TrailingCommaPostFormatVisitor(val settings: CodeStyleSettings) : 
     companion object {
         private val LOG = Logger.getInstance(TrailingCommaVisitor::class.java)
         private val IS_INSIDE = Key.create<Boolean>("TrailingCommaPostFormat")
-        private fun postFormatIsEnable(source: PsiElement): Boolean = source.getUserData(IS_INSIDE)?.not() ?: true
+        private fun postFormatIsEnable(source: PsiElement): Boolean = source.getUserData(IS_INSIDE) != true
     }
 }
 

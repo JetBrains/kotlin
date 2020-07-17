@@ -173,7 +173,7 @@ class DeserializedPropertyDescriptor(
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
             newOwner, original, annotations, newModality, newVisibility, isVar, newName, kind, isLateInit, isConst, isExternal,
-            @Suppress("DEPRECATION") isDelegated, isExpect, proto, nameResolver, typeTable, versionRequirementTable, containerSource
+            isDelegated, isExpect, proto, nameResolver, typeTable, versionRequirementTable, containerSource
         )
     }
 

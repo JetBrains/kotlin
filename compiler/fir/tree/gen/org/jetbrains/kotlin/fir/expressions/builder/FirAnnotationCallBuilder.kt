@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolveStatus
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
@@ -31,6 +32,7 @@ class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, 
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     var useSiteTarget: AnnotationUseSiteTarget? = null
     lateinit var annotationTypeRef: FirTypeRef
+    var resolveStatus: FirAnnotationResolveStatus = FirAnnotationResolveStatus.Unresolved
 
     override fun build(): FirAnnotationCall {
         return FirAnnotationCallImpl(
@@ -39,6 +41,7 @@ class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, 
             argumentList,
             useSiteTarget,
             annotationTypeRef,
+            resolveStatus,
         )
     }
 

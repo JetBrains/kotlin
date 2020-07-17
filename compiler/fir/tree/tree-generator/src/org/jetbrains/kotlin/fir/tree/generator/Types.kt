@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
@@ -22,7 +25,7 @@ val jumpTargetType = type("fir", "FirTarget")
 val constKindType = generatedType("expressions", "FirConstKind")
 val operationType = type("fir.expressions", "FirOperation")
 val classKindType = type(ClassKind::class)
-val invocationKindType = type(InvocationKind::class)
+val eventOccurrencesRangeType = type(EventOccurrencesRange::class)
 val varianceType = type(Variance::class)
 val nameType = type(Name::class)
 val visibilityType = type(Visibility::class)
@@ -34,7 +37,15 @@ val classIdType = type(ClassId::class)
 val annotationUseSiteTargetType = type(AnnotationUseSiteTarget::class)
 val operationKindType = type("fir.expressions", "LogicOperationKind")
 val coneKotlinTypeType = type(ConeKotlinType::class)
-val whenSubjectType = type("fir", "FirWhenSubject")
+
+val whenExpressionType = generatedType("expressions", "FirWhenExpression")
+val expressionType = generatedType("expressions", "FirExpression")
+val safeCallCheckedSubjectType = generatedType("expressions", "FirCheckedSafeCallSubject")
+
+val whenRefType = generatedType("", "FirExpressionRef<FirWhenExpression>")
+val safeCallOriginalReceiverReferenceType = generatedType("", "FirExpressionRef<FirExpression>")
+val safeCallCheckedSubjectReferenceType = generatedType("", "FirExpressionRef<FirCheckedSafeCallSubject>")
+
 val firSessionType = type("fir", "FirSession")
 val emptyCfgReferenceType = generatedType("references.impl", "FirEmptyControlFlowGraphReference")
 val noReceiverExpressionType = generatedType("expressions.impl", "FirNoReceiverExpression")
@@ -70,3 +81,6 @@ val coneStubDiagnosticType = generatedType("diagnostics", "ConeStubDiagnostic")
 
 val dslBuilderAnnotationType = generatedType("builder", "FirBuilderDsl")
 val firImplementationDetailType = generatedType("FirImplementationDetail")
+val declarationOriginType = generatedType("declarations", "FirDeclarationOrigin")
+val declarationAttributesType = generatedType("declarations", "FirDeclarationAttributes")
+val annotationResolveStatusType = generatedType("expressions", "FirAnnotationResolveStatus")

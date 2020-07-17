@@ -45,7 +45,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             ":kotlin-android-extensions",
             ":kotlin-scripting-compiler-embeddable",
             ":kotlin-scripting-compiler-impl-embeddable",
-            ":kotlin-scripting-jvm-host-embeddable"
+            ":kotlin-scripting-jvm-host"
         )
 
         private val MAPPED_LIBRARIES = mapOf(

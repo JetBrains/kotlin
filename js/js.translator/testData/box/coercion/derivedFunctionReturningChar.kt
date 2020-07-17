@@ -1,5 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1292
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 abstract class A<out T> {
     abstract fun foo(): T
 }

@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.impl.*
-import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
+import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
+import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
 
-abstract class FirModuleBasedSession(override val moduleInfo: ModuleInfo, sessionProvider: FirSessionProvider?) :
-    FirSessionBase(sessionProvider) {
-    init {
-        registerComponent(FirQualifierResolver::class, FirQualifierResolverImpl(this))
-        registerComponent(FirTypeResolver::class, FirTypeResolverImpl(this))
-        registerComponent(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
-    }
+abstract class FirModuleBasedSession(
+    override val moduleInfo: ModuleInfo,
+    sessionProvider: FirSessionProvider?
+) : FirSession(sessionProvider)
+
+fun FirModuleBasedSession.registerResolveComponents() {
+    register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
+    register(FirTypeResolver::class, FirTypeResolverImpl(this))
 }
-

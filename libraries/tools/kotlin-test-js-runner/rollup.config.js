@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 import typescript from 'rollup-plugin-typescript2';
 import nodeResolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
@@ -44,6 +49,20 @@ export default [
         external: ['path', 'util'],
         output: {
             file: 'lib/karma-kotlin-reporter.js',
+            format: 'cjs'
+        }
+    },
+    {
+        input: './tc-log-appender.js',
+        output: {
+            file: 'lib/tc-log-appender.js',
+            format: 'cjs'
+        }
+    },
+    {
+        input: './tc-log-error-webpack.js',
+        output: {
+            file: 'lib/tc-log-error-webpack.js',
             format: 'cjs'
         }
     },

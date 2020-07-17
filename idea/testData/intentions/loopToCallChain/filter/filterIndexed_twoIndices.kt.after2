@@ -3,7 +3,7 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filterIndexed{}.filterIndexedTo(){}'"
 fun foo(list: List<String>, target: MutableCollection<String>) {
     <caret>list
-            .asSequence()
-            .filterIndexed { i, s -> s.length <= i }
-            .filterIndexedTo(target) { j, s -> s.length % j == 0 }
+        .asSequence()
+        .filterIndexed { i, s -> s.length <= i }
+        .filterIndexedTo(target) { j, s -> s.length % j == 0 }
 }

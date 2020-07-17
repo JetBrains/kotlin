@@ -165,7 +165,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
 
         classpath = mainSourceSet.runtimeClasspath
 
-        main = "com.intellij.idea.Main"
+        mainClass.set("com.intellij.idea.Main")
 
         workingDir = File(intellijRootDir(), "bin")
 
@@ -177,13 +177,14 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Didea.debug.mode=true",
             "-Didea.system.path=$ideaSandboxDir",
             "-Didea.config.path=$ideaSandboxConfigDir",
+            "-Didea.tooling.debug=true",
             "-Dapple.laf.useScreenMenuBar=true",
             "-Dapple.awt.graphics.UseQuartz=true",
             "-Dsun.io.useCanonCaches=false",
             "-Dplugin.path=${ideaPluginDir.absolutePath}"
         )
 
-        if (Platform[201].orHigher()) {
+        if (Platform[201].orHigher() && !isIntellijUltimateSdkAvailable()) {
             jvmArgs("-Didea.platform.prefix=Idea")
         }
 

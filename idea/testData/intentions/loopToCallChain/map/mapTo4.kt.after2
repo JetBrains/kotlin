@@ -4,9 +4,9 @@
 fun foo(list: List<String>): List<Int> {
     val target = createCollection()
     <caret>list
-            .asSequence()
-            .filter { it.length > 0 }
-            .mapTo(target) { it.hashCode() }
+        .asSequence()
+        .filter { it.length > 0 }
+        .mapTo(target) { it.hashCode() }
     return target
 }
 

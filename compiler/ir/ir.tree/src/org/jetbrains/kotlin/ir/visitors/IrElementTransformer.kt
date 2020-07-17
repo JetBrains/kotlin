@@ -86,7 +86,7 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: D) = visitDeclarationReference(expression, data)
     override fun visitGetField(expression: IrGetField, data: D) = visitFieldAccess(expression, data)
     override fun visitSetField(expression: IrSetField, data: D) = visitFieldAccess(expression, data)
-    override fun visitMemberAccess(expression: IrMemberAccessExpression, data: D): IrElement = visitExpression(expression, data)
+    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: D): IrElement = visitExpression(expression, data)
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: D): IrElement = visitMemberAccess(expression, data)
     override fun visitCall(expression: IrCall, data: D) = visitFunctionAccess(expression, data)
     override fun visitConstructorCall(expression: IrConstructorCall, data: D): IrElement = visitFunctionAccess(expression, data)
@@ -94,11 +94,13 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitFunctionAccess(expression, data)
     override fun visitGetClass(expression: IrGetClass, data: D) = visitExpression(expression, data)
 
-    override fun visitCallableReference(expression: IrCallableReference, data: D) = visitMemberAccess(expression, data)
+    override fun visitCallableReference(expression: IrCallableReference<*>, data: D) = visitMemberAccess(expression, data)
     override fun visitFunctionReference(expression: IrFunctionReference, data: D) = visitCallableReference(expression, data)
     override fun visitPropertyReference(expression: IrPropertyReference, data: D) = visitCallableReference(expression, data)
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: D) =
         visitCallableReference(expression, data)
+
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: D) = visitDeclarationReference(expression, data)
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: D): IrElement = visitExpression(expression, data)
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 object FirDiagnosticRenderers {
     val NULLABLE_STRING = Renderer<String?> { it ?: "null" }
@@ -23,5 +24,11 @@ object FirDiagnosticRenderers {
         }
     }
 
-    val TO_STRING = Renderer<Any> { it.toString() }
+    val TO_STRING = Renderer { element: Any ->
+        element.toString()
+    }
+
+    val PROPERTY_NAME = Renderer { symbol: FirPropertySymbol ->
+        symbol.fir.name.asString()
+    }
 }

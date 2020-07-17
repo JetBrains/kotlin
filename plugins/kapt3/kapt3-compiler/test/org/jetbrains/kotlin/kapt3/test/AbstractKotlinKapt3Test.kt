@@ -60,20 +60,13 @@ import java.io.PrintStream
 import java.util.*
 import com.sun.tools.javac.util.List as JavacList
 
-abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
+abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
     companion object {
         const val FILE_SEPARATOR = "\n\n////////////////////\n\n"
         val ERR_BYTE_STREAM = ByteArrayOutputStream()
         private val ERR_PRINT_STREAM = PrintStream(ERR_BYTE_STREAM)
 
         val messageCollector = PrintingMessageCollector(ERR_PRINT_STREAM, MessageRenderer.PLAIN_FULL_PATHS, false)
-    }
-
-    val kaptFlags = mutableListOf<KaptFlag>()
-
-    override fun setUp() {
-        super.setUp()
-        kaptFlags.clear()
     }
 
     override fun tearDown() {
@@ -111,9 +104,34 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *listOfNotNull(writeJavaFiles(files)).toTypedArray())
         addAnnotationProcessingRuntimeLibrary(myEnvironment)
 
-        // Use light analysis mode in tests
         val project = myEnvironment.project
-        val analysisExtension = PartialAnalysisHandlerExtension()
+
+        val javacOptions = wholeFile.getOptionValues("JAVAC_OPTION")
+            .map { opt ->
+                val (key, value) = opt.split('=').map { it.trim() }.also { assert(it.size == 2) }
+                key to value
+            }.toMap()
+
+        val options = KaptOptions.Builder().apply {
+            projectBaseDir = project.basePath?.let { File(it) }
+            compileClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath)
+
+            sourcesOutputDir = KotlinTestUtils.tmpDir("kaptRunner")
+            classesOutputDir = sourcesOutputDir
+            stubsOutputDir = sourcesOutputDir
+            incrementalDataOutputDir = sourcesOutputDir
+
+            this.javacOptions.putAll(javacOptions)
+            flags.addAll(kaptFlags)
+
+            detectMemoryLeaks = DetectMemoryLeaksMode.NONE
+        }.build()
+
+        val analysisExtension = object : PartialAnalysisHandlerExtension() {
+            override val analyzeDefaultParameterValues: Boolean
+                get() = options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
+        }
+
         AnalysisHandlerExtension.registerExtension(project, analysisExtension)
         StorageComponentContainerContributor.registerExtension(project, KaptComponentContributor(analysisExtension))
 
@@ -125,30 +143,9 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
 
         val logger = MessageCollectorBackedKaptLogger(isVerbose = true, isInfoAsWarnings = false, messageCollector = messageCollector)
 
-        val javacOptions = wholeFile.getOptionValues("JAVAC_OPTION")
-            .map { opt ->
-                val (key, value) = opt.split('=').map { it.trim() }.also { assert(it.size == 2) }
-                key to value
-            }.toMap()
-
         var kaptContext: KaptContext? = null
 
         try {
-            val options = KaptOptions.Builder().apply {
-                projectBaseDir = generationState.project.basePath?.let(::File)
-                compileClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath)
-
-                sourcesOutputDir = KotlinTestUtils.tmpDir("kaptRunner")
-                classesOutputDir = sourcesOutputDir
-                stubsOutputDir = sourcesOutputDir
-                incrementalDataOutputDir = sourcesOutputDir
-
-                this.javacOptions.putAll(javacOptions)
-                flags.addAll(kaptFlags)
-
-                detectMemoryLeaks = DetectMemoryLeaksMode.NONE
-            }.build()
-
             kaptContext = KaptContextForStubGeneration(
                 options, true, logger,
                 generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,
@@ -205,8 +202,6 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         }
     }
 
-    protected fun File.isOptionSet(name: String) = this.useLines { lines -> lines.any { it.trim() == "// $name" } }
-
     protected fun File.getRawOptionValues(name: String) = this.useLines { lines ->
         lines.filter { it.startsWith("// $name") }.toList()
     }
@@ -248,18 +243,6 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
     fun testSuppressWarning() {}
 
     override fun doTest(filePath: String) {
-        val wholeFile = File(filePath)
-
-        kaptFlags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
-
-        if (wholeFile.isOptionSet("CORRECT_ERROR_TYPES")) {
-            kaptFlags.add(KaptFlag.CORRECT_ERROR_TYPES)
-        }
-
-        if (wholeFile.isOptionSet("STRICT_MODE")) {
-            kaptFlags.add(KaptFlag.STRICT)
-        }
-
         super.doTest(filePath)
         doTestWithJdk9(AbstractClassFileToSourceStubConverterTest::class.java, filePath)
         doTestWithJdk11(AbstractClassFileToSourceStubConverterTest::class.java, filePath)

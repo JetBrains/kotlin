@@ -80,9 +80,9 @@ abstract class AbstractReplTestRunner : TestCase() {
                 if (b != Unit) return "fail2: ${'$'}b"
 
                 return "OK"
-            },
-            box()
-            """
+            }
+            """,
+            "box()"
         )
         Assert.assertEquals("OK", compileAndEval(lines))
     }

@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousInitializerImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -28,6 +30,7 @@ class FirAnonymousInitializerBuilder {
     var source: FirSourceElement? = null
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    lateinit var origin: FirDeclarationOrigin
     var body: FirBlock? = null
     var symbol: FirAnonymousInitializerSymbol = FirAnonymousInitializerSymbol()
 
@@ -36,6 +39,7 @@ class FirAnonymousInitializerBuilder {
             source,
             session,
             resolvePhase,
+            origin,
             body,
             symbol,
         )

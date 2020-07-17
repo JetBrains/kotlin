@@ -8,8 +8,8 @@ object TestClass {
 
 fun test(s: String): String {
     val a = TestClass { TestClass { TestClass } }
-    a checkType { <!UNRESOLVED_REFERENCE!>_<!><TestClass>() }
+    a checkType { _<TestClass>() }
 
     val b = TestClass { return s }
-    b checkType { <!UNRESOLVED_REFERENCE!>_<!><Nothing>() }
+    b checkType { _<Nothing>() }
 }

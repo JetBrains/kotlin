@@ -305,11 +305,13 @@ class KotlinFunctionCallUsage(
             defaultValueForCall != null -> substituteReferences(defaultValueForCall, parameter.defaultValueParameterReferences, psiFactory)
             else -> null
         }
+
         val argName = (if (isInsideOfCallerBody) null else name)?.let { Name.identifier(it) }
         return psiFactory.createArgument(argValue ?: psiFactory.createExpression("0"), argName).apply {
-            generatedArgumentValue = true
             if (argValue == null) {
-                getArgumentExpression()!!.delete()
+                getArgumentExpression()?.delete()
+            } else {
+                generatedArgumentValue = true
             }
         }
     }
@@ -437,7 +439,9 @@ class KotlinFunctionCallUsage(
         }
 
         val oldArgumentList = element.valueArgumentList.sure { "Argument list is expected: " + element.text }
-        replaceListPsiAndKeepDelimiters(oldArgumentList, newArgumentList) { arguments }
+        for (argument in replaceListPsiAndKeepDelimiters(oldArgumentList, newArgumentList) { arguments }.arguments) {
+            if (argument.getArgumentExpression() == null) argument.delete()
+        }
 
         element.accept(
             object : KtTreeVisitorVoid() {

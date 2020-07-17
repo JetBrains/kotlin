@@ -58,6 +58,11 @@ fun <T> withSettingsOf(
     function: TemplateEnvironment.() -> T
 ): T = function(IdBasedTemplateEnvironment(template, identificator))
 
+fun <V : Any, T : SettingType<V>> Reader.settingValue(module: Module, setting: TemplateSetting<V, T>): V? =
+    withSettingsOf(module) {
+        setting.reference.notRequiredSettingValue
+    }
+
 
 abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSettingItem {
     final override fun <V : Any, T : SettingType<V>> settingDelegate(
@@ -72,7 +77,10 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
 
     override val text: String get() = title
 
-    open fun isApplicableTo(module: Module): Boolean = true
+    open fun isApplicableTo(
+        reader: Reader,
+        module: Module
+    ): Boolean = true
 
     open val settings: List<TemplateSetting<*, *>> = emptyList()
     open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()
@@ -97,7 +105,8 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
         targetConfigurationIR: TargetConfigurationIR
     ): TargetConfigurationIR = targetConfigurationIR
 
-    open fun Writer.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = emptyList()
+    open fun Reader.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = emptyList()
+    open fun Reader.getAdditionalSettings(module: Module): Map<String, Any> = emptyMap()
 
     open fun createInterceptors(module: ModuleIR): List<TemplateInterceptor> = emptyList()
 
@@ -123,15 +132,18 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
         return result.asSuccess()
     }
 
-    fun Writer.settingsAsMap(module: Module): Map<String, Any> =
+    fun Reader.settingsAsMap(module: Module): Map<String, Any> = mutableMapOf<String, Any>().apply {
         withSettingsOf(module) {
-            settings.associate { setting ->
+            settings.associateTo(this@apply) { setting ->
                 setting.path to setting.reference.settingValue
             }
-        } + createDefaultSettings()
+        }
+        putAll(createDefaultSettings())
+        putAll(getAdditionalSettings(module))
+    }
 
 
-    private fun Writer.createDefaultSettings() = mapOf(
+    private fun Reader.createDefaultSettings() = mapOf(
         "projectName" to StructurePlugin::name.settingValue.capitalize()
     )
 

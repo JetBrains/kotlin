@@ -10,5 +10,5 @@ public class A<T> {
 
 fun foo1(x: A<*>) = x.baz()
 fun foo2(x: A<*>) {
-    x.baz() checkType { <!UNRESOLVED_REFERENCE!>_<!><Array<out A<*>>>() }
+    x.baz() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Array<out A<*>>>() }
 }

@@ -29,7 +29,8 @@ interface KlibResolvedModuleDescriptorsFactory {
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
-        customAction: ((KotlinLibrary, ModuleDescriptorImpl) -> Unit)? = null
+        customAction: ((KotlinLibrary, ModuleDescriptorImpl) -> Unit)? = null,
+        additionalDependencyModules: Iterable<ModuleDescriptorImpl>
     ): KotlinResolvedModuleDescriptors
 }
 

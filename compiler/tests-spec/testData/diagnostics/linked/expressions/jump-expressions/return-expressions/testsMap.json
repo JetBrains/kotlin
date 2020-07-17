@@ -6,7 +6,10 @@
           "specVersion": "0.1-222",
           "casesNumber": 4,
           "description": "",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ]
     }
@@ -18,7 +21,9 @@
           "specVersion": "0.1-313",
           "casesNumber": 2,
           "description": "check returning is not allowed from run{...}",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/return-expressions/p-4/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

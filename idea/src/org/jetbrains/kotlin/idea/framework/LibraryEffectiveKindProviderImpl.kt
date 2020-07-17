@@ -20,7 +20,7 @@ class LibraryEffectiveKindProviderImpl(project: Project) : LibraryEffectiveKindP
     }
 
     init {
-        project.messageBus.connect(project).subscribe(
+        project.messageBus.connect().subscribe(
             ProjectTopics.PROJECT_ROOTS,
             object : ModuleRootListener {
                 override fun rootsChanged(event: ModuleRootEvent) {

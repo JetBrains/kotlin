@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.view
 
-import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.JavaExecutionStack
 import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.intellij.ide.CommonActionsManager
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
@@ -40,10 +37,7 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CreationCoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.CoroutineDebugProbesProxy
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ManagerThreadExecutor
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParams
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParamsProvider
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.XDebugSessionListenerProvider
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.*
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -51,22 +45,20 @@ import javax.swing.JPanel
 class XCoroutineView(val project: Project, val session: XDebugSession) :
     Disposable, XDebugSessionListenerProvider, CreateContentParamsProvider {
     val log by logger
-    val versionedImplementationProvider = VersionedImplementationProvider()
+    private val versionedImplementationProvider = VersionedImplementationProvider()
 
     val mainPanel = JPanel(BorderLayout())
     val someCombobox = ComboBox<String>()
     val panel = XDebuggerTreePanel(project, session.debugProcess.editorsProvider, this, null, XCOROUTINE_POPUP_ACTION_GROUP, null)
-    val alarm = SingleAlarm(Runnable { resetRoot() }, VIEW_CLEAR_DELAY, this)
-//    val javaDebugProcess =
-//    val debugProcess: DebugProcessImpl = javaDebugProcess.debuggerSession.process
+    val alarm = SingleAlarm({ resetRoot() }, VIEW_CLEAR_DELAY, this)
     val renderer = SimpleColoredTextIconPresentationRenderer()
     val managerThreadExecutor = ManagerThreadExecutor(session)
-    var treeState: XDebuggerTreeState? = null
+    private var treeState: XDebuggerTreeState? = null
     private var restorer: XDebuggerTreeRestorer? = null
     private var selectedNodeListener: XDebuggerTreeSelectedNodeListener? = null
 
     companion object {
-        private val VIEW_CLEAR_DELAY = 100 //ms
+        private const val VIEW_CLEAR_DELAY = 100 //ms
     }
 
     init {
@@ -101,7 +93,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
 
     fun saveState() {
         DebuggerUIUtil.invokeLater {
-            if (!(panel.tree.root is EmptyNode)) {
+            if (panel.tree.root !is EmptyNode) {
                 treeState = XDebuggerTreeState.saveState(panel.tree)
             }
         }
@@ -128,10 +120,6 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
         }
     }
 
-    fun forceClear() {
-        alarm.cancel()
-    }
-
     override fun debugSessionListener(session: XDebugSession) =
         CoroutineViewDebugSessionListener(session, this)
 
@@ -149,14 +137,32 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
     inner class XCoroutinesRootNode(suspendContext: SuspendContextImpl) :
         XValueContainerNode<CoroutineGroupContainer>(
             panel.tree, null, false,
-            CoroutineGroupContainer(suspendContext, KotlinDebuggerCoroutinesBundle.message("coroutine.view.default.group"))
+            CoroutineGroupContainer(suspendContext)
         )
 
-    inner class CoroutineGroupContainer(val suspendContext: SuspendContextImpl, val groupName: String) : XValueContainer() {
+    inner class CoroutineGroupContainer(val suspendContext: SuspendContextImpl) : XValueContainer() {
         override fun computeChildren(node: XCompositeNode) {
             if (suspendContext.suspendPolicy == EventRequest.SUSPEND_ALL) {
-                val groups = XValueChildrenList.singleton(CoroutineContainer(suspendContext, groupName))
-                node.addChildren(groups, true)
+                managerThreadExecutor.on(suspendContext).invoke {
+                    val debugProbesProxy = CoroutineDebugProbesProxy(suspendContext)
+
+                    val emptyDispatcherName = KotlinDebuggerCoroutinesBundle.message("coroutine.view.dispatcher.empty")
+                    val coroutineCache = debugProbesProxy.dumpCoroutines()
+                    if (coroutineCache.isOk()) {
+                        val children = XValueChildrenList()
+                        val groups = coroutineCache.cache.groupBy { it.key.dispatcher }
+                        for (dispatcher in groups.keys) {
+                            children.add(CoroutineContainer(suspendContext, dispatcher ?: emptyDispatcherName, groups[dispatcher]))
+                        }
+                        if (children.size() > 0)
+                            node.addChildren(children, true)
+                        else
+                            node.addChildren(XValueChildrenList.singleton(InfoNode("coroutine.view.fetching.not_found")), true)
+                    } else {
+                        val errorNode = ErrorNode("coroutine.view.fetching.error")
+                        node.addChildren(XValueChildrenList.singleton(errorNode), true)
+                    }
+                }
             } else {
                 node.addChildren(
                     XValueChildrenList.singleton(ErrorNode("to.enable.information.breakpoint.suspend.policy.should.be.set.to.all.threads")),
@@ -168,28 +174,21 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
 
     inner class CoroutineContainer(
         val suspendContext: SuspendContextImpl,
-        val groupName: String
+        val groupName: String,
+        val coroutines: List<CoroutineInfoData>?
     ) : RendererContainer(renderer.renderGroup(groupName)) {
 
         override fun computeChildren(node: XCompositeNode) {
-            managerThreadExecutor.on(suspendContext).schedule {
-                val debugProbesProxy = CoroutineDebugProbesProxy(suspendContext)
-
-                var coroutineCache = debugProbesProxy.dumpCoroutines()
-                if (coroutineCache.isOk()) {
-                    val children = XValueChildrenList()
-                    for (coroutineInfo in coroutineCache.cache) {
-                        children.add(FramesContainer(coroutineInfo, suspendContext))
-                    }
-                    if (children.size() > 0)
-                        node.addChildren(children, true)
-                    else
-                        node.addChildren(XValueChildrenList.singleton(InfoNode("coroutine.view.fetching.not_found")), true)
-                } else {
-                    val errorNode = ErrorNode("coroutine.view.fetching.error")
-                    node.addChildren(XValueChildrenList.singleton(errorNode), true)
+            val children = XValueChildrenList()
+            if (coroutines != null)
+                for (coroutineInfo in coroutines) {
+                    children.add(FramesContainer(coroutineInfo, suspendContext))
                 }
-            }
+            if (children.size() > 0)
+                node.addChildren(children, true)
+            else
+                node.addChildren(XValueChildrenList.singleton(InfoNode("coroutine.view.fetching.not_found")), true)
+
         }
     }
 
@@ -203,19 +202,15 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
     ) : RendererContainer(renderer.render(infoData)) {
 
         override fun computeChildren(node: XCompositeNode) {
-            managerThreadExecutor.on(suspendContext).schedule {
-                val debugProbesProxy = CoroutineDebugProbesProxy(suspendContext)
+            managerThreadExecutor.on(suspendContext).invoke {
                 val children = XValueChildrenList()
-                var stackFrames = debugProbesProxy.frameBuilder().build(infoData)
-                val creationStack = mutableListOf<CreationCoroutineStackFrameItem>()
-                for (frame in stackFrames) {
-                    if (frame is CreationCoroutineStackFrameItem)
-                        creationStack.add(frame)
-                    else if (frame is CoroutineStackFrameItem)
-                        children.add(CoroutineFrameValue(infoData, frame))
+                val doubleFrameList = CoroutineFrameBuilder.build(infoData, suspendContext)
+                doubleFrameList?.frames?.forEach {
+                    children.add(CoroutineFrameValue(infoData, it))
                 }
-                if (creationStack.isNotEmpty())
-                    children.add(CreationFramesContainer(infoData, creationStack))
+                doubleFrameList?.creationFrames?.let {
+                    children.add(CreationFramesContainer(infoData, it))
+                }
                 node.addChildren(children, true)
             }
         }
@@ -245,7 +240,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
     }
 
     private fun applyRenderer(node: XValueNode, presentation: SimpleColoredTextIcon) =
-        node.setPresentation(presentation.icon, presentation.valuePresentation(), presentation.hasChildrens)
+        node.setPresentation(presentation.icon, presentation.valuePresentation(), presentation.hasChildren)
 
     open inner class RendererContainer(val presentation: SimpleColoredTextIcon) : XNamedValue(presentation.simpleString()) {
         override fun computePresentation(node: XValueNode, place: XValuePlace) =

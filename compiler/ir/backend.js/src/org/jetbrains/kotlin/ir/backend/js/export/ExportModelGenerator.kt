@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.backend.common.ir.isExpect
-import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.*
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
@@ -21,13 +21,12 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ExportModelGenerator(val context: JsIrBackendContext) {
 
-    private fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
+    fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = file.fqName
         val exports = file.declarations.flatMap { declaration -> listOfNotNull(exportDeclaration(declaration)) }
         return when {
@@ -37,10 +36,11 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
         }
     }
 
-    fun generateExport(module: IrModuleFragment): ExportedModule =
+    fun generateExport(modules: Iterable<IrModuleFragment>): ExportedModule =
         ExportedModule(
-            sanitizeName(context.configuration[CommonConfigurationKeys.MODULE_NAME]!!),
-            (context.externalPackageFragment.values + module.files).flatMap {
+            context.configuration[CommonConfigurationKeys.MODULE_NAME]!!,
+            context.configuration[JSConfigurationKeys.MODULE_KIND]!!,
+            (context.externalPackageFragment.values + modules.flatMap { it.files }).flatMap {
                 generateExport(it)
             }
         )
@@ -79,7 +79,8 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
     private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
         if (!constructor.isPrimary) return null
-        val allValueParameters = listOfNotNull(constructor.extensionReceiverParameter) + constructor.valueParameters
+        val allValueParameters = listOfNotNull(constructor.extensionReceiverParameter) +
+            constructor.valueParameters.filterNot { it.origin === ES6_RESULT_TYPE_PARAMETER || it.origin === ES6_INIT_BOX_PARAMETER }
         return ExportedConstructor(allValueParameters.map { exportParameter(it) })
     }
 
@@ -136,14 +137,14 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
     private fun exportClass(
         klass: IrClass
-    ): ExportedDeclaration? {
+    ): ExportedClass? {
         when (val exportability = classExportability(klass)) {
-            is Exportability.Prohibited -> return ErrorDeclaration(exportability.reason)
+            is Exportability.Prohibited -> return error(exportability.reason)
             is Exportability.NotNeeded -> return null
         }
 
         val members = mutableListOf<ExportedDeclaration>()
-        val statics = mutableListOf<ExportedDeclaration>()
+        val nestedClasses = mutableListOf<ExportedClass>()
 
         for (declaration in klass.declarations) {
             val candidate = getExportCandidate(declaration) ?: continue
@@ -160,7 +161,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
                     members.addIfNotNull(exportProperty(candidate))
 
                 is IrClass ->
-                    statics.addIfNotNull(exportClass(candidate))
+                    nestedClasses.addIfNotNull(exportClass(candidate))
 
                 is IrField -> {
                     assert(candidate.correspondingPropertySymbol != null) {
@@ -195,7 +196,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             superInterfaces = superInterfaces,
             typeParameters = typeParameters,
             members = members,
-            statics = statics,
+            nestedClasses = nestedClasses,
             ir = klass
         )
     }

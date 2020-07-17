@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -28,20 +30,22 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirAnonymousFunctionImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override val origin: FirDeclarationOrigin,
     override val annotations: MutableList<FirAnnotationCall>,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
-    override val typeParameters: MutableList<FirTypeParameter>,
     override var controlFlowGraphReference: FirControlFlowGraphReference,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
     override var typeRef: FirTypeRef,
     override val symbol: FirAnonymousFunctionSymbol,
     override var label: FirLabel?,
-    override var invocationKind: InvocationKind?,
+    override var invocationKind: EventOccurrencesRange?,
     override val isLambda: Boolean,
+    override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirAnonymousFunction() {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
     init {
         symbol.bind(this)
@@ -51,24 +55,24 @@ internal class FirAnonymousFunctionImpl(
         annotations.forEach { it.accept(visitor, data) }
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        typeParameters.forEach { it.accept(visitor, data) }
         controlFlowGraphReference.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
         typeRef.accept(visitor, data)
         label?.accept(visitor, data)
+        typeParameters.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
         transformAnnotations(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        typeParameters.transformInplace(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
-        body = body?.transformSingle(transformer, data)
+        transformBody(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
         label = label?.transformSingle(transformer, data)
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -97,6 +101,11 @@ internal class FirAnonymousFunctionImpl(
         return this
     }
 
+    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        body = body?.transformSingle(transformer, data)
+        return this
+    }
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
@@ -118,7 +127,7 @@ internal class FirAnonymousFunctionImpl(
         typeRef = newTypeRef
     }
 
-    override fun replaceInvocationKind(newInvocationKind: InvocationKind?) {
+    override fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?) {
         invocationKind = newInvocationKind
     }
 }

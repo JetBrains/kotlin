@@ -2,7 +2,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, constant-literals, real-literals -> paragraph 2 -> sentence 1
+ * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 2 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: Real literals suffixed by f/F (float suffix) with an exponent mark.
  */

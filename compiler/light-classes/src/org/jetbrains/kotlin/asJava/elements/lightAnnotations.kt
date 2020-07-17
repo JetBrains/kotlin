@@ -309,6 +309,9 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
         // all data-class generated members are not-null
         if (annotatedElement is KtClass && annotatedElement.isData()) return NotNull::class.java.name
 
+        // objects and companion objects are not null
+        if (annotatedElement is KtObjectDeclaration) return NotNull::class.java.name
+
         if (annotatedElement is KtParameter) {
             if (annotatedElement.containingClassOrObject?.isAnnotation() == true) return null
         }

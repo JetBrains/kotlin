@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
@@ -16,6 +16,7 @@ import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInt
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.DEV
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
@@ -24,7 +25,8 @@ data class NpmDependency(
     internal val project: Project,
     private val name: String,
     private val version: String,
-    val scope: Scope = Scope.NORMAL
+    val scope: Scope = Scope.NORMAL,
+    val generateExternals: Boolean = false
 ) : SelfResolvingDependency,
     SelfResolvingDependencyInternal,
     ResolvableDependency,
@@ -43,22 +45,6 @@ data class NpmDependency(
     internal val dependencies = mutableSetOf<NpmDependency>()
     internal var resolvedVersion: String? = null
     internal var integrity: String? = null
-
-    fun getDependenciesRecursively(): Set<NpmDependency> {
-        val visited = mutableSetOf<NpmDependency>()
-
-        fun visit(it: NpmDependency) {
-            if (!visited.add(it)) return
-
-            it.dependencies.forEach { child ->
-                visit(child)
-            }
-        }
-
-        visit(this)
-
-        return visited
-    }
 
     override fun resolve(transitive: Boolean): Set<File> =
         resolveProject()
@@ -125,7 +111,39 @@ data class NpmDependency(
     }
 
     override fun getReason(): String? = reason
+
+    fun uniqueRepresentation() =
+        "$scope $key:$version, $generateExternals"
 }
+
+internal fun directoryNpmDependency(
+    project: Project,
+    name: String,
+    directory: File,
+    scope: NpmDependency.Scope,
+    generateExternals: Boolean
+): NpmDependency {
+    check(directory.isDirectory) {
+        "Dependency on local path should point on directory but $directory found"
+    }
+
+    return NpmDependency(
+        project = project,
+        name = name,
+        version = fileVersion(directory),
+        scope = scope,
+        generateExternals = generateExternals
+    )
+}
+
+internal fun onlyNameNpmDependency(
+    name: String
+): Nothing {
+    throw IllegalArgumentException("NPM dependency '$name' doesn't have version. Please, set version explicitly.")
+}
+
+fun String.isFileVersion() =
+    startsWith(FILE_VERSION_PREFIX)
 
 internal fun fileVersion(directory: File): String =
     "$FILE_VERSION_PREFIX${directory.canonicalPath}"

@@ -1,5 +1,5 @@
 // "Replace array of boxed with array of primitive" "true"
 annotation class SuperAnnotation(
-        val c: CharArray,
-        val str: Array<String>
+    val c: CharArray,
+    val str: Array<String>
 )

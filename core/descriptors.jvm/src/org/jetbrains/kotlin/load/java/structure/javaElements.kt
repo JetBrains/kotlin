@@ -90,6 +90,7 @@ interface JavaClass : JavaClassifier, JavaTypeParameterListOwner, JavaModifierLi
     val methods: Collection<JavaMethod>
     val fields: Collection<JavaField>
     val constructors: Collection<JavaConstructor>
+    fun hasDefaultConstructor(): Boolean
 }
 
 val JavaClass.classId: ClassId?

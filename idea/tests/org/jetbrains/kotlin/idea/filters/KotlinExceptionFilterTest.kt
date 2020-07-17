@@ -32,8 +32,8 @@ class KotlinExceptionFilterTest : KotlinLightCodeInsightFixtureTestCase() {
     private var myExceptionLine: String = ""
 
     private val mySuffixOptions = listOf(
-        SuffixOption("10:1", 10, 1),
-        SuffixOption("14:11", 14, 11),
+        SuffixOption("10:1", 9, 1),
+        SuffixOption("14:11", 13, 11),
         SuffixOption("<unknown>", 0, 0)
     )
 

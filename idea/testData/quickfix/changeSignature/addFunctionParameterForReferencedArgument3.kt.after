@@ -1,0 +1,7 @@
+// "Add parameter to function 'foo'" "true"
+// DISABLE-ERRORS
+fun foo(isObject: Boolean) {}
+
+fun test(isObject: Boolean) {
+    foo((isObject))
+}

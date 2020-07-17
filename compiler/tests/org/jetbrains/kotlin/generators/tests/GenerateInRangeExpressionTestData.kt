@@ -24,10 +24,7 @@ object GenerateInRangeExpressionTestData {
     ) {
         PrintWriter(File(GENERATED_DIR, fileName)).use {
             it.generateTestCaseBody(
-                header, rangeExpressions, elementExpressions,
-                ignoreFrontendIR = fileName !in listOf(
-                    "charRangeLiteral.kt", "charDownTo.kt", "charUntil.kt", "intDownTo.kt", "longDownTo.kt"
-                )
+                header, rangeExpressions, elementExpressions
             )
         }
     }
@@ -35,12 +32,8 @@ object GenerateInRangeExpressionTestData {
     private fun PrintWriter.generateTestCaseBody(
         header: String,
         rangeExpressions: List<String>,
-        elementExpressions: List<String>,
-        ignoreFrontendIR: Boolean
+        elementExpressions: List<String>
     ) {
-        if (ignoreFrontendIR) {
-            println("// IGNORE_BACKEND_FIR: JVM_IR")
-        }
         println("// KJS_WITH_FULL_RUNTIME")
         println("// $PREAMBLE_MESSAGE")
         println("// WITH_RUNTIME")
@@ -126,9 +119,13 @@ object GenerateInRangeExpressionTestData {
 
         val charLiterals = listOf("'0'", "'1'", "'2'", "'3'", "'4'")
 
-        val numericLiterals =
+        val integerLiterals =
             listOf("(-1)", "0", "1", "2", "3", "4").flatMap {
-                listOf("$it.toByte()", "$it.toShort()", it, "$it.toLong()", "$it.toFloat()", "$it.toDouble()")
+                listOf("$it.toByte()", "$it.toShort()", it, "$it.toLong()")
+            }
+        val floatingPointLiterals =
+            listOf("(-1)", "0", "1", "2", "3", "4").flatMap {
+                listOf("$it.toFloat()", "$it.toDouble()")
             }
 
         generateRangeOperatorTestCase(
@@ -158,14 +155,14 @@ object GenerateInRangeExpressionTestData {
             "1",
             "..",
             "3",
-            numericLiterals
+            integerLiterals
         )
         generateRangeOperatorTestCase(
             "intUntil.kt",
             "1",
             "until",
             "3",
-            numericLiterals
+            integerLiterals
         )
         generateRangeOperatorTestCase(
             "intDownTo.kt",
@@ -180,14 +177,14 @@ object GenerateInRangeExpressionTestData {
             "1L",
             "..",
             "3L",
-            numericLiterals
+            integerLiterals
         )
         generateRangeOperatorTestCase(
             "longUntil.kt",
             "1L",
             "until",
             "3L",
-            numericLiterals
+            integerLiterals
         )
         generateRangeOperatorTestCase(
             "longDownTo.kt",
@@ -202,7 +199,7 @@ object GenerateInRangeExpressionTestData {
             "1.0F",
             "..",
             "3.0F",
-            numericLiterals
+            floatingPointLiterals
         )
 
         generateRangeOperatorTestCase(
@@ -210,13 +207,13 @@ object GenerateInRangeExpressionTestData {
             "1.0",
             "..",
             "3.0",
-            numericLiterals
+            floatingPointLiterals
         )
 
         generateMatrixTestCase(
             "arrayIndices.kt",
             listOf("intArray.indices", "objectArray.indices", "emptyIntArray.indices", "emptyObjectArray.indices"),
-            numericLiterals,
+            integerLiterals,
             """val intArray = intArrayOf(1, 2, 3)
                     |val objectArray = arrayOf(1, 2, 3)
                     |val emptyIntArray = intArrayOf()
@@ -227,7 +224,7 @@ object GenerateInRangeExpressionTestData {
         generateMatrixTestCase(
             "collectionIndices.kt",
             listOf("collection.indices", "emptyCollection.indices"),
-            numericLiterals,
+            integerLiterals,
             """val collection = listOf(1, 2, 3)
                     |val emptyCollection = listOf<Any>()
                 """.trimMargin()
@@ -236,7 +233,7 @@ object GenerateInRangeExpressionTestData {
         generateMatrixTestCase(
             "charSequenceIndices.kt",
             listOf("charSequence.indices", "emptyCharSequence.indices"),
-            numericLiterals,
+            integerLiterals,
             """val charSequence: CharSequence = "123"
                     |val emptyCharSequence: CharSequence = ""
                 """.trimMargin()

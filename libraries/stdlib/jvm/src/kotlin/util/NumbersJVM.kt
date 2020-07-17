@@ -97,24 +97,24 @@ public actual inline fun Float.Companion.fromBits(bits: Int): Float = java.lang.
 /**
  * Counts the number of set bits in the binary representation of this [Int] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Int.countOneBits(): Int = Integer.bitCount(this)
 
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Int] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Int.countLeadingZeroBits(): Int = Integer.numberOfLeadingZeros(this)
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Int] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Int.countTrailingZeroBits(): Int = Integer.numberOfTrailingZeros(this)
 
@@ -122,8 +122,8 @@ public actual inline fun Int.countTrailingZeroBits(): Int = Integer.numberOfTrai
  * Returns a number having a single bit set in the position of the most significant set bit of this [Int] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Int.takeHighestOneBit(): Int = Integer.highestOneBit(this)
 
@@ -131,8 +131,8 @@ public actual inline fun Int.takeHighestOneBit(): Int = Integer.highestOneBit(th
  * Returns a number having a single bit set in the position of the least significant set bit of this [Int] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Int.takeLowestOneBit(): Int = Integer.lowestOneBit(this)
 
@@ -171,24 +171,24 @@ public actual inline fun Int.rotateRight(bitCount: Int): Int = Integer.rotateRig
 /**
  * Counts the number of set bits in the binary representation of this [Long] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.countOneBits(): Int = java.lang.Long.bitCount(this)
 
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.countLeadingZeroBits(): Int = java.lang.Long.numberOfLeadingZeros(this)
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.countTrailingZeroBits(): Int = java.lang.Long.numberOfTrailingZeros(this)
 
@@ -196,8 +196,8 @@ public actual inline fun Long.countTrailingZeroBits(): Int = java.lang.Long.numb
  * Returns a number having a single bit set in the position of the most significant set bit of this [Long] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.takeHighestOneBit(): Long = java.lang.Long.highestOneBit(this)
 
@@ -205,8 +205,8 @@ public actual inline fun Long.takeHighestOneBit(): Long = java.lang.Long.highest
  * Returns a number having a single bit set in the position of the least significant set bit of this [Long] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.takeLowestOneBit(): Long = java.lang.Long.lowestOneBit(this)
 

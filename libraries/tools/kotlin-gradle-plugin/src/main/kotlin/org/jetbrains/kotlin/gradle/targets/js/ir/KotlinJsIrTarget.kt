@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
@@ -36,6 +39,9 @@ constructor(
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
 
+    open var isMpp: Boolean? = null
+        internal set
+
     override var moduleName: String? = null
         set(value) {
             check(!isBrowserConfigured && !isNodejsConfigured) {
@@ -44,8 +50,29 @@ constructor(
             field = value
         }
 
+    override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
+        val usageContexts = super.createUsageContexts(producingCompilation)
+
+        if (isMpp!! || mixedMode) return usageContexts
+
+        return usageContexts +
+                DefaultKotlinUsageContext(
+                    compilation = compilations.getByName(MAIN_COMPILATION_NAME),
+                    usage = project.usageByName("java-api-jars"),
+                    dependencyConfigurationName = commonFakeApiElementsConfigurationName,
+                    overrideConfigurationArtifacts = emptySet()
+                )
+    }
+
+    internal val commonFakeApiElementsConfigurationName: String
+        get() = disambiguateName("commonFakeApiElements")
+
     val disambiguationClassifierInPlatform: String?
-        get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.IR)
+        get() = if (mixedMode) {
+            disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.IR)
+        } else {
+            disambiguationClassifier
+        }
 
     override val binaries: KotlinJsBinaryContainer
         get() = compilations.withType(KotlinJsIrCompilation::class.java)
@@ -132,23 +159,21 @@ constructor(
 
     override fun useCommonJs() {
         compilations.all {
-            it.compileKotlinTask.configureCommonJsOptions()
+            it.kotlinOptions.configureCommonJsOptions()
 
             binaries
                 .withType(JsIrBinary::class.java)
                 .all {
                     it.linkTask.configure { linkTask ->
-                        linkTask.configureCommonJsOptions()
+                        linkTask.kotlinOptions.configureCommonJsOptions()
                     }
                 }
         }
     }
 
-    private fun Kotlin2JsCompile.configureCommonJsOptions() {
-        kotlinOptions {
-            moduleKind = "commonjs"
-            sourceMap = true
-            sourceMapEmbedSources = null
-        }
+    private fun KotlinJsOptions.configureCommonJsOptions() {
+        moduleKind = "commonjs"
+        sourceMap = true
+        sourceMapEmbedSources = null
     }
 }

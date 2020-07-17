@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 
 class IDEPackagePartProvider(val scope: GlobalSearchScope) : PackagePartProvider, MetadataPartProvider {
@@ -38,4 +39,10 @@ class IDEPackagePartProvider(val scope: GlobalSearchScope) : PackagePartProvider
     // Note that in case of several modules with the same name, we return all annotations on all of them, which is probably incorrect
     override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> =
         FileBasedIndex.getInstance().getValues(KotlinJvmModuleAnnotationsIndex.KEY, moduleName, scope).flatten()
+
+    // Optional annotations are not needed in IDE because they can only be used in common module sources, and they are loaded via the
+    // standard common module resolution there. (In the CLI compiler the situation is different because we compile common+platform
+    // sources together, _without_ common dependencies.)
+    override fun getAllOptionalAnnotationClasses(): List<ClassData> =
+        emptyList()
 }

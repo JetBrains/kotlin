@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.js.inline.context.FunctionDefinitionLoader
 import org.jetbrains.kotlin.js.inline.context.InliningContext
 
 import org.jetbrains.kotlin.js.translate.general.AstGenerationResult
+import org.jetbrains.kotlin.resolve.BindingContext
 
 class JsInliner(
     val reporter: JsConfig.Reporter,
     val config: JsConfig,
     val trace: DiagnosticSink,
+    val bindingContext: BindingContext,
     val translationResult: AstGenerationResult
 ) {
 

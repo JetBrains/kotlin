@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.typeUtil.unCapture
+import org.jetbrains.kotlin.utils.SmartList
 
 
 class MutableVariableWithConstraints private constructor(
@@ -36,12 +37,15 @@ class MutableVariableWithConstraints private constructor(
     // see @OnlyInputTypes annotation
     val projectedInputCallTypes: Collection<UnwrappedType>
         get() = mutableConstraints
-            .filter { it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null }
-            .map { (it.type as KotlinType).unCapture().unwrap() }
+            .mapNotNullTo(SmartList()) {
+                if (it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null)
+                    (it.type as KotlinType).unCapture().unwrap()
+                else null
+            }
 
-    private val mutableConstraints = if (constraints == null) ArrayList() else ArrayList(constraints)
+    private val mutableConstraints = if (constraints == null) SmartList() else SmartList(constraints)
 
-    private var simplifiedConstraints: ArrayList<Constraint>? = mutableConstraints
+    private var simplifiedConstraints: SmartList<Constraint>? = mutableConstraints
 
     // return new actual constraint, if this constraint is new
     fun addConstraint(constraint: Constraint): Constraint? {
@@ -110,13 +114,13 @@ class MutableVariableWithConstraints private constructor(
         }
     }
 
-    private fun ArrayList<Constraint>.simplifyConstraints(): ArrayList<Constraint> {
+    private fun SmartList<Constraint>.simplifyConstraints(): SmartList<Constraint> {
         val equalityConstraints =
             filter { it.kind == ConstraintKind.EQUALITY }
                 .groupBy { it.typeHashCode }
         return when {
             equalityConstraints.isEmpty() -> this
-            else -> filterTo(ArrayList()) { isUsefulConstraint(it, equalityConstraints) }
+            else -> filterTo(SmartList()) { isUsefulConstraint(it, equalityConstraints) }
         }
     }
 
@@ -134,10 +138,10 @@ class MutableVariableWithConstraints private constructor(
 internal class MutableConstraintStorage : ConstraintStorage {
     override val allTypeVariables: MutableMap<TypeConstructorMarker, TypeVariableMarker> = LinkedHashMap()
     override val notFixedTypeVariables: MutableMap<TypeConstructorMarker, MutableVariableWithConstraints> = LinkedHashMap()
-    override val initialConstraints: MutableList<InitialConstraint> = ArrayList()
+    override val initialConstraints: MutableList<InitialConstraint> = SmartList()
     override var maxTypeDepthFromInitialConstraints: Int = 1
-    override val errors: MutableList<KotlinCallDiagnostic> = ArrayList()
+    override val errors: MutableList<KotlinCallDiagnostic> = SmartList()
     override val hasContradiction: Boolean get() = errors.any { !it.candidateApplicability.isSuccess }
     override val fixedTypeVariables: MutableMap<TypeConstructorMarker, KotlinTypeMarker> = LinkedHashMap()
-    override val postponedTypeVariables: ArrayList<TypeVariableMarker> = ArrayList()
+    override val postponedTypeVariables: MutableList<TypeVariableMarker> = SmartList()
 }

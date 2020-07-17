@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 
 abstract class JvmPackagePartProviderBase<MappingsKey> : PackagePartProvider, MetadataPartProvider {
@@ -50,5 +52,19 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackagePartProvider, Me
         return loadedModules.mapNotNull { (_, mapping, name) ->
             if (name == moduleName) mapping.moduleData.annotations.map(ClassId::fromString) else null
         }.flatten()
+    }
+
+    override fun getAllOptionalAnnotationClasses(): List<ClassData> =
+        loadedModules.flatMap { module ->
+            getAllOptionalAnnotationClasses(module.mapping)
+        }
+
+    companion object {
+        fun getAllOptionalAnnotationClasses(module: ModuleMapping): List<ClassData> {
+            val data = module.moduleData
+            return data.optionalAnnotations.map { proto ->
+                ClassData(data.nameResolver, proto, module.version, SourceElement.NO_SOURCE)
+            }
+        }
     }
 }

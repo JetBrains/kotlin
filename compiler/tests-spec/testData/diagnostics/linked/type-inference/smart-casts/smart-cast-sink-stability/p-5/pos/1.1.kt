@@ -6,8 +6,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-268
- * PLACE: type-inference, smart-casts, smart-cast-sink-stability -> paragraph 5 -> sentence 1
- * RELEVANT PLACES: overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 1 -> sentence 1
+ * MAIN LINK: type-inference, smart-casts, smart-cast-sink-stability -> paragraph 5 -> sentence 1
+ * PRIMARY LINKS: overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 1 -> sentence 1
  * overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 3 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: smart cast for the property available through the operator invoke

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 
@@ -35,3 +36,11 @@ interface IrGetEnumValue : IrGetSingletonValue {
     override val symbol: IrEnumEntrySymbol
 }
 
+/**
+ * Platform-specific low-level reference to function.
+ *
+ * On JS platform represent a plain reference to JavaScript function.
+ */
+interface IrRawFunctionReference : IrDeclarationReference {
+    override val symbol: IrFunctionSymbol
+}

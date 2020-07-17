@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import junit.framework.Assert
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
@@ -33,18 +33,17 @@ fun runWithKotlinc(
     )
 }
 
-fun runWithKotlinc(
-    compilerArgs: Array<String>,
+fun runWithKotlinLauncherScript(
+    launcherScriptName: String,
+    compilerArgs: Iterable<String>,
     expectedOutPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
     classpath: List<File> = emptyList(),
     additionalEnvVars: Iterable<Pair<String, String>>? = null
 ) {
-    val executableName = "kotlinc"
-    // TODO:
     val executableFileName =
-        if (System.getProperty("os.name").contains("windows", ignoreCase = true)) "$executableName.bat" else executableName
+        if (System.getProperty("os.name").contains("windows", ignoreCase = true)) "$launcherScriptName.bat" else launcherScriptName
     val launcherFile = File("dist/kotlinc/bin/$executableFileName")
     Assert.assertTrue("Launcher script not found, run dist task: ${launcherFile.absolutePath}", launcherFile.exists())
 
@@ -55,6 +54,30 @@ fun runWithKotlinc(
         }
         addAll(compilerArgs)
     }
+
+    runAndCheckResults(args, expectedOutPatterns, expectedExitCode, workDirectory, additionalEnvVars)
+}
+
+fun runWithKotlinc(
+    compilerArgs: Array<String>,
+    expectedOutPatterns: List<String> = emptyList(),
+    expectedExitCode: Int = 0,
+    workDirectory: File? = null,
+    classpath: List<File> = emptyList(),
+    additionalEnvVars: Iterable<Pair<String, String>>? = null
+) {
+    runWithKotlinLauncherScript(
+        "kotlinc", compilerArgs.asIterable(), expectedOutPatterns, expectedExitCode, workDirectory, classpath, additionalEnvVars
+    )
+}
+
+fun runAndCheckResults(
+    args: List<String>,
+    expectedOutPatterns: List<String> = emptyList(),
+    expectedExitCode: Int = 0,
+    workDirectory: File? = null,
+    additionalEnvVars: Iterable<Pair<String, String>>? = null
+) {
     val processBuilder = ProcessBuilder(args)
     if (workDirectory != null) {
         processBuilder.directory(workDirectory)
@@ -197,6 +220,16 @@ internal fun <R> withDisposable(body: (Disposable) -> R) {
         body(disposable)
     } finally {
         Disposer.dispose(disposable)
+    }
+}
+
+class TestDisposable : Disposable {
+    @Volatile
+    var isDisposed = false
+        private set
+
+    override fun dispose() {
+        isDisposed = true
     }
 }
 

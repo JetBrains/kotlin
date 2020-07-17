@@ -108,9 +108,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<List<String>> ADDITIONAL_JAVA_MODULES =
             CompilerConfigurationKey.create("additional Java modules");
 
-    public static final CompilerConfigurationKey<Boolean> ENABLE_JVM_DEFAULT =
-            CompilerConfigurationKey.create("Allow to use '@JvmDefault'");
-
     public static final CompilerConfigurationKey<Boolean> EMIT_JVM_TYPE_ANNOTATIONS =
             CompilerConfigurationKey.create("Emit JVM type annotations in bytecode");
 
@@ -122,4 +119,10 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> NO_OPTIMIZED_CALLABLE_REFERENCES =
             CompilerConfigurationKey.create("Do not use optimized callable reference superclasses available from 1.4");
+
+    public static final CompilerConfigurationKey<Boolean> NO_KOTLIN_NOTHING_VALUE_EXCEPTION =
+            CompilerConfigurationKey.create("Do not use KotlinNothingValueException available since 1.4");
+
+    public static final CompilerConfigurationKey<Boolean> USE_OLD_SPILLED_VAR_TYPE_ANALYSIS =
+            CompilerConfigurationKey.create("Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines");
 }

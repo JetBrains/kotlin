@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 
 fun test(list: List<Int>) {
-    val mapIndexedNotNullTo: MutableList<Int> = list.asSequence().filter { it > 1 }.mapIndexedNotNullTo(mutableListOf()) { index, i -> i }
+    val mapIndexedNotNullTo: MutableList<Int> = list.asSequence().filter { it > 1 }
+        .mapIndexedNotNullTo(mutableListOf()) { index, i -> i }
 }

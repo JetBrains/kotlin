@@ -16,13 +16,14 @@ import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.FirSessionBase
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.render
@@ -75,7 +76,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     }
 
     protected fun KtFile.toFirFile(stubMode: Boolean): FirFile =
-        RawFirBuilder(object : FirSessionBase(null) {}, StubFirScopeProvider, stubMode).buildFirFile(this)
+        RawFirBuilder(object : FirSession(null) {}, StubFirScopeProvider, stubMode).buildFirFile(this)
 
     private fun FirElement.traverseChildren(result: MutableSet<FirElement> = hashSetOf()): MutableSet<FirElement> {
         if (!result.add(this)) {
@@ -165,7 +166,8 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 private fun throwTwiceVisitingError(element: FirElement) {
     if (element is FirTypeRef || element is FirNoReceiverExpression || element is FirTypeParameter ||
         element is FirEmptyContractDescription || element is FirEmptyControlFlowGraphReference ||
-        element is FirStubReference || element.isExtensionFunctionAnnotation || element is FirEmptyArgumentList
+        element is FirStubReference || element.isExtensionFunctionAnnotation || element is FirEmptyArgumentList ||
+        element is FirStubStatement
     ) {
         return
     }

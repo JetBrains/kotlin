@@ -56,6 +56,12 @@ private val Module.facetSettings get() = KotlinFacet.get(this)?.configuration?.s
 
 val Module.implementingModules: List<Module>
     get() = cacheInvalidatingOnRootModifications {
+        fun Module.implementingModulesM2(moduleManager: ModuleManager): List<Module> {
+            return moduleManager.getModuleDependentModules(this).filter {
+                it.isNewMPPModule && it.externalProjectId == externalProjectId
+            }
+        }
+
         val moduleManager = ModuleManager.getInstance(project)
 
         when (facetSettings?.mppVersion) {
@@ -63,13 +69,19 @@ val Module.implementingModules: List<Module>
 
             KotlinMultiplatformVersion.M3 -> {
                 val thisModuleStableName = stableModuleName
+                val result = mutableSetOf<Module>()
+                moduleManager.modules.filterTo(result) { it.facetSettings?.dependsOnModuleNames?.contains(thisModuleStableName) == true }
 
-                moduleManager.modules.filter { it.facetSettings?.dependsOnModuleNames?.contains(thisModuleStableName) == true }
+                // HACK: we do not import proper dependsOn for android source-sets in M3,
+                // so add all Android modules that M2-implemention would've added,
+                // to at least not make things worse.
+                // See KT-33809 for details
+                implementingModulesM2(moduleManager).forEach { if (it !in result && it.isAndroidModule()) result += it }
+
+                result.toList()
             }
 
-            KotlinMultiplatformVersion.M2 -> moduleManager.getModuleDependentModules(this).filter {
-                it.isNewMPPModule && it.externalProjectId == externalProjectId
-            }
+            KotlinMultiplatformVersion.M2 -> implementingModulesM2(moduleManager)
 
             KotlinMultiplatformVersion.M1 -> moduleManager.modules.filter { name in it.findOldFashionedImplementedModuleNames() }
         }
@@ -90,24 +102,35 @@ private val Project.modulesByLinkedKey: Map<String, Module>
 
 val Module.implementedModules: List<Module>
     get() = cacheInvalidatingOnRootModifications {
+        fun Module.implementedModulesM2(): List<Module> {
+            return rootManager.dependencies.filter {
+                // TODO: remove additional android check
+                it.isNewMPPModule &&
+                        it.platform.isCommon() &&
+                        it.externalProjectId == externalProjectId &&
+                        (isAndroidModule() || it.isTestModule == isTestModule)
+            }
+        }
+
         val facetSettings = facetSettings
         when (facetSettings?.mppVersion) {
             null -> emptyList()
 
             KotlinMultiplatformVersion.M3 -> {
-                facetSettings.dependsOnModuleNames.mapNotNull {
-                    project.modulesByLinkedKey[it]
+                if (isAndroidModule()) {
+                    // HACK: we do not import proper dependsOn for android source-sets in M3, so fallback to M2-impl
+                    // to at least not make things worse.
+                    // See KT-33809 for details
+                    implementedModulesM2()
+                } else {
+                    facetSettings.dependsOnModuleNames.mapNotNull {
+                        project.modulesByLinkedKey[it]
+                    }
                 }
             }
 
             KotlinMultiplatformVersion.M2 -> {
-                rootManager.dependencies.filter {
-                    // TODO: remove additional android check
-                    it.isNewMPPModule && 
-                            it.platform.isCommon() &&
-                            it.externalProjectId == externalProjectId &&
-                            (isAndroidModule() || it.isTestModule == isTestModule)
-                }
+                implementedModulesM2()
             }
 
             KotlinMultiplatformVersion.M1 -> {

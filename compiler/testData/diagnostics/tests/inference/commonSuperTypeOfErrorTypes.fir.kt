@@ -9,13 +9,13 @@ fun <T> materialize() = null as T
 
 fun test() {
     consume(
-        materialize<Foo<Bar<ErrorType>>>(),
-        materialize<Foo<Bar<ErrorType>>>()
+        materialize<<!UPPER_BOUND_VIOLATED!>Foo<Bar<ErrorType>><!>>(),
+        materialize<<!UPPER_BOUND_VIOLATED!>Foo<Bar<ErrorType>><!>>()
     )
 
     <!INAPPLICABLE_CANDIDATE!>consume<!>(
-        materialize<Foo<Bar<ErrorType>>>(),
-        materialize<Foo<ErrorType>>()
+        materialize<<!UPPER_BOUND_VIOLATED!>Foo<Bar<ErrorType>><!>>(),
+        materialize<<!UPPER_BOUND_VIOLATED!>Foo<ErrorType><!>>()
     )
 
 }

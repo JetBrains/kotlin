@@ -3,7 +3,7 @@ FILE: runnable.kt
     }
     public final fun main(): R|kotlin/Unit| {
         R|/foo|(R|java/lang/Runnable|(<L> = Runnable@fun <anonymous>(): R|kotlin/Unit| {
-            Unit
+            ^@Runnable Unit
         }
         ))
     }

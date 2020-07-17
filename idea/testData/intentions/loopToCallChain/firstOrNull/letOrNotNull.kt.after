@@ -3,9 +3,9 @@
 // IS_APPLICABLE_2: false
 fun foo(list: List<String>) {
     val <caret>result = list
-            .firstOrNull { it.length > 0 }
-            ?.let { bar(it) }
-            ?: ""
+        .firstOrNull { it.length > 0 }
+        ?.let { bar(it) }
+        ?: ""
 }
 
 fun bar(s: String): String = s

@@ -5,7 +5,7 @@ class Test {
         }
     }
     fun test() {
-        1.self().bar() <!INAPPLICABLE_CANDIDATE!>+<!> 1
+        1.self().bar() + 1
     }
 }
 

@@ -13,5 +13,5 @@ fun myAssert(condition: Boolean, message: String = "") {
 
 fun test(x: Any?) {
     myAssert(x is String)
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.length
 }

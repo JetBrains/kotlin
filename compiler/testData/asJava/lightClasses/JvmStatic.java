@@ -1,4 +1,5 @@
 public final class A {
+    @org.jetbrains.annotations.NotNull
     public static final A.Companion Companion;
 
     public A() { /* compiled code */ }
@@ -7,6 +8,7 @@ public final class A {
     public static final void f() { /* compiled code */ }
 
     public static final class B {
+        @org.jetbrains.annotations.NotNull
         public static final A.B INSTANCE;
 
         @kotlin.jvm.JvmStatic

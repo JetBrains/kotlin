@@ -18,7 +18,6 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
-
 data class ArgumentMapping(
     // This map should be ordered by arguments as written, e.g.:
     //      fun foo(a: Int, b: Int) {}
@@ -26,7 +25,20 @@ data class ArgumentMapping(
     // parameterToCallArgumentMap.values() should be [ 'bar()', 'foo()' ]
     val parameterToCallArgumentMap: Map<FirValueParameter, ResolvedCallArgument>,
     val diagnostics: List<ResolutionDiagnostic>
-)
+) {
+    fun toArgumentToParameterMapping(): Map<FirExpression, FirValueParameter> {
+        val argumentToParameterMapping = mutableMapOf<FirExpression, FirValueParameter>()
+        parameterToCallArgumentMap.forEach { (valueParameter, resolvedArgument) ->
+            when (resolvedArgument) {
+                is ResolvedCallArgument.SimpleArgument -> argumentToParameterMapping[resolvedArgument.callArgument] = valueParameter
+                is ResolvedCallArgument.VarargArgument -> resolvedArgument.arguments.forEach {
+                    argumentToParameterMapping[it] = valueParameter
+                }
+            }
+        }
+        return argumentToParameterMapping
+    }
+}
 
 private val EmptyArgumentMapping = ArgumentMapping(emptyMap(), emptyList())
 

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.caches.project.lazyClosure
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.klib.*
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.isInterop
@@ -41,7 +42,9 @@ import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.library.nativeTargets
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms.nativePlatformByTargetNames
 import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -67,12 +70,13 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
                 storageManager = storageManager,
                 metadataModuleDescriptorFactory = metadataFactories.DefaultDeserializedDescriptorFactory,
                 languageVersionSettings = languageVersionSettings,
-                moduleDescriptor = moduleDescriptor
+                moduleDescriptor = moduleDescriptor,
+                lookupTracker = LookupTracker.DO_NOTHING
             )
     }
 
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean =
-        virtualFile.isKlibLibraryRootForPlatform(NativePlatforms.defaultNativePlatform)
+        virtualFile.isKlibLibraryRootForPlatform(NativePlatforms.unspecifiedNativePlatform)
 
     override fun createResolverForModuleFactory(
         settings: PlatformAnalysisParameters,
@@ -149,7 +153,8 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
 class NativeKlibLibraryInfo(project: Project, library: Library, libraryRoot: String) :
     AbstractKlibLibraryInfo(project, library, libraryRoot) {
 
-    val isStdlib get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
+    // If you're changing this, please take a look at ideaModelDependencies as well
+    val isStdlib: Boolean get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
 
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() {
@@ -159,6 +164,7 @@ class NativeKlibLibraryInfo(project: Project, library: Library, libraryRoot: Str
             return capabilities
         }
 
-    override val platform: TargetPlatform
-        get() = NativePlatforms.defaultNativePlatform
+    override val platform: TargetPlatform by lazy {
+        nativePlatformByTargetNames(resolvedKotlinLibrary.safeRead(emptyList()) { nativeTargets })
+    }
 }

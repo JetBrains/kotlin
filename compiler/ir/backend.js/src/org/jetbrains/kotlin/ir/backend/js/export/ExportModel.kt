@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.ir.backend.js.export
 
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 sealed class ExportedDeclaration
 
 data class ExportedModule(
     val name: String,
+    val moduleKind: ModuleKind,
     val declarations: List<ExportedDeclaration>
 )
 
@@ -56,7 +60,7 @@ class ExportedClass(
     val superInterfaces: List<ExportedType> = emptyList(),
     val typeParameters: List<String>,
     val members: List<ExportedDeclaration>,
-    val statics: List<ExportedDeclaration>,
+    val nestedClasses: List<ExportedClass>,
     val ir: IrClass
 ) : ExportedDeclaration()
 

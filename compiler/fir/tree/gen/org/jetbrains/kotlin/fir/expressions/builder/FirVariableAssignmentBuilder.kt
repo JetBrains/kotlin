@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirVariableAssignmentBuilder : FirQualifiedAccessBuilder, FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var safe: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
@@ -41,7 +40,6 @@ class FirVariableAssignmentBuilder : FirQualifiedAccessBuilder, FirAnnotationCon
         return FirVariableAssignmentImpl(
             source,
             annotations,
-            safe,
             typeArguments,
             explicitReceiver,
             dispatchReceiver,

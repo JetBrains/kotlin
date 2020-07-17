@@ -3,9 +3,9 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().map{}.min()'"
 fun getMinLineWidth(lineCount: Int): Double {
     val <caret>min_width = (0..lineCount - 1)
-            .map { getLineWidth(it) }
-            .min()
-            ?: Double.MAX_VALUE
+        .map { getLineWidth(it) }
+        .min()
+        ?: Double.MAX_VALUE
     return min_width
 }
 

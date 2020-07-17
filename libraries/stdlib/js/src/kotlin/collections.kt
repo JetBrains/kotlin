@@ -49,21 +49,74 @@ internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<
     return array
 }
 
+
 /**
  * Returns an immutable list containing only the specified object [element].
  */
 public fun <T> listOf(element: T): List<T> = arrayListOf(element)
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <E> buildListInternal(builderAction: MutableList<E>.() -> Unit): List<E> {
+    return ArrayList<E>().apply(builderAction).build()
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <E> buildListInternal(capacity: Int, builderAction: MutableList<E>.() -> Unit): List<E> {
+    checkBuilderCapacity(capacity)
+    return ArrayList<E>(capacity).apply(builderAction).build()
+}
+
 
 /**
  * Returns an immutable set containing only the specified object [element].
  */
 public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
 
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() -> Unit): Set<E> {
+    return LinkedHashSet<E>().apply(builderAction).build()
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <E> buildSetInternal(capacity: Int, builderAction: MutableSet<E>.() -> Unit): Set<E> {
+    return LinkedHashSet<E>(capacity).apply(builderAction).build()
+}
+
+
 /**
  * Returns an immutable map, mapping only the specified key to the
  * specified value.
  */
 public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
+    return LinkedHashMap<K, V>().apply(builderAction).build()
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <K, V> buildMapInternal(capacity: Int, builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
+    return LinkedHashMap<K, V>(capacity).apply(builderAction).build()
+}
+
 
 /**
  * Fills the list with the provided [value].
@@ -196,6 +249,6 @@ internal actual fun mapCapacity(expectedSize: Int) = expectedSize
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
 @PublishedApi
-internal actual fun checkBuilderCapacity(capacity: Int) {
+internal fun checkBuilderCapacity(capacity: Int) {
     require(capacity >= 0) { "capacity must be non-negative." }
 }

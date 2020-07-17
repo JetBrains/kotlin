@@ -12,6 +12,7 @@ import com.intellij.execution.configurations.RunnerSettings
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.project.Project
 import com.intellij.xdebugger.XDebuggerManagerListener
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 
 interface DebuggerListener : XDebuggerManagerListener {
@@ -32,15 +33,17 @@ class CoroutineDebuggerListener(val project: Project) : DebuggerListener {
     ): DebuggerConnection? {
         val isExternalSystemRunConfiguration = configuration is ExternalSystemRunConfiguration
         val isGradleConfiguration = gradleConfiguration(configuration.type.id)
-
-        if (runnerSettings == null || isExternalSystemRunConfiguration || isGradleConfiguration) {
-            log.warn("Coroutine debugger in standalone mode for ${configuration.name} ${configuration.javaClass} / ${params?.javaClass} / ${runnerSettings?.javaClass} (if enabled)")
-        } else if (runnerSettings is DebuggingRunnerData?)
-            return DebuggerConnection(project, configuration, params, runnerSettings)
+        val disableCoroutineAgent = KotlinDebuggerSettings.getInstance().debugDisableCoroutineAgent
+        if (!disableCoroutineAgent && runnerSettings is DebuggingRunnerData) {
+            if (isExternalSystemRunConfiguration && isGradleConfiguration)
+                // gradle related logic in KotlinGradleCoroutineDebugProjectResolver
+                return DebuggerConnection(project, configuration, params, runnerSettings, false)
+            else
+                return DebuggerConnection(project, configuration, params, runnerSettings, true)
+        }
         return null
     }
 
     private fun gradleConfiguration(configurationName: String) =
         "GradleRunConfiguration" == configurationName || "KotlinGradleRunConfiguration" == configurationName
-
 }

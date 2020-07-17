@@ -46,7 +46,10 @@ object CommonConfigurationKeys {
     val USE_FIR = CompilerConfigurationKey.create<Boolean>("front-end IR")
 
     @JvmField
-    val KLIB_MPP = CompilerConfigurationKey.create<Boolean>("Klib based MPP")
+    val EXPECT_ACTUAL_LINKER = CompilerConfigurationKey.create<Boolean>("Experimental expext/actual linker")
+
+    @JvmField
+    val DESERIALIZE_FAKE_OVERRIDES = CompilerConfigurationKey.create<Boolean>("Deserialize fake overrides")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

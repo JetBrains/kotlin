@@ -27,11 +27,13 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
 
-class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) {
-    fun serializeAnnotation(annotation: AnnotationDescriptor): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
+open class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) {
+    fun serializeAnnotation(annotation: AnnotationDescriptor): ProtoBuf.Annotation? = ProtoBuf.Annotation.newBuilder().apply {
         val annotationClass = annotation.annotationClass ?: error("Annotation type is not a class: ${annotation.type}")
         if (ErrorUtils.isError(annotationClass)) {
+            if (ignoreAnnotation(annotation.type)) return null
             error("Unresolved annotation type: ${annotation.type} at ${annotation.source.containingFile}")
         }
 
@@ -173,4 +175,6 @@ class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) 
             }
         }, Unit)
     }
+
+    protected open fun ignoreAnnotation(type: KotlinType): Boolean = false
 }

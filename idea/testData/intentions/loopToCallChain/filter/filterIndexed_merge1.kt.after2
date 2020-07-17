@@ -3,7 +3,7 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filterIndexed{}.firstOrNull()'"
 fun foo(list: List<String>): String? {
     <caret>return list
-            .asSequence()
-            .filterIndexed { index, s -> s.length <= index * 10 && s.length > index }
-            .firstOrNull()
+        .asSequence()
+        .filterIndexed { index, s -> s.length <= index * 10 && s.length > index }
+        .firstOrNull()
 }

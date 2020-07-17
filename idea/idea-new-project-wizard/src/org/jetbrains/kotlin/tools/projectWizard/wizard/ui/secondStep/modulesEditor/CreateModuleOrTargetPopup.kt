@@ -67,10 +67,15 @@ class CreateModuleOrTargetPopup private constructor(
         targetConfiguratorGroup.subItems.filter { it.needToShow() }
     ) {
         override fun getIconFor(value: DisplayableSettingItem): Icon? = when (value) {
-            is DisplayableTargetConfiguratorGroup -> value.moduleType.icon
-            is ModuleConfigurator -> value.moduleType?.icon ?: AllIcons.Nodes.Module
+            is DisplayableTargetConfiguratorGroup -> value.icon
+            is ModuleConfigurator -> value.icon ?: AllIcons.Nodes.Module
             else -> null
         }
+
+        override fun hasSubstep(selectedValue: DisplayableSettingItem?): Boolean =
+            selectedValue is TargetConfiguratorGroupWithSubItems
+
+        override fun isAutoSelectionEnabled(): Boolean = true
 
         override fun getTextFor(value: DisplayableSettingItem): String = value.fullTextHtml
 

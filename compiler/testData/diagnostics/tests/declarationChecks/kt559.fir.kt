@@ -22,9 +22,9 @@ class C() : D() {
 
 class B() : A() {
     override fun foo(): Int {
-        super.i
+        super.<!ABSTRACT_SUPER_CALL!>i<!>
 
         super.fff() //everything is ok
-        return super.foo()  //no error!!
+        return super.<!ABSTRACT_SUPER_CALL!>foo<!>()
     }
 }

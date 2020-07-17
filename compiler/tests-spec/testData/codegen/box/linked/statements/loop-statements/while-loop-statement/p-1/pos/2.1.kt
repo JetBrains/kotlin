@@ -4,8 +4,8 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-253
- * PLACE: statements, loop-statements, while-loop-statement -> paragraph 1 -> sentence 2
- * RELEVANT PLACES: statements, loop-statements, while-loop-statement -> paragraph 2 -> sentence 1
+ * MAIN LINK: statements, loop-statements, while-loop-statement -> paragraph 1 -> sentence 2
+ * PRIMARY LINKS: statements, loop-statements, while-loop-statement -> paragraph 2 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: while-loop-statement evaluates the loop condition expression before evaluating the loop body.
  */

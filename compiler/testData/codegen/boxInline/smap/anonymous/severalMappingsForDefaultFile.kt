@@ -1,7 +1,7 @@
 //FILE: 1.kt
-
-
 package test
+
+
 inline fun annotatedWith2(crossinline predicate: () -> Boolean) =
         { any { predicate() } }()
 
@@ -33,11 +33,6 @@ inline fun test(z: () -> Unit) {
 
 
 // FILE: 2.smap
-//*L
-//1#1,15:1
-//17#1:19
-
-
 SMAP
 2.kt
 Kotlin
@@ -74,7 +69,16 @@ test/_1Kt
 _2Kt
 *L
 1#1,18:1
-14#2,2:19
-10#2:21
-7#3:22
+14#2:19
+10#2:20
+15#2:22
+7#3:21
+*E
+*S KotlinDebug
+*F
++ 1 1.kt
+test/_1Kt$annotatedWith2$1
+*L
+6#1:19
+6#1:22
 *E

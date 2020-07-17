@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_FILE_NAME
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromXml
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
-import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
 import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
+import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
@@ -21,8 +22,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class HierarchicalMppIT : BaseGradleIT() {
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = gradleVersion
+
     companion object {
-        private val gradleVersion = GradleVersionRequired.AtLeast("5.0")
+        private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
     }
 
     @Test
@@ -141,8 +145,52 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    private fun publishThirdPartyLib(withGranularMetadata: Boolean): Project =
-        Project("third-party-lib", gradleVersion, "hierarchical-mpp-published-modules").apply {
+    @Test
+    fun testHmppWithPublishedJsBothDependency() {
+        val directoryPrefix = "hierarchical-mpp-with-js-published-modules"
+        publishThirdPartyLib(
+            projectName = "third-party-lib",
+            directoryPrefix = directoryPrefix,
+            withGranularMetadata = true,
+            jsCompilerType = KotlinJsCompilerType.BOTH
+        )
+
+        with(Project("my-lib-foo", gradleVersion, directoryPrefix)) {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            build(
+                "publish",
+                "assemble",
+                options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.IR)
+            ) {
+                assertSuccessful()
+            }
+        }
+    }
+
+    @Test
+    fun testHmppWithProjectJsIrDependency() {
+        with(Project("hierarchical-mpp-with-js-project-dependency", gradleVersion)) {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            build(
+                "assemble",
+                options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.IR)
+            ) {
+                assertSuccessful()
+            }
+        }
+    }
+
+    private fun publishThirdPartyLib(
+        projectName: String = "third-party-lib",
+        directoryPrefix: String = "hierarchical-mpp-published-modules",
+        withGranularMetadata: Boolean,
+        jsCompilerType: KotlinJsCompilerType = KotlinJsCompilerType.LEGACY
+    ): Project =
+        Project(projectName, gradleVersion, directoryPrefix).apply {
             setupWorkingDir()
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
@@ -150,7 +198,10 @@ class HierarchicalMppIT : BaseGradleIT() {
                 projectDir.resolve("gradle.properties").appendText("kotlin.mpp.enableGranularSourceSetsMetadata=true")
             }
 
-            build("publish") {
+            build(
+                "publish",
+                options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
+            ) {
                 assertSuccessful()
             }
         }
@@ -397,12 +448,7 @@ class HierarchicalMppIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCompileOnlyDependencyProcessingForMetadataCompilations() = with(
-        Project(
-            "hierarchical-mpp-project-dependency",
-            GradleVersionRequired.AtLeast("5.0") // Bug in Gradle versions < 5.0: Gradle can't pick build dependencies from nested provider
-        )
-    ) {
+    fun testCompileOnlyDependencyProcessingForMetadataCompilations() = with(Project("hierarchical-mpp-project-dependency")) {
         publishThirdPartyLib(withGranularMetadata = true)
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
@@ -421,6 +467,18 @@ class HierarchicalMppIT : BaseGradleIT() {
 
         build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata") {
             assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testHmppDependenciesInJsTests() {
+        val thirdPartyRepo = publishThirdPartyLib(withGranularMetadata = true).projectDir.parentFile.resolve("repo")
+        with(Project("hierarchical-mpp-js-test")) {
+            val taskToExecute = ":jsNodeTest"
+            build(taskToExecute, "-PthirdPartyRepo=$thirdPartyRepo") {
+                assertSuccessful()
+                assertTasksExecuted(taskToExecute)
+            }
         }
     }
 
@@ -462,6 +520,17 @@ class HierarchicalMppIT : BaseGradleIT() {
                     assertEquals(setOf("commonMain"), it.allVisibleSourceSets)
                     assertEquals(setOf("commonMain"), it.newVisibleSourceSets)
                 }
+            }
+        }
+    }
+
+    @Test
+    fun testTransitiveDependencyOnSelf() = with(Project("transitive-dep-on-self-hmpp")) {
+        testDependencyTransformations(subproject = "lib") { reports ->
+            reports.single {
+                it.sourceSetName == "commonTest" && it.scope == "implementation" && "libtests" in it.groupAndModule
+            }.let {
+                assertEquals(setOf("commonMain", "jvmAndJsMain"), it.allVisibleSourceSets)
             }
         }
     }

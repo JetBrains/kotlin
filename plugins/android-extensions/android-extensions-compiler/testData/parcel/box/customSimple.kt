@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JVM
+// See KT-38105
+// Throws IllegalAccessError, since the code tries to access the private companion field directly from the generated User$Creator class.
 // WITH_RUNTIME
 
 @file:JvmName("TestKt")
@@ -25,6 +28,7 @@ fun box() = parcelTest { parcel ->
 
     val bytes = parcel.marshall()
     parcel.unmarshall(bytes, 0, bytes.size)
+    parcel.setDataPosition(0)
 
     val user2 = readFromParcel<User>(parcel)
 

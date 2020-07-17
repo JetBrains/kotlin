@@ -1,1 +1,11 @@
-rootProject.name = "MultiplatformLibrary"
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven {
+            url = uri("https://dl.bintray.com/kotlin/kotlin-dev")
+        }
+    }
+
+}
+rootProject.name = "multiplatformLibrary"

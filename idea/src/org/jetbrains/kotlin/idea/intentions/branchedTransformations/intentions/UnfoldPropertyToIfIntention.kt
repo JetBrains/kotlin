@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,12 +17,10 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class UnfoldPropertyToIfIntention :
-    SelfTargetingRangeIntention<KtProperty>(
-        KtProperty::class.java,
-        KotlinBundle.message("replace.property.initializer.with.if.expression")
-    ),
-    LowPriorityAction {
+class UnfoldPropertyToIfIntention : SelfTargetingRangeIntention<KtProperty>(
+    KtProperty::class.java,
+    KotlinBundle.lazyMessage("replace.property.initializer.with.if.expression")
+), LowPriorityAction {
     override fun applicabilityRange(element: KtProperty): TextRange? {
         if (!element.isLocal) return null
         val initializer = element.initializer as? KtIfExpression ?: return null

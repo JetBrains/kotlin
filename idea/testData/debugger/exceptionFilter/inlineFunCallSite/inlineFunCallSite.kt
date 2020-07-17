@@ -3,6 +3,7 @@ fun box() {
 }
 
 inline fun foo() {
+    val unused = 1
     null!!
 }
 

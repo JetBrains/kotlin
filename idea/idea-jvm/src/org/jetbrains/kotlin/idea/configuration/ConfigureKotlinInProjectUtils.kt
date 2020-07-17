@@ -23,6 +23,7 @@ import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.annotations.CalledInBackground
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
@@ -49,7 +50,7 @@ private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.configuration.C
 
 data class RepositoryDescription(val id: String, val name: String, val url: String, val bintrayUrl: String?, val isSnapshot: Boolean)
 
-const val LAST_SNAPSHOT_VERSION = "1.4-SNAPSHOT"
+const val LAST_SNAPSHOT_VERSION = "1.4.255-SNAPSHOT"
 
 val SNAPSHOT_REPOSITORY = RepositoryDescription(
     "sonatype.oss.snapshots",
@@ -130,6 +131,7 @@ fun isModuleConfigured(moduleSourceRootGroup: ModuleSourceRootGroup): Boolean {
  *
  * DO NOT CALL THIS ON AWT THREAD
  */
+@CalledInBackground
 fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
     if (!isUnitTestMode() && ApplicationManager.getApplication().isDispatchThread) {
         LOG.error("getModulesWithKotlinFiles could be a heavy operation and should not be call on AWT thread")

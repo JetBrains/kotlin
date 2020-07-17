@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Color
 import java.util.*
 
+@Suppress("ComponentNotRegistered")
 class InspectBreakpointApplicabilityAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val data = e.getData() ?: return

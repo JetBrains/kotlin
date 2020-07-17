@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
@@ -39,7 +38,9 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 class JvmPlatformParameters(
     val packagePartProviderFactory: (ModuleContent<*>) -> PackagePartProvider,
-    val moduleByJavaClass: (JavaClass) -> ModuleInfo?
+    val moduleByJavaClass: (JavaClass) -> ModuleInfo?,
+    // params: referenced module info of target class, context module info of current resolver
+    val resolverForReferencedModule: ((ModuleInfo, ModuleInfo) -> ResolverForModule?)? = null,
 ) : PlatformAnalysisParameters
 
 
@@ -64,13 +65,22 @@ class JvmResolverForModuleFactory(
         )
 
         val moduleClassResolver = ModuleClassResolverImpl { javaClass ->
-            val referencedClassModule = (platformParameters as JvmPlatformParameters).moduleByJavaClass(javaClass)
-            // We don't have full control over idea resolve api so we allow for a situation which should not happen in Kotlin.
-            // For example, type in a java library can reference a class declared in a source root (is valid but rare case)
-            // Providing a fallback strategy in this case can hide future problems, so we should at least log to be able to diagnose those
+            val referencedClassModule = platformParameters.moduleByJavaClass(javaClass)
+            // A type in a java library can reference a class declared in a source root (is valid but rare case).
+            // Resolving such a class with Kotlin resolver for libraries is guaranteed to fail, as libraries can't
+            // have dependencies on the source roots. The chain of resolvers (sources -> libraries -> sdk) exists to prevent
+            // potentially slow repetitive analysis of the same libraries after modifications in sources. The only way to mitigate
+            // this restriction currently is to manually configure resolution anchors for known source-dependent libraries in a project.
+            // See also KT-24309
 
             @Suppress("UNCHECKED_CAST")
-            val resolverForReferencedModule = referencedClassModule?.let { resolverForProject.tryGetResolverForModule(it as M) }
+            val resolverForReferencedModule = referencedClassModule?.let { referencedModuleInfo ->
+                if (platformParameters.resolverForReferencedModule != null) {
+                    platformParameters.resolverForReferencedModule.invoke(referencedModuleInfo, moduleInfo)
+                } else {
+                    resolverForProject.tryGetResolverForModule(referencedModuleInfo as M)
+                }
+            }
 
             val resolverForModule = resolverForReferencedModule?.takeIf {
                 referencedClassModule.platform.isJvm() || referencedClassModule.platform == null
@@ -110,12 +120,12 @@ class JvmResolverForModuleFactory(
         )
 
         providersForModule +=
-                PackageFragmentProviderExtension.getInstances(project)
-                    .mapNotNull {
-                        it.getPackageFragmentProvider(
-                            project, moduleDescriptor, moduleContext.storageManager, trace, moduleInfo, lookupTracker
-                        )
-                    }
+            PackageFragmentProviderExtension.getInstances(project)
+                .mapNotNull {
+                    it.getPackageFragmentProvider(
+                        project, moduleDescriptor, moduleContext.storageManager, trace, moduleInfo, lookupTracker
+                    )
+                }
 
         return ResolverForModule(CompositePackageFragmentProvider(providersForModule), container)
     }

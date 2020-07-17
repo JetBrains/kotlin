@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -45,20 +45,29 @@ import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.common.toLogger
 import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.CodegenFactory
+import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
@@ -76,10 +85,7 @@ import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
-import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import java.io.File
-import java.lang.reflect.InvocationTargetException
-import java.net.URLClassLoader
 
 object KotlinToJVMBytecodeCompiler {
     private fun writeOutput(
@@ -156,8 +162,23 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    internal fun compileModules(environment: KotlinCoreEnvironment, buildFile: File?, chunk: List<Module>): Boolean {
+    internal fun compileModules(
+        environment: KotlinCoreEnvironment,
+        buildFile: File?,
+        chunk: List<Module>,
+        repeat: Boolean = false
+    ): Boolean {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        val repeats = environment.configuration[CLIConfigurationKeys.REPEAT_COMPILE_MODULES]
+        if (repeats != null && !repeat) {
+            val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
+            return (0 until repeats).map {
+                val result = compileModules(environment, buildFile, chunk, repeat = true)
+                performanceManager?.notifyRepeat(repeats, it)
+                result
+            }.last()
+        }
 
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
         for (module in chunk) {
@@ -283,6 +304,8 @@ object KotlinToJVMBytecodeCompiler {
 
     private fun compileModulesUsingFrontendIR(environment: KotlinCoreEnvironment, buildFile: File?, chunk: List<Module>): Boolean {
         val project = environment.project
+        val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
+
         Extensions.getArea(project)
             .getExtensionPoint(PsiElementFinder.EP_NAME)
             .unregisterExtension(JavaElementFinder::class.java)
@@ -291,6 +314,7 @@ object KotlinToJVMBytecodeCompiler {
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
         val outputs = newLinkedHashMapWithExpectedSize<Module, GenerationState>(chunk.size)
         for (module in chunk) {
+            performanceManager?.notifyAnalysisStarted()
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
             val ktFiles = module.getSourceFiles(environment, localFileSystem, chunk.size > 1, buildFile)
@@ -318,7 +342,7 @@ object KotlinToJVMBytecodeCompiler {
             }
 
             val moduleInfo = FirJvmModuleInfo(module.getModuleName())
-            val session: FirSession = FirJavaModuleBasedSession(moduleInfo, provider, scope).also {
+            val session: FirSession = FirJavaModuleBasedSession.create(moduleInfo, provider, scope).also {
                 val dependenciesInfo = FirJvmModuleInfo(Name.special("<dependencies>"))
                 moduleInfo.dependencies.add(dependenciesInfo)
                 val librariesScope = ProjectScope.getLibrariesScope(project)
@@ -326,27 +350,41 @@ object KotlinToJVMBytecodeCompiler {
                     dependenciesInfo, provider, librariesScope,
                     project, environment.createPackagePartProvider(librariesScope)
                 )
-
+                it.extensionService.registerExtensions(BunchOfRegisteredExtensions.empty())
             }
             val firProvider = (session.firProvider as FirProviderImpl)
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
-            val resolveTransformer = FirTotalResolveTransformer()
+            val resolveTransformer = FirTotalResolveProcessor(session)
             val firFiles = ktFiles.map {
                 val firFile = builder.buildFirFile(it)
                 firProvider.recordFile(firFile)
                 firFile
             }.also {
                 try {
-                    resolveTransformer.processFiles(it)
+                    resolveTransformer.process(it)
                 } catch (e: Exception) {
                     throw e
                 }
             }
 
+            val debugTargetDescription = "target " + module.getModuleName() + "-" + module.getModuleType() + " "
+            val codeLines = environment.countLinesOfCode(ktFiles)
+            performanceManager?.notifyAnalysisFinished(ktFiles.size, codeLines, debugTargetDescription)
+
+            performanceManager?.notifyGenerationStarted()
             val signaturer = IdSignatureDescriptor(JvmManglerDesc())
 
-            val (moduleFragment, symbolTable, sourceManager) =
-                Fir2IrConverter.createModuleFragment(session, firFiles, moduleConfiguration.languageVersionSettings, signaturer = signaturer)
+            performanceManager?.notifyIRTranslationStarted()
+            val (moduleFragment, symbolTable, sourceManager, components) =
+                Fir2IrConverter.createModuleFragment(
+                    session, resolveTransformer.scopeSession, firFiles,
+                    moduleConfiguration.languageVersionSettings, signaturer = signaturer,
+                    generatorExtensions = JvmGeneratorExtensions(),
+                    mangler = FirJvmKotlinMangler(session)
+                )
+
+            performanceManager?.notifyIRTranslationFinished(ktFiles.size, codeLines, debugTargetDescription)
+
             val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
             val codegenFactory = JvmIrCodegenFactory(moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
@@ -362,20 +400,25 @@ object KotlinToJVMBytecodeCompiler {
                 createOutputFilesFlushingCallbackIfPossible(moduleConfiguration)
             ).isIrBackend(
                 true
+            ).jvmBackendClassResolver(
+                FirJvmBackendClassResolver(components)
             ).build()
 
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-            val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
-            performanceManager?.notifyGenerationStarted()
+            performanceManager?.notifyIRGenerationStarted()
             generationState.beforeCompile()
-            codegenFactory.generateModuleInFrontendIRMode(generationState, moduleFragment, symbolTable, sourceManager)
+            codegenFactory.generateModuleInFrontendIRMode(
+                generationState, moduleFragment, symbolTable, sourceManager
+            ) { irClass, context, parentFunction ->
+                FirJvmClassCodegen(irClass, context, parentFunction, session)
+            }
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
             performanceManager?.notifyGenerationFinished(
                 ktFiles.size,
-                environment.countLinesOfCode(ktFiles),
-                additionalDescription = "target " + module.getModuleName() + "-" + module.getModuleType() + " "
+                codeLines,
+                additionalDescription = debugTargetDescription
             )
 
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -392,6 +435,7 @@ object KotlinToJVMBytecodeCompiler {
                 generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector
             )
 
+            performanceManager?.notifyIRGenerationFinished(ktFiles.size, codeLines, additionalDescription = debugTargetDescription)
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             outputs[module] = generationState
         }
@@ -440,26 +484,6 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    fun compileAndExecuteScript(environment: KotlinCoreEnvironment, scriptArgs: List<String>): ExitCode {
-        val scriptClass = compileScript(environment) ?: return ExitCode.COMPILATION_ERROR
-
-        try {
-            try {
-                tryConstructClassFromStringArgs(scriptClass, scriptArgs)
-                    ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n")
-            } finally {
-                // NB: these lines are required (see KT-9546) but aren't covered by tests
-                System.out.flush()
-                System.err.flush()
-            }
-        } catch (e: Throwable) {
-            reportExceptionFromScript(e)
-            return ExitCode.SCRIPT_EXECUTION_ERROR
-        }
-
-        return ExitCode.OK
-    }
-
     private fun repeatAnalysisIfNeeded(
         result: AnalysisResult?,
         environment: KotlinCoreEnvironment,
@@ -491,42 +515,6 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         return result
-    }
-
-    private fun reportExceptionFromScript(exception: Throwable) {
-        // expecting InvocationTargetException from constructor invocation with cause that describes the actual cause
-        val stream = System.err
-        val cause = exception.cause
-        if (exception !is InvocationTargetException || cause == null) {
-            exception.printStackTrace(stream)
-            return
-        }
-        stream.println(cause)
-        val fullTrace = cause.stackTrace
-        for (i in 0 until fullTrace.size - exception.stackTrace.size) {
-            stream.println("\tat " + fullTrace[i])
-        }
-    }
-
-    fun compileScript(environment: KotlinCoreEnvironment, parentClassLoader: ClassLoader? = null): Class<*>? {
-        val state = analyzeAndGenerate(environment) ?: return null
-
-        try {
-            val urls = environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
-                when (root) {
-                    is JvmModulePathRoot -> root.file // TODO: only add required modules
-                    is JvmClasspathRoot -> root.file
-                    else -> null
-                }
-            }.map { it.toURI().toURL() }
-
-            val classLoader = GeneratedClassLoader(state.factory, parentClassLoader ?: URLClassLoader(urls.toTypedArray(), null))
-
-            val script = environment.getSourceFiles()[0].script ?: error("Script must be parsed")
-            return classLoader.loadClass(script.fqName.asString())
-        } catch (e: Exception) {
-            throw RuntimeException("Failed to evaluate script: $e", e)
-        }
     }
 
     @Suppress("MemberVisibilityCanBePrivate") // Used in ExecuteKotlinScriptMojo

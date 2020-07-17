@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
+import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
+import com.intellij.debugger.engine.events.SuspendContextCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
+import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
@@ -27,12 +31,16 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
 fun Location.isInKotlinSources(): Boolean {
-    val declaringType = declaringType()
-    val fileExtension = declaringType.safeSourceName()?.substringAfterLast('.')?.toLowerCase() ?: ""
-    return fileExtension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS || declaringType.containsKotlinStrata()
+    return declaringType().isInKotlinSources()
+}
+
+fun ReferenceType.isInKotlinSources(): Boolean {
+    val fileExtension = safeSourceName()?.substringAfterLast('.')?.toLowerCase() ?: ""
+    return fileExtension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS || containsKotlinStrata()
 }
 
 fun ReferenceType.containsKotlinStrata() = availableStrata().contains(KOTLIN_STRATA_NAME)
@@ -79,6 +87,24 @@ fun <T : Any> DebugProcessImpl.invokeInManagerThread(f: (DebuggerContextImpl) ->
             managerThread.invoke(command)
         else ->
             managerThread.invokeAndWait(command)
+    }
+
+    return result
+}
+
+fun <T : Any> SuspendContextImpl.invokeInSuspendManagerThread(debugProcessImpl: DebugProcessImpl, f: (SuspendContextImpl) -> T?): T? {
+    var result: T? = null
+    val command: SuspendContextCommandImpl = object : SuspendContextCommandImpl(this) {
+        override fun contextAction() {
+            result = runReadAction { f(this@invokeInSuspendManagerThread) }
+        }
+    }
+
+    when {
+        DebuggerManagerThreadImpl.isManagerThread() ->
+            debugProcessImpl.managerThread.invoke(command)
+        else ->
+            debugProcessImpl.managerThread.invokeAndWait(command)
     }
 
     return result
@@ -158,6 +184,17 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
 private const val DO_RESUME_SIGNATURE = "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;"
 private const val INVOKE_SUSPEND_SIGNATURE = "(Ljava/lang/Object;)Ljava/lang/Object;"
 
+fun StackFrameProxyImpl.isOnSuspensionPoint(): Boolean {
+    val location = this.safeLocation() ?: return false
+
+    if (isInSuspendMethod(location)) {
+        val firstLocation = getFirstMethodLocation(location) ?: return false
+        return firstLocation.safeLineNumber() == location.safeLineNumber() && firstLocation.codeIndex() != location.codeIndex()
+    }
+
+    return false
+}
+
 fun isInSuspendMethod(location: Location): Boolean {
     val method = location.method()
     val signature = method.signature()
@@ -171,31 +208,18 @@ fun isInSuspendMethod(location: Location): Boolean {
     return false
 }
 
-fun suspendFunctionFirstLineLocation(location: Location): Int? {
-    if (!isInSuspendMethod(location)) {
+private fun getFirstMethodLocation(location: Location): Location? {
+    val firstLocation = location.safeMethod()?.location() ?: return null
+    if (firstLocation.safeLineNumber() < 0) {
         return null
     }
 
-    val lineNumber = location.method().location()?.lineNumber()
-    if (lineNumber == -1) {
-        return null
-    }
-
-    return lineNumber
+    return firstLocation
 }
 
 fun isOnSuspendReturnOrReenter(location: Location): Boolean {
-    val suspendStartLineNumber = suspendFunctionFirstLineLocation(location) ?: return false
-    return suspendStartLineNumber == location.lineNumber()
-}
-
-fun isLastLineLocationInMethod(location: Location): Boolean {
-    val knownLines = location.method().safeAllLineLocations().map { it.lineNumber() }.filter { it != -1 }
-    if (knownLines.isEmpty()) {
-        return false
-    }
-
-    return knownLines.max() == location.lineNumber()
+    val firstLocation = getFirstMethodLocation(location) ?: return false
+    return firstLocation.safeLineNumber() == location.safeLineNumber()
 }
 
 fun isOneLineMethod(location: Location): Boolean {

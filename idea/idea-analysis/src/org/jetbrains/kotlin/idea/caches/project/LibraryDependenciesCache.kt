@@ -9,8 +9,8 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.util.CachedValueProvider
@@ -19,36 +19,34 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.core.util.CachedValue
 import org.jetbrains.kotlin.idea.core.util.getValue
-import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-internal typealias LibrariesAndSdks = Pair<List<Library>, List<Sdk>>
+internal typealias LibrariesAndSdks = Pair<List<LibraryInfo>, List<SdkInfo>>
 
 interface LibraryDependenciesCache {
     companion object {
         fun getInstance(project: Project) = ServiceManager.getService(project, LibraryDependenciesCache::class.java)!!
     }
 
-    fun getLibrariesAndSdksUsedWith(library: Library): LibrariesAndSdks
+    fun getLibrariesAndSdksUsedWith(libraryInfo: LibraryInfo): LibrariesAndSdks
 }
 
 class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDependenciesCache {
-    val cache by CachedValue(project) {
+    private val cache by CachedValue(project) {
         CachedValueProvider.Result(
-            ContainerUtil.createConcurrentWeakMap<Library, LibrariesAndSdks>(),
+            ContainerUtil.createConcurrentWeakMap<LibraryInfo, LibrariesAndSdks>(),
             ProjectRootManager.getInstance(project)
         )
     }
 
-    override fun getLibrariesAndSdksUsedWith(library: Library): LibrariesAndSdks =
-        cache.getOrPut(library) { computeLibrariesAndSdksUsedWith(library) }
+    override fun getLibrariesAndSdksUsedWith(libraryInfo: LibraryInfo): LibrariesAndSdks =
+        cache.getOrPut(libraryInfo) { computeLibrariesAndSdksUsedWith(libraryInfo) }
 
 
     //NOTE: used LibraryRuntimeClasspathScope as reference
-    private fun computeLibrariesAndSdksUsedWith(library: Library): LibrariesAndSdks {
+    private fun computeLibrariesAndSdksUsedWith(libraryInfo: LibraryInfo): LibrariesAndSdks {
         val processedModules = HashSet<Module>()
         val condition = Condition<OrderEntry> { orderEntry ->
             if (orderEntry is ModuleOrderEntry) {
@@ -59,12 +57,12 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
             }
         }
 
-        val libraries = LinkedHashSet<Library>()
-        val sdks = LinkedHashSet<Sdk>()
+        val libraries = LinkedHashSet<LibraryInfo>()
+        val sdks = LinkedHashSet<SdkInfo>()
 
-        val platform = getLibraryPlatform(project, library)
+        val platform = libraryInfo.platform
 
-        for (module in getLibraryUsageIndex().modulesLibraryIsUsedIn[library]) {
+        for (module in getLibraryUsageIndex().modulesLibraryIsUsedIn[libraryInfo.library]) {
             if (!processedModules.add(module)) continue
 
             ModuleRootManager.getInstance(module).orderEntries().recursively().satisfying(condition).process(object : RootPolicy<Unit>() {
@@ -74,13 +72,19 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
 
                 override fun visitLibraryOrderEntry(libraryOrderEntry: LibraryOrderEntry, value: Unit) {
                     val otherLibrary = libraryOrderEntry.library
-                    if (otherLibrary != null && compatiblePlatforms(platform, getLibraryPlatform(project, otherLibrary))) {
-                        libraries.add(otherLibrary)
+                    if (otherLibrary is LibraryEx && !otherLibrary.isDisposed) {
+                        val otherLibraryInfos = createLibraryInfo(project, otherLibrary)
+                        otherLibraryInfos.firstOrNull()?.platform?.let { otherLibraryPlatform ->
+                            if (compatiblePlatforms(platform, otherLibraryPlatform)) {
+                                libraries.addAll(otherLibraryInfos)
+                            }
+                        }
                     }
                 }
 
                 override fun visitJdkOrderEntry(jdkOrderEntry: JdkOrderEntry, value: Unit) {
-                    sdks.addIfNotNull(jdkOrderEntry.jdk)
+                    val jdk = jdkOrderEntry.jdk ?: return
+                    sdks += SdkInfo(project, jdk)
                 }
             }, Unit)
         }
@@ -92,7 +96,7 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
      * @return true if it's OK to add a dependency from a library with platform [from] to a library with platform [to]
      */
     private fun compatiblePlatforms(from: TargetPlatform, to: TargetPlatform): Boolean {
-        return from == to || to.isCommon()
+        return from === to || to.containsAll(from) || to.isCommon()
     }
 
     private fun getLibraryUsageIndex(): LibraryUsageIndex {

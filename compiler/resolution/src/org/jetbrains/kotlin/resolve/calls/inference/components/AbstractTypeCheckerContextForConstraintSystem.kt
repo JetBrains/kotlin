@@ -28,7 +28,11 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
     // super and sub type isSingleClassifierType
     abstract fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker)
 
-    abstract fun addLowerConstraint(typeVariable: TypeConstructorMarker, subType: KotlinTypeMarker)
+    abstract fun addLowerConstraint(
+        typeVariable: TypeConstructorMarker,
+        subType: KotlinTypeMarker,
+        isFromNullabilityConstraint: Boolean = false
+    )
 
     override fun getLowerCapturedTypePolicy(subType: SimpleTypeMarker, superType: CapturedTypeMarker): LowerCapturedTypePolicy {
         return when {
@@ -52,7 +56,11 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
      * then we can get wrong result.
      * override val sameConstructorPolicy get() = SeveralSupertypesWithSameConstructorPolicy.TAKE_FIRST_FOR_SUBTYPING
      */
-    final override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? {
+    final override fun addSubtypeConstraint(
+        subType: KotlinTypeMarker,
+        superType: KotlinTypeMarker,
+        isFromNullabilityConstraint: Boolean
+    ): Boolean? {
         val hasNoInfer = subType.isTypeVariableWithNoInfer() || superType.isTypeVariableWithNoInfer()
         if (hasNoInfer) return true
 
@@ -64,10 +72,10 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
         val mySuperType =
             if (hasExact) extractTypeForProjectedType(superType, out = false) ?: superType.removeExactAnnotation() else superType
 
-        val result = internalAddSubtypeConstraint(mySubType, mySuperType)
+        val result = internalAddSubtypeConstraint(mySubType, mySuperType, isFromNullabilityConstraint)
         if (!hasExact) return result
 
-        val result2 = internalAddSubtypeConstraint(mySuperType, mySubType)
+        val result2 = internalAddSubtypeConstraint(mySuperType, mySubType, isFromNullabilityConstraint)
 
         if (result == null && result2 == null) return null
         return (result ?: true) && (result2 ?: true)
@@ -93,13 +101,17 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
     private fun KotlinTypeMarker.isTypeVariableWithNoInfer() =
         hasNoInferAnnotation() && anyBound(this@AbstractTypeCheckerContextForConstraintSystem::isMyTypeVariable)
 
-    private fun internalAddSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? {
+    private fun internalAddSubtypeConstraint(
+        subType: KotlinTypeMarker,
+        superType: KotlinTypeMarker,
+        isFromNullabilityConstraint: Boolean
+    ): Boolean? {
         assertInputTypes(subType, superType)
 
         var answer: Boolean? = null
 
         if (superType.anyBound(this::isMyTypeVariable)) {
-            answer = simplifyLowerConstraint(superType, subType)
+            answer = simplifyLowerConstraint(superType, subType, isFromNullabilityConstraint)
         }
 
         if (subType.anyBound(this::isMyTypeVariable)) {
@@ -178,7 +190,11 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
      *
      * => (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
      */
-    private fun simplifyLowerConstraint(typeVariable: KotlinTypeMarker, subType: KotlinTypeMarker): Boolean {
+    private fun simplifyLowerConstraint(
+        typeVariable: KotlinTypeMarker,
+        subType: KotlinTypeMarker,
+        isFromNullabilityConstraint: Boolean = false
+    ): Boolean {
         val lowerConstraint = when (typeVariable) {
             is SimpleTypeMarker ->
                 /*
@@ -229,7 +245,7 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
             else -> error("sealed")
         }
 
-        addLowerConstraint(typeVariable.typeConstructor(), lowerConstraint)
+        addLowerConstraint(typeVariable.typeConstructor(), lowerConstraint, isFromNullabilityConstraint)
 
         return true
     }

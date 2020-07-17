@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirQualifiedAccessBuilder {
     abstract var source: FirSourceElement?
     abstract val annotations: MutableList<FirAnnotationCall>
-    abstract var safe: Boolean
     abstract val typeArguments: MutableList<FirTypeProjection>
     abstract var explicitReceiver: FirExpression?
     abstract var dispatchReceiver: FirExpression

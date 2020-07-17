@@ -384,7 +384,7 @@ private val MIN_VALUE = Long(0, 1 shl 31)
 private val TWO_PWR_24_ = fromInt(1 shl 24)
 
 @JsName("Math")
-external object JsMath {
+internal external object JsMath {
     fun max(lhs: Number, rhs: Number): Double
     fun floor(x: Number): Double
     fun ceil(x: Number): Double

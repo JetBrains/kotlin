@@ -8,6 +8,7 @@ dependencies {
     compile(project(":compiler:config"))
     compile(project(":compiler:config.jvm"))
     compile(project(":js:js.config"))
+    compile(project(":native:kotlin-native-utils"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }

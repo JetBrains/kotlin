@@ -24,7 +24,7 @@ dependencies {
     // FIXME: drop after removing references to LocalFileSystem they don't exist in intellij-core
     compileOnly(intellijDep()) { includeJars("platform-api") }
 
-    runtime(project(":kotlin-reflect"))
+    runtimeOnly(project(":kotlin-reflect"))
 
     testCompile(project(":compiler:frontend"))
     testCompile(project(":compiler:plugin-api"))

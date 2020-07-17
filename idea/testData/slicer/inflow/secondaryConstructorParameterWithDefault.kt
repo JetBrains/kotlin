@@ -1,4 +1,5 @@
 // FLOW: IN
+// WITH_RUNTIME
 
 open class A {
     @JvmOverloads constructor(n: Int, <caret>s: String = "???")

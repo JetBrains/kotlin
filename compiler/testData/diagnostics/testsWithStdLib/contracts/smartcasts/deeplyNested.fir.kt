@@ -54,7 +54,7 @@ fun nullWhenNotString(x: Any?): String? {
 
 fun nested1(x: Any?) {
     if (equalsTrue(isString(x))) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -63,7 +63,7 @@ fun nested1(x: Any?) {
 
 fun nested2(x: Any?) {
     myAssert(equalsTrue(isString(x)))
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.length
 }
 
 fun nested3(x: Any?) {
@@ -74,14 +74,14 @@ fun nested3(x: Any?) {
 fun branchedAndNested(x: Any?, y: Any?) {
     myAssert(equalsTrue(notEqualsNull(nullWhenNotString(x))) && equalsTrue(isString(y)))
     x.<!UNRESOLVED_REFERENCE!>length<!>
-    y.<!UNRESOLVED_REFERENCE!>length<!>
+    y.length
 }
 
 
 fun br(y: Any?) {
     if (myAssert(y is Int) == Unit && myAssert(y is String) == Unit) {
-        y.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!AMBIGUITY!>inc<!>()
+        y.length
+        y.inc()
     }
 }
 
@@ -98,7 +98,7 @@ fun branchedAndNestedWithNativeOperators(x: Any?, y: Any?) {
             (1 == 2 || y is Int || isString(y))
     )
     x.<!UNRESOLVED_REFERENCE!>length<!>
-    y.<!UNRESOLVED_REFERENCE!>length<!>
-    y.<!AMBIGUITY!>inc<!>()
+    y.length
+    y.inc()
 }
 

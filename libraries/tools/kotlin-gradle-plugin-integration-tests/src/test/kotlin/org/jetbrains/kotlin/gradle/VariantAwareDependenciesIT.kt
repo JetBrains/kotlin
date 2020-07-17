@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
+import kotlin.test.assertTrue
 
 class VariantAwareDependenciesIT : BaseGradleIT() {
-    private val gradleVersion = GradleVersionRequired.None
+    private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
 
     @Test
     fun testJvmKtAppResolvesMppLib() {
@@ -89,19 +90,17 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                     .replace("\"org.jetbrains.kotlin:kotlin-stdlib\"", "\"org.jetbrains.kotlin:kotlin-stdlib:\$kotlin_version\"")
             }
 
-            if (testGradleVersionAtLeast("5.3-rc-1")) {
-                gradleBuildScript().appendText(
-                    // In Gradle 5.3, the variants of a Kotlin MPP can't be disambiguated in a pure Java project's deprecated
-                    // configurations that don't have a proper 'org.gradle.usage' attribute value, see KT-30378
-                    "\n" + """
-                    configurations {
-                        configure([compile, runtime, testCompile, testRuntime, getByName('default')]) {
-                            canBeResolved = false
-                        }
+            gradleBuildScript().appendText(
+                // In Gradle 5.3+, the variants of a Kotlin MPP can't be disambiguated in a pure Java project's deprecated
+                // configurations that don't have a proper 'org.gradle.usage' attribute value, see KT-30378
+                "\n" + """
+                configurations {
+                    configure([compile, runtime, testCompile, testRuntime, getByName('default')]) {
+                        canBeResolved = false
                     }
-                    """.trimIndent()
-                )
-            }
+                }
+                """.trimIndent()
+            )
         }
 
         with(outerProject) {
@@ -133,6 +132,18 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         with(outerProject) {
             embedProject(innerProject)
             gradleBuildScript(innerProject.projectName).appendText("\ndependencies { compile rootProject }")
+
+            gradleBuildScript(innerProject.projectName).appendText(
+                // Newer Gradle versions fail to resolve the deprecated configurations because of variant-aware resolution ambiguity between
+                // the *Elements configuration and its sub-variants (classes, resources)
+                "\n" + """
+                configurations {
+                    configure([compile, runtime, testCompile, testRuntime, getByName('default')]) {
+                        canBeResolved = false
+                    }
+                }
+                """.trimIndent()
+            )
 
             testResolveAllConfigurations(innerProject.projectName)
         }
@@ -195,17 +206,17 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             listOf(innerJvmProject to ":libJvm", innerJsProject to ":libJs").forEach { (project, dependency) ->
                 gradleBuildScript(project.projectName).appendText(
                     "\n" + """
-                        configurations.create('foo')
                         dependencies {
-                            foo project('$dependency')
-                            compile project('$dependency')
-                            foo project(':lib')
-                            compile project(':lib')
+                            implementation project('$dependency')
+                            implementation project(':lib')
                         }
                     """.trimIndent()
                 )
 
-                testResolveAllConfigurations(project.projectName)
+                testResolveAllConfigurations(
+                    project.projectName,
+                    excludePredicate = "it.name in ['compile', 'runtime', 'testCompile', 'testRuntime', 'default']"
+                )
             }
         }
     }
@@ -260,7 +271,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
 
     @Test
     fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations() =
-        with(Project("new-mpp-jvm-with-java-multi-module")) {
+        with(Project("new-mpp-jvm-with-java-multi-module", GradleVersionRequired.FOR_MPP_SUPPORT)) {
             testResolveAllConfigurations("app")
         }
 
@@ -269,7 +280,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
     // Starting with Gradle 5.0, plain Maven dependencies are represented as two variants, and resolving them to the API one leads
     // to transitive dependencies left out of the resolution results. We need to ensure that our attributes schema does not lead to the API
         // variants chosen over the runtime ones when resolving a configuration with no required Usage:
-        with(Project("simpleProject", GradleVersionRequired.AtLeast("5.0-milestone-1"))) {
+        with(Project("simpleProject")) {
             setupWorkingDir()
             gradleBuildScript().appendText("\ndependencies { compile 'org.jetbrains.kotlin:kotlin-compiler-embeddable' }")
 
@@ -304,6 +315,27 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                 }
             }
         }
+
+    @Test
+    fun testResolveDependencyOnMppInCustomConfiguration() = with(Project("simpleProject", GradleVersionRequired.FOR_MPP_SUPPORT)) {
+        setupWorkingDir()
+
+        gradleBuildScript().appendText(
+            "\n" + """
+            configurations.create("custom")
+            repositories.maven { setUrl("https://dl.bintray.com/kotlin/kotlin-dev") }
+            dependencies { custom("org.jetbrains.kotlinx:kotlinx-cli:0.2.0-dev-7") }
+            tasks.register("resolveCustom") { doLast { println("###" + configurations.custom.toList()) } }
+            """.trimIndent()
+        )
+
+        build("resolveCustom") {
+            assertSuccessful()
+            val printedLine = output.lines().single { "###" in it }.substringAfter("###")
+            val items = printedLine.removeSurrounding("[", "]").split(", ")
+            assertTrue(items.toString()) { items.any { "kotlinx-cli-jvm" in it } }
+        }
+    }
 
 }
 

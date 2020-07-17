@@ -8,15 +8,7 @@ FILE: smartcastFromArgument.kt
     }
     public final fun test(a: R|kotlin/Any|): R|kotlin/Unit| {
         when () {
-            R|/takeA|(when (lval <elvis>: R|A?| = (R|<local>/a| as? R|A|)) {
-                ==($subj$, Null(null)) ->  {
-                    ^test Unit
-                }
-                else ->  {
-                    R|<local>/<elvis>|
-                }
-            }
-            ) ->  {
+            R|/takeA|((R|<local>/a| as? R|A|) ?: ^test Unit) ->  {
                 R|<local>/a|.R|/A.foo|()
             }
         }

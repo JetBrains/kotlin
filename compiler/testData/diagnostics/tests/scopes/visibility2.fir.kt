@@ -9,7 +9,7 @@ private open class A {
 
 private fun foo() {}
 
-fun makeA() = A()
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>makeA<!>() = A()
 
 private object PO {}
 
@@ -33,7 +33,7 @@ fun test() {
     val po = <!INAPPLICABLE_CANDIDATE!>PO<!>
 }
 
-class B : <!INAPPLICABLE_CANDIDATE!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS, INAPPLICABLE_CANDIDATE!>A<!>() {}
 
 class Q {
     class W {

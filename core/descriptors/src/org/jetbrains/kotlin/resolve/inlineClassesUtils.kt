@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun ClassDescriptor.underlyingRepresentation(): ValueParameterDescriptor? {
@@ -28,7 +30,7 @@ fun KotlinType.isInlineClassType(): Boolean = constructor.declarationDescriptor?
 
 fun KotlinType.substitutedUnderlyingType(): KotlinType? {
     val parameter = unsubstitutedUnderlyingParameter() ?: return null
-    return memberScope.getContributedVariables(parameter.name, NoLookupLocation.FOR_ALREADY_TRACKED).singleOrNull()?.type
+    return TypeSubstitutor.create(this).substitute(parameter.type, Variance.INVARIANT)
 }
 
 fun KotlinType.isRecursiveInlineClassType() =

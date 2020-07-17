@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstit
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -31,24 +32,32 @@ class ConstraintIncorporator(
         fun addNewIncorporatedConstraint(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,
-            shouldTryUseDifferentFlexibilityForUpperType: Boolean
+            shouldTryUseDifferentFlexibilityForUpperType: Boolean,
+            isFromNullabilityConstraint: Boolean = false
         )
 
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
     }
 
+    fun incorporateIntoOtherConstraints(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
+        // we shouldn't incorporate recursive constraint -- It is too dangerous
+        if (c.areThereRecursiveConstraints(typeVariable, constraint)) return
+
+        c.insideOtherConstraint(typeVariable, constraint)
+    }
+
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
     fun incorporate(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
         // we shouldn't incorporate recursive constraint -- It is too dangerous
-        with(c) {
-            val freshTypeConstructor = typeVariable.freshTypeConstructor()
-            if (constraint.type.contains { it.typeConstructor() == freshTypeConstructor }) return
-        }
+        if (c.areThereRecursiveConstraints(typeVariable, constraint)) return
 
         c.directWithVariable(typeVariable, constraint)
         c.otherInsideMyConstraint(typeVariable, constraint)
         c.insideOtherConstraint(typeVariable, constraint)
     }
+
+    private fun Context.areThereRecursiveConstraints(typeVariable: TypeVariableMarker, constraint: Constraint) =
+        constraint.type.contains { it.typeConstructor() == typeVariable.freshTypeConstructor() }
 
     // A <:(=) \alpha <:(=) B => A <: B
     private fun Context.directWithVariable(
@@ -62,7 +71,7 @@ class ConstraintIncorporator(
         if (constraint.kind != ConstraintKind.LOWER) {
             getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.UPPER) {
-                    addNewIncorporatedConstraint(it.type, constraint.type, shouldBeTypeVariableFlexible)
+                    addNewIncorporatedConstraint(it.type, constraint.type, shouldBeTypeVariableFlexible, it.isNullabilityConstraint)
                 }
             }
         }
@@ -90,7 +99,7 @@ class ConstraintIncorporator(
 
         for (otherTypeVariable in otherInMyConstraint) {
             // to avoid ConcurrentModificationException
-            val otherConstraints = ArrayList(this.getConstraintsForVariable(otherTypeVariable))
+            val otherConstraints = SmartList(this.getConstraintsForVariable(otherTypeVariable))
             for (otherConstraint in otherConstraints) {
                 generateNewConstraint(typeVariable, constraint, otherTypeVariable, otherConstraint)
             }
@@ -212,9 +221,10 @@ class ConstraintIncorporator(
         val isFromVariableFixation = baseConstraint.position.from is FixVariableConstraintPosition
                 || otherConstraint.position.from is FixVariableConstraintPosition
 
-        if (!containsConstrainingTypeWithoutProjection(newConstraint, otherConstraint)
-            && !isUsefulForNullabilityConstraint
-            && !isFromVariableFixation
+        if (!otherConstraint.kind.isEqual() &&
+            !isUsefulForNullabilityConstraint &&
+            !isFromVariableFixation &&
+            !containsConstrainingTypeWithoutProjection(newConstraint, otherConstraint)
         ) return
 
         if (trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(
@@ -222,7 +232,7 @@ class ConstraintIncorporator(
             )
         ) return
 
-        val derivedFrom = (baseConstraint.derivedFrom + otherConstraint.derivedFrom).toMutableSet()
+        val derivedFrom = SmartSet.create(baseConstraint.derivedFrom).also { it.addAll(otherConstraint.derivedFrom) }
         if (otherVariable in derivedFrom) return
 
         derivedFrom.add(otherVariable)
@@ -231,7 +241,10 @@ class ConstraintIncorporator(
 
         val inputTypePosition = baseConstraint.position.from.safeAs<OnlyInputTypeConstraintPosition>()
 
-        val isNullabilityConstraint = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
+        val isNewConstraintUsefulForNullability = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
+        val isOtherConstraintUsefulForNullability = otherConstraint.isNullabilityConstraint && otherConstraint.type.isNullableNothing()
+        val isNullabilityConstraint = isNewConstraintUsefulForNullability || isOtherConstraintUsefulForNullability
+
         val constraintContext = ConstraintContext(kind, derivedFrom, inputTypePosition, isNullabilityConstraint)
 
         addNewIncorporatedConstraint(targetVariable, newConstraint, constraintContext)
@@ -262,7 +275,7 @@ class ConstraintIncorporator(
     }
 
     fun Context.getNestedTypeVariables(type: KotlinTypeMarker): List<TypeVariableMarker> =
-        getNestedArguments(type).mapNotNull { getTypeVariable(it.getType().typeConstructor()) }
+        getNestedArguments(type).mapNotNullTo(SmartList()) { getTypeVariable(it.getType().typeConstructor()) }
 
 
     private fun KotlinTypeMarker.substitute(c: Context, typeVariable: TypeVariableMarker, value: KotlinTypeMarker): KotlinTypeMarker {
@@ -277,7 +290,7 @@ class ConstraintIncorporator(
 }
 
 private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinTypeMarker): List<TypeArgumentMarker> {
-    val result = ArrayList<TypeArgumentMarker>()
+    val result = SmartList<TypeArgumentMarker>()
     val stack = ArrayDeque<TypeArgumentMarker>()
 
     when (type) {

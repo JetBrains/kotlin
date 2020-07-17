@@ -1,0 +1,4 @@
+package
+
+public typealias A = kotlin.String
+public typealias My = (kotlin.collections.Map<A, kotlin.Int>) -> kotlin.Unit

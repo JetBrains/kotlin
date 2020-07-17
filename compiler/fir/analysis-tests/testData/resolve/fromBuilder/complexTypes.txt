@@ -4,8 +4,8 @@ FILE: complexTypes.kt
             super<R|kotlin/Any|>()
         }
 
-        public final inner class D<R, in P> : R|kotlin/Any| {
-            public constructor<R, in P>(): R|a/b/C.D<R, P>| {
+        public final inner class D<R, in P, T, out S> : R|kotlin/Any| {
+            public constructor<R, in P>(): R|a/b/C.D<R, P, T, S>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -13,7 +13,7 @@ FILE: complexTypes.kt
 
     }
     public abstract interface Test : R|kotlin/Any| {
-        public abstract val x: R|a/b/C.D<out kotlin/CharSequence, *, in kotlin/collections/List<*>, *>|
-            public get(): R|a/b/C.D<out kotlin/CharSequence, *, in kotlin/collections/List<*>, *>|
+        public abstract val x: R|a/b/C.D<in kotlin/collections/List<*>, *, out kotlin/CharSequence, *>|
+            public get(): R|a/b/C.D<in kotlin/collections/List<*>, *, out kotlin/CharSequence, *>|
 
     }

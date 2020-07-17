@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun String.bar(): String {
     open class Local {
         fun result() = this@bar

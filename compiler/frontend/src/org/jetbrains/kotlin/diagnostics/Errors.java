@@ -100,6 +100,12 @@ public interface Errors {
     DiagnosticFactory3<PsiElement, DeclarationDescriptor, VersionRequirement.Version, Pair<LanguageVersion, String>>
             VERSION_REQUIREMENT_DEPRECATION_ERROR = DiagnosticFactory3.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory2<PsiElement, String, String> API_NOT_AVAILABLE = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory1<PsiElement, FqName> MISSING_DEPENDENCY_CLASS = DiagnosticFactory1.create(ERROR);
@@ -369,6 +375,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> FUN_INTERFACE_CONSTRUCTOR_REFERENCE = DiagnosticFactory0.create(ERROR);
 
     // Secondary constructors
 
@@ -681,6 +688,7 @@ public interface Errors {
     DiagnosticFactory0<KtNamedDeclaration> ACTUAL_MISSING = DiagnosticFactory0.create(ERROR, ACTUAL_DECLARATION_NAME);
 
     DiagnosticFactory0<PsiElement> OPTIONAL_EXPECTATION_NOT_ON_EXPECTED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> NESTED_OPTIONAL_EXPECTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE = DiagnosticFactory0.create(ERROR);
 
@@ -758,6 +766,9 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, TypeParameterDescriptor> TYPE_PARAMETER_AS_REIFIED_ARRAY_WARNING = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, KotlinType> REIFIED_TYPE_FORBIDDEN_SUBSTITUTION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> REIFIED_TYPE_UNSAFE_SUBSTITUTION = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory0<KtElement> CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory1<KtElement, CallableDescriptor> COMPATIBILITY_WARNING = DiagnosticFactory1.create(WARNING);
 
     DiagnosticFactory3<KtReferenceExpression, ClassifierDescriptor, WrongResolutionToClassifier, String> RESOLUTION_TO_CLASSIFIER =
             DiagnosticFactory3.create(ERROR);

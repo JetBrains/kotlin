@@ -8,12 +8,51 @@
 
 package kotlin.collections
 
+import kotlin.collections.builders.SetBuilder
+
 
 /**
  * Returns an immutable set containing only the specified object [element].
  * The returned set is serializable.
  */
 public fun <T> setOf(element: T): Set<T> = java.util.Collections.singleton(element)
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() -> Unit): Set<E> {
+    return build(createSetBuilder<E>().apply(builderAction))
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <E> buildSetInternal(capacity: Int, builderAction: MutableSet<E>.() -> Unit): Set<E> {
+    return build(createSetBuilder<E>(capacity).apply(builderAction))
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+internal fun <E> createSetBuilder(): MutableSet<E> {
+    return SetBuilder()
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+internal fun <E> createSetBuilder(capacity: Int): MutableSet<E> {
+    return SetBuilder(capacity)
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+internal fun <E> build(builder: MutableSet<E>): Set<E> {
+    return (builder as SetBuilder<E>).build()
+}
 
 
 /**

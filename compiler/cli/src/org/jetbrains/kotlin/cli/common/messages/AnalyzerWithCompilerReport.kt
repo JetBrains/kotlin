@@ -166,11 +166,20 @@ class AnalyzerWithCompilerReport(
         fun reportDiagnostics(diagnostics: Diagnostics, messageCollector: MessageCollector): Boolean {
             val hasErrors = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector))
 
-            if (diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS || it.factory == Errors.PRE_RELEASE_CLASS }) {
+            if (diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS }) {
                 messageCollector.report(
                     ERROR,
                     "Incompatible classes were found in dependencies. " +
                             "Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors"
+                )
+            }
+
+            if (diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS }) {
+                messageCollector.report(
+                    ERROR,
+                    "Pre-release classes were found in dependencies. " +
+                            "Remove them from the classpath, recompile with a release compiler " +
+                            "or use '-Xskip-prerelease-check' to suppress errors"
                 )
             }
 

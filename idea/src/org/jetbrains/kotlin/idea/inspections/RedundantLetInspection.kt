@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.core.util.getLineCount
+import org.jetbrains.kotlin.idea.core.util.isMultiLine
 import org.jetbrains.kotlin.idea.intentions.*
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
 import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -146,7 +147,7 @@ private fun KtDotQualifiedExpression.applyTo(element: KtCallExpression) {
 }
 
 private fun deleteCall(element: KtCallExpression) {
-    val parent = element.parent as? KtDotQualifiedExpression
+    val parent = element.parent as? KtQualifiedExpression
     if (parent != null) {
         val replacement = parent.selectorExpression?.takeIf { it != element } ?: parent.receiverExpression
         parent.replace(replacement)
@@ -249,7 +250,7 @@ private fun KtFunctionLiteral.valueParameterReferences(callExpression: KtCallExp
 private fun isSingleLine(element: KtCallExpression): Boolean {
     val qualifiedExpression = element.getQualifiedExpressionForSelector() ?: return true
     var receiver = qualifiedExpression.receiverExpression
-    if (receiver.lineCount() > 1) return false
+    if (receiver.isMultiLine()) return false
     var count = 1
     while (true) {
         if (count > 2) return false

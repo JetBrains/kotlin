@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,8 +25,18 @@ open class KotlinJsTargetPreset(
     var irPreset: KotlinJsIrTargetPreset? = null
         internal set
 
+    open val isMpp: Boolean
+        get() = true
+
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.js
+
+    override fun useDisambiguationClassifierAsSourceSetNamePrefix() = irPreset == null
+
+    override fun overrideDisambiguationClassifierOnIdeImport(name: String): String? =
+        irPreset?.let {
+            name.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
+        }
 
     override fun instantiateTarget(name: String): KotlinJsTarget {
         return project.objects.newInstance(
@@ -40,6 +50,7 @@ open class KotlinJsTargetPreset(
                     KotlinJsCompilerType.IR.lowerName
                 )
             )
+            this.isMpp = this@KotlinJsTargetPreset.isMpp
 
             project.whenEvaluated {
                 if (!isBrowserConfigured && !isNodejsConfigured) {
@@ -72,7 +83,7 @@ open class KotlinJsTargetPreset(
         )
     }
 
-    override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJsCompilation>): KotlinJsCompilationFactory {
+    override fun createCompilationFactory(forTarget: KotlinJsTarget): KotlinJsCompilationFactory {
         return KotlinJsCompilationFactory(project, forTarget, irPreset?.let { (forTarget as KotlinJsTarget).irTarget })
     }
 
@@ -88,6 +99,12 @@ class KotlinJsSingleTargetPreset(
     project,
     kotlinPluginVersion
 ) {
+    override val isMpp: Boolean
+        get() = false
+
+    override fun overrideDisambiguationClassifierOnIdeImport(name: String): String? =
+        null
+
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsCompilation>): String? =
         irPreset?.let {

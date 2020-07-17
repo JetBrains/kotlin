@@ -6,12 +6,23 @@
 package org.jetbrains.kotlin.ir.symbols.impl
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.render
 
-abstract class IrPublicSymbolBase<out D : DeclarationDescriptor>(override val descriptor: D, override val signature: IdSignature) : IrSymbol
+abstract class IrPublicSymbolBase<out D : DeclarationDescriptor> @OptIn(ObsoleteDescriptorBasedAPI::class) constructor(
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: D,
+    override val signature: IdSignature
+) : IrSymbol {
+    override fun toString(): String {
+        if (isBound) return owner.render()
+        return "Unbound public symbol for $signature"
+    }
+}
 
 abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(descriptor: D, sig: IdSignature) :
     IrBindableSymbol<D, B>, IrPublicSymbolBase<D>(descriptor, sig) {
@@ -37,7 +48,7 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
         if (_owner == null) {
             _owner = owner
         } else {
-            throw IllegalStateException("${javaClass.simpleName} for $signature is already bound")
+            throw IllegalStateException("${javaClass.simpleName} for $signature is already bound: ${owner.render()}")
         }
     }
 

@@ -137,7 +137,7 @@ class AccessorPropertyLValue(
 
     private val typeArgumentsCount = typeArguments?.size ?: 0
 
-    private fun IrMemberAccessExpression.putTypeArguments() {
+    private fun IrMemberAccessExpression<*>.putTypeArguments() {
         typeArguments?.forEachIndexed { index, irType ->
             putTypeArgument(index, irType)
         }

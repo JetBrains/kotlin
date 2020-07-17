@@ -3,6 +3,6 @@
 // INTENTION_TEXT_2: "Replace with '+= asSequence().flatMap{}.takeWhile{}'"
 fun foo(list: List<String>, target: MutableCollection<Int>) {
     <caret>target += list
-            .flatMap { it.indices }
-            .takeWhile { it <= 1000 }
+        .flatMap { it.indices }
+        .takeWhile { it <= 1000 }
 }

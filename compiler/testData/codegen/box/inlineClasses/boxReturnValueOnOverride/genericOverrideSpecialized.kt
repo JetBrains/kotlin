@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 interface GFoo<out T> {
     fun foo(): T
 }

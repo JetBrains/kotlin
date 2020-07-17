@@ -29,6 +29,7 @@ public class AsmTypes {
     public static final Type UNIT_TYPE = Type.getObjectType("kotlin/Unit");
 
     public static final Type LAMBDA = Type.getObjectType("kotlin/jvm/internal/Lambda");
+    public static final Type FUNCTION_ADAPTER = Type.getObjectType("kotlin/jvm/internal/FunctionAdapter");
 
     public static final Type FUNCTION_REFERENCE = Type.getObjectType("kotlin/jvm/internal/FunctionReference");
     public static final Type FUNCTION_REFERENCE_IMPL = Type.getObjectType("kotlin/jvm/internal/FunctionReferenceImpl");
@@ -40,6 +41,7 @@ public class AsmTypes {
     public static final Type MUTABLE_PROPERTY_REFERENCE1 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference1");
     public static final Type MUTABLE_PROPERTY_REFERENCE2 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference2");
 
+    public static final Type FUNCTION = Type.getObjectType("kotlin/Function");
     public static final Type FUNCTION0 = Type.getObjectType("kotlin/jvm/functions/Function0");
     public static final Type FUNCTION1 = Type.getObjectType("kotlin/jvm/functions/Function1");
 
@@ -56,6 +58,7 @@ public class AsmTypes {
 
     public static final Type K_CLASS_TYPE = reflect("KClass");
     public static final Type K_CLASS_ARRAY_TYPE = Type.getObjectType("[" + K_CLASS_TYPE.getDescriptor());
+    public static final Type K_CLASSIFIER_TYPE = reflect("KClassifier");
     public static final Type K_DECLARATION_CONTAINER_TYPE = reflect("KDeclarationContainer");
 
     public static final Type K_FUNCTION = reflect("KFunction");
@@ -71,6 +74,8 @@ public class AsmTypes {
     public static final Type K_TYPE = reflect("KType");
     public static final Type K_TYPE_PROJECTION = reflect("KTypeProjection");
     public static final Type K_TYPE_PROJECTION_COMPANION = reflect("KTypeProjection$Companion");
+    public static final Type K_TYPE_PARAMETER = reflect("KTypeParameter");
+    public static final Type K_VARIANCE = reflect("KVariance");
 
     public static final Type SUSPEND_FUNCTION_TYPE = Type.getObjectType("kotlin/coroutines/jvm/internal/SuspendFunction");
 

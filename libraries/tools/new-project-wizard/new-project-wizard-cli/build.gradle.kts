@@ -12,6 +12,7 @@ dependencies {
 
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(project(":kotlin-reflect"))
     testImplementation(commonDep("junit:junit"))
     testImplementation(intellijDep())
 }

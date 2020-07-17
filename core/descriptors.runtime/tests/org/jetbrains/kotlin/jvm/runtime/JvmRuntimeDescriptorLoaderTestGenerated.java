@@ -606,6 +606,11 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 runTest("compiler/testData/loadJava/compiledKotlin/class/EnumWithPrimitiveConstructorParameter.kt");
             }
 
+            @TestMetadata("FunInterface.kt")
+            public void testFunInterface() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/class/FunInterface.kt");
+            }
+
             @TestMetadata("InheritClassSimple.kt")
             public void testInheritClassSimple() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/class/InheritClassSimple.kt");
@@ -2914,6 +2919,11 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
 
         public void testAllFilesPresentInCompiledJava() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true, "sam", "kotlinSignature/propagation");
+        }
+
+        @TestMetadata("ArrayInGenericArguments.java")
+        public void testArrayInGenericArguments() throws Exception {
+            runTest("compiler/testData/loadJava/compiledJava/ArrayInGenericArguments.java");
         }
 
         @TestMetadata("ArrayTypeVariance.java")

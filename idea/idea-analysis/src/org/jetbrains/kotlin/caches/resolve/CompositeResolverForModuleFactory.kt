@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.frontend.java.di.configureJavaSpecificComponents
 import org.jetbrains.kotlin.frontend.java.di.initializeJavaSpecificComponents
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -80,7 +81,7 @@ class CompositeResolverForModuleFactory(
             val resolverForReferencedModule = referencedClassModule?.let { resolverForProject.tryGetResolverForModule(it as M) }
 
             val resolverForModule = resolverForReferencedModule?.takeIf {
-                referencedClassModule.platform.has<JvmPlatform>() || referencedClassModule.platform == null
+                referencedClassModule.platform.has<JvmPlatform>()
             } ?: run {
                 // in case referenced class lies outside of our resolver, resolve the class as if it is inside our module
                 // this leads to java class being resolved several times
@@ -103,7 +104,7 @@ class CompositeResolverForModuleFactory(
             yieldAll(getCommonProvidersIfAny(moduleInfo, moduleContext, moduleDescriptor, container)) // todo: module context
             yieldAll(getJsProvidersIfAny(moduleInfo, moduleContext, moduleDescriptor, container))
             yieldAll(getJvmProvidersIfAny(container))
-            yieldAll(getKonanProvidersIfAny(moduleInfo, container))
+            yieldAll(getNativeProvidersIfAny(moduleInfo, container))
         }.toList()
 
         return ResolverForModule(CompositePackageFragmentProvider(packageFragmentProviders), container)
@@ -132,11 +133,11 @@ class CompositeResolverForModuleFactory(
     private fun getJvmProvidersIfAny(container: StorageComponentContainer): List<PackageFragmentProvider> =
         if (targetPlatform.has<JvmPlatform>()) listOf(container.get<JavaDescriptorResolver>().packageFragmentProvider) else emptyList()
 
-    private fun getKonanProvidersIfAny(moduleInfo: ModuleInfo, container: StorageComponentContainer): List<PackageFragmentProvider> {
+    private fun getNativeProvidersIfAny(moduleInfo: ModuleInfo, container: StorageComponentContainer): List<PackageFragmentProvider> {
         if (!targetPlatform.has<NativePlatform>()) return emptyList()
 
         return listOfNotNull(
-            NativePlatforms.defaultNativePlatform.idePlatformKind.resolution.createKlibPackageFragmentProvider(
+            NativePlatforms.unspecifiedNativePlatform.idePlatformKind.resolution.createKlibPackageFragmentProvider(
                 moduleInfo,
                 container.get<StorageManager>(),
                 container.get<LanguageVersionSettings>(),

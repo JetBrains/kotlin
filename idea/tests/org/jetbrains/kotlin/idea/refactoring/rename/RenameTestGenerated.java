@@ -483,6 +483,11 @@ public class RenameTestGenerated extends AbstractRenameTest {
         runTest("idea/testData/refactoring/rename/propertyAccidentalOverrideSuperclass/propertyAccidentalOverrideSuperclass.test");
     }
 
+    @TestMetadata("propertyImportAliasByRef/propertyImportAliasByRef.test")
+    public void testPropertyImportAliasByRef_PropertyImportAliasByRef() throws Exception {
+        runTest("idea/testData/refactoring/rename/propertyImportAliasByRef/propertyImportAliasByRef.test");
+    }
+
     @TestMetadata("propertyParameterAccidentalOverrideSubclass/propertyParameterAccidentalOverrideSubclass.test")
     public void testPropertyParameterAccidentalOverrideSubclass_PropertyParameterAccidentalOverrideSubclass() throws Exception {
         runTest("idea/testData/refactoring/rename/propertyParameterAccidentalOverrideSubclass/propertyParameterAccidentalOverrideSubclass.test");
@@ -881,6 +886,11 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("renameKotlinPackageFunctionFromJavaNewFacade/renameKotlinPackageFunctionFromJava.test")
     public void testRenameKotlinPackageFunctionFromJavaNewFacade_RenameKotlinPackageFunctionFromJava() throws Exception {
         runTest("idea/testData/refactoring/rename/renameKotlinPackageFunctionFromJavaNewFacade/renameKotlinPackageFunctionFromJava.test");
+    }
+
+    @TestMetadata("renameKotlinPackageWithLongType/renameKotlinPackageWithLongType.test")
+    public void testRenameKotlinPackageWithLongType_RenameKotlinPackageWithLongType() throws Exception {
+        runTest("idea/testData/refactoring/rename/renameKotlinPackageWithLongType/renameKotlinPackageWithLongType.test");
     }
 
     @TestMetadata("renameKotlinParameterWithGetterJvmName/renameKotlinParameterWithGetterJvmName.test")

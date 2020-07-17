@@ -3,8 +3,6 @@ plugins {
     kotlin("jvm")
 }
 
-jvmTarget = "1.6"
-
 val allTestsRuntime by configurations.creating
 val testCompile by configurations
 testCompile.extendsFrom(allTestsRuntime)
@@ -19,7 +17,7 @@ dependencies {
         allTestsRuntime(intellijDep()) { includeJars("openapi") }
     }
     allTestsRuntime(intellijDep()) { includeJars("idea", "idea_rt", "log4j", "jna") }
-    testCompile(project(":kotlin-scripting-jvm-host"))
+    testCompile(project(":kotlin-scripting-jvm-host-unshaded"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":daemon-common")) // TODO: fix import (workaround for jps build)
@@ -28,7 +26,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     
-    embeddableTestRuntime(project(":kotlin-scripting-jvm-host-embeddable"))
+    embeddableTestRuntime(project(":kotlin-scripting-jvm-host"))
     embeddableTestRuntime(project(":kotlin-test:kotlin-test-jvm"))
     embeddableTestRuntime(project(":kotlin-test:kotlin-test-junit"))
     embeddableTestRuntime(projectTests(":compiler:tests-common")) { isTransitive = false }

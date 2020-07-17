@@ -31,10 +31,13 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-private val ANY_MEMBER_NAMES = setOf("equals", "hashCode", "toString")
+private val ALLOWED_MEMBER_NAMES = setOf(
+    "equals", "hashCode", "toString", "invoke", "name"
+)
 
 private val ALLOWED_CLASSES = setOf(
     FqName("kotlin.reflect.KType"),
+    FqName("kotlin.reflect.KTypeParameter"),
     FqName("kotlin.reflect.KTypeProjection"),
     FqName("kotlin.reflect.KTypeProjection.Companion"),
     FqName("kotlin.reflect.KVariance")
@@ -76,10 +79,8 @@ abstract class AbstractReflectionApiCallChecker(
 
     protected open fun isAllowedReflectionApi(descriptor: CallableDescriptor, containingClass: ClassDescriptor): Boolean {
         val name = descriptor.name
-        return name.asString() in ANY_MEMBER_NAMES ||
-                name == OperatorNameConventions.INVOKE ||
-                name.asString() == "name" ||
-                DescriptorUtils.isSubclass(containingClass, kClass) && isAllowedKClassMember(descriptor.name) ||
+        return name.asString() in ALLOWED_MEMBER_NAMES ||
+                DescriptorUtils.isSubclass(containingClass, kClass) && isAllowedKClassMember(name) ||
                 (name.asString() == "get" || name.asString() == "set") && containingClass.isKPropertyClass() ||
                 containingClass.fqNameSafe in ALLOWED_CLASSES
     }

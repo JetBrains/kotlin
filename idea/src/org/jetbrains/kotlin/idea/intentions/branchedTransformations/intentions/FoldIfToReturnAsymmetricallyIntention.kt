@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.*
 
-class FoldIfToReturnAsymmetricallyIntention :
-    SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, KotlinBundle.message("replace.if.expression.with.return")) {
+class FoldIfToReturnAsymmetricallyIntention : SelfTargetingRangeIntention<KtIfExpression>(
+    KtIfExpression::class.java,
+    KotlinBundle.lazyMessage("replace.if.expression.with.return")
+) {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         if (BranchedFoldingUtils.getFoldableBranchedReturn(element.then) == null || element.`else` != null) {
             return null

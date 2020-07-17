@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 
 abstract class AbstractConeSubstitutor : ConeSubstitutor() {
-    protected fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypeProjection {
+    private fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypeProjection {
         return when (old) {
             is ConeStarProjection -> old
             is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
@@ -107,7 +107,8 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
                 is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                     lookupTag,
                     newArguments as Array<ConeTypeProjection>,
-                    nullability.isNullable
+                    nullability.isNullable,
+                    attributes
                 )
                 is ConeClassLikeType -> error("Unknown class-like type to substitute: $this, ${this::class}")
                 else -> error("Unknown type to substitute: $this, ${this::class}")
@@ -133,6 +134,12 @@ data class ChainedSubstitutor(private val first: ConeSubstitutor, private val se
         first.substituteOrNull(type)?.let { return second.substituteOrSelf(it) }
         return second.substituteOrNull(type)
     }
+}
+
+fun ConeSubstitutor.chain(other: ConeSubstitutor): ConeSubstitutor {
+    if (this == ConeSubstitutor.Empty) return other
+    if (other == ConeSubstitutor.Empty) return this
+    return ChainedSubstitutor(this, other)
 }
 
 data class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>) : AbstractConeSubstitutor() {

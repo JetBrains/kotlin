@@ -23,7 +23,8 @@ interface Setting<out V : Any, out T : SettingType<V>> : Entity, ActivityChecker
     val defaultValue: SettingDefaultValue<V>?
     val isRequired: Boolean
     val isSavable: Boolean
-    var neededAtPhase: GenerationPhase
+    val neededAtPhase: GenerationPhase
+    val validateOnProjectCreation: Boolean
     val type: T
 }
 
@@ -34,8 +35,9 @@ data class InternalSetting<out V : Any, out T : SettingType<V>>(
     override val isAvailable: Checker,
     override val isRequired: Boolean,
     override val isSavable: Boolean,
-    override var neededAtPhase: GenerationPhase,
+    override val neededAtPhase: GenerationPhase,
     override val validator: SettingValidator<@UnsafeVariance V>,
+    override val validateOnProjectCreation: Boolean,
     override val type: T
 ) : Setting<V, T>, EntityWithValue<V>()
 
@@ -58,7 +60,7 @@ class TemplateSetting<out V : Any, out T : SettingType<V>>(
 sealed class SettingDefaultValue<out V : Any> {
     data class Value<V : Any>(val value: V) : SettingDefaultValue<V>()
     data class Dynamic<V : Any>(
-        val getter: Reader.(SettingReference<V, SettingType<V>>) -> V
+        val getter: Reader.(SettingReference<V, SettingType<V>>) -> V?
     ) : SettingDefaultValue<V>()
 }
 

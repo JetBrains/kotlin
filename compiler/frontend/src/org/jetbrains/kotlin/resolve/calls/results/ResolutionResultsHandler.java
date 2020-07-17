@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.TowerUtilsKt;
 import org.jetbrains.kotlin.util.CancellationChecker;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*;
 
@@ -220,6 +222,14 @@ public class ResolutionResultsHandler {
 
         Set<MutableResolvedCall<D>> specificCalls =
                 myResolver.chooseMaximallySpecificCandidates(refinedCandidates, checkArgumentsMode, discriminateGenerics);
+
+        if (specificCalls.size() > 1) {
+            specificCalls = specificCalls.stream()
+                    .filter((call) ->
+                                    !call.getCandidateDescriptor().getAnnotations().hasAnnotation(
+                                            KotlinCallResolver.Companion.getOVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION())
+                    ).collect(Collectors.toSet());
+        }
 
         if (specificCalls.size() == 1) {
             return OverloadResolutionResultsImpl.success(specificCalls.iterator().next());

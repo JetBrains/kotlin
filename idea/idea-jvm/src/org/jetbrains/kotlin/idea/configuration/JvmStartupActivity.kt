@@ -19,7 +19,7 @@ import com.intellij.ui.EditorNotifications
 
 class JvmStartupActivity : StartupActivity {
     override fun runActivity(project: Project) {
-        val connection = project.messageBus.connect(project)
+        val connection = project.messageBus.connect()
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
             override fun rootsChanged(event: ModuleRootEvent) {
                 EditorNotifications.getInstance(project).updateAllNotifications()

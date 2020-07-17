@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -216,7 +219,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             if (
                 primaryConstructorDescriptor.isExpect ||
                 DescriptorUtils.isAnnotationClass(primaryConstructorDescriptor.constructedClass) ||
-                primaryConstructorDescriptor.constructedClass.isExternal
+                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal()
             )
                 null
             else
@@ -227,7 +230,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
         return declareConstructor(ktConstructor, ktConstructor, constructorDescriptor) {
             when {
-                constructorDescriptor.constructedClass.isExternal ->
+                constructorDescriptor.constructedClass.isEffectivelyExternal() ->
                     null
 
                 ktConstructor.isConstructorDelegatingToSuper(context.bindingContext) ->
@@ -244,17 +247,25 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ktParametersElement: KtPureElement,
         constructorDescriptor: ClassConstructorDescriptor,
         generateBody: BodyGenerator.() -> IrBody?
-    ): IrConstructor =
-        context.symbolTable.declareConstructor(
-            ktConstructorElement.getStartOffsetOfConstructorDeclarationKeywordOrNull() ?: ktConstructorElement.pureStartOffset,
-            ktConstructorElement.pureEndOffset,
-            IrDeclarationOrigin.DEFINED,
-            constructorDescriptor
-        ).buildWithScope { irConstructor ->
+    ): IrConstructor {
+        val startOffset = ktConstructorElement.getStartOffsetOfConstructorDeclarationKeywordOrNull() ?: ktConstructorElement.pureStartOffset
+        val endOffset = ktConstructorElement.pureEndOffset
+        val origin = IrDeclarationOrigin.DEFINED
+        return context.symbolTable.declareConstructor(constructorDescriptor) {
+            with(constructorDescriptor) {
+                IrConstructorImpl(
+                    startOffset, endOffset, origin, it, context.symbolTable.nameProvider.nameForDeclaration(this),
+                    visibility, IrUninitializedType, isInline, isEffectivelyExternal(), isPrimary, isExpect
+                )
+            }.apply {
+                metadata = MetadataSource.Function(it.descriptor)
+            }
+        }.buildWithScope { irConstructor ->
             generateValueParameterDeclarations(irConstructor, ktParametersElement, null)
             irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody()
             irConstructor.returnType = constructorDescriptor.returnType.toIrType()
         }
+    }
 
     fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
         val descriptor = irFunction.descriptor

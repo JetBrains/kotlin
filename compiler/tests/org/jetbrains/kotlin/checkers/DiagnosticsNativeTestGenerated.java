@@ -33,9 +33,19 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
         runTest("compiler/testData/diagnostics/nativeTests/sharedImmutable.kt");
     }
 
+    @TestMetadata("threadLocal.kt")
+    public void testThreadLocal() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/threadLocal.kt");
+    }
+
     @TestMetadata("throws.kt")
     public void testThrows() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/throws.kt");
+    }
+
+    @TestMetadata("throwsClash.kt")
+    public void testThrowsClash() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/throwsClash.kt");
     }
 
     @TestMetadata("topLevelSingleton.kt")

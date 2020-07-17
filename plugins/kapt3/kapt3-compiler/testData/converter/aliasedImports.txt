@@ -4,15 +4,10 @@ import a.b.ABC;
 
 @kotlin.Metadata()
 public final class Test {
-    @org.jetbrains.annotations.NotNull()
     public Test.MyDate date;
-    @org.jetbrains.annotations.NotNull()
     public java.util.concurrent.TimeUnit timeUnit;
-    @org.jetbrains.annotations.NotNull()
     public java.util.concurrent.TimeUnit microseconds;
-    @org.jetbrains.annotations.NotNull()
     public a.b.ABC abc;
-    @org.jetbrains.annotations.NotNull()
     public bcd bcd;
 
     @org.jetbrains.annotations.NotNull()
@@ -66,7 +61,6 @@ public final class Test {
 
     @kotlin.Metadata()
     public static final class MyDate {
-        @org.jetbrains.annotations.NotNull()
         public Test.MyDate date2;
 
         @org.jetbrains.annotations.NotNull()
@@ -93,7 +87,6 @@ import a.b.ABC;
 
 @kotlin.Metadata()
 public final class Test2 {
-    @org.jetbrains.annotations.NotNull()
     public java.util.Date date;
 
     @org.jetbrains.annotations.NotNull()

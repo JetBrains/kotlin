@@ -79,6 +79,7 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
                 ) return elementParent
             }
 
+            if (elementParent is KtPrimaryConstructor && elementParent.getConstructorKeyword() === element) return elementParent
             if (elementParent is KtSecondaryConstructor && elementParent.getConstructorKeyword() === element) return elementParent
 
             element.getStrictParentOfType<KtParameterList>()?.let { parameterList ->

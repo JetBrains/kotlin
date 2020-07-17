@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -27,9 +29,10 @@ import org.jetbrains.kotlin.name.FqName
 @FirBuilderDsl
 class FirFileBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    lateinit var origin: FirDeclarationOrigin
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     val imports: MutableList<FirImport> = mutableListOf()
     val declarations: MutableList<FirDeclaration> = mutableListOf()
     lateinit var name: String
@@ -38,9 +41,10 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirFile {
         return FirFileImpl(
             source,
-            annotations,
             session,
             resolvePhase,
+            origin,
+            annotations,
             imports,
             declarations,
             name,

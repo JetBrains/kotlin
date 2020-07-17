@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -20,7 +21,6 @@ abstract class FirFunctionCall : FirQualifiedAccessExpression(), FirCall {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val safe: Boolean
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
@@ -29,6 +29,16 @@ abstract class FirFunctionCall : FirQualifiedAccessExpression(), FirCall {
     abstract override val calleeReference: FirNamedReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunctionCall(this, data)
+
+    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
+    abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
+
+    abstract fun replaceCalleeReference(newCalleeReference: FirNamedReference)
+
+    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionCall
 

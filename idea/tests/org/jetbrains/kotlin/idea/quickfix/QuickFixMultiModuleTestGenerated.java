@@ -209,6 +209,39 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @TestMetadata("idea/testData/multiModuleQuickFix/addThrowAnnotation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddThrowAnnotation extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddThrowAnnotation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiModuleQuickFix/addThrowAnnotation"), Pattern.compile("^([^\\.]+)$"), null, true);
+        }
+
+        @TestMetadata("common")
+        public void testCommon() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addThrowAnnotation/common/");
+        }
+
+        @TestMetadata("js")
+        public void testJs() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addThrowAnnotation/js/");
+        }
+
+        @TestMetadata("jvm")
+        public void testJvm() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addThrowAnnotation/jvm/");
+        }
+
+        @TestMetadata("jvmWithoutStdlib")
+        public void testJvmWithoutStdlib() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/addThrowAnnotation/jvmWithoutStdlib/");
+        }
+    }
+
     @TestMetadata("idea/testData/multiModuleQuickFix/changeModifier")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -758,6 +791,49 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         @TestMetadata("withVararg")
         public void testWithVararg() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createExpect/withVararg/");
+        }
+    }
+
+    @TestMetadata("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FixNativeThrowsErrors extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("addCancellationException1")
+        public void testAddCancellationException1() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors/addCancellationException1/");
+        }
+
+        @TestMetadata("addCancellationException2")
+        public void testAddCancellationException2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors/addCancellationException2/");
+        }
+
+        @TestMetadata("addCancellationException3")
+        public void testAddCancellationException3() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors/addCancellationException3/");
+        }
+
+        @TestMetadata("addCancellationException4")
+        public void testAddCancellationException4() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors/addCancellationException4/");
+        }
+
+        public void testAllFilesPresentInFixNativeThrowsErrors() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors"), Pattern.compile("^([^\\.]+)$"), null, true);
+        }
+
+        @TestMetadata("removeEmptyThrows")
+        public void testRemoveEmptyThrows() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors/removeEmptyThrows/");
+        }
+
+        @TestMetadata("removeThrowsOnIncompatibleOverride")
+        public void testRemoveThrowsOnIncompatibleOverride() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/fixNativeThrowsErrors/removeThrowsOnIncompatibleOverride/");
         }
     }
 

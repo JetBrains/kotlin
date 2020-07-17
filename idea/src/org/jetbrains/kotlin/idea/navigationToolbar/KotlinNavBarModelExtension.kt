@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.idea.navigationToolbar
 
-import com.intellij.ide.navigationToolbar.AbstractNavBarModelExtension
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinIconProvider
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.idea.projectView.KtDeclarationTreeNode.Companion.tryGetRepresentableText
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
-class KotlinNavBarModelExtension : AbstractNavBarModelExtension() {
-    override fun getPresentableText(item: Any?): String? {
-        return when (item) {
-            is KtClassOrObject -> item.name ?: "unknown"
-            else -> null
-        }
-    }
+class KotlinNavBarModelExtension : AbstractNavBarModelExtensionCompatBase() {
+    override fun getPresentableText(item: Any?): String? =
+        (item as? KtDeclaration)?.let { tryGetRepresentableText(it, it.project) }
 
-    override fun adjustElement(psiElement: PsiElement?): PsiElement? {
+    override fun adjustElementImpl(psiElement: PsiElement?): PsiElement? {
+        if (psiElement is KtDeclaration) {
+            return psiElement
+        }
         val containingFile = psiElement?.containingFile as? KtFile ?: return psiElement
         if (containingFile.isScript()) return psiElement
         return KotlinIconProvider.getSingleClass(containingFile) ?: psiElement

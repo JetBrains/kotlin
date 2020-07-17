@@ -17,28 +17,29 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.container.DefaultImplementation
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.synthetic.FunInterfaceConstructorsScopeProvider
 import org.jetbrains.kotlin.types.KotlinType
 
 
 interface SyntheticScope {
+
     fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
     fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
-    fun getSyntheticStaticFunctions(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
-    fun getSyntheticConstructors(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    fun getSyntheticStaticFunctions(contributedFunctions: Collection<FunctionDescriptor>, location: LookupLocation): Collection<FunctionDescriptor>
+    fun getSyntheticConstructors(contributedClassifier: ClassifierDescriptor, location: LookupLocation): Collection<FunctionDescriptor>
 
     fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<PropertyDescriptor>
     fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
-    fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor>
-    fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor>
+    fun getSyntheticStaticFunctions(functionDescriptors: Collection<DeclarationDescriptor>): Collection<FunctionDescriptor>
+    fun getSyntheticConstructors(classifierDescriptors: Collection<DeclarationDescriptor>): Collection<FunctionDescriptor>
 
     fun getSyntheticConstructor(constructor: ConstructorDescriptor): ConstructorDescriptor?
 
     open class Default : SyntheticScope {
+
         override fun getSyntheticExtensionProperties(
             receiverTypes: Collection<KotlinType>,
             name: Name,
@@ -56,16 +57,14 @@ interface SyntheticScope {
         }
 
         override fun getSyntheticStaticFunctions(
-            scope: ResolutionScope,
-            name: Name,
+            contributedFunctions: Collection<FunctionDescriptor>,
             location: LookupLocation
         ): Collection<FunctionDescriptor> {
             return emptyList()
         }
 
         override fun getSyntheticConstructors(
-            scope: ResolutionScope,
-            name: Name,
+            contributedClassifier: ClassifierDescriptor,
             location: LookupLocation
         ): Collection<FunctionDescriptor> {
             return emptyList()
@@ -82,11 +81,11 @@ interface SyntheticScope {
             return emptyList()
         }
 
-        override fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor> {
+        override fun getSyntheticStaticFunctions(functionDescriptors: Collection<DeclarationDescriptor>): Collection<FunctionDescriptor> {
             return emptyList()
         }
 
-        override fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor> {
+        override fun getSyntheticConstructors(classifierDescriptors: Collection<DeclarationDescriptor>): Collection<FunctionDescriptor> {
             return emptyList()
         }
 
@@ -96,7 +95,7 @@ interface SyntheticScope {
     }
 }
 
-@DefaultImplementation(impl = SyntheticScopes.Empty::class)
+@DefaultImplementation(impl = FunInterfaceConstructorsScopeProvider::class)
 interface SyntheticScopes {
     val scopes: Collection<SyntheticScope>
 
@@ -105,18 +104,17 @@ interface SyntheticScopes {
     }
 }
 
-
 fun SyntheticScopes.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
         = scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes, name, location) }
 
 fun SyntheticScopes.collectSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
         = scopes.flatMap { it.getSyntheticMemberFunctions(receiverTypes, name, location) }
 
-fun SyntheticScopes.collectSyntheticStaticFunctions(scope: ResolutionScope, name: Name, location: LookupLocation)
-        = scopes.flatMap { it.getSyntheticStaticFunctions(scope, name, location) }
+fun SyntheticScopes.collectSyntheticStaticFunctions(contributedFunctions: Collection<FunctionDescriptor>, location: LookupLocation)
+        = scopes.flatMap { it.getSyntheticStaticFunctions(contributedFunctions, location,) }
 
-fun SyntheticScopes.collectSyntheticConstructors(scope: ResolutionScope, name: Name, location: LookupLocation)
-        = scopes.flatMap { it.getSyntheticConstructors(scope, name, location) }
+fun SyntheticScopes.collectSyntheticConstructors(contributedClassifier: ClassifierDescriptor, location: LookupLocation)
+        = scopes.flatMap { it.getSyntheticConstructors(contributedClassifier, location) }
 
 fun SyntheticScopes.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, location: LookupLocation)
         = scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes, location) }
@@ -124,11 +122,11 @@ fun SyntheticScopes.collectSyntheticExtensionProperties(receiverTypes: Collectio
 fun SyntheticScopes.collectSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>)
         = scopes.flatMap { it.getSyntheticMemberFunctions(receiverTypes) }
 
-fun SyntheticScopes.collectSyntheticStaticFunctions(scope: ResolutionScope)
-        = scopes.flatMap { it.getSyntheticStaticFunctions(scope) }
+fun SyntheticScopes.collectSyntheticStaticFunctions(functionDescriptors: Collection<DeclarationDescriptor>)
+        = scopes.flatMap { it.getSyntheticStaticFunctions(functionDescriptors) }
 
-fun SyntheticScopes.collectSyntheticConstructors(scope: ResolutionScope)
-        = scopes.flatMap { it.getSyntheticConstructors(scope) }
+fun SyntheticScopes.collectSyntheticConstructors(classifierDescriptors: Collection<DeclarationDescriptor>)
+        = scopes.flatMap { it.getSyntheticConstructors(classifierDescriptors) }
 
 fun SyntheticScopes.collectSyntheticConstructors(constructor: ConstructorDescriptor)
         = scopes.mapNotNull { it.getSyntheticConstructor(constructor) }

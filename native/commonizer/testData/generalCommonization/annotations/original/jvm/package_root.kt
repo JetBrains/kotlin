@@ -16,14 +16,6 @@ annotation class JvmAnnotationForAnnotationClassesOnly(val text: String)
 @CommonAnnotationForAnnotationClassesOnly("annotation-class")
 annotation class JvmAnnotation(val text: String)
 
-//@Target(AnnotationTarget.CLASS)
-//annotation class CommonOuterAnnotation(val inner: CommonInnerAnnotation)
-//annotation class CommonInnerAnnotation(val text: String)
-//
-//@Target(AnnotationTarget.CLASS)
-//annotation class JvmOuterAnnotation(val inner: JvmInnerAnnotation)
-//annotation class JvmInnerAnnotation(val text: String)
-
 @JvmAnnotation("property")
 @CommonAnnotation("property")
 var propertyWithoutBackingField
@@ -53,10 +45,14 @@ fun <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : @J
 @CommonAnnotation("class")
 class AnnotatedClass @JvmAnnotation("constructor") @CommonAnnotation("constructor") constructor(val value: String)
 
-@JvmAnnotation("type-alias")
-@CommonAnnotation("type-alias")
-typealias AnnotatedTypeAlias = AnnotatedClass
+@JvmAnnotation("jvm-only-class")
+@CommonAnnotation("jvm-only-class")
+class JvmOnlyAnnotatedClass @JvmAnnotation("jvm-only-constructor") @CommonAnnotation("jvm-only-constructor") constructor(val value: String)
 
-//@JvmOuterAnnotation(inner = JvmInnerAnnotation("nested-annotations"))
-//@CommonOuterAnnotation(inner = CommonInnerAnnotation("nested-annotations"))
-//object ObjectWithNestedAnnotations
+@JvmAnnotation("lifted-up-type-alias")
+@CommonAnnotation("lifted-up-type-alias")
+typealias AnnotatedLiftedUpTypeAlias = AnnotatedClass
+
+@JvmAnnotation("non-lifted-up-type-alias")
+@CommonAnnotation("non-lifted-up-type-alias")
+typealias AnnotatedNonLiftedUpTypeAlias = JvmOnlyAnnotatedClass

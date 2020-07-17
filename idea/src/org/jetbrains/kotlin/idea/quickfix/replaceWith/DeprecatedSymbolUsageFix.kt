@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 
 class DeprecatedSymbolUsageFix(
-    element: KtSimpleNameExpression,
+    element: KtReferenceExpression,
     replaceWith: ReplaceWith
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith), CleanupFix, HighPriorityAction {
 
@@ -51,8 +51,8 @@ class DeprecatedSymbolUsageFix(
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val (nameExpression, replacement) = extractDataFromDiagnostic(diagnostic, false) ?: return null
-            return DeprecatedSymbolUsageFix(nameExpression, replacement)
+            val (referenceExpression, replacement) = extractDataFromDiagnostic(diagnostic, false) ?: return null
+            return DeprecatedSymbolUsageFix(referenceExpression, replacement)
         }
 
         fun isImportToBeRemoved(import: KtImportDirective): Boolean {

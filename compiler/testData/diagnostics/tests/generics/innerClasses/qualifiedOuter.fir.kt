@@ -7,9 +7,9 @@ class Outer<T> {
     fun foo(x: Outer<String>.Inner, y: Outer.Inner, z: Inner) {
         var inner = Inner()
         x.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Inner>() }
-        x.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Outer<String>.Inner>() }
+        x.checkType { _<Outer<String>.Inner>() }
         z.checkType { _<Inner>() }
-        z.checkType { _<Outer<T>.Inner>() }
+        z.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Outer<T>.Inner>() }
 
         inner = x
     }

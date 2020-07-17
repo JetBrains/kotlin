@@ -202,13 +202,13 @@ internal abstract class AbstractCompletionBenchmarkScenario(
         if (result == JFileChooser.APPROVE_OPTION) {
             val file = jfc.selectedFile
             file.writeText(buildString {
-                appendln("n, file, lines, ff, full")
+                appendLine("n, file, lines, ff, full")
                 var i = 0
                 allResults.forEach {
                     append(i++)
                     append(", ")
                     it.toCSV(this)
-                    appendln()
+                    appendLine()
                 }
             })
         }

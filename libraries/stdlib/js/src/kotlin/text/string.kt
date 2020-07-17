@@ -11,6 +11,7 @@ import kotlin.js.RegExp
  * Converts the characters in the specified array to a string.
  */
 @SinceKotlin("1.2")
+@Deprecated("Use CharArray.concatToString() instead", ReplaceWith("chars.concatToString()"))
 public actual fun String(chars: CharArray): String {
     var result = ""
     for (char in chars) {
@@ -26,6 +27,7 @@ public actual fun String(chars: CharArray): String {
  * or `offset + length` is out of [chars] array bounds.
  */
 @SinceKotlin("1.2")
+@Deprecated("Use CharArray.concatToString(startIndex, endIndex) instead", ReplaceWith("chars.concatToString(offset, offset + length)"))
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
     if (offset < 0 || length < 0 || chars.size - offset < length)
         throw IndexOutOfBoundsException("size: ${chars.size}; offset: $offset; length: $length")
@@ -39,8 +41,8 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
 /**
  * Concatenates characters in this [CharArray] into a String.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun CharArray.concatToString(): String {
     var result = ""
     for (char in this) {
@@ -58,9 +60,9 @@ public actual fun CharArray.concatToString(): String {
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-@ExperimentalStdlibApi
 public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
     var result = ""
@@ -73,8 +75,8 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
 /**
  * Returns a [CharArray] containing characters of this string.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.toCharArray(): CharArray {
     return CharArray(length) { get(it) }
 }
@@ -88,9 +90,9 @@ public actual fun String.toCharArray(): CharArray {
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-@ExperimentalStdlibApi
 public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
     return CharArray(endIndex - startIndex) { get(startIndex + it) }
@@ -101,8 +103,8 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  *
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun ByteArray.decodeToString(): String {
     return decodeUtf8(this, 0, size, false)
 }
@@ -118,9 +120,9 @@ public actual fun ByteArray.decodeToString(): String {
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-@ExperimentalStdlibApi
 public actual fun ByteArray.decodeToString(
     startIndex: Int = 0,
     endIndex: Int = this.size,
@@ -135,8 +137,8 @@ public actual fun ByteArray.decodeToString(
  *
  * Any malformed char sequence is replaced by the replacement byte sequence.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.encodeToByteArray(): ByteArray {
     return encodeUtf8(this, 0, length, false)
 }
@@ -152,9 +154,9 @@ public actual fun String.encodeToByteArray(): ByteArray {
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
  */
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-@ExperimentalStdlibApi
 public actual fun String.encodeToByteArray(
     startIndex: Int = 0,
     endIndex: Int = this.length,

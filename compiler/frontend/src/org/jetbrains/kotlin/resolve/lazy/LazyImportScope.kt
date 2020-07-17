@@ -32,9 +32,14 @@ import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportInfo
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.annotations.KOTLIN_NATIVE_THROWS_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -43,20 +48,20 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import org.jetbrains.kotlin.utils.ifEmpty
 
-interface IndexedImports<I : KtImportInfo> {
-    val imports: List<I>
-    fun importsForName(name: Name): Collection<I>
+open class IndexedImports<I : KtImportInfo>(val imports: Array<I>) {
+    open fun importsForName(name: Name): Iterable<I> = imports.asIterable()
 }
 
-class AllUnderImportsIndexed<I : KtImportInfo>(allImports: Collection<I>) : IndexedImports<I> {
-    override val imports = allImports.filter { it.isAllUnder }
-    override fun importsForName(name: Name) = imports
-}
+inline fun <reified I : KtImportInfo> makeAllUnderImportsIndexed(imports: Collection<I>) : IndexedImports<I> =
+    IndexedImports(imports.filter { it.isAllUnder }.toTypedArray())
 
-class ExplicitImportsIndexed<I : KtImportInfo>(allImports: Collection<I>) : IndexedImports<I> {
-    override val imports = allImports.filter { !it.isAllUnder }
 
-    private val nameToDirectives: ListMultimap<Name, I> by lazy {
+class ExplicitImportsIndexed<I : KtImportInfo>(
+    imports: Array<I>,
+    storageManager: StorageManager
+) : IndexedImports<I>(imports) {
+
+    private val nameToDirectives: NotNullLazyValue<ListMultimap<Name, I>> = storageManager.createLazyValue {
         val builder = ImmutableListMultimap.builder<Name, I>()
 
         for (directive in imports) {
@@ -67,8 +72,14 @@ class ExplicitImportsIndexed<I : KtImportInfo>(allImports: Collection<I>) : Inde
         builder.build()
     }
 
-    override fun importsForName(name: Name) = nameToDirectives.get(name)
+    override fun importsForName(name: Name) = nameToDirectives().get(name)
 }
+
+inline fun <reified I : KtImportInfo> makeExplicitImportsIndexed(
+    imports: Collection<I>,
+    storageManager: StorageManager
+) : IndexedImports<I> =
+    ExplicitImportsIndexed(imports.filter { !it.isAllUnder }.toTypedArray(), storageManager)
 
 interface ImportForceResolver {
     fun forceResolveNonDefaultImports()
@@ -115,15 +126,18 @@ open class LazyImportResolver<I : KtImportInfo>(
     }
 
     val allNames: Set<Name>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        indexedImports.imports.flatMapToNullable(THashSet()) { getImportScope(it).computeImportedNames() }
+        indexedImports.imports.asIterable().flatMapToNullable(THashSet()) { getImportScope(it).computeImportedNames() }
     }
 
     fun definitelyDoesNotContainName(name: Name) = allNames?.let { name !in it } == true
 
     fun recordLookup(name: Name, location: LookupLocation) {
         if (allNames == null) return
-        indexedImports.importsForName(name).forEach {
-            getImportScope(it).recordLookup(name, location)
+        for (it in indexedImports.importsForName(name)) {
+            val scope = getImportScope(it)
+            if (scope !== ImportingScope.Empty) {
+                scope.recordLookup(name, location)
+            }
         }
     }
 }
@@ -242,12 +256,38 @@ class LazyImportScope(
                 val descriptor = getImportScope(directive).getContributedClassifier(name, location)
                 if (descriptor !is ClassDescriptor && descriptor !is TypeAliasDescriptor || !isClassifierVisible(descriptor))
                     continue /* type parameters can't be imported */
-                if (target != null && target != descriptor) return@compute null // ambiguity
-                target = descriptor
+                if (target != null && target != descriptor) {
+                    if (isKotlinOrJvmThrowsAmbiguity(descriptor, target) || isKotlinOrNativeThrowsAmbiguity(descriptor, target)) {
+                        if (descriptor.isKotlinThrows()) {
+                            target = descriptor
+                        }
+                    } else {
+                        return@compute null // ambiguity
+                    }
+                } else {
+                    target = descriptor
+                }
             }
 
             target
         }
+
+    private fun isKotlinOrJvmThrowsAmbiguity(c1: ClassifierDescriptor, c2: ClassifierDescriptor) =
+        c1.isKotlinOrJvmThrows() && c2.isKotlinOrJvmThrows()
+
+    private fun isKotlinOrNativeThrowsAmbiguity(c1: ClassifierDescriptor, c2: ClassifierDescriptor) =
+        c1.isKotlinOrNativeThrows() && c2.isKotlinOrNativeThrows()
+
+    private fun ClassifierDescriptor.isKotlinThrows() = fqNameOrNull() == KOTLIN_THROWS_ANNOTATION_FQ_NAME
+    private fun ClassifierDescriptor.isKotlinOrJvmThrows(): Boolean {
+        if (name != JVM_THROWS_ANNOTATION_FQ_NAME.shortName()) return false
+        return isKotlinThrows() || fqNameOrNull() == JVM_THROWS_ANNOTATION_FQ_NAME
+    }
+
+    private fun ClassifierDescriptor.isKotlinOrNativeThrows(): Boolean {
+        if (name != KOTLIN_THROWS_ANNOTATION_FQ_NAME.shortName()) return false
+        return isKotlinThrows() || fqNameOrNull() == KOTLIN_NATIVE_THROWS_ANNOTATION_FQ_NAME
+    }
 
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = null
 

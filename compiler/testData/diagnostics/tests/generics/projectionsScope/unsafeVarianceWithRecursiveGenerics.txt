@@ -1,0 +1,10 @@
+package
+
+internal fun kotlin.Any.matchesRendering(/*0*/ other: kotlin.Any): kotlin.Boolean
+
+public interface UpdatableRendering</*0*/ out T : UpdatableRendering<T>> {
+    public abstract fun canUpdateFrom(/*0*/ another: @kotlin.UnsafeVariance T): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

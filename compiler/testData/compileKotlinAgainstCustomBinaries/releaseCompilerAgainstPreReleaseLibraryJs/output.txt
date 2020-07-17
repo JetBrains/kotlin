@@ -1,4 +1,4 @@
-error: incompatible classes were found in dependencies. Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors
+error: pre-release classes were found in dependencies. Remove them from the classpath, recompile with a release compiler or use '-Xskip-prerelease-check' to suppress errors
 compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs/source.kt:5:16: error: package 'a' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
 fun baz(param: A, nested: A.Nested) {
                ^

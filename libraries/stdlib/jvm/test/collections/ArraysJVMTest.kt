@@ -5,11 +5,8 @@
 
 package test.collections
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import java.util.Collections
+import kotlin.test.*
 
 
 class ArraysJVMTest {

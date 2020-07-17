@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
+import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.name.Name

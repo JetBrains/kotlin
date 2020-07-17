@@ -56,12 +56,6 @@ public class KotlinCodeInsightWorkspaceSettingsProvider implements AutoImportOpt
 
         projectSettings.optimizeImportsOnTheFly = myOptimizeImportsOnTheFly.isSelected();
         settings.addUnambiguousImportsOnTheFly = myAddUnambiguousImportsOnTheFly.isSelected();
-
-        final Map<String, String> data = new HashMap<>();
-        data.put("optimizeImportsOnTheFly", Boolean.toString(projectSettings.optimizeImportsOnTheFly));
-        data.put("addUnambiguousImportsOnTheFly", Boolean.toString(settings.addUnambiguousImportsOnTheFly));
-
-        KotlinFUSLogger.Companion.log(FUSEventGroups.Settings, "KotlinCodeInsightWorkspaceSettings", data);
     }
 
     @Override

@@ -1,0 +1,11 @@
+package
+
+public fun callIsolatedFunFace(): kotlin.Unit
+public fun referIsolatedFunFace(/*0*/ iff: IsolatedFunFace): kotlin.Unit
+
+public fun interface IsolatedFunFace {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias FunAlias = IsolatedFunFace

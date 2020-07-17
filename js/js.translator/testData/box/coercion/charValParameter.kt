@@ -1,7 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1276
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
-@JsExport
 class A(val x: Char)
 
 fun typeOf(x: dynamic): String = js("typeof x")

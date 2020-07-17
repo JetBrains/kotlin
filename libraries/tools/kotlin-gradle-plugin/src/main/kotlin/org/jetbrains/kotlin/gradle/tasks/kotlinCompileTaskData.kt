@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
@@ -15,7 +16,7 @@ import java.io.File
 internal open class KotlinCompileTaskData(
     val taskName: String,
     @field:Transient // cannot be serialized for Gradle Instant Execution, but actually is not needed when a task is deserialized
-    val compilation: AbstractKotlinCompilation<*>,
+    val compilation: KotlinCompilation<*>,
     val destinationDir: Property<File>,
     val useModuleDetection: Property<Boolean>
 ) {
@@ -40,7 +41,7 @@ internal open class KotlinCompileTaskData(
 
         fun register(
             taskName: String,
-            compilation: AbstractKotlinCompilation<*>
+            compilation: KotlinCompilation<*>
         ): KotlinCompileTaskData {
             val project = compilation.target.project
             val container = project.getTaskDataMap()

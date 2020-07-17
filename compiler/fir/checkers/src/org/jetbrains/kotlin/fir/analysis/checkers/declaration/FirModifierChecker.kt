@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 
-object FirModifierChecker : FirDeclarationChecker<FirDeclaration>() {
+object FirModifierChecker : FirBasicDeclarationChecker() {
 
     private enum class CompatibilityType {
         COMPATIBLE,

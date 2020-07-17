@@ -8,7 +8,7 @@ FILE: main.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lval processor: R|AdapterProcessor<ft<PsiMethod, PsiMethod?>!, ft<PsiClass, PsiClass?>!>| = R|/AdapterProcessor.AdapterProcessor|<R|ft<PsiMethod, PsiMethod?>!|, R|ft<PsiClass, PsiClass?>!|>(R|/Function|<R|ft<PsiMethod, PsiMethod?>!|, R|PsiClass?|>(<L> = Function@fun <anonymous>(method: R|PsiMethod?|): R|PsiClass?| {
-            ^ R|<local>/method|?.R|/PsiMethod.containingClass|
+            ^ R|<local>/method|?.{ $subj$.R|/PsiMethod.containingClass| }
         }
         ))
     }

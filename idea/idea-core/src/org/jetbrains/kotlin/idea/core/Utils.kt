@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
@@ -157,8 +158,6 @@ fun KtCallableDeclaration.canOmitDeclaredType(initializerOrBodyExpression: KtExp
     if (KotlinTypeChecker.DEFAULT.equalTypes(expressionType, declaredType)) return true
     return canChangeTypeToSubtype && expressionType.isSubtypeOf(declaredType)
 }
-
-fun String.unquote(): String = KtPsiUtil.unquoteIdentifier(this)
 
 fun FqName.quoteSegmentsIfNeeded(): String {
     return pathSegments().joinToString(".") { it.asString().quoteIfNeeded() }

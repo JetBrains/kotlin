@@ -11,6 +11,11 @@ import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
 class KotlinCocoaPodsModelResolver : AbstractProjectResolverExtension() {
+    override fun requiresTaskRunning(): Boolean = true
+
+    override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
+        return setOf(EnablePodImportTask::class.java)
+    }
 
     override fun getProjectsLoadedModelProvider(): ProjectImportModelProvider {
         return ClassSetProjectImportModelProvider(
@@ -18,7 +23,6 @@ class KotlinCocoaPodsModelResolver : AbstractProjectResolverExtension() {
         )
     }
 
-    override fun requiresTaskRunning(): Boolean = true
 }
 
 

@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/castFromAny.kt
-  CLASS INTERFACE name:KRunnable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+  CLASS INTERFACE name:KRunnable modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KRunnable
     FUN name:invoke visibility:public modality:ABSTRACT <> ($this:<root>.KRunnable) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.KRunnable
@@ -22,6 +22,6 @@ FILE fqName:<root> fileName:/castFromAny.kt
       TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
         GET_VAR 'a: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
       CALL 'public abstract fun invoke (): kotlin.Unit declared in <root>.KRunnable' type=kotlin.Unit origin=null
-        $this: CALL 'public final fun KRunnable (block: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>' type=<root>.KRunnable origin=null
-          block: TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
+        $this: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+          TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
             GET_VAR 'a: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null

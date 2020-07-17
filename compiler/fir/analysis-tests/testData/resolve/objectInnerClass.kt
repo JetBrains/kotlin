@@ -7,22 +7,22 @@
 val case1 = object : A {
     inner class Child(property: B) : Base(property) {
         fun Base.zoo() {
-            val x = <!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
+            val x = property
         }
 
         fun foo() {
-            <!UNRESOLVED_REFERENCE!>baseFun<!>() //UNRESOLVED_REFERENCE
-            val x = <!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
-            <!UNRESOLVED_REFERENCE!>zoo<!>() //UNRESOLVED_REFERENCE
+            baseFun()
+            val x = property
+            zoo()
             hoo()
         }
     }
     fun Child.voo() {
-        val x = <!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
+        val x = property
     }
 
     fun Base.hoo() {
-        val x = <!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
+        val x = property
     }
 
     open inner class Base(/*protected*/ val property: B) {
@@ -32,8 +32,8 @@ val case1 = object : A {
     fun caseForBase() {
         val base = Base(B())
         /*member of Base*/
-        base.<!UNRESOLVED_REFERENCE!>baseFun<!>() //UNRESOLVED_REFERENCE
-        base.<!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
+        base.baseFun()
+        base.property
         /*extensions*/
         base.hoo()
     }
@@ -41,10 +41,10 @@ val case1 = object : A {
     fun caseForChild() {
         val child = Child(B())
         /*member of Base*/
-        child.<!UNRESOLVED_REFERENCE!>baseFun<!>() //UNRESOLVED_REFERENCE
-        child.<!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
+        child.baseFun()
+        child.property
         /*member of Child*/
-        child.<!UNRESOLVED_REFERENCE!>foo<!>() //UNRESOLVED_REFERENCE
+        child.foo()
         /*extensions*/
         child.hoo()
         child.voo()
@@ -100,22 +100,22 @@ class Case3() {
     val x = object : A {
         inner class Child(property: B) : Base(property) {
             fun Base.zoo() {
-                val x = <!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
+                val x = property
             }
 
             fun foo() {
-                <!UNRESOLVED_REFERENCE!>baseFun<!>() //UNRESOLVED_REFERENCE
-                val x = <!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
+                baseFun()
+                val x = property
                 zoo()
                 hoo()
             }
         }
 
         fun Child.voo() {
-            val x = <!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
+            val x = property
         }
         fun Base.hoo() {
-            val x = <!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
+            val x = property
         }
 
         open inner class Base(/*protected*/ val property: B) {
@@ -125,8 +125,8 @@ class Case3() {
         fun caseForBase() {
             val base = Base(B())
             /*member of Base*/
-            base.<!UNRESOLVED_REFERENCE!>baseFun<!>() //UNRESOLVED_REFERENCE
-            base.<!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
+            base.baseFun()
+            base.property
             /*extensions*/
             base.hoo()
         }
@@ -134,10 +134,10 @@ class Case3() {
         fun caseForChild() {
             val child = Child(B())
             /*member of Base*/
-            child.<!UNRESOLVED_REFERENCE!>baseFun<!>() //UNRESOLVED_REFERENCE
-            child.<!UNRESOLVED_REFERENCE!>property<!> //UNRESOLVED_REFERENCE
+            child.baseFun()
+            child.property
             /*member of Child*/
-            child.<!UNRESOLVED_REFERENCE!>foo<!>() //UNRESOLVED_REFERENCE
+            child.foo()
             /*extensions*/
             child.hoo()
             child.voo()

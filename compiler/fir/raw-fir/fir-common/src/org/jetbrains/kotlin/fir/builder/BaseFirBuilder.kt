@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,24 +13,19 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.ANONYMOUS_CLASS_ID
-import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.lexer.KtTokens.CLOSING_QUOTE
 import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
 import org.jetbrains.kotlin.name.FqName
@@ -41,7 +36,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 //T can be either PsiElement, or LighterASTNode
 abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Context<T> = Context()) {
 
-    abstract fun T.toFirSourceElement(): FirSourceElement
+    abstract fun T.toFirSourceElement(kind: FirFakeSourceElementKind? = null): FirSourceElement
 
     protected val implicitUnitType = baseSession.builtinTypes.unitType
     protected val implicitAnyType = baseSession.builtinTypes.anyType
@@ -59,20 +54,53 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     abstract val T?.selectorExpression: T?
 
     /**** Class name utils ****/
-    inline fun <T> withChildClassName(name: Name, l: () -> T): T {
+    inline fun <T> withChildClassName(
+        name: Name,
+        isLocal: Boolean = context.firFunctionTargets.isNotEmpty(),
+        l: () -> T
+    ): T {
         context.className = context.className.child(name)
+        context.localBits.add(isLocal)
         return try {
             l()
         } finally {
             context.className = context.className.parent()
+            context.localBits.removeLast()
         }
+    }
+
+    inline fun <T> withCapturedTypeParameters(block: () -> T): T {
+        val previous = context.capturedTypeParameters
+        val result = block()
+        context.capturedTypeParameters = previous
+        return result
+    }
+
+    fun addCapturedTypeParameters(typeParameters: List<FirTypeParameterRef>) {
+        context.capturedTypeParameters =
+            context.capturedTypeParameters.addAll(0, typeParameters.map { typeParameter -> typeParameter.symbol })
+    }
+
+    fun clearCapturedTypeParameters() {
+        context.capturedTypeParameters = context.capturedTypeParameters.clear()
     }
 
     fun callableIdForName(name: Name, local: Boolean = false) =
         when {
-            local -> CallableId(name)
+            local -> {
+                val pathFqName =
+                    context.firFunctionTargets.fold(
+                        if (context.className == FqName.ROOT) context.packageFqName else context.currentClassId.asSingleFqName()
+                    ) { result, firFunctionTarget ->
+                        if (firFunctionTarget.isLambda || firFunctionTarget.labelName == null)
+                            result
+                        else
+                            result.child(Name.identifier(firFunctionTarget.labelName!!))
+                    }
+                CallableId(name, pathFqName)
+            }
             context.className == FqName.ROOT -> CallableId(context.packageFqName, name)
-            context.className.shortName() === ANONYMOUS_OBJECT_NAME -> CallableId(ANONYMOUS_CLASS_ID, name)
+            context.className.shortName() == ANONYMOUS_OBJECT_NAME -> CallableId(ANONYMOUS_CLASS_ID, name)
             else -> CallableId(context.packageFqName, context.className, name)
         }
 
@@ -106,6 +134,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     buildErrorFunction {
                         source = baseSource
                         session = this@BaseFirBuilder.baseSession
+                        origin = FirDeclarationOrigin.Source
                         diagnostic = ConeSimpleDiagnostic(message, kind)
                         symbol = FirErrorFunctionSymbol()
                     }
@@ -132,29 +161,28 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    fun T?.toDelegatedSelfType(firClass: AbstractFirRegularClassBuilder): FirResolvedTypeRef {
+    fun T?.toDelegatedSelfType(firClass: FirRegularClassBuilder): FirResolvedTypeRef =
+        toDelegatedSelfType(firClass, firClass.symbol)
+
+    fun T?.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef =
+        toDelegatedSelfType(firObject, firObject.symbol)
+
+    private fun T?.toDelegatedSelfType(firClass: FirClassBuilder, symbol: FirClassLikeSymbol<*>): FirResolvedTypeRef {
         return buildResolvedTypeRef {
-            source = this@toDelegatedSelfType?.toFirSourceElement()
+            source = this@toDelegatedSelfType?.toFirSourceElement(FirFakeSourceElementKind.ClassSelfTypeRef)
             type = ConeClassLikeTypeImpl(
-                firClass.symbol.toLookupTag(),
+                symbol.toLookupTag(),
                 firClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
         }
     }
 
-    fun T?.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef {
-        return buildResolvedTypeRef {
-            source = this@toDelegatedSelfType?.toFirSourceElement()
-            type = ConeClassLikeTypeImpl(firObject.symbol.toLookupTag(), emptyArray(), false)
+    fun constructorTypeParametersFromConstructedClass(ownerTypeParameters: List<FirTypeParameterRef>): List<FirTypeParameterRef> {
+        return ownerTypeParameters.mapNotNull {
+            val declaredTypeParameter = (it as? FirTypeParameter) ?: return@mapNotNull null
+            buildConstructedClassTypeParameterRef { symbol = declaredTypeParameter.symbol }
         }
-    }
-
-    fun typeParametersFromSelfType(delegatedSelfTypeRef: FirTypeRef): List<FirTypeParameter> {
-        return delegatedSelfTypeRef.coneTypeSafe<ConeKotlinType>()
-            ?.typeArguments
-            ?.map { ((it as ConeTypeParameterType).lookupTag.symbol as FirTypeParameterSymbol).fir }
-            ?: emptyList()
     }
 
     fun FirLoopBuilder.configure(generateBlock: () -> FirBlock): FirLoop {
@@ -207,21 +235,26 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         val type = expression.elementType
         val text: String = expression.asText
         val sourceElement = expression.toFirSourceElement()
+
+        fun reportIncorrectConstant(kind: DiagnosticKind): FirErrorExpression {
+            return buildErrorExpression {
+                source = sourceElement
+                diagnostic = ConeSimpleDiagnostic("Incorrect constant expression: $text", kind)
+            }
+        }
+
         val convertedText: Any? = when (type) {
-            INTEGER_CONSTANT, FLOAT_CONSTANT -> parseNumericLiteral(text, type)
+            INTEGER_CONSTANT, FLOAT_CONSTANT -> when {
+                hasIllegalUnderscore(text, type) -> return reportIncorrectConstant(DiagnosticKind.IllegalUnderscore)
+                else -> parseNumericLiteral(text, type)
+            }
             BOOLEAN_CONSTANT -> parseBoolean(text)
             else -> null
         }
         return when (type) {
             INTEGER_CONSTANT -> {
                 val kind = when {
-                    convertedText !is Long -> return buildErrorExpression {
-                        source = sourceElement
-                        diagnostic = ConeSimpleDiagnostic(
-                            "Incorrect constant expression: $text",
-                            DiagnosticKind.IllegalConstExpression
-                        )
-                    }
+                    convertedText !is Long -> return reportIncorrectConstant(DiagnosticKind.IllegalConstExpression)
 
                     hasUnsignedLongSuffix(text) -> {
                         FirConstKind.UnsignedLong
@@ -257,7 +290,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     buildConstOrErrorExpression(
                         sourceElement,
                         FirConstKind.Double,
-                        convertedText as Double,
+                        convertedText as? Double,
                         ConeSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.IllegalConstExpression)
                     )
                 }
@@ -308,7 +341,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                             hasExpressions = true
                             val firExpression = entry.convertTemplateEntry("Incorrect template argument")
-                            val source = firExpression.source
+                            val source = firExpression.source?.withKind(FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry)
                             buildFunctionCall {
                                 this.source = source
                                 explicitReceiver = firExpression
@@ -375,22 +408,28 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
         return buildBlock {
             val baseSource = baseExpression?.toFirSourceElement()
-            source = baseSource
+            val desugaredSource = baseSource?.withKind(FirFakeSourceElementKind.DesugaredIncrementOrDecrement)
+            source = desugaredSource
             val tempName = Name.special("<unary>")
-            val temporaryVariable = generateTemporaryVariable(this@BaseFirBuilder.baseSession, source, tempName, argument.convert())
+            val temporaryVariable = generateTemporaryVariable(
+                this@BaseFirBuilder.baseSession,
+                desugaredSource,
+                tempName,
+                argument.convert()
+            )
             statements += temporaryVariable
             val resultName = Name.special("<unary-result>")
             val resultInitializer = buildFunctionCall {
-                source = baseSource
+                source = desugaredSource
                 calleeReference = buildSimpleNamedReference {
                     source = operationReference?.toFirSourceElement()
                     name = callName
                 }
-                explicitReceiver = generateResolvedAccessExpression(source, temporaryVariable)
+                explicitReceiver = generateResolvedAccessExpression(desugaredSource, temporaryVariable)
             }
-            val resultVar = generateTemporaryVariable(this@BaseFirBuilder.baseSession, source, resultName, resultInitializer)
+            val resultVar = generateTemporaryVariable(this@BaseFirBuilder.baseSession, desugaredSource, resultName, resultInitializer)
             val assignment = argument.generateAssignment(
-                source,
+                desugaredSource,
                 argument,
                 if (prefix && argument.elementType != REFERENCE_EXPRESSION)
                     generateResolvedAccessExpression(source, resultVar)
@@ -411,14 +450,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 if (argument.elementType != REFERENCE_EXPRESSION) {
                     statements += resultVar
                     appendAssignment()
-                    statements += generateResolvedAccessExpression(source, resultVar)
+                    statements += generateResolvedAccessExpression(desugaredSource, resultVar)
                 } else {
                     appendAssignment()
-                    statements += generateAccessExpression(source, argument.getReferencedNameAsName())
+                    statements += generateAccessExpression(desugaredSource, argument.getReferencedNameAsName())
                 }
             } else {
                 appendAssignment()
-                statements += generateResolvedAccessExpression(source, temporaryVariable)
+                statements += generateResolvedAccessExpression(desugaredSource, temporaryVariable)
             }
         }
     }
@@ -446,7 +485,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     val firMemberAccess = left.convertQualified()
                     return if (firMemberAccess != null) {
                         explicitReceiver = firMemberAccess.explicitReceiver
-                        safe = firMemberAccess.safe
                         firMemberAccess.calleeReference
                     } else {
                         buildErrorNamedReference {
@@ -509,12 +547,41 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
         }
         require(operation == FirOperation.ASSIGN)
+
+        if (this?.elementType == SAFE_ACCESS_EXPRESSION && this != null) {
+            val safeCallNonAssignment = convert() as? FirSafeCallExpression
+            if (safeCallNonAssignment != null) {
+                return putAssignmentToSafeCall(safeCallNonAssignment, baseSource, value)
+            }
+        }
+
         return buildVariableAssignment {
             source = baseSource
-            safe = false
             rValue = value
             calleeReference = initializeLValue(this@generateAssignment) { convert() as? FirQualifiedAccess }
         }
+    }
+
+    // gets a?.{ $subj.x } and turns it to a?.{ $subj.x = v }
+    private fun putAssignmentToSafeCall(
+        safeCallNonAssignment: FirSafeCallExpression,
+        baseSource: FirSourceElement?,
+        value: FirExpression
+    ): FirSafeCallExpression {
+        val nestedAccess = safeCallNonAssignment.regularQualifiedAccess
+
+        val assignment = buildVariableAssignment {
+            source = baseSource
+            rValue = value
+            calleeReference = nestedAccess.calleeReference
+            explicitReceiver = safeCallNonAssignment.checkedSubjectRef.value
+        }
+
+        safeCallNonAssignment.replaceRegularQualifiedAccess(
+            assignment
+        )
+
+        return safeCallNonAssignment
     }
 
     private fun T.generateAugmentedArraySetCall(
@@ -631,110 +698,118 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    fun List<Pair<T, FirProperty>>.generateComponentFunctions(
-        session: FirSession, firClassBuilder: AbstractFirRegularClassBuilder, packageFqName: FqName, classFqName: FqName,
-        firPrimaryConstructor: FirConstructor,
+    inner class DataClassMembersGenerator(
+        private val session: FirSession,
+        private val source: T,
+        private val classBuilder: FirRegularClassBuilder,
+        private val zippedParameters: List<Pair<T, FirProperty>>,
+        private val packageFqName: FqName,
+        private val classFqName: FqName,
+        private val createClassTypeRefWithSourceKind: (FirFakeSourceElementKind) -> FirTypeRef,
+        private val createParameterTypeRefWithSourceKind: (FirProperty, FirFakeSourceElementKind) -> FirTypeRef,
     ) {
-        var componentIndex = 1
-        for ((sourceNode, firProperty) in this) {
-            if (!firProperty.isVal && !firProperty.isVar) continue
-            val name = Name.identifier("component$componentIndex")
-            componentIndex++
-            val parameterSource = sourceNode?.toFirSourceElement()
-            val target = FirFunctionTarget(labelName = null, isLambda = false)
-            val componentFunction = buildSimpleFunction {
-                source = parameterSource
-                this.session = session
-                returnTypeRef = buildImplicitTypeRef {
-                    source = parameterSource
-                }
-                receiverTypeRef = null
-                this.name = name
-                this.status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
-                this.symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
-
-                val returnExpression = buildReturnExpression {
-                    source = parameterSource
-                    result = buildQualifiedAccessExpression {
-                        source = parameterSource
-                        dispatchReceiver = buildThisReceiverExpression {
-                            calleeReference = buildImplicitThisReference {
-                                boundSymbol = firClassBuilder.symbol
-                            }
-                            typeRef = firPrimaryConstructor.returnTypeRef
-                        }
-                        calleeReference = buildResolvedNamedReference {
-                            source = parameterSource
-                            this.name = firProperty.name
-                            resolvedSymbol = firProperty.symbol
-                        }
-                    }
-                    this.target = target
-                }
-                body = buildSingleExpressionBlock(returnExpression)
-            }.also {
-                target.bind(it)
-            }
-            firClassBuilder.addDeclaration(componentFunction)
+        fun generate() {
+            generateComponentFunctions()
+            generateCopyFunction()
+            // Refer to (IR utils or FIR backend) DataClassMembersGenerator for generating equals, hashCode, and toString
         }
-    }
 
-    private val copyName = Name.identifier("copy")
-
-    fun List<Pair<T, FirProperty>>.generateCopyFunction(
-        session: FirSession,
-        classOrObject: T,
-        classBuilder: AbstractFirRegularClassBuilder,
-        packageFqName: FqName,
-        classFqName: FqName,
-        firPrimaryConstructor: FirConstructor,
-    ) {
-        classBuilder.addDeclaration(
-            buildSimpleFunction {
-                source = classOrObject?.toFirSourceElement()
-                this.session = session
-                returnTypeRef = firPrimaryConstructor.returnTypeRef
-                name = copyName
-                status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
-                symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
-                for ((ktParameter, firProperty) in this@generateCopyFunction) {
-                    val propertyName = firProperty.name
-                    val parameterSource = ktParameter?.toFirSourceElement()
-                    valueParameters += buildValueParameter {
-                        source = parameterSource
-                        this.session = session
-                        returnTypeRef = firProperty.returnTypeRef
-                        name = propertyName
-                        symbol = FirVariableSymbol(propertyName)
-                        defaultValue = buildQualifiedAccessExpression {
-                            source = parameterSource
-                            dispatchReceiver = buildThisReceiverExpression {
-                                calleeReference = buildImplicitThisReference {
-                                    boundSymbol = classBuilder.symbol
-                                }
-                                typeRef = firPrimaryConstructor.returnTypeRef
-                            }
-                            calleeReference = buildResolvedNamedReference {
-                                source = parameterSource
-                                this.name = propertyName
-                                resolvedSymbol = firProperty.symbol
-                            }
-                        }
-                        isCrossinline = false
-                        isNoinline = false
-                        isVararg = false
+        private fun generateComponentAccess(
+            parameterSource: FirSourceElement?,
+            firProperty: FirProperty,
+            classTypeRefWithCorrectSourceKind: FirTypeRef,
+            firPropertyReturnTypeRefWithCorrectSourceKind: FirTypeRef
+        ) =
+            buildQualifiedAccessExpression {
+                source = parameterSource
+                typeRef = firPropertyReturnTypeRefWithCorrectSourceKind
+                dispatchReceiver = buildThisReceiverExpression {
+                    calleeReference = buildImplicitThisReference {
+                        boundSymbol = classBuilder.symbol
                     }
+                    typeRef = classTypeRefWithCorrectSourceKind
                 }
+                calleeReference = buildResolvedNamedReference {
+                    source = parameterSource
+                    this.name = firProperty.name
+                    resolvedSymbol = firProperty.symbol
+                }
+            }
 
-                body = buildEmptyExpressionBlock()
-            },
-        )
+        private fun generateComponentFunctions() {
+            var componentIndex = 1
+            for ((sourceNode, firProperty) in zippedParameters) {
+                if (!firProperty.isVal && !firProperty.isVar) continue
+                val name = Name.identifier("component$componentIndex")
+                componentIndex++
+                val parameterSource = sourceNode?.toFirSourceElement()
+                val componentFunction = buildSimpleFunction {
+                    source = parameterSource?.withKind(FirFakeSourceElementKind.DataClassGeneratedMembers)
+                    session = this@DataClassMembersGenerator.session
+                    origin = FirDeclarationOrigin.Source
+                    returnTypeRef = firProperty.returnTypeRef
+                    receiverTypeRef = null
+                    this.name = name
+                    status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
+                    symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
+
+                    // Refer to FIR backend ClassMemberGenerator for body generation.
+                }
+                classBuilder.addDeclaration(componentFunction)
+            }
+        }
+
+        private val copyName = Name.identifier("copy")
+
+        private fun generateCopyFunction() {
+            classBuilder.addDeclaration(
+                buildSimpleFunction {
+                    val classTypeRef = createClassTypeRefWithSourceKind(FirFakeSourceElementKind.DataClassGeneratedMembers)
+                    source = this@DataClassMembersGenerator.source.toFirSourceElement(FirFakeSourceElementKind.DataClassGeneratedMembers)
+                    session = this@DataClassMembersGenerator.session
+                    origin = FirDeclarationOrigin.Source
+                    returnTypeRef = classTypeRef
+                    name = copyName
+                    status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
+                    symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
+                    for ((ktParameter, firProperty) in zippedParameters) {
+                        val propertyName = firProperty.name
+                        val parameterSource = ktParameter?.toFirSourceElement(FirFakeSourceElementKind.DataClassGeneratedMembers)
+                        val propertyReturnTypeRef =
+                            createParameterTypeRefWithSourceKind(firProperty, FirFakeSourceElementKind.DataClassGeneratedMembers)
+                        valueParameters += buildValueParameter {
+                            source = parameterSource
+                            session = this@DataClassMembersGenerator.session
+                            origin = FirDeclarationOrigin.Source
+                            returnTypeRef = propertyReturnTypeRef
+                            name = propertyName
+                            symbol = FirVariableSymbol(propertyName)
+                            defaultValue = generateComponentAccess(parameterSource, firProperty, propertyReturnTypeRef, classTypeRef)
+                            isCrossinline = false
+                            isNoinline = false
+                            isVararg = false
+                        }
+                    }
+                    // Refer to FIR backend ClassMemberGenerator for body generation.
+                }
+            )
+        }
     }
 
     private fun FirVariable<*>.toQualifiedAccess(): FirQualifiedAccessExpression = buildQualifiedAccessExpression {
         calleeReference = buildResolvedNamedReference {
             name = this@toQualifiedAccess.name
             resolvedSymbol = this@toQualifiedAccess.symbol
+        }
+    }
+
+    protected inline fun <R> withDefaultSourceElementKind(newDefault: FirSourceElementKind, action: () -> R): R {
+        val currentForced = context.forcedElementSourceKind
+        context.forcedElementSourceKind = newDefault
+        try {
+            return action()
+        } finally {
+            context.forcedElementSourceKind = currentForced
         }
     }
 }

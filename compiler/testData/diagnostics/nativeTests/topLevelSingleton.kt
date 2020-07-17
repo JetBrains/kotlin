@@ -65,7 +65,7 @@ class Bar2 {
     }
 }
 
-<!ENUM_THREAD_LOCAL_INAPPLICABLE!>@ThreadLocal<!>
+<!INAPPLICABLE_THREAD_LOCAL!>@ThreadLocal<!>
 enum class Color(<!VARIABLE_IN_ENUM!>var rgb: Int<!>) {
     RED(0xFF0000),
     GREEN(0x00FF00),

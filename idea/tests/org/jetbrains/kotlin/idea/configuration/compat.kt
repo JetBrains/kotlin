@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import java.nio.file.Path
 
-// BUNCH: 192
+// FIX ME WHEN BUNCH 192 REMOVED
 internal fun loadProjectCompat(projectFile: Path): Project {
     return (ProjectManagerEx.getInstanceEx()).loadProject(projectFile)
 }

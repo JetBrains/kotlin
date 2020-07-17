@@ -75,7 +75,7 @@ class LazyJavaClassMemberScope(
     override fun computeMemberIndex() = ClassDeclaredMemberIndex(jClass) { !it.isStatic }
 
     override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
-        ownerDescriptor.typeConstructor.supertypes.flatMapTo(hashSetOf()) {
+        ownerDescriptor.typeConstructor.supertypes.flatMapTo(linkedSetOf()) {
             it.memberScope.getFunctionNames()
         }.apply {
             addAll(declaredMemberIndex().getMethodNames())
@@ -619,7 +619,7 @@ class LazyJavaClassMemberScope(
 
     private fun createDefaultConstructor(): ClassConstructorDescriptor? {
         val isAnnotation: Boolean = jClass.isAnnotationType
-        if (jClass.isInterface && !isAnnotation)
+        if ((jClass.isInterface || !jClass.hasDefaultConstructor()) && !isAnnotation)
             return null
 
         val classDescriptor = ownerDescriptor

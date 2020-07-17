@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.generateResolvedAccessExpression
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -88,6 +89,7 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
                 parent?.tokenType == KT_FILE -> return true
                 parent?.tokenType == CLASS_BODY && !(grandParent?.tokenType == OBJECT_DECLARATION && grandParent?.getParent()?.tokenType == OBJECT_LITERAL) -> return true
                 parent?.tokenType == BLOCK && grandParent?.tokenType == SCRIPT -> return true
+                parent?.tokenType == ENUM_ENTRY -> return true
             }
         }
         if (tokenType == BLOCK) {
@@ -112,6 +114,7 @@ fun generateDestructuringBlock(
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
             statements += buildProperty {
                 this.session = session
+                origin = FirDeclarationOrigin.Source
                 returnTypeRef = entry.returnTypeRef
                 name = entry.name
                 initializer = buildComponentCall {

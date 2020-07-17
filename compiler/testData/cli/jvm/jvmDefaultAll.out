@@ -1,0 +1,2 @@
+error: '-Xjvm-default=all' is only supported since JVM target 1.8. Recompile with '-jvm-target 1.8'
+COMPILATION_ERROR

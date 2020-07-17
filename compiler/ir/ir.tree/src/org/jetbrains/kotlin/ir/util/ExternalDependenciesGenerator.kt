@@ -16,14 +16,27 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-class ExternalDependenciesGenerator(val symbolTable: SymbolTable, private val irProviders: List<IrProvider>) {
+class ExternalDependenciesGenerator(
+    val symbolTable: SymbolTable,
+    private val irProviders: List<IrProvider>,
+    private val languageVersionSettings: LanguageVersionSettings
+) {
     fun generateUnboundSymbolsAsDependencies() {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
+            require(symbolTable.unboundTypeParameters.isEmpty()) {
+                "Unbound type parameters are forbidden: ${symbolTable.unboundTypeParameters}"
+            }
+        }
         // There should be at most one DeclarationStubGenerator (none in closed world?)
         irProviders.singleOrNull { it is DeclarationStubGenerator }?.let {
             (it as DeclarationStubGenerator).unboundSymbolGeneration = true
@@ -31,10 +44,10 @@ class ExternalDependenciesGenerator(val symbolTable: SymbolTable, private val ir
         /*
             Deserializing a reference may lead to new unbound references, so we loop until none are left.
          */
-        require(symbolTable.unboundTypeParameters.isEmpty()) { "Unbound type parameters are forbidden" }
-
-        lateinit var unbound: List<IrSymbol>
+        var unbound = setOf<IrSymbol>()
+        lateinit var prevUnbound: Set<IrSymbol>
         do {
+            prevUnbound = unbound
             unbound = symbolTable.allUnbound
 
             for (symbol in unbound) {
@@ -42,31 +55,16 @@ class ExternalDependenciesGenerator(val symbolTable: SymbolTable, private val ir
                 if (!symbol.isBound) {
                     irProviders.getDeclaration(symbol)
                 }
-                assert(symbol.isBound) { "$symbol unbound even after deserialization attempt" }
             }
-        } while (unbound.isNotEmpty())
-
-        irProviders.forEach { (it as? IrDeserializer)?.declareForwardDeclarations() }
+        // We wait for the unbound to stabilize on fake overrides.
+        } while (unbound != prevUnbound)
     }
 }
 
-private val SymbolTable.allUnbound: List<IrSymbol>
-    get() {
-        val r = mutableListOf<IrSymbol>()
-        r.addAll(unboundClasses)
-        r.addAll(unboundConstructors)
-        r.addAll(unboundEnumEntries)
-        r.addAll(unboundFields)
-        r.addAll(unboundSimpleFunctions)
-        r.addAll(unboundProperties)
-        r.addAll(unboundTypeAliases)
-        return r
-    }
-
-fun List<IrProvider>.getDeclaration(symbol: IrSymbol): IrDeclaration =
+fun List<IrProvider>.getDeclaration(symbol: IrSymbol): IrDeclaration? =
     firstNotNullResult { provider ->
         provider.getDeclaration(symbol)
-    } ?: error("Could not find declaration for unbound symbol $symbol")
+    }
 
 // In most cases, IrProviders list consist of an optional deserializer and a DeclarationStubGenerator.
 fun generateTypicalIrProviderList(

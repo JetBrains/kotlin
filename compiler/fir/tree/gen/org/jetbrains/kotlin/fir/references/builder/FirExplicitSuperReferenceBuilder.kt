@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirExplicitSuperReferenceBuilder {
     var source: FirSourceElement? = null
+    var labelName: String? = null
     lateinit var superTypeRef: FirTypeRef
 
     fun build(): FirSuperReference {
         return FirExplicitSuperReference(
             source,
+            labelName,
             superTypeRef,
         )
     }

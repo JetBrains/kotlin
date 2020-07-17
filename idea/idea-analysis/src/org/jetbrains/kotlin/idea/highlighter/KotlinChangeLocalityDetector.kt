@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.codeInsight.daemon.ChangeLocalityDetector
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener.Companion.getInsideCodeBlockModificationDirtyScope
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListenerCompat.Companion.getInsideCodeBlockModificationDirtyScope
 
 class KotlinChangeLocalityDetector : ChangeLocalityDetector {
     override fun getChangeHighlightingDirtyScopeFor(element: PsiElement): PsiElement? {

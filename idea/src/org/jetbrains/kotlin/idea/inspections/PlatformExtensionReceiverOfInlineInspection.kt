@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isNullabilityFlexible
+import org.jetbrains.kotlin.types.isNullable
 import java.awt.BorderLayout
 import java.util.regex.PatternSyntaxException
 import javax.swing.JPanel
@@ -68,7 +69,7 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
                 val extensionReceiverType = resolvedCall.extensionReceiver?.type ?: return
                 if (!extensionReceiverType.isNullabilityFlexible()) return
                 val descriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
-                if (!descriptor.isInline) return
+                if (!descriptor.isInline || descriptor.extensionReceiverParameter?.type?.isNullable() == true) return
 
                 val receiverExpression = expression.receiverExpression
                 val dataFlowValueFactory = receiverExpression.getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)

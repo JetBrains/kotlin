@@ -3,6 +3,6 @@
 // IS_APPLICABLE_2: false
 fun foo(list: List<String>): Int? {
     <caret>return list
-            .firstOrNull { it.isNotEmpty() }
-            ?.length
+        .firstOrNull { it.isNotEmpty() }
+        ?.length
 }

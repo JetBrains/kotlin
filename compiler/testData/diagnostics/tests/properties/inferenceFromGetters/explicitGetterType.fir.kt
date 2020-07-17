@@ -12,7 +12,7 @@ fun <E> bar(): List<E> = null!!
 
 
 fun baz() {
-    x checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><List<Int>>() }
-    z checkType { <!UNRESOLVED_REFERENCE!>_<!><List<Int>>() }
+    x checkType { _<String>() }
+    y checkType { _<List<Int>>() }
+    z checkType { _<List<Int>>() }
 }

@@ -37,7 +37,8 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
-        customAction: ((KotlinLibrary, ModuleDescriptorImpl) -> Unit)?
+        customAction: ((KotlinLibrary, ModuleDescriptorImpl) -> Unit)?,
+        additionalDependencyModules: Iterable<ModuleDescriptorImpl>
     ): KotlinResolvedModuleDescriptors {
 
         val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
@@ -64,7 +65,10 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         // Set inter-dependencies between module descriptors, add forwarding declarations module.
         for (module in moduleDescriptors) {
             // Yes, just to all of them.
-            module.setDependencies(moduleDescriptors + forwardDeclarationsModule)
+            module.setDependencies(
+                moduleDescriptors + additionalDependencyModules + forwardDeclarationsModule,
+                additionalDependencyModules.toSet()
+            )
         }
 
         return KotlinResolvedModuleDescriptors(moduleDescriptors, forwardDeclarationsModule)

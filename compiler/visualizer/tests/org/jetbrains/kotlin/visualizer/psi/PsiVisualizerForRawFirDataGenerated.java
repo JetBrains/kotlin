@@ -55,9 +55,24 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizer {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorInObject.kt");
         }
 
+        @TestMetadata("constructorOfAnonymousObject.kt")
+        public void testConstructorOfAnonymousObject() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorOfAnonymousObject.kt");
+        }
+
+        @TestMetadata("contractDescription.kt")
+        public void testContractDescription() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contractDescription.kt");
+        }
+
         @TestMetadata("derivedClass.kt")
         public void testDerivedClass() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/derivedClass.kt");
+        }
+
+        @TestMetadata("emptyAnonymousObject.kt")
+        public void testEmptyAnonymousObject() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/emptyAnonymousObject.kt");
         }
 
         @TestMetadata("enums.kt")
@@ -231,6 +246,11 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizer {
         @TestMetadata("init.kt")
         public void testInit() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/init.kt");
+        }
+
+        @TestMetadata("labelForInfix.kt")
+        public void testLabelForInfix() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/labelForInfix.kt");
         }
 
         @TestMetadata("lambda.kt")

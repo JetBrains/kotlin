@@ -1,5 +1,4 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JVM
 
 interface I<T> {
     val prop: T

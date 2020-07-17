@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.codegen.context.CodegenContextUtil
 import org.jetbrains.kotlin.codegen.context.InlineLambdaContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -71,8 +73,8 @@ private const val INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall"
 private const val INLINE_MARKER_FINALLY_START = "finallyStart"
 
 private const val INLINE_MARKER_FINALLY_END = "finallyEnd"
-const val INLINE_MARKER_BEFORE_SUSPEND_ID = 0
-const val INLINE_MARKER_AFTER_SUSPEND_ID = 1
+private const val INLINE_MARKER_BEFORE_SUSPEND_ID = 0
+private const val INLINE_MARKER_AFTER_SUSPEND_ID = 1
 private const val INLINE_MARKER_RETURNS_UNIT = 2
 private const val INLINE_MARKER_FAKE_CONTINUATION = 3
 private const val INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL = 4
@@ -90,12 +92,8 @@ internal fun getMethodNode(
     val cr = ClassReader(classData)
     var node: MethodNode? = null
     val debugInfo = arrayOfNulls<String>(2)
-    val lines = IntArray(2)
-    lines[0] = Integer.MAX_VALUE
-    lines[1] = Integer.MIN_VALUE
 
     cr.accept(object : ClassVisitor(Opcodes.API_VERSION) {
-
         override fun visitSource(source: String?, debug: String?) {
             super.visitSource(source, debug)
             debugInfo[0] = source
@@ -121,16 +119,8 @@ internal fun getMethodNode(
             node?.let { existing ->
                 throw AssertionError("Can't find proper '$name' method for inline: ambiguity between '${existing.name + existing.desc}' and '${name + desc}'")
             }
-
-            return object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
-                override fun visitLineNumber(line: Int, start: Label) {
-                    super.visitLineNumber(line, start)
-                    lines[0] = min(lines[0], line)
-                    lines[1] = max(lines[1], line)
-                }
-            }.also {
-                node = it
-            }
+            node = MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions)
+            return node!!
         }
     }, ClassReader.SKIP_FRAMES or if (GENERATE_SMAP) 0 else ClassReader.SKIP_DEBUG)
 
@@ -138,8 +128,23 @@ internal fun getMethodNode(
         return null
     }
 
-    val smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classType.internalName, lines[0], lines[1])
+    val (first, last) = listOfNotNull(node).lineNumberRange()
+    val smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classType.internalName, first, last)
     return SMAPAndMethodNode(node!!, smap)
+}
+
+internal fun Collection<MethodNode>.lineNumberRange(): Pair<Int, Int> {
+    var minLine = Int.MAX_VALUE
+    var maxLine = Int.MIN_VALUE
+    for (node in this) {
+        for (insn in node.instructions.asSequence()) {
+            if (insn is LineNumberNode) {
+                minLine = min(minLine, insn.line)
+                maxLine = max(maxLine, insn.line)
+            }
+        }
+    }
+    return minLine to maxLine
 }
 
 internal fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
@@ -200,10 +205,11 @@ private fun getInlineName(
 }
 
 internal fun isInvokeOnLambda(owner: String, name: String): Boolean {
-    return OperatorNameConventions.INVOKE.asString() == name &&
-            owner.startsWith(NUMBERED_FUNCTION_PREFIX) &&
-            owner.substring(NUMBERED_FUNCTION_PREFIX.length).isInteger()
+    return OperatorNameConventions.INVOKE.asString() == name && owner.isNumberedFunctionInternalName()
 }
+
+internal fun String.isNumberedFunctionInternalName(): Boolean =
+    startsWith(NUMBERED_FUNCTION_PREFIX) && substring(NUMBERED_FUNCTION_PREFIX.length).isInteger()
 
 internal fun isAnonymousConstructorCall(internalName: String, methodName: String): Boolean =
     isConstructor(methodName) && isAnonymousClass(internalName)
@@ -429,16 +435,14 @@ fun addReturnsUnitMarker(v: InstructionAdapter) {
     v.emitInlineMarker(INLINE_MARKER_RETURNS_UNIT)
 }
 
-fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
-    v.emitInlineMarker(if (isStartNotEnd) INLINE_MARKER_BEFORE_SUSPEND_ID else INLINE_MARKER_AFTER_SUSPEND_ID)
-}
-
-fun addInlineSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
-    v.emitInlineMarker(if (isStartNotEnd) INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID else INLINE_MARKER_AFTER_INLINE_SUSPEND_ID)
-}
-
-fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean, isInline: Boolean) {
-    if (isInline) addInlineSuspendMarker(v, isStartNotEnd) else addSuspendMarker(v, isStartNotEnd)
+fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean, inlinable: Boolean = false) {
+    val marker = when {
+        inlinable && isStartNotEnd -> INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID
+        inlinable -> INLINE_MARKER_AFTER_INLINE_SUSPEND_ID
+        isStartNotEnd -> INLINE_MARKER_BEFORE_SUSPEND_ID
+        else -> INLINE_MARKER_AFTER_SUSPEND_ID
+    }
+    v.emitInlineMarker(marker)
 }
 
 fun addFakeContinuationConstructorCallMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
@@ -466,16 +470,16 @@ private fun InstructionAdapter.emitInlineMarker(id: Int) {
 
 internal fun isBeforeSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_SUSPEND_ID)
 internal fun isAfterSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_AFTER_SUSPEND_ID)
-fun isBeforeInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID)
-fun isAfterInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_AFTER_INLINE_SUSPEND_ID)
+internal fun isBeforeInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID)
+internal fun isAfterInlineSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_AFTER_INLINE_SUSPEND_ID)
 internal fun isReturnsUnitMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_RETURNS_UNIT)
 internal fun isFakeContinuationMarker(insn: AbstractInsnNode) =
     insn.previous != null && isSuspendMarker(insn.previous, INLINE_MARKER_FAKE_CONTINUATION) && insn.opcode == Opcodes.ACONST_NULL
 
-fun isBeforeFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
+internal fun isBeforeFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
     isSuspendMarker(insn, INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL)
 
-fun isAfterFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
+internal fun isAfterFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
     isSuspendMarker(insn, INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL)
 
 private fun isSuspendMarker(insn: AbstractInsnNode, id: Int) =
@@ -536,10 +540,28 @@ fun isFakeLocalVariableForInline(name: String): Boolean {
 internal fun isThis0(name: String): Boolean = AsmUtil.CAPTURED_THIS_FIELD == name
 
 class InlineOnlySmapSkipper(codegen: BaseExpressionCodegen) {
-
     private val callLineNumber = codegen.lastLineNumber
 
-    fun markCallSiteLineNumber(mv: MethodVisitor) {
+    companion object {
+        const val LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER = 1
+    }
+
+    fun onInlineLambdaStart(mv: MethodVisitor, info: LambdaInfo, smap: SourceMapper) {
+        val firstLine = info.node.node.instructions.asSequence().mapNotNull { it as? LineNumberNode }.firstOrNull()?.line ?: -1
+        if (callLineNumber >= 0 && firstLine == callLineNumber) {
+            // We want the debugger to be able to break both on the inline call itself, plus on each
+            // invocation of the inline lambda passed to it. For that to happen there needs to be at least
+            // one different line number in between those breakpoints for the VM to emit a locatable event.
+            // @InlineOnly functions, however, contain no line numbers, so if the lambda is single-line,
+            // the entire call will "meld" into a single region. To break it up, we insert a different line
+            // number that is remapped by the SMAP to a line that does not exist.
+            val label = Label()
+            mv.visitLabel(label)
+            mv.visitLineNumber(smap.mapSyntheticLineNumber(LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER), label)
+        }
+    }
+
+    fun onInlineLambdaEnd(mv: MethodVisitor) {
         if (callLineNumber >= 0) {
             val label = Label()
             mv.visitLabel(label)
@@ -548,18 +570,29 @@ class InlineOnlySmapSkipper(codegen: BaseExpressionCodegen) {
     }
 }
 
-fun initDefaultSourceMappingIfNeeded(
-    context: CodegenContext<*>, codegen: MemberCodegen<*>, state: GenerationState
-) {
-    if (state.isInlineDisabled) return
-
-    var parentContext: CodegenContext<*>? = context.parentContext
-    while (parentContext != null) {
-        if (parentContext.isInlineMethodContext) {
-            //just init default one to one mapping
-            codegen.orCreateSourceMapper
-            break
+fun MethodNode.preprocessSuspendMarkers(forInline: Boolean, keepFakeContinuation: Boolean = true) {
+    if (instructions.first == null) return
+    if (!keepFakeContinuation) {
+        val sequence = instructions.asSequence()
+        val start = sequence.find { isBeforeFakeContinuationConstructorCallMarker(it) }
+        val end = sequence.find { isAfterFakeContinuationConstructorCallMarker(it) }
+        if (start != null) {
+            // Include one instruction before the start marker (that's the id) and one after the end marker (that's a pop).
+            InsnSequence(start.previous, end?.next?.next).forEach(instructions::remove)
         }
-        parentContext = parentContext.parentContext
+    }
+    for (insn in instructions.asSequence().filter { isBeforeInlineSuspendMarker(it) || isAfterInlineSuspendMarker(it) }) {
+        if (forInline || keepFakeContinuation) {
+            val beforeMarker = insn.previous.previous
+            if (isReturnsUnitMarker(beforeMarker)) {
+                instructions.remove(beforeMarker.previous)
+                instructions.remove(beforeMarker)
+            }
+            instructions.remove(insn.previous)
+            instructions.remove(insn)
+        } else {
+            val newId = if (isBeforeInlineSuspendMarker(insn)) INLINE_MARKER_BEFORE_SUSPEND_ID else INLINE_MARKER_AFTER_SUSPEND_ID
+            instructions.set(insn.previous, InsnNode(Opcodes.ICONST_0 + newId))
+        }
     }
 }

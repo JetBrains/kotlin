@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.idea.klib.KlibCompatibilityInfo.IncompatibleMetadata
 
+// FIX ME WHEN BUNCH 192 REMOVED
 /** TODO: merge [KotlinNativeABICompatibilityChecker] in the future with [UnsupportedAbiVersionNotificationPanelProvider], KT-34525 */
 class KotlinNativeABICompatibilityChecker(private val project: Project) : ProjectComponent, Disposable {
 
@@ -87,7 +88,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
     }
 
     private fun getLibrariesToNotifyAbout(): Map<String, NativeKlibLibraryInfo> {
-        val incompatibleLibraries = getModuleInfosFromIdeaModel(project).asSequence()
+        val incompatibleLibraries = getModuleInfosFromIdeaModel(project)
             .filterIsInstance<NativeKlibLibraryInfo>()
             .filter { !it.compatibilityInfo.isCompatible }
             .associateBy { it.libraryRoot }

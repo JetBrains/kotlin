@@ -17,7 +17,9 @@ class JvmNameResolver(
     private val localNameIndices = types.localNameList.run { if (isEmpty()) emptySet() else toSet() }
 
     // Here we expand the 'range' field of the Record message for simplicity to a list of records
-    val records: List<Record> = ArrayList<Record>().apply {
+    // Note that as an optimization, range of each expanded record is equal to the original range, not 1. If correct ranges are needed,
+    // please use the original record representation in [types.recordList].
+    private val records: List<Record> = ArrayList<Record>().apply {
         val records = types.recordList
         this.ensureCapacity(records.size)
         for (record in records) {

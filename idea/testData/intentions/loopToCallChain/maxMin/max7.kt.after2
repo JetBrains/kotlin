@@ -5,10 +5,10 @@ import java.lang.Math.max
 
 fun getMaxLineWidth(count: Int): Double {
     val <caret>m = (0..count-1)
-            .asSequence()
-            .map { getLineWidth(it) }
-            .max()
-            ?: 0.0
+        .asSequence()
+        .map { getLineWidth(it) }
+        .max()
+        ?: 0.0
     return m
 }
 

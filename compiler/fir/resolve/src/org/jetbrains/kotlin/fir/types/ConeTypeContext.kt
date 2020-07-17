@@ -200,11 +200,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         //require(this is ConeSymbol)
         return when (this) {
             is FirTypeParameterSymbol,
-            is FirAnonymousObjectSymbol,
             is ConeCapturedTypeConstructor,
             is ErrorTypeConstructor,
             is ConeTypeVariableTypeConstructor,
             is ConeIntersectionType -> 0
+            is FirAnonymousObjectSymbol -> fir.typeParameters.size
             is FirRegularClassSymbol -> fir.typeParameters.size
             is FirTypeAliasSymbol -> fir.typeParameters.size
             is ConeIntegerLiteralType -> 0
@@ -216,6 +216,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         //require(this is ConeSymbol)
         return when (this) {
             is FirTypeParameterSymbol -> error("?!:11")
+            is FirAnonymousObjectSymbol -> fir.typeParameters[index].symbol
             is FirRegularClassSymbol -> fir.typeParameters[index].symbol
             is FirTypeAliasSymbol -> fir.typeParameters[index].symbol
             else -> error("?!:12")
@@ -227,7 +228,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         //require(this is ConeSymbol)
         return when (this) {
             is ConeTypeVariableTypeConstructor -> emptyList()
-            is FirTypeParameterSymbol -> fir.bounds.map { it.coneTypeUnsafe() }
+            is FirTypeParameterSymbol -> fir.bounds.map { it.coneType }
             is FirClassSymbol<*> -> fir.superConeTypes
             is FirTypeAliasSymbol -> listOfNotNull(fir.expandedConeType)
             is ConeCapturedTypeConstructor -> supertypes!!
@@ -258,7 +259,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeParameterMarker.getUpperBound(index: Int): KotlinTypeMarker {
         require(this is FirTypeParameterSymbol)
-        return this.fir.bounds[index].coneTypeUnsafe()
+        return this.fir.bounds[index].coneType
     }
 
     override fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker {
@@ -334,6 +335,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             }
 
             require(newArgument is ConeCapturedType)
+            @Suppress("UNCHECKED_CAST")
             newArgument.constructor.supertypes = upperBounds as List<ConeKotlinType>
         }
 
@@ -378,7 +380,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun SimpleTypeMarker.isPrimitiveType(): Boolean {
-        return false //TODO
+        if (this is ConeClassLikeType) {
+            return StandardClassIds.primitiveTypes.contains(this.lookupTag.classId)
+        }
+        return false
     }
 
     override fun SimpleTypeMarker.isStubType(): Boolean {
@@ -472,7 +477,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker {
         require(this is FirTypeParameterSymbol)
-        return this.fir.bounds.getOrNull(0)?.let { (it as? FirResolvedTypeRef)?.type }
+        return this.fir.bounds.getOrNull(0)?.let { it.coneType }
             ?: session.builtinTypes.nullableAnyType.type
     }
 
@@ -522,7 +527,7 @@ class ConeTypeCheckerContext(
             else -> null
         }
 
-        val substitutor = if (declaration is FirTypeParametersOwner) {
+        val substitutor = if (declaration is FirTypeParameterRefsOwner) {
             val substitution =
                 declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
                     parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type

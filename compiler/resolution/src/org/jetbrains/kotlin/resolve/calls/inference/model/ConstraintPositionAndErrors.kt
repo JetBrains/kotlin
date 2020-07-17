@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -123,3 +122,5 @@ class ConstrainingTypeIsError(
     val constraintType: KotlinTypeMarker,
     val position: IncorporationConstraintPosition
 ) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+
+object LowerPriorityToPreserveCompatibility : ConstraintSystemCallDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)

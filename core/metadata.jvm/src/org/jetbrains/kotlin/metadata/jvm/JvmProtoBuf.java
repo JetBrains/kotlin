@@ -18,6 +18,7 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.classModuleName);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.classLocalVariable);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.anonymousObjectOriginName);
+    registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.jvmClassFlags);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.packageModuleName);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.packageLocalVariable);
   }
@@ -3983,6 +3984,26 @@ public final class JvmProtoBuf {
         null,
         null,
         103,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
+        java.lang.Integer.class);
+  public static final int JVM_CLASS_FLAGS_FIELD_NUMBER = 104;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
+   *
+   * <pre>
+   * isFunctionBodyInInterface: 0 if actual body generated in DefaultImpl, 1 - otherwise (in interface default method)
+   * </pre>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Class,
+      java.lang.Integer> jvmClassFlags = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Class.getDefaultInstance(),
+        0,
+        null,
+        null,
+        104,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         java.lang.Integer.class);
   public static final int PACKAGE_MODULE_NAME_FIELD_NUMBER = 101;

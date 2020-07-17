@@ -2,6 +2,7 @@
 <caret>fun foo() {
 
 }
+
 // MOVE: up
 // class A
 class A {

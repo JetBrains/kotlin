@@ -7,10 +7,26 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 
-class FirControlFlowAnalyzer(private val reporter: DiagnosticReporter) {
-    fun analyze(graph: ControlFlowGraph, context: CheckerContext) {
+class FirControlFlowAnalyzer {
+    private val propertyInitializationAnalyzer = FirPropertyInitializationAnalyzer()
 
+    fun analyzeClassInitializer(klass: FirClass<*>, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (graph.owner != null) return
+        // TODO()
+    }
+
+    fun analyzeFunction(function: FirFunction<*>, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (graph.owner != null) return
+        propertyInitializationAnalyzer.analyze(graph, reporter)
+    }
+
+    fun analyzePropertyInitializer(property: FirProperty, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (graph.owner != null) return
+        // TODO()
     }
 }

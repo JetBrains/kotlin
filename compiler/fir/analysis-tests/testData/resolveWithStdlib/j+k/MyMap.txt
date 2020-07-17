@@ -27,8 +27,8 @@ FILE: test.kt
         }
         )
         lval otherResult: R|kotlin/String| = R|<local>/map|.R|FakeOverride<kotlin/collections/MutableMap.getOrDefault: R|kotlin/String|>|(String(key), String(value))
-        lval anotherResult: R|kotlin/String?| = R|<local>/map|.R|FakeOverride<java/util/Map.replace: R|kotlin/String?|>|(String(key), String(value))
-        R|<local>/map|.R|FakeOverride<java/util/Map.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|ft<kotlin/String, kotlin/String?>!|, value: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit| {
+        lval anotherResult: R|kotlin/String?| = R|<local>/map|.R|FakeOverride<kotlin/collections/MutableMap.replace: R|kotlin/String?|>|(String(key), String(value))
+        R|<local>/map|.R|FakeOverride<kotlin/collections/MutableMap.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|ft<kotlin/String, kotlin/String?>!|, value: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit| {
             R|kotlin/io/println|(<strcat>(R|<local>/key|.R|kotlin/Any.toString|(), String(: ), R|<local>/value|.R|kotlin/Any.toString|()))
             R|<local>/key|.R|kotlin/String.length|
             ^ R|<local>/value|.R|kotlin/String.length|

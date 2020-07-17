@@ -7,6 +7,8 @@ package kotlin.script.experimental.test
 
 import junit.framework.TestCase
 import org.junit.Test
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.ScriptCompilationConfigurationKeys
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.ScriptingHostConfigurationKeys
 import kotlin.script.experimental.host.withDefaultsFrom
@@ -23,6 +25,7 @@ class ConfigurationsTest : TestCase() {
         val c2 = ScriptingHostConfiguration {
             p1(2)
             p2("yes")
+            p4("local")
         }
 
         assertEquals(c1, c1.withDefaultsFrom(c0))
@@ -35,8 +38,20 @@ class ConfigurationsTest : TestCase() {
         assertEquals(1, c1c2[ScriptingHostConfiguration.p1])
         assertEquals("yes", c1c2[ScriptingHostConfiguration.p2])
         assertEquals(2, c2c1[ScriptingHostConfiguration.p1])
+
+        assertEquals("from delegated", c1[ScriptingHostConfiguration.p4])
+        assertEquals("local", c2[ScriptingHostConfiguration.p4])
     }
 }
 
-private val ScriptingHostConfigurationKeys.p1 by PropertiesCollection.key<Int>(-1)
-private val ScriptingHostConfigurationKeys.p2 by PropertiesCollection.key<String>("-")
+private val ScriptingHostConfigurationKeys.p1 by PropertiesCollection.key(-1)
+private val ScriptingHostConfigurationKeys.p2 by PropertiesCollection.key("-")
+
+private val ScriptCompilationConfigurationKeys.p3 by PropertiesCollection.key<String>()
+
+private val delegatedConfig = ScriptCompilationConfiguration {
+    p3("from delegated")
+}
+
+private val ScriptingHostConfigurationKeys.p4 by PropertiesCollection.keyCopy(ScriptCompilationConfiguration.p3, { delegatedConfig })
+

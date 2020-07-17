@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.Messages.OkCancelResult
+import org.jetbrains.kotlin.descriptors.Visibility
 import javax.swing.Icon
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 
 @OkCancelResult
 fun showOkCancelDialog(
@@ -23,10 +24,8 @@ fun showOkCancelDialog(
         project,
         message,
         title,
-        Messages.OK_BUTTON,
-        Messages.CANCEL_BUTTON,
         icon
     )
 }
 
-typealias ComboBox = com.intellij.openapi.ui.ComboBox<Visibility>
+typealias ComboBox = javax.swing.JComboBox<Visibility>

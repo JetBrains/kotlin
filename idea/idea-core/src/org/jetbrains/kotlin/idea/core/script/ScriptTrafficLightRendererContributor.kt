@@ -27,14 +27,17 @@ class ScriptTrafficLightRendererContributor : TrafficLightRendererContributor {
         TrafficLightRenderer(project, document, file) {
         override fun getDaemonCodeAnalyzerStatus(severityRegistrar: SeverityRegistrar): DaemonCodeAnalyzerStatus {
             val status = super.getDaemonCodeAnalyzerStatus(severityRegistrar)
-            if (!ScriptDefinitionsManager.getInstance(file.project).isReady()) {
+
+            val configurations = ScriptConfigurationManager.getServiceIfCreated(project)
+            if (configurations == null) {
+                // services not yet initialized (it should be initialized under the LoadScriptDefinitionsStartupActivity)
+                status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.configuration")
+                status.errorAnalyzingFinished = false
+            } else if (!ScriptDefinitionsManager.getInstance(file.project).isReady()) {
                 status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.definitions")
                 status.errorAnalyzingFinished = false
-            } else if (
-                !ScriptConfigurationManager.getInstance(project).hasConfiguration(file)
-                && !ScriptConfigurationManager.isManualConfigurationLoading(file.originalFile.virtualFile)
-            ) {
-                status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.dependencies")
+            } else if (configurations.isConfigurationLoadingInProgress(file)) {
+                status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.configuration")
                 status.errorAnalyzingFinished = false
             }
             return status

@@ -5,7 +5,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, conditional-expression -> paragraph 1 -> sentence 2
+ * MAIN LINK: expressions, conditional-expression -> paragraph 1 -> sentence 2
  * NUMBER: 5
  * DESCRIPTION: if-expression: check the correct branch is evaluating
  */

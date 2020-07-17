@@ -1,0 +1,30 @@
+// "Implement members" "true"
+// WITH_RUNTIME
+// DISABLE-ERRORS
+interface A {
+    fun foo() {}
+    fun bar() {}
+}
+
+open class B {
+    open fun foo() {}
+    open fun bar() {}
+}
+
+class C : A, B() {
+    override fun foo() {
+        TODO("Not yet implemented")
+    }
+
+    override fun foo() {
+        TODO("Not yet implemented")
+    }
+
+    override fun bar() {
+        TODO("Not yet implemented")
+    }
+
+    override fun bar() {
+        TODO("Not yet implemented")
+    }
+}

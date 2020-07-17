@@ -22,15 +22,23 @@ interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : Fi
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
+    override val origin: FirDeclarationOrigin
+    override val attributes: FirDeclarationAttributes
     override val annotations: List<FirAnnotationCall>
     override val returnTypeRef: FirTypeRef
     override val receiverTypeRef: FirTypeRef?
     override val symbol: FirCallableSymbol<F>
-    override val typeParameters: List<FirTypeParameter>
+    override val typeParameters: List<FirTypeParameterRef>
     override val status: FirDeclarationStatus
     val containerSource: DeserializedContainerSource?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableMemberDeclaration(this, data)
+
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration<F>
 

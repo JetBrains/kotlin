@@ -7,8 +7,8 @@ fun foo(list: List<String>, o: Any) {
         unresolvedFun()
 
         val result: Any? = list
-                .map { it.length + (o as String).capitalize().hashCode() }
-                .map { it * o.length }
-                .firstOrNull { it > 1000 }
+            .map { it.length + (o as String).capitalize().hashCode() }
+            .map { it * o.length }
+            .firstOrNull { it > 1000 }
     }
 }

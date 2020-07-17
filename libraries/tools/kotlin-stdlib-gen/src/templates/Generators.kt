@@ -966,7 +966,7 @@ object Generators : TemplateGroupBase() {
         }
         body(CharSequences) {
             """
-            val size = ${if (f == CharSequences) "length" else "size" } - 1
+            val size = ${f.code.size} - 1
             if (size < 1) return emptyList()
             val result = ArrayList<R>(size)
             for (index in 0 until size) {

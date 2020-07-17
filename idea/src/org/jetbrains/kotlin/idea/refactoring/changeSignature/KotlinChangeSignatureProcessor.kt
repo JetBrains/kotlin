@@ -30,11 +30,15 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
+import org.jetbrains.kotlin.idea.core.canMoveLambdaOutsideParentheses
+import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinFunctionCallUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinImplicitReceiverUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
+import org.jetbrains.kotlin.psi.KtCallExpression
 import java.util.*
 
 class KotlinChangeSignatureProcessor(
@@ -42,6 +46,11 @@ class KotlinChangeSignatureProcessor(
     changeInfo: KotlinChangeInfo,
     private val commandName: String
 ) : ChangeSignatureProcessorBase(project, KotlinChangeInfoWrapper(changeInfo)) {
+    init {
+        // we must force collecting references to other parameters now before the signature is changed
+        changeInfo.newParameters.forEach { it.defaultValueParameterReferences }
+    }
+
     val ktChangeInfo
         get() = changeInfo.delegate!!
 
@@ -67,10 +76,14 @@ class KotlinChangeSignatureProcessor(
 
     override fun findUsages(): Array<UsageInfo> {
         val allUsages = ArrayList<UsageInfo>()
+        val javaUsages = mutableSetOf<UsageInfo>()
         ktChangeInfo.getOrCreateJavaChangeInfos()?.let { javaChangeInfos ->
             val javaProcessor = JavaChangeSignatureUsageProcessor()
             javaChangeInfos.mapTo(allUsages) {
-                KotlinWrapperForJavaUsageInfos(it, javaProcessor.findUsages(it), changeInfo.method)
+                val javaUsagesForKtChange = javaProcessor.findUsages(it)
+                val uniqueJavaUsagesForKtChange = javaUsagesForKtChange.filterNot<UsageInfo> { javaUsages.contains(it) }
+                javaUsages.addAll(javaUsagesForKtChange)
+                KotlinWrapperForJavaUsageInfos(it, uniqueJavaUsagesForKtChange.toTypedArray(), changeInfo.method)
             }
         }
         super.findUsages().filterTo(allUsages) { it is KotlinUsageInfo<*> || it is UnresolvableCollisionUsageInfo }
@@ -130,6 +143,13 @@ class KotlinChangeSignatureProcessor(
     override fun performRefactoring(usages: Array<out UsageInfo>) {
         try {
             super.performRefactoring(usages)
+            usages.forEach {
+                val callExpression = it.element as? KtCallExpression ?: return@forEach
+                if (callExpression.canMoveLambdaOutsideParentheses()) {
+                    callExpression.moveFunctionLiteralOutsideParentheses()
+                }
+            }
+            performDelayedRefactoringRequests(myProject)
         } finally {
             changeInfo.invalidate()
         }

@@ -9,12 +9,6 @@ public final class Foo {
         return null;
     }
 
-    @org.jetbrains.annotations.Nullable()
-    public final java.lang.Object b(@org.jetbrains.annotations.NotNull()
-    kotlin.coroutines.Continuation<Result<ABC>> p0) {
-        return null;
-    }
-
     public Foo() {
         super();
     }

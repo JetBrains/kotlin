@@ -21,8 +21,7 @@ testsJar {}
 
 projectTest(parallel = true) {
     dependsOn(":dist")
-    dependsOn(":kotlin-stdlib-js-ir:generateFullRuntimeKLib")
-
+    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
 }

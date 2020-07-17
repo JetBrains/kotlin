@@ -8,34 +8,35 @@ package kotlin.script.experimental.jvm
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.jvm.impl.getConfigurationWithClassloader
 
 open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
     override suspend operator fun invoke(
-        compiledScript: CompiledScript<*>,
+        compiledScript: CompiledScript,
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> = try {
-        val configuration = getConfigurationWithClassloader(compiledScript, scriptEvaluationConfiguration)
+        compiledScript.getClass(scriptEvaluationConfiguration).onSuccess { scriptClass ->
 
-        compiledScript.getClass(configuration).onSuccess { scriptClass ->
-            // in the future, when (if) we'll stop to compile everything into constructor
-            // run as SAM
-            // return res
+            // configuration shared between all module scripts
+            val sharedConfiguration = scriptEvaluationConfiguration.getOrPrepareShared(scriptClass.java.classLoader)
 
-            val sharedScripts = configuration[ScriptEvaluationConfiguration.jvm.scriptsInstancesSharingMap]
+            val sharedScripts = sharedConfiguration[ScriptEvaluationConfiguration.jvm.scriptsInstancesSharingMap]
 
             sharedScripts?.get(scriptClass)?.asSuccess()
                 ?: compiledScript.otherScripts.mapSuccess {
-                    invoke(it, configuration)
+                    invoke(it, sharedConfiguration)
                 }.onSuccess { importedScriptsEvalResults ->
 
                     val refinedEvalConfiguration =
-                        configuration.refineBeforeEvaluation(compiledScript).valueOr {
+                        sharedConfiguration.refineBeforeEvaluation(compiledScript).valueOr {
                             return@invoke ResultWithDiagnostics.Failure(it.reports)
                         }
 
                     val resultValue = try {
+                        // in the future, when (if) we'll stop to compile everything into constructor
+                        // run as SAM
+                        // return res
+
                         val instance =
                             scriptClass.evalWithConfigAndOtherScriptsResults(refinedEvalConfiguration, importedScriptsEvalResults)
 
@@ -99,3 +100,13 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
     }
 }
 
+private fun ScriptEvaluationConfiguration.getOrPrepareShared(classLoader: ClassLoader): ScriptEvaluationConfiguration =
+    if (this[ScriptEvaluationConfiguration.jvm.actualClassLoader] != null)
+        this
+    else
+        with {
+            ScriptEvaluationConfiguration.jvm.actualClassLoader(classLoader)
+            if (this[ScriptEvaluationConfiguration.scriptsInstancesSharing] == true) {
+                ScriptEvaluationConfiguration.jvm.scriptsInstancesSharingMap(mutableMapOf())
+            }
+        }

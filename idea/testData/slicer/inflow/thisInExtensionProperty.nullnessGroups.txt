@@ -1,0 +1,3 @@
+[NotNull Values]
+7 	<bold>val x</bold> = "".extensionProp (in foo())
+7 		<bold>val x</bold> = "".extensionProp (in foo())

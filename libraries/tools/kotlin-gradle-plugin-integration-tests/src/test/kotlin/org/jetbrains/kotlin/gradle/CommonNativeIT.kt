@@ -11,6 +11,9 @@ import org.junit.Test
 
 class CommonNativeIT : BaseGradleIT() {
 
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.FOR_MPP_SUPPORT
+
     private fun doCommonNativeTest(
         projectName: String,
         libTargets: List<String>,

@@ -1,4 +1,4 @@
-//FILE: test.kt
+// FILE: test.kt
 fun box() {
     for (i in 1..3) {
         foo(i)
@@ -8,14 +8,14 @@ fun box() {
 inline fun foo(n: Int) {}
 
 // LINENUMBERS
-// test.kt:3
-// test.kt:4
-// test.kt:8
-// test.kt:3
-// test.kt:4
-// test.kt:8
-// test.kt:3
-// test.kt:4
-// test.kt:8
-// test.kt:3
-// test.kt:6
+// test.kt:3 box
+// test.kt:4 box
+// test.kt:8 box
+// test.kt:3 box
+// test.kt:4 box
+// test.kt:8 box
+// test.kt:3 box
+// test.kt:4 box
+// test.kt:8 box
+// test.kt:3 box
+// test.kt:6 box

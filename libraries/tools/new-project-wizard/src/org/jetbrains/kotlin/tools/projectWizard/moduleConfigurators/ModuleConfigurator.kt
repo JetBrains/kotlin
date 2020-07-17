@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.StdlibType
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.correspondingStdl
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModulePath
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import java.nio.file.Path
@@ -53,6 +53,12 @@ fun <T> withSettingsOf(
     configurator: ModuleConfigurator = module.configurator,
     function: ModuleConfiguratorSettingsEnvironment.() -> T
 ): T = function(ModuleBasedConfiguratorSettingsEnvironment(configurator, module))
+
+
+fun <V : Any, T : SettingType<V>> Reader.settingValue(module: Module, setting: ModuleConfiguratorSetting<V, T>): V? =
+    withSettingsOf(module) {
+        setting.reference.notRequiredSettingValue
+    }
 
 
 abstract class ModuleConfiguratorSettings : SettingsOwner {
@@ -173,6 +179,9 @@ interface ModuleConfiguratorWithSettings : ModuleConfigurator {
             }
         }
     }
+
+    fun <V : Any, T : SettingType<V>> Reader.settingsValue(module: Module, setting: ModuleConfiguratorSetting<V, T>): V =
+        withSettingsOf(module) { setting.reference.settingValue }
 }
 
 val ModuleConfigurator.settings
@@ -204,12 +213,17 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     val canContainSubModules: Boolean get() = false
     val requiresRootBuildFile: Boolean get() = false
 
+    val kotlinDirectoryName: String get() = Defaults.KOTLIN_DIR.toString()
+    val resourcesDirectoryName: String get() = Defaults.RESOURCES_DIR.toString()
+
     fun createBuildFileIRs(
         reader: Reader,
         configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> =
         emptyList()
+
+    fun createBuildFileIRsComparator(): Comparator<BuildSystemIR>? = null
 
     fun createModuleIRs(
         reader: Reader,

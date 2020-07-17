@@ -23,13 +23,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimpleFunction>, FirCallableMemberDeclaration<FirSimpleFunction>, FirContractDescriptionOwner {
+abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimpleFunction>, FirCallableMemberDeclaration<FirSimpleFunction>, FirContractDescriptionOwner, FirTypeParametersOwner {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
+    abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val typeParameters: List<FirTypeParameter>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
@@ -39,8 +40,19 @@ abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimp
     abstract val name: Name
     abstract override val symbol: FirFunctionSymbol<FirSimpleFunction>
     abstract override val annotations: List<FirAnnotationCall>
+    abstract override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSimpleFunction(this, data)
+
+    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
+
+    abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
+
+    abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
@@ -49,6 +61,8 @@ abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimp
     abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction
+
+    abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 

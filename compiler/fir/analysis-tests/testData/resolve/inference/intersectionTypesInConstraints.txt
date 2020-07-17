@@ -1,0 +1,24 @@
+FILE: main.kt
+    public final fun <R> elemAndList(r: R|R|, t: R|kotlin/collections/MutableList<R>|): R|R| {
+        ^elemAndList R|kotlin/TODO|()
+    }
+    public abstract interface I : R|kotlin/Any| {
+    }
+    public final class A : R|kotlin/Comparable<A>|, R|I| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Comparable<B>|, R|I| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/elemAndList|<R|ft<it(kotlin/Comparable<it(A & B)> & I), it(kotlin/Comparable<it(A & B)>? & I?)>|>(R|/A.A|(), R|/list|<R|ft<it(kotlin/Comparable<it(A & B)> & I), it(kotlin/Comparable<it(A & B)>? & I?)>|>(R|/B.B|()))
+    }
+    public final fun <T> list(value: R|T|): R|MyList<T>| {
+        ^list R|kotlin/TODO|()
+    }

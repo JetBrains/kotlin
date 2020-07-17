@@ -44,6 +44,11 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
             return module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("android.os.Parcel")))?.defaultType
         }
 
+        fun resolveParcelableCreatorClassType(module: ModuleDescriptor): SimpleType? {
+            val creatorClassId = ClassId(FqName("android.os"), FqName("Parcelable.Creator"), false)
+            return module.findClassAcrossModuleDependencies(creatorClassId)?.defaultType
+        }
+
         fun createMethod(
                 classDescriptor: ClassDescriptor,
                 componentKind: ParcelableSyntheticComponent.ComponentKind,
@@ -75,6 +80,9 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
             return ValueParameterDescriptorImpl(
                     this, null, index, Annotations.EMPTY, Name.identifier(name), type, false, false, false, null, this.source)
         }
+
+        private val parcelizeMethodNames: List<Name> =
+            listOf(Name.identifier(DESCRIBE_CONTENTS.methodName), Name.identifier(WRITE_TO_PARCEL.methodName))
     }
 
     @Deprecated(
@@ -85,6 +93,13 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
     protected open fun isExperimental(element: KtElement) = true
 
     override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor) = null
+
+    override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> {
+        return if (thisDescriptor.isParcelize)
+            parcelizeMethodNames
+        else
+            emptyList()
+    }
 
     override fun generateSyntheticMethods(
         thisDescriptor: ClassDescriptor,

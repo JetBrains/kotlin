@@ -1,0 +1,8 @@
+// "Change parameter 'f' type of function 'foo' to '() -> Int'" "true"
+fun foo(f: () -> Int) {}
+
+fun test() {
+    foo {
+        1 // comment
+    }
+}

@@ -31,26 +31,26 @@ FILE: O.kt
 
                 public[private] final fun test(): R|kotlin/Unit| {
                     lval x: R|kotlin/Int| = this@R|/O.Derived|.R|/O.Derived.bar|
-                    lval o: R|anonymous| = object : R|Wrapper| {
-                        private constructor(): R|anonymous| {
+                    lval o: R|<anonymous>| = object : R|Wrapper| {
+                        private[local] constructor(): R|<anonymous>| {
                             super<R|Wrapper|>(this@R|/O.Derived.Some|.R|/O.Derived.Some.z|)
                         }
 
-                        public final fun local(): R|kotlin/Unit| {
+                        public[local] final fun local(): R|kotlin/Unit| {
                             lval y: R|ft<kotlin/String, kotlin/String?>!| = this@R|/O.Derived|.R|/Base.foo|()
                         }
 
-                        public final val oo: R|anonymous| = object : R|kotlin/Any| {
-                            private constructor(): R|anonymous| {
+                        public[local] final val oo: R|<anonymous>| = object : R|kotlin/Any| {
+                            private[local] constructor(): R|<anonymous>| {
                                 super<R|kotlin/Any|>()
                             }
 
-                            public final val zz: R|kotlin/Boolean| = this@R|/O.Derived.Some|.R|/O.Derived.Some.z|
+                            public[local] final val zz: R|kotlin/Boolean| = this@R|/O.Derived.Some|.R|/O.Derived.Some.z|
                                 public get(): R|kotlin/Boolean|
 
                         }
 
-                            public get(): R|anonymous|
+                            public get(): R|<anonymous>|
 
                     }
 
@@ -60,12 +60,12 @@ FILE: O.kt
 
             public[private] final fun test(): R|kotlin/Unit| {
                 lval x: R|kotlin/Int| = this@R|/O.Derived|.R|/O.Derived.bar|
-                lval o: R|anonymous| = object : R|kotlin/Any| {
-                    private constructor(): R|anonymous| {
+                lval o: R|<anonymous>| = object : R|kotlin/Any| {
+                    private[local] constructor(): R|<anonymous>| {
                         super<R|kotlin/Any|>()
                     }
 
-                    public final fun local(): R|kotlin/Unit| {
+                    public[local] final fun local(): R|kotlin/Unit| {
                         lval y: R|ft<kotlin/String, kotlin/String?>!| = this@R|/O.Derived|.R|/Base.foo|()
                     }
 
@@ -86,11 +86,11 @@ FILE: O.kt
 
         private final fun gen(): R|kotlin/Any| {
             ^gen object : R|Wrapper| {
-                private constructor(): R|anonymous| {
+                private[local] constructor(): R|<anonymous>| {
                     super<R|Wrapper|>(Boolean(true))
                 }
 
-                private final fun invokeFunction(): R|kotlin/Unit| {
+                private[local] final fun invokeFunction(): R|kotlin/Unit| {
                     lval c: R|kotlin/Any| = this@R|/Generator|.R|/Generator.codegen|
                     lval cc: R|kotlin/Int| = this@R|/Generator|.R|/Generator.codegen|.R|kotlin/Any.hashCode|()
                 }

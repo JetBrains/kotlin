@@ -1,3 +1,4 @@
+// CHECK_BYTECODE_LISTING
 // FILE: 1.kt
 package test
 

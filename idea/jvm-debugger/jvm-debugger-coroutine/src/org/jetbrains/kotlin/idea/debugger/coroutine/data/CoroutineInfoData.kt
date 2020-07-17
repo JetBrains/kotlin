@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.data
 
 import com.sun.jdi.ObjectReference
 import com.sun.jdi.ThreadReference
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.CoroutineHolder
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData.Companion.DEFAULT_COROUTINE_NAME
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData.Companion.DEFAULT_COROUTINE_STATE
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.MirrorOfCoroutineInfo
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 
 /**
  * Represents state of a coroutine.
@@ -18,20 +21,8 @@ data class CoroutineInfoData(
     val stackTrace: List<CoroutineStackFrameItem>,
     val creationStackTrace: List<CreationCoroutineStackFrameItem>,
     val activeThread: ThreadReference? = null, // for suspended coroutines should be null
-    val lastObservedFrameFieldRef: ObjectReference?
+    val lastObservedFrame: ObjectReference? = null
 ) {
-    var stackFrameList = mutableListOf<CoroutineStackFrameItem>()
-
-    // @TODO for refactoring/removal along with DumpPanel
-    val stringStackTrace: String by lazy {
-        buildString {
-            appendln("\"${key.name}\", state: ${key.state}")
-            stackTrace.forEach {
-                appendln("\t$it")
-            }
-        }
-    }
-
     fun isSuspended() = key.state == State.SUSPENDED
 
     fun isCreated() = key.state == State.CREATED
@@ -40,17 +31,32 @@ data class CoroutineInfoData(
 
     fun isRunning() = key.state == State.RUNNING
 
+    private fun topRestoredFrame() = stackTrace.firstOrNull()
+
+    fun topFrameVariables() = topRestoredFrame()?.spilledVariables ?: emptyList()
+
     companion object {
-        fun suspendedCoroutineInfoData(
-            holder: CoroutineHolder,
-            lastObservedFrameFieldRef: ObjectReference
-        ): CoroutineInfoData? {
-            return CoroutineInfoData(holder.info, holder.stackFrameItems, emptyList(), null, lastObservedFrameFieldRef)
-        }
+        val log by logger
+        const val DEFAULT_COROUTINE_NAME = "coroutine"
+        const val DEFAULT_COROUTINE_STATE = "UNKNOWN"
     }
 }
 
-data class CoroutineNameIdState(val name: String, val id: String, val state: State)
+data class CoroutineNameIdState(val name: String, val id: String, val state: State, val dispatcher: String?) {
+
+    fun formatName() =
+        "$name:$id"
+    
+    companion object {
+        fun instance(mirror: MirrorOfCoroutineInfo): CoroutineNameIdState =
+            CoroutineNameIdState(
+                mirror.context?.name ?: DEFAULT_COROUTINE_NAME,
+                "${mirror.sequenceNumber}",
+                State.valueOf(mirror.state ?: DEFAULT_COROUTINE_STATE),
+                mirror.context?.dispatcher
+            )
+    }
+}
 
 enum class State {
     RUNNING,

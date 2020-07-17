@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -19,10 +20,9 @@ class FirLazyNestedClassifierScope(
     private val existingNames: List<Name>,
     private val symbolProvider: FirSymbolProvider
 ) : FirScope() {
-
-    override fun processClassifiersByName(
+    override fun processClassifiersByNameWithSubstitution(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> Unit
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
         if (name !in existingNames) {
             return
@@ -30,6 +30,6 @@ class FirLazyNestedClassifierScope(
         val child = classId.createNestedClassId(name)
         val symbol = symbolProvider.getClassLikeSymbolByFqName(child) ?: return
 
-        processor(symbol)
+        processor(symbol, ConeSubstitutor.Empty)
     }
 }

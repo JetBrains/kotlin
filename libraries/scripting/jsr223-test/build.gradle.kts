@@ -3,22 +3,26 @@ plugins {
     kotlin("jvm")
 }
 
-jvmTarget = "1.6"
-
-val embeddableTestRuntime by configurations.creating
+val embeddableTestRuntime by configurations.creating {
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+    }
+}
 
 dependencies {
     testCompile(commonDep("junit"))
-    testCompileOnly(project(":kotlin-scripting-jvm-host"))
+    testCompileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":core:util.runtime"))
     
-    testRuntimeOnly(project(":kotlin-scripting-jsr223"))
+    testRuntimeOnly(project(":kotlin-scripting-jsr223-unshaded"))
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(project(":kotlin-reflect"))
-    
+
     embeddableTestRuntime(commonDep("junit"))
-    embeddableTestRuntime(project(":kotlin-scripting-jsr223-embeddable"))
+    embeddableTestRuntime(project(":kotlin-scripting-jsr223", configuration = "runtimeElements"))
+    embeddableTestRuntime(project(":kotlin-scripting-compiler-embeddable", configuration = "runtimeElements"))
     embeddableTestRuntime(testSourceSet.output)
 }
 

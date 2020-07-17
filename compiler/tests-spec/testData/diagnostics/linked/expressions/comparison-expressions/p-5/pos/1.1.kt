@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
@@ -6,8 +7,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, comparison-expressions -> paragraph 5 -> sentence 1
- * RELEVANT PLACES: overloadable-operators -> paragraph 4 -> sentence 1
+ * MAIN LINK: expressions, comparison-expressions -> paragraph 5 -> sentence 1
+ * PRIMARY LINKS: overloadable-operators -> paragraph 4 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: All comparison expressions always have type kotlin.Boolean.
  * HELPERS: checkType

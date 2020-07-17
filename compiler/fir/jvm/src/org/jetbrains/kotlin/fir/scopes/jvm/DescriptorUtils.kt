@@ -77,7 +77,7 @@ private val PRIMITIVE_TYPE_SIGNATURE: Map<String, String> = mapOf(
     "Char" to "C",
     "Short" to "S",
     "Int" to "I",
-    "Long" to "L",
+    "Long" to "J",
     "Float" to "F",
     "Double" to "D",
 )
@@ -108,7 +108,7 @@ private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
         }
         is ConeTypeParameterType -> {
             val representative = coneType.lookupTag.typeParameterSymbol.fir.bounds.firstOrNull {
-                (it as? FirResolvedTypeRef)?.type is ConeClassLikeType
+                it.coneType is ConeClassLikeType
             }
             if (representative == null || representative is FirImplicitNullableAnyTypeRef || representative is FirImplicitAnyTypeRef) {
                 append("Ljava/lang/Object")

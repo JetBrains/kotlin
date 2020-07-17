@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_JDK
 // FILE: samConversions.kt
 fun J.test0(a: Runnable) {

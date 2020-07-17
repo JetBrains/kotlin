@@ -11,7 +11,7 @@ fun test() {
     } else {
         ::foo
     }
-    a checkType {  <!UNRESOLVED_REFERENCE!>_<!><KFunction0<Int>>() }
+    a checkType {  _<KFunction0<Int>>() }
 }
 
 fun foo(): Int = 0

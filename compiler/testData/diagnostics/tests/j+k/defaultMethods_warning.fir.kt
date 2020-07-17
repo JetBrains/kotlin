@@ -26,7 +26,7 @@ interface KotlinInterface : JavaInterface {
 
         object  {
             fun run () {
-                super@KotlinInterface.<!UNRESOLVED_REFERENCE!>test<!>()
+                super@KotlinInterface.test()
             }
         }
     }
@@ -37,7 +37,7 @@ interface KotlinInterface : JavaInterface {
 
             object  {
                 fun run () {
-                    super@KotlinInterface.<!UNRESOLVED_REFERENCE!>test<!>()
+                    super@KotlinInterface.test()
                 }
             }
             return ""
@@ -55,7 +55,7 @@ interface KotlinInterfaceIndirectInheritance : KotlinInterface {
 
         object  {
             fun run () {
-                super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>test<!>()
+                super@KotlinInterfaceIndirectInheritance.test()
             }
         }
     }
@@ -66,7 +66,7 @@ interface KotlinInterfaceIndirectInheritance : KotlinInterface {
 
             object  {
                 fun run () {
-                    super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>test<!>()
+                    super@KotlinInterfaceIndirectInheritance.test()
                 }
             }
             return ""
@@ -81,7 +81,7 @@ open class KotlinClass : JavaInterface {
 
         object  {
             fun run () {
-                super@KotlinClass.<!UNRESOLVED_REFERENCE!>test<!>()
+                super@KotlinClass.test()
             }
         }
     }
@@ -93,7 +93,7 @@ open class KotlinClass : JavaInterface {
 
             object  {
                 fun run () {
-                    super@KotlinClass.<!UNRESOLVED_REFERENCE!>test<!>()
+                    super@KotlinClass.test()
                 }
             }
             return ""
@@ -108,7 +108,7 @@ class KotlinClassIndirectInheritance : KotlinClass() {
 
         object  {
             fun run () {
-                super@KotlinClassIndirectInheritance.<!UNRESOLVED_REFERENCE!>test<!>()
+                super@KotlinClassIndirectInheritance.test()
             }
         }
     }
@@ -120,7 +120,7 @@ class KotlinClassIndirectInheritance : KotlinClass() {
 
             object  {
                 fun run () {
-                    super@KotlinClassIndirectInheritance.<!UNRESOLVED_REFERENCE!>test<!>()
+                    super@KotlinClassIndirectInheritance.test()
                 }
             }
             return ""
@@ -135,7 +135,7 @@ class KotlinClassIndirectInheritance2 : KotlinInterfaceIndirectInheritance {
 
         object  {
             fun run () {
-                super@KotlinClassIndirectInheritance2.<!UNRESOLVED_REFERENCE!>test<!>()
+                super@KotlinClassIndirectInheritance2.test()
             }
         }
     }
@@ -147,7 +147,7 @@ class KotlinClassIndirectInheritance2 : KotlinInterfaceIndirectInheritance {
 
             object  {
                 fun run () {
-                    super@KotlinClassIndirectInheritance2.<!UNRESOLVED_REFERENCE!>test<!>()
+                    super@KotlinClassIndirectInheritance2.test()
                 }
             }
             return ""

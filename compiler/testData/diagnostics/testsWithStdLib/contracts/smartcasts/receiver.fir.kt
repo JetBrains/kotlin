@@ -17,7 +17,7 @@ fun smartcastOnReceiver(x: Int?) {
         x.<!AMBIGUITY!>inc<!>()
     }
     else {
-        x.<!AMBIGUITY!>dec<!>()
+        x.dec()
     }
 }
 

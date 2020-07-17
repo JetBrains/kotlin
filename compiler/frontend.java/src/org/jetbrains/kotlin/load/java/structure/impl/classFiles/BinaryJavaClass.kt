@@ -47,6 +47,7 @@ class BinaryJavaClass(
     override val methods = arrayListOf<JavaMethod>()
     override val fields = arrayListOf<JavaField>()
     override val constructors = arrayListOf<JavaConstructor>()
+    override fun hasDefaultConstructor() = false // never: all constructors explicit in bytecode
 
     override val annotationsByFqName by buildLazyValueForMap()
 

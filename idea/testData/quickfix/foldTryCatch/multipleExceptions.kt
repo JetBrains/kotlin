@@ -5,14 +5,11 @@ fun foo() {
     val x: Int
     try {
         x = 1
-    }
-    catch (e: RuntimeException) {
+    } catch (e: RuntimeException) {
         <caret>x = 2
-    }
-    catch (e: Exception) {
+    } catch (e: Exception) {
         x = 3
-    }
-    catch (e: Throwable) {
+    } catch (e: Throwable) {
         x = 4
     }
 }

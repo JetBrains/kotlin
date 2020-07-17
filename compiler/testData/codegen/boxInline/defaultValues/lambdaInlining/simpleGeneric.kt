@@ -1,3 +1,6 @@
+// Enable for dexing once we have a D8 version with a fix for
+// https://issuetracker.google.com/148661132
+// IGNORE_DEXING
 // FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: inlineFun$default
 package test

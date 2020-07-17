@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.types.Variance
-
 enum class ClassModifier {
     ENUM,
     ANNOTATION,
     DATA,
+    INLINE,
     INNER,
-    COMPANION
+    COMPANION,
+    FUN
 }
 
 enum class MemberModifier {

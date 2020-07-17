@@ -36,5 +36,5 @@ fun foo(coneSymbol: AbstractFirBasedSymbol<*>) {
     coneSymbol.phasedFir() checkType { _<FirVariable<*>>() }
 
     if (coneSymbol !is FirPropertySymbol) return
-    coneSymbol.phasedFir() checkType { _<FirVariable<*>>() }
+    coneSymbol.phasedFir() checkType { _<FirProperty>() }
 }

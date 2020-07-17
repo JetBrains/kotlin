@@ -16,8 +16,10 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UQualifiedReferenceExpression
@@ -33,7 +35,7 @@ class KotlinUQualifiedReferenceExpression(
     override val selector by lz { KotlinConverter.convertOrEmpty(sourcePsi.selectorExpression, this) }
     override val accessType = UastQualifiedExpressionAccessType.SIMPLE
 
-    override fun resolve() = sourcePsi.selectorExpression?.resolveCallToDeclaration()
+    override fun resolve(): PsiElement? = sourcePsi.selectorExpression?.let { resolveToDeclaration(it) }
 
     override val resolvedName: String?
         get() = (resolve() as? PsiNamedElement)?.name

@@ -7,38 +7,39 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
+import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
+import org.jetbrains.kotlin.fir.utils.TypeRegistry
 import org.jetbrains.kotlin.utils.Jsr305State
-import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
 
-abstract class FirSession(val sessionProvider: FirSessionProvider?) {
+interface FirSessionComponent
+
+abstract class FirSession(val sessionProvider: FirSessionProvider?) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {
+    companion object : TypeRegistry<FirSessionComponent, FirSessionComponent>() {
+        inline fun <reified T : FirSessionComponent> sessionComponentAccessor(): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
+            return generateAccessor(T::class)
+        }
+    }
+
     open val moduleInfo: ModuleInfo? get() = null
 
     val jsr305State: Jsr305State? get() = null
 
     val builtinTypes: BuiltinTypes = BuiltinTypes()
 
-    val components: MutableMap<KClass<*>, Any> = mutableMapOf()
+    final override val typeRegistry: TypeRegistry<FirSessionComponent, FirSessionComponent> = Companion
 
-    internal val componentArray = ComponentArray()
-
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> getService(kclass: KClass<T>): T =
-        components[kclass] as T
-
-    protected fun <T : Any /* TODO: FirSessionComponent */> registerComponent(tClass: KClass<T>, t: T) {
-        assert(tClass !in components) { "Already registered component" }
-        components[tClass] = t
-
-        // TODO: Make t of FirSessionComponent
-        if (t is FirSessionComponent) {
-            @Suppress("UNCHECKED_CAST")
-            componentArray[(tClass as KClass<FirSessionComponent>).componentId()] = t
-        }
+    fun register(tClass: KClass<out FirSessionComponent>, value: FirSessionComponent) {
+        registerComponent(tClass, value)
     }
+}
+
+interface FirSessionProvider {
+    val project: Project
+
+    fun getSession(moduleInfo: ModuleInfo): FirSession?
 }
 
 class BuiltinTypes {
@@ -52,62 +53,4 @@ class BuiltinTypes {
     val nothingType: FirImplicitBuiltinTypeRef = FirImplicitNothingTypeRef(null)
     val nullableNothingType: FirImplicitBuiltinTypeRef = FirImplicitNullableNothingTypeRef(null)
     val stringType: FirImplicitBuiltinTypeRef = FirImplicitStringTypeRef(null)
-}
-
-interface FirSessionProvider {
-    val project: Project
-
-    fun getSession(moduleInfo: ModuleInfo): FirSession?
-}
-
-@Deprecated("This is very slow, introduce & use componentArrayAccessor instead")
-inline fun <reified T : Any> FirSession.service(): T =
-    getService(T::class)
-
-internal object ComponentTypeRegistry {
-    private val idPerType = mutableMapOf<KClass<out FirSessionComponent>, Int>()
-
-    fun <T : FirSessionComponent> id(kClass: KClass<T>): Int {
-        return idPerType.getOrPut(kClass) { idPerType.size }
-    }
-}
-
-
-private fun <T : FirSessionComponent> KClass<T>.componentId(): Int {
-    return ComponentTypeRegistry.id(this)
-}
-
-
-class ComponentArrayAccessor<T : FirSessionComponent>(val type: KClass<T>) : ReadOnlyProperty<FirSession, T> {
-    val id: Int = type.componentId()
-    override fun getValue(thisRef: FirSession, property: KProperty<*>): T {
-        @Suppress("UNCHECKED_CAST")
-        return thisRef.componentArray.getOrNull(id) as? T ?: error("No '$type'($id) component in session: $thisRef")
-    }
-}
-
-inline fun <reified T : FirSessionComponent> componentArrayAccessor(): ComponentArrayAccessor<T> {
-    return ComponentArrayAccessor(T::class)
-}
-
-interface FirSessionComponent
-
-internal class ComponentArray : AbstractList<FirSessionComponent?>() {
-    override val size: Int
-        get() = data.size
-    private var data = arrayOfNulls<FirSessionComponent>(20)
-    private fun ensureCapacity(index: Int) {
-        if (data.size < index) {
-            data = data.copyOf(data.size * 2)
-        }
-    }
-
-    operator fun set(index: Int, value: FirSessionComponent) {
-        ensureCapacity(index)
-        data[index] = value
-    }
-
-    override operator fun get(index: Int): FirSessionComponent? {
-        return data[index]
-    }
 }

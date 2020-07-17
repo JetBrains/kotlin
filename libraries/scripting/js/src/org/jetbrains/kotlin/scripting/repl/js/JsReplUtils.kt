@@ -40,7 +40,7 @@ class JsEvaluationState(lock: ReentrantReadWriteLock, val engine: ScriptEngine) 
 class JsCompiledScript(
     val jsCode: String,
     override val compilationConfiguration: ScriptCompilationConfiguration
-) : CompiledScript<Any> {
+) : CompiledScript {
     override suspend fun getClass(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<KClass<*>> {
         throw IllegalStateException("Class is not available for JS implementation")
     }

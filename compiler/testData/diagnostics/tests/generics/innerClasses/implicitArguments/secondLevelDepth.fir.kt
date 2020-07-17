@@ -14,5 +14,5 @@ class DerivedOuter : Outer<String>() {
 }
 
 fun foo() {
-    DerivedOuter().DerivedInner().foo() checkType { <!UNRESOLVED_REFERENCE!>_<!><Outer<String>.Inner<Int>.Inner2<Char>>() }
+    DerivedOuter().DerivedInner().foo() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Outer<String>.Inner<Int>.Inner2<Char>>() }
 }

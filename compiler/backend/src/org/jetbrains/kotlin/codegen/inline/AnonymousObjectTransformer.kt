@@ -42,8 +42,7 @@ class AnonymousObjectTransformer(
     private val fieldNames = hashMapOf<String, MutableList<String>>()
 
     private var constructor: MethodNode? = null
-    private var sourceInfo: String? = null
-    private var debugInfo: String? = null
+    private lateinit var sourceMap: SMAP
     private lateinit var sourceMapper: SourceMapper
     private val languageVersionSettings = inliningContext.state.languageVersionSettings
 
@@ -56,6 +55,8 @@ class AnonymousObjectTransformer(
         val methodsToTransform = ArrayList<MethodNode>()
         val metadataReader = ReadKotlinClassHeaderAnnotationVisitor()
         lateinit var superClassName: String
+        var sourceInfo: String? = null
+        var debugInfo: String? = null
 
         createClassReader().accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
@@ -113,22 +114,12 @@ class AnonymousObjectTransformer(
             override fun visitEnd() {}
         }, ClassReader.SKIP_FRAMES)
 
-        if (!inliningContext.isInliningLambda) {
-            sourceMapper = if (debugInfo != null && !debugInfo!!.isEmpty()) {
-                SourceMapper.createFromSmap(SMAPParser.parse(debugInfo!!))
-            } else {
-                //seems we can't do any clever mapping cause we don't know any about original class name
-                IdenticalSourceMapper
-            }
-            if (sourceInfo != null && !GENERATE_SMAP) {
-                classBuilder.visitSource(sourceInfo!!, debugInfo)
-            }
-        } else {
-            if (sourceInfo != null) {
-                classBuilder.visitSource(sourceInfo!!, debugInfo)
-            }
-            sourceMapper = IdenticalSourceMapper
-        }
+        // When regenerating objects in inline lambdas, keep the old SMAP and don't remap the line numbers to
+        // save time. The result is effectively the same anyway.
+        val debugInfoToParse = if (inliningContext.isInliningLambda) null else debugInfo
+        val (firstLine, lastLine) = (methodsToTransform + listOfNotNull(constructor)).lineNumberRange()
+        sourceMap = SMAPParser.parseOrCreateDefault(debugInfoToParse, sourceInfo, oldObjectType.internalName, firstLine, lastLine)
+        sourceMapper = SourceMapper(sourceMap.fileMappings.firstOrNull { it.name == sourceInfo }?.toSourceInfo())
 
         val allCapturedParamBuilder = ParametersBuilder.newBuilder()
         val constructorParamBuilder = ParametersBuilder.newBuilder()
@@ -144,8 +135,7 @@ class AnonymousObjectTransformer(
             inliningContext,
             classBuilder,
             methodsToTransform,
-            superClassName,
-            allCapturedParamBuilder.listCaptured()
+            superClassName
         )
         loop@ for (next in methodsToTransform) {
             val deferringVisitor =
@@ -184,7 +174,11 @@ class AnonymousObjectTransformer(
             }
         }
 
-        classBuilder.visitSMAP(sourceMapper, !state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+        if (GENERATE_SMAP && !inliningContext.isInliningLambda) {
+            classBuilder.visitSMAP(sourceMapper, !state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+        } else if (sourceInfo != null) {
+            classBuilder.visitSource(sourceInfo!!, debugInfo)
+        }
 
         val visitor = classBuilder.visitor
         innerClassNodes.forEach { node ->
@@ -297,7 +291,7 @@ class AnonymousObjectTransformer(
             remapper,
             isSameModule,
             "Transformer for " + transformationInfo.oldClassName,
-            sourceMapper,
+            SourceMapCopier(sourceMapper, sourceMap),
             InlineCallSiteInfo(
                 transformationInfo.oldClassName,
                 sourceNode.name,
@@ -526,7 +520,7 @@ class AnonymousObjectTransformer(
                         alreadyAddedParam?.newFieldName ?: getNewFieldName(desc.fieldName, false),
                         alreadyAddedParam != null
                     )
-                    if (info is ExpressionLambda && info.isCapturedSuspend(desc, inliningContext)) {
+                    if (info is ExpressionLambda && info.isCapturedSuspend(desc)) {
                         recapturedParamInfo.functionalArgument = NonInlineableArgumentForInlineableParameterCalledInSuspend
                     }
                     val composed = StackValue.field(

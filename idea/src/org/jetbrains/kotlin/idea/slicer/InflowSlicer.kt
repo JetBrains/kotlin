@@ -6,62 +6,72 @@
 package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.psi.PsiCall
-import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
+import org.jetbrains.kotlin.idea.findUsages.processAllUsages
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpression
-import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
-import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTargetElementEvaluator
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class InflowSlicer(
-    element: KtExpression,
+    element: KtElement,
     processor: SliceUsageProcessor,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
 
-    override fun processChildren() {
-        if (parentUsage.forcedExpressionMode) {
-            processExpression(element)
+    override fun processChildren(forcedExpressionMode: Boolean) {
+        if (forcedExpressionMode) {
+            (element as? KtExpression)?.let { processExpression(it) }
             return
         }
 
         when (element) {
             is KtProperty -> processProperty(element)
-            // for parameter, we include overriders only when the feature is invoked on parameter itself
+
+            // include overriders only when invoked on the parameter declaration
             is KtParameter -> processParameter(parameter = element, includeOverriders = parentUsage.parent == null)
+
             is KtDeclarationWithBody -> element.processBody()
-            else -> processExpression(element)
+
+            is KtTypeReference -> {
+                val parent = element.parent
+                require(parent is KtCallableDeclaration)
+                require(element == parent.receiverTypeReference)
+                // include overriders only when invoked on receiver type in the declaration
+                processExtensionReceiver(parent, includeOverriders = parentUsage.parent == null)
+            }
+
+            is KtExpression -> processExpression(element)
         }
     }
 
@@ -70,7 +80,7 @@ class InflowSlicer(
             val getter = (property.unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter ?: return
             val bindingContext = property.analyzeWithContent()
             val delegateGetterResolvedCall = bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getter]
-            delegateGetterResolvedCall?.resultingDescriptor?.originalSource?.getPsi()?.passToProcessor()
+            delegateGetterResolvedCall?.resultingDescriptor?.toPsi()?.passToProcessor()
             return
         }
 
@@ -105,46 +115,49 @@ class InflowSlicer(
         ) {
 
             ReferencesSearch.search(function, analysisScope)
-                .filterIsInstance<KtPropertyDelegationMethodsReference>()
-                .mapNotNull { it.element.parent as? KtProperty }
-                .forEach { it.processPropertyAssignments() }
+                .forEach(Processor { reference ->
+                    if (reference is KtPropertyDelegationMethodsReference) {
+                        val property = reference.element.parent as? KtProperty
+                        property?.processPropertyAssignments()
+                    }
+                    true
+                })
         }
 
-        val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
+        val parameterDescriptor = parameter.resolveToParameterDescriptorIfAny() ?: return
 
         if (function is KtFunction) {
-            fun extractArgumentExpression(refElement: PsiElement): PsiElement? {
-                val refParent = refElement.parent
-                return when {
-                    refElement is KtExpression -> {
-                        val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return null
-                        val resolvedCall = callElement.resolveToCall() ?: return null
-                        val callParameterDescriptor = resolvedCall.resultingDescriptor.valueParameters[parameterDescriptor.index]
-                        val resolvedArgument = resolvedCall.valueArguments[callParameterDescriptor] ?: return null
-                        when (resolvedArgument) {
-                            is DefaultValueArgument -> parameter.defaultValue
-                            is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
-                            else -> null
-                        }
-                    }
+            processCalls(function, includeOverriders, ArgumentSliceProducer(parameterDescriptor))
+        }
 
-                    refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(parameter.parameterIndex())
-
-                    else -> null
+        val valVar = parameter.valOrVarKeyword.toValVar()
+        if (valVar != KotlinValVar.None) {
+            val classOrObject = (parameter.ownerFunction as? KtPrimaryConstructor)?.getContainingClassOrObject()
+            if (classOrObject is KtClass && classOrObject.isData()) {
+                // Search usages of constructor parameter in form of named argument of call to "copy" function.
+                // We will miss calls of "copy" with positional parameters but it's unlikely someone write such code.
+                // Also, we will find named arguments of constructor calls but we need them anyway (already found above).
+                val options = KotlinPropertyFindUsagesOptions(project).apply {
+                    searchScope = analysisScope
+                }
+                //TODO: optimizations to search only in files where "copy" word is present and also not resolve anything except named arguments
+                parameter.processAllUsages(options) { usageInfo ->
+                    (((usageInfo.element as? KtNameReferenceExpression)
+                        ?.parent as? KtValueArgumentName)
+                        ?.parent as? KtValueArgument)
+                        ?.getArgumentExpression()
+                        ?.passToProcessorAsValue()
                 }
             }
 
-            fun processCall(usageInfo: UsageInfo) {
-                val refElement = usageInfo.element ?: return
-                extractArgumentExpression(refElement)?.passToProcessorAsValue()
+            if (valVar == KotlinValVar.Var) {
+                processAssignments(parameter, analysisScope)
             }
-
-            processCalls(function, analysisScope, includeOverriders, ::processCall)
         }
+    }
 
-        if (parameter.valOrVarKeyword.toValVar() == KotlinValVar.Var) {
-            processAssignments(parameter, analysisScope)
-        }
+    private fun processExtensionReceiver(declaration: KtCallableDeclaration, includeOverriders: Boolean) {
+        processCalls(declaration, includeOverriders, ReceiverSliceProducer)
     }
 
     private fun processExpression(expression: KtExpression) {
@@ -153,9 +166,29 @@ class InflowSlicer(
             is KtNamedFunction -> expression.takeIf { expression.name == null }
             else -> null
         }
+        val currentBehaviour = mode.currentBehaviour
         if (lambda != null) {
-            if (parentUsage.lambdaLevel > 0) {
-                lambda.passToProcessor(parentUsage.lambdaLevel - 1)
+            when (currentBehaviour) {
+                is LambdaResultInflowBehaviour -> {
+                    lambda.passToProcessor(mode.dropBehaviour())
+                }
+
+                is LambdaParameterInflowBehaviour -> {
+                    val valueParameters = lambda.valueParameters
+                    if (valueParameters.isEmpty() && lambda is KtFunctionLiteral) {
+                        if (currentBehaviour.parameterIndex == 0) {
+                            lambda.implicitItUsages().forEach {
+                                it.passToProcessor(mode.dropBehaviour())
+                            }
+                        }
+                    } else {
+                        valueParameters.getOrNull(currentBehaviour.parameterIndex)?.passToProcessor(mode.dropBehaviour())
+                    }
+                }
+
+                is LambdaReceiverInflowBehaviour -> {
+                    processExtensionReceiverUsages(lambda, lambda, mode.dropBehaviour())
+                }
             }
             return
         }
@@ -171,18 +204,50 @@ class InflowSlicer(
                     }
                     return
                 }
+
                 val accessedDescriptor = createdAt.target.accessedDescriptor ?: return
-                val accessedDeclaration = accessedDescriptor.originalSource.getPsi() ?: return
-                if (accessedDescriptor is SyntheticFieldDescriptor) {
-                    val property = accessedDeclaration as? KtProperty ?: return
-                    if (accessedDescriptor.propertyDescriptor.setter?.isDefault != false) {
-                        property.processPropertyAssignments()
-                    } else {
-                        property.setter?.processBackingFieldAssignments()
+                val accessedDeclaration = accessedDescriptor.toPsi()
+                when (accessedDescriptor) {
+                    is SyntheticFieldDescriptor -> {
+                        val property = accessedDeclaration as? KtProperty ?: return
+                        if (accessedDescriptor.propertyDescriptor.setter?.isDefault != false) {
+                            property.processPropertyAssignments()
+                        } else {
+                            property.setter?.processBackingFieldAssignments()
+                        }
                     }
-                    return
+
+                    is ReceiverParameterDescriptor -> {
+                        //TODO: handle non-extension receivers?
+                        val callable = accessedDescriptor.containingDeclaration as? CallableDescriptor ?: return
+                        when (val declaration = callable.toPsi()) {
+                            is KtFunctionLiteral -> {
+                                declaration.passToProcessorAsValue(mode.withBehaviour(LambdaCallsBehaviour(ReceiverSliceProducer)))
+                            }
+
+                            is KtCallableDeclaration -> {
+                                declaration.receiverTypeReference?.passToProcessor()
+                            }
+                        }
+                    }
+
+                    is ValueParameterDescriptor -> {
+                        if (accessedDeclaration == null) {
+                            val anonymousFunction = accessedDescriptor.containingDeclaration as? AnonymousFunctionDescriptor
+                            if (anonymousFunction != null && accessedDescriptor.name.asString() == "it") {
+                                val functionLiteral = anonymousFunction.source.getPsi() as KtFunctionLiteral
+                                val parameterDescriptor = anonymousFunction.valueParameters.first()
+                                processCalls(functionLiteral, false, ArgumentSliceProducer(parameterDescriptor))
+                            }
+                        } else {
+                            accessedDeclaration.passDeclarationToProcessorWithOverriders()
+                        }
+                    }
+
+                    else -> {
+                        accessedDeclaration?.passDeclarationToProcessorWithOverriders()
+                    }
                 }
-                accessedDeclaration.passDeclarationToProcessorWithOverriders()
             }
 
             is MergeInstruction -> createdAt.passInputsToProcessor()
@@ -192,11 +257,26 @@ class InflowSlicer(
 
                 MagicKind.BOUND_CALLABLE_REFERENCE, MagicKind.UNBOUND_CALLABLE_REFERENCE -> {
                     val callableRefExpr = expressionValue.element as? KtCallableReferenceExpression ?: return
-                    val bindingContext = expression.analyze()
+                    val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
                     val referencedDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, callableRefExpr.callableReference] ?: return
-                    val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.originalSource?.getPsi()
-                        ?: return
-                    referencedDeclaration.passToProcessor(parentUsage.lambdaLevel - 1)
+                    val referencedDeclaration = (referencedDescriptor as? DeclarationDescriptorWithSource)?.toPsi() ?: return
+                    when (currentBehaviour) {
+                        is LambdaResultInflowBehaviour -> {
+                            referencedDeclaration.passToProcessor(mode.dropBehaviour())
+                        }
+
+                        is LambdaParameterInflowBehaviour -> {
+                            val parameter = (referencedDeclaration as? KtCallableDeclaration)
+                                ?.valueParameters?.getOrNull(currentBehaviour.parameterIndex)
+                            parameter?.passToProcessor(mode.dropBehaviour())
+                        }
+
+                        is LambdaReceiverInflowBehaviour -> {
+                            val parameter = (referencedDeclaration as? KtCallableDeclaration)
+                                ?.valueParameters?.getOrNull(0)
+                            parameter?.passToProcessor(mode.dropBehaviour())
+                        }
+                    }
                 }
 
                 else -> return
@@ -206,9 +286,10 @@ class InflowSlicer(
                 val resolvedCall = createdAt.resolvedCall
                 val resultingDescriptor = resolvedCall.resultingDescriptor
                 if (resultingDescriptor is FunctionInvokeDescriptor) {
-                    (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression?.passToProcessorAsValue(parentUsage.lambdaLevel + 1)
+                    (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression
+                        ?.passToProcessorAsValue(mode.withBehaviour(LambdaResultInflowBehaviour))
                 } else {
-                    resultingDescriptor.originalSource.getPsi()?.passDeclarationToProcessorWithOverriders()
+                    resultingDescriptor.toPsi()?.passToProcessorInCallMode(createdAt.element, withOverriders = true)
                 }
             }
         }
@@ -283,12 +364,24 @@ class InflowSlicer(
         }
     }
 
-    private fun PsiElement.passToProcessorAsValue(lambdaLevel: Int = parentUsage.lambdaLevel) = passToProcessor(lambdaLevel, true)
+    override fun processCalls(callable: KtCallableDeclaration, includeOverriders: Boolean, sliceProducer: SliceProducer) {
+        if (callable is KtNamedFunction) {
+            val (newMode, callElement) = mode.popInlineFunctionCall(callable)
+            if (newMode != null && callElement != null) {
+                val sliceUsage = KotlinSliceUsage(callElement, parentUsage, newMode, false)
+                sliceProducer.produceAndProcess(sliceUsage, newMode, parentUsage, processor)
+                return
+            }
+        }
 
-    private fun PsiElement.passDeclarationToProcessorWithOverriders() {
-        passToProcessor()
-        HierarchySearchRequest(this, analysisScope)
-            .searchOverriders()
-            .forEach { it.namedUnwrappedElement?.passToProcessor() }
+        super.processCalls(callable, includeOverriders, sliceProducer)
+    }
+
+    private fun KtFunctionLiteral.implicitItUsages(): Collection<KtSimpleNameExpression> {
+        return collectDescendantsOfType(fun(expression: KtSimpleNameExpression): Boolean {
+            if (expression.getQualifiedExpressionForSelector() != null || expression.getReferencedName() != "it") return false
+            val lBrace = KotlinTargetElementEvaluator.findLambdaOpenLBraceForGeneratedIt(expression.mainReference) ?: return false
+            return lBrace == this.lBrace.node.treeNext.psi
+        })
     }
 }

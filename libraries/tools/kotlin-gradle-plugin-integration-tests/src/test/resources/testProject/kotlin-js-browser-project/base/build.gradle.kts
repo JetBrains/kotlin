@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.BOTH as BOTH_TYPE
+
 plugins {
     kotlin("js")
 }
@@ -7,7 +9,9 @@ dependencies {
 }
 
 kotlin {
-    target {
+    js("both")
+    js(BOTH)
+    js(BOTH_TYPE) {
         useCommonJs()
         browser {
         }

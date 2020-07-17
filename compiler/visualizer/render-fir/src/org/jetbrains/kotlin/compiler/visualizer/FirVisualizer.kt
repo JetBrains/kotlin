@@ -349,7 +349,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             if (valueParameter.isVararg) {
                 data.append("vararg ")
             }
-            valueParameter.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType(session)?.let { data.append(it.render()) }
+            valueParameter.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType()?.let { data.append(it.render()) }
                 ?: valueParameter.returnTypeRef.accept(this, data)
             valueParameter.defaultValue?.let { data.append(" = ...") }
         }
@@ -404,6 +404,17 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: StringBuilder) {
             //skip rendering for as/as?/is/!is
+        }
+
+        override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: StringBuilder) {
+            safeCallExpression.receiver.accept(this, data)
+            data.append("?.{ ")
+            safeCallExpression.regularQualifiedAccess.accept(this, data)
+            data.append(" }")
+        }
+
+        override fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: StringBuilder) {
+            data.append("\$subj\$")
         }
 
         override fun visitFunctionCall(functionCall: FirFunctionCall, data: StringBuilder) {

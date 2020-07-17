@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -136,7 +136,11 @@ enum class SequenceClass {
     stateful
 }
 
-data class Deprecation(val message: String, val replaceWith: String? = null, val level: DeprecationLevel = DeprecationLevel.WARNING)
+data class Deprecation(
+    val message: String, val replaceWith: String? = null, val level: DeprecationLevel = DeprecationLevel.WARNING,
+    val warningSince: String? = null, val errorSince: String? = null, val hiddenSince: String? = null)
 val forBinaryCompatibility = Deprecation("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 
 data class ThrowsException(val exceptionType: String, val reason: String)
+
+fun String.ifOrEmpty(condition: Boolean): String = if (condition) this else ""

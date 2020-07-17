@@ -1,0 +1,23 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        google()
+        jcenter()
+        maven {
+            url 'https://dl.bintray.com/kotlin/kotlin-dev'
+        }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.namespace == 'com.android' || requested.id.name == 'kotlin-android-extensions') {
+                useModule('com.android.tools.build:gradle:3.5.2')
+            }
+        }
+    }
+}
+rootProject.name = 'multiplatformMobileApplication'
+
+
+include(':shared')
+include(':androidApp')

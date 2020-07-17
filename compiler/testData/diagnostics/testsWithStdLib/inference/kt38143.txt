@@ -1,0 +1,35 @@
+package
+
+public fun main(): kotlin.Unit
+public fun </*0*/ O> UseCase<kotlin.Unit, O>.execute(): O
+
+public final class Bar : UseCase<kotlin.Unit, kotlin.collections.List<kotlin.collections.List<kotlin.String>>> {
+    public constructor Bar()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun execute(/*0*/ input: kotlin.Unit): kotlin.collections.List<kotlin.collections.List<kotlin.String>>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Baz : UseCase<kotlin.Unit, kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.String>>>>>>> {
+    public constructor Baz()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun execute(/*0*/ input: kotlin.Unit): kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.String>>>>>>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo : UseCase<kotlin.Unit, kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.String>>>> {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun execute(/*0*/ input: kotlin.Unit): kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.String>>>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface UseCase</*0*/ in I, /*1*/ out O> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun execute(/*0*/ input: I): O
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

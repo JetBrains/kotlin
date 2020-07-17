@@ -7,7 +7,7 @@ FILE: F.kt
     }
     public? final? class B : A {
         public? constructor(): R|B| {
-            super<R|kotlin/Any|>()
+            super<<implicit>>()
         }
 
     }

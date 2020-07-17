@@ -53,6 +53,8 @@ class ConeTypeMismatchError(val expectedType: ConeKotlinType, val actualType: Co
         get() = "Type mismatch. Expected: $expectedType, Actual: $actualType"
 }
 
+class ConeContractDescriptionError(override val reason: String) : ConeDiagnostic()
+
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {
     return when (symbol) {
         is FirClassLikeSymbol<*> -> symbol.classId.asString()

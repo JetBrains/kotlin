@@ -19,7 +19,8 @@ import java.io.File
 open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
     project: Project,
     override val platformType: KotlinPlatformType,
-    override val targetName: String
+    override val targetName: String,
+    kotlinOptionsFactory: () -> KotlinOptionsType
 ) : AbstractKotlinTarget(project) {
     override var disambiguationClassifier: String? = null
         internal set
@@ -40,13 +41,13 @@ open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
         @Suppress("UNCHECKED_CAST")
         project.container(
             KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>,
-            KotlinWithJavaCompilationFactory(project, this)
+            KotlinWithJavaCompilationFactory(project, this, kotlinOptionsFactory)
         )
 
     internal val defaultArtifactClassesListFile: File
         get() {
             val jarTask = project.tasks.getByName(artifactsTaskName) as Jar
-            return File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), "${sanitizeFileName(jarTask.archiveName)}-classes.txt")
+            return File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), "${sanitizeFileName(jarTask.archiveFileName.get())}-classes.txt")
         }
 }
 

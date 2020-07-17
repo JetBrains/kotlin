@@ -42,8 +42,10 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JvmDiagnosticComponents
+import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -62,7 +64,8 @@ fun createContainerForLazyResolveWithJava(
     languageVersionSettings: LanguageVersionSettings,
     useBuiltInsProvider: Boolean,
     configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
-    javaClassTracker: JavaClassesTracker? = null
+    javaClassTracker: JavaClassesTracker? = null,
+    implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null,
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatformAnalyzerServices) {
     configureModule(moduleContext, jvmPlatform, JvmPlatformAnalyzerServices, bindingTrace, languageVersionSettings)
 
@@ -72,6 +75,7 @@ fun createContainerForLazyResolveWithJava(
     useInstance(moduleContentScope)
     useInstance(packagePartProvider)
     useInstance(declarationProviderFactory)
+    useInstanceIfNotNull(implicitsResolutionFilter)
 
     useInstance(VirtualFileFinderFactory.getInstance(moduleContext.project).create(moduleContentScope))
 
@@ -121,6 +125,7 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
         useInstance((moduleContext.module.builtIns as JvmBuiltIns).settings)
         useImpl<JvmBuiltInsPackageFragmentProvider>()
     }
+    useImpl<OptionalAnnotationPackageFragmentProvider>()
 
     useInstance(javaClassTracker ?: JavaClassesTracker.Default)
     useInstance(

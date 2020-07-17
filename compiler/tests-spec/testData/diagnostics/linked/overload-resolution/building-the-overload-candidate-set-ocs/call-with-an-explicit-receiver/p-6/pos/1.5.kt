@@ -1,13 +1,14 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -DEBUG_INFO_LEAKING_THIS -EXTENSION_SHADOWED_BY_MEMBER
 // SKIP_TXT
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-268
- * PLACE: overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 6 -> sentence 1
- * RELEVANT PLACES: overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 6 -> sentence 2
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 6 -> sentence 1
+ * PRIMARY LINKS: overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 6 -> sentence 2
  * overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 6 -> sentence 3
  * overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 6 -> sentence 4
  * overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 6 -> sentence 5
@@ -24,7 +25,7 @@ package libPackage
 
 class Marker {
     fun foo() = println("non-extension member Marker.foo()")
-    val foo: Marker = <!DEBUG_INFO_LEAKING_THIS!>this<!>
+    val foo: Marker = this
     operator fun invoke() =  println("non-extension member Marker.invoke()")
 }
 
@@ -36,7 +37,7 @@ import libPackage.Marker
 
 class Case1() {
 
-    fun Marker.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>() = println("local extension marker.foo")
+    fun Marker.foo() = println("local extension marker.foo")
 
     fun test() {
         Marker().<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo()<!>
@@ -50,12 +51,12 @@ fun case1() {
 // TESTCASE NUMBER: 2
 class Case2() {
     fun test() {
-        fun Marker.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>() = println("local extension marker.foo")
+        fun Marker.foo() = println("local extension marker.foo")
         Marker().<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo()<!>
     }
 }
 
-fun Marker.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>() = println("top level extension marker.foo")
+fun Marker.foo() = println("top level extension marker.foo")
 
 fun case2() {
     Marker().<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo()<!>
@@ -63,7 +64,7 @@ fun case2() {
 
 // TESTCASE NUMBER: 3
 fun case3() {
-    fun Marker.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>() = println("local extension marker.foo")
+    fun Marker.foo() = println("local extension marker.foo")
     Marker().<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo()<!>
 }
 
@@ -75,7 +76,7 @@ fun case4(marker : Marker?) {
 // TESTCASE NUMBER: 5
 fun case5(marker : Marker?) {
     fun bar(){
-        fun Marker.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>() = println("local extension marker.foo")
+        fun Marker.foo() = println("local extension marker.foo")
         marker?.<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo()<!>
     }
     marker?.<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo()<!>

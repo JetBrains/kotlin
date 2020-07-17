@@ -42,7 +42,7 @@ fun test() {
     var x = foobar<String>()
     x = foobar<String>()
 
-    x().foo().a() checkType { <!UNRESOLVED_REFERENCE!>_<!><A<String, Double, Short, Long>>() }
+    x().foo().a() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<String, Double, Short, Long>>() }
     x().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><A<String, Double, Short, Char>>() }
 
     x = foobar<Int>()
@@ -50,6 +50,6 @@ fun test() {
     var y = noParameters()
     y = noParameters()
 
-    y().foo().a() checkType { <!UNRESOLVED_REFERENCE!>_<!><A<Any, Double, Short, Long>>() }
+    y().foo().a() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<Any, Double, Short, Long>>() }
     y().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><A<Any, Double, Short, Char>>() }
 }

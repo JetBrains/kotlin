@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
+import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.mapToIndex
 
@@ -35,10 +37,10 @@ abstract class ArgumentGenerator {
      * @see kotlin.reflect.jvm.internal.KCallableImpl.callBy
      */
     open fun generate(
-            valueArgumentsByIndex: List<ResolvedValueArgument>,
-            actualArgs: List<ResolvedValueArgument>,
-            // may be null for a constructor of an object literal
-            calleeDescriptor: CallableDescriptor?
+        valueArgumentsByIndex: List<ResolvedValueArgument>,
+        actualArgs: List<ResolvedValueArgument>,
+        // may be null for a constructor of an object literal
+        calleeDescriptor: CallableDescriptor?
     ): DefaultCallArgs {
         assert(valueArgumentsByIndex.size == actualArgs.size) {
             "Value arguments collection should have same size, but ${valueArgumentsByIndex.size} != ${actualArgs.size}"
@@ -50,9 +52,9 @@ abstract class ArgumentGenerator {
             ArgumentAndDeclIndex(it, arg2Index[it]!!)
         }.toMutableList()
 
-        valueArgumentsByIndex.withIndex().forEach {
-            if (it.value is DefaultValueArgument) {
-                actualArgsWithDeclIndex.add(it.index, ArgumentAndDeclIndex(it.value, it.index))
+        for ((index, value) in valueArgumentsByIndex.withIndex()) {
+            if (value is DefaultValueArgument) {
+                actualArgsWithDeclIndex.add(index, ArgumentAndDeclIndex(value, index))
             }
         }
 
@@ -70,8 +72,7 @@ abstract class ArgumentGenerator {
                 is DefaultValueArgument -> {
                     if (calleeDescriptor?.defaultValueFromJava(declIndex) == true) {
                         generateDefaultJava(declIndex, argument)
-                    }
-                    else {
+                    } else {
                         defaultArgs.mark(declIndex)
                         generateDefault(declIndex, argument)
                     }
@@ -116,11 +117,42 @@ abstract class ArgumentGenerator {
 }
 
 private fun CallableDescriptor.defaultValueFromJava(index: Int): Boolean = DFS.ifAny(
-        listOf(this),
-        { current -> current.original.overriddenDescriptors.map { it.original } },
-        { descriptor ->
-            descriptor.original.overriddenDescriptors.isEmpty() &&
-            descriptor is JavaCallableMemberDescriptor &&
-            descriptor.valueParameters[index].declaresDefaultValue()
-        }
+    listOf(this),
+    { current -> current.original.overriddenDescriptors.map { it.original } },
+    { descriptor ->
+        descriptor.original.overriddenDescriptors.isEmpty() &&
+                descriptor is JavaCallableMemberDescriptor &&
+                descriptor.valueParameters[index].declaresDefaultValue()
+    }
 )
+
+fun shouldInvokeDefaultArgumentsStub(resolvedCall: ResolvedCall<*>): Boolean {
+    val descriptor = resolvedCall.resultingDescriptor
+    val valueArgumentsByIndex = resolvedCall.valueArgumentsByIndex ?: return false
+    for (index in valueArgumentsByIndex.indices) {
+        val resolvedValueArgument = valueArgumentsByIndex[index]
+        if (resolvedValueArgument is DefaultValueArgument && !descriptor.defaultValueFromJava(index)) {
+            return true
+        }
+    }
+    return false
+}
+
+fun getFunctionWithDefaultArguments(functionDescriptor: FunctionDescriptor): FunctionDescriptor {
+    if (functionDescriptor.containingDeclaration !is ClassDescriptor) return functionDescriptor
+    if (functionDescriptor.overriddenDescriptors.isEmpty()) return functionDescriptor
+
+    // We are calling a function with some arguments mapped as defaults.
+    // Multiple override-equivalent functions from different supertypes with (potentially different) default values
+    // can't be overridden by any function in a subtype.
+    // Also, a function overriding some other function can't introduce default parameter values.
+    // Thus, among all overridden functions should be one (and only one) function
+    // that doesn't override anything and has parameters with default values.
+    return functionDescriptor.overriddenTreeUniqueAsSequence(true)
+        .firstOrNull { function ->
+            function.kind == CallableMemberDescriptor.Kind.DECLARATION &&
+                    function.overriddenDescriptors.isEmpty() &&
+                    function.valueParameters.any { valueParameter -> valueParameter.hasDefaultValue() }
+        }
+        ?: functionDescriptor
+}

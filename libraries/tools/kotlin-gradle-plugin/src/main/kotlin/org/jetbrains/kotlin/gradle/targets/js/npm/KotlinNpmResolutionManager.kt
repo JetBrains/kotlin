@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -47,7 +47,10 @@ import java.io.File
  * by compilation that depends on this compilation. Note that package.json will be executed only for
  * required compilations, while other may be missed.
  *
- * **installed**. Global final state. Initiated by executing global `kotlinNpmInstall` task.
+ * **Prepared**.
+ * Global final state. Initiated by executing global `rootPackageJson` task.
+ *
+ * **Installed**.
  * All created package.json files will be gathered and package manager will be executed.
  * Package manager will create lock file, that will be parsed for transitive npm dependencies
  * that will be added to the root [NpmDependency] objects. `kotlinNpmInstall` task may be up-to-date.
@@ -84,61 +87,108 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
         )
 
     internal sealed class ResolutionState {
-        class Configuring(val resolver: KotlinRootNpmResolver) : ResolutionState()
-        class Installed(val resolved: KotlinRootNpmResolution) : ResolutionState()
+        abstract val npmProjects: List<NpmProject>
+
+        class Configuring(val resolver: KotlinRootNpmResolver) : ResolutionState() {
+            override val npmProjects: List<NpmProject>
+                get() = resolver.compilations.map { it.npmProject }
+        }
+
+        open class Prepared(val preparedInstallation: KotlinRootNpmResolver.Installation) : ResolutionState() {
+            override val npmProjects: List<NpmProject>
+                get() = npmProjectsByProjectResolutions(preparedInstallation.projectResolutions)
+        }
+
+        class Installed(val resolved: KotlinRootNpmResolution) : ResolutionState() {
+            override val npmProjects: List<NpmProject>
+                get() = npmProjectsByProjectResolutions(resolved.projects)
+        }
+
+        companion object {
+            fun npmProjectsByProjectResolutions(
+                resolutions: Map<Project, KotlinProjectNpmResolution>
+            ): List<NpmProject> {
+                return resolutions
+                    .values
+                    .flatMap { it.npmProjects.map { it.npmProject } }
+            }
+        }
     }
 
     @Incubating
-    fun requireInstalled() = installIfNeeded(requireUpToDateReason = "")
+    internal fun requireInstalled() = installIfNeeded(reason = "")
 
     internal fun requireConfiguringState(): KotlinRootNpmResolver =
         (this.state as? ResolutionState.Configuring ?: error("NPM Dependencies already resolved and installed")).resolver
 
-    internal fun install() = installIfNeeded(requireNotInstalled = true)
+    internal fun prepare() = prepareIfNeeded(requireNotPrepared = true)
+
+    internal fun installIfNeeded(
+        reason: String? = "",
+        args: List<String> = emptyList()
+    ): KotlinRootNpmResolution {
+        synchronized(this) {
+            if (state is ResolutionState.Installed) {
+                return (state as ResolutionState.Installed).resolved
+            }
+
+            val installUpToDate = nodeJsSettings.npmInstallTaskProvider.get().state.upToDate
+            val forceUpToDate = installUpToDate && !forceFullResolve
+
+            val installation = prepareIfNeeded(requireUpToDateReason = reason)
+            val resolution = installation
+                .install(forceUpToDate, args)
+            state = ResolutionState.Installed(resolution)
+
+            installation.closePlugins(resolution)
+
+            return resolution
+        }
+    }
 
     internal fun requireAlreadyInstalled(project: Project, reason: String = ""): KotlinProjectNpmResolution =
-        installIfNeeded(requireUpToDateReason = reason)[project]
+        installIfNeeded(reason = reason)[project]
 
     internal val packageJsonFiles: Collection<File>
-        get() = (state as ResolutionState.Configuring).resolver.compilations.map { it.npmProject.packageJsonFile }
+        get() = state.npmProjects.map { it.packageJsonFile }
 
     /**
      * @param requireUpToDateReason Check that project already resolved,
      * or it is up-to-date but just not closed. Show given message if it is not.
-     * @param requireNotInstalled Check that project is not resolved
+     * @param requireNotPrepared Check that project is not prepared
      */
-    private fun installIfNeeded(
+    private fun prepareIfNeeded(
         requireUpToDateReason: String? = null,
-        requireNotInstalled: Boolean = false
-    ): KotlinRootNpmResolution {
-        fun alreadyResolved(resolution: KotlinRootNpmResolution): KotlinRootNpmResolution {
-            if (requireNotInstalled) error("Project already resolved")
-            return resolution
+        requireNotPrepared: Boolean = false
+    ): KotlinRootNpmResolver.Installation {
+        fun alreadyResolved(installation: KotlinRootNpmResolver.Installation): KotlinRootNpmResolver.Installation {
+            if (requireNotPrepared) error("Project already prepared")
+            return installation
         }
 
         val state0 = this.state
         return when (state0) {
-            is ResolutionState.Installed -> alreadyResolved(state0.resolved)
+            is ResolutionState.Prepared -> alreadyResolved(state0.preparedInstallation)
             is ResolutionState.Configuring -> {
                 synchronized(this) {
                     val state1 = this.state
                     when (state1) {
-                        is ResolutionState.Installed -> alreadyResolved(state1.resolved)
+                        is ResolutionState.Prepared -> alreadyResolved(state1.preparedInstallation)
                         is ResolutionState.Configuring -> {
-                            val upToDate = nodeJsSettings.npmInstallTask.state.upToDate
+                            val upToDate = nodeJsSettings.rootPackageJsonTaskProvider.get().state.upToDate
                             if (requireUpToDateReason != null && !upToDate) {
                                 error("NPM dependencies should be resolved $requireUpToDateReason")
                             }
 
-                            val forceUpToDate = upToDate && !forceFullResolve
-                            state1.resolver.close(forceUpToDate).also {
-                                this.state = ResolutionState.Installed(it)
-                                state1.resolver.closePlugins(it)
+                            state1.resolver.prepareInstallation().also {
+                                this.state = ResolutionState.Prepared(it)
                             }
                         }
+                        is ResolutionState.Installed -> error("Project already installed")
                     }
                 }
             }
+            is ResolutionState.Installed -> error("Project already installed")
         }
     }
 
@@ -147,18 +197,19 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
         val resolvedProject =
             if (forceFullResolve) {
-                installIfNeeded()[project]
+                installIfNeeded(reason = null)[project]
             } else {
                 // may return null only during npm resolution
                 // (it can be called since NpmDependency added to configuration that
                 // requires resolve to build package.json, in this case we should just skip this call)
                 val state0 = state
                 when (state0) {
-                    is ResolutionState.Installed -> state0.resolved[project]
+                    is ResolutionState.Prepared -> state0.preparedInstallation[project]
                     is ResolutionState.Configuring -> {
                         return null
                         //error("Cannot use NpmDependency before :kotlinNpmInstall task execution")
                     }
+                    is ResolutionState.Installed -> state0.resolved[project]
                 }
             }
 

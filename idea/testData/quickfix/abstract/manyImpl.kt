@@ -4,6 +4,7 @@
 // ACTION: Make internal
 // ACTION: Make private
 // ACTION: Extract 'X' from current file
+// ACTION: Implement members
 
 interface D {
     fun foo()

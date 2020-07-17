@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.js.isJs
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -58,13 +56,6 @@ object KSerializerDescriptorResolver {
         if (isSerialInfoImpl(thisDescriptor)) {
             supertypes.add((thisDescriptor.containingDeclaration as LazyClassDescriptor).toSimpleType(false))
         }
-    }
-
-    private fun ClassDescriptor.needSerializerFactory(): Boolean {
-        if (this.platform?.isNative() != true) return false
-        val serializableClass = getSerializableClassDescriptorByCompanion(this) ?: return false
-        if (serializableClass.declaredTypeParameters.isEmpty()) return false
-        return true
     }
 
     fun addSerializerFactorySuperType(classDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
@@ -213,11 +204,16 @@ object KSerializerDescriptorResolver {
                 shouldAddSerializerFunction { classDescriptor.checkSaveMethodParameters(it.valueParameters) }
         val isLoad = name == SerialEntityNames.LOAD_NAME &&
                 shouldAddSerializerFunction { classDescriptor.checkLoadMethodParameters(it.valueParameters) }
-        val isDescriptorGetter = name == SerialEntityNames.GENERATED_DESCRIPTOR_GETTER &&
+        val isDescriptorGetter = name == SerialEntityNames.CHILD_SERIALIZERS_GETTER &&
                 thisDescriptor.typeConstructor.supertypes.any(::isGeneratedKSerializer) &&
                 shouldAddSerializerFunction { true /* TODO? */ }
 
-        if (isSave || isLoad || isDescriptorGetter) {
+        val isTypeParamsSerializersGetter = name == SerialEntityNames.TYPE_PARAMS_SERIALIZERS_GETTER &&
+                thisDescriptor.typeConstructor.supertypes.any(::isGeneratedKSerializer) &&
+                classDescriptor.declaredTypeParameters.isNotEmpty() &&
+                shouldAddSerializerFunction { true /* TODO? */ }
+
+        if (isSave || isLoad || isDescriptorGetter || isTypeParamsSerializersGetter) {
             result.add(doCreateSerializerFunction(thisDescriptor, name))
         }
     }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 interface Foo {
     fun foo(a: Double = 1.0): Double
 }

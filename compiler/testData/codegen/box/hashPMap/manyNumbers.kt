@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JVM
 
+// Out of memory on Android 4.4
+// IGNORE_BACKEND: ANDROID
+
 // WITH_REFLECT
 
 import java.util.*

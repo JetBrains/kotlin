@@ -140,16 +140,44 @@ val KotlinMultiplatformVersion?.isNewMPP: Boolean
 val KotlinMultiplatformVersion?.isHmpp: Boolean
     get() = this == KotlinMultiplatformVersion.M3
 
-data class ExternalSystemTestTask(val testName: String, val externalSystemProjectId: String, val targetName: String?) {
+interface ExternalSystemRunTask {
+    val taskName: String
+    val externalSystemProjectId: String
+    val targetName: String?
+}
 
-    fun toStringRepresentation() = "$testName|$externalSystemProjectId|$targetName"
+data class ExternalSystemTestRunTask(
+    override val taskName: String,
+    override val externalSystemProjectId: String,
+    override val targetName: String?
+) : ExternalSystemRunTask {
+
+    fun toStringRepresentation() = "$taskName|$externalSystemProjectId|$targetName"
 
     companion object {
         fun fromStringRepresentation(line: String) =
-            line.split("|").let { if (it.size == 3) ExternalSystemTestTask(it[0], it[1], it[2]) else null }
+            line.split("|").let { if (it.size == 3) ExternalSystemTestRunTask(it[0], it[1], it[2]) else null }
     }
 
-    override fun toString() = "$testName@$externalSystemProjectId [$targetName]"
+    override fun toString() = "$taskName@$externalSystemProjectId [$targetName]"
+}
+
+data class ExternalSystemNativeMainRunTask(
+    override val taskName: String,
+    override val externalSystemProjectId: String,
+    override val targetName: String?,
+    val entryPoint: String,
+    val debuggable: Boolean,
+) : ExternalSystemRunTask {
+
+    fun toStringRepresentation() = "$taskName|$externalSystemProjectId|$targetName|$entryPoint|$debuggable"
+
+    companion object {
+        fun fromStringRepresentation(line: String): ExternalSystemNativeMainRunTask? =
+            line.split("|").let {
+                if (it.size == 5) ExternalSystemNativeMainRunTask(it[0], it[1], it[2], it[3], it[4].toBoolean()) else null
+            }
+    }
 }
 
 class KotlinFacetSettings {
@@ -209,13 +237,17 @@ class KotlinFacetSettings {
     var languageLevel: LanguageVersion?
         get() = compilerArguments?.languageVersion?.let { LanguageVersion.fromFullVersionString(it) }
         set(value) {
-            compilerArguments!!.languageVersion = value?.versionString
+            compilerArguments?.apply {
+                languageVersion = value?.versionString
+            }
         }
 
     var apiLevel: LanguageVersion?
         get() = compilerArguments?.apiVersion?.let { LanguageVersion.fromFullVersionString(it) }
         set(value) {
-            compilerArguments!!.apiVersion = value?.versionString
+            compilerArguments?.apply {
+                apiVersion = value?.versionString
+            }
         }
 
     var targetPlatform: TargetPlatform? = null
@@ -231,7 +263,7 @@ class KotlinFacetSettings {
             return field
         }
 
-    var externalSystemTestTasks: List<ExternalSystemTestTask> = emptyList()
+    var externalSystemRunTasks: List<ExternalSystemRunTask> = emptyList()
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(

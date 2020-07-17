@@ -29,6 +29,8 @@ open class KaptExtension {
 
     open var correctErrorTypes: Boolean = false
 
+    open var dumpDefaultParameterValues: Boolean = false
+
     open var mapDiagnosticLocations: Boolean = false
 
     open var strictMode: Boolean = false

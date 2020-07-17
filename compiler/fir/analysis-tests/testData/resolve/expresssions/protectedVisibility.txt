@@ -24,11 +24,11 @@ FILE: protectedVisibility.kt
         }
 
         protected open class Nested : R|kotlin/Any| {
-            public[protected (in different classes)] constructor(): R|Protected.Nested| {
+            public[protected] constructor(): R|Protected.Nested| {
                 super<R|kotlin/Any|>()
             }
 
-            public[protected (in different classes)] final fun foo(): R|kotlin/Unit| {
+            public[protected] final fun foo(): R|kotlin/Unit| {
                 this@R|/Protected.Nested|.R|/Protected.Nested.bar|()
             }
 
@@ -101,7 +101,7 @@ FILE: protectedVisibility.kt
         }
 
         public final override fun foo(): R|kotlin/Int| {
-            ^foo super<R|Generic<kotlin/Int>|>.R|FakeOverride</Generic.foo: R|kotlin/Int|>|()
+            ^foo this@R|/DerivedGeneric|.super<R|Generic<kotlin/Int>|>.R|FakeOverride</Generic.foo: R|kotlin/Int|>|()
         }
 
     }

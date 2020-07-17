@@ -533,6 +533,8 @@ public fun <T : Comparable<T>> Sequence<T>.sorted(): Sequence<T> {
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  *
  * The operation is _intermediate_ and _stateful_.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortedBy
  */
 public inline fun <T, R : Comparable<R>> Sequence<T>.sortedBy(crossinline selector: (T) -> R?): Sequence<T> {
     return sortedWith(compareBy(selector))
@@ -770,8 +772,112 @@ public fun <T> Sequence<T>.toSet(): Set<T> {
  * 
  * @sample samples.collections.Collections.Transformations.flatMap
  */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapIterable")
+public fun <T, R> Sequence<T>.flatMap(transform: (T) -> Iterable<R>): Sequence<R> {
+    return FlatteningSequence(this, transform, Iterable<R>::iterator)
+}
+
+/**
+ * Returns a single sequence of all elements from results of [transform] function being invoked on each element of original sequence.
+ *
+ * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
+ */
 public fun <T, R> Sequence<T>.flatMap(transform: (T) -> Sequence<R>): Sequence<R> {
-    return FlatteningSequence(this, transform, { it.iterator() })
+    return FlatteningSequence(this, transform, Sequence<R>::iterator)
+}
+
+/**
+ * Returns a single sequence of all elements yielded from results of [transform] function being invoked on each element
+ * and its index in the original sequence.
+ *
+ * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMapIndexed
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapIndexedIterable")
+public fun <T, R> Sequence<T>.flatMapIndexed(transform: (index: Int, T) -> Iterable<R>): Sequence<R> {
+    return flatMapIndexed(this, transform, Iterable<R>::iterator)
+}
+
+/**
+ * Returns a single sequence of all elements yielded from results of [transform] function being invoked on each element
+ * and its index in the original sequence.
+ *
+ * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMapIndexed
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapIndexedSequence")
+public fun <T, R> Sequence<T>.flatMapIndexed(transform: (index: Int, T) -> Sequence<R>): Sequence<R> {
+    return flatMapIndexed(this, transform, Sequence<R>::iterator)
+}
+
+/**
+ * Appends all elements yielded from results of [transform] function being invoked on each element
+ * and its index in the original sequence, to the given [destination].
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@kotlin.internal.InlineOnly
+public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Iterable<R>): C {
+    var index = 0
+    for (element in this) {
+        val list = transform(checkIndexOverflow(index++), element)
+        destination.addAll(list)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements yielded from results of [transform] function being invoked on each element
+ * and its index in the original sequence, to the given [destination].
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapIndexedSequenceTo")
+@kotlin.internal.InlineOnly
+public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Sequence<R>): C {
+    var index = 0
+    for (element in this) {
+        val list = transform(checkIndexOverflow(index++), element)
+        destination.addAll(list)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements yielded from results of [transform] function being invoked on each element of original sequence, to the given [destination].
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("flatMapIterableTo")
+public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
+    for (element in this) {
+        val list = transform(element)
+        destination.addAll(list)
+    }
+    return destination
 }
 
 /**
@@ -1078,7 +1184,12 @@ public inline fun <T> Sequence<T>.count(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ * Accumulates value starting with [initial] value and applying [operation] from left to right
+ * to current accumulator value and each element.
+ * 
+ * Returns the specified [initial] value if the sequence is empty.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
  *
  * The operation is _terminal_.
  */
@@ -1091,6 +1202,9 @@ public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (acc: R, T) -> 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original sequence.
+ * 
+ * Returns the specified [initial] value if the sequence is empty.
+ * 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  *
@@ -1115,7 +1229,7 @@ public inline fun <T> Sequence<T>.forEach(action: (T) -> Unit): Unit {
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
- * and performs the desired action on the element.
+ * and performs the action on the element.
  *
  * The operation is _terminal_.
  */
@@ -1124,62 +1238,30 @@ public inline fun <T> Sequence<T>.forEachIndexed(action: (index: Int, T) -> Unit
     for (item in this) action(checkIndexOverflow(index++), item)
 }
 
-/**
- * Returns the largest element or `null` if there are no elements.
- * 
- * If any of elements is `NaN` returns `NaN`.
- *
- * The operation is _terminal_.
- */
+@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Sequence<Double>.max(): Double? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var max = iterator.next()
-    if (max.isNaN()) return max
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        if (e.isNaN()) return e
-        if (max < e) max = e
-    }
-    return max
+    return maxOrNull()
 }
 
-/**
- * Returns the largest element or `null` if there are no elements.
- * 
- * If any of elements is `NaN` returns `NaN`.
- *
- * The operation is _terminal_.
- */
+@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Sequence<Float>.max(): Float? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var max = iterator.next()
-    if (max.isNaN()) return max
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        if (e.isNaN()) return e
-        if (max < e) max = e
-    }
-    return max
+    return maxOrNull()
 }
 
-/**
- * Returns the largest element or `null` if there are no elements.
- *
- * The operation is _terminal_.
- */
+@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Sequence<T>.max(): T? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var max = iterator.next()
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        if (max < e) max = e
-    }
-    return max
+    return maxOrNull()
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
+public inline fun <T, R : Comparable<R>> Sequence<T>.maxBy(selector: (T) -> R): T? {
+    return maxByOrNull(selector)
 }
 
 /**
@@ -1187,9 +1269,10 @@ public fun <T : Comparable<T>> Sequence<T>.max(): T? {
  *
  * The operation is _terminal_.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.maxByOrNull
  */
-public inline fun <T, R : Comparable<R>> Sequence<T>.maxBy(selector: (T) -> R): T? {
+@SinceKotlin("1.4")
+public inline fun <T, R : Comparable<R>> Sequence<T>.maxByOrNull(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var maxElem = iterator.next()
@@ -1207,11 +1290,265 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.maxBy(selector: (T) -> R): 
 }
 
 /**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each element in the sequence.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @throws NoSuchElementException if the sequence is empty.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.maxOf(selector: (T) -> Double): Double {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var maxValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        maxValue = maxOf(maxValue, v)
+    }
+    return maxValue
+}
+
+/**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each element in the sequence.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @throws NoSuchElementException if the sequence is empty.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.maxOf(selector: (T) -> Float): Float {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var maxValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        maxValue = maxOf(maxValue, v)
+    }
+    return maxValue
+}
+
+/**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each element in the sequence.
+ * 
+ * @throws NoSuchElementException if the sequence is empty.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T, R : Comparable<R>> Sequence<T>.maxOf(selector: (T) -> R): R {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var maxValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        if (maxValue < v) {
+            maxValue = v
+        }
+    }
+    return maxValue
+}
+
+/**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each element in the sequence or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.maxOfOrNull(selector: (T) -> Double): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var maxValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        maxValue = maxOf(maxValue, v)
+    }
+    return maxValue
+}
+
+/**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each element in the sequence or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.maxOfOrNull(selector: (T) -> Float): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var maxValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        maxValue = maxOf(maxValue, v)
+    }
+    return maxValue
+}
+
+/**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each element in the sequence or `null` if there are no elements.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T, R : Comparable<R>> Sequence<T>.maxOfOrNull(selector: (T) -> R): R? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var maxValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        if (maxValue < v) {
+            maxValue = v
+        }
+    }
+    return maxValue
+}
+
+/**
+ * Returns the largest value according to the provided [comparator]
+ * among all values produced by [selector] function applied to each element in the sequence.
+ * 
+ * @throws NoSuchElementException if the sequence is empty.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T, R> Sequence<T>.maxOfWith(comparator: Comparator<in R>, selector: (T) -> R): R {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var maxValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        if (comparator.compare(maxValue, v) < 0) {
+            maxValue = v
+        }
+    }
+    return maxValue
+}
+
+/**
+ * Returns the largest value according to the provided [comparator]
+ * among all values produced by [selector] function applied to each element in the sequence or `null` if there are no elements.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T, R> Sequence<T>.maxOfWithOrNull(comparator: Comparator<in R>, selector: (T) -> R): R? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var maxValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        if (comparator.compare(maxValue, v) < 0) {
+            maxValue = v
+        }
+    }
+    return maxValue
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+public fun Sequence<Double>.maxOrNull(): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        max = maxOf(max, e)
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+public fun Sequence<Float>.maxOrNull(): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        max = maxOf(max, e)
+    }
+    return max
+}
+
+/**
+ * Returns the largest element or `null` if there are no elements.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+public fun <T : Comparable<T>> Sequence<T>.maxOrNull(): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (max < e) max = e
+    }
+    return max
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
+public fun <T> Sequence<T>.maxWith(comparator: Comparator<in T>): T? {
+    return maxWithOrNull(comparator)
+}
+
+/**
  * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
  *
  * The operation is _terminal_.
  */
-public fun <T> Sequence<T>.maxWith(comparator: Comparator<in T>): T? {
+@SinceKotlin("1.4")
+public fun <T> Sequence<T>.maxWithOrNull(comparator: Comparator<in T>): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var max = iterator.next()
@@ -1222,62 +1559,30 @@ public fun <T> Sequence<T>.maxWith(comparator: Comparator<in T>): T? {
     return max
 }
 
-/**
- * Returns the smallest element or `null` if there are no elements.
- * 
- * If any of elements is `NaN` returns `NaN`.
- *
- * The operation is _terminal_.
- */
+@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Sequence<Double>.min(): Double? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var min = iterator.next()
-    if (min.isNaN()) return min
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        if (e.isNaN()) return e
-        if (min > e) min = e
-    }
-    return min
+    return minOrNull()
 }
 
-/**
- * Returns the smallest element or `null` if there are no elements.
- * 
- * If any of elements is `NaN` returns `NaN`.
- *
- * The operation is _terminal_.
- */
+@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Sequence<Float>.min(): Float? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var min = iterator.next()
-    if (min.isNaN()) return min
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        if (e.isNaN()) return e
-        if (min > e) min = e
-    }
-    return min
+    return minOrNull()
 }
 
-/**
- * Returns the smallest element or `null` if there are no elements.
- *
- * The operation is _terminal_.
- */
+@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Sequence<T>.min(): T? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var min = iterator.next()
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        if (min > e) min = e
-    }
-    return min
+    return minOrNull()
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
+public inline fun <T, R : Comparable<R>> Sequence<T>.minBy(selector: (T) -> R): T? {
+    return minByOrNull(selector)
 }
 
 /**
@@ -1285,9 +1590,10 @@ public fun <T : Comparable<T>> Sequence<T>.min(): T? {
  *
  * The operation is _terminal_.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minByOrNull
  */
-public inline fun <T, R : Comparable<R>> Sequence<T>.minBy(selector: (T) -> R): T? {
+@SinceKotlin("1.4")
+public inline fun <T, R : Comparable<R>> Sequence<T>.minByOrNull(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minElem = iterator.next()
@@ -1305,11 +1611,265 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.minBy(selector: (T) -> R): 
 }
 
 /**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each element in the sequence.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @throws NoSuchElementException if the sequence is empty.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.minOf(selector: (T) -> Double): Double {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var minValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        minValue = minOf(minValue, v)
+    }
+    return minValue
+}
+
+/**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each element in the sequence.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ * 
+ * @throws NoSuchElementException if the sequence is empty.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.minOf(selector: (T) -> Float): Float {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var minValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        minValue = minOf(minValue, v)
+    }
+    return minValue
+}
+
+/**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each element in the sequence.
+ * 
+ * @throws NoSuchElementException if the sequence is empty.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T, R : Comparable<R>> Sequence<T>.minOf(selector: (T) -> R): R {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var minValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        if (minValue > v) {
+            minValue = v
+        }
+    }
+    return minValue
+}
+
+/**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each element in the sequence or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.minOfOrNull(selector: (T) -> Double): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var minValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        minValue = minOf(minValue, v)
+    }
+    return minValue
+}
+
+/**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each element in the sequence or `null` if there are no elements.
+ * 
+ * If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.minOfOrNull(selector: (T) -> Float): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var minValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        minValue = minOf(minValue, v)
+    }
+    return minValue
+}
+
+/**
+ * Returns the smallest value among all values produced by [selector] function
+ * applied to each element in the sequence or `null` if there are no elements.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T, R : Comparable<R>> Sequence<T>.minOfOrNull(selector: (T) -> R): R? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var minValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        if (minValue > v) {
+            minValue = v
+        }
+    }
+    return minValue
+}
+
+/**
+ * Returns the smallest value according to the provided [comparator]
+ * among all values produced by [selector] function applied to each element in the sequence.
+ * 
+ * @throws NoSuchElementException if the sequence is empty.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T, R> Sequence<T>.minOfWith(comparator: Comparator<in R>, selector: (T) -> R): R {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var minValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        if (comparator.compare(minValue, v) > 0) {
+            minValue = v
+        }
+    }
+    return minValue
+}
+
+/**
+ * Returns the smallest value according to the provided [comparator]
+ * among all values produced by [selector] function applied to each element in the sequence or `null` if there are no elements.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.internal.InlineOnly
+public inline fun <T, R> Sequence<T>.minOfWithOrNull(comparator: Comparator<in R>, selector: (T) -> R): R? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var minValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        if (comparator.compare(minValue, v) > 0) {
+            minValue = v
+        }
+    }
+    return minValue
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+public fun Sequence<Double>.minOrNull(): Double? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        min = minOf(min, e)
+    }
+    return min
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ * 
+ * If any of elements is `NaN` returns `NaN`.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+public fun Sequence<Float>.minOrNull(): Float? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        min = minOf(min, e)
+    }
+    return min
+}
+
+/**
+ * Returns the smallest element or `null` if there are no elements.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+public fun <T : Comparable<T>> Sequence<T>.minOrNull(): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (min > e) min = e
+    }
+    return min
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
+public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T? {
+    return minWithOrNull(comparator)
+}
+
+/**
  * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
  *
  * The operation is _terminal_.
  */
-public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T? {
+@SinceKotlin("1.4")
+public fun <T> Sequence<T>.minWithOrNull(comparator: Comparator<in T>): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var min = iterator.next()
@@ -1357,7 +1917,29 @@ public fun <T> Sequence<T>.onEach(action: (T) -> Unit): Sequence<T> {
 }
 
 /**
- * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
+ * Returns a sequence which performs the given [action] on each element of the original sequence as they pass through it.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the action on the element.
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
+@SinceKotlin("1.4")
+public fun <T> Sequence<T>.onEachIndexed(action: (index: Int, T) -> Unit): Sequence<T> {
+    return mapIndexed { index, element ->
+        action(index, element)
+        element
+    }
+}
+
+/**
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element.
+ * 
+ * Throws an exception if this sequence is empty. If the sequence can be empty in an expected way,
+ * please use [reduceOrNull] instead. It returns `null` when its receiver is empty.
+ * 
+ * @param [operation] function that takes current accumulator value and an element,
+ * and calculates the next accumulator value.
  *
  * The operation is _terminal_.
  * 
@@ -1376,8 +1958,12 @@ public inline fun <S, T : S> Sequence<T>.reduce(operation: (acc: S, T) -> S): S 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original sequence.
- * @param [operation] function that takes the index of an element, current accumulator value
- * and the element itself and calculates the next accumulator value.
+ * 
+ * Throws an exception if this sequence is empty. If the sequence can be empty in an expected way,
+ * please use [reduceIndexedOrNull] instead. It returns `null` when its receiver is empty.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value and the element itself,
+ * and calculates the next accumulator value.
  *
  * The operation is _terminal_.
  * 
@@ -1397,9 +1983,11 @@ public inline fun <S, T : S> Sequence<T>.reduceIndexed(operation: (index: Int, a
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
  * to current accumulator value and each element with its index in the original sequence.
- * Returns null if the sequence is empty.
- * @param [operation] function that takes the index of an element, current accumulator value
- * and the element itself and calculates the next accumulator value.
+ * 
+ * Returns `null` if the sequence is empty.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value and the element itself,
+ * and calculates the next accumulator value.
  *
  * The operation is _terminal_.
  * 
@@ -1418,14 +2006,20 @@ public inline fun <S, T : S> Sequence<T>.reduceIndexedOrNull(operation: (index: 
 }
 
 /**
- * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element. Returns null if the sequence is empty.
+ * Accumulates value starting with the first element and applying [operation] from left to right
+ * to current accumulator value and each element.
+ * 
+ * Returns `null` if the sequence is empty.
+ * 
+ * @param [operation] function that takes current accumulator value and an element,
+ * and calculates the next accumulator value.
  *
  * The operation is _terminal_.
  * 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <S, T : S> Sequence<T>.reduceOrNull(operation: (acc: S, T) -> S): S? {
     val iterator = this.iterator()
     if (!iterator.hasNext()) return null
@@ -1449,15 +2043,14 @@ public inline fun <S, T : S> Sequence<T>.reduceOrNull(operation: (acc: S, T) -> 
  *
  * The operation is _intermediate_ and _stateless_.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public fun <T, R> Sequence<T>.scan(initial: R, operation: (acc: R, T) -> R): Sequence<R> {
+@SinceKotlin("1.4")
+public fun <T, R> Sequence<T>.runningFold(initial: R, operation: (acc: R, T) -> R): Sequence<R> {
     return sequence {
         yield(initial)
         var accumulator = initial
-        for (element in this@scan) {
+        for (element in this@runningFold) {
             accumulator = operation(accumulator, element)
             yield(accumulator)
         }
@@ -1478,16 +2071,15 @@ public fun <T, R> Sequence<T>.scan(initial: R, operation: (acc: R, T) -> R): Seq
  *
  * The operation is _intermediate_ and _stateless_.
  * 
- * @sample samples.collections.Collections.Aggregates.scan
+ * @sample samples.collections.Collections.Aggregates.runningFold
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public fun <T, R> Sequence<T>.scanIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): Sequence<R> {
+@SinceKotlin("1.4")
+public fun <T, R> Sequence<T>.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): Sequence<R> {
     return sequence {
         yield(initial)
         var index = 0
         var accumulator = initial
-        for (element in this@scanIndexed) {
+        for (element in this@runningFoldIndexed) {
             accumulator = operation(checkIndexOverflow(index++), accumulator, element)
             yield(accumulator)
         }
@@ -1505,11 +2097,11 @@ public fun <T, R> Sequence<T>.scanIndexed(initial: R, operation: (index: Int, ac
  *
  * The operation is _intermediate_ and _stateless_.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public fun <S, T : S> Sequence<T>.scanReduce(operation: (acc: S, T) -> S): Sequence<S> {
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+public fun <S, T : S> Sequence<T>.runningReduce(operation: (acc: S, T) -> S): Sequence<S> {
     return sequence {
         val iterator = iterator()
         if (iterator.hasNext()) {
@@ -1535,11 +2127,10 @@ public fun <S, T : S> Sequence<T>.scanReduce(operation: (acc: S, T) -> S): Seque
  *
  * The operation is _intermediate_ and _stateless_.
  * 
- * @sample samples.collections.Collections.Aggregates.scanReduce
+ * @sample samples.collections.Collections.Aggregates.runningReduce
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public fun <S, T : S> Sequence<T>.scanReduceIndexed(operation: (index: Int, acc: S, T) -> S): Sequence<S> {
+@SinceKotlin("1.4")
+public fun <S, T : S> Sequence<T>.runningReduceIndexed(operation: (index: Int, acc: S, T) -> S): Sequence<S> {
     return sequence {
         val iterator = iterator()
         if (iterator.hasNext()) {
@@ -1552,6 +2143,63 @@ public fun <S, T : S> Sequence<T>.scanReduceIndexed(operation: (index: Int, acc:
             }
         }
     }
+}
+
+/**
+ * Returns a sequence containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting sequence.
+ * The [initial] value should also be immutable (or should not be mutated)
+ * as it may be passed to [operation] function later because of sequence's lazy nature.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ *
+ * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+public fun <T, R> Sequence<T>.scan(initial: R, operation: (acc: R, T) -> R): Sequence<R> {
+    return runningFold(initial, operation)
+}
+
+/**
+ * Returns a sequence containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original sequence and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting sequence.
+ * The [initial] value should also be immutable (or should not be mutated)
+ * as it may be passed to [operation] function later because of sequence's lazy nature.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ *
+ * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.scan
+ */
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+public fun <T, R> Sequence<T>.scanIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): Sequence<R> {
+    return runningFoldIndexed(initial, operation)
+}
+
+@Deprecated("Use runningReduce instead.", ReplaceWith("runningReduce(operation)"), level = DeprecationLevel.ERROR)
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public fun <S, T : S> Sequence<T>.scanReduce(operation: (acc: S, T) -> S): Sequence<S> {
+    return runningReduce(operation)
+}
+
+@Deprecated("Use runningReduceIndexed instead.", ReplaceWith("runningReduceIndexed(operation)"), level = DeprecationLevel.ERROR)
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public fun <S, T : S> Sequence<T>.scanReduceIndexed(operation: (index: Int, acc: S, T) -> S): Sequence<S> {
+    return runningReduceIndexed(operation)
 }
 
 /**
@@ -1574,6 +2222,98 @@ public inline fun <T> Sequence<T>.sumBy(selector: (T) -> Int): Int {
  */
 public inline fun <T> Sequence<T>.sumByDouble(selector: (T) -> Double): Double {
     var sum: Double = 0.0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("sumOfDouble")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.sumOf(selector: (T) -> Double): Double {
+    var sum: Double = 0.toDouble()
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("sumOfInt")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.sumOf(selector: (T) -> Int): Int {
+    var sum: Int = 0.toInt()
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("sumOfLong")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.sumOf(selector: (T) -> Long): Long {
+    var sum: Long = 0.toLong()
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("sumOfUInt")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.sumOf(selector: (T) -> UInt): UInt {
+    var sum: UInt = 0.toUInt()
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("sumOfULong")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.sumOf(selector: (T) -> ULong): ULong {
+    var sum: ULong = 0.toULong()
     for (element in this) {
         sum += selector(element)
     }

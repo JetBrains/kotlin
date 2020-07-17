@@ -37,8 +37,7 @@ import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
-abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments,
-    JvmDeclarationUElementPlaceholder {
+abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments {
 
     final override val uastParent: UElement? by lz {
         givenParent ?: convertParent()
@@ -193,6 +192,10 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
     }
 
     if (result is USwitchClauseExpressionWithBody && !isInConditionBranch(element, result)) {
+        val uYieldExpression = result.body.expressions.lastOrNull().safeAs<UYieldExpression>()
+        if (uYieldExpression != null && uYieldExpression.expression == element)
+            return uYieldExpression
+
         return result.body
     }
 
@@ -247,8 +250,7 @@ private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter):
 
 abstract class KotlinAbstractUExpression(givenParent: UElement?) :
     KotlinAbstractUElement(givenParent),
-    UExpression,
-    JvmDeclarationUElementPlaceholder {
+    UExpression {
 
     override val javaPsi: PsiElement? = null
 

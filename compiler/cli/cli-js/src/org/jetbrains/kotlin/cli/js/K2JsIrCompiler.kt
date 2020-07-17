@@ -149,7 +149,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val outputFile = File(outputFilePath)
 
-        configurationJs.put(CommonConfigurationKeys.MODULE_NAME, FileUtil.getNameWithoutExtension(outputFile))
+        configurationJs.put(
+            CommonConfigurationKeys.MODULE_NAME,
+            arguments.irModuleName ?: FileUtil.getNameWithoutExtension(outputFile)
+        )
 
         // TODO: in this method at least 3 different compiler configurations are used (original, env.configuration, jsConfig.configuration)
         // Such situation seems a bit buggy...
@@ -226,14 +229,19 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     mainArguments = mainCallArguments,
                     generateFullJs = !arguments.irDce,
                     generateDceJs = arguments.irDce,
-                    dceDriven = arguments.irDceDriven
+                    dceDriven = arguments.irDceDriven,
+                    multiModule = arguments.irPerModule,
+                    relativeRequirePath = true
                 )
             } catch (e: JsIrCompilationError) {
                 return COMPILATION_ERROR
             }
 
             val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.dceJsCode!! else compiledModule.jsCode!!
-            outputFile.writeText(jsCode)
+            outputFile.writeText(jsCode.mainModule)
+            jsCode.dependencies.forEach { (name, content) ->
+                outputFile.resolveSibling("$name.js").writeText(content)
+            }
             if (arguments.generateDts) {
                 val dtsFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "d.ts")!!
                 dtsFile.writeText(compiledModule.tsDefinitions ?: error("No ts definitions"))
@@ -319,6 +327,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         configuration.put(JSConfigurationKeys.PRINT_REACHABILITY_INFO, arguments.irDcePrintReachabilityInfo)
+        configuration.put(JSConfigurationKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR, arguments.disableFakeOverrideValidator)
     }
 
     override fun executableScriptFileName(): String {

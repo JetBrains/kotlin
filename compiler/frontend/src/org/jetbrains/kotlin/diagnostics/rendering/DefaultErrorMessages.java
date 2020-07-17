@@ -306,6 +306,7 @@ public class DefaultErrorMessages {
         MAP.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'");
 
         MAP.put(OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, "'@OptionalExpectation' can only be used on an expected annotation class");
+        MAP.put(NESTED_OPTIONAL_EXPECTATION, "'@OptionalExpectation' cannot be used on a nested class");
         MAP.put(OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, "Declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry");
         MAP.put(OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE, "Declaration annotated with '@OptionalExpectation' can only be used in common module sources");
 
@@ -375,6 +376,12 @@ public class DefaultErrorMessages {
         MAP.put(VERSION_REQUIREMENT_DEPRECATION_ERROR, "''{0}''{1} cannot be used in Kotlin {2}", DEPRECATION_RENDERER,
                 (obj, renderingContext) -> obj.equals(VersionRequirement.Version.INFINITY) ? "" : " is only available since Kotlin " + obj.asString() + " and",
                 versionRequirementMessage);
+
+        MAP.put(DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED, "DeprecatedSinceKotlin annotation can be used only together with Deprecated annotation");
+        MAP.put(DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL, "DeprecatedSinceKotlin annotation can be used only with unspecified deprecation level of Deprecated annotation");
+        MAP.put(DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS, "Values of DeprecatedSinceKotlin annotation should be ordered so 'warningSince' <= 'errorSince' <= 'hiddenSince' if specified");
+        MAP.put(DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS, "DeprecatedSinceKotlin annotation should have at least one argument");
+        MAP.put(DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE, "DeprecatedSinceKotlin annotation cannot be used outside 'kotlin' subpackages");
 
         MAP.put(API_NOT_AVAILABLE, "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}", STRING, STRING);
 
@@ -708,6 +715,7 @@ public class DefaultErrorMessages {
         MAP.put(FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES, "Fun interfaces cannot have abstract properties");
         MAP.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS, "Single abstract member cannot declare type parameters");
         MAP.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE, "Single abstract member cannot declare default values");
+        MAP.put(FUN_INTERFACE_CONSTRUCTOR_REFERENCE, "Functional interface constructor references are prohibited");
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED, "Variance annotations are only allowed for type parameters of classes and interfaces");
         MAP.put(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, "Bounds are not allowed on type alias parameters");
@@ -895,6 +903,9 @@ public class DefaultErrorMessages {
         MAP.put(REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, "Cannot use ''{0}'' as reified type parameter", RENDER_TYPE);
         MAP.put(REIFIED_TYPE_UNSAFE_SUBSTITUTION, "It may be not safe to use ''{0}'' as an argument for a reified type parameter. Use a non-generic type or * if possible", RENDER_TYPE);
         MAP.put(TYPE_PARAMETERS_NOT_ALLOWED, "Type parameters are not allowed here");
+        MAP.put(CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION, "Candidate was chosen only by @OverloadResolutionByLambdaReturnType annotation");
+
+        MAP.put(COMPATIBILITY_WARNING, "Candidate resolution will be changed soon, please use fully qualified name to invoke the following closer candidate explicitly ''{0}''", COMPATIBILITY_CANDIDATE);
 
         MAP.put(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, "Type parameter of a property must be used in its receiver type");
 

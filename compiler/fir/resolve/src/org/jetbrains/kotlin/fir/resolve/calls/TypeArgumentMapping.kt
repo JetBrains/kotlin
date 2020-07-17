@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 
 sealed class TypeArgumentMapping {
-
     abstract operator fun get(typeParameterIndex: Int): FirTypeProjection
 
     object NoExplicitArguments : TypeArgumentMapping() {
@@ -24,7 +23,6 @@ sealed class TypeArgumentMapping {
     }
 }
 
-
 internal object MapTypeArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val typeArguments = callInfo.typeArguments
@@ -33,9 +31,9 @@ internal object MapTypeArguments : ResolutionStage() {
             return
         }
 
-        val owner = candidate.symbol.fir as FirTypeParametersOwner
+        val owner = candidate.symbol.fir as FirTypeParameterRefsOwner
 
-        if (typeArguments.size == owner.typeParameters.size) {
+        if (typeArguments.size == owner.typeParameters.size || callInfo.callKind == CallKind.DelegatingConstructorCall) {
             candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
         } else {
             sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
@@ -46,7 +44,6 @@ internal object MapTypeArguments : ResolutionStage() {
 
 internal object NoTypeArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
-
         if (callInfo.typeArguments.isNotEmpty()) {
             sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
         }

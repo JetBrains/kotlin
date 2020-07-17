@@ -264,7 +264,7 @@ class ModulesTxtBuilder {
                 "js" -> settings.compilerArguments =
                     K2JSCompilerArguments().also { settings.targetPlatform = JsPlatforms.defaultJsPlatform }
                 "native" -> settings.compilerArguments =
-                    FakeK2NativeCompilerArguments().also { settings.targetPlatform = NativePlatforms.defaultNativePlatform }
+                    FakeK2NativeCompilerArguments().also { settings.targetPlatform = NativePlatforms.unspecifiedNativePlatform }
                 else -> {
                     val flagProperty = ModulesTxt.Module.flags[flag]
                     if (flagProperty != null) flagProperty.set(module, true)

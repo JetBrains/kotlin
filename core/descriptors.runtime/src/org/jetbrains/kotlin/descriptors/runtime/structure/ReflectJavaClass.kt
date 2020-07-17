@@ -96,6 +96,8 @@ class ReflectJavaClass(
             .map(::ReflectJavaConstructor)
             .toList()
 
+    override fun hasDefaultConstructor() = false // any default constructor is returned by constructors
+
     override val lightClassOriginKind: LightClassOriginKind?
         get() = null
 

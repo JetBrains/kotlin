@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.backend.common.bridges.findImplementationFromInterface
-import org.jetbrains.kotlin.backend.common.bridges.firstSuperMethodFromKotlin
+import org.jetbrains.kotlin.util.findImplementationFromInterface
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmMethodExceptionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.util.firstSuperMethodFromKotlin
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 
@@ -167,7 +168,7 @@ class InterfaceImplBodyCodegen(
                 name: String,
                 desc: String,
                 signature: String?,
-                exceptions: Array<out String>?
+                exceptions: JvmMethodExceptionTypes
         ): MethodVisitor {
             if (shouldCount) {
                 isAnythingGenerated = true

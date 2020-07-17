@@ -24,7 +24,7 @@ class KotlinJvmTargetPreset(
 
     override fun getName(): String = PRESET_NAME
 
-    override fun createCompilationFactory(forTarget: KotlinOnlyTarget<KotlinJvmCompilation>): KotlinCompilationFactory<KotlinJvmCompilation> =
+    override fun createCompilationFactory(forTarget: KotlinJvmTarget): KotlinCompilationFactory<KotlinJvmCompilation> =
         KotlinJvmCompilationFactory(forTarget)
 
     override fun createKotlinTargetConfigurator() = KotlinJvmTargetConfigurator(kotlinPluginVersion)

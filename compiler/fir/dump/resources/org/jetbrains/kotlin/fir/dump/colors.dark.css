@@ -43,6 +43,10 @@ body.dark {
     text-decoration-color: red;
 }
 
+.dark .subtype-error {
+    color: red;
+}
+
 .dark .error.unsupported {
     text-decoration-color: cyan;
 }

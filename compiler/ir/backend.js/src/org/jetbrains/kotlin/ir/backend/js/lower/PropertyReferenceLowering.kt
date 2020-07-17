@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.name.Name
 
 class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
 
-    private val implicitDeclarationFile = context.implicitDeclarationFile
     private val referenceBuilderSymbol = context.kpropertyBuilder
     private val localDelegateBuilderSymbol = context.klocalDelegateBuilder
     private val jsClassSymbol = context.intrinsics.jsClass
@@ -40,7 +40,11 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         newDeclarations.clear()
         irBody.transformChildrenVoid(PropertyReferenceTransformer())
-        implicitDeclarationFile.declarations.addAll(newDeclarations)
+        if (!newDeclarations.isEmpty()) {
+            val file = container.file
+            newDeclarations.forEach { it.parent = file }
+            file.declarations.addAll(newDeclarations)
+        }
     }
 
     private inner class PropertyReferenceTransformer : IrElementTransformerVoid() {
@@ -55,22 +59,16 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
                 name = Name.identifier("${property.name.asString()}\$factory")
             }
 
-            factoryDeclaration.parent = implicitDeclarationFile
-
             val boundArguments = listOfNotNull(reference.dispatchReceiver, reference.extensionReceiver)
 
-            val valueParameters = ArrayList<IrValueParameter>(boundArguments.size)
-            factoryDeclaration.valueParameters = valueParameters
-
-            for ((i, arg) in boundArguments.withIndex()) {
-                val vp = buildValueParameter {
+            val valueParameters = boundArguments.mapIndexed { i, arg ->
+                buildValueParameter(factoryDeclaration) {
                     type = arg.type
                     index = i
                     name = Name.identifier("\$b$i")
                 }
-                vp.parent = factoryDeclaration
-                valueParameters.add(vp)
             }
+            factoryDeclaration.valueParameters = valueParameters
 
             // TODO: type parameters
 

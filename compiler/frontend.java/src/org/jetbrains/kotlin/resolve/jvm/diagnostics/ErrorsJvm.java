@@ -108,9 +108,9 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtExpression> ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> JVM_DEFAULT_NOT_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> JVM_DEFAULT_IN_JVM6_TARGET = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> JVM_DEFAULT_IN_JVM6_TARGET = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<KtDeclaration> JVM_DEFAULT_REQUIRED_FOR_OVERRIDE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> JVM_DEFAULT_IN_DECLARATION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory1<KtElement, String> JVM_DEFAULT_IN_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtDeclaration> JVM_DEFAULT_THROUGH_INHERITANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<PsiElement> USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL = DiagnosticFactory0.create(ERROR);
 
@@ -136,6 +136,12 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory0<PsiElement> FUNCTION_DELEGATE_MEMBER_NAME_CLASH = DiagnosticFactory0.create(ERROR);
+
+    DiagnosticFactory2<KtDeclaration, CallableDescriptor, CallableDescriptor> EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE = DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+
+    DiagnosticFactory1<PsiElement, String> DANGEROUS_CHARACTERS = DiagnosticFactory1.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

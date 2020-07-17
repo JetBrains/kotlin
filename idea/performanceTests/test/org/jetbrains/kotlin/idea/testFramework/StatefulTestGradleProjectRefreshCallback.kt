@@ -52,20 +52,20 @@ class StatefulTestGradleProjectRefreshCallback(
         val error = error ?: return
 
         val failure = buildString {
-            appendln("Gradle import failed for ${project.name} at $projectPath")
+            appendLine("Gradle import failed for ${project.name} at $projectPath")
 
             project.guessProjectDir()
 
-            append("=".repeat(40)).appendln(" Error message:")
-            appendln(error.message.trimEnd())
+            append("=".repeat(40)).appendLine(" Error message:")
+            appendLine(error.message.trimEnd())
 
-            append("=".repeat(40)).appendln(" Error details:")
-            appendln(error.details?.trimEnd().orEmpty())
+            append("=".repeat(40)).appendLine(" Error details:")
+            appendLine(error.details?.trimEnd().orEmpty())
 
-            append("=".repeat(40)).appendln(" Gradle process output:")
-            appendln(GradleProcessOutputInterceptor.getInstance()?.getOutput()?.trimEnd() ?: "<interceptor not installed>")
+            append("=".repeat(40)).appendLine(" Gradle process output:")
+            appendLine(GradleProcessOutputInterceptor.getInstance()?.getOutput()?.trimEnd() ?: "<interceptor not installed>")
 
-            appendln("=".repeat(40))
+            appendLine("=".repeat(40))
         }
 
         fail(failure)

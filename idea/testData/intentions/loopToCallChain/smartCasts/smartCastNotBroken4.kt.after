@@ -5,8 +5,8 @@ fun foo(list: List<String>, o: Any) {
     var result: Any? = ""
     if (o is CharSequence) {
         result = list
-                .map { it.length + (o as String).capitalize().hashCode() }
-                .map { it * o.length }
-                .firstOrNull { it > 1000 }
+            .map { it.length + (o as String).capitalize().hashCode() }
+            .map { it * o.length }
+            .firstOrNull { it > 1000 }
     }
 }

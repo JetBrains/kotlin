@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.TargetSupportException
 import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
 import java.io.File
 import java.io.IOException
@@ -32,7 +33,7 @@ class KlibInfoProvider(kotlinNativeHome: File) {
 
     private val hostManager by lazy {
         HostManager(
-            distribution = Distribution(konanHomeOverride = kotlinNativeHome.path),
+            distribution = Distribution(kotlinNativeHome.path),
             experimental = true
         )
     }
@@ -57,7 +58,11 @@ class KlibInfoProvider(kotlinNativeHome: File) {
         val manifestFile = findManifestFile(libraryPath) ?: return null
         val manifest = loadProperties(manifestFile)
 
-        val name = manifest.getProperty(KLIB_PROPERTY_UNIQUE_NAME) ?: return null
+        val name = with(manifest) {
+            getProperty(KLIB_PROPERTY_SHORT_NAME)
+                ?: getProperty(KLIB_PROPERTY_UNIQUE_NAME)
+                ?: return null
+        }
         val target = (detectTarget(libraryPath) ?: return null).result
 
         return when (origin) {

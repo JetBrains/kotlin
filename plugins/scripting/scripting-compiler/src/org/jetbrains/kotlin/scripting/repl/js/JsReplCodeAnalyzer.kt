@@ -11,26 +11,27 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.AbstractJsScriptlikeCodeAnalyser
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzer
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.toSourceCode
 import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 
 class JsReplCodeAnalyzer(
     environment: KotlinCoreEnvironment,
     dependencies: List<ModuleDescriptor>,
-    private val replState: ReplCodeAnalyzer.ResettableAnalyzerState
+    private val replState: ReplCodeAnalyzerBase.ResettableAnalyzerState
 ) : AbstractJsScriptlikeCodeAnalyser(environment, dependencies) {
 
     fun analyzeReplLine(linePsi: KtFile, codeLine: ReplCodeLine): AnalysisResult {
         linePsi.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, codeLine.no)
-        replState.submitLine(linePsi, codeLine)
+        replState.submitLine(linePsi)
 
         val result = analysisImpl(linePsi)
 
         return if (result.isSuccess) {
-            replState.lineSuccess(linePsi, codeLine, result.script)
+            replState.lineSuccess(linePsi, codeLine.toSourceCode(), result.script)
             AnalysisResult.success(result.bindingContext, result.moduleDescriptor)
         } else {
-            replState.lineFailure(linePsi, codeLine)
+            replState.lineFailure(linePsi)
             AnalysisResult.compilationError(result.bindingContext)
         }
     }

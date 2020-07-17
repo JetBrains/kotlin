@@ -121,6 +121,16 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/defineClass.kt");
         }
 
+        @TestMetadata("functionExpression.kt")
+        public void testFunctionExpression() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/functionExpression.kt");
+        }
+
+        @TestMetadata("inlineCallInsideInlineLambda.kt")
+        public void testInlineCallInsideInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/inlineCallInsideInlineLambda.kt");
+        }
+
         @TestMetadata("kt13182.kt")
         public void testKt13182() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt13182.kt");
@@ -209,6 +219,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
         @TestMetadata("kt34656.kt")
         public void testKt34656() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt34656.kt");
+        }
+
+        @TestMetadata("kt38197.kt")
+        public void testKt38197() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt38197.kt");
         }
 
         @TestMetadata("kt6552.kt")
@@ -951,6 +966,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             runTest("compiler/testData/codegen/boxInline/complexStack/asCheck2.kt");
         }
 
+        @TestMetadata("breakContinueInInlineLambdaArgument.kt")
+        public void testBreakContinueInInlineLambdaArgument() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/complexStack/breakContinueInInlineLambdaArgument.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/codegen/boxInline/complexStack/simple.kt");
@@ -974,6 +994,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
         @TestMetadata("simpleExtension.kt")
         public void testSimpleExtension() throws Exception {
             runTest("compiler/testData/codegen/boxInline/complexStack/simpleExtension.kt");
+        }
+
+        @TestMetadata("spillConstructorArgumentsAndInlineLambdaParameter.kt")
+        public void testSpillConstructorArgumentsAndInlineLambdaParameter() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/complexStack/spillConstructorArgumentsAndInlineLambdaParameter.kt");
         }
     }
 
@@ -1669,6 +1694,26 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
         @TestMetadata("inlineFunctionInsideInlineClassesBox.kt")
         public void testInlineFunctionInsideInlineClassesBox() throws Exception {
             runTest("compiler/testData/codegen/boxInline/inlineClasses/inlineFunctionInsideInlineClassesBox.kt");
+        }
+
+        @TestMetadata("noReturnTypeManglingFun.kt")
+        public void testNoReturnTypeManglingFun() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/noReturnTypeManglingFun.kt");
+        }
+
+        @TestMetadata("noReturnTypeManglingVal.kt")
+        public void testNoReturnTypeManglingVal() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/noReturnTypeManglingVal.kt");
+        }
+
+        @TestMetadata("withReturnTypeManglingFun.kt")
+        public void testWithReturnTypeManglingFun() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/withReturnTypeManglingFun.kt");
+        }
+
+        @TestMetadata("withReturnTypeManglingVal.kt")
+        public void testWithReturnTypeManglingVal() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/withReturnTypeManglingVal.kt");
         }
     }
 
@@ -2880,6 +2925,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             runTest("compiler/testData/codegen/boxInline/smap/assertion.kt");
         }
 
+        @TestMetadata("classCycle.kt")
+        public void testClassCycle() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/classCycle.kt");
+        }
+
         @TestMetadata("classFromDefaultPackage.kt")
         public void testClassFromDefaultPackage() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/classFromDefaultPackage.kt");
@@ -3097,6 +3147,16 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             public void testNoSmapWithProperty() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/noSmapWithProperty.kt");
             }
+
+            @TestMetadata("stdlibInlineOnly.kt")
+            public void testStdlibInlineOnly() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/stdlibInlineOnly.kt");
+            }
+
+            @TestMetadata("stdlibInlineOnlyOneLine.kt")
+            public void testStdlibInlineOnlyOneLine() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/smap/inlineOnly/stdlibInlineOnlyOneLine.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/boxInline/smap/newsmap")
@@ -3286,6 +3346,16 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             runTest("compiler/testData/codegen/boxInline/stackOnReturn/nonLocalReturn3.kt");
         }
 
+        @TestMetadata("poppedLocalReturn.kt")
+        public void testPoppedLocalReturn() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/stackOnReturn/poppedLocalReturn.kt");
+        }
+
+        @TestMetadata("poppedLocalReturn2.kt")
+        public void testPoppedLocalReturn2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/stackOnReturn/poppedLocalReturn2.kt");
+        }
+
         @TestMetadata("returnLong.kt")
         public void testReturnLong() throws Exception {
             runTest("compiler/testData/codegen/boxInline/stackOnReturn/returnLong.kt");
@@ -3321,6 +3391,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
         @TestMetadata("crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt")
         public void testCrossinlineSuspendLambdaInsideCrossinlineSuspendLambda_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt", "kotlin.coroutines");
+        }
+
+        @TestMetadata("delegatedProperties.kt")
+        public void testDelegatedProperties_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/delegatedProperties.kt", "kotlin.coroutines");
         }
 
         @TestMetadata("doubleRegenerationWithNonSuspendingLambda.kt")
@@ -3411,6 +3486,16 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
         @TestMetadata("tryCatchStackTransform.kt")
         public void testTryCatchStackTransform_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/tryCatchStackTransform.kt", "kotlin.coroutines");
+        }
+
+        @TestMetadata("twiceRegeneratedAnonymousObject.kt")
+        public void testTwiceRegeneratedAnonymousObject() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/twiceRegeneratedAnonymousObject.kt");
+        }
+
+        @TestMetadata("twiceRegeneratedSuspendLambda.kt")
+        public void testTwiceRegeneratedSuspendLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/twiceRegeneratedSuspendLambda.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/boxInline/suspend/callableReference")
@@ -3768,6 +3853,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             @TestMetadata("privateInCrossInline.kt")
             public void testPrivateInCrossInline() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/privateInCrossInline.kt");
+            }
+
+            @TestMetadata("privateInDefaultStubArgument.kt")
+            public void testPrivateInDefaultStubArgument() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/privateInDefaultStubArgument.kt");
             }
 
             @TestMetadata("protectedInCrossinline.kt")

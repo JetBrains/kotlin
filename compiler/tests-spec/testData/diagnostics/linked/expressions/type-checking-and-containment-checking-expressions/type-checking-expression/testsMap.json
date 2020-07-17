@@ -6,14 +6,19 @@
           "specVersion": "0.1-296",
           "casesNumber": 4,
           "description": "Type-checking expression always has type kotlin.Boolean.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
         },
         {
           "specVersion": "0.1-296",
           "casesNumber": 4,
           "description": "Type-checking expression always has type kotlin.Boolean.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
         }
       ]
     }

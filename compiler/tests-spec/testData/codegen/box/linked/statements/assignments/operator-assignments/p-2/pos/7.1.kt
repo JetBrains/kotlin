@@ -4,8 +4,8 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-222
- * PLACE: statements, assignments, operator-assignments -> paragraph 2 -> sentence 7
- * RELEVANT PLACES: statements, assignments, operator-assignments -> paragraph 2 -> sentence 8
+ * MAIN LINK: statements, assignments, operator-assignments -> paragraph 2 -> sentence 7
+ * PRIMARY LINKS: statements, assignments, operator-assignments -> paragraph 2 -> sentence 8
  * statements, assignments, operator-assignments -> paragraph 2 -> sentence 9
  * NUMBER: 1
  * DESCRIPTION: A *= B is exactly the same as A.timesAssign(B) or A = A.times(B) (applied in order)

@@ -132,6 +132,9 @@ abstract class AbstractKapt3Extension(
     override val analyzePartially: Boolean
         get() = !annotationProcessingComplete
 
+    override val analyzeDefaultParameterValues: Boolean
+        get() = options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
+
     override fun doAnalysis(
         project: Project,
         module: ModuleDescriptor,
@@ -237,8 +240,8 @@ abstract class AbstractKapt3Extension(
 
             for (leak in leaks) {
                 logger.warn(buildString {
-                    appendln("Memory leak detected!")
-                    appendln("Location: '${leak.className}', static field '${leak.fieldName}'")
+                    appendLine("Memory leak detected!")
+                    appendLine("Location: '${leak.className}', static field '${leak.fieldName}'")
                     append(leak.description)
                 })
             }

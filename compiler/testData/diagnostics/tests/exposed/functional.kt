@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 internal class My
 
 class Your

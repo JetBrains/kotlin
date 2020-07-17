@@ -17,5 +17,5 @@ fun smartIt(p1: String?, p2: String?) {
     p1.<!INAPPLICABLE_CANDIDATE!>length<!>
 
     p2 ?: callItContracted { return }
-    p2.<!INAPPLICABLE_CANDIDATE!>length<!>
+    p2.length
 }

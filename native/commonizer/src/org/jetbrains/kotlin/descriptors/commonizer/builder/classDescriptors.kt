@@ -9,26 +9,30 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassConstructor
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassConstructorNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
 
 internal fun CirClassNode.buildDescriptors(
     components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<ClassifierDescriptorWithTypeParameters>,
     containingDeclarations: List<DeclarationDescriptor?>
 ) {
-    val commonClass = common()
+    val commonClass = commonDeclaration()
     val markAsActual = commonClass != null && commonClass.kind != ClassKind.ENUM_ENTRY
 
-    target.forEachIndexed { index, clazz ->
-        clazz?.buildDescriptor(components, output, index, containingDeclarations, fqName, isActual = markAsActual)
+    targetDeclarations.forEachIndexed { index, clazz ->
+        clazz?.buildDescriptor(components, output, index, containingDeclarations, classId, isActual = markAsActual)
     }
 
-    commonClass?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, fqName, isExpect = true)
+    commonClass?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, classId, isExpect = true)
 
     // log stats
-    components.statsCollector?.logStats(output.toList())
+    components.statsCollector?.logStats(output)
 }
 
 internal fun CirClass.buildDescriptor(
@@ -36,7 +40,7 @@ internal fun CirClass.buildDescriptor(
     output: CommonizedGroup<in ClassifierDescriptorWithTypeParameters>,
     index: Int,
     containingDeclarations: List<DeclarationDescriptor?>,
-    fqName: FqName,
+    classId: ClassId,
     isExpect: Boolean = false,
     isActual: Boolean = false
 ) {
@@ -59,12 +63,12 @@ internal fun CirClass.buildDescriptor(
         isExpect = isExpect,
         isActual = isActual,
         cirDeclaredTypeParameters = typeParameters,
-        companionObjectName = companion?.shortName(),
+        companionObjectName = companion,
         cirSupertypes = supertypes
     )
 
     // cache created class descriptor:
-    components.cache.cache(fqName, index, classDescriptor)
+    components.cache.cache(classId, index, classDescriptor)
 
     output[index] = classDescriptor
 }
@@ -74,17 +78,17 @@ internal fun CirClassConstructorNode.buildDescriptors(
     output: CommonizedGroup<ClassConstructorDescriptor>,
     containingDeclarations: List<CommonizedClassDescriptor?>
 ) {
-    val commonConstructor = common()
+    val commonConstructor = commonDeclaration()
     val markAsActual = commonConstructor != null
 
-    target.forEachIndexed { index, constructor ->
+    targetDeclarations.forEachIndexed { index, constructor ->
         constructor?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsActual)
     }
 
     commonConstructor?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = true)
 
     // log stats
-    components.statsCollector?.logStats(output.toList())
+    components.statsCollector?.logStats(output)
 }
 
 private fun CirClassConstructor.buildDescriptor(
@@ -109,7 +113,6 @@ private fun CirClassConstructor.buildDescriptor(
     constructorDescriptor.isActual = isActual
 
     constructorDescriptor.setHasStableParameterNames(hasStableParameterNames)
-    constructorDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames)
 
     val classTypeParameters = containingDeclaration.declaredTypeParameters
     val (constructorTypeParameters, typeParameterResolver) = typeParameters.buildDescriptorsAndTypeParameterResolver(

@@ -124,12 +124,15 @@ enum class LanguageFeature(
     ProperIeee754Comparisons(KOTLIN_1_4, kind = BUG_FIX),
     FunctionalInterfaceConversion(KOTLIN_1_4, kind = UNSTABLE_FEATURE),
     GenerateJvmOverloadsAsFinal(KOTLIN_1_4),
+    MangleClassMembersReturningInlineClasses(KOTLIN_1_4),
 
     ProhibitSpreadOnSignaturePolymorphicCall(KOTLIN_1_5, kind = BUG_FIX),
     ProhibitInvisibleAbstractMethodsInSuperclasses(KOTLIN_1_5, kind = BUG_FIX),
     ProhibitNonReifiedArraysAsReifiedTypeArguments(KOTLIN_1_5, kind = BUG_FIX),
     ProhibitVarargAsArrayAfterSamArgument(KOTLIN_1_5, kind = BUG_FIX),
     CorrectSourceMappingSyntax(KOTLIN_1_5, kind = UNSTABLE_FEATURE),
+    ProperArrayConventionSetterWithDefaultCalls(KOTLIN_1_5, kind = OTHER),
+    DisableCompatibilityModeForNewInference(KOTLIN_1_5, defaultState = LanguageFeature.State.DISABLED),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
@@ -150,6 +153,10 @@ enum class LanguageFeature(
     SamConversionPerArgument(sinceVersion = KOTLIN_1_4),
     FunctionReferenceWithDefaultValueAsOtherType(sinceVersion = KOTLIN_1_4),
     NonStrictOnlyInputTypesChecks(sinceVersion = KOTLIN_1_4),
+    SuspendConversion(sinceVersion = KOTLIN_1_4, defaultState = State.DISABLED),
+    UnitConversion(sinceVersion = KOTLIN_1_4, defaultState = State.DISABLED),
+    OverloadResolutionByLambdaReturnType(sinceVersion = KOTLIN_1_4),
+    ContractsOnCallsWithImplicitReceiver(sinceVersion = KOTLIN_1_4),
 
     BooleanElvisBoundSmartCasts(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED), // see KT-26357 for details
     NewDataFlowForTryExpressions(sinceVersion = KOTLIN_1_4, defaultState = State.DISABLED),
@@ -158,8 +165,6 @@ enum class LanguageFeature(
     // Next features can be enabled regardless of new inference
 
     InlineClasses(sinceVersion = KOTLIN_1_3, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
-
-    ContractsOnCallsWithImplicitReceiver(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
     ;
 
     val presentableName: String

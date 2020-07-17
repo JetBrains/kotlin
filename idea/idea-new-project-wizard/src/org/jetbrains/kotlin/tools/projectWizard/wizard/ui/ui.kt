@@ -17,9 +17,7 @@ import com.intellij.util.ui.components.BorderLayoutPanel
 import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.SimpleTargetConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
@@ -70,46 +68,44 @@ fun ValidationResult.ValidationError.asHtml() = when (messages.size) {
 
 val ModuleType.icon: Icon
     get() = when (this) {
-        ModuleType.jvm -> KotlinIcons.SMALL_LOGO
-        ModuleType.js -> KotlinIcons.JS
-        ModuleType.native -> KotlinIcons.NATIVE
+        ModuleType.jvm -> KotlinIcons.Wizard.JVM
+        ModuleType.js -> KotlinIcons.Wizard.JS
+        ModuleType.native -> KotlinIcons.Wizard.NATIVE
         ModuleType.common -> KotlinIcons.SMALL_LOGO
-        ModuleType.android -> KotlinIcons.SMALL_LOGO
+        ModuleType.android -> KotlinIcons.Wizard.ANDROID
     }
 
 
 val Module.icon: Icon
-    get() = when (kind) {
-        ModuleKind.target -> (configurator as TargetConfigurator).moduleType.icon
-        ModuleKind.multiplatform -> AllIcons.Nodes.Module
-        ModuleKind.singleplatformJs -> KotlinIcons.JS
-        ModuleKind.singleplatformJvm -> AllIcons.Nodes.Module
-        ModuleKind.singleplatformAndroid -> AllIcons.Nodes.Module
-    }
-
-val ProjectKind.icon: Icon
-    get() = when (this) {
-        ProjectKind.Singleplatform -> KotlinIcons.SMALL_LOGO
-        ProjectKind.Multiplatform -> KotlinIcons.MPP
-        ProjectKind.Android -> KotlinIcons.SMALL_LOGO
-        ProjectKind.Js -> KotlinIcons.JS
-    }
-
+    get() = configurator.icon
 
 val ModuleSubType.icon: Icon
-    get() = moduleType.icon
+    get() = when (this) {
+        ModuleSubType.jvm -> KotlinIcons.Wizard.JVM
+        ModuleSubType.js -> KotlinIcons.Wizard.JS
+        ModuleSubType.android, ModuleSubType.androidNativeArm32, ModuleSubType.androidNativeArm64 -> KotlinIcons.Wizard.ANDROID
+        ModuleSubType.iosArm32, ModuleSubType.iosArm64, ModuleSubType.iosX64 -> KotlinIcons.Wizard.IOS
+        ModuleSubType.linuxArm32Hfp, ModuleSubType.linuxMips32, ModuleSubType.linuxMipsel32, ModuleSubType.linuxX64 ->
+            KotlinIcons.Wizard.LINUX
+        ModuleSubType.macosX64 -> KotlinIcons.Wizard.MAC_OS
+        ModuleSubType.mingwX64, ModuleSubType.mingwX86 -> KotlinIcons.Wizard.WINDOWS
+        ModuleSubType.common -> KotlinIcons.SMALL_LOGO
+    }
 
 val ModuleKind.icon: Icon
     get() = when (this) {
         ModuleKind.multiplatform -> KotlinIcons.MPP
-        ModuleKind.singleplatformJs -> KotlinIcons.JS
-        ModuleKind.singleplatformJvm -> AllIcons.Nodes.Module
+        ModuleKind.singleplatformJs -> KotlinIcons.Wizard.JS
+        ModuleKind.singleplatformJvm -> KotlinIcons.Wizard.JVM
         ModuleKind.target -> AllIcons.Nodes.Module
-        ModuleKind.singleplatformAndroid -> AllIcons.Nodes.Module
+        ModuleKind.singleplatformAndroid -> KotlinIcons.Wizard.ANDROID
     }
 
 val ModuleConfigurator.icon: Icon
     get() = when (this) {
+        is JsBrowserTargetConfigurator -> KotlinIcons.Wizard.WEB
+        is JsNodeTargetConfigurator -> KotlinIcons.Wizard.NODE_JS
+        is IOSSinglePlatformModuleConfigurator -> KotlinIcons.Wizard.IOS
         is SimpleTargetConfigurator -> moduleSubType.icon
         is TargetConfigurator -> moduleType.icon
         else -> moduleKind.icon

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.utils
 
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.ExceptionWithAttachments
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttachments {
     private val attachments = mutableListOf<Attachment>()
@@ -21,13 +23,16 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
 
     override fun getAttachments(): Array<Attachment> = attachments.toTypedArray()
 
-    fun withAttachment(name: String, content: String?): KotlinExceptionWithAttachments {
-        attachments.add(Attachment(name, content ?: "<null>"))
+    fun withAttachment(name: String, content: Any?): KotlinExceptionWithAttachments {
+        attachments.add(Attachment(name, content?.toString() ?: "<null>"))
         return this
     }
 }
 
+@OptIn(ExperimentalContracts::class)
 inline fun checkWithAttachment(value: Boolean, lazyMessage: () -> String, attachments: (KotlinExceptionWithAttachments) -> Unit = {}) {
+    contract { returns() implies(value) }
+
     if (!value) {
         val e = KotlinExceptionWithAttachments(lazyMessage())
         attachments(e)

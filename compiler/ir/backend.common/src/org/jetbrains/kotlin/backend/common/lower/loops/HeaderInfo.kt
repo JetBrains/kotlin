@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalUnsignedTypes::class)
+
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
@@ -10,47 +12,12 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.matchers.IrCallMatcher
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-
-// TODO: Handle withIndex()
-// TODO: Handle UIntProgression, ULongProgression
-
-/** Represents a progression type in the Kotlin stdlib. */
-internal enum class ProgressionType(val elementCastFunctionName: Name, val stepCastFunctionName: Name) {
-    INT_PROGRESSION(Name.identifier("toInt"), Name.identifier("toInt")),
-    LONG_PROGRESSION(Name.identifier("toLong"), Name.identifier("toLong")),
-    CHAR_PROGRESSION(Name.identifier("toChar"), Name.identifier("toInt"));
-
-    /** Returns the [IrType] of the `first`/`last` properties and elements in the progression. */
-    fun elementType(builtIns: IrBuiltIns): IrType = when (this) {
-        INT_PROGRESSION -> builtIns.intType
-        LONG_PROGRESSION -> builtIns.longType
-        CHAR_PROGRESSION -> builtIns.charType
-    }
-
-    /** Returns the [IrType] of the `step` property in the progression. */
-    fun stepType(builtIns: IrBuiltIns): IrType = when (this) {
-        INT_PROGRESSION, CHAR_PROGRESSION -> builtIns.intType
-        LONG_PROGRESSION -> builtIns.longType
-    }
-
-    companion object {
-        fun fromIrType(irType: IrType, symbols: Symbols<CommonBackendContext>): ProgressionType? = when {
-            irType.isSubtypeOfClass(symbols.charProgression) -> CHAR_PROGRESSION
-            irType.isSubtypeOfClass(symbols.intProgression) -> INT_PROGRESSION
-            irType.isSubtypeOfClass(symbols.longProgression) -> LONG_PROGRESSION
-            else -> null
-        }
-    }
-}
 
 internal enum class ProgressionDirection {
     DECREASING {
@@ -112,6 +79,11 @@ internal class ProgressionHeaderInfo(
         // We can't determine the safe limit at compile-time if "step" is not const.
         val stepValueAsLong = step.constLongValue ?: return@lazy true
 
+        if (direction == ProgressionDirection.UNKNOWN) {
+            // If we don't know the direction, we can't be sure which limit to use.
+            return@lazy true
+        }
+
         // Induction variable can NOT overflow if "last" is const and is <= (MAX/MIN_VALUE - step) (depending on direction).
         //
         // Examples that can NOT overflow:
@@ -130,26 +102,33 @@ internal class ProgressionHeaderInfo(
         //   - `0..10 step someStep()` CAN overflow (we don't know the step and hence can't determine the safe limit)
         //   - `0..someLast()` CAN overflow (we don't know the direction)
         //   - `someProgression()` CAN overflow (we don't know the direction)
-        val lastValueAsLong = last.constLongValue ?: return@lazy true  // If "last" is not a const Number or Char.
-        when (direction) {
-            ProgressionDirection.UNKNOWN ->
-                // If we don't know the direction, we can't be sure which limit to use.
-                true
-            ProgressionDirection.DECREASING -> {
-                val constLimitAsLong = when (progressionType) {
-                    ProgressionType.INT_PROGRESSION -> Int.MIN_VALUE.toLong()
-                    ProgressionType.CHAR_PROGRESSION -> Char.MIN_VALUE.toLong()
-                    ProgressionType.LONG_PROGRESSION -> Long.MIN_VALUE
+
+        if (progressionType is UnsignedProgressionType) {
+            // "step" is still signed for unsigned progressions.
+            val lastValueAsULong = last.constLongValue?.toULong() ?: return@lazy true  // If "last" is not a const Number or Char.
+            when (direction) {
+                ProgressionDirection.DECREASING -> {
+                    val constLimitAsULong = progressionType.minValueAsLong.toULong()
+                    lastValueAsULong < (constLimitAsULong - stepValueAsLong.toULong())
                 }
-                lastValueAsLong < (constLimitAsLong - stepValueAsLong)
+                ProgressionDirection.INCREASING -> {
+                    val constLimitAsULong = progressionType.maxValueAsLong.toULong()
+                    lastValueAsULong > (constLimitAsULong - stepValueAsLong.toULong())
+                }
+                else -> error("Unexpected progression direction")
             }
-            ProgressionDirection.INCREASING -> {
-                val constLimitAsLong = when (progressionType) {
-                    ProgressionType.INT_PROGRESSION -> Int.MAX_VALUE.toLong()
-                    ProgressionType.CHAR_PROGRESSION -> Char.MAX_VALUE.toLong()
-                    ProgressionType.LONG_PROGRESSION -> Long.MAX_VALUE
+        } else {
+            val lastValueAsLong = last.constLongValue ?: return@lazy true  // If "last" is not a const Number or Char.
+            when (direction) {
+                ProgressionDirection.DECREASING -> {
+                    val constLimitAsLong = progressionType.minValueAsLong
+                    lastValueAsLong < (constLimitAsLong - stepValueAsLong)
                 }
-                lastValueAsLong > (constLimitAsLong - stepValueAsLong)
+                ProgressionDirection.INCREASING -> {
+                    val constLimitAsLong = progressionType.maxValueAsLong
+                    lastValueAsLong > (constLimitAsLong - stepValueAsLong)
+                }
+                else -> error("Unexpected progression direction")
             }
         }
     }
@@ -171,6 +150,7 @@ internal class ProgressionHeaderInfo(
  * The internal induction variable used is an Int.
  */
 internal class IndexedGetHeaderInfo(
+    symbols: Symbols<CommonBackendContext>,
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,
@@ -178,7 +158,7 @@ internal class IndexedGetHeaderInfo(
     val objectVariable: IrVariable,
     val expressionHandler: IndexedGetIterationHandler
 ) : NumericHeaderInfo(
-    ProgressionType.INT_PROGRESSION,
+    IntProgressionType(symbols),
     first,
     last,
     step,
@@ -261,14 +241,17 @@ internal abstract class HeaderInfoBuilder(context: CommonBackendContext, private
 
     private val symbols = context.ir.symbols
 
-    // TODO: Include unsigned types
-    private val progressionElementTypes = listOf(
-        context.irBuiltIns.byteType,
-        context.irBuiltIns.shortType,
-        context.irBuiltIns.intType,
-        context.irBuiltIns.longType,
-        context.irBuiltIns.charType
-    )
+    private val progressionElementTypes = listOfNotNull(
+        symbols.byte,
+        symbols.short,
+        symbols.int,
+        symbols.long,
+        symbols.char,
+        symbols.uByte,
+        symbols.uShort,
+        symbols.uInt,
+        symbols.uLong
+    ).map { it.defaultType }
 
     private val progressionHandlers = listOf(
         CollectionIndicesHandler(context),

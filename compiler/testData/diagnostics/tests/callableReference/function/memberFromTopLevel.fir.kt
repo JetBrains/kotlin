@@ -17,7 +17,7 @@ fun main() {
     checkSubtype<KFunction2<A, Int, Unit>>(y)
     checkSubtype<KFunction1<A, String>>(z)
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KFunction<Unit>>(x)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KFunction<Unit>>(y)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KFunction<String>>(z)
+    checkSubtype<KFunction<Unit>>(x)
+    checkSubtype<KFunction<Unit>>(y)
+    checkSubtype<KFunction<String>>(z)
 }

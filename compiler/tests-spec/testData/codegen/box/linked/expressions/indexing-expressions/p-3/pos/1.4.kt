@@ -4,8 +4,8 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-220
- * PLACE: expressions, indexing-expressions -> paragraph 3 -> sentence 1
- * RELEVANT PLACES: expressions, indexing-expressions -> paragraph 1 -> sentence 1
+ * MAIN LINK: expressions, indexing-expressions -> paragraph 3 -> sentence 1
+ * PRIMARY LINKS: expressions, indexing-expressions -> paragraph 1 -> sentence 1
  * expressions, indexing-expressions -> paragraph 2 -> sentence 1
  * NUMBER: 4
  * DESCRIPTION: A[I_0,I_1,...,I_N] is exactly the same as A.get(I_0,I_1,...,I_N), where get is a valid operator function available in the current scope

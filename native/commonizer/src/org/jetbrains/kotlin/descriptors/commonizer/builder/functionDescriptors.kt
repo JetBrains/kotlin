@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunction
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunction
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirFunctionNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 
@@ -20,17 +20,17 @@ internal fun CirFunctionNode.buildDescriptors(
     output: CommonizedGroup<SimpleFunctionDescriptor>,
     containingDeclarations: List<DeclarationDescriptor?>
 ) {
-    val commonFunction = common()
+    val commonFunction = commonDeclaration()
     val markAsExpectAndActual = commonFunction != null && commonFunction.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
 
-    target.forEachIndexed { index, function ->
+    targetDeclarations.forEachIndexed { index, function ->
         function?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsExpectAndActual)
     }
 
     commonFunction?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)
 
     // log stats
-    components.statsCollector?.logStats(output.toList())
+    components.statsCollector?.logStats(output)
 }
 
 private fun CirFunction.buildDescriptor(
@@ -52,18 +52,17 @@ private fun CirFunction.buildDescriptor(
         SourceElement.NO_SOURCE
     )
 
-    functionDescriptor.isOperator = isOperator
-    functionDescriptor.isInfix = isInfix
-    functionDescriptor.isInline = isInline
-    functionDescriptor.isTailrec = isTailrec
-    functionDescriptor.isSuspend = isSuspend
-    functionDescriptor.isExternal = isExternal
+    functionDescriptor.isOperator = modifiers.isOperator
+    functionDescriptor.isInfix = modifiers.isInfix
+    functionDescriptor.isInline = modifiers.isInline
+    functionDescriptor.isTailrec = modifiers.isTailrec
+    functionDescriptor.isSuspend = modifiers.isSuspend
+    functionDescriptor.isExternal = modifiers.isExternal
 
     functionDescriptor.isExpect = isExpect
     functionDescriptor.isActual = isActual
 
     functionDescriptor.setHasStableParameterNames(hasStableParameterNames)
-    functionDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames)
 
     val (typeParameters, typeParameterResolver) = typeParameters.buildDescriptorsAndTypeParameterResolver(
         targetComponents,

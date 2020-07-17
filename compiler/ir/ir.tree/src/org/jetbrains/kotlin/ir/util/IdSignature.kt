@@ -20,10 +20,9 @@ sealed class IdSignature {
         fun decode(flags: Long): Boolean = (flags and (1L shl ordinal) != 0L)
     }
 
-
     abstract val isPublic: Boolean
 
-    open fun isPackageSignature() = false
+    open fun isPackageSignature(): Boolean = false
 
     abstract fun topLevelSignature(): IdSignature
     abstract fun nearestPublicSig(): IdSignature
@@ -42,81 +41,88 @@ sealed class IdSignature {
 
     val isLocal: Boolean get() = !isPublic
 
-    override fun toString(): String {
-        return "${if (isPublic) "public" else "private"} ${render()}"
-    }
+    override fun toString(): String =
+        "${if (isPublic) "public" else "private"} ${render()}"
 
-    data class PublicSignature(val packageFqn: FqName, val declarationFqn: FqName, val id: Long?, val mask: Long) : IdSignature() {
-        override val isPublic = true
+    class PublicSignature(val packageFqName: String, val declarationFqName: String, val id: Long?, val mask: Long) : IdSignature() {
+        override val isPublic: Boolean get() = true
 
-        override fun packageFqName() = packageFqn
+        override fun packageFqName(): FqName = FqName(packageFqName)
 
-        private fun adaptMask(old: Long): Long {
-            return old xor Flags.values().fold(0L) { a, f ->
+        val shortName: String get() = declarationFqName.substringAfterLast('.')
+
+        val firstNameSegment: String get() = declarationFqName.substringBefore('.')
+
+        val nameSegments: List<String> get() = declarationFqName.split('.')
+
+        private fun adaptMask(old: Long): Long =
+            old xor Flags.values().fold(0L) { a, f ->
                 if (!f.recursive) a or (old and (1L shl f.ordinal))
                 else a
             }
-        }
 
         override fun topLevelSignature(): IdSignature {
-            if (declarationFqn.isRoot) {
+            if (declarationFqName.isEmpty()) {
                 assert(id == null)
                 // package signature
                 return this
             }
 
-            val pathSegments = declarationFqn.pathSegments()
+            val nameSegments = nameSegments
+            if (nameSegments.size == 1) return this
 
-            if (pathSegments.size == 1) return this
-
-            return PublicSignature(packageFqn, FqName(pathSegments.first().asString()), null, adaptMask(mask))
+            return PublicSignature(packageFqName, nameSegments.first(), null, adaptMask(mask))
         }
 
-        override fun isPackageSignature(): Boolean = id == null && declarationFqn.isRoot
+        override fun isPackageSignature(): Boolean = id == null && declarationFqName.isEmpty()
 
         override fun nearestPublicSig(): PublicSignature = this
 
         override fun flags(): Long = mask
 
-        override fun render(): String = "${packageFqn.asString()}/${declarationFqn.asString()}|$id[${mask.toString(2)}]"
-
-        override fun toString() = super.toString()
+        override fun render(): String = "$packageFqName/$declarationFqName|$id[${mask.toString(2)}]"
 
         override fun asPublic(): PublicSignature? = this
+
+        override fun equals(other: Any?): Boolean =
+            other is PublicSignature && packageFqName == other.packageFqName && declarationFqName == other.declarationFqName &&
+                    id == other.id && mask == other.mask
+
+        override fun hashCode(): Int =
+            ((packageFqName.hashCode() * 31 + declarationFqName.hashCode()) * 31 + id.hashCode()) * 31 + mask.hashCode()
     }
 
     class AccessorSignature(val propertySignature: IdSignature, val accessorSignature: PublicSignature) : IdSignature() {
-        override val isPublic: Boolean = true
+        override val isPublic: Boolean get() = true
 
-        override fun topLevelSignature() = propertySignature.topLevelSignature()
+        override fun topLevelSignature(): IdSignature = propertySignature.topLevelSignature()
 
-        override fun nearestPublicSig() = this
+        override fun nearestPublicSig(): IdSignature = this
 
-        override fun packageFqName() = propertySignature.packageFqName()
+        override fun packageFqName(): FqName = propertySignature.packageFqName()
 
         override fun render(): String = accessorSignature.render()
 
-        override fun equals(other: Any?): Boolean {
-            if (other is AccessorSignature) return accessorSignature == other.accessorSignature
-            return accessorSignature == other
-        }
-
         override fun flags(): Long = accessorSignature.mask
 
-        override fun hashCode(): Int = accessorSignature.hashCode()
-
         override fun asPublic(): PublicSignature? = accessorSignature
+
+        override fun equals(other: Any?): Boolean =
+            if (other is AccessorSignature) accessorSignature == other.accessorSignature
+            else accessorSignature == other
+
+        override fun hashCode(): Int = accessorSignature.hashCode()
     }
 
-    data class FileLocalSignature(val container: IdSignature, val id: Long) : IdSignature() {
-        override val isPublic = false
+    class FileLocalSignature(val container: IdSignature, val id: Long) : IdSignature() {
+        override val isPublic: Boolean get() = false
 
         override fun packageFqName(): FqName = container.packageFqName()
 
         override fun topLevelSignature(): IdSignature {
             val topLevelContainer = container.topLevelSignature()
             if (topLevelContainer === container) {
-                if (topLevelContainer is PublicSignature && topLevelContainer.declarationFqn.isRoot) {
+                if (topLevelContainer is PublicSignature && topLevelContainer.declarationFqName.isEmpty()) {
                     // private top level
                     return this
                 }
@@ -128,14 +134,17 @@ sealed class IdSignature {
 
         override fun render(): String = "${container.render()}:$id"
 
-        override fun toString() = super.toString()
+        override fun equals(other: Any?): Boolean =
+            other is FileLocalSignature && id == other.id
+
+        override fun hashCode(): Int = id.toInt()
     }
 
     // Used to reference local variable and value parameters in function
     class ScopeLocalDeclaration(val id: Int, val description: String = "<no description>") : IdSignature() {
-        override val isPublic: Boolean = false
+        override val isPublic: Boolean get() = false
 
-        override val hasTopLevel: Boolean = false
+        override val hasTopLevel: Boolean get() = false
 
         override fun topLevelSignature(): IdSignature = error("Is not supported for Local ID")
 
@@ -145,9 +154,8 @@ sealed class IdSignature {
 
         override fun render(): String = "#$id"
 
-        override fun equals(other: Any?): Boolean {
-            return other is ScopeLocalDeclaration && id == other.id
-        }
+        override fun equals(other: Any?): Boolean =
+            other is ScopeLocalDeclaration && id == other.id
 
         override fun hashCode(): Int = id
     }

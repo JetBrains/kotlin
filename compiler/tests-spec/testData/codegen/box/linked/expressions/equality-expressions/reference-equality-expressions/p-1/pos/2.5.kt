@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-213
- * PLACE: expressions, equality-expressions, reference-equality-expressions -> paragraph 1 -> sentence 2
+ * MAIN LINK: expressions, equality-expressions, reference-equality-expressions -> paragraph 1 -> sentence 2
  * NUMBER: 5
  * DESCRIPTION: two values are equal (===) or non-equal (!==) by reference
  */

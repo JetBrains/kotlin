@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.jsr223
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -66,7 +66,7 @@ class KotlinJsr223JvmScriptEngine4Idea(
 
     private val messageCollector = MyMessageCollector()
 
-    override val replCompiler: ReplCompiler by lazy {
+    override val replCompiler: ReplCompilerWithoutCheck by lazy {
         KotlinRemoteReplCompilerClient(
             daemon,
             makeAutodeletingFlagFile("idea-jsr223-repl-session"),
@@ -92,7 +92,7 @@ class KotlinJsr223JvmScriptEngine4Idea(
     private class MyMessageCollector : MessageCollector {
         private var hasErrors: Boolean = false
 
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
             System.err.println(message) // TODO: proper location printing
             if (!hasErrors) {
                 hasErrors = severity == CompilerMessageSeverity.EXCEPTION || severity == CompilerMessageSeverity.ERROR

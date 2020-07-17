@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAccess {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val safe: Boolean
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
@@ -29,6 +28,10 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
     abstract val rValue: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVariableAssignment(this, data)
+
+    abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
+    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariableAssignment
 

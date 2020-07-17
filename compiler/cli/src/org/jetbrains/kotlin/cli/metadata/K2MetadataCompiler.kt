@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -106,7 +105,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         try {
             val metadataVersion =
                 configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? BuiltInsBinaryVersion ?: BuiltInsBinaryVersion.INSTANCE
-            if (arguments.klibBasedMpp) {
+            if (arguments.expectActualLinker) {
                 K2MetadataKlibSerializer(metadataVersion).serialize(environment)
             } else {
                 MetadataSerializer(metadataVersion, true).serialize(environment)

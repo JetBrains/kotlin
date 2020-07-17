@@ -53,7 +53,7 @@ open class KotlinTestTasksResolver : AbstractProjectResolverExtension() {
     ): MutableCollection<TaskData> {
         val testTaskNames = mutableSetOf<String>().apply {
             mppModel.targets.forEach { target ->
-                target.testTasks.forEach { testTaskModel ->
+                target.testRunTasks.forEach { testTaskModel ->
                     add(testTaskModel.taskName)
                 }
             }

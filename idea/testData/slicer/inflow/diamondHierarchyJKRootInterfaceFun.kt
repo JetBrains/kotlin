@@ -4,7 +4,7 @@ interface A {
     fun foo() = 1
 }
 
-fun test(a: A, b: B, c: C, d: D) {
+internal fun test(a: A, b: B, c: C, d: D) {
     val <caret>x = a.foo()
     val y = b.foo()
     val z = c.foo()

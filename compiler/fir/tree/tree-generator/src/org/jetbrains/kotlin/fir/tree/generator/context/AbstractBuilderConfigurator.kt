@@ -23,8 +23,10 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
             types.forEach { builder.usedTypes += it }
         }
 
-        fun defaultNoReceivers() {
-            defaultNull("explicitReceiver")
+        fun defaultNoReceivers(notNullExplicitReceiver: Boolean = false) {
+            if (!notNullExplicitReceiver) {
+                defaultNull("explicitReceiver")
+            }
             default("dispatchReceiver", "FirNoReceiverExpression")
             default("extensionReceiver", "FirNoReceiverExpression")
             useTypes(noReceiverExpressionType)
@@ -150,6 +152,10 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
         fun openBuilder() {
             builder.isOpen = true
         }
+
+        fun withCopy() {
+            builder.wantsCopy = true
+        }
     }
 
     fun builder(name: String? = null, block: IntermediateBuilderConfigurationContext.() -> Unit): IntermediateBuilderDelegateProvider {
@@ -167,22 +173,22 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
         return if (type == null) {
             allImplementations.filter { it.kind?.hasLeafBuilder == true }.singleOrNull() ?: this@AbstractBuilderConfigurator.run {
                 val message = buildString {
-                    appendln("${this@extractImplementation} has multiple implementations:")
+                    appendLine("${this@extractImplementation} has multiple implementations:")
                     for (implementation in allImplementations) {
-                        appendln("  - ${implementation.type}")
+                        appendLine("  - ${implementation.type}")
                     }
-                    appendln("Please specify implementation is needed")
+                    appendLine("Please specify implementation is needed")
                 }
                 throw IllegalArgumentException(message)
             }
         } else {
             allImplementations.firstOrNull { it.type == type } ?: this@AbstractBuilderConfigurator.run {
                 val message = buildString {
-                    appendln("${this@extractImplementation} has not implementation $type. Existing implementations:")
+                    appendLine("${this@extractImplementation} has not implementation $type. Existing implementations:")
                     for (implementation in allImplementations) {
-                        appendln("  - ${implementation.type}")
+                        appendLine("  - ${implementation.type}")
                     }
-                    appendln("Please specify implementation is needed")
+                    appendLine("Please specify implementation is needed")
                 }
                 throw IllegalArgumentException(message)
             }

@@ -41,7 +41,7 @@ class IdeWizard(
         JavaRuntimeLibraryDescription(null),
         LibrariesContainerFactory.createContainer(null as Project?),
     )
-
+    var jdk: Sdk? = null
 
     var projectPath by setting(StructurePlugin::projectPath.reference)
     var projectName by setting(StructurePlugin::name.reference)
@@ -50,7 +50,7 @@ class IdeWizard(
     var artifactId by setting(StructurePlugin::artifactId.reference)
     var buildSystemType by setting(BuildSystemPlugin::type.reference)
 
-    val projectTemplate by setting(ProjectTemplatesPlugin::template.reference)
+    var projectTemplate by setting(ProjectTemplatesPlugin::template.reference)
 
     private fun <V : Any, T : SettingType<V>> setting(reference: SettingReference<V, T>) =
         object : ReadWriteProperty<Any?, V?> {
@@ -69,7 +69,6 @@ class IdeWizard(
     data class JpsData(
         val libraryDescription: JavaRuntimeLibraryDescription,
         val librariesContainer: LibrariesContainer,
-        var jdk: Sdk? = null,
         val libraryOptionsPanel: LibraryOptionsPanel = LibraryOptionsPanel(
             libraryDescription,
             "",

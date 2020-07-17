@@ -1,5 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR, NATIVE
+// IGNORE_BACKEND: JS_IR_ES6
 
 fun f(
     f1: () -> String = { f2() },

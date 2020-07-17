@@ -13,14 +13,3 @@ fun box(): String {
 }
 
 // FILE: 2.smap
-
-SMAP
-2.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 2.kt
-_2Kt
-*L
-1#1,7:1
-*E

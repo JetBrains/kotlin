@@ -135,8 +135,8 @@ open class OverloadingConflictResolver<C : Any>(
                 if (DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(
                         me,
                         other,
-                        isTypeRefinementEnabled,
-                        ignoreReturnType
+                        allowCopiesFromTheSameDeclaration = isTypeRefinementEnabled,
+                        ignoreReturnType = ignoreReturnType
                     )
                 ) {
                     continue@outerLoop

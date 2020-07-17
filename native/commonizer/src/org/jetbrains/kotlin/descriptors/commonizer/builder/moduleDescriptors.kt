@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirModule
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirModuleNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirModule
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirModuleNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 
@@ -15,14 +15,14 @@ internal fun CirModuleNode.buildDescriptors(
     components: GlobalDeclarationsBuilderComponents,
     output: CommonizedGroup<ModuleDescriptorImpl>
 ) {
-    target.forEachIndexed { index, module ->
+    targetDeclarations.forEachIndexed { index, module ->
         module?.buildDescriptor(components, output, index)
     }
 
-    common()?.buildDescriptor(components, output, indexOfCommon)
+    commonDeclaration()?.buildDescriptor(components, output, indexOfCommon)
 
     // log stats
-    components.statsCollector?.logStats(output.toList())
+    components.statsCollector?.logStats(output)
 }
 
 private fun CirModule.buildDescriptor(

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 
-interface ClassCarrier : DeclarationCarrier<ClassCarrier> {
+interface ClassCarrier : DeclarationCarrier {
     var thisReceiverField: IrValueParameter?
     var metadataField: MetadataSource?
     var visibilityField: Visibility

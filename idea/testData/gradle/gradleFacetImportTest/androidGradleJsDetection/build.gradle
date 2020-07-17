@@ -14,7 +14,7 @@ buildscript {
 }
 
 ext {
-    androidBuildToolsVersion = '23.0.1'
+    androidBuildToolsVersion = '28.0.3'
 }
 
 allprojects {

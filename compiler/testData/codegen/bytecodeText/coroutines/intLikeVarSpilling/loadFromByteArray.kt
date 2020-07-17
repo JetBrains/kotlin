@@ -35,4 +35,4 @@ fun box(): String {
     return "OK"
 }
 
-// 1 PUTFIELD .*\.B\$0 : B
+// 1 PUTFIELD .*\.I\$0 : I

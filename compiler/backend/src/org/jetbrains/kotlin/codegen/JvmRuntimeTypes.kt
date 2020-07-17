@@ -44,9 +44,9 @@ class JvmRuntimeTypes(
         lazy { (0..2).map { i -> createClass(kotlinJvmInternalPackage, prefix + i + suffix) } }
 
     private val lambda: ClassDescriptor by internal("Lambda")
-
-    private val functionReference: ClassDescriptor by internal("FunctionReference")
+    val functionReference: ClassDescriptor by internal("FunctionReference")
     val functionReferenceImpl: ClassDescriptor by internal("FunctionReferenceImpl")
+    val adaptedFunctionReference: ClassDescriptor by internal("AdaptedFunctionReference")
 
     private val localVariableReference: ClassDescriptor by internal("LocalVariableReference")
     private val mutableLocalVariableReference: ClassDescriptor by internal("MutableLocalVariableReference")
@@ -135,7 +135,9 @@ class JvmRuntimeTypes(
     fun getSupertypesForFunctionReference(
         referencedFunction: FunctionDescriptor,
         anonymousFunctionDescriptor: AnonymousFunctionDescriptor,
-        isBound: Boolean
+        isBound: Boolean,
+        isAdaptedCallableReference: Boolean,
+        isSuspendConversion: Boolean
     ): Collection<KotlinType> {
         val receivers = computeExpectedNumberOfReceivers(referencedFunction, isBound)
 
@@ -146,12 +148,18 @@ class JvmRuntimeTypes(
                 ?: referencedFunction.dispatchReceiverParameter?.type,
             anonymousFunctionDescriptor.valueParameters.drop(receivers).map { it.type },
             null,
-            referencedFunction.returnType!!,
-            referencedFunction.isSuspend
+            anonymousFunctionDescriptor.returnType!!,
+            referencedFunction.isSuspend || isSuspendConversion
         )
 
         val suspendFunctionType = if (referencedFunction.isSuspend) suspendFunctionInterface?.defaultType else null
-        val superClass = if (generateOptimizedCallableReferenceSuperClasses) functionReferenceImpl else functionReference
+        val superClass = when {
+            generateOptimizedCallableReferenceSuperClasses -> when {
+                isAdaptedCallableReference || isSuspendConversion -> adaptedFunctionReference
+                else -> functionReferenceImpl
+            }
+            else -> functionReference
+        }
         return listOfNotNull(superClass.defaultType, functionType, suspendFunctionType)
     }
 

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -54,13 +53,9 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
 
     // TODO: import IR structures from the library?
 
-    private val annotationPackage: IrPackageFragment = IrExternalPackageFragmentImpl(
-        IrExternalPackageFragmentSymbolImpl(
-            EmptyPackageFragmentDescriptor(
-                context.ir.irModule.descriptor,
-                FqName("java.lang.annotation")
-            )
-        )
+    private val annotationPackage: IrPackageFragment = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
+        context.ir.irModule.descriptor,
+        FqName("java.lang.annotation")
     )
 
     private fun buildAnnotationClass(
@@ -73,7 +68,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         val irClass = this
         parent = annotationPackage
         annotationPackage.addChild(this)
-        thisReceiver = buildValueParameter {
+        thisReceiver = buildValueParameter(this) {
             name = Name.identifier("\$this")
             type = IrSimpleTypeImpl(irClass.symbol, false, emptyList(), emptyList())
         }
@@ -188,15 +183,9 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     )
 
     private val annotationTargetMaps: Map<JvmTarget, Map<KotlinTarget, IrEnumEntry>> =
-        mapOf(
-            JvmTarget.JVM_1_6 to jvm6TargetMap,
-            JvmTarget.JVM_1_8 to jvm8TargetMap,
-            JvmTarget.JVM_9 to jvm8TargetMap,
-            JvmTarget.JVM_10 to jvm8TargetMap,
-            JvmTarget.JVM_11 to jvm8TargetMap,
-            JvmTarget.JVM_12 to jvm8TargetMap,
-            JvmTarget.JVM_13 to jvm8TargetMap
-        )
+        JvmTarget.values().associate { target ->
+            target to (if (target == JvmTarget.JVM_1_6) jvm6TargetMap else jvm8TargetMap)
+        }
 
     private fun generateTargetAnnotation(irClass: IrClass) {
         if (irClass.hasAnnotation(FqName("java.lang.annotation.Target"))) return

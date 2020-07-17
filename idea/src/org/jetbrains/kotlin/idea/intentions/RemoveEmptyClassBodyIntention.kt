@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,15 +18,15 @@ import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComme
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 @Suppress("DEPRECATION")
-class RemoveEmptyClassBodyInspection :
-    IntentionBasedInspection<KtClassBody>(RemoveEmptyClassBodyIntention::class), CleanupLocalInspectionTool {
-    override fun problemHighlightType(element: KtClassBody): ProblemHighlightType =
-        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+class RemoveEmptyClassBodyInspection : IntentionBasedInspection<KtClassBody>(RemoveEmptyClassBodyIntention::class),
+    CleanupLocalInspectionTool {
+    override fun problemHighlightType(element: KtClassBody): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveEmptyClassBodyIntention :
-    SelfTargetingOffsetIndependentIntention<KtClassBody>(KtClassBody::class.java, KotlinBundle.message("redundant.empty.class.body")) {
-
+class RemoveEmptyClassBodyIntention : SelfTargetingOffsetIndependentIntention<KtClassBody>(
+    KtClassBody::class.java,
+    KotlinBundle.lazyMessage("redundant.empty.class.body")
+) {
     override fun applyTo(element: KtClassBody, editor: Editor?) {
         val parent = element.parent
         element.delete()

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 enum class X {
     B {
         override val value = "OK"

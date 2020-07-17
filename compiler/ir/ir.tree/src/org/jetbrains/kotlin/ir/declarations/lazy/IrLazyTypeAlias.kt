@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
@@ -15,11 +16,12 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.util.mapOptimized
+import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyTypeAlias(
     startOffset: Int,
     endOffset: Int,
@@ -27,7 +29,7 @@ class IrLazyTypeAlias(
     override val symbol: IrTypeAliasSymbol,
     override val descriptor: TypeAliasDescriptor,
     override val name: Name,
-    override val visibility: Visibility,
+    override var visibility: Visibility,
     override val isActual: Boolean,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator
@@ -61,6 +63,6 @@ class IrLazyTypeAlias(
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        typeParameters = typeParameters.mapOptimized { it.transform(transformer, data) }
+        typeParameters = typeParameters.transformIfNeeded(transformer, data)
     }
 }

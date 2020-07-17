@@ -149,26 +149,51 @@ public class ArgumentTypeResolver {
     public static boolean isFunctionLiteralArgument(
             @NotNull KtExpression expression, @NotNull ResolutionContext context
     ) {
-        return getFunctionLiteralArgumentIfAny(expression, context) != null;
+        return isFunctionLiteralArgument(expression, context.statementFilter);
+    }
+
+    private static boolean isFunctionLiteralArgument(
+            @NotNull KtExpression expression, @NotNull StatementFilter statementFilter
+    ) {
+        return getFunctionLiteralArgumentIfAny(expression, statementFilter) != null;
     }
 
     public static boolean isCallableReferenceArgument(
             @NotNull KtExpression expression, @NotNull ResolutionContext context
     ) {
-        return getCallableReferenceExpressionIfAny(expression, context) != null;
+        return isCallableReferenceArgument(expression, context.statementFilter);
+    }
+
+    private static boolean isCallableReferenceArgument(
+            @NotNull KtExpression expression, @NotNull StatementFilter statementFilter
+    ) {
+        return getCallableReferenceExpressionIfAny(expression, statementFilter) != null;
     }
 
     public static boolean isFunctionLiteralOrCallableReference(
             @NotNull KtExpression expression, @NotNull ResolutionContext context
     ) {
-        return isFunctionLiteralArgument(expression, context) || isCallableReferenceArgument(expression, context);
+        return isFunctionLiteralOrCallableReference(expression, context.statementFilter);
+    }
+
+    public static boolean isFunctionLiteralOrCallableReference(
+            @NotNull KtExpression expression, @NotNull StatementFilter statementFilter
+    ) {
+        return isFunctionLiteralArgument(expression, statementFilter) || isCallableReferenceArgument(expression, statementFilter);
     }
 
     @Nullable
     public static KtFunction getFunctionLiteralArgumentIfAny(
             @NotNull KtExpression expression, @NotNull ResolutionContext context
     ) {
-        KtExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
+        return getFunctionLiteralArgumentIfAny(expression, context.statementFilter);
+    }
+
+    @Nullable
+    public static KtFunction getFunctionLiteralArgumentIfAny(
+            @NotNull KtExpression expression, @NotNull StatementFilter statementFilter
+    ) {
+        KtExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, statementFilter);
         if (deparenthesizedExpression instanceof KtLambdaExpression) {
             return ((KtLambdaExpression) deparenthesizedExpression).getFunctionLiteral();
         }
@@ -183,7 +208,15 @@ public class ArgumentTypeResolver {
             @NotNull KtExpression expression,
             @NotNull ResolutionContext context
     ) {
-        KtExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
+        return getCallableReferenceExpressionIfAny(expression, context.statementFilter);
+    }
+
+    @Nullable
+    public static KtCallableReferenceExpression getCallableReferenceExpressionIfAny(
+            @NotNull KtExpression expression,
+            @NotNull StatementFilter statementFilter
+    ) {
+        KtExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, statementFilter);
         if (deparenthesizedExpression instanceof KtCallableReferenceExpression) {
             return (KtCallableReferenceExpression) deparenthesizedExpression;
         }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
 import org.jetbrains.kotlin.tools.projectWizard.core.safe
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWizardService
@@ -19,6 +20,7 @@ class IdeaMavenWizardService(private val project: Project) : ProjectImportingWiz
         buildSystemType == BuildSystemType.Maven
 
     override fun importProject(
+        reader: Reader,
         path: Path,
         modulesIrs: List<ModuleIR>,
         buildSystem: BuildSystemType

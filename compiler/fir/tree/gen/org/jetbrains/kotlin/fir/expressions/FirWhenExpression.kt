@@ -28,6 +28,10 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenExpression(this, data)
 
+    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
     abstract fun replaceIsExhaustive(newIsExhaustive: Boolean)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenExpression

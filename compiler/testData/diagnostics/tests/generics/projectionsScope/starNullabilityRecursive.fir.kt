@@ -5,5 +5,5 @@ interface A<T : A<T?>?> {
     fun foo(): T?
 }
 fun testA(a: A<*>) {
-    a.foo() checkType { <!UNRESOLVED_REFERENCE!>_<!><A<*>?>() }
+    a.foo() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<*>?>() }
 }

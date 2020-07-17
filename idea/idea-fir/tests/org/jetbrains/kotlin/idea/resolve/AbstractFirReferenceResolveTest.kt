@@ -6,13 +6,19 @@
 package org.jetbrains.kotlin.idea.resolve
 
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
-import org.jetbrains.kotlin.idea.fir.FirResolution
+import org.jetbrains.kotlin.idea.shouldBeRethrown
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() {
+    override fun isFirPlugin(): Boolean = true
+
+    override fun getProjectDescriptor(): KotlinLightProjectDescriptor =
+        KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
+
     override fun setUp() {
         super.setUp()
-        FirResolution.enabled = true
     }
 
     override fun doTest(path: String) {
@@ -22,6 +28,7 @@ abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() 
             try {
                 performChecks()
             } catch (t: Throwable) {
+                if (t.shouldBeRethrown()) throw t
                 return
             }
             throw AssertionError("Looks like test is passing, please remove IGNORE_FIR")
@@ -30,7 +37,6 @@ abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() 
     }
 
     override fun tearDown() {
-        FirResolution.enabled = false
         super.tearDown()
     }
 }

@@ -1,14 +1,15 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.*
@@ -91,10 +92,30 @@ internal object StoreReceiver : FirTransformer<FirExpression>() {
 
 internal fun FirValueParameter.transformVarargTypeToArrayType() {
     if (isVararg) {
-        val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
-        transformReturnTypeRef(
-            StoreType,
-            returnTypeRef.withReplacedConeType(ConeKotlinTypeProjectionOut(returnType).createArrayOf(session))
+        this.transformTypeToArrayType()
+    }
+}
+
+internal fun FirTypedDeclaration.transformTypeToArrayType() {
+    val returnType = returnTypeRef.coneType
+    transformReturnTypeRef(
+        StoreType,
+        returnTypeRef.withReplacedConeType(
+            ConeKotlinTypeProjectionOut(returnType).createArrayOf(),
+            FirFakeSourceElementKind.ArrayTypeFromVarargParameter
         )
+    )
+}
+
+inline fun <T> withScopeCleanup(scopes: MutableList<*>, crossinline l: () -> T): T {
+    val sizeBefore = scopes.size
+    return try {
+        l()
+    } finally {
+        val size = scopes.size
+        assert(size >= sizeBefore)
+        repeat(size - sizeBefore) {
+            scopes.let { it.removeAt(it.size - 1) }
+        }
     }
 }

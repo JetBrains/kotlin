@@ -27,6 +27,7 @@ fun JUnit.configureForKotlin(xmx: String = "1600m") {
         "-Djna.nosys=true",
         if (Platform[201].orHigher()) "-Didea.platform.prefix=Idea" else null,
         "-Didea.is.unit.test=true",
+        if (Platform[202].orHigher()) "-Didea.ignore.disabled.plugins=true" else null,
         "-Didea.home.path=$ideaSdkPath",
         "-Djps.kotlin.home=${ideaPluginDir.absolutePath}",
         "-Dkotlin.ni=" + if (rootProject.hasProperty("newInferenceTests")) "true" else "false",
@@ -41,12 +42,30 @@ fun JUnit.configureForKotlin(xmx: String = "1600m") {
     workingDirectory = rootDir.toString()
 }
 
+// Needed because of idea.ext plugin can't pass \n symbol
+fun setupGenerateAllTestsRunConfiguration() {
+    rootDir.resolve(".idea/runConfigurations/JPS__Generate_All_Tests.xml").writeText(
+        """
+        |<component name="ProjectRunConfigurationManager">
+        | <configuration default="false" name="[JPS] Generate All Tests" type="Application" factoryName="Application">
+        |    <option name="MAIN_CLASS_NAME" value="org.jetbrains.kotlin.pill.generateAllTests.Main" />
+        |    <module name="kotlin.pill.generate-all-tests.test" />
+        |    <option name="VM_PARAMETERS" value="&quot;-Dline.separator=&#xA;&quot;" />
+        |    <shortenClasspath name="CLASSPATH_FILE" />
+        |    <method v="2">
+        |      <option name="Make" enabled="true" />
+        |    </method>
+        |  </configuration>
+        |</component>
+    """.trimMargin())
+}
+
 // Needed because of idea.ext plugin doesn't allow to set TEST_SEARCH_SCOPE = moduleWithDependencies
 fun setupFirRunConfiguration() {
 
     val junit = JUnit("_stub").apply { configureForKotlin("2048m") }
-    junit.moduleName = "kotlin.compiler.test"
-    junit.pattern = "^(org\\.jetbrains\\.kotlin\\.fir((?!\\.lightTree\\.benchmark)(\\.\\w+)*)\\.((?!(TreesCompareTest|TotalKotlinTest|RawFirBuilderTotalKotlinTestCase))\\w+)|org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxCodegenTestGenerated)\$"
+    junit.moduleName = "kotlin.compiler.tests-spec.test"
+    junit.pattern = "^(org\\.jetbrains\\.kotlin\\.fir((?!\\.lightTree\\.benchmark)(\\.\\w+)*)\\.((?!(TreesCompareTest|TotalKotlinTest|RawFirBuilderTotalKotlinTestCase))\\w+)|org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxCodegenTestGenerated|org\\.jetbrains\\.kotlin\\.spec\\.checkers\\.FirDiagnosticsTestSpecGenerated)\$"
     junit.vmParameters = junit.vmParameters.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
     junit.workingDirectory = junit.workingDirectory.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
 
@@ -84,20 +103,33 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         apply(mapOf("plugin" to "idea"))
         // Make Idea import embedded configuration as transitive dependency for some configurations
         afterEvaluate {
+            val jpsBuildTestDependencies = configurations.maybeCreate("jpsBuildTestDependencies").apply {
+                isCanBeConsumed = false
+                isCanBeResolved = true
+                attributes {
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named("embedded-java-runtime"))
+                }
+            }
+
             listOf(
                 "testCompile",
                 "testCompileOnly",
                 "testRuntime",
                 "testRuntimeOnly"
             ).forEach { configurationName ->
-                val dependencyProjects = configurations
-                    .findByName(configurationName)
+                val configuration = configurations.findByName(configurationName)
+
+                configuration?.apply {
+                    extendsFrom(jpsBuildTestDependencies)
+                }
+
+                val dependencyProjects = configuration
                     ?.dependencies
                     ?.mapNotNull { (it as? ProjectDependency)?.dependencyProject }
 
                 dependencies {
                     dependencyProjects?.forEach {dependencyProject ->
-                        add(configurationName, project(dependencyProject.path, configuration = "embedded"))
+                        add(jpsBuildTestDependencies.name, project(dependencyProject.path))
                     }
                 }
             }
@@ -107,6 +139,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     rootProject.afterEvaluate {
 
         setupFirRunConfiguration()
+        setupGenerateAllTestsRunConfiguration()
 
         rootProject.allprojects {
             idea {
@@ -179,6 +212,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                                     "-Didea.debug.mode=true",
                                     "-Didea.system.path=${sandboxDir.absolutePath}",
                                     "-Didea.config.path=${sandboxDir.absolutePath}/config",
+                                    "-Didea.tooling.debug=true",
                                     "-Dapple.laf.useScreenMenuBar=true",
                                     "-Dapple.awt.graphics.UseQuartz=true",
                                     "-Dsun.io.useCanonCaches=false",
@@ -194,12 +228,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
                         if (intellijUltimateEnabled) {
                             idea("[JPS] IDEA Ultimate", ideaUltimateSandboxDir, ideaPluginDir)
-                        }
-
-                        application("[JPS] Generate All Tests") {
-                            moduleName = "kotlin.pill.generate-all-tests.test"
-                            workingDirectory = rootDir.toString()
-                            mainClass = "org.jetbrains.kotlin.pill.generateAllTests.Main"
                         }
 
                         defaults<JUnit> {

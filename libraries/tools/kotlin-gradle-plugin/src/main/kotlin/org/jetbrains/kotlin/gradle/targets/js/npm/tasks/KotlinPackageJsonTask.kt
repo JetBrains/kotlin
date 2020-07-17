@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,16 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.File
 
@@ -37,13 +35,19 @@ open class KotlinPackageJsonTask : DefaultTask() {
             dependency.includedBuild.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME")
         }
 
+    @get:Input
+    internal val toolsNpmDependencies: List<String>
+        get() = nodeJs.taskRequirements
+            .getCompilationNpmRequirements(compilation)
+            .map { it.uniqueRepresentation() }
+
     @get:Nested
     internal val producerInputs: KotlinCompilationNpmResolver.PackageJsonProducerInputs
         get() = producer.inputs
 
     @get:OutputFile
     val packageJson: File
-        get() = compilationResolver.npmProject.packageJsonFile
+        get() = compilationResolver.npmProject.prePackageJsonFile
 
     @TaskAction
     fun resolve() {
@@ -57,10 +61,10 @@ open class KotlinPackageJsonTask : DefaultTask() {
             val npmProject = compilation.npmProject
             val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-            val rootClean = project.rootProject.tasks.getByName(BasePlugin.CLEAN_TASK_NAME)
-            val npmInstallTask = nodeJs.npmInstallTask
+            val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
+            val npmInstallTask = nodeJs.npmInstallTaskProvider
             val packageJsonTaskName = npmProject.packageJsonTaskName
-            val packageJsonUmbrella = project.rootProject.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME)
+            val packageJsonUmbrella = nodeJs.packageJsonUmbrellaTaskProvider
             val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
                 task.nodeJs = nodeJs
                 task.compilation = compilation
@@ -74,12 +78,10 @@ open class KotlinPackageJsonTask : DefaultTask() {
                 task.inputs.file(packageJsonTask.map { it.packageJson })
             }
 
-            npmInstallTask.mustRunAfter(rootClean, packageJsonTask)
+            nodeJs.rootPackageJsonTaskProvider.configure { it.mustRunAfter(packageJsonTask) }
 
-            compilation.compileKotlinTask.dependsOn(
-                npmInstallTask,
-                packageJsonTask
-            )
+            compilation.compileKotlinTaskProvider.dependsOn(npmInstallTask)
+            compilation.compileKotlinTaskProvider.dependsOn(packageJsonTask)
 
             return packageJsonTask
         }

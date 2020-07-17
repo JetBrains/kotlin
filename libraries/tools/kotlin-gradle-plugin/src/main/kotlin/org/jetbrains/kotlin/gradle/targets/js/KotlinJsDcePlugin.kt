@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,11 +15,21 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
 class KotlinJsDcePlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        project.logger.warn(
+            """
+                The `kotlin-dce-js` Gradle plugin has been deprecated.
+                DCE is now integrated in the `org.jetbrains.kotlin.js` plugin.
+                For plugin usage details, see https://kotlinlang.org/docs/reference/js-project-setup.html.
+                For more details about JavaScript DCE, see https://kotlinlang.org/docs/reference/javascript-dce.html
+        """.trimIndent()
+        )
         val kotlinExtension =
             project.multiplatformExtensionOrNull
                 ?: project.extensions.getByName("kotlin") as? KotlinSingleTargetExtension
@@ -44,18 +54,18 @@ class KotlinJsDcePlugin : Plugin<Project> {
     }
 
     private fun processCompilation(project: Project, kotlinCompilation: KotlinCompilation<*>) {
-        val kotlinTaskName = kotlinCompilation.compileKotlinTaskName
-        val kotlinTask = project.tasks.findByName(kotlinTaskName) as? Kotlin2JsCompile ?: return
+        val kotlinTask = kotlinCompilation.compileKotlinTaskProvider
         val dceTaskName = lowerCamelCaseName(
             DCE_TASK_PREFIX,
             kotlinCompilation.target.disambiguationClassifier,
             kotlinCompilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
             if (kotlinCompilation.target is KotlinWithJavaTarget<*>) TASK_SUFFIX else MPP_TASK_SUFFIX
         )
-        val dceTask = project.tasks.create(dceTaskName, KotlinJsDce::class.java).also {
+
+        val dceTask = project.registerTask<KotlinJsDce>(dceTaskName) {
             it.dependsOn(kotlinTask)
-            project.tasks.findByName("build")!!.dependsOn(it)
         }
+        project.tasks.named("build").dependsOn(dceTask)
 
         project.afterEvaluate {
             val outputDir = project.buildDir
@@ -64,10 +74,10 @@ class KotlinJsDcePlugin : Plugin<Project> {
 
             val configuration = project.configurations.getByName(kotlinCompilation.compileDependencyConfigurationName)
 
-            with(dceTask) {
-                classpath = configuration
-                destinationDir = dceTask.dceOptions.outputDirectory?.let { File(it) } ?: outputDir
-                source(kotlinTask.outputFile)
+            dceTask.configure {
+                it.classpath = configuration
+                it.destinationDir = it.dceOptions.outputDirectory?.let { File(it) } ?: outputDir
+                it.source((kotlinTask.get() as Kotlin2JsCompile).outputFile)
             }
         }
     }

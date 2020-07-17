@@ -69,15 +69,13 @@ public class IrFlags extends Flags {
             ProtoBuf.Visibility visibility,
             boolean isFinal,
             boolean isExternal,
-            boolean isStatic,
-            boolean isFakeOverride
+            boolean isStatic
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility)
                | IS_FINAL.toFlags(isFinal)
                | IS_EXTERNAL_FIELD.toFlags(isExternal)
                | IS_STATIC.toFlags(isStatic)
-               | IS_FAKE_OVERRIDE.toFlags(isFakeOverride)
                 ;
     }
 

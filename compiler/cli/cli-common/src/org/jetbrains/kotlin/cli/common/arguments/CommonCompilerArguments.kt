@@ -89,9 +89,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xskip-metadata-version-check",
-        description = "Load classes with bad metadata version anyway (incl. pre-release classes)"
+        description = "Allow to load classes with bad metadata version and pre-release classes"
     )
     var skipMetadataVersionCheck: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xskip-prerelease-check", description = "Allow to load pre-release classes")
+    var skipPrereleaseCheck: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-Xallow-kotlin-package",
@@ -321,10 +324,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var useMixedNamedArguments: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xklib-mpp",
-        description = "Enable experimental support for multi-platform klib libraries"
+        value = "-Xexpect-actual-linker",
+        description = "Enable experimental expect/actual linker"
     )
-    var klibBasedMpp: Boolean by FreezableVar(false)
+    var expectActualLinker: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
     var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
@@ -337,9 +340,16 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var explicitApi: String by FreezableVar(ExplicitApiMode.DISABLED.state)
 
+    @Argument(
+        value = "-Xdeserialize-fake-overrides",
+        description = "Fallback to deserializing fake overrides"
+    )
+    var deserializeFakeOverrides: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
+            put(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
             put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
             val experimentalFqNames = experimental?.toList().orEmpty()
             if (experimentalFqNames.isNotEmpty()) {
@@ -347,7 +357,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 collector.report(CompilerMessageSeverity.WARNING, "'-Xexperimental' is deprecated and will be removed in a future release")
             }
             put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty() + optIn?.toList().orEmpty())
-            put(AnalysisFlags.klibBasedMpp, klibBasedMpp)
+            put(AnalysisFlags.expectActualLinker, expectActualLinker)
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
             put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
             ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(
@@ -378,6 +388,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
                 put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
                 put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
+                put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
             }
 
             if (inlineClasses) {
@@ -457,6 +468,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (!functionReferenceWithDefaultValueFeaturePassedExplicitly)
                 put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
+
+            put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {

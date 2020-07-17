@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.GradleVersionRequired.Companion.OLDEST_SUPPORTED
 import org.junit.Assume
 
 sealed class GradleVersionRequired(val minVersion: String, val maxVersion: String?) {
     companion object {
-        const val OLDEST_SUPPORTED = "4.9"
+        const val OLDEST_SUPPORTED = "5.3"
+
+        val FOR_MPP_SUPPORT = AtLeast("6.0")
     }
 
     class Exact(version: String) : GradleVersionRequired(version, version)
@@ -32,13 +35,13 @@ sealed class GradleVersionRequired(val minVersion: String, val maxVersion: Strin
 
     class Until(maxVersion: String) : GradleVersionRequired(OLDEST_SUPPORTED, maxVersion)
 
-    object None : GradleVersionRequired(GradleVersionRequired.OLDEST_SUPPORTED, null)
+    object None : GradleVersionRequired(OLDEST_SUPPORTED, null)
 }
 
 
 fun BaseGradleIT.Project.chooseWrapperVersionOrFinishTest(): String {
     val gradleVersionForTests = System.getProperty("kotlin.gradle.version.for.tests")?.toGradleVersion()
-    val minVersion = gradleVersionRequirement.minVersion.toGradleVersion()
+    val minVersion = max(gradleVersionRequirement.minVersion.toGradleVersion(), OLDEST_SUPPORTED.toGradleVersion())
     val maxVersion = gradleVersionRequirement.maxVersion?.toGradleVersion()
 
     if (gradleVersionForTests == null) {
@@ -49,5 +52,7 @@ fun BaseGradleIT.Project.chooseWrapperVersionOrFinishTest(): String {
 
     return gradleVersionForTests.version
 }
+
+private fun <T : Comparable<T>> max(a: T, b: T): T = if (a < b) b else a
 
 private fun String.toGradleVersion() = GradleVersion.version(this)

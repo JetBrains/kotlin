@@ -45,7 +45,7 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
                     KotlinNewProjectWizardBundle.message(
                         "plugin.buildsystem.setting.type.error.wrong.project.kind",
                         projectKind,
-                        buildSystemType.text
+                        buildSystemType.fullText
                     )
                 )
             } else ValidationResult.OK
@@ -100,7 +100,7 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
         withAction {
             val data = BuildSystemPlugin::buildSystemData.propertyValue.first { it.type == buildSystemType }
             service<ProjectImportingWizardService> { service -> service.isSuitableFor(data.type) }
-                .importProject(StructurePlugin::projectPath.reference.settingValue, allIRModules, buildSystemType)
+                .importProject(this, StructurePlugin::projectPath.reference.settingValue, allIRModules, buildSystemType)
         }
     }
 
@@ -122,11 +122,28 @@ data class BuildFileData(
     @NonNls val buildFileName: String
 )
 
-enum class BuildSystemType(@Nls override val text: String) : DisplayableSettingItem {
-    GradleKotlinDsl(KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.kotlin")),
-    GradleGroovyDsl(KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.groovy")),
-    Jps(KotlinNewProjectWizardBundle.message("buildsystem.type.intellij")),
-    Maven(KotlinNewProjectWizardBundle.message("buildsystem.type.maven"))
+enum class BuildSystemType(
+    @Nls override val text: String,
+    @NonNls val id: String, // used for FUS, should never be changed
+    val fullText: String = text
+) : DisplayableSettingItem {
+    GradleKotlinDsl(
+        text = KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.kotlin"),
+        id = "gradleKotlin"
+    ),
+    GradleGroovyDsl(
+        text = KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.groovy"),
+        id = "gradleGroovy"
+    ),
+    Jps(
+        text = KotlinNewProjectWizardBundle.message("buildsystem.type.intellij"),
+        id = "jps",
+        fullText = KotlinNewProjectWizardBundle.message("buildsystem.type.intellij.full")
+    ),
+    Maven(
+        text = KotlinNewProjectWizardBundle.message("buildsystem.type.maven"),
+        id = "maven"
+    )
 
     ;
 

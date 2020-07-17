@@ -2,7 +2,7 @@ FILE: main.kt
     public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(<L> = foo@fun <anonymous>(x: R|ERROR CLASS: No type for parameter|): R|kotlin/Boolean| {
+        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(<L> = foo@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Boolean| {
             ^ CMP(>, R|<local>/x|.<Unresolved name: compareTo>#(Int(1)))
         }
         )

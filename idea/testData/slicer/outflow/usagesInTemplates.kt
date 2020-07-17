@@ -6,6 +6,6 @@ fun f1(param: String){
 
 fun main(args: Array<String>) {
     val <caret>hello = "Hello"
-    println("hello = $hello")
+    val v = "hello = $hello"
     f1(hello)
 }

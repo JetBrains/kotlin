@@ -1,14 +1,13 @@
-// TARGET_BACKEND: JS_IR
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
+// SKIP_MINIFICATION
+// SKIP_NODE_JS
 
 @file:JsExport
 
 package foo
 
 val _any: Any = Any()
-
-val _unit: Unit = Unit
 
 fun _nothing(): Nothing { throw Throwable() }
 

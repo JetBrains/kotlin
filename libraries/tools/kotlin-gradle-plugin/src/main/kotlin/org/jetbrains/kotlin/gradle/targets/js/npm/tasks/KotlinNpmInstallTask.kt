@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,12 @@ import java.io.File
 open class KotlinNpmInstallTask : DefaultTask() {
     init {
         check(project == project.rootProject)
+
+        onlyIf {
+            preparedFiles.all {
+                it.exists()
+            }
+        }
     }
 
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
@@ -29,6 +35,10 @@ open class KotlinNpmInstallTask : DefaultTask() {
     val packageJsonFiles: Collection<File>
         get() = resolutionManager.packageJsonFiles
 
+    @get:InputFiles
+    val preparedFiles: Collection<File>
+        get() = nodeJs.packageManager.preparedFiles(project)
+
     // avoid using node_modules as output directory, as it is significantly slows down build
     @get:OutputFile
     val nodeModulesState: File
@@ -40,7 +50,7 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     @TaskAction
     fun resolve() {
-        resolutionManager.install()
+        resolutionManager.installIfNeeded(args = args)
     }
 
     companion object {

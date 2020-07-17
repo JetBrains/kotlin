@@ -1,0 +1,31 @@
+package
+
+package foo {
+    @kotlin.js.JsExport public val x: foo.C
+    @kotlin.js.JsExport public var x2: foo.C
+    @kotlin.js.JsExport public fun bar(): foo.C
+    @kotlin.js.JsExport public fun foo(/*0*/ x: foo.C): kotlin.Unit
+    @kotlin.js.JsExport public fun foo2(): kotlin.Unit
+    @kotlin.js.JsExport public fun foo3(/*0*/ x: kotlin.Unit): kotlin.Unit
+    @kotlin.js.JsExport public fun foo4(/*0*/ x: () -> kotlin.Unit): kotlin.Unit
+    @kotlin.js.JsExport public fun foo5(/*0*/ x: (kotlin.Unit) -> kotlin.Unit): kotlin.Unit
+    @kotlin.js.JsExport public fun foo6(/*0*/ x: (foo.A) -> foo.A): kotlin.Unit
+
+    @kotlin.js.JsExport public final class A {
+        public constructor A(/*0*/ x: foo.C, /*1*/ y: foo.C)
+        public final val x: foo.C
+        public final val x2: foo.C
+        public final var x3: foo.C
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(/*0*/ x: foo.C): foo.C
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class C {
+        public constructor C()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

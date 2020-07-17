@@ -1,10 +1,10 @@
 // FLOW: IN
 
-interface C : A {
+internal interface C : A {
     override fun foo() = 3
 }
 
-fun test(a: A, b: B, c: C, d: D) {
+internal fun test(a: A, b: B, c: C, d: D) {
     val x = a.foo()
     val y = b.foo()
     val <caret>z = c.foo()

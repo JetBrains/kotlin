@@ -8,6 +8,7 @@ dependencies {
     compile(project(":compiler:frontend.common"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:fir:resolve"))
+    compile(project(":compiler:fir:checkers"))
     implementation(project(":compiler:fir:jvm"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }

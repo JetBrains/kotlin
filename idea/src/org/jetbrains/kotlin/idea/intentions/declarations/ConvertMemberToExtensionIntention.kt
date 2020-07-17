@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions.declarations
@@ -51,12 +40,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 private val LOG = Logger.getInstance(ConvertMemberToExtensionIntention::class.java)
 
-class ConvertMemberToExtensionIntention :
-    SelfTargetingRangeIntention<KtCallableDeclaration>(
-        KtCallableDeclaration::class.java,
-        KotlinBundle.message("convert.member.to.extension")
-    ),
-    LowPriorityAction {
+class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
+    KtCallableDeclaration::class.java,
+    KotlinBundle.lazyMessage("convert.member.to.extension")
+), LowPriorityAction {
     private fun isApplicable(element: KtCallableDeclaration): Boolean {
         val classBody = element.parent as? KtClassBody ?: return false
         if (classBody.parent !is KtClass) return false
@@ -66,6 +53,7 @@ class ConvertMemberToExtensionIntention :
             is KtProperty -> if (element.hasInitializer()) return false
             is KtSecondaryConstructor -> return false
         }
+
         return true
     }
 
@@ -314,6 +302,7 @@ class ConvertMemberToExtensionIntention :
         if (classVisibility != null && extension.visibilityModifier() == null) {
             extension.addModifier(classVisibility)
         }
+
         return extension to bodyTypeToSelect
     }
 
@@ -327,8 +316,7 @@ class ConvertMemberToExtensionIntention :
     }
 
     companion object {
-        fun convert(element: KtCallableDeclaration): KtCallableDeclaration {
-            return ConvertMemberToExtensionIntention().createExtensionCallableAndPrepareBodyToSelect(element).first
-        }
+        fun convert(element: KtCallableDeclaration): KtCallableDeclaration =
+            ConvertMemberToExtensionIntention().createExtensionCallableAndPrepareBodyToSelect(element).first
     }
 }

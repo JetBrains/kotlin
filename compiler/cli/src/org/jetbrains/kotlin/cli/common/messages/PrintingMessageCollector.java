@@ -42,7 +42,7 @@ public class PrintingMessageCollector implements MessageCollector {
     public void report(
             @NotNull CompilerMessageSeverity severity,
             @NotNull String message,
-            @Nullable CompilerMessageLocation location
+            @Nullable CompilerMessageSourceLocation location
     ) {
         if (!verbose && CompilerMessageSeverity.VERBOSE.contains(severity)) return;
 

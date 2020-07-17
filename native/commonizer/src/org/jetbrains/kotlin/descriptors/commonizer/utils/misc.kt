@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
+import gnu.trove.THashMap
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 internal fun <T> Sequence<T>.toList(expectedCapacity: Int): List<T> {
@@ -12,6 +13,16 @@ internal fun <T> Sequence<T>.toList(expectedCapacity: Int): List<T> {
     toCollection(result)
     return result
 }
+
+internal infix fun <K, V> Map<K, V>.concat(other: Map<K, V>): Map<K, V> =
+    when {
+        isEmpty() -> other
+        other.isEmpty() -> this
+        else -> THashMap<K, V>(size + other.size, 1F).apply {
+            putAll(this@concat)
+            putAll(other)
+        }
+    }
 
 internal inline fun <reified T> Iterable<T?>.firstNonNull() = firstIsInstance<T>()
 

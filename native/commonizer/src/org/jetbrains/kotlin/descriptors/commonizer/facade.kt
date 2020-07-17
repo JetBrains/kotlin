@@ -5,38 +5,47 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor1
 import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor2
 import org.jetbrains.kotlin.descriptors.commonizer.builder.createGlobalBuilderComponents
 import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizationVisitor
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.mergeRoots
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTreeMerger
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 fun runCommonization(parameters: Parameters): Result {
     if (!parameters.hasAnythingToCommonize())
-        return NothingToCommonize
+        return Result.NothingToCommonize
 
     val storageManager = LockBasedStorageManager("Declaration descriptors commonization")
 
     // build merged tree:
-    val mergedTree = mergeRoots(storageManager, parameters.targetProviders)
+    val mergeResult = CirTreeMerger(storageManager, parameters).merge()
 
     // commonize:
+    val mergedTree = mergeResult.root
     mergedTree.accept(CommonizationVisitor(mergedTree), Unit)
+    parameters.progressLogger?.invoke("Commonized declarations")
 
     // build resulting descriptors:
-    val components = mergedTree.createGlobalBuilderComponents(storageManager, parameters.statsCollector)
+    val components = mergedTree.createGlobalBuilderComponents(storageManager, parameters)
     mergedTree.accept(DeclarationsBuilderVisitor1(components), emptyList())
     mergedTree.accept(DeclarationsBuilderVisitor2(components), emptyList())
 
-    val modulesByTargets = LinkedHashMap<Target, Collection<ModuleDescriptor>>() // use linked hash map to preserve order
-    components.targetComponents.forEach {
-        val target = it.target
+    val modulesByTargets = LinkedHashMap<Target, Collection<ModuleResult>>() // use linked hash map to preserve order
+    components.targetComponents.forEach { component ->
+        val target = component.target
         check(target !in modulesByTargets)
 
-        modulesByTargets[target] = components.cache.getAllModules(it.index)
+        val commonizedModules: List<ModuleResult.Commonized> = components.cache.getAllModules(component.index).map(ModuleResult::Commonized)
+
+        val absentModules: List<ModuleResult.Absent> = if (target is InputTarget)
+            mergeResult.absentModuleInfos.getValue(target).map { ModuleResult.Absent(it.originalLocation) }
+        else emptyList()
+
+        modulesByTargets[target] = commonizedModules + absentModules
     }
 
-    return CommonizationPerformed(modulesByTargets)
+    parameters.progressLogger?.invoke("Prepared new descriptors")
+
+    return Result.Commonized(modulesByTargets)
 }

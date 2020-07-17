@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkersComponent
+import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
+import org.jetbrains.kotlin.fir.extensions.extensionService
 
 object FirDiagnosticsCollector {
     fun create(session: FirSession): AbstractDiagnosticCollector {
+        session.registerAdditionalCheckers()
         val collector = SimpleDiagnosticsCollector(session)
         collector.registerAllComponents()
         return collector
@@ -17,8 +21,13 @@ object FirDiagnosticsCollector {
     // Use in CLI compiler
     @Suppress("unused")
     fun createParallel(session: FirSession): AbstractDiagnosticCollector {
+        session.registerAdditionalCheckers()
         val collector = ParallelDiagnosticsCollector(session, numberOfThreads = 4)
         collector.registerAllComponents()
         return collector
+    }
+
+    private fun FirSession.registerAdditionalCheckers() {
+        extensionService.additionalCheckers.forEach(checkersComponent::register)
     }
 }

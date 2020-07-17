@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceAddWithPlusAssignIntention : SelfTargetingOffsetIndependentIntention<KtDotQualifiedExpression>(
     KtDotQualifiedExpression::class.java,
-    KotlinBundle.message("replace.with1")
+    KotlinBundle.lazyMessage("replace.with1")
 ) {
     private val compatibleNames: Set<String> by lazy { setOf("add", "addAll") }
 
@@ -29,7 +29,7 @@ class ReplaceAddWithPlusAssignIntention : SelfTargetingOffsetIndependentIntentio
         if (element.callExpression?.valueArguments?.size != 1) return false
 
         if (element.calleeName !in compatibleNames) return false
-        text = KotlinBundle.message("replace.0.with", element.calleeName.toString())
+        setTextGetter(KotlinBundle.lazyMessage("replace.0.with", element.calleeName.toString()))
 
         val context = element.analyze(BodyResolveMode.PARTIAL)
         BindingContextUtils.extractVariableDescriptorFromReference(context, element.receiverExpression)?.let {

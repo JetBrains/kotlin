@@ -9,4 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 
 interface JsCommonBackendContext : CommonBackendContext {
     override val mapping: JsMapping
+
+    val es6mode: Boolean
+        get() = false
 }

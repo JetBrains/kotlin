@@ -1,15 +1,18 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.internal
 
+import jetbrains.buildServer.messages.serviceMessages.ServiceMessageParserCallback
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.process.ExecResult
 import org.gradle.process.internal.ExecAction
 import org.gradle.process.internal.ExecActionFactory
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler
 import java.io.ByteArrayOutputStream
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
@@ -60,6 +63,27 @@ internal fun Project.execWithProgress(description: String, readStdErr: Boolean =
                 $stderr
                 $stdout
                 """.trimIndent()
+            )
+        }
+        result
+    }
+}
+
+internal fun Project.execWithErrorLogger(
+    description: String,
+    body: (ExecAction, ProgressLogger) -> TeamCityMessageCommonClient
+): ExecResult {
+    this as ProjectInternal
+
+    val exec = services.get(ExecActionFactory::class.java).newExecAction()
+    return project!!.operation(description) {
+        progress(description)
+        val client = body(exec, this)
+        exec.isIgnoreExitValue = true
+        val result = exec.execute()
+        if (result.exitValue != 0) {
+            error(
+                client.testFailedMessage()
             )
         }
         result

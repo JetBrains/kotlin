@@ -29,7 +29,10 @@ val asserter: Asserter
 internal var _asserter: Asserter? = null
 
 /** Asserts that the given [block] returns `true`. */
-fun assertTrue(message: String? = null, block: () -> Boolean): Unit = assertTrue(block(), message)
+fun assertTrue(message: String? = null, block: () -> Boolean) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    assertTrue(block(), message)
+}
 
 /** Asserts that the expression is `true` with an optional [message]. */
 fun assertTrue(actual: Boolean, message: String? = null) {
@@ -38,7 +41,10 @@ fun assertTrue(actual: Boolean, message: String? = null) {
 }
 
 /** Asserts that the given [block] returns `false`. */
-fun assertFalse(message: String? = null, block: () -> Boolean): Unit = assertFalse(block(), message)
+fun assertFalse(message: String? = null, block: () -> Boolean) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    assertFalse(block(), message)
+}
 
 /** Asserts that the expression is `false` with an optional [message]. */
 fun assertFalse(actual: Boolean, message: String? = null) {
@@ -105,11 +111,13 @@ fun fail(message: String? = null, cause: Throwable? = null): Nothing {
 
 /** Asserts that given function [block] returns the given [expected] value. */
 fun <@OnlyInputTypes T> expect(expected: T, block: () -> T) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertEquals(expected, block())
 }
 
 /** Asserts that given function [block] returns the given [expected] value and use the given [message] if it fails. */
 fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertEquals(expected, block(), message)
 }
 

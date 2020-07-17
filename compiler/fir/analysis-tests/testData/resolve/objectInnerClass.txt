@@ -1,33 +1,33 @@
 FILE: objectInnerClass.kt
-    public final val case1: R|anonymous| = object : R|A| {
-        private constructor(): R|anonymous| {
+    public final val case1: R|<anonymous>| = object : R|A| {
+        private[local] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 
-        local final inner class Child : R|ERROR CLASS: Symbol not found, for `Base`| {
+        local final inner class Child : R|<anonymous>.Base| {
             public[local] constructor(property: R|B|): R|<anonymous>.Child| {
-                super<R|ERROR CLASS: Symbol not found, for `Base`|>(R|<local>/property|)
+                this@R|/<anonymous>|.super<R|<anonymous>.Base|>(R|<local>/property|)
             }
 
-            public[local] final fun R|ERROR CLASS: Symbol not found, for `Base`|.zoo(): R|kotlin/Unit| {
-                lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
+            public[local] final fun R|<anonymous>.Base|.zoo(): R|kotlin/Unit| {
+                lval x: R|B| = this@R|/<anonymous>.Child.zoo|.R|/<anonymous>.Base.property|
             }
 
             public[local] final fun foo(): R|kotlin/Unit| {
-                <Unresolved name: baseFun>#()
-                lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
-                <Unresolved name: zoo>#()
-                (this@R|/anonymous|, this@R|/<anonymous>.Child|).R|/anonymous.hoo|()
+                this@R|/<anonymous>.Child|.R|/<anonymous>.Base.baseFun|()
+                lval x: R|B| = this@R|/<anonymous>.Child|.R|/<anonymous>.Base.property|
+                (this@R|/<anonymous>.Child|, this@R|/<anonymous>.Child|).R|/<anonymous>.Child.zoo|()
+                (this@R|/<anonymous>|, this@R|/<anonymous>.Child|).R|/<anonymous>.hoo|()
             }
 
         }
 
-        public final fun R|ERROR CLASS: Symbol not found, for `Child`|.voo(): R|kotlin/Unit| {
-            lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
+        public[local] final fun R|<anonymous>.Child|.voo(): R|kotlin/Unit| {
+            lval x: R|B| = this@R|/<anonymous>.voo|.R|/<anonymous>.Base.property|
         }
 
-        public final fun R|ERROR CLASS: Symbol not found, for `Base`|.hoo(): R|kotlin/Unit| {
-            lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
+        public[local] final fun R|<anonymous>.Base|.hoo(): R|kotlin/Unit| {
+            lval x: R|B| = this@R|/<anonymous>.hoo|.R|/<anonymous>.Base.property|
         }
 
         local open inner class Base : R|kotlin/Any| {
@@ -43,49 +43,49 @@ FILE: objectInnerClass.kt
 
         }
 
-        public final fun caseForBase(): R|kotlin/Unit| {
-            lval base: R|<anonymous>.Base| = this@R|/anonymous|.R|/<anonymous>.Base.Base|(R|/B.B|())
-            R|<local>/base|.<Unresolved name: baseFun>#()
-            R|<local>/base|.<Unresolved name: property>#
-            (this@R|/anonymous|, R|<local>/base|).R|/anonymous.hoo|()
+        public[local] final fun caseForBase(): R|kotlin/Unit| {
+            lval base: R|<anonymous>.Base| = this@R|/<anonymous>|.R|/<anonymous>.Base.Base|(R|/B.B|())
+            R|<local>/base|.R|/<anonymous>.Base.baseFun|()
+            R|<local>/base|.R|/<anonymous>.Base.property|
+            (this@R|/<anonymous>|, R|<local>/base|).R|/<anonymous>.hoo|()
         }
 
-        public final fun caseForChild(): R|kotlin/Unit| {
-            lval child: R|<anonymous>.Child| = this@R|/anonymous|.R|/<anonymous>.Child.Child|(R|/B.B|())
-            R|<local>/child|.<Unresolved name: baseFun>#()
-            R|<local>/child|.<Unresolved name: property>#
-            R|<local>/child|.<Unresolved name: foo>#()
-            (this@R|/anonymous|, R|<local>/child|).R|/anonymous.hoo|()
-            (this@R|/anonymous|, R|<local>/child|).R|/anonymous.voo|()
+        public[local] final fun caseForChild(): R|kotlin/Unit| {
+            lval child: R|<anonymous>.Child| = this@R|/<anonymous>|.R|/<anonymous>.Child.Child|(R|/B.B|())
+            R|<local>/child|.R|/<anonymous>.Base.baseFun|()
+            R|<local>/child|.R|/<anonymous>.Base.property|
+            R|<local>/child|.R|/<anonymous>.Child.foo|()
+            (this@R|/<anonymous>|, R|<local>/child|).R|/<anonymous>.hoo|()
+            (this@R|/<anonymous>|, R|<local>/child|).R|/<anonymous>.voo|()
         }
 
     }
 
-        public get(): R|anonymous|
+        public get(): R|<anonymous>|
     public final class Case2 : R|kotlin/Any| {
         public constructor(): R|Case2| {
             super<R|kotlin/Any|>()
         }
 
-        public final val x: R|anonymous| = object : R|Case2.Base| {
-            private constructor(): R|anonymous| {
-                super<R|Case2.Base|>(R|/B.B|())
+        public final val x: R|<anonymous>| = object : R|Case2.Base| {
+            private[local] constructor(): R|<anonymous>| {
+                this@R|/Case2|.super<R|Case2.Base|>(R|/B.B|())
             }
 
-            public final fun R|Case2.Base|.zoo(): R|kotlin/Unit| {
-                lval x: R|B| = this@R|/anonymous.zoo|.R|/Case2.Base.property|
+            public[local] final fun R|Case2.Base|.zoo(): R|kotlin/Unit| {
+                lval x: R|B| = this@R|/<anonymous>.zoo|.R|/Case2.Base.property|
             }
 
-            public final fun foo(): R|kotlin/Unit| {
-                this@R|/anonymous|.R|/Case2.Base.baseFun|()
-                lval x: R|B| = this@R|/anonymous|.R|/Case2.Base.property|
-                this@R|/anonymous|.R|/anonymous.zoo|()
-                (this@R|/Case2|, this@R|/anonymous|).R|/Case2.hoo|()
+            public[local] final fun foo(): R|kotlin/Unit| {
+                this@R|/<anonymous>|.R|/Case2.Base.baseFun|()
+                lval x: R|B| = this@R|/<anonymous>|.R|/Case2.Base.property|
+                (this@R|/<anonymous>|, this@R|/<anonymous>|).R|/<anonymous>.zoo|()
+                (this@R|/Case2|, this@R|/<anonymous>|).R|/Case2.hoo|()
             }
 
         }
 
-            public get(): R|anonymous|
+            public get(): R|<anonymous>|
 
         public final fun R|Case2.Base|.hoo(): R|kotlin/Unit| {
             lval x: R|B| = this@R|/Case2.hoo|.R|/Case2.Base.property|
@@ -112,7 +112,7 @@ FILE: objectInnerClass.kt
         }
 
         public final fun caseForChild(): R|kotlin/Unit| {
-            lval child: R|anonymous| = this@R|/Case2|.R|/Case2.x|
+            lval child: R|<anonymous>| = this@R|/Case2|.R|/Case2.x|
             R|<local>/child|.R|/Case2.Base.baseFun|()
             R|<local>/child|.R|/Case2.Base.property|
             (this@R|/Case2|, R|<local>/child|).R|/Case2.hoo|()
@@ -124,35 +124,35 @@ FILE: objectInnerClass.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val x: R|anonymous| = object : R|A| {
-            private constructor(): R|anonymous| {
+        public final val x: R|<anonymous>| = object : R|A| {
+            private[local] constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
-            local final inner class Child : R|ERROR CLASS: Symbol not found, for `Base`| {
+            local final inner class Child : R|Case3.<anonymous>.Base| {
                 public[local] constructor(property: R|B|): R|Case3.<anonymous>.Child| {
-                    super<R|ERROR CLASS: Symbol not found, for `Base`|>(R|<local>/property|)
+                    this@R|/<anonymous>|.super<R|Case3.<anonymous>.Base|>(R|<local>/property|)
                 }
 
-                public[local] final fun R|ERROR CLASS: Symbol not found, for `Base`|.zoo(): R|kotlin/Unit| {
-                    lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
+                public[local] final fun R|Case3.<anonymous>.Base|.zoo(): R|kotlin/Unit| {
+                    lval x: R|B| = this@R|/Case3.<anonymous>.Child.zoo|.R|/Case3.<anonymous>.Base.property|
                 }
 
                 public[local] final fun foo(): R|kotlin/Unit| {
-                    <Unresolved name: baseFun>#()
-                    lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
-                    this@R|/Case3.<anonymous>.Child|.R|/Case3.<anonymous>.Child.zoo|()
-                    (this@R|/anonymous|, this@R|/Case3.<anonymous>.Child|).R|/anonymous.hoo|()
+                    this@R|/Case3.<anonymous>.Child|.R|/Case3.<anonymous>.Base.baseFun|()
+                    lval x: R|B| = this@R|/Case3.<anonymous>.Child|.R|/Case3.<anonymous>.Base.property|
+                    (this@R|/Case3.<anonymous>.Child|, this@R|/Case3.<anonymous>.Child|).R|/Case3.<anonymous>.Child.zoo|()
+                    (this@R|/<anonymous>|, this@R|/Case3.<anonymous>.Child|).R|/<anonymous>.hoo|()
                 }
 
             }
 
-            public final fun R|ERROR CLASS: Symbol not found, for `Child`|.voo(): R|kotlin/Unit| {
-                lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
+            public[local] final fun R|Case3.<anonymous>.Child|.voo(): R|kotlin/Unit| {
+                lval x: R|B| = this@R|/<anonymous>.voo|.R|/Case3.<anonymous>.Base.property|
             }
 
-            public final fun R|ERROR CLASS: Symbol not found, for `Base`|.hoo(): R|kotlin/Unit| {
-                lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
+            public[local] final fun R|Case3.<anonymous>.Base|.hoo(): R|kotlin/Unit| {
+                lval x: R|B| = this@R|/<anonymous>.hoo|.R|/Case3.<anonymous>.Base.property|
             }
 
             local open inner class Base : R|kotlin/Any| {
@@ -168,25 +168,25 @@ FILE: objectInnerClass.kt
 
             }
 
-            public final fun caseForBase(): R|kotlin/Unit| {
-                lval base: R|Case3.<anonymous>.Base| = R|/Case3.<anonymous>.Base.Base|(R|/B.B|())
-                R|<local>/base|.<Unresolved name: baseFun>#()
-                R|<local>/base|.<Unresolved name: property>#
-                R|<local>/base|.R|/anonymous.hoo|()
+            public[local] final fun caseForBase(): R|kotlin/Unit| {
+                lval base: R|Case3.<anonymous>.Base| = this@R|/<anonymous>|.R|/Case3.<anonymous>.Base.Base|(R|/B.B|())
+                R|<local>/base|.R|/Case3.<anonymous>.Base.baseFun|()
+                R|<local>/base|.R|/Case3.<anonymous>.Base.property|
+                (this@R|/<anonymous>|, R|<local>/base|).R|/<anonymous>.hoo|()
             }
 
-            public final fun caseForChild(): R|kotlin/Unit| {
-                lval child: R|Case3.<anonymous>.Child| = R|/Case3.<anonymous>.Child.Child|(R|/B.B|())
-                R|<local>/child|.<Unresolved name: baseFun>#()
-                R|<local>/child|.<Unresolved name: property>#
-                R|<local>/child|.<Unresolved name: foo>#()
-                R|<local>/child|.R|/anonymous.hoo|()
-                R|<local>/child|.R|/anonymous.voo|()
+            public[local] final fun caseForChild(): R|kotlin/Unit| {
+                lval child: R|Case3.<anonymous>.Child| = this@R|/<anonymous>|.R|/Case3.<anonymous>.Child.Child|(R|/B.B|())
+                R|<local>/child|.R|/Case3.<anonymous>.Base.baseFun|()
+                R|<local>/child|.R|/Case3.<anonymous>.Base.property|
+                R|<local>/child|.R|/Case3.<anonymous>.Child.foo|()
+                (this@R|/<anonymous>|, R|<local>/child|).R|/<anonymous>.hoo|()
+                (this@R|/<anonymous>|, R|<local>/child|).R|/<anonymous>.voo|()
             }
 
         }
 
-            public get(): R|anonymous|
+            public get(): R|<anonymous>|
 
     }
     public abstract interface A : R|kotlin/Any| {

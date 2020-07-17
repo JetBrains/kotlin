@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 
 // KT-11447 Multifile declaration causes IAE: Method can not access a member of class

@@ -11,17 +11,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
-import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.declarations.*
-import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.generateValueOfFunction
-import org.jetbrains.kotlin.fir.generateValuesFunction
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.lazyNestedClassifierScope
@@ -29,7 +25,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -82,7 +77,7 @@ class JavaSymbolProvider(
         val stored = javaTypeParameterStack.safeGet(this)
         if (stored != null) return stored to true
         val firSymbol = FirTypeParameterSymbol()
-        javaTypeParameterStack.add(this, firSymbol)
+        javaTypeParameterStack.addParameter(this, firSymbol)
         return firSymbol to false
     }
 
@@ -92,6 +87,7 @@ class JavaSymbolProvider(
     ): FirTypeParameter {
         return FirTypeParameterBuilder().apply {
             this.session = this@JavaSymbolProvider.session
+            origin = FirDeclarationOrigin.Java
             this.name = this@toFirTypeParameter.name
             symbol = firSymbol
             variance = INVARIANT
@@ -150,13 +146,13 @@ class JavaSymbolProvider(
         ) { firSymbol, foundClass ->
             foundClass?.let { javaClass ->
                 val javaTypeParameterStack = JavaTypeParameterStack()
-                val parentFqName = classId.relativeClassName.parent()
-                val isTopLevel = parentFqName.isRoot
-                if (!isTopLevel) {
-                    val parentId = ClassId(classId.packageFqName, parentFqName, false)
-                    val parentClassSymbol = getClassLikeSymbolByFqName(parentId)
+                val outerClassId = classId.outerClassId
+                val parentClassSymbol = if (outerClassId != null) {
+                    getClassLikeSymbolByFqName(outerClassId)
+                } else null
+                if (parentClassSymbol != null) {
                     val parentStack = parentClassTypeParameterStackCache[parentClassSymbol]
-                        ?: (parentClassSymbol?.fir as? FirJavaClass)?.javaTypeParameterStack
+                        ?: (parentClassSymbol.fir as? FirJavaClass)?.javaTypeParameterStack
                     if (parentStack != null) {
                         javaTypeParameterStack.addStack(parentStack)
                     }
@@ -169,35 +165,57 @@ class JavaSymbolProvider(
                     visibility = javaClass.visibility
                     modality = javaClass.modality
                     classKind = javaClass.classKind
-                    this.isTopLevel = isTopLevel
+                    this.isTopLevel = outerClassId == null
                     isStatic = javaClass.isStatic
                     this.javaTypeParameterStack = javaTypeParameterStack
                     parentClassTypeParameterStackCache[firSymbol] = javaTypeParameterStack
                     existingNestedClassifierNames += javaClass.innerClassNames
                     scopeProvider = this@JavaSymbolProvider.scopeProvider
-                    typeParameters += foundClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
+                    val classTypeParameters = foundClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
+                    typeParameters += classTypeParameters
+                    if (!isStatic && parentClassSymbol != null) {
+                        typeParameters += parentClassSymbol.fir.typeParameters.map {
+                            buildOuterClassTypeParameterRef { symbol = it.symbol }
+                        }
+                    }
                     addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
                     // TODO: may be we can process fields & methods later.
                     // However, they should be built up to override resolve stage
                     for (javaField in javaClass.fields) {
                         val fieldName = javaField.name
                         val fieldId = CallableId(classId.packageFqName, classId.relativeClassName, fieldName)
-                        val fieldSymbol = FirFieldSymbol(fieldId)
                         val returnType = javaField.type
-                        val firJavaField = buildJavaField {
-                            source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-                            session = this@JavaSymbolProvider.session
-                            symbol = fieldSymbol
-                            name = fieldName
-                            visibility = javaField.visibility
-                            modality = javaField.modality
-                            returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
-                            isVar = !javaField.isFinal
-                            isStatic = javaField.isStatic
-                            isEnumEntry = javaField.isEnumEntry
-                            addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
+                        val firJavaDeclaration = when {
+                            javaField.isEnumEntry -> buildEnumEntry {
+                                source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
+                                session = this@JavaSymbolProvider.session
+                                symbol = FirVariableSymbol(fieldId)
+                                name = fieldName
+                                status = FirDeclarationStatusImpl(javaField.visibility, javaField.modality).apply {
+                                    isStatic = javaField.isStatic
+                                    isExpect = false
+                                    isActual = false
+                                    isOverride = false
+                                }
+                                returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
+                                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                                origin = FirDeclarationOrigin.Java
+                                addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
+                            }
+                            else -> buildJavaField {
+                                source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
+                                session = this@JavaSymbolProvider.session
+                                symbol = FirFieldSymbol(fieldId)
+                                name = fieldName
+                                visibility = javaField.visibility
+                                modality = javaField.modality
+                                returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
+                                isVar = !javaField.isFinal
+                                isStatic = javaField.isStatic
+                                addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
+                            }
                         }
-                        declarations += firJavaField
+                        declarations += firJavaDeclaration
                     }
                     for (javaMethod in javaClass.methods) {
                         val methodName = javaMethod.name
@@ -232,7 +250,6 @@ class JavaSymbolProvider(
                         isPrimary: Boolean = false,
                     ): FirJavaConstructorBuilder {
                         val constructorSymbol = FirConstructorSymbol(constructorId)
-                        val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                         return FirJavaConstructorBuilder().apply {
                             source = psi?.toFirPsiSourceElement()
                             session = this@JavaSymbolProvider.session
@@ -242,15 +259,17 @@ class JavaSymbolProvider(
                             isInner = javaClass.outerClass != null && !javaClass.isStatic
                             returnTypeRef = buildResolvedTypeRef {
                                 type = firSymbol.constructType(
-                                    classTypeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                                    this@buildJavaClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                                     false,
                                 )
                             }
-                            typeParameters += classTypeParameters
+                            typeParameters += classTypeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
                         }
                     }
 
-                    if (javaClassDeclaredConstructors.isEmpty() && javaClass.classKind == ClassKind.CLASS) {
+                    if (javaClassDeclaredConstructors.isEmpty()
+                        && javaClass.classKind == ClassKind.CLASS
+                        && javaClass.hasDefaultConstructor()) {
                         declarations += prepareJavaConstructor(isPrimary = true).build()
                     }
                     for (javaConstructor in javaClassDeclaredConstructors) {

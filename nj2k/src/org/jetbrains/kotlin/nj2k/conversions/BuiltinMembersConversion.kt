@@ -235,6 +235,13 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
             Method("java.lang.Double.parseDouble") convertTo ExtensionMethod("kotlin.text.toDouble")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
 
+            Method("java.lang.Number.byteValue") convertTo Method("kotlin.Number.toByte"),
+            Method("java.lang.Number.doubleValue") convertTo Method("kotlin.Number.toDouble"),
+            Method("java.lang.Number.floatValue") convertTo Method("kotlin.Number.toFloat"),
+            Method("java.lang.Number.intValue") convertTo Method("kotlin.Number.toInt"),
+            Method("java.lang.Number.longValue") convertTo Method("kotlin.Number.toLong"),
+            Method("java.lang.Number.shortValue") convertTo Method("kotlin.Number.toShort"),
+
             Field("java.lang.Byte.MIN_VALUE") convertTo Field("kotlin.Byte.Companion.MIN_VALUE")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
             Field("java.lang.Byte.MAX_VALUE") convertTo Field("kotlin.Byte.Companion.MAX_VALUE")

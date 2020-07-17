@@ -1,6 +1,6 @@
 import react.dom.render
-import kotlin.browser.document
-import kotlin.browser.window
+import kotlinx.browser.document
+import kotlinx.browser.window
 
 fun main() {
     window.onload = {

@@ -114,7 +114,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         } else {
             val filePathsToReport = filesExistingInTargetDir.joinToString(
                 separator = "\n",
-                prefix = "Cannot perform refactoring since the following files already exist:\n\n"
+                prefix = KotlinBundle.message("move.refactoring.error.text.cannot.perform.refactoring.since.the.following.files.already.exist")
             ) { it.virtualFile.path }
             throw ConfigurationException(filePathsToReport)
         }

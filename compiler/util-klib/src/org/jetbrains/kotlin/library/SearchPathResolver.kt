@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.impl.isPre_1_4_Library
 import org.jetbrains.kotlin.util.*
+import java.nio.file.InvalidPathException
+import java.nio.file.Paths
 
 const val KOTLIN_STDLIB_NAME = "stdlib"
 
@@ -69,29 +71,54 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         }
     }
 
+    /**
+     * Returns a [File] instance if the [path] is valid on the current file system and null otherwise.
+     * Doesn't check whether the file denoted by [path] really exists.
+     */
+    private fun validFileOrNull(path: String): File? =
+        try {
+            File(Paths.get(path))
+        } catch (_: InvalidPathException) {
+            null
+        }
+
+    /**
+     * Returns a sequence of libraries passed to the compiler directly for which unique_name == [givenName].
+     */
+    private fun directLibsSequence(givenName: String): Sequence<File> {
+        // Search among user-provided libraries by unique name.
+        // It's a workaround for maven publication. When a library is published without Gradle metadata,
+        // it has a complex file name (e.g. foo-macos_x64-1.0.klib). But a dependency on this lib in manifests
+        // of other libs uses its unique name written in the manifest (i.e just 'foo'). So we cannot resolve this
+        // library by its filename. But we have this library's file (we've downloaded it using maven dependency
+        // resolution) so we can pass it to the compiler directly. This code takes this into account and looks for
+        // a library dependencies also in libs passed to the compiler as files (passed to the resolver as the
+        // 'directLibraries' property).
+        return directLibraries.asSequence().filter {
+            it.uniqueName == givenName
+        }.map {
+            it.libraryFile
+        }
+    }
+
     override fun resolutionSequence(givenPath: String): Sequence<File> {
-        val given = File(givenPath)
-        val sequence = if (given.isAbsolute) {
-            sequenceOf(found(given))
-        } else {
-            // Search among user-provided libraries by unique name.
-            // It's a workaround for maven publication. When a library is published without Gradle metadata,
-            // it has a complex file name (e.g. foo-macos_x64-1.0.klib). But a dependency on this lib in manifests
-            // of other libs uses its unique name written in the manifest (i.e just 'foo'). So we cannot resolve this
-            // library by its filename. But we have this library's file (we've downloaded it using maven dependency
-            // resolution) so we can pass it to the compiler directly. This code takes this into account and looks for
-            // a library dependencies also in libs passed to the compiler as files (passed to the resolver as the
-            // 'directLibraries' property).
-            val directLibs = directLibraries.asSequence().filter {
-                it.uniqueName == givenPath
-            }.map {
-                it.libraryFile
+        val given = validFileOrNull(givenPath)
+        val sequence = when {
+            given == null -> {
+                // The given path can't denote a real file, so just look for such
+                // unique_name among libraries passed to the compiler directly.
+                directLibsSequence(givenPath)
             }
-            // Search among libraries in repositoreis by library filename.
-            val repoLibs = searchRoots.asSequence().map {
-                found(File(it, givenPath))
+            given.isAbsolute ->
+                sequenceOf(found(given))
+            else -> {
+                // Search among libraries in repositories by library filename.
+                val repoLibs = searchRoots.asSequence().map {
+                    found(File(it, given))
+                }
+                // The given path still may denote a unique name of a direct library.
+                directLibsSequence(givenPath) + repoLibs
             }
-            directLibs + repoLibs
         }
         return sequence.filterNotNull()
     }

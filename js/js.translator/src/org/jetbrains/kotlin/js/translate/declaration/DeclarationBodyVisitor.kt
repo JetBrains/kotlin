@@ -159,10 +159,12 @@ class DeclarationBodyVisitor(
 
     override fun addProperty(descriptor: PropertyDescriptor, getter: JsExpression, setter: JsExpression?) {
         if (!JsDescriptorUtils.isSimpleFinalProperty(descriptor)) {
-            val literal = JsObjectLiteral(true)
-            literal.propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), getter)
-            if (setter != null) {
-                literal.propertyInitializers += JsPropertyInitializer(JsStringLiteral("set"), setter)
+            val literal = JsObjectLiteral(true).apply {
+                propertyInitializers += JsPropertyInitializer(JsStringLiteral("configurable"), JsBooleanLiteral(true))
+                propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), getter)
+                if (setter != null) {
+                    propertyInitializers += JsPropertyInitializer(JsStringLiteral("set"), setter)
+                }
             }
             context.addAccessorsToPrototype(containingClass, descriptor, literal)
         }

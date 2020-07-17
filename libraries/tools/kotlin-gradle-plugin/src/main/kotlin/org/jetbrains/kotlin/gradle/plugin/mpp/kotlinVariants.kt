@@ -97,38 +97,6 @@ class KotlinVariantWithMetadataVariant(
     override fun getVariants() = metadataTarget.components
 }
 
-class KotlinVariantWithMetadataDependency(
-    producingCompilation: KotlinCompilation<*>,
-    val originalUsages: Set<DefaultKotlinUsageContext>,
-    private val metadataTarget: AbstractKotlinTarget
-) : KotlinVariantWithCoordinates(producingCompilation, originalUsages) {
-    override fun getUsages(): Set<KotlinUsageContext> = originalUsages.mapTo(mutableSetOf()) { usageContext ->
-        KotlinUsageContextWithAdditionalDependencies(usageContext, setOf(metadataDependency()))
-    }
-
-    private fun metadataDependency(): ModuleDependency {
-        val metadataComponent = metadataTarget.kotlinComponents.single() as KotlinTargetComponentWithPublication
-        val project = metadataTarget.project
-
-        // The metadata component may not be published, e.g. if the whole project is not published:
-        val metadataPublication: MavenPublication? = metadataComponent.publicationDelegate
-
-        val metadataGroupId = metadataPublication?.groupId ?: project.group
-        val metadataArtifactId = metadataPublication?.artifactId ?: metadataComponent.defaultArtifactId
-        val metadataVersion = metadataPublication?.version ?: project.version
-        return target.project.dependencies.module("$metadataGroupId:$metadataArtifactId:$metadataVersion") as ModuleDependency
-    }
-
-    class KotlinUsageContextWithAdditionalDependencies(
-        val parentUsageContext: DefaultKotlinUsageContext,
-        val additionalDependencies: Set<ModuleDependency>
-    ) : KotlinUsageContext by parentUsageContext {
-        override fun getDependencies() = parentUsageContext.dependencies + additionalDependencies
-
-        override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
-    }
-}
-
 class JointAndroidKotlinTargetComponent(
     override val target: KotlinAndroidTarget,
     private val nestedVariants: Set<KotlinVariant>,

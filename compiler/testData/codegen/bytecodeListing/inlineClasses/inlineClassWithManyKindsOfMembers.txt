@@ -49,11 +49,11 @@ public interface IFoo {
 public final class Z {
     private final field x: int
     private synthetic method <init>(p0: int): void
-    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z
+    public synthetic final static method box-impl(p0: int): Z
     public static method constructor-impl(p0: int): int
     public static method constructor-impl(p0: long): int
     public method equals(p0: java.lang.Object): boolean
-    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int): boolean
     public synthetic deprecated static @A method getNonOverridingExtVal$annotations(p0: java.lang.String): void
     public final static @AGet method getNonOverridingExtVal-impl(p0: int, @AReceiver @org.jetbrains.annotations.NotNull p1: java.lang.String): int

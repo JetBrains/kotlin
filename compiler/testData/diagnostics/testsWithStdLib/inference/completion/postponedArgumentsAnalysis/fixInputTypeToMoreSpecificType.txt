@@ -1,0 +1,4 @@
+package
+
+public val x: kotlin.collections.Map<kotlin.String, kotlin.String>
+public fun </*0*/ T> materialize(): T

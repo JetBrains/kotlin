@@ -12,26 +12,25 @@ import java.io.File
 import javax.script.ScriptEngine
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.fileExtension
+import kotlin.script.experimental.api.with
 import kotlin.script.experimental.jvm.JvmScriptCompilationConfigurationBuilder
-import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
-import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
-import kotlin.script.experimental.jvmhost.createJvmEvaluationConfigurationFromTemplate
+import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
 
 class KotlinJsr223MainKtsScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
 
-    private val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<MainKtsScript>()
-    private val evaluationConfiguration = createJvmEvaluationConfigurationFromTemplate<MainKtsScript>()
+    private val scriptDefinition = createJvmScriptDefinitionFromTemplate<MainKtsScript>()
     private var lastClassLoader: ClassLoader? = null
     private var lastClassPath: List<File>? = null
 
-    override fun getExtensions(): List<String> = listOf(compilationConfiguration[ScriptCompilationConfiguration.fileExtension]!!)
+    override fun getExtensions(): List<String> =
+        listOf(scriptDefinition.compilationConfiguration[ScriptCompilationConfiguration.fileExtension]!!)
 
     @Synchronized
-    protected fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext() {
+    private fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext() {
         val currentClassLoader = Thread.currentThread().contextClassLoader
         val classPath = if (lastClassLoader == null || lastClassLoader != currentClassLoader) {
             scriptCompilationClasspathFromContext(
@@ -49,12 +48,12 @@ class KotlinJsr223MainKtsScriptEngineFactory : KotlinJsr223JvmScriptEngineFactor
     override fun getScriptEngine(): ScriptEngine =
         KotlinJsr223ScriptEngineImpl(
             this,
-            ScriptCompilationConfiguration(compilationConfiguration) {
+            scriptDefinition.compilationConfiguration.with {
                 jvm {
                     dependenciesFromCurrentContext()
                 }
             },
-            evaluationConfiguration
+            scriptDefinition.evaluationConfiguration
         ) { ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class)) }
 }
 

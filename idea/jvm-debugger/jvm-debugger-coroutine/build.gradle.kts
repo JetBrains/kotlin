@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     implementation(project(":idea:jvm-debugger:jvm-debugger-core"))
+    implementation("org.apache.maven:maven-artifact:3.6.3")
 
     compileOnly(toolsJarApi())
     compileOnly(intellijDep())

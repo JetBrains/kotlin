@@ -21,13 +21,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirPropertyAccessor : FirPureAbstractElement(), FirFunction<FirPropertyAccessor>, FirContractDescriptionOwner {
+abstract class FirPropertyAccessor : FirPureAbstractElement(), FirFunction<FirPropertyAccessor>, FirContractDescriptionOwner, FirTypeParametersOwner {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
+    abstract override val origin: FirDeclarationOrigin
+    abstract override val attributes: FirDeclarationAttributes
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val typeParameters: List<FirTypeParameter>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
@@ -37,8 +38,19 @@ abstract class FirPropertyAccessor : FirPureAbstractElement(), FirFunction<FirPr
     abstract val isSetter: Boolean
     abstract val status: FirDeclarationStatus
     abstract override val annotations: List<FirAnnotationCall>
+    abstract override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitPropertyAccessor(this, data)
+
+    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
+
+    abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
+
+    abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
 
@@ -47,6 +59,8 @@ abstract class FirPropertyAccessor : FirPureAbstractElement(), FirFunction<FirPr
     abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
 
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
+
+    abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
 
     abstract override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
 

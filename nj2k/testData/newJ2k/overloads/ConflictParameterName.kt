@@ -22,7 +22,15 @@ class Test {
         private get() = 1
 
     @JvmOverloads
-    fun foo(a: Boolean = this.a, b: Boolean = this.b, c: Boolean = c(), isD: Boolean = this.isD, e: Boolean = this.e.ee, f: Boolean = F().f, g: Int = this.g) {
+    fun foo(
+        a: Boolean = this.a,
+        b: Boolean = this.b,
+        c: Boolean = c(),
+        isD: Boolean = this.isD,
+        e: Boolean = this.e.ee,
+        f: Boolean = F().f,
+        g: Int = this.g
+    ) {
     }
 
     @JvmOverloads

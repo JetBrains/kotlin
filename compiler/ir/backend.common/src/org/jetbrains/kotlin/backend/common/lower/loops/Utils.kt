@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -18,19 +19,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
-internal fun IrExpression.castIfNecessary(targetType: IrType, numberCastFunctionName: Name): IrExpression {
-    // This expression's type could be Nothing from an exception throw.
-    return if (type == targetType || type.isNothing()) {
-        this
-    } else {
-        val castFun = type.getClass()!!.functions.single { it.name == numberCastFunctionName && it.valueParameters.isEmpty() }
-        IrCallImpl(startOffset, endOffset, castFun.returnType, castFun.symbol)
-            .apply { dispatchReceiver = this@castIfNecessary }
-    }
-}
 
 /** Return the negated value if the expression is const, otherwise call unaryMinus(). */
 internal fun IrExpression.negate(): IrExpression {
@@ -45,7 +34,12 @@ internal fun IrExpression.negate(): IrExpression {
                 it.name == OperatorNameConventions.UNARY_MINUS &&
                         it.valueParameters.isEmpty()
             }
-            IrCallImpl(startOffset, endOffset, type, unaryMinusFun.symbol).apply {
+            IrCallImpl(
+                startOffset, endOffset, type,
+                unaryMinusFun.symbol,
+                valueArgumentsCount = 0,
+                typeArgumentsCount = 0
+            ).apply {
                 dispatchReceiver = this@negate
             }
         }
@@ -63,7 +57,12 @@ internal fun IrExpression.decrement(): IrExpression {
                 it.name == OperatorNameConventions.DEC &&
                         it.valueParameters.isEmpty()
             }
-            IrCallImpl(startOffset, endOffset, type, decFun.symbol).apply {
+            IrCallImpl(
+                startOffset, endOffset, type,
+                decFun.symbol,
+                valueArgumentsCount = 0,
+                typeArgumentsCount = 0
+            ).apply {
                 dispatchReceiver = this@decrement
             }
         }
@@ -88,9 +87,12 @@ internal val IrExpression.constLongValue: Long?
  *
  * This helps reduce local variable usage.
  */
-internal fun DeclarationIrBuilder.createTemporaryVariableIfNecessary(expression: IrExpression, nameHint: String? = null) =
+internal fun DeclarationIrBuilder.createTemporaryVariableIfNecessary(
+    expression: IrExpression, nameHint: String? = null,
+    irType: IrType? = null
+): Pair<IrVariable?, IrExpression> =
     if (expression.canHaveSideEffects) {
-        scope.createTmpVariable(expression, nameHint = nameHint).let { Pair(it, irGet(it)) }
+        scope.createTmpVariable(expression, nameHint = nameHint, irType = irType).let { Pair(it, irGet(it)) }
     } else {
         Pair(null, expression)
     }

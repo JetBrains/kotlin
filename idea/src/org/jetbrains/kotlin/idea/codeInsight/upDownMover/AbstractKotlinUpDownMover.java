@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.codeInsight.upDownMover;
 
 import com.intellij.codeInsight.editorActions.moveUpDown.LineMover;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Pair;
@@ -29,10 +30,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.core.util.PsiLinesUtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
-import org.jetbrains.kotlin.psi.KtBlockExpression;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtFunctionLiteral;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.*;
 
 public abstract class AbstractKotlinUpDownMover extends LineMover {
     protected AbstractKotlinUpDownMover() {
@@ -144,6 +143,23 @@ public abstract class AbstractKotlinUpDownMover extends LineMover {
         }
 
         return lastElement;
+    }
+
+    @Nullable
+    protected static KtAnnotationEntry getParentFileAnnotationEntry(@Nullable PsiElement element) {
+        if (element == null) return null;
+
+        KtAnnotationEntry annotationEntry = PsiTreeUtil.getParentOfType(element, KtAnnotationEntry.class);
+        if (annotationEntry == null) return null;
+
+        KtAnnotationUseSiteTarget useSiteTarget = annotationEntry.getUseSiteTarget();
+        if (useSiteTarget == null) return null;
+
+        ASTNode node = useSiteTarget.getNode().getFirstChildNode();
+        if (node == null) return null;
+        if (node.getElementType() != KtTokens.FILE_KEYWORD) return null;
+
+        return annotationEntry;
     }
 
     private static boolean checkCommentAtBlockBound(PsiElement blockElement, PsiElement comment, KtBlockExpression block) {

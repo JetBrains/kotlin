@@ -7,10 +7,29 @@ package org.jetbrains.kotlin.tools.projectWizard
 
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
+@Suppress("ClassName", "SpellCheckingInspection")
 object Versions {
-    val KOTLIN = version("1.3.70")
+    val KOTLIN = version("1.4-M1") // used as fallback version
+    val GRADLE = version("6.3")
+    val KTOR: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.3.2-$kotlinVersion") }
 
-    object GradlePlugins {
+    object ANDROID {
+        val ANDROIDX_CORE_KTX = version("1.2.0")
+        val ANDROIDX_APPCOMPAT = version("1.1.0")
+        val ANDROIDX_CONSTRAINTLAYOUT = version("1.1.3")
+    }
+
+    object KOTLINX {
+        val KOTLINX_HTML: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("0.7.1-$kotlinVersion") }
+    }
+
+    object JS_WRAPPERS {
+        val KOTLIN_REACT: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("16.13.1-pre.109-kotlin-$kotlinVersion") }
+        val KOTLIN_REACT_DOM = KOTLIN_REACT
+        val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.0.0-pre.109-kotlin-$kotlinVersion") }
+    }
+
+    object GRADLE_PLUGINS {
         val ANDROID = version("3.5.2")
     }
 }

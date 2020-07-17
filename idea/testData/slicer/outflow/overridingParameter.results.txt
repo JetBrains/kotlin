@@ -1,8 +1,8 @@
-10 override val foo = <bold>3</bold>
-10 	override val <bold>foo = 3</bold>
-14 		val x = a.<bold>foo</bold>
-14 			val <bold>x = a.foo</bold>
-15 		val y = b.<bold>foo</bold>
-15 			val <bold>y = b.foo</bold>
-16 		val z = c.<bold>foo</bold>
-16 			val <bold>z = c.foo</bold>
+10 override val foo = <bold>3</bold> (in C.foo)
+10 	override <bold>val foo</bold> = 3 (in C)
+14 		val x = a.<bold>foo</bold> (in test(A, B,…))
+14 			<bold>val x</bold> = a.foo (in test(A, B,…))
+15 		val y = b.<bold>foo</bold> (in test(A, B,…))
+15 			<bold>val y</bold> = b.foo (in test(A, B,…))
+16 		val z = c.<bold>foo</bold> (in test(A, B,…))
+16 			<bold>val z</bold> = c.foo (in test(A, B,…))

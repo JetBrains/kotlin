@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: JVM_IR, JS, JS_IR, NATIVE
+// IGNORE_BACKEND: JS, JS_IR, NATIVE
+// IGNORE_BACKEND: JS_IR_ES6
 // FILE: test.kt
 
 fun checkEqual(x: Any, y: Any) {
@@ -48,6 +49,11 @@ fun box(): String {
     checkNotEqual(captureNoDefaultsBound(v0::target), captureAllDefaultsBound(v0::target))
 
     checkNotEqual(captureNoDefaults(V::target), captureNoDefaultsBoundFromOtherFile(v0))
+
+    val v1 = V()
+    checkNotEqual(captureNoDefaultsBound(v0::target), captureNoDefaultsBound(v1::target))
+    checkNotEqual(captureOneDefaultBound(v0::target), captureOneDefaultBound(v1::target))
+    checkNotEqual(captureAllDefaultsBound(v0::target), captureAllDefaultsBound(v1::target))
 
     return "OK"
 }

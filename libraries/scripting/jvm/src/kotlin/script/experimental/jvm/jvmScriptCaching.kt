@@ -11,16 +11,16 @@ import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface CompiledJvmScriptsCache {
-    fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript<*>?
-    fun store(compiledScript: CompiledScript<*>, script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration)
+    fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript?
+    fun store(compiledScript: CompiledScript, script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration)
 
     object NoCache : CompiledJvmScriptsCache {
         override fun get(
             script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration
-        ): CompiledScript<*>? = null
+        ): CompiledScript? = null
 
         override fun store(
-            compiledScript: CompiledScript<*>, script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration
+            compiledScript: CompiledScript, script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration
         ) {
         }
     }

@@ -2,6 +2,18 @@ package
 
 @kotlin.jvm.JvmName(name = "bad") public fun bar(/*0*/ f: Foo): kotlin.Unit
 @kotlin.jvm.JvmName(name = "good") public fun baz(/*0*/ r: kotlin.Result<kotlin.Int>): kotlin.Unit
+@kotlin.jvm.JvmName(name = "test") public fun returnsInlineClass(): Foo
+@kotlin.jvm.JvmName(name = "test") public fun returnsKotlinResult(/*0*/ a: kotlin.Result<kotlin.Int>): kotlin.Result<kotlin.Int>
+@kotlin.jvm.JvmName(name = "extensionFun") public fun Foo.extensionFun(): kotlin.Unit
+
+public final class C {
+    public constructor C()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @kotlin.jvm.JvmName(name = "test") public final fun returnsInlineClass(): Foo
+    @kotlin.jvm.JvmName(name = "test") public final fun returnsKotlinResult(/*0*/ a: kotlin.Result<kotlin.Int>): kotlin.Result<kotlin.Int>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
 
 public final inline class Foo {
     public constructor Foo(/*0*/ x: kotlin.Int)

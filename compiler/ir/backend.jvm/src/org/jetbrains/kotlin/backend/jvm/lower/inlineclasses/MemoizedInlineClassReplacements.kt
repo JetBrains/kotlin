@@ -10,15 +10,17 @@ import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForInlining
+import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionBase
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -30,8 +32,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 /**
  * Keeps track of replacement functions and inline class box/unbox functions.
  */
-class MemoizedInlineClassReplacements {
+class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean) {
     private val storageManager = LockBasedStorageManager("inline-class-replacements")
+    private val propertyMap = mutableMapOf<IrPropertySymbol, IrProperty>()
 
     /**
      * Get a replacement for a function or a constructor.
@@ -41,17 +44,22 @@ class MemoizedInlineClassReplacements {
             when {
                 // Don't mangle anonymous or synthetic functions
                 it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
-                        it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
-                        it.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT ||
-                        it.origin.isSynthetic ||
-                        it.isInlineClassFieldGetter -> null
+                        (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == Visibilities.LOCAL) ||
+                        it.isStaticInlineClassReplacement ||
+                        it.origin.isSynthetic -> null
+
+                it.isInlineClassFieldGetter ->
+                    if (it.hasMangledReturnType)
+                        createMethodReplacement(it)
+                    else
+                        null
 
                 // Mangle all functions in the body of an inline class
                 it.parent.safeAs<IrClass>()?.isInline == true ->
                     createStaticReplacement(it)
 
-                // Otherwise, mangle functions with mangled parameters, while ignoring constructors
-                it is IrSimpleFunction && it.hasMangledParameters ->
+                // Otherwise, mangle functions with mangled parameters, ignoring constructors
+                it is IrSimpleFunction && (it.hasMangledParameters || mangleReturnTypes && it.hasMangledReturnType) ->
                     if (it.dispatchReceiverParameter != null) createMethodReplacement(it) else createStaticReplacement(it)
 
                 else ->
@@ -124,7 +132,7 @@ class MemoizedInlineClassReplacements {
         }
     }
 
-    internal fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
+    private fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
             require(function.dispatchReceiverParameter != null && function is IrSimpleFunction)
             val newValueParameters = ArrayList<IrValueParameter>()
@@ -175,34 +183,59 @@ class MemoizedInlineClassReplacements {
         function: IrFunction,
         replacementOrigin: IrDeclarationOrigin,
         noFakeOverride: Boolean = false,
-        body: IrFunctionImpl.() -> Unit
-    ) =
-        buildFunWithDescriptorForInlining(function.descriptor) {
-            updateFrom(function)
-            origin = if (function.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER) {
+        body: IrFunction.() -> Unit
+    ): IrSimpleFunction = buildFun(function.descriptor) {
+        updateFrom(function)
+        if (function is IrConstructor) {
+            // The [updateFrom] call will set the modality to FINAL for constructors, while the JVM backend would use OPEN here.
+            modality = Modality.OPEN
+        }
+        origin = when {
+            function.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER ->
                 JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
-            } else {
+            function is IrConstructor && function.constructedClass.isInline ->
+                JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
+            else ->
                 replacementOrigin
-            }
-            if (noFakeOverride) {
-                isFakeOverride = false
-            }
-            name = mangledNameFor(function)
-            returnType = function.returnType
-        }.apply {
-            parent = function.parent
-            annotations += function.annotations
-            copyTypeParameters(function.allTypeParameters)
+        }
+        if (noFakeOverride) {
+            isFakeOverride = false
+        }
+        name = mangledNameFor(function, mangleReturnTypes)
+        returnType = function.returnType
+    }.apply {
+        parent = function.parent
+        annotations += function.annotations
+        copyTypeParameters(function.allTypeParameters)
+        if (function.metadata != null) {
             metadata = function.metadata
-            function.safeAs<IrFunctionBase<*>>()?.metadata = null
+            function.metadata = null
+        }
 
-            if (function is IrSimpleFunction) {
-                correspondingPropertySymbol = function.correspondingPropertySymbol
-                overriddenSymbols = function.overriddenSymbols.map {
-                    getReplacementFunction(it.owner)?.symbol ?: it
+        if (function is IrSimpleFunction) {
+            val propertySymbol = function.correspondingPropertySymbol
+            if (propertySymbol != null) {
+                val property = propertyMap.getOrPut(propertySymbol) {
+                    buildProperty(propertySymbol.descriptor) {
+                        name = propertySymbol.owner.name
+                        updateFrom(propertySymbol.owner)
+                    }.apply {
+                        parent = propertySymbol.owner.parent
+                    }
+                }
+                correspondingPropertySymbol = property.symbol
+                when (function) {
+                    propertySymbol.owner.getter -> property.getter = this
+                    propertySymbol.owner.setter -> property.setter = this
+                    else -> error("Orphaned property getter/setter: ${function.render()}")
                 }
             }
 
-            body()
+            overriddenSymbols = function.overriddenSymbols.map {
+                getReplacementFunction(it.owner)?.symbol ?: it
+            }
         }
+
+        body()
+    }
 }

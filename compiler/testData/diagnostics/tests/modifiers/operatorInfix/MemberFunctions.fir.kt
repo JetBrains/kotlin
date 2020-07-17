@@ -1,10 +1,10 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -EXTENSION_SHADOWED_BY_MEMBER
 
 class Example {
-    <!INAPPLICABLE_INFIX_MODIFIER!>operator infix fun plus(other: Example) = 0<!>
+    operator infix fun plus(other: Example) = 0
     fun minus(other: Example) = 0
 
-    <!INAPPLICABLE_INFIX_MODIFIER!>operator infix fun times(other: Example) = 0<!>
+    operator infix fun times(other: Example) = 0
     fun div(other: Example) = 0
 }
 

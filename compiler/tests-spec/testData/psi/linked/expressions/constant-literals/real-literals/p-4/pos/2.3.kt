@@ -2,7 +2,7 @@
  * KOTLIN PSI SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, constant-literals, real-literals -> paragraph 4 -> sentence 2
+ * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 4 -> sentence 2
  * NUMBER: 3
  * DESCRIPTION: Real literals with underscores around an exponent mark.
  */

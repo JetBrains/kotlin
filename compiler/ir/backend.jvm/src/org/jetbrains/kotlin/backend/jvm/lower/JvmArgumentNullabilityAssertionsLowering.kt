@@ -52,7 +52,7 @@ private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContex
         else
             super.visitTypeOperator(expression, data)
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression, data: AssertionScope): IrElement {
+    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: AssertionScope): IrElement {
         // Always drop nullability assertions on dispatch receivers, assuming that it will throw NPE.
         //
         // NB there are some members in Kotlin built-in classes which are NOT implemented as platform method calls,
@@ -89,7 +89,7 @@ private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContex
         return expression
     }
 
-    private fun isCallToMethodWithTypeCheckBarrier(expression: IrMemberAccessExpression): Boolean =
+    private fun isCallToMethodWithTypeCheckBarrier(expression: IrMemberAccessExpression<*>): Boolean =
         expression.symbol.owner.safeAs<IrSimpleFunction>()?.let { specialBridgeMethods.findSpecialWithOverride(it) != null } == true
 
     private val IrStatementOrigin?.isOperatorWithNoNullabilityAssertionsOnExtensionReceiver

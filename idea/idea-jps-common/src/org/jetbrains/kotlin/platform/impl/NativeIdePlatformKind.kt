@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.platform.konan.isNative
 
 object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
-    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform == NativePlatforms.defaultNativePlatform
+    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform.isNative()
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
         return if (arguments is FakeK2NativeCompilerArguments)
-            NativePlatforms.defaultNativePlatform
+            NativePlatforms.unspecifiedNativePlatform
         else
             null
     }
@@ -30,7 +31,7 @@ object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
     }
 
     override val defaultPlatform: TargetPlatform
-        get() = NativePlatforms.defaultNativePlatform
+        get() = NativePlatforms.unspecifiedNativePlatform
 
     @Deprecated(
         message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",

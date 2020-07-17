@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideControl
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -183,8 +184,8 @@ open class IrFileSerializer(
 
     private fun serializePublicSignature(signature: IdSignature.PublicSignature): ProtoPublicIdSignature {
         val proto = ProtoPublicIdSignature.newBuilder()
-        proto.addAllPackageFqName(serializeFqName(signature.packageFqn))
-        proto.addAllDeclarationFqName(serializeFqName(signature.declarationFqn))
+        proto.addAllPackageFqName(serializeFqName(signature.packageFqName))
+        proto.addAllDeclarationFqName(serializeFqName(signature.declarationFqName))
 
         signature.id?.let { proto.memberUniqId = it }
         if (signature.mask != 0L) {
@@ -199,7 +200,7 @@ open class IrFileSerializer(
 
         proto.propertySignature = protoIdSignature(signature.propertySignature)
         with(signature.accessorSignature) {
-            proto.name = serializeString(declarationFqn.shortName().asString())
+            proto.name = serializeString(shortName)
             proto.accessorHashId = id ?: error("Expected hash Id")
             if (mask != 0L) {
                 proto.flags = mask
@@ -296,7 +297,7 @@ open class IrFileSerializer(
     private fun serializeAnnotations(annotations: List<IrConstructorCall>) =
         annotations.map { serializeConstructorCall(it) }
 
-    private fun serializeFqName(fqName: FqName) = fqName.pathSegments().map { serializeString(it.asString()) }
+    private fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map(::serializeString)
 
     private fun serializeIrStarProjection() = BinaryTypeProjection.STAR_CODE
 
@@ -471,7 +472,7 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeMemberAccessCommon(call: IrMemberAccessExpression): ProtoMemberAccessCommon {
+    private fun serializeMemberAccessCommon(call: IrMemberAccessExpression<*>): ProtoMemberAccessCommon {
         val proto = ProtoMemberAccessCommon.newBuilder()
         if (call.extensionReceiver != null) {
             proto.extensionReceiver = serializeExpression(call.extensionReceiver!!)
@@ -1121,7 +1122,7 @@ open class IrFileSerializer(
             .setName(serializeName(clazz.name))
 
         clazz.declarations.forEach {
-            proto.addDeclaration(serializeDeclaration(it))
+            if (memberNeedsSerialization(it)) proto.addDeclaration(serializeDeclaration(it))
         }
 
         clazz.typeParameters.forEach {
@@ -1211,13 +1212,23 @@ open class IrFileSerializer(
     open fun backendSpecificExplicitRoot(declaration: IrFunction) = false
     open fun backendSpecificExplicitRoot(declaration: IrClass) = false
     open fun keepOrderOfProperties(property: IrProperty): Boolean = !property.isConst
+    open fun backendSpecificSerializeAllMembers(irClass: IrClass) = false
+
+    fun memberNeedsSerialization(member: IrDeclaration): Boolean {
+        assert(member.parent is IrClass)
+        if (FakeOverrideControl.serializeFakeOverrides) return true
+        if (backendSpecificSerializeAllMembers(member.parent as IrClass)) return true
+        // TODO: we can, probably, maintain a privacy bit while traversing the tree
+        // instead of running the parent hierarchy for isExported every time.
+        return !(member.isFakeOverride && declarationTable.isExportedDeclaration(member))
+    }
 
     fun serializeIrFile(file: IrFile): SerializedIrFile {
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
 
         val proto = ProtoFile.newBuilder()
             .setFileEntry(serializeFileEntry(file.fileEntry))
-            .addAllFqName(serializeFqName(file.fqName))
+            .addAllFqName(serializeFqName(file.fqName.asString()))
             .addAllAnnotation(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {
@@ -1233,7 +1244,7 @@ open class IrFileSerializer(
 
             // TODO: keep order similar
             val sigIndex = protoIdSignatureMap[idSig] ?: error("Not found ID for $idSig (${it.render()})")
-            topLevelDeclarations.add(TopLevelDeclaration(sigIndex, it.descriptor.toString(), byteArray))
+            topLevelDeclarations.add(TopLevelDeclaration(sigIndex, idSig.toString(), byteArray))
             proto.addDeclarationId(sigIndex)
         }
 

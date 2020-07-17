@@ -20,6 +20,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemDescriptorBase
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
 import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
@@ -166,17 +167,18 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     private fun getInspectionResult(tool: LocalInspectionTool, file: VirtualFile): List<String> {
         val resultRef = Ref<List<String>>()
-        invokeTestRunnable {
-            val presentation = runInspection(tool, myProject, listOf(file))
+        runInEdtAndWait {
+            invokeTestRunnable {
+                val presentation = runInspection(tool, myProject, listOf(file))
 
-            val foundProblems = presentation.problemElements
-                .values
-                .mapNotNull { it as? ProblemDescriptorBase }
-                .map { it.descriptionTemplate }
+                val foundProblems = presentation.problemElements
+                    .values
+                    .mapNotNull { it as? ProblemDescriptorBase }
+                    .map { it.descriptionTemplate }
 
-            resultRef.set(foundProblems)
+                resultRef.set(foundProblems)
+            }
         }
-
         return resultRef.get()
     }
 

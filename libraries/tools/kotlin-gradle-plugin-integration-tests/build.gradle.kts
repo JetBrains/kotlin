@@ -52,7 +52,7 @@ val shortenTempRootName = System.getProperty("os.name")!!.contains("Windows")
 projectTest("test", shortenTempRootName = shortenTempRootName) {}
 
 projectTest("testAdvanceGradleVersion", shortenTempRootName = shortenTempRootName) {
-    val gradleVersionForTests = "5.3-rc-2"
+    val gradleVersionForTests = "6.3"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
 }
 
@@ -92,45 +92,7 @@ tasks.withType<Test> {
     onlyIf { !project.hasProperty("noTest") }
 
     dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
-    dependsOn(
-        ":kotlin-allopen:install",
-        ":kotlin-allopen:plugin-marker:install",
-        ":kotlin-noarg:install",
-        ":kotlin-allopen:plugin-marker:install",
-        ":kotlin-sam-with-receiver:install",
-        ":kotlin-android-extensions:install",
-        ":kotlin-build-common:install",
-        ":kotlin-compiler-embeddable:install",
-        ":native:kotlin-native-utils:install",
-        ":kotlin-util-klib:install",
-        ":kotlin-util-io:install",
-        ":kotlin-compiler-runner:install",
-        ":kotlin-daemon-embeddable:install",
-        ":kotlin-daemon-client:install",
-        ":kotlin-gradle-plugin-api:install",
-        ":kotlin-gradle-plugin:install",
-        ":kotlin-gradle-plugin-model:install",
-        ":kotlin-gradle-plugin:plugin-marker:install",
-        ":kotlin-reflect:install",
-        ":kotlin-annotation-processing-gradle:install",
-        ":kotlin-test:kotlin-test-common:install",
-        ":kotlin-test:kotlin-test-annotations-common:install",
-        ":kotlin-test:kotlin-test-jvm:install",
-        ":kotlin-test:kotlin-test-js:install",
-        ":kotlin-gradle-subplugin-example:install",
-        ":kotlin-stdlib-common:install",
-        ":kotlin-stdlib:install",
-        ":kotlin-stdlib-jdk8:install",
-        ":kotlin-stdlib-js:install",
-        ":examples:annotation-processor-example:install",
-        ":kotlin-script-runtime:install",
-        ":kotlin-scripting-common:install",
-        ":kotlin-scripting-jvm:install",
-        ":kotlin-scripting-compiler-embeddable:install",
-        ":kotlin-scripting-compiler-impl-embeddable:install",
-        ":kotlin-test-js-runner:install",
-        ":kotlin-source-map-loader:install"
-    )
+    dependsOnKotlinPluginInstall()
 
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
 

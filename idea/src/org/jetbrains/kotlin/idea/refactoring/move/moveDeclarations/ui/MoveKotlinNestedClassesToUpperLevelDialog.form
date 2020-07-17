@@ -13,7 +13,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="messages/RefactoringBundle" key="class.name.prompt"/>
+          <text resource-bundle="messages/KotlinBundle" key="class.name.prompt"/>
         </properties>
       </component>
       <hspacer id="dbb8e">
@@ -37,7 +37,7 @@
           <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="messages/RefactoringBundle" key="pass.outer.class.instance.as.parameter"/>
+          <text resource-bundle="messages/KotlinBundle" key="pass.outer.class.instance.as.parameter"/>
         </properties>
       </component>
       <component id="ec0ba" class="javax.swing.JLabel" binding="parameterNameLabel">
@@ -45,7 +45,7 @@
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="messages/RefactoringBundle" key="parameter.name.prompt"/>
+          <text resource-bundle="messages/KotlinBundle" key="parameter.name.prompt"/>
         </properties>
       </component>
       <component id="73425" class="com.intellij.refactoring.ui.NameSuggestionsField" binding="parameterField" custom-create="true">
@@ -64,13 +64,13 @@
           <component id="46c54" class="com.intellij.ui.NonFocusableCheckBox" binding="searchInCommentsCheckBox">
             <constraints/>
             <properties>
-              <text resource-bundle="messages/RefactoringBundle" key="search.in.comments.and.strings"/>
+              <text resource-bundle="messages/KotlinBundle" key="search.in.comments.and.strings"/>
             </properties>
           </component>
           <component id="e1ccb" class="com.intellij.ui.NonFocusableCheckBox" binding="searchForTextOccurrencesCheckBox">
             <constraints/>
             <properties>
-              <text resource-bundle="messages/RefactoringBundle" key="search.for.text.occurrences"/>
+              <text resource-bundle="messages/KotlinBundle" key="search.for.text.occurrences"/>
             </properties>
           </component>
         </children>

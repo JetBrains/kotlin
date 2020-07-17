@@ -40,8 +40,8 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
      */
     fun isPotentialQualifierPartPosition() = qualifierStack.size > 1
 
-    fun initProcessingQualifiedAccess(qualifiedAccess: FirQualifiedAccess, callee: FirSimpleNamedReference) {
-        if (qualifiedAccess.safe || callee.name.isSpecial) {
+    fun initProcessingQualifiedAccess(callee: FirSimpleNamedReference) {
+        if (callee.name.isSpecial) {
             qualifierStack.clear()
         } else {
             qualifierStack.add(callee.name)
@@ -78,7 +78,6 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
                 this.source = source
                 packageFqName = resolved.packageFqName
                 relativeClassFqName = resolved.relativeClassFqName
-                safe = false
                 symbol = resolved.classSymbol
             }.apply {
                 resultType = typeForQualifier(this)

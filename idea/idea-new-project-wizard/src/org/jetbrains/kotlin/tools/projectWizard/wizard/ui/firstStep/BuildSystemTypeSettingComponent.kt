@@ -1,35 +1,29 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
-import com.intellij.ide.ui.UISettings
-import com.intellij.openapi.Disposable
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ActionButtonLook
-import com.intellij.ui.layout.panel
-import com.intellij.util.ui.JBInsets
-import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
-import com.intellij.util.ui.UIUtilities
+import com.intellij.openapi.actionSystem.impl.ActionButton
+import com.intellij.openapi.actionSystem.impl.ActionButtonWithText
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.util.Disposer
+import icons.GradleIcons
+import icons.OpenapiIcons
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.isSpecificError
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.DropDownSettingType
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.IdeaBasedComponentValidator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.awt.Cursor
 import java.awt.Dimension
-import java.awt.Graphics
-import java.awt.Rectangle
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
+import java.awt.Insets
 import javax.swing.JComponent
-import javax.swing.SwingConstants
-import javax.swing.SwingUtilities
 
 
 class BuildSystemTypeSettingComponent(
@@ -37,22 +31,18 @@ class BuildSystemTypeSettingComponent(
 ) : SettingComponent<BuildSystemType, DropDownSettingType<BuildSystemType>>(
     BuildSystemPlugin::type.reference,
     context
-), Disposable {
-    override val forceLabelCenteringOffset: Int? = 2
-    private val buttons = setting.type.values.map(::BuildSystemChooseButton)
-    override val component = panel {
-        row {
-            buttons.forEach { button -> button(growX) }
-        }
+) {
+
+    private val toolbar by lazy(LazyThreadSafetyMode.NONE) {
+        val buildSystemTypes = read { setting.type.values.filter { setting.type.filter(this, reference, it) } }
+        val actionGroup = DefaultActionGroup(buildSystemTypes.map(::BuildSystemTypeAction))
+        BuildSystemToolbar(ActionPlaces.UNKNOWN, actionGroup, true)
+    }
+    override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
+        toolbar
     }
 
-    override val validationIndicator: ValidationIndicator = IdeaBasedComponentValidator(this, component)
-
-    override fun onInit() {
-        super.onInit()
-        updateButtonsValidationState()
-        updateButtons()
-    }
+    override val validationIndicator: ValidationIndicator = IdeaBasedComponentValidator(Disposer.newDisposable(), component)
 
     override fun navigateTo(error: ValidationResult.ValidationError) {
         if (validationIndicator.validationState.isSpecificError(error)) {
@@ -60,117 +50,74 @@ class BuildSystemTypeSettingComponent(
         }
     }
 
-    override fun onValueUpdated(reference: SettingReference<*, *>?) {
-        super.onValueUpdated(reference)
-        if (reference == BuildSystemPlugin::type.reference) {
-            updateButtons()
-        }
-        if (reference == KotlinPlugin::projectKind.reference) {
-            updateButtonsValidationState()
-        }
-    }
-
-    private fun updateButtonsValidationState() {
-        buttons.forEach(BuildSystemChooseButton::updateValidationState)
-    }
-
     private fun validateBuildSystem(buildSystem: BuildSystemType) = read {
         setting.validator.validate(this, buildSystem)
     }
 
-    private fun updateButtons() {
-        buttons.forEach(BuildSystemChooseButton::updateSelectedBuildSystem)
+    private inner class BuildSystemTypeAction(
+        val buildSystemType: BuildSystemType
+    ) : ToggleAction(buildSystemType.text, null, buildSystemType.icon), DumbAware {
+        override fun isSelected(e: AnActionEvent): Boolean = value == buildSystemType
+
+        override fun setSelected(e: AnActionEvent, state: Boolean) {
+            if (state) {
+                value = buildSystemType
+            }
+        }
+
+        override fun update(e: AnActionEvent) {
+            super.update(e)
+            val validationResult = validateBuildSystem(buildSystemType)
+            e.presentation.isEnabled = validationResult.isOk
+            e.presentation.description = validationResult.safeAs<ValidationResult.ValidationError>()?.messages?.firstOrNull()
+        }
     }
 
-    override fun dispose() {}
-
-    private inner class BuildSystemChooseButton(private val buildSystemType: BuildSystemType) : JComponent() {
-        private val look = ActionButtonLook.SYSTEM_LOOK
-
+    private inner class BuildSystemToolbar(
+        place: String,
+        actionGroup: ActionGroup,
+        horizontal: Boolean
+    ) : ActionToolbarImplWrapper(place, actionGroup, horizontal) {
         init {
-            font = UIUtil.getLabelFont()
-            preferredSize = Dimension(preferredSize.width, BUTTON_HEIGHT)
-            minimumSize = Dimension(minimumSize.width, BUTTON_HEIGHT)
-            cursor = Cursor(Cursor.HAND_CURSOR)
-            addMouseListener(object : MouseAdapter() {
-                override fun mouseClicked(e: MouseEvent?) = modify {
-                    if (isValidBuildSystem) {
-                        BuildSystemPlugin::type.reference.setValue(buildSystemType)
-                    }
-                }
-
-                override fun mouseEntered(e: MouseEvent?) {
-                    hovered = true
-                    repaint()
-                }
-
-                override fun mouseExited(e: MouseEvent?) {
-                    hovered = false
-                    repaint()
-                }
-            })
+            layoutPolicy = ActionToolbar.WRAP_LAYOUT_POLICY
         }
 
-        fun updateSelectedBuildSystem() {
-            val currentBuildSystem = read { BuildSystemPlugin::type.settingValue }
-            selected = currentBuildSystem == buildSystemType
-            repaint()
+        override fun createToolbarButton(
+            action: AnAction,
+            look: ActionButtonLook?,
+            place: String,
+            presentation: Presentation,
+            minimumSize: Dimension
+        ): ActionButton = BuildSystemChooseButton(action as BuildSystemTypeAction, presentation, place, minimumSize)
+    }
+
+    private inner class BuildSystemChooseButton(
+        action: BuildSystemTypeAction,
+        presentation: Presentation,
+        place: String?,
+        minimumSize: Dimension
+    ) : ActionButtonWithText(action, presentation, place, minimumSize) {
+        override fun getInsets(): Insets = super.getInsets().apply {
+            right += left
+            left = 0
         }
 
-        fun updateValidationState() {
-            val validationResult = validateBuildSystem(buildSystemType)
-            isValidBuildSystem = validationResult.isOk
-            cursor = Cursor(if (isValidBuildSystem) Cursor.HAND_CURSOR else Cursor.DEFAULT_CURSOR)
-            toolTipText = validationResult.safeAs<ValidationResult.ValidationError>()
-                ?.messages
-                ?.firstOrNull()
-                ?.takeUnless { isSelectedAndInvalid }
-            repaint()
+        override fun getPreferredSize(): Dimension {
+            val old = super.getPreferredSize()
+            return Dimension(old.width + LEFT_RIGHT_PADDING * 2, old.height + TOP_BOTTOM_PADDING * 2)
         }
-
-
-        // mostly copied from com.intellij.openapi.actionSystem.impl.ActionButtonWithText.paintComponent
-        override fun paintComponent(g: Graphics) {
-            UISettings.setupAntialiasing(g)
-
-            val fm = getFontMetrics(font)
-            val viewRect = Rectangle(size)
-            JBInsets.removeFrom(viewRect, insets)
-
-            val iconRect = Rectangle()
-            val textRect = Rectangle()
-            val text = SwingUtilities.layoutCompoundLabel(
-                this, fm, buildSystemType.text, null,
-                SwingConstants.CENTER, SwingConstants.CENTER,
-                SwingConstants.CENTER, SwingConstants.TRAILING,
-                viewRect, iconRect, textRect, 0
-            )
-
-            look.paintLookBackground(g, viewRect, bgColor())
-
-            g.color = if (isValidBuildSystem) foreground else UIUtil.getInactiveTextColor()
-            UIUtilities.drawStringUnderlineCharAt(
-                this, g, text, -1,
-                textRect.x, textRect.y + fm.ascent
-            )
-        }
-
-        private fun bgColor() = when {
-            selected -> JBUI.CurrentTheme.ActionButton.pressedBackground()
-            hovered -> JBUI.CurrentTheme.ActionButton.hoverBackground()
-            else -> background
-        }
-
-        private var selected: Boolean = false
-        private var hovered: Boolean = false
-        private var isValidBuildSystem: Boolean = true
-
-        private val isSelectedAndInvalid
-            get() = selected && !isValidBuildSystem
-
     }
 
     companion object {
-        private const val BUTTON_HEIGHT = 25
+        private const val LEFT_RIGHT_PADDING = 6
+        private const val TOP_BOTTOM_PADDING = 2
     }
 }
+
+private val BuildSystemType.icon
+    get() = when (this) {
+        BuildSystemType.GradleKotlinDsl -> KotlinIcons.GRADLE_SCRIPT
+        BuildSystemType.GradleGroovyDsl -> GradleIcons.Gradle
+        BuildSystemType.Maven -> OpenapiIcons.RepositoryLibraryLogo
+        BuildSystemType.Jps -> AllIcons.Nodes.Module
+    }

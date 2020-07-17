@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.collections
 
+import kotlin.random.Random
 import kotlin.test.*
 
 fun fibonacci(): Sequence<Int> {
@@ -125,6 +126,21 @@ public class SequenceTest {
         assertEquals(sum, count)
     }
 
+    @Test
+    fun onEachIndexed() {
+        var count = 0
+        val data = sequenceOf("foo", "bar")
+        val newData = data.onEachIndexed { i, e -> count += i + e.length }
+        assertNotSame(data, newData)
+        assertEquals(0, count, "onEachIndex should be executed lazily")
+
+        data.forEach {  }
+        assertEquals(0, count, "onEachIndex should be executed only when resulting sequence is iterated")
+
+        val sum = newData.foldIndexed(0) { i, acc, e -> acc + i + e.length }
+        assertEquals(sum, count)
+    }
+
 
     @Test fun filterAndTakeWhileExtractTheElementsWithinRange() {
         assertEquals(listOf(144, 233, 377, 610, 987), fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.toList())
@@ -150,41 +166,35 @@ public class SequenceTest {
     @Test
     fun scan() {
         for (size in 0 until 4) {
-            assertEquals(
-                sequenceOf("", "0", "01", "012").take(size).toList(),
-                indexSequence().scan("") { acc, e -> acc + e }.take(size).toList()
-            )
+            val expected = listOf("_", "_0", "_01", "_012").take(size)
+            assertEquals(expected, indexSequence().scan("_") { acc, e -> acc + e }.take(size).toList())
+            assertEquals(expected, indexSequence().runningFold("_") { acc, e -> acc + e }.take(size).toList())
         }
     }
 
     @Test
     fun scanIndexed() {
         for (size in 0 until 4) {
-            assertEquals(
-                sequenceOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]").take(size).toList(),
-                indexSequence().map { 'a' + it }.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }.take(size).toList()
-            )
+            val source = indexSequence().map { 'a' + it }
+            val expected = listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]").take(size)
+            assertEquals(expected, source.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }.take(size).toList())
+            assertEquals(expected, source.runningFoldIndexed("+") { index, acc, e -> "$acc[$index: $e]" }.take(size).toList())
         }
     }
 
     @Test
-    fun scanReduce() {
+    fun runningReduce() {
         for (size in 0 until 4) {
             val expected = listOf(0, 1, 3, 6).subList(0, size)
-            assertEquals(
-                sequenceOf(0, 1, 3, 6).take(size).toList(),
-                indexSequence().scanReduce { acc, e -> acc + e }.take(size).toList()
-            )
+            assertEquals(expected, indexSequence().runningReduce { acc, e -> acc + e }.take(size).toList())
         }
     }
 
     @Test
-    fun scanReduceIndexed() {
+    fun runningReduceIndexed() {
         for (size in 0 until 4) {
-            assertEquals(
-                sequenceOf(0, 1, 6, 27).take(size).toList(),
-                indexSequence().scanReduceIndexed { index, acc, e -> index * (acc + e) }.take(size).toList()
-            )
+            val expected = listOf(0, 1, 6, 27).take(size)
+            assertEquals(expected, indexSequence().runningReduceIndexed { index, acc, e -> index * (acc + e) }.take(size).toList())
         }
     }
 
@@ -562,18 +572,32 @@ public class SequenceTest {
     }
 
     @Test fun flatMap() {
-        val result = sequenceOf(1, 2).flatMap { (0..it).asSequence() }
-        assertEquals(listOf(0, 1, 0, 1, 2), result.toList())
+        val result1 = sequenceOf(1, 2).flatMap { (0..it).asSequence() }
+        val result2 = sequenceOf(1, 2).flatMap { 0..it }
+        val expected = listOf(0, 1, 0, 1, 2)
+        assertEquals(expected, result1.toList())
+        assertEquals(expected, result2.toList())
     }
 
     @Test fun flatMapOnEmpty() {
-        val result = sequenceOf<Int>().flatMap { (0..it).asSequence() }
-        assertTrue(result.none())
+        assertTrue(sequenceOf<Int>().flatMap { sequenceOf(1) }.none())
+        assertTrue(sequenceOf<Int>().flatMap { listOf(1) }.none())
     }
 
     @Test fun flatMapWithEmptyItems() {
-        val result = sequenceOf(1, 2, 4).flatMap { if (it == 2) sequenceOf<Int>() else (it - 1..it).asSequence() }
-        assertEquals(listOf(0, 1, 3, 4), result.toList())
+        val result1 = sequenceOf(1, 2, 4).flatMap { if (it == 2) sequenceOf<Int>() else (it - 1..it).asSequence() }
+        val result2 = sequenceOf(1, 2, 4).flatMap { if (it == 2) emptyList<Int>() else it - 1..it }
+        val expected = listOf(0, 1, 3, 4)
+        assertEquals(expected, result1.toList())
+        assertEquals(expected, result2.toList())
+    }
+
+    @Test fun flatMapIndexed() {
+        val result1 = sequenceOf(1, 2).flatMapIndexed { index, v -> (0..v + index).asSequence() }
+        val result2 = sequenceOf(1, 2).flatMapIndexed { index, v -> 0..v + index }
+        val expected = listOf(0, 1, 0, 1, 2, 3)
+        assertEquals(expected, result1.toList())
+        assertEquals(expected, result2.toList())
     }
 
     @Test fun flatten() {
@@ -632,6 +656,60 @@ public class SequenceTest {
         val comparator = compareBy { s: String -> s.reversed() }
         assertEquals(listOf("act", "wast", "test"), sequenceOf("act", "test", "wast").sortedWith(comparator).toList())
     }
+
+    @Test fun shuffled() {
+        val sequence = (0 until 100).asSequence()
+        val originalValues = sequence.toList()
+        val shuffled = sequence.shuffled()
+        val values1 = shuffled.toList()
+        val values2 = shuffled.toList()
+
+        assertNotEquals(originalValues, values1)
+        assertNotEquals(values1, values2, "Each run returns new shuffle")
+        assertEquals(originalValues.toSet(), values1.toSet())
+        assertEquals(originalValues.toSet(), values2.toSet())
+        assertEquals(originalValues.size, values1.distinct().size)
+        assertEquals(originalValues.size, values2.distinct().size)
+    }
+
+    @Test fun shuffledPredictably() {
+        val list = List(10) { it }
+        val sequence = list.asSequence()
+        val shuffled1 = sequence.shuffled(Random(1))
+        val shuffled2 = sequence.shuffled(Random(1))
+
+        val values1 = shuffled1.toList()
+        val values2 = shuffled2.toList()
+
+        assertEquals(values1, values2)
+        assertEquals("[5, 3, 7, 9, 8, 2, 6, 0, 4, 1]", values1.toString())
+
+        val values1n = shuffled1.toList()
+        assertNotEquals(values1, values1n, "Each run returns new shuffle")
+
+        val values42 = sequence.shuffled(Random(42)).toList()
+        assertEquals("[3, 6, 7, 1, 8, 2, 9, 4, 0, 5]", values42.toString())
+    }
+
+    @Test fun shuffledPartially() {
+        val countingRandom = object : Random() {
+            var counter: Int = 0
+            override fun nextBits(bitCount: Int): Int {
+                counter++
+                return Random.nextBits(bitCount)
+            }
+        }
+
+        val sequence = (0 until 100).asSequence()
+        val partialShuffle = sequence.shuffled(countingRandom).take(10)
+
+        assertEquals(0, countingRandom.counter)
+
+        val result = partialShuffle.toList()
+        assertEquals(10, result.size)
+        assertEquals(10, countingRandom.counter)
+    }
+
 
     @Test fun associateWith() {
         val items = sequenceOf("Alice", "Bob", "Carol")

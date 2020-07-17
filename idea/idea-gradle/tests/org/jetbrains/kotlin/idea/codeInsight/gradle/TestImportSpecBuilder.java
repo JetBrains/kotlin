@@ -13,10 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class TestImportSpecBuilder extends ImportSpecBuilder {
     public TestImportSpecBuilder(
-            @NotNull Project project,
-            @NotNull ProjectSystemId id
+            @NotNull ImportSpec importSpec
     ) {
-        super(project, id);
+        super(importSpec);
     }
 
     public ImportSpecBuilder setCreateEmptyContentRoots(boolean value) {

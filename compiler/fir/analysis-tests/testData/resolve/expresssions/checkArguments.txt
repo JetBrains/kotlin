@@ -13,7 +13,7 @@ FILE: checkArguments.kt
     }
     public final class C : R|B| {
         public constructor(): R|C| {
-            super<R|kotlin/Any|>()
+            super<R|B|>()
         }
 
     }

@@ -1,11 +1,3 @@
-//
-//  SceneDelegate.swift
-//  appName
-//
-//  Created by Ilya Kirillov on 3/24/20.
-//  Copyright © 2020 orgName. All rights reserved.
-//
-
 import UIKit
 import SwiftUI
 

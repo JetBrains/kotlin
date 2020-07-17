@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-278
- * PLACE: overload-resolution, receivers -> paragraph 5 -> sentence 3
+ * MAIN LINK: overload-resolution, receivers -> paragraph 5 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: The phantom static implicit this receiver has higher priority than the current class companion object receiver;
  */

@@ -15,6 +15,6 @@ fun <KotlinType : Any> defineType(@BuilderInference definition: TypeDefinition<K
 fun main() {
     <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>defineType<!> {
         parse { it.toInt() }
-        serialize { <!OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>toString<!>() }
+        serialize { <!OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!>.<!OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>toString<!>() }
     }
 }

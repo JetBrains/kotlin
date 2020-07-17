@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.3.70"
+    kotlin("multiplatform") version "KOTLIN_VERSION"
     id("com.android.library")
     id("kotlin-android-extensions")
 }
@@ -11,6 +11,9 @@ repositories {
     google()
     jcenter()
     mavenCentral()
+    maven {
+        url = uri("https://dl.bintray.com/kotlin/kotlin-dev")
+    }
 }
 kotlin {
     android()
@@ -22,11 +25,7 @@ kotlin {
         }
     }
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
-            }
-        }
+        val commonMain by getting
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
@@ -35,8 +34,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-jdk7"))
-                implementation("androidx.core:core-ktx:1.1.0")
+                implementation("androidx.core:core-ktx:1.2.0")
             }
         }
         val androidTest by getting

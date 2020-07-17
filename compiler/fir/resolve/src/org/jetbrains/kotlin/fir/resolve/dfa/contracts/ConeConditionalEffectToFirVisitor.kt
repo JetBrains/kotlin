@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.dfa.contracts
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -38,7 +37,7 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
         return buildBinaryLogicExpression {
             leftOperand = leftExpression
             rightOperand = rightExpression
-            binaryLogicExpression.kind
+            kind = binaryLogicExpression.kind
         }
     }
 
@@ -86,21 +85,24 @@ fun ConeConditionalEffectDeclaration.buildContractFir(argumentMapping: Map<Int, 
     return condition.accept(ConeConditionalEffectToFirVisitor, argumentMapping)
 }
 
-fun createArgumentsMapping(functionCall: FirFunctionCall): Map<Int, FirExpression>? {
-    val function = functionCall.toResolvedCallableSymbol()?.fir as? FirSimpleFunction ?: return null
+fun createArgumentsMapping(qualifiedAccess: FirQualifiedAccess): Map<Int, FirExpression>? {
     val argumentsMapping = mutableMapOf<Int, FirExpression>()
-    // TODO: process implicit receiver
-    // TODO: change to mapping from candidate
-    //  problem: we have already resolved reference without candidate
-    functionCall.explicitReceiver?.let { argumentsMapping[-1] = it }
-
-
-    val nameToIndex = function.valueParameters.mapIndexed { index, parameter -> parameter.name to index }.toMap()
-    functionCall.arguments.forEachIndexed { index, argument ->
-        when (argument) {
-            is FirNamedArgumentExpression -> argumentsMapping[nameToIndex[argument.name]!!] = argument
-            else -> argumentsMapping[index] = argument
+    qualifiedAccess.extensionReceiver.takeIf { it != FirNoReceiverExpression }?.let { argumentsMapping[-1] = it }
+        ?: qualifiedAccess.dispatchReceiver.takeIf { it != FirNoReceiverExpression }?.let { argumentsMapping[-1] = it }
+    when (qualifiedAccess) {
+        is FirFunctionCall -> {
+            val function = qualifiedAccess.toResolvedCallableSymbol()?.fir as? FirSimpleFunction ?: return null
+            val parameterToIndex = function.valueParameters.mapIndexed { index, parameter -> parameter to index }.toMap()
+            val callArgumentMapping = qualifiedAccess.argumentMapping ?: return null
+            for (argument in qualifiedAccess.arguments) {
+                argumentsMapping[parameterToIndex.getValue(callArgumentMapping.getValue(argument))] = argument.unwrap()
+            }
+        }
+        is FirVariableAssignment -> {
+            argumentsMapping[0] = qualifiedAccess.rValue
         }
     }
     return argumentsMapping
 }
+
+private fun FirExpression.unwrap(): FirExpression = if (this is FirWrappedArgumentExpression) expression else this

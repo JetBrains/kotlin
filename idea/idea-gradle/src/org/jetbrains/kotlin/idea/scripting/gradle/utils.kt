@@ -5,41 +5,27 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
+import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 private val sections = arrayListOf("buildscript", "plugins", "initscript", "pluginManagement")
 
 fun isGradleKotlinScript(virtualFile: VirtualFile) = virtualFile.name.endsWith(".gradle.kts")
-
-fun isInAffectedGradleProjectFiles(project: Project, filePath: String): Boolean {
-    if (filePath.endsWith("/gradle.properties")) return true
-    if (filePath.endsWith("/gradle-wrapper.properties")) return true
-
-    if (filePath.endsWith(".gradle") || filePath.endsWith(".gradle.kts")) {
-        if (ApplicationManager.getApplication().isUnitTestModeWithoutAffectedGradleProjectFilesCheck) {
-            return true
-        }
-
-        return filePath.substringBeforeLast("/") in project.service<GradleScriptInputsWatcher>().getGradleProjectsRoots()
-    }
-
-    return false
-}
 
 fun getGradleScriptInputsStamp(
     project: Project,
@@ -67,7 +53,8 @@ fun getGradleScriptInputsStamp(
                                 super.visitElement(element)
                                 when (element) {
                                     is PsiWhiteSpace -> if (element.text.contains("\n")) result.append("\n")
-                                    is PsiComment -> { }
+                                    is PsiComment -> {
+                                    }
                                     is LeafPsiElement -> result.append(element.text)
                                 }
                             }
@@ -76,7 +63,8 @@ fun getGradleScriptInputsStamp(
                     }
                 }
 
-            GradleKotlinScriptConfigurationInputs(result.toString(), givenTimeStamp)
+            val buildRoot = GradleBuildRootsManager.getInstance(project).findScriptBuildRoot(file)?.nearest as? GradleBuildRoot
+            GradleKotlinScriptConfigurationInputs(result.toString(), givenTimeStamp, buildRoot?.pathPrefix)
         } else null
     }
 }
@@ -87,6 +75,21 @@ fun kotlinDslScriptsModelImportSupported(currentGradleVersion: String): Boolean 
     return GradleVersion.version(currentGradleVersion) >= GradleVersion.version(minimal_gradle_version_supported)
 }
 
-fun useScriptConfigurationFromImportOnly(): Boolean {
-    return Registry.`is`("kotlin.gradle.scripts.useIdeaProjectImport", false)
+fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings> =
+    (ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID) as GradleSettings).linkedProjectsSettings
+
+private val logger = Logger.getInstance("#org.jetbrains.kotlin.idea.scripting.gradle")
+
+fun scriptingDebugLog(message: () -> String) {
+    if (logger.isDebugEnabled) {
+        logger.debug("[KOTLIN_GRADLE_DSL] ${message()}")
+    }
+}
+
+fun scriptingInfoLog(message: String) {
+    logger.info("[KOTLIN_GRADLE_DSL] $message")
+}
+
+fun scriptingErrorLog(message: String, throwable: Throwable?) {
+    logger.error("[KOTLIN_GRADLE_DSL] $message", throwable)
 }

@@ -23,6 +23,7 @@ fun extraSourceSet(name: String, extendMain: Boolean = true): Pair<SourceSet, Co
 
 val (builtinsSourceSet, builtinsApi) = extraSourceSet("builtins", extendMain = false)
 val (evaluateSourceSet, evaluateApi) = extraSourceSet("evaluate")
+val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
 
 dependencies {
     // for GeneratorsFileUtil
@@ -31,13 +32,17 @@ dependencies {
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(project(":core:deserialization"))
+    interpreterApi(project(":compiler:ir.tree"))
 
     testCompile(builtinsSourceSet.output)
     testCompile(evaluateSourceSet.output)
+    testCompile(interpreterSourceSet.output)
 
     testCompile(projectTests(":compiler:cli"))
     testCompile(projectTests(":idea:idea-maven"))
     testCompile(projectTests(":idea:idea-fir"))
+    testCompile(projectTests(":idea:idea-frontend-fir"))
+    testCompile(projectTests(":idea:idea-frontend-fir:idea-fir-low-level-api"))
     testCompile(projectTests(":j2k"))
     testCompile(projectTests(":nj2k"))
     if (Ide.IJ()) {
@@ -57,6 +62,7 @@ dependencies {
     testCompile(projectTests(":kotlin-noarg-compiler-plugin"))
     testCompile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     testCompile(projectTests(":kotlinx-serialization-compiler-plugin"))
+    testCompile(projectTests(":plugins:fir:fir-plugin-prototype"))
     testCompile(projectTests(":idea:jvm-debugger:jvm-debugger-test"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(projectTests(":idea"))
@@ -85,5 +91,6 @@ val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.fronten
 
 val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)
 val generateOperationsMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt", evaluateSourceSet)
+val generateInterpreterMap by generator("org.jetbrains.kotlin.generators.interpreter.GenerateInterpreterMapKt", interpreterSourceSet)
 
 testsJar()

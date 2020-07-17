@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.deserialization.ClassData
 
 interface PackagePartProvider {
     /**
@@ -19,9 +20,13 @@ interface PackagePartProvider {
 
     fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId>
 
+    fun getAllOptionalAnnotationClasses(): List<ClassData>
+
     object Empty : PackagePartProvider {
         override fun findPackageParts(packageFqName: String): List<String> = emptyList()
 
         override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> = emptyList()
+
+        override fun getAllOptionalAnnotationClasses(): List<ClassData> = emptyList()
     }
 }

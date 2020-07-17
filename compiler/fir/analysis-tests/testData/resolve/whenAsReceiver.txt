@@ -11,8 +11,8 @@ FILE: whenAsReceiver.kt
                 Null(null)
             }
         }
-        ?.R|/also|<R|kotlin/Int|, R|kotlin/Int|>(<L> = also@fun <anonymous>(): R|kotlin/Int| {
+        ?.{ $subj$.R|/also|<R|kotlin/Int|, R|kotlin/Int|>(<L> = also@fun <anonymous>(): R|kotlin/Int| {
             ^ Int(1)
         }
-        )
+        ) }
     }

@@ -12,7 +12,6 @@ kotlin {
     val jvmWithoutJava = jvm("jvmWithoutJava")
     val jvmWithJava = targetFromPreset(presets["jvmWithJava"])
     val js = js {
-        browser()
         nodejs()
     }
     val macos64 = macosX64("macos64")

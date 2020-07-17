@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
     AA().other()
 }
 
-// ADDITIONAL_BREAKPOINT: stopInWrongClass.Other.kt: Breakpoint 1
+// ADDITIONAL_BREAKPOINT: stopInWrongClass.Other.kt / Breakpoint 1
 
 // FILE: stopInWrongClass.Other.kt
 package stopInWrongClass

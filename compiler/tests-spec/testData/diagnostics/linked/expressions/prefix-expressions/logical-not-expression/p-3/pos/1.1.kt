@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
@@ -6,7 +7,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, prefix-expressions, logical-not-expression -> paragraph 3 -> sentence 1
+ * MAIN LINK: expressions, prefix-expressions, logical-not-expression -> paragraph 3 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: No additional restrictions apply for unary minus
  * HELPERS: checkType

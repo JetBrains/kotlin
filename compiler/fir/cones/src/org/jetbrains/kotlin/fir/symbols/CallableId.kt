@@ -10,7 +10,18 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 // NB: with className == null we are at top level
-data class CallableId(val packageName: FqName, val className: FqName?, val callableName: Name) {
+data class CallableId(
+    val packageName: FqName,
+    val className: FqName?,
+    val callableName: Name,
+    // Currently, it's only used for debug info
+    private val pathToLocal: FqName? = null
+) {
+    private companion object {
+        val LOCAL_NAME = Name.special("<local>")
+        val PACKAGE_FQ_NAME_FOR_LOCAL = FqName.topLevel(LOCAL_NAME)
+    }
+
     var classId: ClassId? = null
         get() {
             if (field == null && className != null) {
@@ -26,8 +37,22 @@ data class CallableId(val packageName: FqName, val className: FqName?, val calla
     constructor(packageName: FqName, callableName: Name) : this(packageName, null, callableName)
 
     @Deprecated("TODO: Better solution for local callables?")
-    constructor(callableName: Name) : this(FqName.topLevel(Name.special("<local>")), null, callableName)
+    constructor(
+        callableName: Name,
+        // Currently, it's only used for debug info
+        pathToLocal: FqName? = null
+    ) : this(
+        PACKAGE_FQ_NAME_FOR_LOCAL,
+        className = null,
+        callableName,
+        pathToLocal,
+    )
 
+    fun asFqNameForDebugInfo(): FqName {
+        if (pathToLocal != null) return pathToLocal.child(callableName)
+
+        return classId?.asSingleFqName()?.child(callableName) ?: packageName.child(callableName)
+    }
 
     override fun toString(): String {
         return buildString {

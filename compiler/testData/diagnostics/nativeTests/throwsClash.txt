@@ -1,0 +1,97 @@
+package
+
+package abc1 {
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo2(): kotlin.Unit
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+}
+
+package abc2 {
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo2(): kotlin.Unit
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+}
+
+package abc3 {
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo2(): kotlin.Unit
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+}
+
+package abc4 {
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo2(): kotlin.Unit
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+}
+
+package abc5 {
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo2(): kotlin.Unit
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+}
+
+package abc6 {
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo2(): kotlin.Unit
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+}
+
+package abc7 {
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo2(): kotlin.Unit
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+}
+
+package abc8 {
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo2(): kotlin.Unit
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+}
+
+package abc9 {
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws(ThrowableClasses = {kotlin.Throwable::class}) public fun foo2(): kotlin.Unit
+    @kotlin.native.Throws /* = kotlin.Throws */(ThrowableClasses = {kotlin.Throwable::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.native.Throws /* = kotlin.Throws */): kotlin.Unit
+}
+
+package kotlin {
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class Throws : kotlin.Annotation {
+        public constructor Throws(/*0*/ vararg ThrowableClasses: kotlin.reflect.KClass<out kotlin.Throwable> /*kotlin.Array<out kotlin.reflect.KClass<out kotlin.Throwable>>*/)
+        public final val ThrowableClasses: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Throwable>>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    package kotlin.native {
+        @kotlin.Deprecated(message = "") public typealias Throws = kotlin.Throws
+    }
+}

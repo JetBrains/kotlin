@@ -39,5 +39,5 @@ fun testFlexibleReceiver() {
     flexible.extensionProperty()
     flexible?.extensionProperty()
     flexible.<!INAPPLICABLE_CANDIDATE!>nullableExtensionProperty<!>()
-    flexible?.nullableExtensionProperty()
+    flexible?.<!INAPPLICABLE_CANDIDATE!>nullableExtensionProperty<!>()
 }

@@ -4,32 +4,32 @@ import aa.A.use
 import aa.A.useList
 
 fun testPrimitives(b: Byte, ss: Short, i: Int, l: Long, d: Double, s: String, f: Float, bool: Boolean) {
-    <!INAPPLICABLE_CANDIDATE!>use<!>(b)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(ss)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(i)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(l)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(s)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(f)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(d)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(bool)
+    use(b)
+    use(ss)
+    use(i)
+    use(l)
+    use(s)
+    use(f)
+    use(d)
+    use(bool)
 }
 
 class N
 class S: java.io.Serializable
 
 fun testArrays(ia: IntArray, ai: Array<Int>, an: Array<N>, a: Array<S>) {
-    <!INAPPLICABLE_CANDIDATE!>use<!>(ia)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(ai)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(an)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(a)
+    use(ia)
+    use(ai)
+    use(an)
+    use(a)
 }
 
 fun testLiterals() {
-    <!INAPPLICABLE_CANDIDATE!>use<!>(1)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(1.0)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(11111111111111)
-    <!INAPPLICABLE_CANDIDATE!>use<!>("Asdsd")
-    <!INAPPLICABLE_CANDIDATE!>use<!>(true)
+    use(1)
+    use(1.0)
+    use(11111111111111)
+    use("Asdsd")
+    use(true)
 }
 
 fun testNotSerializable(l: List<Int>) {
@@ -42,13 +42,13 @@ enum class C {
 }
 
 fun testEnums(a: Enum<*>) {
-    <!INAPPLICABLE_CANDIDATE!>use<!>(C.E)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(C.E2)
-    <!INAPPLICABLE_CANDIDATE!>use<!>(a)
+    use(C.E)
+    use(C.E2)
+    use(a)
 }
 
 fun testLists(a: List<Int>) {
-    <!INAPPLICABLE_CANDIDATE!>useList<!>(a)
+    useList(a)
 }
 
 // FILE: aa/A.java

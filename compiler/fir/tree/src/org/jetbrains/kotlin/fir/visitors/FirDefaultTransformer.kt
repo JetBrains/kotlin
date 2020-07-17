@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -83,10 +82,6 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
 
     override fun transformNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformWrappedArgumentExpression(namedArgumentExpression, data)
-    }
-
-    override fun transformSealedClass(sealedClass: FirSealedClass, data: D): CompositeTransformResult<FirStatement> {
-        return transformRegularClass(sealedClass, data)
     }
 
     override fun transformErrorExpression(errorExpression: FirErrorExpression, data: D): CompositeTransformResult<FirStatement> {

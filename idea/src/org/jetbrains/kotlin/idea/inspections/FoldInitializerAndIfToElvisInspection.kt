@@ -86,7 +86,8 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
             val childRangeAfter = childRangeBefore.withoutLastStatement()
 
             val margin = CodeStyle.getSettings(element.containingKtFile).defaultRightMargin
-            val pattern = elvisPattern(declaration.textLength + ifNullExpr.textLength + 5 >= margin || element.then?.hasComments() == true)
+            val declarationTextLength = declaration.text.split("\n").lastOrNull()?.trim()?.length ?: 0
+            val pattern = elvisPattern(declarationTextLength + ifNullExpr.textLength + 5 >= margin || element.then?.hasComments() == true)
 
             val elvis = factory.createExpressionByPattern(pattern, initializer, ifNullExpr) as KtBinaryExpression
 

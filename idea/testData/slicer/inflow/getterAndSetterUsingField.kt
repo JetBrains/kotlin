@@ -1,7 +1,7 @@
 // FLOW: IN
 
 class A(var b: Boolean) {
-    var foo: Int
+    var foo: Int = -1
         get() = if (b) field else 0
         set(value) {
             field = if (b) value else 0

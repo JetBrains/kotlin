@@ -36,7 +36,7 @@ class KotlinStringTemplateUPolyadicExpression(
                 this,
                 DEFAULT_EXPRESSION_TYPES_LIST
             )!!
-        }
+        }.takeIf { it.isNotEmpty() } ?: listOf(KotlinStringULiteralExpression(sourcePsi, this, ""))
     }
     override val operator = UastBinaryOperator.PLUS
 

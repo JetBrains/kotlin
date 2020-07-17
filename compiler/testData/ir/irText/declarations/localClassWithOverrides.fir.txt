@@ -41,6 +41,8 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
             DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.outer.ALocal'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Local modality:FINAL visibility:local superTypes:[<root>.outer.ALocal]'
         FUN name:afun visibility:public modality:FINAL <> ($this:<root>.outer.Local) returnType:kotlin.Unit
+          overridden:
+            public abstract fun afun (): kotlin.Unit declared in <root>.outer.ALocal
           $this: VALUE_PARAMETER name:<this> type:<root>.outer.Local
           BLOCK_BODY
         PROPERTY name:aval visibility:public modality:FINAL [val]
@@ -49,6 +51,8 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
               CONST Int type=kotlin.Int value=1
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aval> visibility:public modality:FINAL <> ($this:<root>.outer.Local) returnType:kotlin.Int
             correspondingProperty: PROPERTY name:aval visibility:public modality:FINAL [val]
+            overridden:
+              public abstract fun <get-aval> (): kotlin.Int declared in <root>.outer.ALocal
             $this: VALUE_PARAMETER name:<this> type:<root>.outer.Local
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='public final fun <get-aval> (): kotlin.Int declared in <root>.outer.Local'
@@ -60,6 +64,8 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
               CONST Int type=kotlin.Int value=2
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-avar> visibility:public modality:FINAL <> ($this:<root>.outer.Local) returnType:kotlin.Int
             correspondingProperty: PROPERTY name:avar visibility:public modality:FINAL [var]
+            overridden:
+              public abstract fun <get-avar> (): kotlin.Int declared in <root>.outer.ALocal
             $this: VALUE_PARAMETER name:<this> type:<root>.outer.Local
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='public final fun <get-avar> (): kotlin.Int declared in <root>.outer.Local'
@@ -67,6 +73,8 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
                   receiver: GET_VAR '<this>: <root>.outer.Local declared in <root>.outer.Local.<get-avar>' type=<root>.outer.Local origin=null
           FUN DEFAULT_PROPERTY_ACCESSOR name:<set-avar> visibility:public modality:FINAL <> ($this:<root>.outer.Local, <set-?>:kotlin.Int) returnType:kotlin.Unit
             correspondingProperty: PROPERTY name:avar visibility:public modality:FINAL [var]
+            overridden:
+              public abstract fun <set-avar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.outer.ALocal
             $this: VALUE_PARAMETER name:<this> type:<root>.outer.Local
             VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
             BLOCK_BODY

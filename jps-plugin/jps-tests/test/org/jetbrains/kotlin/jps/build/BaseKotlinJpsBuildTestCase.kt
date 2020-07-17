@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.jps.build
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
 
+@WithMutedInDatabaseRunTest
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     @Throws(Exception::class)
     override fun setUp() {
@@ -31,10 +33,10 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     @Throws(Exception::class)
     override fun tearDown() {
         System.clearProperty("kotlin.jps.tests")
-        super.tearDown()
         myModel = null
         myBuildParams.clear()
         JpsKotlinCompilerRunner.releaseCompileServiceSession()
+        super.tearDown()
     }
 
     private val libraries = mutableMapOf<String, JpsLibrary>()

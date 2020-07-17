@@ -67,8 +67,8 @@ object BuiltinSpecialProperties {
             .map { Pair(it.key.shortName(), it.value) }
             .groupBy({ it.second }, { it.first })
 
-    private val SPECIAL_FQ_NAMES = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keys
-    internal val SPECIAL_SHORT_NAMES = SPECIAL_FQ_NAMES.map(FqName::shortName).toSet()
+    val SPECIAL_FQ_NAMES = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keys
+    val SPECIAL_SHORT_NAMES = SPECIAL_FQ_NAMES.map(FqName::shortName).toSet()
 
     fun hasBuiltinSpecialPropertyFqName(callableMemberDescriptor: CallableMemberDescriptor): Boolean {
         if (callableMemberDescriptor.name !in SPECIAL_SHORT_NAMES) return false
@@ -231,7 +231,7 @@ object BuiltinMethodsWithDifferentJvmName {
         )
     }
 
-    private val SIGNATURE_TO_JVM_REPRESENTATION_NAME: Map<String, Name> =
+    val SIGNATURE_TO_JVM_REPRESENTATION_NAME: Map<String, Name> =
         NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.mapKeys { it.key.signature }
 
     val ORIGINAL_SHORT_NAMES: List<Name> = NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.keys.map { it.name }

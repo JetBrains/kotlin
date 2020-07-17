@@ -26,5 +26,5 @@ fun test(k: K) {
     k.<!AMBIGUITY!>bas<!> { <!UNRESOLVED_REFERENCE!>it<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Any?>() }; "" } <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
 
     // NI: TODO
-    k.bar { it checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }; "" } checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    k.bar { it checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }; "" } checkType { _<Int>() }
 }

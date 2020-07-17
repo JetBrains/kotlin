@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody>(
     KtDeclarationWithBody::class.java,
@@ -44,11 +46,11 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
     override fun allowCaretInsideElement(element: PsiElement) = element !is KtDeclaration && super.allowCaretInsideElement(element)
 
     override fun applyTo(element: KtDeclarationWithBody, editor: Editor?) {
-        convert(element)
+        convert(element, true)
     }
 
     companion object {
-        fun convert(declaration: KtDeclarationWithBody): KtDeclarationWithBody {
+        fun convert(declaration: KtDeclarationWithBody, withReformat: Boolean = false): KtDeclarationWithBody {
             val body = declaration.bodyExpression!!
 
             fun generateBody(returnsValue: Boolean): KtExpression {
@@ -86,13 +88,17 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
 
             declaration.equalsToken!!.delete()
             val replaced = body.replace(newBody)
-            declaration.containingKtFile.adjustLineIndent(replaced.startOffset, replaced.endOffset)
+            if (withReformat) declaration.containingKtFile.adjustLineIndent(replaced.startOffset, replaced.endOffset)
             return declaration
         }
 
         private fun KtNamedFunction.returnType(): KotlinType? {
-            val descriptor = resolveToDescriptorIfAny() ?: return null
-            return descriptor.returnType
+            val descriptor = resolveToDescriptorIfAny()
+            val returnType = descriptor?.returnType ?: return null
+            if (returnType.isNullabilityFlexible()
+                && descriptor.overriddenDescriptors.firstOrNull()?.returnType?.isMarkedNullable == false
+            ) return returnType.makeNotNullable()
+            return returnType
         }
     }
 }

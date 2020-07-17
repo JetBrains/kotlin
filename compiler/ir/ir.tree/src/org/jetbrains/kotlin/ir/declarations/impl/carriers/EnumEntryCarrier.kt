@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
-interface EnumEntryCarrier : DeclarationCarrier<EnumEntryCarrier> {
+interface EnumEntryCarrier : DeclarationCarrier {
     var correspondingClassField: IrClass?
     var initializerExpressionField: IrExpressionBody?
     

@@ -1,0 +1,23 @@
+package
+
+package kotlin {
+    @kotlin.Deprecated(message = "") @kotlin.DeprecatedSinceKotlin(errorSince = "1.4") public val valCur: kotlin.Unit
+    @kotlin.Deprecated(message = "") @kotlin.DeprecatedSinceKotlin(errorSince = "1.5") public val valNext: kotlin.Unit
+    @kotlin.Deprecated(message = "") @kotlin.DeprecatedSinceKotlin(errorSince = "1.4") public fun funCur(): kotlin.Unit
+    @kotlin.Deprecated(message = "") @kotlin.DeprecatedSinceKotlin(errorSince = "1.5") public fun funNext(): kotlin.Unit
+    public fun usage(): kotlin.Unit
+
+    @kotlin.Deprecated(message = "") @kotlin.DeprecatedSinceKotlin(errorSince = "1.4") public final class ClassCur {
+        public constructor ClassCur()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.Deprecated(message = "") @kotlin.DeprecatedSinceKotlin(errorSince = "1.5") public final class ClassNext {
+        public constructor ClassNext()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

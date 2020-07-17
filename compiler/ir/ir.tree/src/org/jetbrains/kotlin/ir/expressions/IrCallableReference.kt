@@ -17,10 +17,13 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.name.Name
 
-interface IrCallableReference : IrMemberAccessExpression
+interface IrCallableReference<S : IrSymbol> : IrMemberAccessExpression<S> {
+    val referencedName: Name
+}
 
-interface IrFunctionReference : IrCallableReference, IrFunctionAccessExpression {
+interface IrFunctionReference : IrCallableReference<IrFunctionSymbol> {
     val reflectionTarget: IrFunctionSymbol?
 }
 
@@ -30,15 +33,13 @@ val IrFunctionReference.isWithReflection: Boolean
 val IrFunctionReference.isAdapterWithReflection: Boolean
     get() = reflectionTarget != null && reflectionTarget != symbol
 
-interface IrPropertyReference : IrCallableReference {
-    override val symbol: IrPropertySymbol
+interface IrPropertyReference : IrCallableReference<IrPropertySymbol> {
     val field: IrFieldSymbol?
     val getter: IrSimpleFunctionSymbol?
     val setter: IrSimpleFunctionSymbol?
 }
 
-interface IrLocalDelegatedPropertyReference : IrCallableReference {
-    override val symbol: IrLocalDelegatedPropertySymbol
+interface IrLocalDelegatedPropertyReference : IrCallableReference<IrLocalDelegatedPropertySymbol> {
     val delegate: IrVariableSymbol
     val getter: IrSimpleFunctionSymbol
     val setter: IrSimpleFunctionSymbol?

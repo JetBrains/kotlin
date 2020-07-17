@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
+import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 
@@ -44,12 +45,28 @@ interface ImplicitScopeTower {
 
     val typeApproximator: TypeApproximator
 
-    fun interceptCandidates(
+    val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter
+
+    fun allScopesWithImplicitsResolutionInfo(): Sequence<ScopeWithImplicitsExtensionsResolutionInfo> =
+        implicitsResolutionFilter.getScopesWithInfo(lexicalScope.parentsWithSelf)
+
+    fun interceptFunctionCandidates(
         resolutionScope: ResolutionScope,
         name: Name,
         initialResults: Collection<FunctionDescriptor>,
-        location: LookupLocation
+        location: LookupLocation,
+        dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<FunctionDescriptor>
+
+    fun interceptVariableCandidates(
+        resolutionScope: ResolutionScope,
+        name: Name,
+        initialResults: Collection<VariableDescriptor>,
+        location: LookupLocation,
+        dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<VariableDescriptor>
 }
 
 interface ScopeTowerLevel {
@@ -75,6 +92,7 @@ fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>) =
 enum class ResolutionCandidateApplicability {
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
     RESOLVED_WITH_ERROR, // call has error, but it is still successful from resolution perspective
+    RESOLVED_NEED_PRESERVE_COMPATIBILITY, // call resolved successfully, but using new features that changes resolve
     RESOLVED_LOW_PRIORITY,
     CONVENTION_ERROR, // missing infix, operator etc
     MAY_THROW_RUNTIME_ERROR, // unsafe call or unstable smart cast
@@ -109,6 +127,7 @@ class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType) : Resoluti
 object ErrorDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED) // todo discuss and change to INAPPLICABLE
 object LowPriorityDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 object DynamicDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
+object ResolvedUsingNewFeatures : ResolutionDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
 object UnstableSmartCastDiagnostic : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 object HiddenExtensionRelatedToDynamicTypes : ResolutionDiagnostic(HIDDEN)
 object HiddenDescriptor : ResolutionDiagnostic(HIDDEN)

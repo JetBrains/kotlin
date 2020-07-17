@@ -60,9 +60,11 @@ import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDeleg
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class KotlinToResolvedCallTransformer(
     private val callCheckers: Iterable<CallChecker>,
@@ -277,12 +279,7 @@ class KotlinToResolvedCallTransformer(
     }
 
     // todo very beginning code
-    fun runArgumentsChecks(
-        context: BasicCallResolutionContext,
-        trace: BindingTrace,
-        resolvedCall: NewResolvedCallImpl<*>,
-    ) {
-
+    fun runArgumentsChecks(context: BasicCallResolutionContext, resolvedCall: NewResolvedCallImpl<*>) {
         for (valueArgument in resolvedCall.call.valueArguments) {
             val argumentMapping = resolvedCall.getArgumentMapping(valueArgument!!)
             val parameter: ValueParameterDescriptor?
@@ -290,8 +287,13 @@ class KotlinToResolvedCallTransformer(
                 is ArgumentMatch -> {
                     parameter = argumentMapping.valueParameter
 
-                    val expectedType = resolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument)
-                        ?: getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument, context)
+                    // We should take expected type from the last used conversion
+                    // TODO: move this logic into ParameterTypeConversion
+                    val expectedType =
+                        resolvedCall.getExpectedTypeForUnitConvertedArgument(valueArgument)
+                            ?: resolvedCall.getExpectedTypeForSuspendConvertedArgument(valueArgument)
+                            ?: resolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument)
+                            ?: getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument, context)
                     Pair(
                         expectedType,
                         CallPosition.ValueArgumentPosition(resolvedCall, argumentMapping.valueParameter, valueArgument),
@@ -618,22 +620,33 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
 
     private fun createValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> =
         LinkedHashMap<ValueParameterDescriptor, ResolvedValueArgument>().also { result ->
+            var varargMappings: MutableList<Pair<ValueParameterDescriptor, VarargValueArgument>>? = null
             for ((originalParameter, resolvedCallArgument) in argumentMappingByOriginal) {
                 val resultingParameter = resultingDescriptor.valueParameters[originalParameter.index]
+
                 result[resultingParameter] = when (resolvedCallArgument) {
                     ResolvedCallArgument.DefaultArgument ->
                         DefaultValueArgument.DEFAULT
                     is ResolvedCallArgument.SimpleArgument -> {
                         val valueArgument = resolvedCallArgument.callArgument.psiCallArgument.valueArgument
-                        if (resultingParameter.isVararg)
-                            VarargValueArgument().apply { addArgument(valueArgument) }
-                        else
+                        if (resultingParameter.isVararg) {
+                            val vararg = VarargValueArgument().apply { addArgument(valueArgument) }
+                            if (varargMappings == null) varargMappings = SmartList()
+                            varargMappings.add(resultingParameter to vararg)
+                            continue
+                        } else
                             ExpressionValueArgument(valueArgument)
                     }
                     is ResolvedCallArgument.VarargArgument ->
                         VarargValueArgument().apply {
                             resolvedCallArgument.arguments.map { it.psiCallArgument.valueArgument }.forEach { addArgument(it) }
                         }
+                }
+            }
+
+            if (varargMappings != null) {
+                for ((parameter, argument) in varargMappings) {
+                    result[parameter] = argument
                 }
             }
         }
@@ -655,7 +668,9 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     private var extensionReceiver = resolvedCallAtom.extensionReceiverArgument?.receiver?.receiverValue
     private var dispatchReceiver = resolvedCallAtom.dispatchReceiverArgument?.receiver?.receiverValue
     private var smartCastDispatchReceiverType: KotlinType? = null
-    private var expedtedTypeForSamConvertedArgumentMap: MutableMap<ValueArgument, UnwrappedType>? = null
+    private var expectedTypeForSamConvertedArgumentMap: MutableMap<ValueArgument, UnwrappedType>? = null
+    private var expectedTypeForSuspendConvertedArgumentMap: MutableMap<ValueArgument, UnwrappedType>? = null
+    private var expectedTypeForUnitConvertedArgumentMap: MutableMap<ValueArgument, UnwrappedType>? = null
     private var argumentTypeForConstantConvertedMap: MutableMap<KtExpression, IntegerValueTypeConstant>? = null
 
 
@@ -737,6 +752,8 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         }
 
         calculateExpectedTypeForSamConvertedArgumentMap(substitutor)
+        calculateExpectedTypeForSuspendConvertedArgumentMap(substitutor)
+        calculateExpectedTypeForUnitConvertedArgumentMap(substitutor)
         calculateExpectedTypeForConstantConvertedArgumentMap()
     }
 
@@ -803,7 +820,13 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     }
 
     fun getExpectedTypeForSamConvertedArgument(valueArgument: ValueArgument): UnwrappedType? =
-        expedtedTypeForSamConvertedArgumentMap?.get(valueArgument)
+        expectedTypeForSamConvertedArgumentMap?.get(valueArgument)
+
+    fun getExpectedTypeForSuspendConvertedArgument(valueArgument: ValueArgument): UnwrappedType? =
+        expectedTypeForSuspendConvertedArgumentMap?.get(valueArgument)
+
+    fun getExpectedTypeForUnitConvertedArgument(valueArgument: ValueArgument): UnwrappedType? =
+        expectedTypeForUnitConvertedArgumentMap?.get(valueArgument)
 
     private fun calculateExpectedTypeForConstantConvertedArgumentMap() {
         if (resolvedCallAtom.argumentsWithConstantConversion.isEmpty()) return
@@ -818,14 +841,37 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     private fun calculateExpectedTypeForSamConvertedArgumentMap(substitutor: NewTypeSubstitutor?) {
         if (resolvedCallAtom.argumentsWithConversion.isEmpty()) return
 
-        expedtedTypeForSamConvertedArgumentMap = hashMapOf()
+        expectedTypeForSamConvertedArgumentMap = hashMapOf()
         for ((argument, description) in resolvedCallAtom.argumentsWithConversion) {
             val typeWithFreshVariables =
                 resolvedCallAtom.freshVariablesSubstitutor.safeSubstitute(description.convertedTypeByCandidateParameter)
             val expectedType = substitutor?.safeSubstitute(typeWithFreshVariables) ?: typeWithFreshVariables
-            expedtedTypeForSamConvertedArgumentMap!![argument.psiCallArgument.valueArgument] = expectedType
+            expectedTypeForSamConvertedArgumentMap!![argument.psiCallArgument.valueArgument] = expectedType
         }
     }
+
+    private fun calculateExpectedTypeForSuspendConvertedArgumentMap(substitutor: NewTypeSubstitutor?) {
+        if (resolvedCallAtom.argumentsWithSuspendConversion.isEmpty()) return
+
+        expectedTypeForSuspendConvertedArgumentMap = hashMapOf()
+        for ((argument, convertedType) in resolvedCallAtom.argumentsWithSuspendConversion) {
+            val typeWithFreshVariables = resolvedCallAtom.freshVariablesSubstitutor.safeSubstitute(convertedType)
+            val expectedType = substitutor?.safeSubstitute(typeWithFreshVariables) ?: typeWithFreshVariables
+            expectedTypeForSuspendConvertedArgumentMap!![argument.psiCallArgument.valueArgument] = expectedType
+        }
+    }
+
+    private fun calculateExpectedTypeForUnitConvertedArgumentMap(substitutor: NewTypeSubstitutor?) {
+        if (resolvedCallAtom.argumentsWithUnitConversion.isEmpty()) return
+
+        expectedTypeForUnitConvertedArgumentMap = hashMapOf()
+        for ((argument, convertedType) in resolvedCallAtom.argumentsWithUnitConversion) {
+            val typeWithFreshVariables = resolvedCallAtom.freshVariablesSubstitutor.safeSubstitute(convertedType)
+            val expectedType = substitutor?.safeSubstitute(typeWithFreshVariables) ?: typeWithFreshVariables
+            expectedTypeForUnitConvertedArgumentMap!![argument.psiCallArgument.valueArgument] = expectedType
+        }
+    }
+
 
     override fun argumentToParameterMap(
         resultingDescriptor: CallableDescriptor,
@@ -879,7 +925,8 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 fun ResolutionCandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) {
     ResolutionCandidateApplicability.RESOLVED,
     ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY,
-    ResolutionCandidateApplicability.RESOLVED_WITH_ERROR -> ResolutionStatus.SUCCESS
+    ResolutionCandidateApplicability.RESOLVED_WITH_ERROR,
+    ResolutionCandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY -> ResolutionStatus.SUCCESS
     ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ResolutionStatus.RECEIVER_TYPE_ERROR
     else -> ResolutionStatus.OTHER_ERROR
 }

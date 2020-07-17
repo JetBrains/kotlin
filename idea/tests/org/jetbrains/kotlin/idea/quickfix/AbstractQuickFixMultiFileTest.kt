@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.InspectionEP
 import com.intellij.codeInspection.LocalInspectionEP
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.PlainTextFileType
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.idea.quickfix.utils.findInspectionFile
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
+import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -133,64 +133,60 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
 
         configureMultiFileTest(subFiles, beforeFile)
         withCustomCompilerOptions(multiFileText, project, module) {
-            CommandProcessor.getInstance().executeCommand(
-                project,
-                {
-                    try {
-                        val psiFile = file
+            project.executeCommand("") {
+                try {
+                    val psiFile = file
 
-                        val actionHint = ActionHint.parse(psiFile, beforeFile.content)
-                        val text = actionHint.expectedText
+                    val actionHint = ActionHint.parse(psiFile, beforeFile.content)
+                    val text = actionHint.expectedText
 
-                        val actionShouldBeAvailable = actionHint.shouldPresent()
+                    val actionShouldBeAvailable = actionHint.shouldPresent()
 
-                        if (psiFile is KtFile) {
-                            DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
-                        }
-
-                        doAction(
-                            text,
-                            file,
-                            editor,
-                            actionShouldBeAvailable,
-                            getTestName(false),
-                            this::availableActions,
-                            myFixture::doHighlighting,
-                        )
-
-                        val actualText = file.text
-                        val afterText = StringBuilder(actualText).insert(editor.caretModel.offset, "<caret>").toString()
-
-                        if (actionShouldBeAvailable) {
-                            TestCase.assertNotNull(".after file should exist", afterFile)
-                            if (afterText != afterFile!!.content) {
-                                val actualTestFile = StringBuilder()
-                                if (multiFileText.startsWith("// LANGUAGE_VERSION")) {
-                                    actualTestFile.append(multiFileText.lineSequence().first())
-                                }
-
-                                actualTestFile.append("// FILE: ").append(beforeFile.path).append("\n").append(beforeFile.content)
-                                for (file in subFiles) {
-                                    actualTestFile.append("// FILE: ").append(file.path).append("\n").append(file.content)
-                                }
-                                actualTestFile.append("// FILE: ").append(afterFile.path).append("\n").append(afterText)
-
-                                KotlinTestUtils.assertEqualsToFile(File(beforeFileName), actualTestFile.toString())
-                            }
-                        } else {
-                            TestCase.assertNull(".after file should not exist", afterFile)
-                        }
-                    } catch (e: ComparisonFailure) {
-                        throw e
-                    } catch (e: AssertionError) {
-                        throw e
-                    } catch (e: Throwable) {
-                        e.printStackTrace()
-                        TestCase.fail(getTestName(true))
+                    if (psiFile is KtFile) {
+                        DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
                     }
-                },
-                "", "",
-            )
+
+                    doAction(
+                        text,
+                        file,
+                        editor,
+                        actionShouldBeAvailable,
+                        getTestName(false),
+                        this::availableActions,
+                        myFixture::doHighlighting,
+                    )
+
+                    val actualText = file.text
+                    val afterText = StringBuilder(actualText).insert(editor.caretModel.offset, "<caret>").toString()
+
+                    if (actionShouldBeAvailable) {
+                        TestCase.assertNotNull(".after file should exist", afterFile)
+                        if (afterText != afterFile!!.content) {
+                            val actualTestFile = StringBuilder()
+                            if (multiFileText.startsWith("// LANGUAGE_VERSION")) {
+                                actualTestFile.append(multiFileText.lineSequence().first())
+                            }
+
+                            actualTestFile.append("// FILE: ").append(beforeFile.path).append("\n").append(beforeFile.content)
+                            for (file in subFiles) {
+                                actualTestFile.append("// FILE: ").append(file.path).append("\n").append(file.content)
+                            }
+                            actualTestFile.append("// FILE: ").append(afterFile.path).append("\n").append(afterText)
+
+                            KotlinTestUtils.assertEqualsToFile(File(beforeFileName), actualTestFile.toString())
+                        }
+                    } else {
+                        TestCase.assertNull(".after file should not exist", afterFile)
+                    }
+                } catch (e: ComparisonFailure) {
+                    throw e
+                } catch (e: AssertionError) {
+                    throw e
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                    TestCase.fail(getTestName(true))
+                }
+            }
         }
 
     }
@@ -214,69 +210,65 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         myFixture.configureByFiles(*testFiles.toTypedArray())
 
         withCustomCompilerOptions(originalFileText, project, module) {
-            CommandProcessor.getInstance().executeCommand(
-                project,
-                {
-                    try {
-                        val psiFile = file
+            project.executeCommand("") {
+                try {
+                    val psiFile = file
 
-                        val actionHint = ActionHint.parse(psiFile, originalFileText)
-                        val text = actionHint.expectedText
+                    val actionHint = ActionHint.parse(psiFile, originalFileText)
+                    val text = actionHint.expectedText
 
-                        val actionShouldBeAvailable = actionHint.shouldPresent()
+                    val actionShouldBeAvailable = actionHint.shouldPresent()
 
-                        if (psiFile is KtFile) {
-                            DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
-                        }
-
-                        doAction(
-                            text,
-                            file,
-                            editor,
-                            actionShouldBeAvailable,
-                            beforeFileName,
-                            this::availableActions,
-                            myFixture::doHighlighting,
-                        )
-
-                        if (actionShouldBeAvailable) {
-                            val afterFilePath = beforeFileName.replace(".before.Main.", ".after.")
-                            try {
-                                myFixture.checkResultByFile(mainFile.name.replace(".before.Main.", ".after."))
-                            } catch (e: ComparisonFailure) {
-                                KotlinTestUtils.assertEqualsToFile(File(afterFilePath), editor)
-                            }
-
-                            for (file in myFixture.file.containingDirectory.files) {
-                                val fileName = file.name
-                                if (fileName == myFixture.file.name || !fileName.startsWith(
-                                        extraFileNamePrefix(
-                                            myFixture.file
-                                                .name,
-                                        ),
-                                    )
-                                ) continue
-
-                                val extraFileFullPath = beforeFileName.replace(myFixture.file.name, fileName)
-                                val afterFile = File(extraFileFullPath.replace(".before.", ".after."))
-                                if (afterFile.exists()) {
-                                    KotlinTestUtils.assertEqualsToFile(afterFile, file.text)
-                                } else {
-                                    KotlinTestUtils.assertEqualsToFile(File(extraFileFullPath), file.text)
-                                }
-                            }
-                        }
-                    } catch (e: ComparisonFailure) {
-                        throw e
-                    } catch (e: AssertionError) {
-                        throw e
-                    } catch (e: Throwable) {
-                        e.printStackTrace()
-                        TestCase.fail(getTestName(true))
+                    if (psiFile is KtFile) {
+                        DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
                     }
-                },
-                "", "",
-            )
+
+                    doAction(
+                        text,
+                        file,
+                        editor,
+                        actionShouldBeAvailable,
+                        beforeFileName,
+                        this::availableActions,
+                        myFixture::doHighlighting,
+                    )
+
+                    if (actionShouldBeAvailable) {
+                        val afterFilePath = beforeFileName.replace(".before.Main.", ".after.")
+                        try {
+                            myFixture.checkResultByFile(mainFile.name.replace(".before.Main.", ".after."))
+                        } catch (e: ComparisonFailure) {
+                            KotlinTestUtils.assertEqualsToFile(File(afterFilePath), editor)
+                        }
+
+                        for (file in myFixture.file.containingDirectory.files) {
+                            val fileName = file.name
+                            if (fileName == myFixture.file.name || !fileName.startsWith(
+                                    extraFileNamePrefix(
+                                        myFixture.file
+                                            .name,
+                                    ),
+                                )
+                            ) continue
+
+                            val extraFileFullPath = beforeFileName.replace(myFixture.file.name, fileName)
+                            val afterFile = File(extraFileFullPath.replace(".before.", ".after."))
+                            if (afterFile.exists()) {
+                                KotlinTestUtils.assertEqualsToFile(afterFile, file.text)
+                            } else {
+                                KotlinTestUtils.assertEqualsToFile(File(extraFileFullPath), file.text)
+                            }
+                        }
+                    }
+                } catch (e: ComparisonFailure) {
+                    throw e
+                } catch (e: AssertionError) {
+                    throw e
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                    TestCase.fail(getTestName(true))
+                }
+            }
         }
     }
 

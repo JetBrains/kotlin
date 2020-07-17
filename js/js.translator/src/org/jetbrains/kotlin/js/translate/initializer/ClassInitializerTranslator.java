@@ -235,7 +235,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                     }
                 }
 
-                if (superDescriptor.isPrimary()) {
+                if (superDescriptor.isPrimary() || superDescriptor.getConstructedClass().isExternal()) {
                     addCallToSuperMethod(arguments, initializer, superCall.getCall().getCallElement());
                 }
                 else {

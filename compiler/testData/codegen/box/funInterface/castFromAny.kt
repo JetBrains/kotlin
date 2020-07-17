@@ -1,6 +1,4 @@
 // !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-// TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 
 
 fun interface KRunnable {

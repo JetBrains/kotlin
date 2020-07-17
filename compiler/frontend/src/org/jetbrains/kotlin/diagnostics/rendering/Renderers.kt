@@ -198,6 +198,11 @@ object Renderers {
     }
 
     @JvmField
+    val COMPATIBILITY_CANDIDATE = Renderer { call: CallableDescriptor ->
+        renderAmbiguousDescriptors(listOf(call))
+    }
+
+    @JvmField
     val AMBIGUOUS_CALLABLE_REFERENCES = Renderer { references: Collection<CallableDescriptor> ->
         renderAmbiguousDescriptors(references)
     }

@@ -25,6 +25,6 @@ var <caret>test: String
 
 class Test {
     fun foo() {
-        test()
+        test
     }
 }

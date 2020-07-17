@@ -11,8 +11,8 @@ package foo.bar
     /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo)*/>= /*p:kotlin(Int)*/b
     /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo)*/<= /*p:kotlin(Int)*/b
 
-    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/> /*p:kotlin(Any)*/c
-    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/< /*p:kotlin(Any)*/c
-    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/>= /*p:kotlin(Any)*/c
-    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/<= /*p:kotlin(Any)*/c
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCOMPARETo) c:foo.bar.A(getCompareTo) p:foo.bar(compareTo)*/> /*p:kotlin(Any)*/c
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCOMPARETo) c:foo.bar.A(getCompareTo) p:foo.bar(compareTo)*/< /*p:kotlin(Any)*/c
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCOMPARETo) c:foo.bar.A(getCompareTo) p:foo.bar(compareTo)*/>= /*p:kotlin(Any)*/c
+    /*p:foo.bar(A) p:kotlin(Boolean)*/a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCOMPARETo) c:foo.bar.A(getCompareTo) p:foo.bar(compareTo)*/<= /*p:kotlin(Any)*/c
 }

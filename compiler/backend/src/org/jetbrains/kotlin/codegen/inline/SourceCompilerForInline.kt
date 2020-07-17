@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.isInlineClass
-import org.jetbrains.kotlin.resolve.jvm.annotations.isCallableMemberWithJvmDefaultAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.isCallableMemberCompiledToJvmDefault
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Label
@@ -46,7 +46,7 @@ interface SourceCompilerForInline {
 
     val inlineCallSiteInfo: InlineCallSiteInfo
 
-    val lazySourceMapper: DefaultSourceMapper
+    val lazySourceMapper: SourceMapper
 
     fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode
 
@@ -212,18 +212,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             codegen.propagateChildReifiedTypeParametersUsages(parentCodegen.reifiedTypeParametersUsages)
         }
 
-        return createSMAPWithDefaultMapping(expression, parentCodegen.orCreateSourceMapper.resultMappings)
-    }
-
-
-    private fun createSMAPWithDefaultMapping(
-        declaration: KtExpression,
-        mappings: List<FileMapping>
-    ): SMAP {
-        val containingFile = declaration.containingFile
-        CodegenUtil.getLineNumberForElement(containingFile, true) ?: error("Couldn't extract line count in $containingFile")
-
-        return SMAP(mappings)
+        return SMAP(parentCodegen.orCreateSourceMapper.resultMappings)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -310,7 +299,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 methodContext, callableDescriptor, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
                 inliningFunction as KtNamedFunction?, parentCodegen, asmMethod
             )
-            createSMAPWithDefaultMapping(inliningFunction, parentCodegen.orCreateSourceMapper.resultMappings)
+            SMAP(parentCodegen.orCreateSourceMapper.resultMappings)
         } else {
             generateMethodBody(maxCalcAdapter, callableDescriptor, methodContext, inliningFunction!!, jvmSignature, null)
         }
@@ -408,7 +397,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                         when {
                             DescriptorUtils.isInterface(descriptor) &&
                                     innerDescriptor !is ClassDescriptor &&
-                                    !innerDescriptor.isCallableMemberWithJvmDefaultAnnotation() ->
+                                    !innerDescriptor.isCallableMemberCompiledToJvmDefault(state.jvmDefaultMode) ->
                                 OwnerKind.DEFAULT_IMPLS
                             else ->
                                 OwnerKind.IMPLEMENTATION

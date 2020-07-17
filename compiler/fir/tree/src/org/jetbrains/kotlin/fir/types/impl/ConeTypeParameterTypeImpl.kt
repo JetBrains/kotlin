@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 
 class ConeTypeParameterTypeImpl(
     override val lookupTag: ConeTypeParameterLookupTag,
-    isNullable: Boolean
+    isNullable: Boolean,
+    override val attributes: ConeAttributes = ConeAttributes.Empty
 ) : ConeTypeParameterType() {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = EMPTY_ARRAY

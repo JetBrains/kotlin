@@ -6,8 +6,8 @@ FILE: typeParameterVsNested.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? inner class T : R|kotlin/Any| {
-            public? constructor(): R|test/My.T| {
+        public? final? inner class T<T : Some> : R|kotlin/Any| {
+            public? constructor(): R|test/My.T<T>| {
                 super<R|kotlin/Any|>()
             }
 

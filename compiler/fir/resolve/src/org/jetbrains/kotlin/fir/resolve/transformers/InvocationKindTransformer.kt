@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isInline
@@ -18,14 +19,14 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
 object InvocationKindTransformer : FirTransformer<Nothing?>() {
-    private object ArgumentsTransformer : FirTransformer<Pair<Map<FirExpression, InvocationKind>, InvocationKind?>>() {
-        override fun <E : FirElement> transformElement(element: E, data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>): CompositeTransformResult<E> {
+    private object ArgumentsTransformer : FirTransformer<Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>>() {
+        override fun <E : FirElement> transformElement(element: E, data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>): CompositeTransformResult<E> {
             return element.compose()
         }
 
         override fun transformAnonymousFunction(
             anonymousFunction: FirAnonymousFunction,
-            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>
+            data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
         ): CompositeTransformResult<FirStatement> {
             val kind = data.second ?: data.first[anonymousFunction]
             if (kind != null) {
@@ -36,7 +37,7 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
 
         override fun transformLambdaArgumentExpression(
             lambdaArgumentExpression: FirLambdaArgumentExpression,
-            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>
+            data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
         ): CompositeTransformResult<FirStatement> {
             return data.first[lambdaArgumentExpression]?.let {
                 (lambdaArgumentExpression.transformChildren(this, data.first to it) as FirStatement).compose()
@@ -45,7 +46,7 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
 
         override fun transformNamedArgumentExpression(
             namedArgumentExpression: FirNamedArgumentExpression,
-            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>
+            data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
         ): CompositeTransformResult<FirStatement> {
             return data.first[namedArgumentExpression]?.let {
                 (namedArgumentExpression.transformChildren(this, data.first to it) as FirStatement).compose()
@@ -62,7 +63,7 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
         val argumentMapping = calleeReference.candidate.argumentMapping ?: return functionCall.compose()
         val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return functionCall.compose()
 
-        val callsEffects = function.contractDescription.effects.filterIsInstance<ConeCallsEffectDeclaration>()
+        val callsEffects = function.contractDescription.effects?.filterIsInstance<ConeCallsEffectDeclaration>() ?: emptyList()
 
         val isInline = function.isInline
         if (callsEffects.isEmpty() && !isInline) {
@@ -73,7 +74,7 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
             parameter to argument
         }.toMap()
 
-        val invocationKindMapping = mutableMapOf<FirExpression, InvocationKind>()
+        val invocationKindMapping = mutableMapOf<FirExpression, EventOccurrencesRange>()
         for (effect in callsEffects) {
             // TODO: Support callsInPlace contracts on receivers
             val valueParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex) ?: continue
@@ -82,7 +83,7 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
         }
         if (isInline) {
             for (argument in functionCall.arguments) {
-                invocationKindMapping.putIfAbsent(argument, InvocationKind.UNKNOWN)
+                invocationKindMapping.putIfAbsent(argument, EventOccurrencesRange.UNKNOWN)
             }
         }
         if (invocationKindMapping.isEmpty()) {

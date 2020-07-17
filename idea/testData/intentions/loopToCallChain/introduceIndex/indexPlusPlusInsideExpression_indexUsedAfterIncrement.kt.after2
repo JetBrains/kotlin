@@ -5,8 +5,8 @@
 fun foo(list: List<String>): Int? {
     var index = 0
     return list
-            .asSequence()
-            .filterNot { it.isBlank() }
-            .map { it.length * index++ }
-            .firstOrNull { it * 100 > index * index }
+        .asSequence()
+        .filterNot { it.isBlank() }
+        .map { it.length * index++ }
+        .firstOrNull { it * 100 > index * index }
 }

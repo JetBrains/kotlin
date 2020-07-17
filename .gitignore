@@ -50,10 +50,12 @@ build/
 .idea/artifacts/kotlin_main_kts_jar.xml
 .idea/artifacts/kotlin_compiler_client_embeddable_jar.xml
 .idea/artifacts/kotlin_reflect_jar.xml
+.idea/artifacts/kotlin_stdlib_js_ir_*
+.idea/artifacts/kotlin_test_js_ir_*
+.idea/artifacts/kotlin_stdlib_wasm_*
 .idea/jarRepositories.xml
 kotlin-ultimate/
 node_modules/
 .rpt2_cache/
 libraries/tools/kotlin-test-js-runner/lib/
-libraries/tools/kotlin-source-map-loader/lib/
 local.properties

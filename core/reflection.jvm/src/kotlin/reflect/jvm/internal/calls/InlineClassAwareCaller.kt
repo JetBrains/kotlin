@@ -17,6 +17,7 @@ import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.defaultPrimitiveValue
 import kotlin.reflect.jvm.internal.toJavaClass
 
 /**
@@ -127,9 +128,15 @@ internal class InlineClassAwareCaller<out M : Member?>(
             val method = unbox[index]
             val arg = args[index]
             // Note that arg may be null in case we're calling a $default method and it's an optional parameter of an inline class type
-            unboxed[index] =
-                    if (method != null && arg != null) method.invoke(arg)
-                    else arg
+            unboxed[index] = if (method != null) {
+                if (arg != null) {
+                    method.invoke(arg)
+                } else {
+                    defaultPrimitiveValue(method.returnType)
+                }
+            } else {
+                arg
+            }
         }
 
         val result = caller.call(unboxed)

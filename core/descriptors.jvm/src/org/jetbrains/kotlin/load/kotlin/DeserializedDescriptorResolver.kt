@@ -94,7 +94,7 @@ class DeserializedDescriptorResolver {
     // We report pre-release errors on .class files produced by 1.3-M1 even if this compiler is pre-release. This is needed because
     // 1.3-M1 did not mangle names of functions mentioning inline classes yet, and we don't want to support this case in the codegen
     private val KotlinJvmBinaryClass.isCompiledWith13M1: Boolean
-        get() = !components.configuration.skipMetadataVersionCheck &&
+        get() = !components.configuration.skipPrereleaseCheck &&
                 classHeader.isPreRelease && classHeader.metadataVersion == KOTLIN_1_3_M1_METADATA_VERSION
 
     private val KotlinJvmBinaryClass.isInvisibleJvmIrDependency: Boolean

@@ -73,6 +73,8 @@ class FakeSymbolBasedClass(
 
     override val constructors: Collection<JavaConstructor> get() = emptyList()
 
+    override fun hasDefaultConstructor() = false
+
     override val innerClassNames: Collection<Name> get() = emptyList()
 
     override val virtualFile: VirtualFile? by lazy {

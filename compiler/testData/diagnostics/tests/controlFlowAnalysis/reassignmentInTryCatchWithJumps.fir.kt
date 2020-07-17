@@ -15,7 +15,7 @@ fun f1(flag: Boolean) {
         // KT-13612: reassignment
         n = 3
     }
-    n.hashCode()
+    <!UNINITIALIZED_VARIABLE!>n<!>.hashCode()
 }
 
 fun f2(flag: Boolean) {
@@ -32,7 +32,7 @@ fun f2(flag: Boolean) {
             // KT-13612: reassignment
             n = 3
         }
-        n.hashCode()
+        <!UNINITIALIZED_VARIABLE!>n<!>.hashCode()
     }
 }
 
@@ -50,6 +50,6 @@ fun f3(flag: Boolean) {
             // KT-13612: reassignment
             n = 3
         }
-        n.hashCode()
+        <!UNINITIALIZED_VARIABLE!>n<!>.hashCode()
     }
 }

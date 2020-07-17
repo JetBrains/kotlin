@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirTargetElement
@@ -22,20 +21,28 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTargetElement, FirAnnotationContainer, FirTypeParametersOwner, FirStatement {
+interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTargetElement, FirTypeParameterRefsOwner, FirControlFlowGraphOwner, FirStatement {
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
+    override val origin: FirDeclarationOrigin
+    override val attributes: FirDeclarationAttributes
     override val annotations: List<FirAnnotationCall>
     override val returnTypeRef: FirTypeRef
     override val receiverTypeRef: FirTypeRef?
-    override val typeParameters: List<FirTypeParameter>
-    val controlFlowGraphReference: FirControlFlowGraphReference
+    override val typeParameters: List<FirTypeParameterRef>
+    override val controlFlowGraphReference: FirControlFlowGraphReference
     override val symbol: FirFunctionSymbol<F>
     val valueParameters: List<FirValueParameter>
     val body: FirBlock?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunction(this, data)
+
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
     fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
@@ -45,7 +52,9 @@ interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTarget
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<F>
 
-    fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirFunction<F>
 
     fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction<F>
+
+    fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirFunction<F>
 }

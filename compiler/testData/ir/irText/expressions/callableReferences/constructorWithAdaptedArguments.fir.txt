@@ -34,8 +34,8 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner
-      CONSTRUCTOR visibility:public <> ($this:<root>.Outer.Inner, xs:kotlin.IntArray) returnType:<root>.Outer.Inner [primary]
-        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer, xs:kotlin.IntArray) returnType:<root>.Outer.Inner [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer
         VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'

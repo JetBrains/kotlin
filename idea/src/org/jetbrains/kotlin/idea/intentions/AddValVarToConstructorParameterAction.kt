@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,16 +25,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 interface AddValVarToConstructorParameterAction {
-    companion object {
-        val actionFamily: String get() = KotlinBundle.message("add.val.var.to.primary.constructor.parameter")
-    }
-
-    fun getActionText(element: KtParameter) = KotlinBundle.message("add.val.var.to.parameter.0", element.name ?: "")
-
-    fun canInvoke(element: KtParameter): Boolean {
-        return element.valOrVarKeyword == null && ((element.parent as? KtParameterList)?.parent as? KtPrimaryConstructor)
-            ?.takeIf { it.mustHaveValOrVar() || !it.isExpectDeclaration() } != null
-    }
+    fun canInvoke(element: KtParameter): Boolean =
+        element.valOrVarKeyword == null && ((element.parent as? KtParameterList)?.parent as? KtPrimaryConstructor)?.takeIf { it.mustHaveValOrVar() || !it.isExpectDeclaration() } != null
 
     operator fun invoke(element: KtParameter, editor: Editor?) {
         val project = element.project
@@ -57,13 +49,14 @@ interface AddValVarToConstructorParameterAction {
             .let { TemplateManager.getInstance(project).startTemplate(editor, it) }
     }
 
-    class Intention :
-        SelfTargetingRangeIntention<KtParameter>(KtParameter::class.java, actionFamily),
-        AddValVarToConstructorParameterAction {
+    class Intention : SelfTargetingRangeIntention<KtParameter>(
+        KtParameter::class.java,
+        KotlinBundle.lazyMessage("add.val.var.to.primary.constructor.parameter")
+    ), AddValVarToConstructorParameterAction {
         override fun applicabilityRange(element: KtParameter): TextRange? {
             if (!canInvoke(element)) return null
             if (element.getStrictParentOfType<KtClass>()?.isData() == true) return null
-            text = getActionText(element)
+            setTextGetter(KotlinBundle.lazyMessage("add.val.var.to.parameter.0", element.name ?: ""))
             return element.nameIdentifier?.textRange
         }
 
@@ -73,9 +66,9 @@ interface AddValVarToConstructorParameterAction {
     class QuickFix(parameter: KtParameter) :
         KotlinQuickFixAction<KtParameter>(parameter),
         AddValVarToConstructorParameterAction {
-        override fun getText() = element?.let { getActionText(it) } ?: ""
+        override fun getText() = element?.let { KotlinBundle.message("add.val.var.to.parameter.0", it.name ?: "") } ?: ""
 
-        override fun getFamilyName() = actionFamily
+        override fun getFamilyName() = KotlinBundle.message("add.val.var.to.primary.constructor.parameter")
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             invoke(element ?: return, editor)

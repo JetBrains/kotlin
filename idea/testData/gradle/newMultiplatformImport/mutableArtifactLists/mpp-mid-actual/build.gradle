@@ -1,0 +1,52 @@
+group 'org.jetbrains.qa.combompp'
+version '1.0'
+
+apply plugin: 'kotlin-multiplatform'
+apply plugin: 'maven-publish'
+
+buildscript {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+}
+
+repositories {
+    {{kotlin_plugin_repositories}}
+}
+
+kotlin {
+    jvm("jvmWithJava") {
+        withJava()
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                api project(":mpp-bottom-actual")
+                implementation kotlin('stdlib-common', '{{kotlin_plugin_version}}')
+                implementation kotlin('stdlib', '{{kotlin_plugin_version}}')
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common', '{{kotlin_plugin_version}}')
+                implementation kotlin('test-annotations-common', '{{kotlin_plugin_version}}')
+                implementation kotlin('test', '{{kotlin_plugin_version}}')
+            }
+        }
+
+        jvmWithJavaMain {
+            dependencies {
+            }
+        }
+        jvmWithJavaTest {
+            dependencies {
+                implementation kotlin('test', '{{kotlin_plugin_version}}')
+                implementation kotlin('test-junit', '{{kotlin_plugin_version}}')
+            }
+        }
+    }
+}

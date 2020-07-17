@@ -17,12 +17,18 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.isGetterOfUnderlyingPropertyOfInlineClass
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToInlineClassTypeValueParameters
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -101,4 +107,108 @@ fun computeExpectedNumberOfReceivers(referencedFunction: FunctionDescriptor, isB
     }
 
     return receivers
+}
+
+// Returns false if null was generated.
+internal fun generateCallableReferenceDeclarationContainerClass(
+    iv: InstructionAdapter,
+    descriptor: CallableDescriptor,
+    state: GenerationState
+): Boolean {
+    val typeMapper = state.typeMapper
+    val container = descriptor.containingDeclaration
+    when {
+        container is ClassDescriptor -> {
+            // TODO: would it work for arrays?
+            val containerKotlinType = container.defaultType
+            val containerType = typeMapper.mapClass(container)
+            AsmUtil.putJavaLangClassInstance(iv, containerType, containerKotlinType, typeMapper)
+        }
+        container is PackageFragmentDescriptor -> {
+            iv.aconst(typeMapper.mapOwner(descriptor))
+        }
+        descriptor is VariableDescriptorWithAccessors -> {
+            iv.aconst(state.bindingContext[CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER, descriptor])
+        }
+        else -> {
+            iv.aconst(null)
+            return false
+        }
+    }
+    return true
+}
+
+internal fun generateCallableReferenceDeclarationContainer(
+    iv: InstructionAdapter,
+    descriptor: CallableDescriptor,
+    state: GenerationState
+) {
+    if (!generateCallableReferenceDeclarationContainerClass(iv, descriptor, state)) return
+    if (isTopLevelCallableReference(descriptor)) {
+        // Note that this name is not used in reflection. There should be the name of the referenced declaration's module instead,
+        // but there's no nice API to obtain that name here yet
+        // TODO: write the referenced declaration's module name and use it in reflection
+        iv.aconst(state.moduleName)
+        iv.invokestatic(
+            AsmTypes.REFLECTION, "getOrCreateKotlinPackage",
+            Type.getMethodDescriptor(
+                AsmTypes.K_DECLARATION_CONTAINER_TYPE, AsmTypes.getType(Class::class.java), AsmTypes.getType(String::class.java)
+            ), false
+        )
+    } else {
+        AsmUtil.wrapJavaClassIntoKClass(iv)
+    }
+}
+
+private fun isTopLevelCallableReference(descriptor: CallableDescriptor): Boolean =
+    if (descriptor is LocalVariableDescriptor)
+        DescriptorUtils.getParentOfType(descriptor, ClassDescriptor::class.java) == null
+    else descriptor.containingDeclaration is PackageFragmentDescriptor
+
+internal fun getCallableReferenceTopLevelFlag(descriptor: CallableDescriptor): Int =
+    if (isTopLevelCallableReference(descriptor)) 1 else 0
+
+internal fun generateFunctionReferenceSignature(iv: InstructionAdapter, callable: CallableDescriptor, state: GenerationState) {
+    iv.aconst(getSignatureString(callable, state))
+}
+
+internal fun generatePropertyReferenceSignature(iv: InstructionAdapter, callable: CallableDescriptor, state: GenerationState) {
+    iv.aconst(getSignatureString(callable, state, isPropertySignature = true))
+}
+
+private fun getSignatureString(callable: CallableDescriptor, state: GenerationState, isPropertySignature: Boolean = false): String {
+    if (callable is LocalVariableDescriptor) {
+        val asmType = state.bindingContext.get(CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER, callable)
+            ?: throw AssertionError("No delegated property metadata owner for $callable")
+        val localDelegatedProperties = CodegenBinding.getLocalDelegatedProperties(state.bindingContext, asmType)
+        val index = localDelegatedProperties?.indexOf(callable) ?: -1
+        if (index < 0) {
+            throw AssertionError("Local delegated property is not found in $asmType: $callable")
+        }
+        return "<v#$index>"
+    }
+
+    val accessor = when (callable) {
+        is ClassConstructorDescriptor ->
+            if (shouldHideConstructorDueToInlineClassTypeValueParameters(callable))
+                AccessorForConstructorDescriptor(callable, callable.containingDeclaration, null, AccessorKind.NORMAL)
+            else
+                callable
+        is FunctionDescriptor -> callable
+        is VariableDescriptorWithAccessors ->
+            callable.getter ?: DescriptorFactory.createDefaultGetter(callable as PropertyDescriptor, Annotations.EMPTY).apply {
+                initialize(callable.type)
+            }
+        else -> error("Unsupported callable reference: $callable")
+    }
+    val declaration = DescriptorUtils.unwrapFakeOverride(accessor).original
+    val method = when {
+        callable.containingDeclaration.isInlineClass() && !declaration.isGetterOfUnderlyingPropertyOfInlineClass() ->
+            state.typeMapper.mapSignatureForInlineErasedClassSkipGeneric(declaration).asmMethod
+        isPropertySignature ->
+            state.typeMapper.mapPropertyReferenceSignature(declaration)
+        else ->
+            state.typeMapper.mapAsmMethod(declaration)
+    }
+    return method.name + method.descriptor
 }

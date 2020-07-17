@@ -67,7 +67,7 @@ class ModulesEditorToolbarDecorator(
                     null -> ""
                 }
 
-                text = KotlinNewProjectWizardUIBundle.message("editor.modules.add", moduleKindTextToAdd)
+                text = KotlinNewProjectWizardUIBundle.message("editor.modules.add", moduleKindTextToAdd.capitalize())
             }
             event.presentation.isEnabled
         }
@@ -77,12 +77,12 @@ class ModulesEditorToolbarDecorator(
             if (Messages.showOkCancelDialog(
                     tree,
                     buildString {
-                        appendln(KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.module", moduleKindText))
+                        val moduleName = selectedModule?.name!!
                         if (tree.selectedSettingItem.safeAs<Module>()?.kind != ModuleKind.target) {
-                            appendln(KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.submodules"))
+                            appendLine(KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.module", moduleName))
+                        } else {
+                            appendLine(KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.target", moduleName))
                         }
-                        appendln()
-                        appendln(KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.no.undone"))
                     },
                     KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.question", moduleKindText),
                     KotlinNewProjectWizardUIBundle.message("editor.modules.remove.selected.remove"),
@@ -98,7 +98,7 @@ class ModulesEditorToolbarDecorator(
                 isEnabled = tree.selectedSettingItem is Module
                 text = KotlinNewProjectWizardUIBundle.message(
                     "editor.modules.remove.tooltip",
-                    selectedModuleKindText?.let { " $it" }.orEmpty()
+                    selectedModuleKindText?.let { " ${it.capitalize()}" }.orEmpty()
                 )
             }
             event.presentation.isEnabled
@@ -108,8 +108,11 @@ class ModulesEditorToolbarDecorator(
         setMoveUpAction(null)
     }
 
+    private val selectedModule
+        get() = tree.selectedSettingItem.safeAs<Module>()
+
     private val selectedModuleKindText
-        get() = tree.selectedSettingItem.safeAs<Module>()?.kindText
+        get() = selectedModule?.kindText
 
     fun createToolPanel(): JComponent = toolbarDecorator
         .createPanelWithPopupHandler(tree)

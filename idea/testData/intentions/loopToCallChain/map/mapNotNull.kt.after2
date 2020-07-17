@@ -3,7 +3,7 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().mapNotNull{}.mapTo(){}'"
 fun foo(list: List<String?>, target: MutableList<String>) {
     <caret>list
-            .asSequence()
-            .mapNotNull { it?.length }
-            .mapTo(target) { it.toString() }
+        .asSequence()
+        .mapNotNull { it?.length }
+        .mapTo(target) { it.toString() }
 }

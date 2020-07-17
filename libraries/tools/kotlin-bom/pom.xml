@@ -7,7 +7,7 @@
 
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-bom</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4.255-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!-- No parent to avoid accidentally inheriting parent's dependencyManagement section -->
@@ -157,6 +157,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-scripting-jvm-host</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-scripting-ide-services</artifactId>
                 <version>${kotlin.version}</version>
             </dependency>
             <!-- Compiler dependency required by scripting -->

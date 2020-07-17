@@ -57,4 +57,8 @@ internal class FirCheckNotNullCallImpl(
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {
         argumentList = newArgumentList
     }
+
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        calleeReference = newCalleeReference
+    }
 }

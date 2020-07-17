@@ -56,7 +56,7 @@ public abstract class AbstractCoroutineContextKey<B : Element, E : B>(
 }
 
 /**
- * Returns the current element is it is associated with the given [key] in a polymorphic manner or `null` otherwise.
+ * Returns the current element if it is associated with the given [key] in a polymorphic manner or `null` otherwise.
  * This method returns non-null value if either [Element.key] is equal to the given [key] or if the [key] is associated
  * with [Element.key] via [AbstractCoroutineContextKey].
  * See [AbstractCoroutineContextKey] for the example of usage.

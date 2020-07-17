@@ -1,4 +1,4 @@
-// STRICT_MODE
+// STRICT
 
 class Foo(private val string: String) {
     val bar = Bar("bar")

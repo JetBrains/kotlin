@@ -100,6 +100,8 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
             return constructors(psi.constructors.filter { method -> method.isConstructor })
         }
 
+    override fun hasDefaultConstructor() = !isInterface && constructors.isEmpty()
+
     override val isAbstract: Boolean
         get() = JavaElementUtil.isAbstract(this)
 

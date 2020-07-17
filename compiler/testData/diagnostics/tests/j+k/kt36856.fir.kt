@@ -14,6 +14,6 @@ class Foo<T>
 fun main(foo1: Foo<Boolean>, foo2: Foo<String>) {
     val x = object : Test() {} // FE exception is thrown here
 
-    x.with(foo1) checkType { <!UNRESOLVED_REFERENCE!>_<!><Boolean>() }
-    x.with(foo2) checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    x.with(foo1) checkType { _<Boolean>() }
+    x.with(foo2) checkType { _<String>() }
 }

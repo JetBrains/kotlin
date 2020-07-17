@@ -97,10 +97,6 @@ abstract class AbstractDiagnosticCollector(
             visitClassAndChildren(regularClass, regularClass.defaultType())
         }
 
-        override fun visitSealedClass(sealedClass: FirSealedClass) {
-            visitClassAndChildren(sealedClass, sealedClass.defaultType())
-        }
-
         override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
             visitClassAndChildren(anonymousObject, anonymousObject.defaultType())
         }
@@ -141,6 +137,10 @@ abstract class AbstractDiagnosticCollector(
 
         override fun visitFile(file: FirFile) {
             visitWithDeclaration(file)
+        }
+
+        override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
+            visitWithDeclaration(anonymousInitializer)
         }
 
         private fun visitWithDeclaration(declaration: FirDeclaration) {

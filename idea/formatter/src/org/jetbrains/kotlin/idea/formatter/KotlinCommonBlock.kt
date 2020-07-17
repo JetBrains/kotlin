@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.*
+import com.intellij.formatting.blocks.prev
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
@@ -19,13 +20,16 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.trailingCommaExistsOrCanExist
+import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedFor
+import org.jetbrains.kotlin.idea.util.containsLineBreakInThis
+import org.jetbrains.kotlin.idea.util.isMultiline
+import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS)
@@ -175,7 +179,7 @@ abstract class KotlinCommonBlock(
         if (node.wrapForFirstCallInChainIsAllowed && node.receiverIsCall())
             Wrap.createWrap(
                 settings.kotlinCommonSettings.METHOD_CALL_CHAIN_WRAP,
-                true /* wrapFirstElement */,
+                true, /* wrapFirstElement */
             )
         else
             null
@@ -324,9 +328,14 @@ abstract class KotlinCommonBlock(
         }
 
         if (newChildIndex > 0) {
-            val prevBlock = mySubBlocks?.get(newChildIndex - 1)
-            if (prevBlock?.node?.elementType == MODIFIER_LIST) {
+            val prevNode = mySubBlocks?.get(newChildIndex - 1)?.node
+            if (prevNode?.elementType == MODIFIER_LIST) {
                 return ChildAttributes(Indent.getNoneIndent(), null)
+            }
+            val property = prevNode?.psi as? KtProperty
+            if (property?.receiverTypeReference != null && property.accessors.isNotEmpty()) {
+                val indent = if (type in CODE_BLOCKS) Indent.getContinuationIndent() else Indent.getNormalIndent()
+                return ChildAttributes(indent, null)
             }
         }
 
@@ -336,7 +345,7 @@ abstract class KotlinCommonBlock(
                 null,
             )
 
-            TRY -> ChildAttributes(Indent.getNoneIndent(), null)
+            TRY, CATCH, FINALLY -> ChildAttributes(Indent.getNoneIndent(), null)
 
             in QUALIFIED_EXPRESSIONS -> ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null)
 
@@ -566,36 +575,31 @@ abstract class KotlinCommonBlock(
                         additionalWrap = trailingCommaWrappingStrategyWithMultiLineCheck(LPAR, RPAR),
                     )
                     FUNCTION_TYPE -> return defaultTrailingCommaWrappingStrategy(LPAR, RPAR)
-                    FUNCTION_LITERAL -> {
-                        if (nodePsi.parent?.safeAs<KtFunctionLiteral>()?.needTrailingComma(settings) == true) {
-                            val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
-                            return { childElement ->
-                                createWrapAlwaysIf(getSiblingWithoutWhitespaceAndComments(childElement) == null || check(childElement))
-                            }
+                    FUNCTION_LITERAL -> if (trailingCommaExistsOrCanExist(nodePsi.parent, settings)) {
+                        val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
+                        return { childElement ->
+                            createWrapAlwaysIf(getSiblingWithoutWhitespaceAndComments(childElement) == null || check(childElement))
                         }
                     }
                 }
             }
 
-            elementType === FUNCTION_LITERAL -> {
-                if (nodePsi.cast<KtFunctionLiteral>().needTrailingComma(settings))
-                    return trailingCommaWrappingStrategy(leftAnchor = LBRACE, rightAnchor = ARROW)
+            elementType === FUNCTION_LITERAL -> if (trailingCommaExistsOrCanExist(nodePsi, settings)) {
+                return trailingCommaWrappingStrategy(leftAnchor = LBRACE, rightAnchor = ARROW)
             }
 
-            elementType === WHEN_ENTRY -> {
-                // with argument
-                if (nodePsi.cast<KtWhenEntry>().needTrailingComma(settings)) {
-                    val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
-                    return trailingCommaWrappingStrategy(rightAnchor = ARROW) {
-                        getSiblingWithoutWhitespaceAndComments(it, true) != null && check(it)
-                    }
+            // with argument
+            elementType === WHEN_ENTRY -> if (trailingCommaExistsOrCanExist(nodePsi, settings)) {
+                val check = thisOrPrevIsMultiLineElement(COMMA, LBRACE /* not necessary */, ARROW /* not necessary */)
+                return trailingCommaWrappingStrategy(rightAnchor = ARROW) {
+                    getSiblingWithoutWhitespaceAndComments(it, true) != null && check(it)
                 }
             }
 
             elementType === DESTRUCTURING_DECLARATION -> {
                 nodePsi as KtDestructuringDeclaration
                 if (nodePsi.valOrVarKeyword == null) return defaultTrailingCommaWrappingStrategy(LPAR, RPAR)
-                else if (nodePsi.needTrailingComma(settings)) {
+                else if (trailingCommaExistsOrCanExist(nodePsi, settings)) {
                     val check = thisOrPrevIsMultiLineElement(COMMA, LPAR, RPAR)
                     return trailingCommaWrappingStrategy(leftAnchor = LPAR, rightAnchor = RPAR, filter = { it.elementType !== EQ }) {
                         getSiblingWithoutWhitespaceAndComments(it, true) != null && check(it)
@@ -906,7 +910,17 @@ private val INDENT_RULES = arrayOf(
     strategy("Indent for block content")
         .within(BLOCK, CLASS_BODY, FUNCTION_LITERAL)
         .notForType(RBRACE, LBRACE, BLOCK)
-        .set(Indent.getNormalIndent(false)),
+        .set(Indent.getNormalIndent()),
+
+    strategy("Indent for template content")
+        .within(LONG_STRING_TEMPLATE_ENTRY)
+        .notForType(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END)
+        .set(Indent.getNormalIndent()),
+
+    strategy("No indent for braces in template")
+        .within(LONG_STRING_TEMPLATE_ENTRY)
+        .forType(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END)
+        .set(Indent.getNoneIndent()),
 
     strategy("Indent for property accessors")
         .within(PROPERTY).forType(PROPERTY_ACCESSOR)
@@ -914,11 +928,6 @@ private val INDENT_RULES = arrayOf(
 
     strategy("For a single statement in 'for'")
         .within(BODY).notForType(BLOCK)
-        .set(Indent.getNormalIndent()),
-
-    strategy("For WHEN content")
-        .within(WHEN)
-        .notForType(RBRACE, LBRACE, WHEN_KEYWORD)
         .set(Indent.getNormalIndent()),
 
     strategy("For single statement in THEN and ELSE")
@@ -1006,7 +1015,7 @@ private val INDENT_RULES = arrayOf(
     strategy("Colon of delegation list")
         .within(CLASS, OBJECT_DECLARATION)
         .forType(COLON)
-        .set(Indent.getNormalIndent(false)),
+        .set(Indent.getNormalIndent()),
 
     strategy("Delegation list")
         .within(SUPER_TYPE_LIST)
@@ -1030,20 +1039,25 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Opening parenthesis for conditions")
         .forType(LPAR)
-        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE)
+        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE, FOR, WHEN)
         .set(Indent.getContinuationWithoutFirstIndent(true)),
 
     strategy("Closing parenthesis for conditions")
         .forType(RPAR)
-        .forElement { node -> !hasErrorElementBefore(node) }
-        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE)
+        .forElement { node -> !hasErrorElementBefore(node) || node.prev()?.textLength == 0 }
+        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE, FOR, WHEN)
         .set(Indent.getNoneIndent()),
 
     strategy("Closing parenthesis for incomplete conditions")
         .forType(RPAR)
         .forElement { node -> hasErrorElementBefore(node) }
-        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE)
+        .within(IF, WHEN_ENTRY, WHILE, DO_WHILE, FOR, WHEN)
         .set(Indent.getContinuationWithoutFirstIndent()),
+
+    strategy("For WHEN content")
+        .within(WHEN)
+        .notForType(RBRACE, LBRACE, WHEN_KEYWORD)
+        .set(Indent.getNormalIndent()),
 
     strategy("KDoc comment indent")
         .within(KDOC_CONTENT)

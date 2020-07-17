@@ -6,12 +6,11 @@
 package org.jetbrains.uast.kotlin.psi
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightMethodBuilder
-import com.intellij.psi.impl.light.LightModifierList
-import com.intellij.psi.impl.light.LightParameterListBuilder
-import com.intellij.psi.impl.light.LightTypeParameterBuilder
+import com.intellij.psi.impl.light.*
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -21,28 +20,28 @@ import org.jetbrains.uast.kotlin.analyze
 import org.jetbrains.uast.kotlin.getType
 import org.jetbrains.uast.kotlin.toPsiType
 
-internal class UastFakeLightMethod(internal val original: KtFunction, containingClass: PsiClass) : LightMethodBuilder(
-    original.manager, original.language, original.name ?: "<no name provided>",
-    LightParameterListBuilder(original.manager, original.language),
-    LightModifierList(original.manager)
-) {
-
-    init {
-        this.containingClass = containingClass
-        if (original.safeAs<KtNamedFunction>()?.isTopLevel == true) {
-            addModifier(PsiModifier.STATIC)
-        }
-    }
+internal class UastFakeLightMethod(original: KtFunction, containingClass: PsiClass) : UastFakeLightMethodBase<KtFunction>(original, containingClass) {
 
     private val _buildTypeParameterList by lazy {
         KotlinLightTypeParameterListBuilder(this).also { paramList ->
             for ((i, p) in original.typeParameters.withIndex()) {
                 paramList.addParameter(
-                    LightTypeParameterBuilder(
+                    object : LightTypeParameterBuilder(
                         p.name ?: "__no_name__",
                         this,
                         i
-                    )
+                    ) {
+                        private val myExtendsList by lazy {
+                            super.getExtendsList().apply {
+                                p.extendsBound?.getType()
+                                    ?.toPsiType(this@UastFakeLightMethod, original, false)
+                                    ?.safeAs<PsiClassType>()
+                                    ?.let { addReference(it) }
+                            }
+                        }
+
+                        override fun getExtendsList(): LightReferenceListBuilder = myExtendsList
+                    }
                 )
             }
         }
@@ -86,6 +85,25 @@ internal class UastFakeLightMethod(internal val original: KtFunction, containing
     }
 
     override fun getParameterList(): PsiParameterList = paramsList
+}
+
+internal class UastFakeLightPrimaryConstructor(original: KtClassOrObject, lightClass: PsiClass) : UastFakeLightMethodBase<KtClassOrObject>(original, lightClass){
+    override fun isConstructor(): Boolean = true
+}
+
+internal abstract class UastFakeLightMethodBase<T: KtElement>(internal val original: T, containingClass: PsiClass) : LightMethodBuilder(
+    original.manager, original.language, original.name ?: "<no name provided>",
+    LightParameterListBuilder(original.manager, original.language),
+    LightModifierList(original.manager)
+) {
+
+    init {
+        this.containingClass = containingClass
+        if (original.safeAs<KtNamedFunction>()?.isTopLevel == true) {
+            addModifier(PsiModifier.STATIC)
+        }
+    }
+
 
     override fun getReturnType(): PsiType? {
         val context = original.analyze()
@@ -99,7 +117,7 @@ internal class UastFakeLightMethod(internal val original: KtFunction, containing
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as UastFakeLightMethod
+        other as UastFakeLightMethodBase<*>
 
         if (original != other.original) return false
 

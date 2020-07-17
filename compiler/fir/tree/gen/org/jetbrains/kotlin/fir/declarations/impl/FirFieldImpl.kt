@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -30,6 +32,7 @@ internal class FirFieldImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
+    override val origin: FirDeclarationOrigin,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirVariableSymbol<FirField>,
@@ -39,6 +42,7 @@ internal class FirFieldImpl(
     override var status: FirDeclarationStatus,
     override val containerSource: DeserializedContainerSource?,
 ) : FirField() {
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val receiverTypeRef: FirTypeRef? get() = null
     override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null

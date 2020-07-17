@@ -25,11 +25,9 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.resolveClassByFqName
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -41,23 +39,11 @@ import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.CreateCallableFromUsageFix
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
+import org.jetbrains.kotlin.idea.util.resolveToKotlinType
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.load.java.components.TypeUsage
-import org.jetbrains.kotlin.load.java.lazy.JavaResolverComponents
-import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.lazy.TypeParameterResolver
-import org.jetbrains.kotlin.load.java.lazy.child
-import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
-import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeAttributes
-import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeResolver
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
-import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl
-import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeParameterImpl
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -65,7 +51,6 @@ import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.supertypes
@@ -478,58 +463,3 @@ private fun renderAttributeValue(annotationAttributeRequest: AnnotationAttribute
         is AnnotationAttributeValueRequest.PrimitiveValue -> annotationAttributeRequest.value
         is AnnotationAttributeValueRequest.StringValue -> "\"" + annotationAttributeRequest.value + "\""
     }
-
-
-private fun PsiType.collectTypeParameters(): List<PsiTypeParameter> {
-    val results = ArrayList<PsiTypeParameter>()
-    accept(
-        object : PsiTypeVisitor<Unit>() {
-            override fun visitArrayType(arrayType: PsiArrayType) {
-                arrayType.componentType.accept(this)
-            }
-
-            override fun visitClassType(classType: PsiClassType) {
-                (classType.resolve() as? PsiTypeParameter)?.let { results += it }
-                classType.parameters.forEach { it.accept(this) }
-            }
-
-            override fun visitWildcardType(wildcardType: PsiWildcardType) {
-                wildcardType.bound?.accept(this)
-            }
-        }
-    )
-    return results
-}
-
-
-internal fun PsiType.resolveToKotlinType(resolutionFacade: ResolutionFacade): KotlinType? {
-    if (this == PsiType.NULL) {
-        return resolutionFacade.moduleDescriptor.builtIns.nullableAnyType
-    }
-
-    val typeParameters = collectTypeParameters()
-    val components = resolutionFacade.getFrontendService(JavaResolverComponents::class.java)
-    val rootContext = LazyJavaResolverContext(components, TypeParameterResolver.EMPTY) { null }
-    val dummyPackageDescriptor = MutablePackageFragmentDescriptor(resolutionFacade.moduleDescriptor, FqName("dummy"))
-    val dummyClassDescriptor = ClassDescriptorImpl(
-        dummyPackageDescriptor,
-        Name.identifier("Dummy"),
-        Modality.FINAL,
-        ClassKind.CLASS,
-        emptyList(),
-        SourceElement.NO_SOURCE,
-        false,
-        LockBasedStorageManager.NO_LOCKS
-    )
-    val typeParameterResolver = object : TypeParameterResolver {
-        override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? {
-            val psiTypeParameter = (javaTypeParameter as JavaTypeParameterImpl).psi
-            val index = typeParameters.indexOf(psiTypeParameter)
-            if (index < 0) return null
-            return LazyJavaTypeParameterDescriptor(rootContext.child(this), javaTypeParameter, index, dummyClassDescriptor)
-        }
-    }
-    val typeResolver = JavaTypeResolver(rootContext, typeParameterResolver)
-    val attributes = JavaTypeAttributes(TypeUsage.COMMON)
-    return typeResolver.transformJavaType(JavaTypeImpl.create(this), attributes).approximateFlexibleTypes(preferNotNull = true)
-}

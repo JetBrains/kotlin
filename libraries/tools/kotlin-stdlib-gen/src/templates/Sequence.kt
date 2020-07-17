@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -43,8 +43,9 @@ object SequenceOps : TemplateGroupBase() {
             Creates a [Sequence] instance that wraps the original ${f.collection} returning its ${f.element.pluralize()} when being iterated.
             """
         }
-        if (f in listOf(ArraysOfPrimitives, ArraysOfObjects, Iterables))
+        specialFor(ArraysOfPrimitives, ArraysOfObjects, Iterables) {
             sample("samples.collections.Sequences.Building.sequenceFrom${f.doc.collection.capitalize()}")
+        }
 
         returns("Sequence<T>")
         body {

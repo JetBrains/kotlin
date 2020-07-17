@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 interface Z<T> {
     fun test(p: T): T {
         return p

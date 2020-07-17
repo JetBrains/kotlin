@@ -28,10 +28,10 @@ open class Base {
 
 class Derived : Base() {
     fun test(javaStaticInTypePosition: Classifier) {
-        method()
-        property
-        Classifier()
-        syntheticSam { }
+        <!UNRESOLVED_REFERENCE!>method<!>()
+        <!UNRESOLVED_REFERENCE!>property<!>
+        <!UNRESOLVED_REFERENCE!>Classifier<!>()
+        <!UNRESOLVED_REFERENCE!>syntheticSam<!> { }
 
         // Instance members shouldn't be affected, but we check them, just in case
         val y = instanceSyntheticProperty

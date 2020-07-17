@@ -35,7 +35,9 @@ fun Builder.collectImports(): List<String> {
 fun Implementation.collectImports(base: List<String> = emptyList(), kind: ImportKind = ImportKind.Implementation): List<String> {
     return element.collectImportsInternal(
         base + listOf(element.fullQualifiedName)
-                + usedTypes.mapNotNull { it.fullQualifiedName } + parents.mapNotNull { it.fullQualifiedName }
+                + usedTypes.mapNotNull { it.fullQualifiedName }
+                + arbitraryImportables.mapNotNull { it.fullQualifiedName }
+                + parents.mapNotNull { it.fullQualifiedName }
                 + listOfNotNull(
             pureAbstractElementType.fullQualifiedName?.takeIf { needPureAbstractElement },
             firImplementationDetailType.fullQualifiedName?.takeIf { isPublic || requiresOptIn },
@@ -62,6 +64,7 @@ fun Element.collectImports(): List<String> {
 
 private fun Element.collectImportsInternal(base: List<String>, kind: ImportKind): List<String> {
     val fqns = base + allFields.mapNotNull { it.fullQualifiedName } +
+            allFields.flatMap { it.overridenTypes.mapNotNull { it.fullQualifiedName } } +
             allFields.flatMap { it.arguments.mapNotNull { it.fullQualifiedName } } +
             typeArguments.flatMap { it.upperBounds.mapNotNull { it.fullQualifiedName } }
     return fqns.filterRedundantImports(packageName, kind)
@@ -93,9 +96,10 @@ fun transformFunctionDeclaration(transformName: String, returnType: String): Str
     return "fun <D> transform$transformName(transformer: FirTransformer<D>, data: D): $returnType"
 }
 
-fun Field.replaceFunctionDeclaration(): String {
+fun Field.replaceFunctionDeclaration(overridenType: Importable? = null): String {
     val capName = name.capitalize()
-    return "fun replace$capName(new$capName: $typeWithArguments)"
+    val type = overridenType?.typeWithArguments ?: typeWithArguments
+    return "fun replace$capName(new$capName: $type)"
 }
 
 val Field.mutableType: String

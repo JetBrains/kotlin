@@ -18,6 +18,26 @@ UFile (package = )
             UBlockExpression
                 UReturnExpression
                     USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = function2CharSequence)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = copyWhenGreater)
+            UParameter (name = list)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = threshold)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = threshold2)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = threshold2)
         UMethod (name = function3)
             UParameter (name = t)
                 UAnnotation (fqName = org.jetbrains.annotations.Nullable)
@@ -110,3 +130,34 @@ UFile (package = )
             UBlockExpression
                 UReturnExpression
                     USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = function11CharSequence)
+            UParameter (name = $this$function11CharSequence)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = function12CharSequence)
+            UParameter (name = $this$function12CharSequence)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)
+    UClass (name = Foo)
+        UMethod (name = Foo)
+        UMethod (name = foo)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                    UIdentifier (Identifier (TODO))
+                    USimpleNameReferenceExpression (identifier = TODO, resolvesTo = null)

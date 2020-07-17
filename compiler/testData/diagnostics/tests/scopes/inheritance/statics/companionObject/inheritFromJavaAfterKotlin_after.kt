@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // FILE: J.java
 public class J {

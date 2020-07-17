@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.intentions.ConvertSecondaryConstructorToPrimaryIntention.Companion.tryConvertToPropertyByParameterInitialization
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -25,14 +26,25 @@ import org.jetbrains.kotlin.util.kind
 
 class ConvertSecondaryConstructorToPrimaryInspection : IntentionBasedInspection<KtSecondaryConstructor>(
     ConvertSecondaryConstructorToPrimaryIntention::class,
-    { constructor -> constructor.containingClass()?.secondaryConstructors?.size == 1 }
+    fun(constructor: KtSecondaryConstructor): Boolean {
+        val containingClass = constructor.containingClass() ?: return false
+        if (containingClass.secondaryConstructors.size != 1) return false
+        val context = containingClass.analyzeWithContent()
+        val constructorDescriptor = context[BindingContext.CONSTRUCTOR, constructor] ?: return false
+        for (statement in constructor.bodyExpression?.statements.orEmpty()) {
+            val propertyDescriptor = statement.tryConvertToPropertyByParameterInitialization(constructorDescriptor, context)?.second
+            val property = propertyDescriptor?.let { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtProperty }
+            if (property?.setter?.hasBody() == true) return false
+        }
+        return true
+    }
 ) {
     override fun inspectionTarget(element: KtSecondaryConstructor) = element.getConstructorKeyword()
 }
 
 class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntention<KtSecondaryConstructor>(
     KtSecondaryConstructor::class.java,
-    KotlinBundle.message("convert.to.primary.constructor")
+    KotlinBundle.lazyMessage("convert.to.primary.constructor")
 ) {
     private tailrec fun ConstructorDescriptor.isReachableByDelegationFrom(
         constructor: ConstructorDescriptor, context: BindingContext, visited: Set<ConstructorDescriptor> = emptySet()
@@ -62,26 +74,6 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
         return TextRange(element.startOffset, element.valueParameterList?.endOffset ?: element.getConstructorKeyword().endOffset)
     }
 
-    private fun KtExpression.tryConvertToPropertyByParameterInitialization(
-        constructorDescriptor: ConstructorDescriptor, context: BindingContext
-    ): Pair<ValueParameterDescriptor, PropertyDescriptor>? {
-        if (this !is KtBinaryExpression || operationToken != KtTokens.EQ) return null
-        val rightReference = right as? KtReferenceExpression ?: return null
-        val rightDescriptor = context[BindingContext.REFERENCE_TARGET, rightReference] as? ValueParameterDescriptor ?: return null
-        if (rightDescriptor.containingDeclaration != constructorDescriptor) return null
-        val left = left
-        val leftReference = when (left) {
-            is KtReferenceExpression ->
-                left
-            is KtDotQualifiedExpression ->
-                if (left.receiverExpression is KtThisExpression) left.selectorExpression as? KtReferenceExpression else null
-            else ->
-                null
-        }
-        val leftDescriptor = context[BindingContext.REFERENCE_TARGET, leftReference] as? PropertyDescriptor ?: return null
-        return rightDescriptor to leftDescriptor
-    }
-
     private fun KtSecondaryConstructor.extractInitializer(
         parameterToPropertyMap: MutableMap<ValueParameterDescriptor, PropertyDescriptor>,
         context: BindingContext,
@@ -98,6 +90,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
                     }
                     null to null
                 }
+
             if (rightDescriptor == null || leftDescriptor == null) continue
             parameterToPropertyMap[rightDescriptor] = leftDescriptor
         }
@@ -186,6 +179,27 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
             }
         } else {
             element.delete()
+        }
+    }
+
+    companion object {
+        fun KtExpression.tryConvertToPropertyByParameterInitialization(
+            constructorDescriptor: ConstructorDescriptor, context: BindingContext
+        ): Pair<ValueParameterDescriptor, PropertyDescriptor>? {
+            if (this !is KtBinaryExpression || operationToken != KtTokens.EQ) return null
+            val rightReference = right as? KtReferenceExpression ?: return null
+            val rightDescriptor = context[BindingContext.REFERENCE_TARGET, rightReference] as? ValueParameterDescriptor ?: return null
+            if (rightDescriptor.containingDeclaration != constructorDescriptor) return null
+            val leftReference = when (val left = left) {
+                is KtReferenceExpression ->
+                    left
+                is KtDotQualifiedExpression ->
+                    if (left.receiverExpression is KtThisExpression) left.selectorExpression as? KtReferenceExpression else null
+                else ->
+                    null
+            }
+            val leftDescriptor = context[BindingContext.REFERENCE_TARGET, leftReference] as? PropertyDescriptor ?: return null
+            return rightDescriptor to leftDescriptor
         }
     }
 }

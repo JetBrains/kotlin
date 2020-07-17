@@ -9,8 +9,8 @@ fun main(args: Array<String>) {
 
 // RESUME: 2
 
-// ADDITIONAL_BREAKPOINT: inlineFunInLibrary.kt:public inline fun inlineFun
-// ADDITIONAL_BREAKPOINT: inlineFunInLibrary.kt: Breakpoint 2
+// ADDITIONAL_BREAKPOINT: inlineFunInLibrary.kt / public inline fun inlineFun
+// ADDITIONAL_BREAKPOINT: inlineFunInLibrary.kt / Breakpoint 2
 
 // FILE: customLib/inlineFunInLibrary/inlineFunInLibrary.kt
 package customLib.inlineFunInLibrary

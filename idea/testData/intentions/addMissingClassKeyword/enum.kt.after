@@ -1,0 +1,3 @@
+enum class Foo(val s: String) {
+    A("a"), B("b")
+}

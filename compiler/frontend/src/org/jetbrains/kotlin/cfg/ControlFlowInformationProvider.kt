@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.sideEffectFree
@@ -24,6 +25,8 @@ import org.jetbrains.kotlin.cfg.variable.VariableUseState.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -43,7 +46,9 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.checkers.findDestructuredVariable
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getDispatchReceiverWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasThisOrNoDispatchReceiver
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
@@ -51,6 +56,7 @@ import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -100,6 +106,8 @@ class ControlFlowInformationProvider private constructor(
         if (trace.wantsDiagnostics()) {
             markUnusedVariables()
         }
+
+        checkForSuspendLambdaAndMarkParameters(pseudocode)
 
         markStatements()
         markAnnotationArguments()
@@ -808,6 +816,88 @@ class ControlFlowInformationProvider private constructor(
         }
     }
 
+    private fun checkForSuspendLambdaAndMarkParameters(pseudocode: Pseudocode) {
+        for (instruction in pseudocode.instructionsIncludingDeadCode) {
+            if (instruction is LocalFunctionDeclarationInstruction) {
+                val psi = instruction.body.correspondingElement
+                if (psi is KtFunctionLiteral) {
+                    val descriptor = trace.bindingContext[DECLARATION_TO_DESCRIPTOR, psi]
+                    if (descriptor is AnonymousFunctionDescriptor && descriptor.isSuspend) {
+                        markReadOfSuspendLambdaParameters(instruction.body)
+                        continue
+                    }
+                }
+                checkForSuspendLambdaAndMarkParameters(instruction.body)
+            }
+        }
+    }
+
+    private fun markReadOfSuspendLambdaParameters(pseudocode: Pseudocode) {
+        val instructions = pseudocode.instructionsIncludingDeadCode
+        for (instruction in instructions) {
+            if (instruction is LocalFunctionDeclarationInstruction) {
+                markReadOfSuspendLambdaParameters(instruction.body)
+                continue
+            }
+            markReadOfSuspendLambdaParameter(instruction)
+            markImplicitReceiverOfSuspendLambda(instruction)
+        }
+    }
+
+    private fun markReadOfSuspendLambdaParameter(instruction: Instruction) {
+        if (instruction !is ReadValueInstruction) return
+        val target = instruction.target as? AccessTarget.Call ?: return
+        val descriptor = target.resolvedCall.resultingDescriptor
+        if (descriptor is ParameterDescriptor) {
+            val containing = descriptor.containingDeclaration
+            if (containing is AnonymousFunctionDescriptor && containing.isSuspend) {
+                trace.record(SUSPEND_LAMBDA_PARAMETER_USED, containing to descriptor.index())
+            }
+        } else if (descriptor is LocalVariableDescriptor) {
+            val containing = descriptor.containingDeclaration
+            if (containing is AnonymousFunctionDescriptor && containing.isSuspend) {
+                findDestructuredVariable(descriptor, containing)?.let {
+                    trace.record(SUSPEND_LAMBDA_PARAMETER_USED, containing to it.index)
+                }
+            }
+        }
+    }
+
+    private fun markImplicitReceiverOfSuspendLambda(instruction: Instruction) {
+        if (instruction !is MagicInstruction || instruction.kind != MagicKind.IMPLICIT_RECEIVER) return
+
+        fun CallableDescriptor?.markIfNeeded() {
+            if (this is AnonymousFunctionDescriptor && isSuspend) {
+                trace.record(SUSPEND_LAMBDA_PARAMETER_USED, this to -1)
+            }
+        }
+
+        if (instruction.element is KtDestructuringDeclarationEntry || instruction.element is KtCallExpression) {
+            val visited = mutableSetOf<Instruction>()
+            fun dfs(insn: Instruction) {
+                if (!visited.add(insn)) return
+                if (insn is CallInstruction && insn.element == instruction.element) {
+                    for ((_, receiver) in insn.receiverValues) {
+                        (receiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+                    }
+                }
+                for (next in insn.nextInstructions) {
+                    dfs(next)
+                }
+            }
+
+            instruction.next?.let { dfs(it) }
+        } else if (instruction.element is KtNameReferenceExpression) {
+            val call = instruction.element.getResolvedCall(trace.bindingContext)
+            if (call is VariableAsFunctionResolvedCall) {
+                (call.variableCall.dispatchReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+                (call.variableCall.extensionReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+            }
+            (call?.dispatchReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+            (call?.extensionReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+        }
+    }
+
     private fun markAnnotationArguments() {
         if (subroutine is KtAnnotationEntry) {
             markAnnotationArguments(subroutine)
@@ -1219,3 +1309,10 @@ class ControlFlowInformationProvider private constructor(
                     || diagnosticFactory === UNUSED_CHANGED_VALUE
     }
 }
+
+fun ParameterDescriptor.index(): Int =
+    when (this) {
+        is ReceiverParameterDescriptor -> -1
+        is ValueParameterDescriptor -> index
+        else -> error("expected either receiver or value parameter, but got: $this")
+    }

@@ -51,10 +51,11 @@ fun checkSimpleArgument(
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
     receiverInfo: ReceiverInfo,
-    convertedType: UnwrappedType?
+    convertedType: UnwrappedType?,
+    inferenceSession: InferenceSession?
 ): ResolvedAtom = when (argument) {
     is ExpressionKotlinCallArgument -> checkExpressionArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo.isReceiver, convertedType)
-    is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo)
+    is SubKotlinCallArgument -> checkSubCallArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo, inferenceSession)
     else -> unexpectedArgument(argument)
 }
 
@@ -178,8 +179,11 @@ private fun checkSubCallArgument(
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
     receiverInfo: ReceiverInfo,
+    inferenceSession: InferenceSession?
 ): ResolvedAtom {
-    val subCallResult = ResolvedSubCallArgument(subCallArgument)
+    val subCallResult = ResolvedSubCallArgument(
+        subCallArgument, receiverInfo.isReceiver && inferenceSession?.resolveReceiverIndependently() == true
+    )
 
     if (expectedType == null) return subCallResult
 

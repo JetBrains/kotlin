@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
@@ -46,6 +46,9 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val packageJsonFile: File
         get() = dir.resolve(PACKAGE_JSON)
 
+    val prePackageJsonFile: File
+        get() = dir.resolve(PRE_PACKAGE_JSON)
+
     val packageJsonTaskName: String
         get() = compilation.disambiguateName("packageJson")
 
@@ -64,15 +67,23 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val externalsDir: File
         get() = externalsDirRoot.resolve("src")
 
+    val publicPackageJsonTaskName: String
+        get() = compilation.disambiguateName(PublicPackageJsonTask.NAME)
+
     internal val modules = NpmProjectModules(dir)
 
     private val rootNodeModules: NpmProjectModules?
         get() = NpmProjectModules(nodeJs.rootPackageDir)
 
-    fun useTool(exec: ExecSpec, tool: String, vararg args: String) {
+    fun useTool(
+        exec: ExecSpec,
+        tool: String,
+        nodeArgs: List<String> = listOf(),
+        args: List<String>
+    ) {
         exec.workingDir = dir
         exec.executable = nodeJs.requireConfigured().nodeExecutable
-        exec.args = listOf(require(tool)) + args
+        exec.args = nodeArgs + require(tool) + args
     }
 
     /**
@@ -132,6 +143,7 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
 
     companion object {
         const val PACKAGE_JSON = "package.json"
+        const val PRE_PACKAGE_JSON = "pre-package.json"
         const val NODE_MODULES = "node_modules"
         const val DIST_FOLDER = "kotlin"
     }

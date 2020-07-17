@@ -1,6 +1,6 @@
 // FILE: 1.kt
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 package test
+
 inline fun inlineFun2(param: String): String {
     return param
 }

@@ -592,7 +592,7 @@ class ClassTranslator private constructor(
                 listOfNotNull(innerContext.continuationParameterDescriptor)
 
         val arguments = parameters.map {
-            TranslationUtils.coerce(innerContext, innerContext.getAliasForDescriptor(it)!!, context.currentModule.builtIns.anyType)
+            TranslationUtils.coerce(innerContext, ReferenceTranslator.translateAsValueReference(it, innerContext), context.currentModule.builtIns.anyType)
         }
 
         function.body = JsBlock(JsReturn(JsInvocation(pureFqn(Namer.SAM_FIELD_NAME, JsThisRef()), arguments)))

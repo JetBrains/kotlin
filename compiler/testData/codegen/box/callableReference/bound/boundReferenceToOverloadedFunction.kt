@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND_FIR: JVM_IR
 
 interface JsonParser
 interface JsonCodingParser : JsonParser

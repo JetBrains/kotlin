@@ -1,7 +1,14 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
+
+val kotlinVersion: String by rootProject.extra
+val isFirPlugin: Boolean
+    get() = rootProject.findProperty("idea.fir.plugin") == "true"
+
 
 repositories {
     maven("https://jetbrains.bintray.com/markdown")
@@ -18,8 +25,14 @@ sourceSets {
         resources.srcDirs(
             "idea-completion/resources",
             "idea-live-templates/resources",
-            "idea-repl/resources"
+            "idea-repl/resources",
+            "resources-en"
         )
+        if (isFirPlugin) {
+            resources.srcDir("resources-fir")
+        } else {
+            resources.srcDir("resources-descriptors")
+        }
     }
     "test" {
         projectDefault()
@@ -66,9 +79,11 @@ dependencies {
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:jvm"))
     compile(project(":idea:idea-core"))
+    compile(project(":idea:idea-frontend-independent"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":idea:kotlin-gradle-tooling"))
+    compile(project(":idea:line-indent-provider"))
     compile(project(":plugins:uast-kotlin"))
     compile(project(":plugins:uast-kotlin-idea"))
     compile(project(":kotlin-script-util")) { isTransitive = false }
@@ -178,9 +193,24 @@ dependencies {
         testRuntime(intellijPluginDep("google-cloud-tools-core-as"))
         testRuntime(intellijPluginDep("google-login-as"))
     }
+
+    if (Ide.AS41.orHigher()) {
+        testRuntime(intellijPluginDep("platform-images"))
+    }
 }
 
 tasks.named<Copy>("processResources") {
+    val currentIde = IdeVersionConfigurator.currentIde
+    val pluginPatchNumber = findProperty("pluginPatchNumber") as String? ?: "1"
+    val defaultPluginVersion = "$kotlinVersion-${currentIde.displayVersion}-$pluginPatchNumber"
+    val pluginVersion = findProperty("pluginVersion") as String? ?: defaultPluginVersion
+
+    inputs.property("pluginVersion", pluginVersion)
+
+    filesMatching("META-INF/plugin.xml") {
+        filter<ReplaceTokens>("tokens" to mapOf("snapshot" to pluginVersion))
+    }
+
     from(provider { project(":compiler:cli-common").mainSourceSet.resources }) {
         include("META-INF/extensions/compiler.xml")
     }

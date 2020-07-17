@@ -20,12 +20,10 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
-import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
+import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.types.KotlinType
 
 class RematerializableValue(val irExpression: IrExpressionWithCopy) : IntermediateValue {
-
     override val type: IrType get() = irExpression.type
 
     override fun load(): IrExpression = irExpression.copy()
@@ -34,7 +32,7 @@ class RematerializableValue(val irExpression: IrExpressionWithCopy) : Intermedia
 fun Scope.createTemporaryVariableInBlock(
     context: IrGeneratorContext,
     irExpression: IrExpression,
-    block: IrContainerExpressionBase,
+    block: IrStatementContainer,
     nameHint: String? = null
 ): IntermediateValue {
     val temporaryVariable = createTemporaryVariable(irExpression, nameHint)

@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -31,6 +28,10 @@ interface KotlinResolutionStatelessCallbacks {
     fun isOperatorCall(kotlinCall: KotlinCall): Boolean
     fun isSuperOrDelegatingConstructorCall(kotlinCall: KotlinCall): Boolean
     fun isHiddenInResolution(
+        descriptor: DeclarationDescriptor, kotlinCallArgument: KotlinCallArgument, resolutionCallbacks: KotlinResolutionCallbacks
+    ): Boolean
+
+    fun isHiddenInResolution(
         descriptor: DeclarationDescriptor, kotlinCall: KotlinCall, resolutionCallbacks: KotlinResolutionCallbacks
     ): Boolean
 
@@ -39,6 +40,8 @@ interface KotlinResolutionStatelessCallbacks {
     fun getVariableCandidateIfInvoke(functionCall: KotlinCall): KotlinResolutionCandidate?
     fun isCoroutineCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean
     fun isApplicableCallForBuilderInference(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean
+
+    fun isOldIntersectionIsEmpty(types: Collection<KotlinType>): Boolean
 
     fun createConstraintSystemForOverloadResolution(
         constraintInjector: ConstraintInjector, builtIns: KotlinBuiltIns
@@ -71,7 +74,7 @@ interface KotlinResolutionCallbacks {
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?, // null means, that return type is not proper i.e. it depends on some type variables
         annotations: Annotations,
-        stubsForPostponedVariables: Map<NewTypeVariable, StubType>
+        stubsForPostponedVariables: Map<NewTypeVariable, StubType>,
     ): ReturnArgumentsAnalysisResult
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
@@ -85,4 +88,6 @@ interface KotlinResolutionCallbacks {
     fun disableContractsIfNecessary(resolvedAtom: ResolvedCallAtom)
 
     fun convertSignedConstantToUnsigned(argument: KotlinCallArgument): IntegerValueTypeConstant?
+
+    fun recordInlinabilityOfLambda(atom: Set<Map.Entry<KotlinResolutionCandidate, ResolvedLambdaAtom>>)
 }

@@ -6,8 +6,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, additive-expression -> paragraph 4 -> sentence 1
- * RELEVANT PLACES: expressions, additive-expression -> paragraph 4 -> sentence 2
+ * MAIN LINK: expressions, additive-expression -> paragraph 4 -> sentence 1
+ * PRIMARY LINKS: expressions, additive-expression -> paragraph 4 -> sentence 2
  * overloadable-operators -> paragraph 4 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: The return type of these functions is not restricted.

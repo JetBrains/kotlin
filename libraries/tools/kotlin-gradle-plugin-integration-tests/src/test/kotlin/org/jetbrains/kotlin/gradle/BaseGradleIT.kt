@@ -28,7 +28,7 @@ abstract class BaseGradleIT {
 
     protected var workingDir = File(".")
 
-    protected open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
+    internal open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
 
     open val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.None
@@ -168,17 +168,9 @@ abstract class BaseGradleIT {
             assert(version != runnerGradleVersion) { "Not stopping Gradle daemon v$version as it matches the runner version" }
             println("Stopping gradle daemon v$version")
 
-            val envVariables = if (GradleVersion.version(version) < GradleVersion.version("5.0")) {
-                // Gradle versions below 5.0 do not support running on JDK11, and some of the tests
-                // set JAVA_HOME to JDK11. This makes sure we are using JDK8 when stopping those daemons.
-                environmentVariables + mapOf("JAVA_HOME" to System.getenv()["JDK_18"]!!)
-            } else {
-                environmentVariables
-            }
-
             val wrapperDir = gradleWrappers[version] ?: error("Was asked to stop unknown daemon $version")
             val cmd = createGradleCommand(wrapperDir, arrayListOf("-stop"))
-            val result = runProcess(cmd, wrapperDir, envVariables)
+            val result = runProcess(cmd, wrapperDir, environmentVariables)
             assert(result.isSuccessful) { "Could not stop daemon: $result" }
             DaemonRegistry.unregister(version)
         }
@@ -199,6 +191,7 @@ abstract class BaseGradleIT {
         val daemonOptionSupported: Boolean = true,
         val incremental: Boolean? = null,
         val incrementalJs: Boolean? = null,
+        val incrementalJsKlib: Boolean? = null,
         val jsIrBackend: Boolean? = null,
         val androidHome: File? = null,
         val javaHome: File? = null,
@@ -433,6 +426,18 @@ abstract class BaseGradleIT {
         return this
     }
 
+    fun CompiledProject.assertSingleFileExists(
+        directory: String = "",
+        filePath: String = ""
+    ): CompiledProject {
+        val directoryFile = fileInWorkingDir(directory)
+        assertTrue(
+            directoryFile.listFiles()?.size == 1,
+            "[$directory] should contain only single file"
+        )
+        return assertFileExists("$directory/$filePath")
+    }
+
     fun CompiledProject.assertFileExists(path: String = ""): CompiledProject {
         assertTrue(fileInWorkingDir(path).exists(), "The file [$path] does not exist.")
         return this
@@ -486,6 +491,12 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksExecutedByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertContainsRegex("(Executing actions for task|Executing task) '$prefix\\w*'".toRegex())
+        }
+    }
+
     fun CompiledProject.assertTasksExecuted(vararg tasks: String) {
         assertTasksExecuted(tasks.toList())
     }
@@ -528,6 +539,18 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksRegisteredByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertContainsRegex("'Register task $prefix\\w*'".toRegex())
+        }
+    }
+
+    fun CompiledProject.assertTasksNotRegisteredByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertNotContains("'Register task $prefix\\w*'".toRegex())
+        }
+    }
+
     fun CompiledProject.assertTasksNotRealized(vararg tasks: String) {
         for (task in tasks) {
             assertNotContains("'Realize task $task'")
@@ -542,6 +565,12 @@ abstract class BaseGradleIT {
     fun CompiledProject.assertTasksSkipped(vararg tasks: String) {
         for (task in tasks) {
             assertContains("Skipping task '$task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksSkippedByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertContainsRegex("Skipping task '$prefix\\w*'".toRegex())
         }
     }
 
@@ -736,6 +765,7 @@ Finished executing task ':$taskName'|
                 add("-Pkotlin.incremental=$it")
             }
             options.incrementalJs?.let { add("-Pkotlin.incremental.js=$it") }
+            options.incrementalJsKlib?.let { add("-Pkotlin.incremental.js.klib=$it") }
             options.jsIrBackend?.let { add("-Pkotlin.js.useIrBackend=$it") }
             options.usePreciseJavaTracking?.let { add("-Pkotlin.incremental.usePreciseJavaTracking=$it") }
             options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it") }

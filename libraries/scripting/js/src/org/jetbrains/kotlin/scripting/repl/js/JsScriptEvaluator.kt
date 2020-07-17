@@ -13,7 +13,7 @@ class JsScriptEvaluator : ScriptEvaluator {
     private val engine = ScriptEngineNashorn()
 
     override suspend fun invoke(
-        compiledScript: CompiledScript<*>,
+        compiledScript: CompiledScript,
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> {
         return try {

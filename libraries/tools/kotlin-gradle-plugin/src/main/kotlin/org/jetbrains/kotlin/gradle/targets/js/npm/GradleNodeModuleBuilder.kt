@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
@@ -37,10 +37,13 @@ internal class GradleNodeModuleBuilder(
     }
 
     fun rebuild(): File? {
-        if (files.isEmpty()) return null
+        if (files.isEmpty() && srcPackageJsonFile == null) return null
 
-        val packageJson = fromSrcPackageJson(srcPackageJsonFile)
-            ?: PackageJson(dependency.moduleName, dependency.moduleVersion)
+        val packageJson = fromSrcPackageJson(srcPackageJsonFile)?.apply {
+            // Gson set nulls reflectively no matter on default values and non-null types
+            @Suppress("USELESS_ELVIS")
+            version = version ?: dependency.moduleVersion
+        } ?: PackageJson(dependency.moduleName, dependency.moduleVersion)
 
         val jsFiles = files.filter { it.name.endsWith(".js") }
         if (jsFiles.size == 1) {

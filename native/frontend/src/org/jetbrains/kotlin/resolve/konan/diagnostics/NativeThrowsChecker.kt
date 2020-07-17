@@ -6,31 +6,69 @@
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.lexer.KtTokens.SUSPEND_KEYWORD
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.StatementFilter
+import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.hasUnresolvedArguments
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.utils.DFS
 
 object NativeThrowsChecker : DeclarationChecker {
-    private val throwsFqName = FqName("kotlin.native.Throws")
+    private val throwsFqName = KOTLIN_THROWS_ANNOTATION_FQ_NAME
+
+    private val cancellationExceptionFqName = FqName("kotlin.coroutines.cancellation.CancellationException")
+
+    // Note: can't use subtyping, because CancellationException can be missing (e.g. for common code).
+    private val cancellationExceptionAndSupersClassIds = sequenceOf(
+        KotlinBuiltIns.FQ_NAMES.throwable,
+        FqName("kotlin.Exception"),
+        FqName("kotlin.RuntimeException"),
+        FqName("kotlin.IllegalStateException"),
+        cancellationExceptionFqName
+    ).map { ClassId.topLevel(it) }.toSet()
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val throwsAnnotation = descriptor.annotations.findAnnotation(throwsFqName)
-        val reportLocation = throwsAnnotation?.let { DescriptorToSourceUtils.getSourceFromAnnotation(it) } ?: declaration
+        val throwsAnnotationEntry = throwsAnnotation?.let { DescriptorToSourceUtils.getSourceFromAnnotation(it) }
+        val reportLocation = throwsAnnotationEntry ?: declaration
 
         if (!checkInheritance(declaration, descriptor, context, throwsAnnotation, reportLocation)) return
 
-        if (throwsAnnotation != null && throwsAnnotation.getVariadicArguments().isEmpty()) {
+        if (throwsAnnotation == null) return
+
+        val bindingContext = context.trace.bindingContext
+        if (throwsAnnotationEntry?.getCall(bindingContext)?.hasUnresolvedArgumentsRecursive(bindingContext) == true) return
+
+        val classes = throwsAnnotation.getVariadicArguments()
+        if (classes.isEmpty()) {
             context.trace.report(ErrorsNative.THROWS_LIST_EMPTY.on(reportLocation))
+            return
+        }
+
+        if (declaration.hasModifier(SUSPEND_KEYWORD) && classes.none { it.isGlobalClassWithId(cancellationExceptionAndSupersClassIds) }) {
+            context.trace.report(
+                ErrorsNative.MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND.on(
+                    reportLocation,
+                    cancellationExceptionFqName
+                )
+            )
         }
     }
 
@@ -98,4 +136,15 @@ object NativeThrowsChecker : DeclarationChecker {
 
     private data class ThrowsFilter(val classes: Set<ConstantValue<*>>?)
 
+    private fun ConstantValue<*>.isGlobalClassWithId(classIds: Set<ClassId>): Boolean =
+        this is KClassValue && when (val value = this.value) {
+            is KClassValue.Value.NormalClass -> value.classId in classIds
+            is KClassValue.Value.LocalClass -> false
+        }
+
+}
+
+private fun Call.hasUnresolvedArgumentsRecursive(context: BindingContext): Boolean {
+    return this.hasUnresolvedArguments(context, StatementFilter.NONE) ||
+            valueArguments.any { it.getArgumentExpression()?.getCall(context)?.hasUnresolvedArgumentsRecursive(context) == true }
 }

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class PsiInlineCodegen(
@@ -42,15 +41,8 @@ class PsiInlineCodegen(
     private val actualDispatchReceiver: Type = methodOwner
 ) : InlineCodegen<ExpressionCodegen>(
     codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler,
-    ReifiedTypeInliner(typeParameterMappings, object : ReifiedTypeInliner.IntrinsicsSupport<KotlinType> {
-        override fun putClassInstance(v: InstructionAdapter, type: KotlinType) {
-            AsmUtil.putJavaLangClassInstance(v, state.typeMapper.mapType(type), type, state.typeMapper)
-        }
-
-        override fun toKotlinType(type: KotlinType): KotlinType = type
-    }, codegen.typeSystem, state.languageVersionSettings)
+    ReifiedTypeInliner(typeParameterMappings, PsiInlineIntrinsicsSupport(state), codegen.typeSystem, state.languageVersionSettings),
 ), CallGenerator {
-
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
         if (info.generateAssertField) {
             codegen.parentCodegen.generateAssertField()
@@ -69,7 +61,7 @@ class PsiInlineCodegen(
         }
         try {
             val registerLineNumber = registerLineNumberAfterwards(resolvedCall)
-            performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, callDefault, codegen.typeSystem, registerLineNumber)
+            performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, callDefault, codegen.typeSystem, registerLineNumber, false)
         } finally {
             state.globalInlineContext.exitFromInlining()
         }

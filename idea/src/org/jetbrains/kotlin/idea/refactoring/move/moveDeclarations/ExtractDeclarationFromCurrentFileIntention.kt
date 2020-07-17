@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,13 +39,10 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 
 private const val TIMEOUT_FOR_IMPORT_OPTIMIZING_MS: Long = 700L
 
-class ExtractDeclarationFromCurrentFileIntention :
-    SelfTargetingRangeIntention<KtClassOrObject>(
-        KtClassOrObject::class.java,
-        KotlinBundle.message("intention.extract.declarations.from.file.text")
-    ),
-    LowPriorityAction {
-
+class ExtractDeclarationFromCurrentFileIntention : SelfTargetingRangeIntention<KtClassOrObject>(
+    KtClassOrObject::class.java,
+    KotlinBundle.lazyMessage("intention.extract.declarations.from.file.text")
+), LowPriorityAction {
     private fun KtClassOrObject.tryGetExtraClassesToMove(): List<KtNamedDeclaration>? {
 
         val descriptor = resolveToDescriptorIfAny() ?: return null
@@ -71,10 +68,12 @@ class ExtractDeclarationFromCurrentFileIntention :
 
         val endOffset = element.nameIdentifier?.endOffset ?: return null
 
-        text = KotlinBundle.message(
-            "intention.extract.declarations.from.file.text.details",
-            element.name.toString(),
-            extraClassesToMove.size
+        setTextGetter(
+            KotlinBundle.lazyMessage(
+                "intention.extract.declarations.from.file.text.details",
+                element.name.toString(),
+                extraClassesToMove.size
+            )
         )
 
         return TextRange(startOffset, endOffset)

@@ -3,6 +3,6 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().map{}.firstOrNull{}'"
 fun foo(list: List<String>): Int? {
     <caret>return list
-            .map { it.length }
-            .firstOrNull { it > 0 }
+        .map { it.length }
+        .firstOrNull { it > 0 }
 }

@@ -15,12 +15,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
-import org.jetbrains.kotlin.builtins.UnsignedTypes;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -47,6 +47,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -1526,29 +1527,73 @@ public abstract class StackValue {
 
             coerce(topOfStackType, topOfStackKotlinType, lastParameterType, lastParameterKotlinType, v);
 
-            getCallGenerator().putValueIfNeeded(
+            CallGenerator callGenerator = getCallGenerator();
+            callGenerator.putValueIfNeeded(
                     new JvmKotlinType(lastParameterType, lastParameterKotlinType),
                     StackValue.onStack(lastParameterType, lastParameterKotlinType)
             );
 
-            //Convention setter couldn't have default parameters, just getter can have it at last positions
-            //We should remove default parameters of getter from stack*/
-            //Note that it works only for non-inline case
             CollectionElementReceiver collectionElementReceiver = (CollectionElementReceiver) receiver;
+            boolean callDefault = false;
+            boolean properSetterCalls = codegen.getState().getLanguageVersionSettings().supportsFeature(LanguageFeature.ProperArrayConventionSetterWithDefaultCalls);
             if (collectionElementReceiver.isGetter) {
-                List<ResolvedValueArgument> arguments = collectionElementReceiver.valueArguments;
-                List<Type> types = getter.getValueParameterTypes();
-                for (int i = arguments.size() - 1; i >= 0; i--) {
-                    ResolvedValueArgument argument = arguments.get(i);
-                    if (argument instanceof DefaultValueArgument) {
-                        Type defaultType = types.get(i);
-                        AsmUtil.swap(v, lastParameterType, defaultType);
-                        AsmUtil.pop(v, defaultType);
+                //Convention setter/getter could have default parameters at the end of parameter list (in case of setter before last parameter)
+                //We should remove default parameters of getter from stack if they don't match setter ones and regenerate mask for setter
+                //Note that it works only for non-inline cases
+
+                //TODO: try to don't generate defaults at all in CollectionElementReceiver
+
+                List<ResolvedValueArgument> getterArguments = new ArrayList(collectionElementReceiver.valueArguments);
+                List<ResolvedValueArgument> getterDefaults = CollectionsKt.takeLastWhile(getterArguments,
+                                                                                         argument -> argument instanceof DefaultValueArgument);
+
+                List<ResolvedValueArgument> setterArguments = resolvedSetCall.getValueArgumentsByIndex();
+                List<ResolvedValueArgument> setterDefaults = CollectionsKt.takeLastWhile(CollectionsKt.dropLast(setterArguments, 1),
+                                                                                         argument -> argument instanceof DefaultValueArgument);
+
+                if (!getterDefaults.isEmpty() || !setterDefaults.isEmpty()) {
+                    Local rhsValue = StackValue.local(codegen.myFrameMap.enterTemp(lastParameterType), lastParameterType);
+                    rhsValue.store(StackValue.onStack(type), v);
+
+                    List<Type> types = getter.getValueParameterTypes();
+                    for (int i = collectionElementReceiver.valueArguments.size() - 1; i >= 0; i--) {
+                        ResolvedValueArgument argument = collectionElementReceiver.valueArguments.get(i);
+                        if (argument instanceof DefaultValueArgument) {
+                            AsmUtil.pop(v, types.get(i));
+                        }
+                    }
+
+                    if (properSetterCalls) {
+                        DefaultCallArgs defaultArgs = new DefaultCallArgs(
+                                CodegenUtilKt.unwrapFrontendVersion(resolvedSetCall.getResultingDescriptor()).getValueParameters().size());
+                        if (!setterDefaults.isEmpty()) {
+                            ArgumentGenerator setterArgumentGenerator = new CallBasedArgumentGenerator(
+                                    codegen,
+                                    callGenerator,
+                                    resolvedSetCall.getResultingDescriptor().getValueParameters(), setter.getValueParameterTypes()
+                            );
+
+                            int defaultIndex = CollectionsKt.getLastIndex(setterArguments) - 1/*rhs value*/ - setterDefaults.size();
+                            for (ResolvedValueArgument aDefault : setterDefaults) {
+                                defaultArgs.mark(++defaultIndex);
+                                setterArgumentGenerator.generateDefault(defaultIndex, (DefaultValueArgument) aDefault);
+                            }
+                            callDefault = true;
+                        }
+                        rhsValue.put(v);
+                        codegen.myFrameMap.leaveTemp(lastParameterType);
+                        defaultArgs.generateOnStackIfNeeded(callGenerator, false);
+                    }
+                    else {
+                        rhsValue.put(v);
+                        codegen.myFrameMap.leaveTemp(lastParameterType);
                     }
                 }
+            } else {
+                callDefault = properSetterCalls && genDefaultMaskIfPresent(callGenerator);
             }
 
-            getCallGenerator().genCall(setter, resolvedSetCall, false, codegen);
+            callGenerator.genCall(setter, resolvedSetCall, callDefault, codegen);
             Type returnType = setter.getReturnType();
             if (returnType != Type.VOID_TYPE) {
                 pop(v, returnType);

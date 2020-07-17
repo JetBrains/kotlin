@@ -12,26 +12,26 @@ public class A {
 // FILE: 1.kt
 fun fn() {}
 fun x(r: Runnable) {
-    A.foo(::fn) checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
-    A.foo {} checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    A.foo(::fn) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+    A.foo {} checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
 
-    A.foo(null) checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
-    A.foo(Runnable { }) checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
-    A.foo(r) checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    A.foo(null) checkType { _<Int>() }
+    A.foo(Runnable { }) checkType { _<Int>() }
+    A.foo(r) checkType { _<Int>() }
 
-    A.foo(123) checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
-    A.foo("") checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    A.foo(123) checkType { _<String>() }
+    A.foo("") checkType { _<String>() }
 
-    A.bar(::fn) checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
-    A.bar {} checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    A.bar(::fn) checkType { _<Int>() }
+    A.bar {} checkType { _<Int>() }
 
-    A.bar(r) checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    A.bar(r) checkType { _<Int>() }
 
     A.<!AMBIGUITY!>bar<!>(null)
 
-    A.bar(null as Runnable?) checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
-    A.bar(null as CharSequence?) checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    A.bar(null as Runnable?) checkType { _<Int>() }
+    A.bar(null as CharSequence?) checkType { _<String>() }
 
-    A.bar("") checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    A.bar("") checkType { _<String>() }
     A.<!INAPPLICABLE_CANDIDATE!>bar<!>(123)
 }

@@ -1,3 +1,4 @@
+import TaskUtils.useAndroidEmulator
 
 plugins {
     kotlin("jvm")
@@ -28,9 +29,12 @@ dependencies {
         testCompile(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
     }
 
-    testCompile(intellijDep()) { includeJars("util", "idea", "idea_rt", "groovy-all", rootProject = rootProject) }
-    Platform[191].orLower {
-        testCompile(intellijDep()) { includeJars("jps-builders") }
+    testCompile(intellijDep()) { includeJars("util", "idea", "idea_rt", rootProject = rootProject) }
+    Platform[202].orHigher {
+        testCompile(intellijDep()) { includeJars("groovy", rootProject = rootProject) }
+    }
+    Platform[201].orLower {
+        testCompile(intellijDep()) { includeJars("groovy-all", rootProject = rootProject) }
     }
     Platform[192].orHigher {
         testCompile(intellijPluginDep("java")) { includeJars("jps-builders") }
@@ -59,6 +63,7 @@ projectTest {
     }
 
     workingDir = rootDir
+    useAndroidEmulator(this)
 }
 
 val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator")

@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.serviceIfCreated
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
@@ -28,11 +27,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
-import org.jetbrains.kotlin.idea.core.script.configuration.AbstractScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
-import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
@@ -73,12 +68,6 @@ interface ScriptConfigurationManager {
      */
     fun getConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper?
 
-    /**
-     * Reload the configuration for [file] even it is already loaded.
-     * [loader] is used to load configuration. Other loaders aren't taken into account.
-     */
-    fun forceReloadConfiguration(file: VirtualFile, loader: ScriptConfigurationLoader): ScriptCompilationConfigurationWrapper?
-
     @Deprecated("Use getScriptClasspath(KtFile) instead")
     fun getScriptClasspath(file: VirtualFile): List<VirtualFile>
 
@@ -97,21 +86,14 @@ interface ScriptConfigurationManager {
     fun hasConfiguration(file: KtFile): Boolean
 
     /**
-     * See [ScriptConfigurationUpdater].
+     * returns true when there is no configuration and highlighting should be suspended
      */
-    val updater: ScriptConfigurationUpdater
+    fun isConfigurationLoadingInProgress(file: KtFile): Boolean
 
     /**
-     * Clear all caches and re-highlighting opened scripts
+     * Update caches that depends on script definitions and do update if necessary
      */
-    fun clearConfigurationCachesAndRehighlight()
-
-    /**
-     * Save configurations into cache.
-     * Start indexing for new class/source roots.
-     * Re-highlight opened scripts with changed configuration.
-     */
-    fun saveCompilationConfigurationAfterImport(files: List<Pair<VirtualFile, ScriptConfigurationSnapshot>>)
+    fun updateScriptDefinitionReferences()
 
     ///////////////
     // classpath roots info:
@@ -127,38 +109,22 @@ interface ScriptConfigurationManager {
     fun getAllScriptDependenciesSources(): List<VirtualFile>
 
     companion object {
+        fun getServiceIfCreated(project: Project): ScriptConfigurationManager? =
+            ServiceManager.getServiceIfCreated(project, ScriptConfigurationManager::class.java)
+
         @JvmStatic
         fun getInstance(project: Project): ScriptConfigurationManager =
             ServiceManager.getService(project, ScriptConfigurationManager::class.java)
 
-        fun getScriptDefaultSdk(project: Project): Sdk? {
-            val projectSdk = ProjectRootManager.getInstance(project).projectSdk?.takeIf { it.canBeUsedForScript() }
-            if (projectSdk != null) return projectSdk
-
-            val anyJavaSdk = getAllProjectSdks().find { it.canBeUsedForScript() }
-            if (anyJavaSdk != null) {
-                return anyJavaSdk
-            }
-
-            LOG.warn(
-                "Default Script SDK is null: " +
-                        "projectSdk = ${ProjectRootManager.getInstance(project).projectSdk}, " +
-                        "all sdks = ${getAllProjectSdks().joinToString("\n")}"
-            )
-            return null
-        }
-
         fun toVfsRoots(roots: Iterable<File>): List<VirtualFile> {
-            return roots.mapNotNull { it.classpathEntryToVfs() }
+            return roots.mapNotNull { classpathEntryToVfs(it) }
         }
 
-        private fun Sdk.canBeUsedForScript() = sdkType is JavaSdkType
-
-        private fun File.classpathEntryToVfs(): VirtualFile? {
+        fun classpathEntryToVfs(file: File): VirtualFile? {
             val res = when {
-                !exists() -> null
-                isDirectory -> StandardFileSystems.local()?.findFileByPath(this.canonicalPath)
-                isFile -> StandardFileSystems.jar()?.findFileByPath(this.canonicalPath + URLUtil.JAR_SEPARATOR)
+                !file.exists() -> null
+                file.isDirectory -> StandardFileSystems.local()?.findFileByPath(file.canonicalPath)
+                file.isFile -> StandardFileSystems.jar()?.findFileByPath(file.canonicalPath + URLUtil.JAR_SEPARATOR)
                 else -> null
             }
             // TODO: report this somewhere, but do not throw: assert(res != null, { "Invalid classpath entry '$this': exists: ${exists()}, is directory: $isDirectory, is file: $isFile" })
@@ -168,12 +134,14 @@ interface ScriptConfigurationManager {
         @TestOnly
         fun updateScriptDependenciesSynchronously(file: PsiFile) {
             // TODO: review the usages of this method
-            (getInstance(file.project) as AbstractScriptConfigurationManager).updateScriptDependenciesSynchronously(file)
+            (getInstance(file.project) as CompositeScriptConfigurationManager).default
+                .updateScriptDependenciesSynchronously(file)
         }
 
         @TestOnly
         fun clearCaches(project: Project) {
-            (getInstance(project) as AbstractScriptConfigurationManager).clearCaches()
+            (getInstance(project) as CompositeScriptConfigurationManager).default
+                .updateScriptDefinitionsReferences()
         }
 
         fun clearManualConfigurationLoadingIfNeeded(file: VirtualFile) {

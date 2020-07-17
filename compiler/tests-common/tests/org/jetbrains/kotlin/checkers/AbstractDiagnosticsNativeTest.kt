@@ -93,7 +93,7 @@ private fun createFakeTopDownAnalyzerForNative(
 ): LazyTopDownAnalyzer = createContainer("FakeTopDownAnalyzerForNative", NativePlatformAnalyzerServices) {
     configureModule(
         moduleContext,
-        NativePlatforms.defaultNativePlatform,
+        NativePlatforms.unspecifiedNativePlatform,
         NativePlatformAnalyzerServices,
         bindingTrace,
         languageVersionSettings

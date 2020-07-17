@@ -119,8 +119,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractU
     override fun equals(other: Any?) = other is AbstractKotlinUVariable && psi == other.psi
 
     class WrappedUAnnotation(psiAnnotation: PsiAnnotation, override val uastParent: UElement) : UAnnotation, UAnchorOwner,
-        DelegatedMultiResolve,
-        JvmDeclarationUElementPlaceholder {
+        DelegatedMultiResolve {
 
         override val javaPsi: PsiAnnotation = psiAnnotation
         override val psi: PsiAnnotation = javaPsi
@@ -132,8 +131,7 @@ abstract class AbstractKotlinUVariable(givenParent: UElement?) : KotlinAbstractU
 
         override val uastAnchor by lazy { KotlinUIdentifier(javaPsi.nameReferenceElement?.referenceNameElement, null, this) }
 
-        class WrappedUNamedExpression(pair: PsiNameValuePair, override val uastParent: UElement?) : UNamedExpression,
-            JvmDeclarationUElementPlaceholder {
+        class WrappedUNamedExpression(pair: PsiNameValuePair, override val uastParent: UElement?) : UNamedExpression {
             override val name: String? = pair.name
             override val psi = pair
             override val javaPsi: PsiElement? = psi
@@ -240,7 +238,7 @@ class KotlinReceiverUParameter(
 }
 
 class KotlinNullabilityUAnnotation(val annotatedElement: PsiElement, override val uastParent: UElement) : UAnnotationEx, UAnchorOwner,
-    DelegatedMultiResolve, JvmDeclarationUElementPlaceholder {
+    DelegatedMultiResolve {
 
     private fun getTargetType(annotatedElement: PsiElement): KotlinType? {
         if (annotatedElement is KtTypeReference) {

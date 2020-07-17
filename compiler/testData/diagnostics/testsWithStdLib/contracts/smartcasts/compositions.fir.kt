@@ -13,7 +13,7 @@ fun isString(x: Any?): Boolean {
 
 fun testEqualsWithConstant(x: Any?) {
     if (isString(x) == true) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -25,7 +25,7 @@ fun testNotEqualsWithConstant(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 

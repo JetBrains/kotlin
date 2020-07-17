@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
+import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isBinaryRemOperator
 import org.jetbrains.kotlin.resolve.calls.callUtil.*
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
@@ -60,6 +61,7 @@ class PSICallResolver(
     private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     private val kotlinCallResolver: KotlinCallResolver,
     private val typeApproximator: TypeApproximator,
+    private val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter,
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val effectSystem: EffectSystem,
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
@@ -90,7 +92,7 @@ class PSICallResolver(
         val refinedName = refineNameForRemOperator(isBinaryRemOperator, name)
 
         val kotlinCallKind = resolutionKind.toKotlinCallKind()
-        val kotlinCall = toKotlinCall(context, kotlinCallKind, context.call, refinedName, tracingStrategy)
+        val kotlinCall = toKotlinCall(context, kotlinCallKind, context.call, refinedName, tracingStrategy, isSpecialFunction = false)
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
@@ -109,10 +111,6 @@ class PSICallResolver(
             return OverloadResolutionResultsImpl.nameNotFound()
         }
 
-        result = candidateInterceptor.interceptResolvedCandidates(
-            result, context, kotlinCallResolver, name, resolutionKind, tracingStrategy
-        )
-
         val overloadResolutionResults = convertToOverloadResolutionResults<D>(context, result, tracingStrategy)
         return overloadResolutionResults.also {
             clearCacheForApproximationResults()
@@ -127,8 +125,10 @@ class PSICallResolver(
     ): OverloadResolutionResults<D> {
         val dispatchReceiver = resolutionCandidates.firstNotNullResult { it.dispatchReceiver }
 
-        val kotlinCall =
-            toKotlinCall(context, KotlinCallKind.FUNCTION, context.call, givenCandidatesName, tracingStrategy, dispatchReceiver)
+        val isSpecialFunction = resolutionCandidates.any { it.descriptor.name in SPECIAL_FUNCTION_NAMES }
+        val kotlinCall = toKotlinCall(
+            context, KotlinCallKind.FUNCTION, context.call, givenCandidatesName, tracingStrategy, isSpecialFunction, dispatchReceiver
+        )
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
@@ -165,7 +165,9 @@ class PSICallResolver(
         expectedType: UnwrappedType?
     ): CallResolutionResult {
         val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[remOperatorName]!!
-        val callWithDeprecatedName = toKotlinCall(context, kotlinCallKind, context.call, deprecatedName, tracingStrategy)
+        val callWithDeprecatedName = toKotlinCall(
+            context, kotlinCallKind, context.call, deprecatedName, tracingStrategy, isSpecialFunction = false
+        )
         return kotlinCallResolver.resolveCall(
             scopeTower, resolutionCallbacks, callWithDeprecatedName, expectedType, context.collectAllCandidates
         ) {
@@ -396,6 +398,7 @@ class PSICallResolver(
         override val isNewInferenceEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
         override val lexicalScope: LexicalScope get() = context.scope
         override val typeApproximator: TypeApproximator get() = this@PSICallResolver.typeApproximator
+        override val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter get() = this@PSICallResolver.implicitsResolutionFilter
         private val cache = HashMap<ReceiverParameterDescriptor, ReceiverValueWithSmartCastInfo>()
 
         override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? {
@@ -406,13 +409,46 @@ class PSICallResolver(
             }
         }
 
-        override fun interceptCandidates(
+        override fun interceptFunctionCandidates(
             resolutionScope: ResolutionScope,
             name: Name,
             initialResults: Collection<FunctionDescriptor>,
-            location: LookupLocation
+            location: LookupLocation,
+            dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+            extensionReceiver: ReceiverValueWithSmartCastInfo?
         ): Collection<FunctionDescriptor> {
-            return candidateInterceptor.interceptCandidates(initialResults, this, context, resolutionScope, null, name, location)
+            return candidateInterceptor.interceptFunctionCandidates(
+                initialResults,
+                this,
+                context,
+                resolutionScope,
+                this@PSICallResolver,
+                name,
+                location,
+                dispatchReceiver,
+                extensionReceiver
+            )
+        }
+
+        override fun interceptVariableCandidates(
+            resolutionScope: ResolutionScope,
+            name: Name,
+            initialResults: Collection<VariableDescriptor>,
+            location: LookupLocation,
+            dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+            extensionReceiver: ReceiverValueWithSmartCastInfo?
+        ): Collection<VariableDescriptor> {
+            return candidateInterceptor.interceptVariableCandidates(
+                initialResults,
+                this,
+                context,
+                resolutionScope,
+                this@PSICallResolver,
+                name,
+                location,
+                dispatchReceiver,
+                extensionReceiver
+            )
         }
     }
 
@@ -471,7 +507,7 @@ class PSICallResolver(
         private fun createReceiverCallArgument(variable: KotlinResolutionCandidate): SimpleKotlinCallArgument {
             variable.forceResolution()
             val variableReceiver = createReceiverValueWithSmartCastInfo(variable)
-            if (variableReceiver.possibleTypes.isNotEmpty()) {
+            if (variableReceiver.hasTypesFromSmartCasts()) {
                 return ReceiverExpressionKotlinCallArgument(
                     createReceiverValueWithSmartCastInfo(variable),
                     isForImplicitInvoke = true
@@ -526,7 +562,8 @@ class PSICallResolver(
         oldCall: Call,
         name: Name,
         tracingStrategy: TracingStrategy,
-        forcedExplicitReceiver: Receiver? = null
+        isSpecialFunction: Boolean,
+        forcedExplicitReceiver: Receiver? = null,
     ): PSIKotlinCallImpl {
         val resolvedExplicitReceiver = resolveReceiver(
             context, forcedExplicitReceiver ?: oldCall.explicitReceiver, oldCall.isSafeCall(), isForImplicitInvoke = false
@@ -542,11 +579,16 @@ class PSICallResolver(
         val argumentsInParenthesis = if (extraArgumentsNumber == 0) allValueArguments else allValueArguments.dropLast(extraArgumentsNumber)
 
         val externalLambdaArguments = oldCall.functionLiteralArguments
-        val resolvedArgumentsInParenthesis = resolveArgumentsInParenthesis(context, argumentsInParenthesis)
+        val resolvedArgumentsInParenthesis = resolveArgumentsInParenthesis(context, argumentsInParenthesis, isSpecialFunction)
 
         val externalArgument = if (oldCall.callType == Call.CallType.ARRAY_SET_METHOD) {
             assert(externalLambdaArguments.isEmpty()) {
                 "Unexpected lambda parameters for call $oldCall"
+            }
+            if (allValueArguments.isEmpty()) {
+                throw KotlinExceptionWithAttachments("Can not find an external argument for 'set' method")
+                    .withAttachment("callElement.kt", oldCall.callElement.text)
+                    .withAttachment("file.kt", oldCall.callElement.takeIf { it.isValid }?.containingFile?.text ?: "<no file>")
             }
             allValueArguments.last()
         } else {
@@ -571,7 +613,8 @@ class PSICallResolver(
             else
                 context.dataFlowInfoForArguments.resultInfo
 
-        val resolvedExternalArgument = externalArgument?.let { resolveValueArgument(context, dataFlowInfoAfterArgumentsInParenthesis, it) }
+        val resolvedExternalArgument =
+            externalArgument?.let { resolveValueArgument(context, dataFlowInfoAfterArgumentsInParenthesis, it, isSpecialFunction) }
         val resultDataFlowInfo = resolvedExternalArgument?.dataFlowInfoAfterThisArgument ?: dataFlowInfoAfterArgumentsInParenthesis
 
         resolvedArgumentsInParenthesis.forEach { it.setResultDataFlowInfoIfRelevant(resultDataFlowInfo) }
@@ -653,11 +696,17 @@ class PSICallResolver(
 
     private fun resolveArgumentsInParenthesis(
         context: BasicCallResolutionContext,
-        arguments: List<ValueArgument>
+        arguments: List<ValueArgument>,
+        isSpecialFunction: Boolean
     ): List<KotlinCallArgument> {
         val dataFlowInfoForArguments = context.dataFlowInfoForArguments
         return arguments.map { argument ->
-            resolveValueArgument(context, dataFlowInfoForArguments.getInfo(argument), argument).also { resolvedArgument ->
+            resolveValueArgument(
+                context,
+                dataFlowInfoForArguments.getInfo(argument),
+                argument,
+                isSpecialFunction
+            ).also { resolvedArgument ->
                 dataFlowInfoForArguments.updateInfo(argument, resolvedArgument.dataFlowInfoAfterThisArgument)
             }
         }
@@ -666,7 +715,8 @@ class PSICallResolver(
     private fun resolveValueArgument(
         outerCallContext: BasicCallResolutionContext,
         startDataFlowInfo: DataFlowInfo,
-        valueArgument: ValueArgument
+        valueArgument: ValueArgument,
+        isSpecialFunction: Boolean
     ): PSIKotlinCallArgument {
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
 
@@ -691,8 +741,17 @@ class PSICallResolver(
         }
 
         val context = outerCallContext.replaceContextDependency(ContextDependency.DEPENDENT)
-            .replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceDataFlowInfo(startDataFlowInfo)
-            .expandContextForCatchClause(ktExpression)
+            .replaceDataFlowInfo(startDataFlowInfo)
+            .expandContextForCatchClause(ktExpression).let {
+                if (isSpecialFunction &&
+                    argumentExpression is KtBlockExpression &&
+                    ArgumentTypeResolver.getCallableReferenceExpressionIfAny(argumentExpression, it) != null
+                ) {
+                    it
+                } else {
+                    it.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
+                }
+            }
 
         if (ktExpression is KtCallableReferenceExpression) {
             return createCallableReferenceKotlinCallArgument(

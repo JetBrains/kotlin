@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.ir;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.AbstractGenerateNotNullAssertionsTest;
 import org.jetbrains.kotlin.test.TargetBackend;
 
@@ -13,6 +14,7 @@ public class IrGenerateNotNullAssertionsTest extends AbstractGenerateNotNullAsse
         doTestNoAssertionsForKotlinFromBinary("noAssertionsForKotlin.kt", "noAssertionsForKotlinMain.kt");
     }
 
+    @NotNull
     @Override
     protected TargetBackend getBackend() {
         return TargetBackend.JVM_IR;

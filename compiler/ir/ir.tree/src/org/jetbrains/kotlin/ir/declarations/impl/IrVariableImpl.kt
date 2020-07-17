@@ -17,19 +17,17 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.SmartList
 
 class IrVariableImpl(
     override val startOffset: Int,
@@ -52,45 +50,12 @@ class IrVariableImpl(
         }
 
     override var annotations: List<IrConstructorCall> = emptyList()
-    override val metadata: MetadataSource? get() = null
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrVariableSymbol,
-        type: IrType
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name, type,
-        isVar = symbol.descriptor.isVar,
-        isConst = symbol.descriptor.isConst,
-        isLateinit = symbol.descriptor.isLateInit
-    )
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptor,
-        type: IrType
-    ) : this(startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), type)
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptor,
-        type: IrType,
-        initializer: IrExpression?
-    ) : this(startOffset, endOffset, origin, descriptor, type) {
-        this.initializer = initializer
-    }
 
     init {
         symbol.bind(this)
     }
 
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: VariableDescriptor get() = symbol.descriptor
 
     override var initializer: IrExpression? = null

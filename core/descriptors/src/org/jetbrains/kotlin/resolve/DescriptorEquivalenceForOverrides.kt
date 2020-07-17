@@ -24,20 +24,26 @@ object DescriptorEquivalenceForOverrides {
     fun areEquivalent(
         a: DeclarationDescriptor?,
         b: DeclarationDescriptor?,
-        allowCopiesFromTheSameDeclaration: Boolean
+        allowCopiesFromTheSameDeclaration: Boolean,
+        distinguishExpectsAndNonExpects: Boolean = true
     ): Boolean {
         return when {
-            a is ClassDescriptor &&
-                    b is ClassDescriptor -> areClassesEquivalent(a, b)
+            a is ClassDescriptor && b is ClassDescriptor -> areClassesEquivalent(a, b)
 
-            a is TypeParameterDescriptor &&
-                    b is TypeParameterDescriptor -> areTypeParametersEquivalent(a, b, allowCopiesFromTheSameDeclaration)
+            a is TypeParameterDescriptor && b is TypeParameterDescriptor -> areTypeParametersEquivalent(
+                a,
+                b,
+                allowCopiesFromTheSameDeclaration
+            )
 
-            a is CallableDescriptor &&
-                    b is CallableDescriptor -> areCallableDescriptorsEquivalent(a, b, allowCopiesFromTheSameDeclaration)
+            a is CallableDescriptor && b is CallableDescriptor -> areCallableDescriptorsEquivalent(
+                a,
+                b,
+                allowCopiesFromTheSameDeclaration = allowCopiesFromTheSameDeclaration,
+                distinguishExpectsAndNonExpects = distinguishExpectsAndNonExpects
+            )
 
-            a is PackageFragmentDescriptor &&
-                    b is PackageFragmentDescriptor -> (a).fqName == (b).fqName
+            a is PackageFragmentDescriptor && b is PackageFragmentDescriptor -> (a).fqName == (b).fqName
 
             else -> a == b
         }
@@ -72,14 +78,15 @@ object DescriptorEquivalenceForOverrides {
         a: CallableDescriptor,
         b: CallableDescriptor,
         allowCopiesFromTheSameDeclaration: Boolean,
+        distinguishExpectsAndNonExpects: Boolean = true,
         ignoreReturnType: Boolean = false
     ): Boolean {
         if (a == b) return true
         if (a.name != b.name) return false
+        if (distinguishExpectsAndNonExpects && a is MemberDescriptor && b is MemberDescriptor && a.isExpect != b.isExpect) return false
         if (a.containingDeclaration == b.containingDeclaration) {
             if (!allowCopiesFromTheSameDeclaration) return false
             if (a.singleSource() != b.singleSource()) return false
-            if (a is MemberDescriptor && b is MemberDescriptor && a.isExpect != b.isExpect) return false
         }
 
         // Distinct locals are not equivalent

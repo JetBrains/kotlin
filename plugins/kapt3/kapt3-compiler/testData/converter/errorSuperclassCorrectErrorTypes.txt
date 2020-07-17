@@ -177,7 +177,6 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class TFooBar extends Foo implements test.Intf, Bar {
-    @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
     @org.jetbrains.annotations.NotNull()
@@ -199,7 +198,6 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class TFooBar2 implements Foo, Bar {
-    @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
     @org.jetbrains.annotations.NotNull()

@@ -1,0 +1,7 @@
+fun test() {
+    C().foo { it + 1 }
+}
+
+class C {
+    fun foo(f: (Int) -> Int) {}
+}

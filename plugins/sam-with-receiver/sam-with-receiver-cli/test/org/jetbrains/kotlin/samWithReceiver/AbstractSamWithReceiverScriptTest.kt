@@ -29,12 +29,13 @@ import kotlin.script.templates.ScriptTemplateDefinition
 abstract class AbstractSamWithReceiverScriptTest : AbstractDiagnosticsTest() {
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        StorageComponentContainerContributor.registerExtension(environment.project, CliSamWithReceiverComponentContributor(emptyList()))
         val def = ScriptDefinition.FromLegacy(
             defaultJvmScriptingHostConfiguration,
             KotlinScriptDefinitionFromAnnotatedTemplate(ScriptForSamWithReceivers::class, emptyMap())
         )
         environment.configuration.add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, def)
+        val anns = def.annotationsForSamWithReceivers
+        StorageComponentContainerContributor.registerExtension(environment.project, CliSamWithReceiverComponentContributor(anns))
     }
 }
 

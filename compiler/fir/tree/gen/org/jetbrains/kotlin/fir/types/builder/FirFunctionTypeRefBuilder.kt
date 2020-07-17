@@ -30,6 +30,7 @@ class FirFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
     var receiverTypeRef: FirTypeRef? = null
     val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     lateinit var returnTypeRef: FirTypeRef
+    var isSuspend: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     override fun build(): FirFunctionTypeRef {
         return FirFunctionTypeRefImpl(
@@ -39,6 +40,7 @@ class FirFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
             receiverTypeRef,
             valueParameters,
             returnTypeRef,
+            isSuspend,
         )
     }
 
@@ -50,4 +52,20 @@ inline fun buildFunctionTypeRef(init: FirFunctionTypeRefBuilder.() -> Unit): Fir
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return FirFunctionTypeRefBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildFunctionTypeRefCopy(original: FirFunctionTypeRef, init: FirFunctionTypeRefBuilder.() -> Unit): FirFunctionTypeRef {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirFunctionTypeRefBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.isMarkedNullable = original.isMarkedNullable
+    copyBuilder.receiverTypeRef = original.receiverTypeRef
+    copyBuilder.valueParameters.addAll(original.valueParameters)
+    copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.isSuspend = original.isSuspend
+    return copyBuilder.apply(init).build()
 }

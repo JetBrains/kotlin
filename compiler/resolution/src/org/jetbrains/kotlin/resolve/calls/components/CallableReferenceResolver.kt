@@ -75,13 +75,14 @@ class CallableReferenceResolver(
     fun processCallableReferenceArgument(
         csBuilder: ConstraintSystemBuilder,
         resolvedAtom: ResolvedCallableReferenceAtom,
-        diagnosticsHolder: KotlinDiagnosticsHolder
+        diagnosticsHolder: KotlinDiagnosticsHolder,
+        resolutionCallbacks: KotlinResolutionCallbacks
     ) {
         val argument = resolvedAtom.atom
         val expectedType = resolvedAtom.expectedType?.let { (csBuilder.buildCurrentSubstitutor() as NewTypeSubstitutor).safeSubstitute(it) }
 
         val scopeTower = callComponents.statelessCallbacks.getScopeTowerForCallableReferenceArgument(argument)
-        val candidates = runRHSResolution(scopeTower, argument, expectedType, csBuilder) { checkCallableReference ->
+        val candidates = runRHSResolution(scopeTower, argument, expectedType, csBuilder, resolutionCallbacks) { checkCallableReference ->
             csBuilder.runTransaction { checkCallableReference(this); false }
         }
 
@@ -106,7 +107,13 @@ class CallableReferenceResolver(
                 )
             }
             diagnosticsHolder.addDiagnosticIfNotNull(diagnostic)
-            chosenCandidate.diagnostics.forEach { diagnosticsHolder.addDiagnostic(it) }
+            chosenCandidate.diagnostics.forEach {
+                val transformedDiagnostic = when (it) {
+                    is CompatibilityWarning -> CompatibilityWarningOnArgument(argument, it.candidate)
+                    else -> it
+                }
+                diagnosticsHolder.addDiagnostic(transformedDiagnostic)
+            }
             chosenCandidate.freshSubstitutor = toFreshSubstitutor
         } else {
             if (candidates.isEmpty()) {
@@ -137,10 +144,11 @@ class CallableReferenceResolver(
         callableReference: CallableReferenceKotlinCallArgument,
         expectedType: UnwrappedType?, // this type can have not fixed type variable inside
         csBuilder: ConstraintSystemBuilder,
+        resolutionCallbacks: KotlinResolutionCallbacks,
         compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit // you can run anything throw this operation and all this operation will be rolled back
     ): Set<CallableReferenceCandidate> {
         val factory = CallableReferencesCandidateFactory(
-            callableReference, callComponents, scopeTower, compatibilityChecker, expectedType, csBuilder
+            callableReference, callComponents, scopeTower, compatibilityChecker, expectedType, csBuilder, resolutionCallbacks
         )
         val processor = createCallableReferenceProcessor(factory)
         val candidates = towerResolver.runResolve(scopeTower, processor, useOrder = true, name = callableReference.rhsName)

@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// Temporarily ignored for JVM until KT-36024 is fixed.
-// IGNORE_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_REFLECT
 

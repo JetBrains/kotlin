@@ -46,7 +46,7 @@ internal val inlineCallableReferenceToLambdaPhase = makeIrFilePhase(
 internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendContext) : FileLoweringPass,
     IrElementTransformerVoidWithContext() {
 
-    private var inlinableReferences = mutableSetOf<IrCallableReference>()
+    private var inlinableReferences = mutableSetOf<IrCallableReference<*>>()
 
     override fun lower(irFile: IrFile) {
         inlinableReferences.addAll(IrInlineReferenceLocator.scan(context, irFile))
@@ -113,7 +113,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
         }
     }
 
-    private fun expandInlineFunctionReferenceToLambda(expression: IrCallableReference, referencedFunction: IrFunction): IrExpression {
+    private fun expandInlineFunctionReferenceToLambda(expression: IrCallableReference<*>, referencedFunction: IrFunction): IrExpression {
         val irBuilder = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
 

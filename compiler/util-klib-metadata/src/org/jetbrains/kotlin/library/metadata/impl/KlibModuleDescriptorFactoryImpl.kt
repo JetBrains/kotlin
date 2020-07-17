@@ -31,7 +31,8 @@ internal class KlibModuleDescriptorFactoryImpl(val createBuiltIns: (StorageManag
             KlibModuleOrigin.CAPABILITY to origin,
             ImplicitIntegerCoercion.MODULE_CAPABILITY to origin.isInteropLibrary()
         ),
-        platform = NativePlatforms.defaultNativePlatform
+        // TODO: don't use hardcoded platform; it should be supplied as a parameter
+        platform = NativePlatforms.unspecifiedNativePlatform
     )
 
     override fun createDescriptorAndNewBuiltIns(

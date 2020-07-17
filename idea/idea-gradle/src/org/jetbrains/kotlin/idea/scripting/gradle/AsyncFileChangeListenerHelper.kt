@@ -5,27 +5,41 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import com.intellij.openapi.externalSystem.service.project.autoimport.AsyncFileChangeListenerBase
+import com.intellij.openapi.externalSystem.autoimport.AsyncFileChangeListenerBase
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 
-fun addVfsListener(watcher: GradleScriptInputsWatcher) {
+fun addVfsListener(
+    watcher: GradleScriptListener,
+    buildRootsManager: GradleBuildRootsManager
+) {
     VirtualFileManager.getInstance().addAsyncFileListener(
         object : AsyncFileChangeListenerBase() {
+            val changedFiles = mutableListOf<String>()
+
+            override fun init() {
+                changedFiles.clear()
+            }
+
             override fun isRelevant(path: String): Boolean {
-                return isInAffectedGradleProjectFiles(watcher.project, path)
+                return buildRootsManager.maybeAffectedGradleProjectFile(path)
             }
 
             override fun updateFile(file: VirtualFile, event: VFileEvent) {
-                watcher.fileChanged(event.path, file.timeStamp)
+                changedFiles.add(event.path)
             }
 
-            // do nothing
-            override fun prepareFileDeletion(file: VirtualFile) {}
-            override fun apply() {}
-            override fun reset() {}
-
+            override fun apply() {
+                val fileChangesProcessor = watcher.fileChangesProcessor
+                changedFiles.forEach {
+                    LocalFileSystem.getInstance().findFileByPath(it)?.let { f ->
+                        fileChangesProcessor(f.path, f.timeStamp)
+                    }
+                }
+            }
         },
         watcher.project
     )

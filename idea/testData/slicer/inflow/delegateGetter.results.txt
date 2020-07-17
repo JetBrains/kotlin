@@ -1,5 +1,5 @@
-12 val <bold>x = foo</bold>
-12 	val x = <bold>foo</bold>
-9 		val <bold>foo: Int by D</bold>
-6 			operator fun <bold>getValue(thisRef: Any?, property: KProperty<*>) = 1</bold>
-6 				operator fun getValue(thisRef: Any?, property: KProperty<*>) = <bold>1</bold>
+12 <bold>val x</bold> = foo (in test())
+12 	val x = <bold>foo</bold> (in test())
+9 		<bold>val foo: Int</bold> by D
+6 			operator <bold>fun getValue(thisRef: Any?, property: KProperty<*>)</bold> = 1 (in D)
+6 				operator fun getValue(thisRef: Any?, property: KProperty<*>) = <bold>1</bold> (in D.getValue(Any?, KProperty<*>))

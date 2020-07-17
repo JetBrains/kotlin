@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,10 +13,10 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.konanVersion
-import org.jetbrains.kotlin.gradle.dsl.NativeDistributionType.REGULAR
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.targets.native.internal.setUpKotlinNativePlatformDependencies
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -64,10 +64,8 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             logger.info("User-provided Kotlin/Native distribution: $konanHome")
         }
 
-        val distributionType = PropertiesProvider(project).nativeDistributionType
-        if (konanVersion.isAtLeast(1, 4, 0) &&
-            (distributionType == null || distributionType == REGULAR)
-        ) {
+        val distributionType = NativeDistributionTypeProvider(project).getDistributionType(konanVersion)
+        if (distributionType.mustGeneratePlatformLibs) {
             PlatformLibrariesGenerator(project, konanTarget).generatePlatformLibsIfNeeded()
         }
     }
@@ -150,9 +148,6 @@ internal val KonanTarget.isCurrentHost: Boolean
 
 internal val KonanTarget.enabledOnCurrentHost
     get() = HostManager().isEnabled(this)
-
-internal val AbstractKotlinNativeCompilation.isMainCompilation: Boolean
-    get() = name == KotlinCompilation.MAIN_COMPILATION_NAME
 
 // KonanVersion doesn't provide an API to compare versions,
 // so we have to transform it to KotlinVersion first.

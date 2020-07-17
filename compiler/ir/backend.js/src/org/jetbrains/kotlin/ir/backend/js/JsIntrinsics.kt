@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeBuilder
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.findDeclaration
@@ -31,8 +32,9 @@ import java.util.*
 
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
 
-    private val externalPackageFragmentSymbol = IrExternalPackageFragmentSymbolImpl(context.internalPackageFragmentDescriptor)
-    val externalPackageFragment = IrExternalPackageFragmentImpl(externalPackageFragmentSymbol)
+    val externalPackageFragment = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
+        context.builtIns.builtInsModule, FqName("kotlin.js.internal")
+    )
 
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
 
@@ -150,6 +152,11 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsAnyToString = getInternalFunction("anyToString")
     val jsCompareTo = getInternalFunction("compareTo")
     val jsEquals = getInternalFunction("equals")
+    val jsConstruct = getInternalFunction("construct")
+    val jsNewTarget = unOp("jsNewTarget")
+    val jsEmptyObject = unOp("emptyObject")
+    val jsOpenInitializerBox = binOp("openInitializerBox")
+    val es6DefaultType = defineEs6DefaultTypeIntrinsic().symbol
 
     val jsImul = getInternalFunction("imul")
 
@@ -294,6 +301,12 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsBoxIntrinsic = getInternalFunction("boxIntrinsic")
     val jsUnboxIntrinsic = getInternalFunction("unboxIntrinsic")
 
+    val captureStack = getInternalFunction("captureStack")
+
+    val createSharedBox = defineCreateSharedBox()
+    val readSharedBox = defineReadSharedBox()
+    val writeSharedBox = defineWriteSharedBox()
+
     // Helpers:
 
     private fun getInternalFunction(name: String) =
@@ -318,6 +331,76 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         return externalPackageFragment.addFunction {
             name = Name.identifier("Object\$create")
             origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
+        }.apply {
+            returnType = addTypeParameter("T", irBuiltIns.anyType).defaultType
+        }
+    }
+
+    private fun defineCreateSharedBox(): IrSimpleFunction {
+        return externalPackageFragment.addFunction {
+            name = Name.identifier("\$sharedBox\$create")
+            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
+            returnType = context.dynamicType
+        }.apply {
+            val tp = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter {
+                index = 0
+                name = Name.identifier("v")
+                type = IrSimpleTypeBuilder().run {
+                    classifier = tp.symbol
+                    hasQuestionMark = true
+                    buildSimpleType()
+                }
+            }
+        }
+    }
+
+    private fun defineReadSharedBox(): IrSimpleFunction {
+        return externalPackageFragment.addFunction {
+            name = Name.identifier("\$sharedBox\$read")
+            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
+        }.apply {
+            val tp = addTypeParameter("T", irBuiltIns.anyNType)
+            returnType = IrSimpleTypeBuilder().run {
+                classifier = tp.symbol
+                hasQuestionMark = true
+                buildSimpleType()
+            }
+            addValueParameter {
+                index = 0
+                name = Name.identifier("box")
+                type = context.dynamicType
+            }
+        }
+    }
+
+    private fun defineWriteSharedBox(): IrSimpleFunction {
+        return externalPackageFragment.addFunction {
+            name = Name.identifier("\$sharedBox\$write")
+            origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
+            returnType = irBuiltIns.unitType
+        }.apply {
+            val tp = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter {
+                index = 0
+                name = Name.identifier("box")
+                type = context.dynamicType
+            }
+            addValueParameter {
+                index = 1
+                name = Name.identifier("nv")
+                type = IrSimpleTypeBuilder().run {
+                    classifier = tp.symbol
+                    hasQuestionMark = true
+                    buildSimpleType()
+                }
+            }
+        }
+    }
+
+    private fun defineEs6DefaultTypeIntrinsic(): IrSimpleFunction {
+        return externalPackageFragment.addFunction {
+            name = Name.identifier("DefaultType")
         }.apply {
             returnType = addTypeParameter("T", irBuiltIns.anyType).defaultType
         }

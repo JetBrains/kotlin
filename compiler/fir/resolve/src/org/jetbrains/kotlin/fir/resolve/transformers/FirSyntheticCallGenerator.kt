@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.inferenceContext
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -47,6 +48,7 @@ class FirSyntheticCallGenerator(
     private val trySelectFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
     private val idFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.ID)
     private val checkNotNullFunction: FirSimpleFunction = generateSyntheticCheckNotNullFunction()
+    private val elvisFunction: FirSimpleFunction = generateSyntheticElvisFunction()
 
     fun generateCalleeForWhenExpression(whenExpression: FirWhenExpression): FirWhenExpression? {
         val stubReference = whenExpression.calleeReference
@@ -101,6 +103,22 @@ class FirSyntheticCallGenerator(
         return checkNotNullCall.transformCalleeReference(UpdateReference, reference)
     }
 
+    fun generateCalleeForElvisExpression(elvisExpression: FirElvisExpression): FirElvisExpression? {
+        if (elvisExpression.calleeReference !is FirStubReference) return null
+
+        val argumentList = buildArgumentList {
+            arguments += elvisExpression.lhs
+            arguments += elvisExpression.rhs
+        }
+        val reference = generateCalleeReferenceWithCandidate(
+            elvisFunction,
+            argumentList,
+            SyntheticCallableId.ELVIS_NOT_NULL.callableName
+        ) ?: return null
+
+        return elvisExpression.transformCalleeReference(UpdateReference, reference)
+    }
+
     fun resolveCallableReferenceWithSyntheticOuterCall(
         callableReferenceAccess: FirCallableReferenceAccess,
         expectedTypeRef: FirTypeRef?
@@ -153,12 +171,11 @@ class FirSyntheticCallGenerator(
         name = name,
         explicitReceiver = null,
         argumentList = argumentList,
-        isSafeCall = false,
         isPotentialQualifierPart = false,
         typeArguments = emptyList(),
         session = session,
         containingFile = file,
-        implicitReceiverStack = implicitReceiverStack
+        containingDeclarations = containingDeclarations
     )
 
     private fun generateSyntheticSelectTypeParameter(): Pair<FirTypeParameter, FirResolvedTypeRef> {
@@ -166,6 +183,7 @@ class FirSyntheticCallGenerator(
         val typeParameter =
             buildTypeParameter {
                 session = this@FirSyntheticCallGenerator.session
+                origin = FirDeclarationOrigin.Library
                 name = Name.identifier("K")
                 symbol = typeParameterSymbol
                 variance = Variance.INVARIANT
@@ -185,7 +203,7 @@ class FirSyntheticCallGenerator(
 
         val (typeParameter, returnType) = generateSyntheticSelectTypeParameter()
 
-        val argumentType = buildResolvedTypeRef { type = returnType.coneTypeUnsafe<ConeKotlinType>().createArrayOf(session) }
+        val argumentType = buildResolvedTypeRef { type = returnType.type.createArrayOf() }
         val typeArgument = buildTypeProjectionWithVariance {
             typeRef = returnType
             variance = Variance.INVARIANT
@@ -208,7 +226,7 @@ class FirSyntheticCallGenerator(
         val (typeParameter, returnType) = generateSyntheticSelectTypeParameter()
 
         val argumentType = buildResolvedTypeRef {
-            type = returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.inferenceContext)
+            type = returnType.type.withNullability(ConeNullability.NULLABLE, session.typeContext)
         }
         val typeArgument = buildTypeProjectionWithVariance {
             typeRef = returnType
@@ -225,11 +243,48 @@ class FirSyntheticCallGenerator(
         }.build()
     }
 
+    private fun generateSyntheticElvisFunction(): FirSimpleFunction {
+        // Synthetic function signature:
+        //   fun <K> checkNotNull(x: K?, y: K): @Exact K
+        //
+        // Note: The upper bound of `K` cannot be `Any` because of the following case:
+        //   fun <X> test(a: X, b: X) = a ?: b
+        // `X` is not a subtype of `Any` and hence cannot satisfy `K` if it had an upper bound of `Any`.
+        val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.ELVIS_NOT_NULL)
+        val (typeParameter, rightArgumentType) = generateSyntheticSelectTypeParameter()
+
+        val leftArgumentType = buildResolvedTypeRef {
+            type = rightArgumentType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.typeContext)
+        }
+
+        val returnType = rightArgumentType.resolvedTypeFromPrototype(
+            rightArgumentType.type.withAttributes(
+                ConeAttributes.create(listOf(CompilerConeAttributes.Exact))
+            )
+        )
+
+        val typeArgument = buildTypeProjectionWithVariance {
+            typeRef = returnType
+            variance = Variance.INVARIANT
+        }
+
+        return generateMemberFunction(
+            functionSymbol,
+            SyntheticCallableId.ELVIS_NOT_NULL.callableName,
+            typeArgument.typeRef
+        ).apply {
+            typeParameters += typeParameter
+            valueParameters += leftArgumentType.toValueParameter("x")
+            valueParameters += rightArgumentType.toValueParameter("y")
+        }.build()
+    }
+
     private fun generateMemberFunction(
         symbol: FirNamedFunctionSymbol, name: Name, returnType: FirTypeRef
     ): FirSimpleFunctionBuilder {
         return FirSimpleFunctionBuilder().apply {
             session = this@FirSyntheticCallGenerator.session
+            origin = FirDeclarationOrigin.Synthetic
             this.symbol = symbol
             this.name = name
             status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
@@ -254,6 +309,7 @@ class FirSyntheticCallGenerator(
         val name = Name.identifier(nameAsString)
         return buildValueParameter {
             session = this@FirSyntheticCallGenerator.session
+            origin = FirDeclarationOrigin.Library
             this.name = name
             returnTypeRef = this@toValueParameter
             isCrossinline = false

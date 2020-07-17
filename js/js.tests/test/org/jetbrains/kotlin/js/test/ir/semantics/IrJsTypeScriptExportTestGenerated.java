@@ -29,6 +29,24 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
+    @TestMetadata("js/js.translator/testData/typescript-export/constructors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Constructors extends AbstractIrJsTypeScriptExportTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInConstructors() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/constructors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @TestMetadata("constructors.kt")
+        public void testConstructors() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/constructors/constructors.kt");
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/typescript-export/declarations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -62,6 +80,34 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
         @TestMetadata("inheritance.kt")
         public void testInheritance() throws Exception {
             runTest("js/js.translator/testData/typescript-export/inheritance/inheritance.kt");
+        }
+    }
+
+    @TestMetadata("js/js.translator/testData/typescript-export/moduleSystems")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ModuleSystems extends AbstractIrJsTypeScriptExportTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInModuleSystems() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/moduleSystems"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @TestMetadata("commonjs.kt")
+        public void testCommonjs() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/moduleSystems/commonjs.kt");
+        }
+
+        @TestMetadata("plain.kt")
+        public void testPlain() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/moduleSystems/plain.kt");
+        }
+
+        @TestMetadata("umd.kt")
+        public void testUmd() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/moduleSystems/umd.kt");
         }
     }
 

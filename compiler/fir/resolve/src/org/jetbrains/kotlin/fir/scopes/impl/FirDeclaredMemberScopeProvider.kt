@@ -7,16 +7,36 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.declarations.classId
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.getOrPutNullable
 
 class FirDeclaredMemberScopeProvider : FirSessionComponent {
 
     private val declaredMemberCache = mutableMapOf<FirClass<*>, FirScope>()
-    private val nestedClassifierCache = mutableMapOf<FirClass<*>, FirNestedClassifierScope>()
+    private val nestedClassifierCache = mutableMapOf<FirClass<*>, FirNestedClassifierScope?>()
+
+    fun getClassByClassId(classId: ClassId): FirClass<*>? {
+        for ((clazz, _) in declaredMemberCache) {
+            if (clazz.classId.packageFqName == classId.packageFqName
+                && clazz.classId.relativeClassName == classId.relativeClassName
+            ) {
+                return clazz
+            }
+        }
+        for ((clazz, _) in nestedClassifierCache) {
+            if (clazz.classId.packageFqName == classId.packageFqName
+                && clazz.classId.relativeClassName == classId.relativeClassName
+            ) {
+                return clazz
+            }
+        }
+        return null
+    }
 
     fun declaredMemberScope(
         klass: FirClass<*>,
@@ -29,9 +49,9 @@ class FirDeclaredMemberScopeProvider : FirSessionComponent {
         }
     }
 
-    fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope {
-        return nestedClassifierCache.getOrPut(klass) {
-            FirNestedClassifierScope(klass)
+    fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope? {
+        return nestedClassifierCache.getOrPutNullable(klass) {
+            FirNestedClassifierScope(klass).takeUnless { it.isEmpty() }
         }
     }
 }
@@ -54,7 +74,7 @@ fun declaredMemberScopeWithLazyNestedScope(
         .declaredMemberScope(klass, useLazyNestedClassifierScope = true, existingNames = existingNames, symbolProvider = symbolProvider)
 }
 
-fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope {
+fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope? {
     return klass
         .session
         .declaredMemberScopeProvider
@@ -65,7 +85,7 @@ fun lazyNestedClassifierScope(
     classId: ClassId,
     existingNames: List<Name>,
     symbolProvider: FirSymbolProvider
-): FirLazyNestedClassifierScope {
+): FirLazyNestedClassifierScope? {
+    if (existingNames.isEmpty()) return null
     return FirLazyNestedClassifierScope(classId, existingNames, symbolProvider)
 }
-

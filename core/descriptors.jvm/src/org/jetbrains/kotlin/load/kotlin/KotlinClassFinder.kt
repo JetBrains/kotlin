@@ -28,8 +28,12 @@ interface KotlinClassFinder : KotlinMetadataFinder {
     sealed class Result {
         fun toKotlinJvmBinaryClass(): KotlinJvmBinaryClass? = (this as? KotlinClass)?.kotlinJvmBinaryClass
 
-        data class KotlinClass(val kotlinJvmBinaryClass: KotlinJvmBinaryClass) : Result()
-        data class ClassFileContent(
+        class KotlinClass(val kotlinJvmBinaryClass: KotlinJvmBinaryClass, val byteContent: ByteArray? = null) : Result() {
+            operator fun component1(): KotlinJvmBinaryClass = kotlinJvmBinaryClass
+            operator fun component2(): ByteArray? = byteContent
+        }
+
+        class ClassFileContent(
             @Suppress("ArrayInDataClass")
             val content: ByteArray
         ) : Result()

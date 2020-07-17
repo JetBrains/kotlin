@@ -17,9 +17,13 @@
 package org.jetbrains.kotlin.codegen.range.forLoop
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.types.KotlinType
 
 class ForInRangeInstanceLoopGenerator(
     codegen: ExpressionCodegen,
@@ -30,18 +34,21 @@ class ForInRangeInstanceLoopGenerator(
 ) : AbstractForInRangeLoopGenerator(codegen, forExpression, if (reversed) -1 else 1, comparisonGenerator) {
 
     override fun storeRangeStartAndEnd() {
-        val loopRangeType = codegen.bindingContext.getType(rangeExpression)!!
-        val asmLoopRangeType = codegen.asmType(loopRangeType)
-        codegen.gen(rangeExpression, asmLoopRangeType, loopRangeType)
+        val asmLoopRangeType = codegen.asmType(rangeKotlinType)
+        codegen.gen(rangeExpression, asmLoopRangeType, rangeKotlinType)
         v.dup()
+
+        val firstName = rangeKotlinType.getPropertyGetterName("first")
+        val lastName = rangeKotlinType.getPropertyGetterName("last")
 
         // ranges inherit first and last from corresponding progressions
         if (reversed) {
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, loopParameterType, loopParameterVar)
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, asmElementType, endVar)
+            generateRangeOrProgressionProperty(asmLoopRangeType, lastName, asmElementType, loopParameterType, loopParameterVar)
+            generateRangeOrProgressionProperty(asmLoopRangeType, firstName, asmElementType, asmElementType, endVar)
         } else {
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar)
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar)
+            generateRangeOrProgressionProperty(asmLoopRangeType, firstName, asmElementType, loopParameterType, loopParameterVar)
+            generateRangeOrProgressionProperty(asmLoopRangeType, lastName, asmElementType, asmElementType, endVar)
         }
     }
+
 }

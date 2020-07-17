@@ -50,6 +50,9 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
+import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative.INCOMPATIBLE_THROWS_OVERRIDE
+import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative.MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND
+import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative.THROWS_LIST_EMPTY
 
 class QuickFixRegistrar : QuickFixContributor {
     override fun registerQuickFixes(quickFixes: QuickFixes) {
@@ -214,6 +217,7 @@ class QuickFixRegistrar : QuickFixContributor {
         ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerActions(implementMembersHandler, implementMembersAsParametersHandler)
         ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED.registerActions(implementMembersHandler, implementMembersAsParametersHandler)
         MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED.registerActions(implementMembersHandler, implementMembersAsParametersHandler)
+        MANY_IMPL_MEMBER_NOT_IMPLEMENTED.registerActions(implementMembersHandler)
 
         VAL_WITH_SETTER.registerFactory(ChangeVariableMutabilityFix.VAL_WITH_SETTER_FACTORY)
         VAL_REASSIGNMENT.registerFactory(
@@ -643,6 +647,16 @@ class QuickFixRegistrar : QuickFixContributor {
 
         TOO_MANY_ARGUMENTS.registerFactory(RemoveArgumentFix)
 
+        AMBIGUOUS_SUPER.registerFactory(SpecifySuperTypeFix)
+
         FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS.registerFactory(RemoveModifierFix.createRemoveFunFromInterfaceFactory())
+
+        TOPLEVEL_TYPEALIASES_ONLY.registerFactory(MoveTypeAliasToTopLevelFix)
+
+        CONFLICTING_JVM_DECLARATIONS.registerFactory(AddJvmNameAnnotationFix)
+
+        MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND.registerFactory(AddExceptionToThrowsFix)
+        THROWS_LIST_EMPTY.registerFactory(RemoveAnnotationFix)
+        INCOMPATIBLE_THROWS_OVERRIDE.registerFactory(RemoveAnnotationFix)
     }
 }

@@ -4,18 +4,18 @@ FILE: anonymousInDelegate.kt
 
     }
     public final val x: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = lazy@fun <anonymous>(): R|kotlin/Int| {
-        lval foo: R|anonymous| = object : R|Foo| {
-            private constructor(): R|anonymous| {
+        lval foo: R|<anonymous>| = object : R|Foo| {
+            private[local] constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final override fun bar(): R|kotlin/Int| {
+            public[local] final override fun bar(): R|kotlin/Int| {
                 ^bar Int(42)
             }
 
         }
 
-        ^ R|<local>/foo|.R|/anonymous.bar|()
+        ^ R|<local>/foo|.R|/<anonymous>.bar|()
     }
     )
         public get(): R|kotlin/Int| {

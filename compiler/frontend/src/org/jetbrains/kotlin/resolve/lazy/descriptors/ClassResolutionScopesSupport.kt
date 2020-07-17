@@ -99,12 +99,14 @@ class ClassResolutionScopesSupport(
 
         val parentForNewScope = companionObjectDescriptor?.packScopesOfCompanionSupertypes(parent, ownerDescriptor) ?: parent
 
-        val lexicalChainedScope = LexicalChainedScope(
+        val lexicalChainedScope = LexicalChainedScope.create(
             parentForNewScope, ownerDescriptor,
             isOwnerDescriptorAccessibleByLabel = false,
             implicitReceiver = companionObjectDescriptor?.thisAsReceiverParameter,
             kind = LexicalScopeKind.CLASS_INHERITANCE,
-            memberScopes = staticScopes,
+            classDescriptor.staticScope,
+            classDescriptor.unsubstitutedInnerClassesScope,
+            companionObjectDescriptor?.getStaticScopeOfCompanionObject(classDescriptor),
             isStaticScope = true
         )
 

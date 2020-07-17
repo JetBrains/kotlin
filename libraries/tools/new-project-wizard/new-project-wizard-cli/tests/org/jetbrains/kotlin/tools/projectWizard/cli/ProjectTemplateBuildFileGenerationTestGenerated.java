@@ -28,34 +28,29 @@ public class ProjectTemplateBuildFileGenerationTestGenerated extends AbstractPro
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
-    @TestMetadata("emptyMultiplatform")
-    public void testEmptyMultiplatform() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/emptyMultiplatform/");
+    @TestMetadata("backendApplication")
+    public void testBackendApplication() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/backendApplication/");
     }
 
-    @TestMetadata("emptySingleplatform")
-    public void testEmptySingleplatform() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/emptySingleplatform/");
+    @TestMetadata("consoleApplication")
+    public void testConsoleApplication() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/consoleApplication/");
     }
 
-    @TestMetadata("jsBrowserApplication")
-    public void testJsBrowserApplication() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/jsBrowserApplication/");
+    @TestMetadata("frontendApplication")
+    public void testFrontendApplication() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/frontendApplication/");
     }
 
-    @TestMetadata("jvmConsoleApplication")
-    public void testJvmConsoleApplication() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/jvmConsoleApplication/");
+    @TestMetadata("fullStackWebApplication")
+    public void testFullStackWebApplication() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/fullStackWebApplication/");
     }
 
-    @TestMetadata("jvmServerJsClient")
-    public void testJvmServerJsClient() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/jvmServerJsClient/");
-    }
-
-    @TestMetadata("mppMobileApplication")
-    public void testMppMobileApplication() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/mppMobileApplication/");
+    @TestMetadata("multiplatformApplication")
+    public void testMultiplatformApplication() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformApplication/");
     }
 
     @TestMetadata("multiplatformLibrary")
@@ -63,13 +58,18 @@ public class ProjectTemplateBuildFileGenerationTestGenerated extends AbstractPro
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformLibrary/");
     }
 
+    @TestMetadata("multiplatformMobileApplication")
+    public void testMultiplatformMobileApplication() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileApplication/");
+    }
+
     @TestMetadata("multiplatformMobileLibrary")
     public void testMultiplatformMobileLibrary() throws Exception {
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileLibrary/");
     }
 
-    @TestMetadata("nativeConsoleApplication")
-    public void testNativeConsoleApplication() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/nativeConsoleApplication/");
+    @TestMetadata("nativeApplication")
+    public void testNativeApplication() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/nativeApplication/");
     }
 }

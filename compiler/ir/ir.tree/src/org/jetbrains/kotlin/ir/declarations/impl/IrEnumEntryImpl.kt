@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.EnumEntryCarrier
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -38,18 +38,11 @@ class IrEnumEntryImpl(
     IrEnumEntry,
     EnumEntryCarrier {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrEnumEntrySymbol
-    ) :
-            this(startOffset, endOffset, origin, symbol, symbol.descriptor.name)
-
     init {
         symbol.bind(this)
     }
 
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor get() = symbol.descriptor
 
     override var correspondingClassField: IrClass? = null

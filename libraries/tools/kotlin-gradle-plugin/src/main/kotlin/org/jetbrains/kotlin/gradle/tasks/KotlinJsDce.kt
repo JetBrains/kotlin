@@ -82,11 +82,16 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
         val log = GradleKotlinLogger(logger)
         val allArgs = argsArray + outputDirArgs + inputFiles
+
         val exitCode = runToolInSeparateProcess(
-            allArgs, K2JSDce::class.java.name, computedCompilerClasspath,
-            log
+            allArgs,
+            K2JSDce::class.java.name,
+            computedCompilerClasspath,
+            log,
+            project.buildDir
         )
         throwGradleExceptionIfError(exitCode)
+
     }
 
     private fun isDceCandidate(file: File): Boolean {

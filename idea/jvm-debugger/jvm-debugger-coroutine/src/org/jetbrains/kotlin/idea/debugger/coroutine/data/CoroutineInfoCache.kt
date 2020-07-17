@@ -8,10 +8,17 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.data
 class CoroutineInfoCache(
     val cache: MutableList<CoroutineInfoData> = mutableListOf(), var state: CacheState = CacheState.INIT
 ) {
-    fun ok(infoList: List<CoroutineInfoData>) {
+    fun ok(infoList: List<CoroutineInfoData>): CoroutineInfoCache {
         cache.clear()
         cache.addAll(infoList)
         state = CacheState.OK
+        return this
+    }
+
+    fun ok(): CoroutineInfoCache {
+        cache.clear()
+        state = CacheState.OK
+        return this
     }
 
     fun fail(): CoroutineInfoCache {

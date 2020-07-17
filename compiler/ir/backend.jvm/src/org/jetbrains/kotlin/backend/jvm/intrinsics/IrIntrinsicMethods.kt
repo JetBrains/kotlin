@@ -112,7 +112,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.dataClassArrayMemberToStringSymbol.toKey()!! to IrDataClassArrayMemberToString,
                 symbols.unsafeCoerceIntrinsic.toKey()!! to UnsafeCoerce,
                 symbols.signatureStringIntrinsic.toKey()!! to SignatureString,
-                symbols.reassignParameterIntrinsic.toKey()!! to ReassignParameter
+                symbols.reassignParameterIntrinsic.toKey()!! to ReassignParameter,
+                symbols.ThrowKotlinNothingValueException.toKey()!! to ThrowKotlinNothingValueException
             ) +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +

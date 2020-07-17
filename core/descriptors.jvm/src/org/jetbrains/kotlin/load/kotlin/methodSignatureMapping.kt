@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
@@ -24,6 +25,10 @@ fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true, with
     }
 
     append("(")
+
+    extensionReceiverParameter?.let {
+        appendErasedType(it.type)
+    }
 
     for (parameter in valueParameters) {
         appendErasedType(parameter.type)
@@ -99,6 +104,17 @@ sealed class JvmType {
     class Array(val elementType: JvmType) : JvmType()
 
     override fun toString() = JvmTypeFactoryImpl.toString(this)
+
+    companion object {
+        internal val BOOLEAN = Primitive(JvmPrimitiveType.BOOLEAN)
+        internal val CHAR = Primitive(JvmPrimitiveType.CHAR)
+        internal val BYTE = Primitive(JvmPrimitiveType.BYTE)
+        internal val SHORT = Primitive(JvmPrimitiveType.SHORT)
+        internal val INT = Primitive(JvmPrimitiveType.INT)
+        internal val FLOAT = Primitive(JvmPrimitiveType.FLOAT)
+        internal val LONG = Primitive(JvmPrimitiveType.LONG)
+        internal val DOUBLE = Primitive(JvmPrimitiveType.DOUBLE)
+    }
 }
 
 private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
@@ -132,7 +148,20 @@ private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
         }
     }
 
-    override fun createObjectType(internalName: String) = JvmType.Object(internalName)
+    override fun createPrimitiveType(primitiveType: PrimitiveType): JvmType =
+        when (primitiveType) {
+            PrimitiveType.BOOLEAN -> JvmType.BOOLEAN
+            PrimitiveType.CHAR -> JvmType.CHAR
+            PrimitiveType.BYTE -> JvmType.BYTE
+            PrimitiveType.SHORT -> JvmType.SHORT
+            PrimitiveType.INT -> JvmType.INT
+            PrimitiveType.FLOAT -> JvmType.FLOAT
+            PrimitiveType.LONG -> JvmType.LONG
+            PrimitiveType.DOUBLE -> JvmType.DOUBLE
+        }
+
+    override fun createObjectType(internalName: String): JvmType.Object =
+        JvmType.Object(internalName)
 
     override fun toString(type: JvmType): String =
         when (type) {

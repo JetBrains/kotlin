@@ -10,23 +10,22 @@ import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.util.IJLoggerAdapter
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.platform.TargetPlatform
 
 abstract class AbstractKlibLibraryInfo(project: Project, library: Library, val libraryRoot: String) : LibraryInfo(project, library) {
 
-    val resolvedKotlinLibrary = resolveSingleFileKlib(
+    val resolvedKotlinLibrary: KotlinLibrary = resolveSingleFileKlib(
         libraryFile = File(libraryRoot),
         logger = LOG,
         strategy = ToolingSingleFileKlibResolveStrategy
     )
 
-    val compatibilityInfo by lazy { resolvedKotlinLibrary.getCompatibilityInfo() }
+    val compatibilityInfo: KlibCompatibilityInfo by lazy { resolvedKotlinLibrary.getCompatibilityInfo() }
 
     final override fun getLibraryRoots() = listOf(libraryRoot)
-
-    final override fun toString() = "${this::class.simpleName}(libraryName=${library.name}, libraryRoot=$libraryRoot)"
 
     abstract override val platform: TargetPlatform // must override
 

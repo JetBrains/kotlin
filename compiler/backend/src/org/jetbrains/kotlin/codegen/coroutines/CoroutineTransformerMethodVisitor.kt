@@ -5,23 +5,13 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
-import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.fixStack.top
-import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
@@ -30,7 +20,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.*
 import kotlin.math.max
 
 private const val COROUTINES_DEBUG_METADATA_VERSION = 1
@@ -72,7 +61,9 @@ class CoroutineTransformerMethodVisitor(
     // May differ from containingClassInternalName in case of DefaultImpls
     private val internalNameForDispatchReceiver: String? = null,
     // JVM_IR backend generates $completion, while old backend does not
-    private val putContinuationParameterToLvt: Boolean = true
+    private val putContinuationParameterToLvt: Boolean = true,
+    // New SourceInterpreter-less analyser can be somewhat unstable, disable it
+    private val useOldSpilledVarTypeAnalysis: Boolean = false
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
@@ -92,13 +83,13 @@ class CoroutineTransformerMethodVisitor(
         )
 
         FixStackMethodTransformer().transform(containingClassInternalName, methodNode)
-        RedundantLocalsEliminationMethodTransformer(languageVersionSettings).transform(containingClassInternalName, methodNode)
+        val suspensionPoints = collectSuspensionPoints(methodNode)
+        RedundantLocalsEliminationMethodTransformer(suspensionPoints)
+            .transform(containingClassInternalName, methodNode)
         if (languageVersionSettings.isReleaseCoroutines()) {
             ChangeBoxingMethodTransformer.transform(containingClassInternalName, methodNode)
         }
         updateMaxStack(methodNode)
-
-        val suspensionPoints = collectSuspensionPoints(methodNode)
 
         checkForSuspensionPointInsideMonitor(methodNode, suspensionPoints)
 
@@ -114,6 +105,7 @@ class CoroutineTransformerMethodVisitor(
                 languageVersionSettings,
                 containingClassInternalName,
                 methodNode,
+                suspensionPoints,
                 disableTailCallOptimizationForFunctionReturningUnit
             )
             if (examiner.allSuspensionPointsAreTailCalls(suspensionPoints)) {
@@ -577,11 +569,9 @@ class CoroutineTransformerMethodVisitor(
             return false
         }
 
-        val starts = methodNode.instructions.asSequence().filter {
-            isBeforeSuspendMarker(it) &&
-                    cfg.getPredecessorsIndices(it).isNotEmpty() // Ignore unreachable start markers
-        }.toList()
-        return starts.mapNotNull { start ->
+        return methodNode.instructions.asSequence().filter {
+            isBeforeSuspendMarker(it)
+        }.mapNotNull { start ->
             val ends = mutableSetOf<AbstractInsnNode>()
             if (collectSuspensionPointEnds(start, mutableSetOf(), ends)) return@mapNotNull null
             // Ignore suspension points, if the suspension call begin is alive and suspension call end is dead
@@ -590,7 +580,7 @@ class CoroutineTransformerMethodVisitor(
             // this is an exit point for the corresponding coroutine.
             val end = ends.find { isAfterSuspendMarker(it) } ?: return@mapNotNull null
             SuspensionPoint(start.previous, end)
-        }
+        }.toList()
     }
 
     private fun dropSuspensionMarkers(methodNode: MethodNode) {
@@ -602,7 +592,10 @@ class CoroutineTransformerMethodVisitor(
 
     private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableDescriptor>> {
         val instructions = methodNode.instructions
-        val frames = performRefinedTypeAnalysis(methodNode, containingClassInternalName)
+        val frames =
+            if (useOldSpilledVarTypeAnalysis) performRefinedTypeAnalysis(methodNode, containingClassInternalName)
+            else performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
+
         fun AbstractInsnNode.index() = instructions.indexOf(this)
 
         // We postpone these actions because they change instruction indices that we use when obtaining frames
@@ -650,11 +643,11 @@ class CoroutineTransformerMethodVisitor(
                     .map { Pair(it, frame.getLocal(it)) }
                     .filter { (index, value) ->
                         (index == 0 && needDispatchReceiver && isForNamedFunction) ||
-                                (value != StrictBasicValue.UNINITIALIZED_VALUE && livenessFrame.isAlive(index))
+                                (value.type != null && livenessFrame.isAlive(index))
                     }
 
             for ((index, basicValue) in variablesToSpill) {
-                if (basicValue === StrictBasicValue.NULL_VALUE) {
+                if (basicValue == StrictBasicValue.NULL_VALUE) {
                     postponedActions.add {
                         with(instructions) {
                             insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
@@ -666,7 +659,7 @@ class CoroutineTransformerMethodVisitor(
                     continue
                 }
 
-                val type = basicValue.type
+                val type = basicValue.type!!
                 val normalizedType = type.normalize()
 
                 val indexBySort = varsCountByType[normalizedType]?.plus(1) ?: 0
@@ -750,7 +743,7 @@ class CoroutineTransformerMethodVisitor(
         suspendMarkerVarIndex: Int,
         suspendPointLineNumber: LineNumberNode?
     ): LabelNode {
-        val continuationLabel = LabelNode()
+        val continuationLabel = LabelNode().linkWithLabel()
         val continuationLabelAfterLoadedResult = LabelNode()
         val suspendElementLineNumber = lineNumber
         var nextLineNumberNode = nextDefinitelyHitLineNumber(suspension)
@@ -898,197 +891,6 @@ class CoroutineTransformerMethodVisitor(
     private data class SpilledVariableDescriptor(val fieldName: String, val variableName: String)
 }
 
-// TODO Use this in variable liveness analysis
-private class MethodNodeExaminer(
-    val languageVersionSettings: LanguageVersionSettings,
-    val containingClassInternalName: String,
-    val methodNode: MethodNode,
-    disableTailCallOptimizationForFunctionReturningUnit: Boolean
-) {
-    private val sourceFrames: Array<Frame<SourceValue>?> =
-        MethodTransformer.analyze(containingClassInternalName, methodNode, IgnoringCopyOperationSourceInterpreter())
-    private val controlFlowGraph = ControlFlowGraph.build(methodNode)
-
-    private val safeUnitInstances = mutableSetOf<AbstractInsnNode>()
-    private val popsBeforeSafeUnitInstances = mutableSetOf<AbstractInsnNode>()
-    private val areturnsAfterSafeUnitInstances = mutableSetOf<AbstractInsnNode>()
-    private val meaningfulSuccessorsCache = hashMapOf<AbstractInsnNode, List<AbstractInsnNode>>()
-    private val meaningfulPredecessorsCache = hashMapOf<AbstractInsnNode, List<AbstractInsnNode>>()
-
-    init {
-        if (!disableTailCallOptimizationForFunctionReturningUnit) {
-            // retrieve all POP insns
-            val pops = methodNode.instructions.asSequence().filter { it.opcode == Opcodes.POP }
-            // for each of them check that all successors are PUSH Unit
-            val popsBeforeUnitInstances = pops.map { it to it.meaningfulSuccessors() }
-                .filter { (_, succs) -> succs.all { it.isUnitInstance() } }
-                .map { it.first }.toList()
-            for (pop in popsBeforeUnitInstances) {
-                val units = pop.meaningfulSuccessors()
-                val allUnitsAreSafe = units.all { unit ->
-                    // check no other predecessor exists
-                    unit.meaningfulPredecessors().all { it in popsBeforeUnitInstances } &&
-                            // check they have only returns among successors
-                            unit.meaningfulSuccessors().all { it.opcode == Opcodes.ARETURN }
-                }
-                if (!allUnitsAreSafe) continue
-                // save them all to the properties
-                popsBeforeSafeUnitInstances += pop
-                safeUnitInstances += units
-                units.flatMapTo(areturnsAfterSafeUnitInstances) { it.meaningfulSuccessors() }
-            }
-        }
-    }
-
-    private fun AbstractInsnNode.index() = methodNode.instructions.indexOf(this)
-
-    // GETSTATIC kotlin/Unit.INSTANCE is considered safe iff
-    // it is part of POP, PUSH Unit, ARETURN sequence.
-    private fun AbstractInsnNode.isSafeUnitInstance(): Boolean = this in safeUnitInstances
-
-    private fun AbstractInsnNode.isPopBeforeSafeUnitInstance(): Boolean = this in popsBeforeSafeUnitInstances
-    private fun AbstractInsnNode.isAreturnAfterSafeUnitInstance(): Boolean = this in areturnsAfterSafeUnitInstances
-
-    private fun AbstractInsnNode.meaningfulSuccessors(): List<AbstractInsnNode> = meaningfulSuccessorsCache.getOrPut(this) {
-        meaningfulSuccessorsOrPredecessors(true)
-    }
-
-    private fun AbstractInsnNode.meaningfulPredecessors(): List<AbstractInsnNode> = meaningfulPredecessorsCache.getOrPut(this) {
-        meaningfulSuccessorsOrPredecessors(false)
-    }
-
-    private fun AbstractInsnNode.meaningfulSuccessorsOrPredecessors(isSuccessors: Boolean): List<AbstractInsnNode> {
-        fun AbstractInsnNode.isMeaningful() = isMeaningful && opcode != Opcodes.NOP && opcode != Opcodes.GOTO && this !is LineNumberNode
-
-        fun AbstractInsnNode.getIndices() =
-            if (isSuccessors) controlFlowGraph.getSuccessorsIndices(this)
-            else controlFlowGraph.getPredecessorsIndices(this)
-
-        val visited = arrayListOf<AbstractInsnNode>()
-        fun dfs(insn: AbstractInsnNode) {
-            if (insn in visited) return
-            visited += insn
-            if (!insn.isMeaningful()) {
-                for (succIndex in insn.getIndices()) {
-                    dfs(methodNode.instructions[succIndex])
-                }
-            }
-        }
-
-        for (succIndex in getIndices()) {
-            dfs(methodNode.instructions[succIndex])
-        }
-        return visited.filter { it.isMeaningful() }
-    }
-
-    fun replacePopsBeforeSafeUnitInstancesWithCoroutineSuspendedChecks() {
-        val basicAnalyser = Analyzer(BasicInterpreter())
-        basicAnalyser.analyze(containingClassInternalName, methodNode)
-        val typedFrames = basicAnalyser.frames
-
-        val isReferenceMap = popsBeforeSafeUnitInstances
-            .map { it to (!isUnreachable(it.index(), sourceFrames) && typedFrames[it.index()]?.top()?.isReference == true) }
-            .toMap()
-
-        for (pop in popsBeforeSafeUnitInstances) {
-            if (isReferenceMap[pop] == true) {
-                val label = Label()
-                methodNode.instructions.insertBefore(pop, withInstructionAdapter {
-                    dup()
-                    loadCoroutineSuspendedMarker(languageVersionSettings)
-                    ifacmpne(label)
-                    areturn(AsmTypes.OBJECT_TYPE)
-                    mark(label)
-                })
-            }
-        }
-    }
-
-    fun allSuspensionPointsAreTailCalls(suspensionPoints: List<SuspensionPoint>): Boolean {
-        val safelyReachableReturns = findSafelyReachableReturns()
-
-        val instructions = methodNode.instructions
-        return suspensionPoints.all { suspensionPoint ->
-            val beginIndex = instructions.indexOf(suspensionPoint.suspensionCallBegin)
-            val endIndex = instructions.indexOf(suspensionPoint.suspensionCallEnd)
-
-            if (isUnreachable(endIndex, sourceFrames)) return@all true
-
-            val insideTryBlock = methodNode.tryCatchBlocks.any { block ->
-                val tryBlockStartIndex = instructions.indexOf(block.start)
-                val tryBlockEndIndex = instructions.indexOf(block.end)
-
-                beginIndex in tryBlockStartIndex..tryBlockEndIndex
-            }
-            if (insideTryBlock) return@all false
-
-            safelyReachableReturns[endIndex + 1]?.all { returnIndex ->
-                sourceFrames[returnIndex]?.top().sure {
-                    "There must be some value on stack to return"
-                }.insns.any { sourceInsn ->
-                    sourceInsn?.let(instructions::indexOf) in beginIndex..endIndex
-                }
-            } ?: false
-        }
-    }
-
-    /**
-     * Let's call an instruction safe if its execution is always invisible: stack modifications, branching, variable insns (invisible in debug)
-     *
-     * For some instruction `insn` define the result as following:
-     * - if there is a path leading to the non-safe instruction then result is `null`
-     * - Otherwise result contains all the reachable ARETURN indices
-     *
-     * @return indices of safely reachable returns for each instruction in the method node
-     */
-    private fun findSafelyReachableReturns(): Array<Set<Int>?> {
-        val insns = methodNode.instructions
-        val reachableReturnsIndices = Array<Set<Int>?>(insns.size()) init@{ index ->
-            val insn = insns[index]
-
-            if (insn.opcode == Opcodes.ARETURN && !insn.isAreturnAfterSafeUnitInstance()) {
-                if (isUnreachable(index, sourceFrames)) return@init null
-                return@init setOf(index)
-            }
-
-            // Since POP, PUSH Unit, ARETURN behaves like normal return in terms of tail-call optimization, set return index to POP
-            if (insn.isPopBeforeSafeUnitInstance()) {
-                return@init setOf(index)
-            }
-
-            if (!insn.isMeaningful || insn.opcode in SAFE_OPCODES || insn.isInvisibleInDebugVarInsn(methodNode) || isInlineMarker(insn)
-                || insn.isSafeUnitInstance() || insn.isAreturnAfterSafeUnitInstance()
-            ) {
-                setOf<Int>()
-            } else null
-        }
-
-        var changed: Boolean
-        do {
-            changed = false
-            for (index in 0 until insns.size()) {
-                if (insns[index].opcode == Opcodes.ARETURN) continue
-
-                @Suppress("RemoveExplicitTypeArguments")
-                val newResult =
-                    controlFlowGraph
-                        .getSuccessorsIndices(index).plus(index)
-                        .map(reachableReturnsIndices::get)
-                        .fold<Set<Int>?, Set<Int>?>(mutableSetOf<Int>()) { acc, successorsResult ->
-                            if (acc != null && successorsResult != null) acc + successorsResult else null
-                        }
-
-                if (newResult != reachableReturnsIndices[index]) {
-                    reachableReturnsIndices[index] = newResult
-                    changed = true
-                }
-            }
-        } while (changed)
-
-        return reachableReturnsIndices
-    }
-}
-
 internal fun InstructionAdapter.generateContinuationConstructorCall(
     objectTypeForState: Type?,
     methodNode: MethodNode,
@@ -1169,14 +971,24 @@ private fun Type.normalize() =
  * ICONST_1
  * INVOKESTATIC InlineMarker.mark()
  */
-private class SuspensionPoint(
+internal class SuspensionPoint(
     // ICONST_0
     val suspensionCallBegin: AbstractInsnNode,
     // INVOKESTATIC InlineMarker.mark()
     val suspensionCallEnd: AbstractInsnNode
 ) {
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
+
+    operator fun contains(insn: AbstractInsnNode): Boolean {
+        for (i in InsnSequence(suspensionCallBegin, suspensionCallEnd.next)) {
+            if (i == insn) return true
+        }
+        return false
+    }
 }
+
+internal operator fun List<SuspensionPoint>.contains(insn: AbstractInsnNode): Boolean =
+    any { insn in it }
 
 internal fun getLastParameterIndex(desc: String, access: Int) =
     Type.getArgumentTypes(desc).dropLast(1).map { it.size }.sum() + (if (!isStatic(access)) 1 else 0)
@@ -1207,25 +1019,6 @@ private fun getParameterTypesIndicesForCoroutineConstructor(
 private fun getAllParameterTypes(desc: String, hasDispatchReceiver: Boolean, thisName: String) =
     listOfNotNull(if (!hasDispatchReceiver) null else Type.getObjectType(thisName)).toTypedArray() +
             Type.getArgumentTypes(desc)
-
-internal class IgnoringCopyOperationSourceInterpreter : SourceInterpreter(Opcodes.API_VERSION) {
-    override fun copyOperation(insn: AbstractInsnNode?, value: SourceValue?) = value
-}
-
-// Check whether this instruction is unreachable, i.e. there is no path leading to this instruction
-internal fun <T : Value> isUnreachable(index: Int, sourceFrames: Array<out Frame<out T>?>): Boolean =
-    sourceFrames.size <= index || sourceFrames[index] == null
-
-private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode): Boolean {
-    val insns = methodNode.instructions
-    val index = insns.indexOf(this)
-    return (this is VarInsnNode && methodNode.localVariables.none {
-        it.index == `var` && index in it.start.let(insns::indexOf)..it.end.let(insns::indexOf)
-    })
-}
-
-private val SAFE_OPCODES =
-    ((Opcodes.DUP..Opcodes.DUP2_X2) + Opcodes.NOP + Opcodes.POP + Opcodes.POP2 + (Opcodes.IFEQ..Opcodes.GOTO)).toSet()
 
 internal fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, continuationIndex: Int) {
     val fakeContinuations = methodNode.instructions.asSequence().filter(::isFakeContinuationMarker).toList()

@@ -38,20 +38,20 @@ class CompilerFileLimitTest : CompilerSmokeTestBase() {
         return buildString {
             append("package large\n\n")
             (0..size).forEach {
-                appendln("class Class$it")
-                appendln("{")
-                appendln("\tfun foo(): Long = $it")
-                appendln("}")
-                appendln("\n")
+                appendLine("class Class$it")
+                appendLine("{")
+                appendLine("\tfun foo(): Long = $it")
+                appendLine("}")
+                appendLine("\n")
                 repeat(2000) {
-                    appendln("// kotlin rules ... and stuff")
+                    appendLine("// kotlin rules ... and stuff")
                 }
             }
-            appendln("fun main()")
-            appendln("{")
-            appendln("\tval result = Class5().foo() + Class$size().foo()")
-            appendln("\tprintln(result)")
-            appendln("}")
+            appendLine("fun main()")
+            appendLine("{")
+            appendLine("\tval result = Class5().foo() + Class$size().foo()")
+            appendLine("\tprintln(result)")
+            appendLine("}")
         }
 
     }
@@ -81,33 +81,33 @@ class CompilerFileLimitTest : CompilerSmokeTestBase() {
         return buildString {
             append("package usesLarge\n\n")
             append("import large.Large\n\n")
-            appendln("fun main()")
-            appendln("{")
-            appendln("\tval result = Large.Class0().foo() + Large.Class$size().foo()")
-            appendln("\tprintln(result)")
-            appendln("}")
+            appendLine("fun main()")
+            appendLine("{")
+            appendLine("\tval result = Large.Class0().foo() + Large.Class$size().foo()")
+            appendLine("\tprintln(result)")
+            appendLine("}")
         }
     }
 
     private fun generateLargeJavaFile(size: Int): String {
         return buildString {
             append("package large;\n\n")
-            appendln("public class Large")
-            appendln("{")
+            appendLine("public class Large")
+            appendLine("{")
             (0..size).forEach {
-                appendln("\tpublic static class Class$it")
-                appendln("\t{")
-                appendln("\t\tpublic long foo()")
-                appendln("\t\t{")
-                appendln("\t\t\t return $it;")
-                appendln("\t\t}")
-                appendln("\t}")
-                appendln("\n")
+                appendLine("\tpublic static class Class$it")
+                appendLine("\t{")
+                appendLine("\t\tpublic long foo()")
+                appendLine("\t\t{")
+                appendLine("\t\t\t return $it;")
+                appendLine("\t\t}")
+                appendLine("\t}")
+                appendLine("\n")
                 repeat(2000) {
-                    appendln("// kotlin rules ... and stuff")
+                    appendLine("// kotlin rules ... and stuff")
                 }
             }
-            appendln("}")
+            appendLine("}")
         }
 
     }

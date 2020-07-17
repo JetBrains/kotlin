@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 // FILE: BaseOuter.java
 // See KT-10285

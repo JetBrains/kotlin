@@ -65,7 +65,10 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgu
         for (info in capturedVars) {
             val field = remapper.findField(FieldInsnNode(0, info.containingLambdaName, info.fieldName, ""))
                 ?: error("Captured field not found: " + info.containingLambdaName + "." + info.fieldName)
-            builder.addCapturedParam(field, info.fieldName)
+            val recapturedParamInfo = builder.addCapturedParam(field, info.fieldName)
+            if (this is ExpressionLambda && isCapturedSuspend(info)) {
+                recapturedParamInfo.functionalArgument = NonInlineableArgumentForInlineableParameterCalledInSuspend
+            }
         }
 
         return builder.buildParameters()
@@ -97,6 +100,11 @@ class PsiDefaultLambda(
     override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method {
         return sourceCompiler.state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor).asmMethod
     }
+
+    override fun findInvokeMethodDescriptor(): FunctionDescriptor =
+        parameterDescriptor.type.memberScope
+            .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
+            .single()
 }
 
 abstract class DefaultLambda(
@@ -147,14 +155,10 @@ abstract class DefaultLambda(
             }
         }, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES or ClassReader.SKIP_DEBUG)
 
-        invokeMethodDescriptor =
-            parameterDescriptor.type.memberScope
-                .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
-                .single()
-                .let {
-                    //property reference generates erased 'get' method
-                    if (isPropertyReference) it.original else it
-                }
+        invokeMethodDescriptor = findInvokeMethodDescriptor().let {
+            //property reference generates erased 'get' method
+            if (isPropertyReference) it.original else it
+        }
 
         val descriptor = Type.getMethodDescriptor(Type.VOID_TYPE, *capturedArgs)
         val constructor = getMethodNode(
@@ -203,6 +207,8 @@ abstract class DefaultLambda(
 
     protected abstract fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method
 
+    protected abstract fun findInvokeMethodDescriptor(): FunctionDescriptor
+
     private companion object {
         val PROPERTY_REFERENCE_SUPER_CLASSES =
             listOf(
@@ -222,10 +228,11 @@ internal fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, typeMappe
 abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
     override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {
         node = sourceCompiler.generateLambdaBody(this)
+        node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
     }
 
     abstract fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor
-    abstract fun isCapturedSuspend(desc: CapturedParamDesc, inliningContext: InliningContext): Boolean
+    abstract fun isCapturedSuspend(desc: CapturedParamDesc): Boolean
 }
 
 class PsiExpressionLambda(
@@ -340,6 +347,6 @@ class PsiExpressionLambda(
         )
     }
 
-    override fun isCapturedSuspend(desc: CapturedParamDesc, inliningContext: InliningContext): Boolean =
-        isCapturedSuspendLambda(closure, desc.fieldName, inliningContext.state.bindingContext)
+    override fun isCapturedSuspend(desc: CapturedParamDesc): Boolean =
+        isCapturedSuspendLambda(closure, desc.fieldName, typeMapper.bindingContext)
 }

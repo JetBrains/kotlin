@@ -8,15 +8,13 @@ package org.jetbrains.kotlin.idea.perf
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiCheckerAndHighlightingUpdater
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.TEST_KEY
-import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.runAndMeasure
-import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
+import org.jetbrains.kotlin.idea.perf.util.TeamCity.suite
 import org.jetbrains.kotlin.idea.testFramework.Fixture
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.isAKotlinScriptFile
@@ -29,10 +27,10 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     companion object {
 
         @JvmStatic
-        var warmedUp: Boolean = false
+        val hwStats: Stats = Stats("helloWorld project")
 
         @JvmStatic
-        val hwStats: Stats = Stats("helloWorld project")
+        val warmUp = WarmUpProject(hwStats)
 
         @JvmStatic
         val timer: AtomicLong = AtomicLong()
@@ -53,17 +51,28 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
     override fun setUp() {
         super.setUp()
-        // warm up: open simple small project
-        if (!warmedUp) {
-            warmUpProject(hwStats, "src/HelloMain.kt") { perfOpenHelloWorld(hwStats, WARM_UP) }
-            warmedUp = true
-        }
+        warmUp.warmUp(this)
     }
 
     fun testHelloWorldProject() {
+        suite("Hello world project") {
+            myProject = perfOpenProject(stats = hwStats) {
+                name("helloKotlin")
 
-        tcSuite("Hello world project") {
-            myProject = perfOpenHelloWorld(hwStats)
+                kotlinFile("HelloMain") {
+                    topFunction("main") {
+                        param("args", "Array<String>")
+                        body("""println("Hello World!")""")
+                    }
+                }
+
+                kotlinFile("HelloMain2") {
+                    topFunction("main") {
+                        param("args", "Array<String>")
+                        body("""println("Hello World!")""")
+                    }
+                }
+            }
 
             // highlight
             perfHighlightFile("src/HelloMain.kt", hwStats)
@@ -72,16 +81,25 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun testKotlinProject() {
-        tcSuite("Kotlin project") {
-            val stats = Stats("kotlin project")
-            stats.use {
+        suite("Kotlin project") {
+            Stats("kotlin project").use {
                 perfOpenKotlinProject(it)
 
-                perfHighlightFile("idea/idea-analysis/src/org/jetbrains/kotlin/idea/util/PsiPrecedences.kt", stats = it)
+                val filesToHighlight = arrayOf(
+                    "idea/idea-analysis/src/org/jetbrains/kotlin/idea/util/PsiPrecedences.kt",
+                    "compiler/psi/src/org/jetbrains/kotlin/psi/KtElement.kt",
+                    "compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt",
+                    "core/builtins/native/kotlin/Primitives.kt",
 
-                perfHighlightFile("compiler/psi/src/org/jetbrains/kotlin/psi/KtElement.kt", stats = it)
+                    "compiler/frontend/src/org/jetbrains/kotlin/cfg/ControlFlowProcessor.kt",
+                    "compiler/frontend/src/org/jetbrains/kotlin/cfg/ControlFlowInformationProvider.kt",
 
-                perfHighlightFile("compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt", stats = it)
+                    "compiler/backend/src/org/jetbrains/kotlin/codegen/state/KotlinTypeMapper.kt",
+                    "compiler/backend/src/org/jetbrains/kotlin/codegen/inline/MethodInliner.kt"
+                )
+
+                filesToHighlight.forEach { file -> perfHighlightFile(file, stats = it) }
+                filesToHighlight.forEach { file -> perfHighlightFileEmptyProfile(file, stats = it) }
 
                 perfTypeAndHighlight(
                     it,
@@ -104,9 +122,8 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun testKotlinProjectCopyAndPaste() {
-        tcSuite("Kotlin copy-and-paste") {
-            val stats = Stats("Kotlin copy-and-paste")
-            stats.use { stat ->
+        suite("Kotlin copy-and-paste") {
+            Stats("Kotlin copy-and-paste").use { stat ->
                 perfOpenKotlinProjectFast(stat)
 
                 perfCopyAndPaste(
@@ -119,9 +136,8 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun testKotlinProjectCompletionKtFile() {
-        tcSuite("Kotlin completion ktFile") {
-            val stats = Stats("Kotlin completion ktFile")
-            stats.use { stat ->
+        suite("Kotlin completion ktFile") {
+            Stats("Kotlin completion ktFile").use { stat ->
                 perfOpenKotlinProjectFast(stat)
 
                 perfTypeAndAutocomplete(
@@ -142,14 +158,53 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     lookupElements = listOf("importDirectives"),
                     note = "out-of-method import"
                 )
+
+                perfTypeAndAutocomplete(
+                    stat,
+                    fileName = "compiler/backend/src/org/jetbrains/kotlin/codegen/state/KotlinTypeMapper.kt",
+                    marker = "fun mapOwner(descriptor: DeclarationDescriptor): Type {",
+                    insertString = "val b = bind",
+                    typeAfterMarker = true,
+                    lookupElements = listOf("bindingContext"),
+                    note = "in-method completion for KotlinTypeMapper"
+                )
+
+                perfTypeAndAutocomplete(
+                    stat,
+                    fileName = "compiler/backend/src/org/jetbrains/kotlin/codegen/state/KotlinTypeMapper.kt",
+                    marker = "fun mapOwner(descriptor: DeclarationDescriptor): Type {",
+                    insertString = "val b = bind",
+                    typeAfterMarker = false,
+                    lookupElements = listOf("bindingContext"),
+                    note = "out-of-method completion for KotlinTypeMapper"
+                )
+
+                perfTypeAndAutocomplete(
+                    stat,
+                    fileName = "compiler/tests/org/jetbrains/kotlin/util/ArgsToParamsMatchingTest.kt",
+                    marker = "fun testMatchNamed() {",
+                    insertString = "testMatch",
+                    typeAfterMarker = true,
+                    lookupElements = listOf("testMatchNamed"),
+                    note = "in-method completion for ArgsToParamsMatchingTest"
+                )
+
+                perfTypeAndAutocomplete(
+                    stat,
+                    fileName = "compiler/tests/org/jetbrains/kotlin/util/ArgsToParamsMatchingTest.kt",
+                    marker = "class ArgsToParamsMatchingTest {",
+                    insertString = "val me = ",
+                    typeAfterMarker = true,
+                    lookupElements = listOf("ArgsToParamsMatchingTest"),
+                    note = "out-of-method completion for ArgsToParamsMatchingTest"
+                )
             }
         }
     }
 
     fun testKotlinProjectCompletionBuildGradle() {
-        tcSuite("Kotlin completion gradle.kts") {
-            val stats = Stats("kotlin completion gradle.kts")
-            stats.use { stat ->
+        suite("Kotlin completion gradle.kts") {
+            Stats("kotlin completion gradle.kts").use { stat ->
                 runAndMeasure("open kotlin project") {
                     perfOpenKotlinProjectFast(stat)
                 }
@@ -181,29 +236,27 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun testKotlinProjectScriptDependenciesBuildGradle() {
-        tcSuite("Kotlin scriptDependencies gradle.kts") {
-            val stats = Stats("kotlin scriptDependencies gradle.kts")
-            stats.use { stat ->
+        suite("Kotlin scriptDependencies gradle.kts") {
+            Stats("kotlin scriptDependencies gradle.kts").use { stat ->
                 perfOpenKotlinProjectFast(stat)
 
                 perfScriptDependenciesBuildGradleKts(stat)
                 perfScriptDependenciesIdeaBuildGradleKts(stat)
-                perfScriptDependenciesJpsGradleKts(stat)
-                perfScriptDependenciesVersionGradleKts(stat)
+//                perfScriptDependenciesJpsGradleKts(stat)
+//                perfScriptDependenciesVersionGradleKts(stat)
             }
         }
     }
 
     fun testKotlinProjectBuildGradle() {
-        tcSuite("Kotlin gradle.kts") {
-            val stats = Stats("kotlin gradle.kts")
-            stats.use { stat ->
+        suite("Kotlin gradle.kts") {
+            Stats("kotlin gradle.kts").use { stat ->
                 perfOpenKotlinProjectFast(stat)
 
                 perfFileAnalysisBuildGradleKts(stat)
                 perfFileAnalysisIdeaBuildGradleKts(stat)
-                perfFileAnalysisJpsGradleKts(stat)
-                perfFileAnalysisVersionGradleKts(stat)
+//                perfFileAnalysisJpsGradleKts(stat)
+//                perfFileAnalysisVersionGradleKts(stat)
             }
         }
     }
@@ -259,44 +312,40 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         note: String = ""
     ) {
         val project = myProject!!
-        val disposable = Disposer.newDisposable("perfKtsFileAnalysis $fileName")
+        //val disposable = Disposer.newDisposable("perfKtsFileAnalysis $fileName")
 
-        enableAllInspectionsCompat(project, disposable)
+        //enableAllInspectionsCompat(project, disposable)
 
         replaceWithCustomHighlighter()
 
-        try {
-            highlightFile {
-                val testName = "fileAnalysis ${notePrefix(note)}${simpleFilename(fileName)}"
-                val extraStats = Stats("${stats.name} $testName")
-                val extraTimingsNs = mutableListOf<Map<String, Any>?>()
+        highlightFile {
+            val testName = "fileAnalysis ${notePrefix(note)}${simpleFilename(fileName)}"
+            val extraStats = Stats("${stats.name} $testName")
+            val extraTimingsNs = mutableListOf<Map<String, Any>?>()
 
-                val warmUpIterations = 20
-                val iterations = 30
+            val warmUpIterations = 30
+            val iterations = 50
 
-                performanceTest<Fixture, Pair<Long, List<HighlightInfo>>> {
-                    name(testName)
-                    stats(stats)
-                    warmUpIterations(30)
-                    iterations(50)
-                    setUp(perfKtsFileAnalysisSetUp(project, fileName))
-                    test(perfKtsFileAnalysisTest())
-                    tearDown(perfKtsFileAnalysisTearDown(extraTimingsNs, project))
-                    profileEnabled(true)
-                }
-
-                extraStats.printWarmUpTimings(
-                    "annotator",
-                    extraTimingsNs.take(warmUpIterations).toTypedArray()
-                )
-
-                extraStats.appendTimings(
-                    "annotator",
-                    extraTimingsNs.drop(warmUpIterations).toTypedArray()
-                )
+            performanceTest<Fixture, Pair<Long, List<HighlightInfo>>> {
+                name(testName)
+                stats(stats)
+                warmUpIterations(warmUpIterations)
+                iterations(iterations)
+                setUp(perfKtsFileAnalysisSetUp(project, fileName))
+                test(perfKtsFileAnalysisTest())
+                tearDown(perfKtsFileAnalysisTearDown(extraTimingsNs, project))
+                profilerConfig.enabled = true
             }
-        } finally {
-            Disposer.dispose(disposable)
+
+            extraStats.printWarmUpTimings(
+                "annotator",
+                extraTimingsNs.take(warmUpIterations).toTypedArray()
+            )
+
+            extraStats.appendTimings(
+                "annotator",
+                extraTimingsNs.drop(warmUpIterations).toTypedArray()
+            )
         }
     }
 

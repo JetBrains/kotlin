@@ -30,7 +30,7 @@ class E: A() {
         B().<!UNRESOLVED_REFERENCE!>bar<!>()
 
         D()
-        C()
+        <!UNRESOLVED_REFERENCE!>C<!>()
     }
 
     object Z {
@@ -39,7 +39,7 @@ class E: A() {
             B().<!UNRESOLVED_REFERENCE!>bar<!>()
 
             D()
-            C()
+            <!UNRESOLVED_REFERENCE!>C<!>()
         }
     }
 }

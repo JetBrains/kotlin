@@ -14,6 +14,6 @@ object Test {
 // jvm signature: (Ljava/lang/Integer;)V
 // generic signature: null
 
-// method: Test::asReturn
+// method: Test::asReturn-tzJxzxE
 // jvm signature: ()LSimpleClass;
 // generic signature: null

@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS_IR, JS, NATIVE
+// IGNORE_BACKEND: JS_IR_ES6
 // WITH_REFLECT
 
 import kotlin.reflect.KCallable

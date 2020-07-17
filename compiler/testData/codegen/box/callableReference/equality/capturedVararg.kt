@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: JVM_IR, JS, JS_IR, NATIVE
+// IGNORE_BACKEND: JS, JS_IR, NATIVE
+// IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND_FIR: JVM_IR
 // FILE: test.kt
 
@@ -49,6 +50,10 @@ fun box(): String {
     checkNotEqual(captureVararg0(V::target), captureVarargAsArray(V::target))
     checkNotEqual(captureVararg1Bound(v0::target), captureVarargAsArrayBound(v0::target))
     checkNotEqual(captureVararg1Bound(v0::target), captureVarargAsArrayBoundFromOtherFile(v0))
+
+    val v1 = V()
+    checkNotEqual(captureVararg0Bound(v0::target), captureVararg0Bound(v1::target))
+    checkNotEqual(captureVarargAsArrayBound(v0::target), captureVarargAsArrayBound(v1::target))
 
     return "OK"
 }

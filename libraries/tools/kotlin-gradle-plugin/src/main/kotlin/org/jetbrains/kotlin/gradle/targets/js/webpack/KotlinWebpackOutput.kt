@@ -6,10 +6,17 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 
 data class KotlinWebpackOutput(
-    @Input var library: String?,
-    @Input var libraryTarget: String?
+    @Input
+    @Optional
+    var library: String?,
+    @Input
+    @Optional
+    var libraryTarget: String?,
+    @Input
+    var globalObject: String = "window"
 ) {
     object Target {
         const val VAR = "var"

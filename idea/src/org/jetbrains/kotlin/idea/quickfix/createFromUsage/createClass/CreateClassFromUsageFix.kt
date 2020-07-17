@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
@@ -198,7 +197,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
 
             val targetDirectory = dialog.targetDirectory ?: return
             val fileName = "$className.${KotlinFileType.EXTENSION}"
-            val packageFqName = targetDirectory.getFqNameWithImplicitPrefix()?.quoteIfNeeded()
+            val packageFqName = targetDirectory.getFqNameWithImplicitPrefix()
 
             file.project.executeWriteCommand(text) {
                 val targetFile = getOrCreateKotlinFile(fileName, targetDirectory, (packageFqName ?: defaultPackageFqName).asString())

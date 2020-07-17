@@ -39,14 +39,17 @@ val projectsToShadow by extra(listOf(
         ":idea:scripting-support",
         ":idea:idea-j2k",
         ":idea:formatter",
+        ":idea:line-indent-provider",
         ":compiler:psi",
         ":compiler:fir:cones",
         ":compiler:fir:checkers",
         ":compiler:fir:resolve",
+        ":compiler:fir:fir-serialization",
         ":compiler:fir:tree",
         ":compiler:fir:java",
         ":compiler:fir:jvm",
         ":compiler:fir:raw-fir:psi2fir",
+        ":compiler:fir:raw-fir:fir-common",
         ":compiler:fir:fir2ir",
         ":compiler:fir:fir2ir:jvm-backend",
         ":compiler:frontend",
@@ -91,6 +94,11 @@ val projectsToShadow by extra(listOf(
         ":idea:idea-jvm",
         ":idea:idea-git",
         ":idea:idea-jps-common",
+        ":idea:idea-frontend-independent",
+        ":idea:idea-frontend-fir",
+        ":idea:idea-frontend-api",
+        ":idea:idea-frontend-fir:idea-fir-low-level-api",
+        ":idea:idea-fir",
         *if (Ide.IJ())
             arrayOf(
                 ":idea:idea-maven",
@@ -135,7 +143,12 @@ val libraries by configurations.creating {
     exclude("org.jetbrains.intellij.deps", "trove4j") // Idea already has trove4j
 }
 
-val jpsPlugin by configurations.creating
+val jpsPlugin by configurations.creating {
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 
 configurations.all {
     resolutionStrategy {

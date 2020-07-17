@@ -6,13 +6,17 @@
           "specVersion": "0.1-253",
           "casesNumber": 0,
           "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-253",
           "casesNumber": 0,
           "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "2": [
@@ -21,14 +25,16 @@
           "casesNumber": 0,
           "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
           "path": "compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-253",
           "casesNumber": 0,
           "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
           "path": "compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }
@@ -41,14 +47,16 @@
           "casesNumber": 0,
           "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
           "path": "compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-253",
           "casesNumber": 0,
           "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
           "path": "compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

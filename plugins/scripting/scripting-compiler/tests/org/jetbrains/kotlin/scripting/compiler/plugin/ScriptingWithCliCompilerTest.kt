@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
-import junit.framework.Assert
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
+import org.junit.Assert
 import org.junit.Test
 import java.io.File
 

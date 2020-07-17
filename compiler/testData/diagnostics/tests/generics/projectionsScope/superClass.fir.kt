@@ -6,7 +6,7 @@ interface Clazz<T> {
 }
 
 fun test(clazz: Clazz<*>) {
-    clazz.t checkType { <!UNRESOLVED_REFERENCE!>_<!><Any?>() }
-    clazz.getSuperClass() checkType { <!UNRESOLVED_REFERENCE!>_<!><Clazz<*>>() }
-    clazz.getSuperClass().t checkType { <!UNRESOLVED_REFERENCE!>_<!><Any?>() }
+    clazz.t checkType { _<Any?>() }
+    clazz.getSuperClass() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Clazz<*>>() }
+    clazz.getSuperClass().t checkType { _<Any?>() }
 }

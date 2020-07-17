@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -95,6 +98,14 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val obj = expression.symbol.owner
         assert(obj.kind == ClassKind.OBJECT)
         assert(obj.isEffectivelyExternal()) { "Non external IrGetObjectValue must be lowered" }
+
+        // External interfaces cannot normally have companion objects.
+        // However, stdlib uses them to simulate string literal unions
+        // TODO: Stop abusing this tech
+        if (obj.isCompanion && obj.parentAsClass.isInterface) {
+            return JsNullLiteral()
+        }
+
         return context.getRefForExternalClass(obj)
     }
 
@@ -127,7 +138,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             return JsBinaryOperation(JsBinaryOperator.ASG, thisRef, arguments.single())
         }
 
-        return JsInvocation(callFuncRef, listOf(thisRef) + arguments)
+        return if (context.staticContext.backendContext.es6mode) {
+            JsInvocation(JsNameRef("super"), arguments)
+        } else {
+            JsInvocation(callFuncRef, listOf(thisRef) + arguments)
+        }
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
@@ -254,6 +269,15 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
             else -> error("Unexpected operator ${expression.operator}: ${expression.render()}")
         }
+
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: JsGenerationContext): JsExpression {
+        val name = when (val function = expression.symbol.owner) {
+            is IrConstructor -> data.getNameForConstructor(function)
+            is IrSimpleFunction -> data.getNameForStaticFunction(function)
+            else -> error("Unexpected function kind")
+        }
+        return JsNameRef(name)
+    }
 
     private fun prefixOperation(operator: JsUnaryOperator, expression: IrDynamicOperatorExpression, data: JsGenerationContext) =
         JsPrefixOperation(

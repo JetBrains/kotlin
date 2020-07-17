@@ -5,21 +5,22 @@ import kotlinx.collections.immutable.toPersistentList
 
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
-import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
 
 data class ModulesToIrConversionData(
     val rootModules: List<Module>,
     val projectPath: Path,
     val projectName: String,
-    val kotlinVersion: Version,
+    val kotlinVersion: WizardKotlinVersion,
     val buildSystemType: BuildSystemType,
     val pomIr: PomIR
 ) {
@@ -69,8 +70,12 @@ class ModulesToIRsConverter(
     fun Writer.createBuildFiles(): TaskResult<List<BuildFileIR>> = with(data) {
         val needExplicitRootBuildFile = !needFlattening
         val initialState = ModulesToIrsState(projectPath, parentModuleHasTransitivelySpecifiedKotlinVersion = false)
+
+        val parentModuleHasKotlinVersion = allModules.any { module ->
+            module.configurator == AndroidSinglePlatformModuleConfigurator
+        }
+
         rootModules.mapSequence { module ->
-            val parentModuleHasKotlinVersion = module.configurator == AndroidSinglePlatformModuleConfigurator
             createBuildFileForModule(
                 module,
                 initialState.copy(parentModuleHasTransitivelySpecifiedKotlinVersion = parentModuleHasKotlinVersion)
@@ -120,7 +125,14 @@ class ModulesToIRsConverter(
 
             with(dependencyType) {
                 @Suppress("DEPRECATION")
-                with(unsafeSettingWriter) { runArbitraryTask(module, to, data).ensure() }
+                with(unsafeSettingWriter) {
+                    runArbitraryTask(
+                        module,
+                        to,
+                        to.path.considerSingleRootModuleMode(data.isSingleRootModuleMode).asPath(),
+                        data
+                    ).ensure()
+                }
                 irsToAddToModules.getOrPut(to) { mutableListOf() } += createToIRs(module, to, data).get()
                 createDependencyIrs(module, to, data)
             }
@@ -131,16 +143,7 @@ class ModulesToIRsConverter(
             val dependenciesIRs = buildPersistenceList<BuildSystemIR> {
                 +moduleDependencies
                 with(configurator) { +createModuleIRs(this@createSinglePlatformModule, data, module) }
-                addIfNotNull(
-                    configurator.createStdlibType(data, module)?.let { stdlibType ->
-                        KotlinStdlibDependencyIR(
-                            type = stdlibType,
-                            isInMppModule = false,
-                            version = data.kotlinVersion,
-                            dependencyType = DependencyType.MAIN
-                        )
-                    }
-                )
+                addIfNotNull(addSdtLibForNonGradleSignleplatformModule(module))
             }
 
             val moduleIr = SingleplatformModuleIR(
@@ -174,11 +177,11 @@ class ModulesToIRsConverter(
         }
 
         module.subModules.mapSequence { subModule ->
-                createBuildFileForModule(
-                    subModule,
-                    state.stateForSubModule(modulePath)
-                )
-            }.map { it.flatten() }
+            createBuildFileForModule(
+                subModule,
+                state.stateForSubModule(modulePath)
+            )
+        }.map { it.flatten() }
             .map { children ->
                 buildFileIR?.let { children + it } ?: children
             }
@@ -225,25 +228,11 @@ class ModulesToIRsConverter(
         mutateProjectStructureByModuleConfigurator(target, modulePath)
         val sourcesetss = target.sourcesets.map { sourceset ->
             val sourcesetName = target.name + sourceset.sourcesetType.name.capitalize()
-            val sourcesetIrs = buildList<BuildSystemIR> {
-                if (sourceset.sourcesetType == SourcesetType.main) {
-                    addIfNotNull(
-                        target.configurator.createStdlibType(data, target)?.let { stdlibType ->
-                            KotlinStdlibDependencyIR(
-                                type = stdlibType,
-                                isInMppModule = true,
-                                version = data.kotlinVersion,
-                                dependencyType = DependencyType.MAIN
-                            )
-                        }
-                    )
-                }
-            }
             MultiplatformSourcesetIR(
                 sourceset.sourcesetType,
                 modulePath / Defaults.SRC_DIR / sourcesetName,
                 target.name,
-                sourcesetIrs.toPersistentList(),
+                persistentListOf(),
                 sourceset
             )
         }
@@ -271,6 +260,18 @@ class ModulesToIRsConverter(
         }
     }
 
+    private fun Reader.addSdtLibForNonGradleSignleplatformModule(module: Module): KotlinStdlibDependencyIR? {
+        // for gradle stdlib is added by default KT-38221
+        if (buildSystemType.isGradle) return null
+        val stdlibType = module.configurator.createStdlibType(data, module) ?: return null
+        return KotlinStdlibDependencyIR(
+            type = stdlibType,
+            isInMppModule = false,
+            kotlinVersion = data.kotlinVersion,
+            dependencyType = DependencyType.MAIN
+        )
+    }
+
     private fun Reader.createBuildFileIRs(
         module: Module,
         state: ModulesToIrsState
@@ -280,7 +281,6 @@ class ModulesToIRsConverter(
                 // do not print version for non-root modules for gradle
                 val needRemoveVersion = data.buildSystemType.isGradle
                         && state.parentModuleHasTransitivelySpecifiedKotlinVersion
-                        && module.configurator != AndroidSinglePlatformModuleConfigurator
                 when {
                     needRemoveVersion -> plugin.copy(version = null)
                     else -> plugin

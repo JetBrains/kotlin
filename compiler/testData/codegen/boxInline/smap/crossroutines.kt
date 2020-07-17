@@ -89,17 +89,6 @@ Kotlin
 *S Kotlin
 *F
 + 1 2.kt
-_2Kt$builder$1
-*L
-1#1,29:1
-*E
-
-SMAP
-2.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 2.kt
 _2Kt$box$1
 + 2 1.kt
 test/_1Kt

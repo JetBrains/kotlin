@@ -22,6 +22,12 @@ internal fun <T> sortArrayWith(array: Array<out T>, comparator: Comparator<in T>
     }
 }
 
+internal fun <T> sortArrayWith(array: Array<out T>, fromIndex: Int, toIndex: Int, comparator: Comparator<in T>) {
+    if (fromIndex < toIndex - 1) {
+        mergeSort(array.unsafeCast<Array<T>>(), fromIndex, toIndex - 1, comparator)
+    }
+}
+
 internal fun <T : Comparable<T>> sortArray(array: Array<out T>) {
     if (getStableSortingIsSupported()) {
         val comparison = { a: T, b: T -> a.compareTo(b) }
@@ -56,7 +62,7 @@ private fun <T> mergeSort(array: Array<T>, start: Int, endInclusive: Int, compar
     val buffer = arrayOfNulls<Any?>(array.size).unsafeCast<Array<T>>()
     val result = mergeSort(array, buffer, start, endInclusive, comparator)
     if (result !== array) {
-        result.forEachIndexed { i, v -> array[i] = v }
+        for (i in start..endInclusive) array[i] = result[i]
     }
 }
 

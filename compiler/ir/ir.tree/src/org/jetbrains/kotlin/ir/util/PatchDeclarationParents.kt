@@ -53,19 +53,6 @@ class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
         }
     }
 
-    override fun visitProperty(declaration: IrProperty) {
-        declaration.getter?.let {
-            it.correspondingPropertySymbol = declaration.symbol
-        }
-        declaration.setter?.let {
-            it.correspondingPropertySymbol = declaration.symbol
-        }
-        declaration.backingField?.let {
-            it.correspondingPropertySymbol = declaration.symbol
-        }
-        super.visitProperty(declaration)
-    }
-
     private fun patchParent(declaration: IrDeclaration) {
         declaration.parent = declarationParentsStack.peekFirst()
     }

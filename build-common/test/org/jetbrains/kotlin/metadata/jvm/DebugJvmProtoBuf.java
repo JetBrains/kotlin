@@ -18,6 +18,7 @@ public final class DebugJvmProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.classModuleName);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.classLocalVariable);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.anonymousObjectOriginName);
+    registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.jvmClassFlags);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.packageModuleName);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.packageLocalVariable);
   }
@@ -4650,6 +4651,21 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
         null);
+  public static final int JVM_CLASS_FLAGS_FIELD_NUMBER = 104;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
+   *
+   * <pre>
+   * isFunctionBodyInInterface: 0 if actual body generated in DefaultImpl, 1 - otherwise (in interface default method)
+   * </pre>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.DebugProtoBuf.Class,
+      java.lang.Integer> jvmClassFlags = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Integer.class,
+        null);
   public static final int PACKAGE_MODULE_NAME_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Package { ... }</code>
@@ -4758,12 +4774,13 @@ public final class DebugJvmProtoBuf {
       "\'.org.jetbrains.kotlin.metadata.Property",
       ":P\n\034anonymous_object_origin_name\022$.org.j" +
       "etbrains.kotlin.metadata.Class\030g \001(\005B\004\230\265" +
-      "\030\001:I\n\023package_module_name\022&.org.jetbrain" +
-      "s.kotlin.metadata.Package\030e \001(\005B\004\230\265\030\001:o\n" +
-      "\026package_local_variable\022&.org.jetbrains." +
-      "kotlin.metadata.Package\030f \003(\0132\'.org.jetb" +
-      "rains.kotlin.metadata.PropertyB\022B\020DebugJ" +
-      "vmProtoBuf"
+      "\030\001:@\n\017jvm_class_flags\022$.org.jetbrains.ko" +
+      "tlin.metadata.Class\030h \001(\005:\0010:I\n\023package_" +
+      "module_name\022&.org.jetbrains.kotlin.metad" +
+      "ata.Package\030e \001(\005B\004\230\265\030\001:o\n\026package_local" +
+      "_variable\022&.org.jetbrains.kotlin.metadat" +
+      "a.Package\030f \003(\0132\'.org.jetbrains.kotlin.m" +
+      "etadata.PropertyB\022B\020DebugJvmProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4820,8 +4837,9 @@ public final class DebugJvmProtoBuf {
     classModuleName.internalInit(descriptor.getExtensions().get(8));
     classLocalVariable.internalInit(descriptor.getExtensions().get(9));
     anonymousObjectOriginName.internalInit(descriptor.getExtensions().get(10));
-    packageModuleName.internalInit(descriptor.getExtensions().get(11));
-    packageLocalVariable.internalInit(descriptor.getExtensions().get(12));
+    jvmClassFlags.internalInit(descriptor.getExtensions().get(11));
+    packageModuleName.internalInit(descriptor.getExtensions().get(12));
+    packageLocalVariable.internalInit(descriptor.getExtensions().get(13));
     org.jetbrains.kotlin.protobuf.ExtensionRegistry registry =
         org.jetbrains.kotlin.protobuf.ExtensionRegistry.newInstance();
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.stringIdInTable);

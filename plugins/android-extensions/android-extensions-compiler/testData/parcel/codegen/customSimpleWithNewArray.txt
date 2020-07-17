@@ -25,7 +25,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
           ARETURN
     }
 
-    public void write(User this@write, android.os.Parcel parcel, int flags)
+    public void write(User $this$write, android.os.Parcel parcel, int flags)
 
     public void write(java.lang.Object p0, android.os.Parcel p1, int p2)
 }
@@ -33,9 +33,11 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
 public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel in)
+    public final User createFromParcel(android.os.Parcel in)
 
-    public final java.lang.Object[] newArray(int size) {
+    public java.lang.Object createFromParcel(android.os.Parcel p0)
+
+    public final User[] newArray(int size) {
         LABEL (L0)
           GETSTATIC (Companion, LUser$Companion;)
           ILOAD (1)
@@ -43,12 +45,21 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
           ARETURN
         LABEL (L1)
     }
+
+    public java.lang.Object[] newArray(int p0) {
+        LABEL (L0)
+        LINENUMBER (9)
+          ALOAD (0)
+          ILOAD (1)
+          INVOKEVIRTUAL (User$Creator, newArray, (I)[LUser;)
+          ARETURN
+    }
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
     public final static android.os.Parcelable$Creator CREATOR
 
-    public final static User$Companion Companion
+    private final static User$Companion Companion
 
     private final int age
 

@@ -67,6 +67,14 @@ interface BodyLoweringPass : FileLoweringPass {
 
 fun FileLoweringPass.lower(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { lower(it) }
 
+//fun FileLoweringPass.lower(modules: Iterable<IrModuleFragment>) {
+//    modules.forEach { module ->
+//        module.files.forEach {
+//            lower(it)
+//        }
+//    }
+//}
+
 fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
     irFile.acceptVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
@@ -139,6 +147,15 @@ fun BodyLoweringPass.runOnFilePostfix(irFile: IrFile, withLocalDeclarations: Boo
                     }
                 }
             }
+
+            override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
+                ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
+                if (withLocalDeclarations) {
+                    declaration.statements.forEach { it.accept(this, null) }
+                }
+                declaration.thisReceiver.accept(this, declaration)
+            }
+
         }, null)
     }
 }
@@ -238,6 +255,17 @@ fun DeclarationTransformer.runPostfix(withLocalDeclarations: Boolean = false): D
                     ArrayList(declaration.declarations).forEach { it.accept(this, null) }
 
                     declaration.declarations.transformFlat(this@runPostfix::transformFlatRestricted)
+                }
+
+                override fun visitScript(declaration: IrScript) {
+                    ArrayList(declaration.declarations).forEach { it.accept(this, null) }
+                    declaration.declarations.transformFlat(this@runPostfix::transformFlatRestricted)
+
+                    if (withLocalDeclarations) {
+                        declaration.statements.forEach { it.accept(this, null) }
+                    }
+
+                    declaration.thisReceiver.accept(this, null)
                 }
             })
 

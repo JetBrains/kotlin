@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 open class Test {
     var publicProperty: String = ""
         private set

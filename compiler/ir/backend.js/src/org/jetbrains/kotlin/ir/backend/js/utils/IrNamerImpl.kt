@@ -73,4 +73,14 @@ class IrNamerImpl(private val newNameTables: NameTables) : IrNamer {
                 error("Unsupported external class parent $parent")
         }
     }
+
+    private val associatedObjectKeyMap = mutableMapOf<IrClass, Int>()
+
+    override fun getAssociatedObjectKey(irClass: IrClass): Int? {
+        if (irClass.isAssociatedObjectAnnotatedAnnotation) {
+
+            return associatedObjectKeyMap.getOrPut(irClass) { associatedObjectKeyMap.size }
+        }
+        return null
+    }
 }

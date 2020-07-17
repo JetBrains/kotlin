@@ -3,6 +3,7 @@
 // TODO: replace all references on expected declarations and their members to actuals,
 //  otherwise DCE keeps members of expect D referenced from lambdas in default arguments instead of members of actual D
 // IGNORE_BACKEND: JS, JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 // FILE: 1.kt
 

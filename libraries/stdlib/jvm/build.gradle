@@ -6,6 +6,8 @@ archivesBaseName = 'kotlin-stdlib'
 
 configureJvm6Project(project)
 configurePublishing(project)
+configureJavadocJar()
+configureSourcesJar()
 
 configurations {
     distSources
@@ -39,7 +41,11 @@ sourceSets {
 configurations {
     commonSources
     longRunningTestCompile.extendsFrom(testCompile)
-    builtins
+    builtins {
+        attributes {
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
+        }
+    }
     compileOnly.extendsFrom(builtins)
 }
 
@@ -58,12 +64,11 @@ dependencies {
 
 jar {
     dependsOn(configurations.builtins)
-    manifestAttributes(manifest, project, 'Main' /*true*/)
+    manifestAttributes(manifest, project, 'Main', true)
     from {
         zipTree(configurations.builtins.singleFile)
     }
-    // TODO: enable as soon as this doesn't cause D8/DX to crash
-    // from sourceSets.java9.output
+    from sourceSets.java9.output
 }
 
 sourcesJar {
@@ -85,16 +90,11 @@ task distSourcesJar(type: Jar) {
     }
 }
 
-task modularJar(type: Jar) {
+configureModularJar {
     dependsOn(jar)
     manifestAttributes(manifest, project, 'Main', true)
-    classifier = 'modular'
 
-    from zipTree(jar.outputs.files.singleFile).matching {
-        // Beware of Gradle problem: changing exclude spec doesn't affect Jar task up-to-dateness
-        exclude('kotlin/native/**')
-    }
-    from sourceSets.java9.output
+    from zipTree(jar.outputs.files.singleFile)
 }
 
 artifacts {
@@ -103,8 +103,6 @@ artifacts {
     distSources distSourcesJar
     archives modularJar
 }
-
-javadocJar()
 
 DexMethodCountKt.dexMethodCount(project) { task ->
     task.from(jar)
@@ -138,6 +136,8 @@ compileTestKotlin {
                 "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
                 "-Xopt-in=kotlin.ExperimentalStdlibApi",
         ]
+        // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
+        freeCompilerArgs.remove("-Xno-optimized-callable-references")
     }
 }
 

@@ -205,13 +205,13 @@ class HighlightingBenchmarkAction : AnAction() {
         if (result == JFileChooser.APPROVE_OPTION) {
             val file = jfc.selectedFile
             file.writeText(buildString {
-                appendln("n, file, lines, status, time")
+                appendLine("n, file, lines, status, time")
                 var i = 0
                 allResults.forEach {
                     append(i++)
                     append(", ")
                     it.toCSV(this)
-                    appendln()
+                    appendLine()
                 }
             })
         }

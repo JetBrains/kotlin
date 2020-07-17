@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -106,7 +106,6 @@ class NotPropertiesServiceImpl(private val project: Project) : NotPropertiesServ
     }
 
     companion object {
-
         private val atomicMethods = listOf(
             "getAndIncrement", "getAndDecrement", "getAcquire", "getOpaque", "getPlain"
         )
@@ -126,14 +125,11 @@ class NotPropertiesServiceImpl(private val project: Project) : NotPropertiesServ
     }
 }
 
-class UsePropertyAccessSyntaxIntention :
-    SelfTargetingOffsetIndependentIntention<KtCallExpression>(
-        KtCallExpression::class.java,
-        KotlinBundle.message("use.property.access.syntax")
-    ) {
-    override fun isApplicableTo(element: KtCallExpression): Boolean {
-        return detectPropertyNameToUse(element) != null
-    }
+class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(
+    KtCallExpression::class.java,
+    KotlinBundle.lazyMessage("use.property.access.syntax")
+) {
+    override fun isApplicableTo(element: KtCallExpression): Boolean = detectPropertyNameToUse(element) != null
 
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
         val propertyName = detectPropertyNameToUse(element) ?: return
@@ -142,13 +138,10 @@ class UsePropertyAccessSyntaxIntention :
         }
     }
 
-    fun applyTo(element: KtCallExpression, propertyName: Name, reformat: Boolean): KtExpression {
-        val arguments = element.valueArguments
-        return when (arguments.size) {
-            0 -> replaceWithPropertyGet(element, propertyName)
-            1 -> replaceWithPropertySet(element, propertyName, reformat)
-            else -> error("More than one argument in call to accessor")
-        }
+    fun applyTo(element: KtCallExpression, propertyName: Name, reformat: Boolean): KtExpression = when (element.valueArguments.size) {
+        0 -> replaceWithPropertyGet(element, propertyName)
+        1 -> replaceWithPropertySet(element, propertyName, reformat)
+        else -> error("More than one argument in call to accessor")
     }
 
     fun detectPropertyNameToUse(callExpression: KtCallExpression): Name? {
@@ -195,6 +188,7 @@ class UsePropertyAccessSyntaxIntention :
         val valueArgumentExpression = callExpression.valueArguments.firstOrNull()?.getArgumentExpression()?.takeUnless {
             it is KtLambdaExpression || it is KtNamedFunction || it is KtCallableReferenceExpression
         }
+
         if (isSetUsage && valueArgumentExpression == null) {
             return null
         }
@@ -220,6 +214,7 @@ class UsePropertyAccessSyntaxIntention :
                 expectedType = expectedType,
                 isStatement = true
             )
+
             if (newBindingContext.diagnostics.any { it.severity == Severity.ERROR }) return null
         }
 
@@ -252,6 +247,7 @@ class UsePropertyAccessSyntaxIntention :
             false, facade.frontendService<LanguageVersionSettings>(),
             facade.frontendService<DataFlowValueFactory>()
         )
+
         val callResolver = facade.frontendService<CallResolver>()
         val result = callResolver.resolveSimpleProperty(context)
         return result.isSuccess && result.resultingDescriptor.original == property
@@ -277,7 +273,7 @@ class UsePropertyAccessSyntaxIntention :
         val callParent = call.parent
         var callToConvert = callExpression
         if (callParent is KtDeclarationWithBody && call == callParent.bodyExpression) {
-            ConvertToBlockBodyIntention.convert(callParent)
+            ConvertToBlockBodyIntention.convert(callParent, true)
             val firstStatement = callParent.bodyBlockExpression?.statements?.first()
             callToConvert = (firstStatement as? KtQualifiedExpression)?.selectorExpression as? KtCallExpression
                 ?: firstStatement as? KtCallExpression
@@ -292,6 +288,7 @@ class UsePropertyAccessSyntaxIntention :
                 is KtSafeQualifiedExpression -> "$0?.$1=$2"
                 else -> error(qualifiedExpression) //TODO: make it sealed?
             }
+
             val newExpression = KtPsiFactory(callToConvert).createExpressionByPattern(
                 pattern,
                 qualifiedExpression.receiverExpression,

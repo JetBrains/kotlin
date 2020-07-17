@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.nextSiblingOfSameType
-import org.jetbrains.kotlin.psi.psiUtil.prevSiblingOfSameType
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
@@ -47,17 +46,6 @@ private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
             val nextEntry = declaration.nextSiblingOfSameType()
             if (nextEntry != null && !declaration.containsToken(KtTokens.COMMA)) {
                 declaration.add(comma)
-                delta += comma.textLength
-            }
-
-            val prevEntry = declaration.prevSiblingOfSameType()
-            if (prevEntry != null && !prevEntry.containsToken(KtTokens.COMMA)) {
-                val semicolon = prevEntry.allChildren.firstOrNull { it.node?.elementType == KtTokens.SEMICOLON }
-                if (semicolon != null) {
-                    semicolon.delete()
-                    declaration.add(psiFactory.createSemicolon())
-                }
-                prevEntry.add(comma)
                 delta += comma.textLength
             }
         } else {

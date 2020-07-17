@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,7 +33,7 @@ private const val IMPL_SUFFIX = "Impl"
 
 class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
     KtClass::class.java,
-    KotlinBundle.message("create.kotlin.subclass")
+    KotlinBundle.lazyMessage("create.kotlin.subclass")
 ) {
 
     override fun applicabilityRange(element: KtClass): TextRange? {
@@ -56,15 +56,16 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
                 return null
             }
         }
-        text = getImplementTitle(element)
+
+        setTextGetter(getImplementTitle(element))
         return TextRange(element.startOffset, element.body?.lBrace?.startOffset ?: element.endOffset)
     }
 
     private fun getImplementTitle(baseClass: KtClass) = when {
-        baseClass.isInterface() -> KotlinBundle.message("implement.interface")
-        baseClass.isAbstract() -> KotlinBundle.message("implement.abstract.class")
-        baseClass.isSealed() -> KotlinBundle.message("implement.sealed.class")
-        else /* open class */ -> KotlinBundle.message("create.subclass")
+        baseClass.isInterface() -> KotlinBundle.lazyMessage("implement.interface")
+        baseClass.isAbstract() -> KotlinBundle.lazyMessage("implement.abstract.class")
+        baseClass.isSealed() -> KotlinBundle.lazyMessage("implement.sealed.class")
+        else /* open class */ -> KotlinBundle.lazyMessage("create.subclass")
     }
 
     override fun startInWriteAction() = false

@@ -34,12 +34,12 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.TypeCheck;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.naming.SuggestedName;
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.Arrays;
@@ -57,8 +57,8 @@ public final class Namer {
     public static final String KOTLIN_NAME = KotlinLanguage.NAME;
     public static final String KOTLIN_LOWER_NAME = KOTLIN_NAME.toLowerCase();
 
-    public static final String EQUALS_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatformAnalyzerServices.INSTANCE.getBuiltIns().getAny(), "equals");
-    public static final String COMPARE_TO_METHOD_NAME = getStableMangledNameForDescriptor(JsPlatformAnalyzerServices.INSTANCE.getBuiltIns().getComparable(), "compareTo");
+    public static final String EQUALS_METHOD_NAME = "equals";
+    public static final String COMPARE_TO_METHOD_NAME = "compareTo_11rb$";
     public static final String LONG_FROM_NUMBER = "fromNumber";
     public static final String LONG_TO_NUMBER = "toNumber";
     public static final String LONG_FROM_INT = "fromInt";
@@ -134,7 +134,11 @@ public final class Namer {
     public static final String SAM_FIELD_NAME = "function$";
 
     @NotNull
-    public static String getFunctionTag(@NotNull CallableDescriptor functionDescriptor, @NotNull JsConfig config) {
+    public static String getFunctionTag(
+            @NotNull CallableDescriptor functionDescriptor,
+            @NotNull JsConfig config,
+            @NotNull BindingContext bindingContext
+    ) {
         String intrinsicTag = ArrayFIF.INSTANCE.getTag(functionDescriptor, config);
         if (intrinsicTag != null) return intrinsicTag;
 
@@ -147,7 +151,7 @@ public final class Namer {
             qualifier = fqNameParent.asString();
         }
 
-        SuggestedName suggestedName = new NameSuggestion().suggest(functionDescriptor);
+        SuggestedName suggestedName = new NameSuggestion().suggest(functionDescriptor, bindingContext);
         assert suggestedName != null : "Suggested name can be null only for module descriptors: " + functionDescriptor;
         String mangledName = suggestedName.getNames().get(0);
         return StringUtil.join(Arrays.asList(moduleName, qualifier, mangledName), ".");
@@ -223,18 +227,6 @@ public final class Namer {
 
         callGetProperty = kotlin("callGetter");
         callSetProperty = kotlin("callSetter");
-    }
-
-    // TODO: get rid of this function
-    @NotNull
-    private static String getStableMangledNameForDescriptor(@NotNull ClassDescriptor descriptor, @NotNull String functionName) {
-        Collection<? extends SimpleFunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getContributedFunctions(
-                Name.identifier(functionName), NoLookupLocation.FROM_BACKEND
-        );
-        assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
-        SuggestedName suggested = new NameSuggestion().suggest(functions.iterator().next());
-        assert suggested != null : "Suggested name for class members is always non-null: " + functions.iterator().next();
-        return suggested.getNames().get(0);
     }
 
     @NotNull

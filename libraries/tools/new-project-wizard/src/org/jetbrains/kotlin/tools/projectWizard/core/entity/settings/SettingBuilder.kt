@@ -19,11 +19,13 @@ abstract class SettingBuilder<V : Any, T : SettingType<V>>(
 ) {
     var isAvailable: Reader.() -> Boolean = { true }
     open var defaultValue: SettingDefaultValue<V>? = null
+
+    var validateOnProjectCreation = true
     var isSavable: Boolean = false
     var isRequired: Boolean? = null
 
     fun value(value: V) = SettingDefaultValue.Value(value)
-    fun dynamic(getter: Reader.(SettingReference<V, SettingType<V>>) -> V) =
+    fun dynamic(getter: Reader.(SettingReference<V, SettingType<V>>) -> V?) =
         SettingDefaultValue.Dynamic(getter)
 
     protected var validator =
@@ -51,6 +53,7 @@ abstract class SettingBuilder<V : Any, T : SettingType<V>>(
         isSavable = isSavable,
         neededAtPhase = neededAtPhase,
         validator = validator,
+        validateOnProjectCreation = validateOnProjectCreation,
         type = type
     )
 }

@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 
 class JsBuiltinNameClashChecker(private val nameSuggestion: NameSuggestion) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (AnnotationsUtils.isNativeObject(descriptor)) return
         if (descriptor.containingDeclaration !is ClassDescriptor) return
 
-        val suggestedName = nameSuggestion.suggest(descriptor)!!
+        val suggestedName = nameSuggestion.suggest(descriptor, context.trace.bindingContext)!!
         if (!suggestedName.stable) return
         val simpleName = suggestedName.names.single()
 

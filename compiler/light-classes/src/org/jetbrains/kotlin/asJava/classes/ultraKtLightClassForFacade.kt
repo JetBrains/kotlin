@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.util.CachedValue
+import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -29,6 +31,10 @@ class KtUltraLightClassForFacade(
     override val lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade> get() = invalidAccess()
 
     override val clsDelegate: PsiClass get() = invalidAccess()
+
+    override val lightClassData: LightClassData get() = invalidAccess()
+
+    override val javaFileStub: PsiJavaFileStub? = null
 
     override fun getScope(): PsiElement? = parent
 
@@ -92,8 +98,6 @@ class KtUltraLightClassForFacade(
     override fun getOwnFields() = _ownFields
 
     override fun getOwnMethods() = _ownMethods
-
-    override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
 
     override fun copy(): KtLightClassForFacade =
         KtUltraLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files, filesWithSupports)

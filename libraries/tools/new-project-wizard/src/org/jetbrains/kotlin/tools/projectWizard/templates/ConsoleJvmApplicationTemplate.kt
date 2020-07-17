@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.runTaskIrs
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 
 class ConsoleJvmApplicationTemplate : Template() {
     @NonNls
@@ -31,7 +32,7 @@ class ConsoleJvmApplicationTemplate : Template() {
     override fun updateTargetIr(module: ModuleIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
         targetConfigurationIR.addWithJavaIntoJvmTarget()
 
-    override fun Writer.getFileTemplates(module: ModuleIR) =
+    override fun Reader.getFileTemplates(module: ModuleIR) =
         buildList<FileTemplateDescriptorWithPath> {
             +(FileTemplateDescriptor("$id/main.kt.vm", "main.kt".asPath()) asSrcOf SourcesetType.main)
         }

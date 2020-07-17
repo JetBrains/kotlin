@@ -1,10 +1,10 @@
-// This test depends on line numbers
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FULL_JDK
 // WITH_COROUTINES
-package test
+// IGNORE_BACKEND:
+package test // NB This test depends on line numbers
 
 import helpers.*
 import kotlin.coroutines.*

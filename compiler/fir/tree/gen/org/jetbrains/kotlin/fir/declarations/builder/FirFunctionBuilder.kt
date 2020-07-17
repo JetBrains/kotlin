@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -27,8 +27,8 @@ interface FirFunctionBuilder : FirAnnotationContainerBuilder {
     abstract override var source: FirSourceElement?
     abstract override val annotations: MutableList<FirAnnotationCall>
     abstract var session: FirSession
+    abstract var origin: FirDeclarationOrigin
     abstract var returnTypeRef: FirTypeRef
-    abstract val typeParameters: MutableList<FirTypeParameter>
     abstract val valueParameters: MutableList<FirValueParameter>
     abstract var body: FirBlock?
     override fun build(): FirFunction<*>

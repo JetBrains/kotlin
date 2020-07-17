@@ -1,0 +1,23 @@
+FILE: Base.kt
+    public abstract interface First : R|kotlin/Any| {
+    }
+    public open class Second : R|kotlin/Any| {
+        public constructor(): R|Second| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun R|First|.foo(s: R|kotlin/String|, i: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+FILE: Test.kt
+    public final class Tester : R|Inheritor|, R|First| {
+        public constructor(): R|Tester| {
+            super<R|Inheritor|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            (this@R|/Tester|, this@R|/Tester|).R|/Inheritor.foo|(String(abc), Int(456))
+        }
+
+    }

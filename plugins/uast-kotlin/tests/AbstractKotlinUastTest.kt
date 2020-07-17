@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.script.loadScriptingPlugin
@@ -67,8 +66,6 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     }
 
     private fun enableNewTypeInferenceIfNeeded() {
-        if (!NewInferenceForIDEAnalysisComponent.defaultState) return
-
         val currentLanguageVersionSettings = compilerConfiguration.languageVersionSettings
         if (currentLanguageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return
 

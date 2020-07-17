@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -32,7 +33,38 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
     index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
 
-class FunctionInlining(val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
+interface InlineFunctionResolver {
+    fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+open class DefaultInlineFunctionResolver(open val context: CommonBackendContext) : InlineFunctionResolver {
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
+        val descriptor = symbol.descriptor.original
+        val languageVersionSettings = context.configuration.languageVersionSettings
+        // TODO: Remove these hacks when coroutine intrinsics are fixed.
+        return when {
+            descriptor.isBuiltInIntercepted(languageVersionSettings) ->
+                error("Continuation.intercepted is not available with release coroutines")
+
+            descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
+                context.ir.symbols.suspendCoroutineUninterceptedOrReturn.owner
+
+            symbol == context.ir.symbols.coroutineContextGetter ->
+                context.ir.symbols.coroutineGetContext.owner
+
+            else -> (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
+        }
+    }
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+class FunctionInlining(
+    val context: CommonBackendContext,
+    val inlineFunctionResolver: InlineFunctionResolver
+) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
+
+    constructor(context: CommonBackendContext): this(context, DefaultInlineFunctionResolver(context))
 
     private var containerScope: ScopeWithIr? = null
 
@@ -61,7 +93,7 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
         if (Symbols.isTypeOfIntrinsic(callee.symbol))
             return expression
 
-        val actualCallee = getFunctionDeclaration(callee.symbol)
+        val actualCallee = inlineFunctionResolver.getFunctionDeclaration(callee.symbol)
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
             ?: allScopes.map { it.irElement }.filterIsInstance<IrDeclaration>().lastOrNull()?.parent
@@ -70,24 +102,6 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
 
         val inliner = Inliner(expression, actualCallee, currentScope ?: containerScope!!, parent, context)
         return inliner.inline()
-    }
-
-    private fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
-        val descriptor = symbol.descriptor.original
-        val languageVersionSettings = context.configuration.languageVersionSettings
-        // TODO: Remove these hacks when coroutine intrinsics are fixed.
-        return when {
-            descriptor.isBuiltInIntercepted(languageVersionSettings) ->
-                error("Continuation.intercepted is not available with release coroutines")
-
-            descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
-                context.ir.symbols.suspendCoroutineUninterceptedOrReturn.owner
-
-            symbol == context.ir.symbols.coroutineContextGetter ->
-                context.ir.symbols.coroutineGetContext.owner
-
-            else -> (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
-        }
     }
 
     private val IrFunction.needsInlining get() = this.isInline && !this.isExternal
@@ -109,7 +123,7 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
                 (0 until callSite.typeArgumentsCount).map {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
                 }.associate { it }
-            DeepCopyIrTreeWithSymbolsForInliner(context, typeArguments, parent)
+            DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent)
         }
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
@@ -132,9 +146,12 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
             callee: IrFunction,
             performRecursiveInline: Boolean
         ): IrReturnableBlock {
-            val copiedCallee = if (performRecursiveInline)
-                visitElement(copyIrElement.copy(callee)) as IrFunction
-            else copyIrElement.copy(callee) as IrFunction
+            val copiedCallee = copyIrElement.copy(callee).let {
+                (it as IrFunction).parent = callee.parent
+                if (performRecursiveInline)
+                    visitElement(it) as IrFunction
+                else it
+            }
 
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as IrBlockBody).statements
@@ -149,10 +166,6 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
             val transformer = ParameterSubstitutor()
             statements.transform { it.transform(transformer, data = null) }
             statements.addAll(0, evaluationStatements)
-
-            val isCoroutineIntrinsicCall = callSite.symbol.descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(
-                context.configuration.languageVersionSettings
-            )
 
             return IrReturnableBlockImpl(
                 startOffset = callSite.startOffset,
@@ -400,7 +413,7 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
                     }
 
                     else -> {
-                        val message = "Incomplete expression: call to ${callee.descriptor} " +
+                        val message = "Incomplete expression: call to ${callee.render()} " +
                                 "has no argument at index ${parameter.index}"
                         throw Error(message)
                     }

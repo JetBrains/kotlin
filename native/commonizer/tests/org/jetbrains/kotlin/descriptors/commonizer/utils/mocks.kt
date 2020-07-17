@@ -6,17 +6,25 @@
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
 import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
+import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
+import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.builder.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTypeAliasNode
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.types.*
+import java.io.File
 import kotlin.random.Random
 
 // expected special name for module
@@ -36,6 +44,7 @@ internal fun mockClassType(
         storageManager = LockBasedStorageManager.NO_LOCKS,
         target = InputTarget("Arbitrary target"),
         builtIns = DefaultBuiltIns.Instance,
+        lazyModulesLookupTable = LockBasedStorageManager.NO_LOCKS.createLazyValue { mutableMapOf() },
         isCommon = false,
         index = 0,
         cache = DeclarationsBuilderCache(1)
@@ -113,6 +122,31 @@ private fun createPackageFragmentForClassifier(classifierFqName: FqName): Packag
     }
 
 internal val EMPTY_CLASSIFIERS_CACHE = object : CirClassifiersCache {
-    override val classes: Map<FqName, CirClassNode> get() = emptyMap()
-    override val typeAliases: Map<FqName, CirTypeAliasNode> get() = emptyMap()
+    override val classes: Map<ClassId, CirClassNode> get() = emptyMap()
+    override val typeAliases: Map<ClassId, CirTypeAliasNode> get() = emptyMap()
+}
+
+internal class MockBuiltInsProvider(private val builtIns: KotlinBuiltIns) : BuiltInsProvider {
+    override fun loadBuiltIns() = builtIns
+}
+
+internal class MockModulesProvider : ModulesProvider {
+    private val moduleInfos: Map<String, ModuleInfo>
+    private val modules: Map<String, ModuleDescriptor>
+
+    constructor(moduleNames: Collection<String>) {
+        moduleInfos = moduleNames.associateWith { name -> fakeModuleInfo(name) }
+        modules = moduleNames.associateWith { name -> mockEmptyModule("<$name>") }
+    }
+
+    constructor(module: ModuleDescriptor) {
+        val name = module.name.asString().removeSurrounding("<", ">")
+        moduleInfos = mapOf(name to fakeModuleInfo(name))
+        modules = mapOf(name to module)
+    }
+
+    override fun loadModuleInfos() = moduleInfos
+    override fun loadModules() = modules
+
+    private fun fakeModuleInfo(name: String) = ModuleInfo(name, File("/tmp/commonizer/mocks/$name"))
 }

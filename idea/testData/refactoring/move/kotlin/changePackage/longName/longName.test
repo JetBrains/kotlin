@@ -1,0 +1,5 @@
+{
+  "mainFile": "com/xxxxxxx/yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy/zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz/Y.kt",
+  "type": "CHANGE_PACKAGE_DIRECTIVE",
+  "newPackageName": "org.xxxxxx.yyyyyy.zzzzzz.ttttt"
+}

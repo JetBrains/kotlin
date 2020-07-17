@@ -10,7 +10,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
@@ -24,8 +23,6 @@ import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfoStorage
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedClassNameForRendering
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -109,11 +106,6 @@ class KotlinPullUpHandler : AbstractPullPushMembersHandler(
 
             KotlinPullUpDialog(project, classOrObject, superClasses, memberInfoStorage).show()
         }
-    }
-
-    override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        super.invoke(project, editor, file, dataContext)
-        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this.javaClass.simpleName)
     }
 }
 

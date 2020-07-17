@@ -1,6 +1,5 @@
 @file:Suppress("HasPlatformType")
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.regex.Pattern.quote
 
 description = "Kotlin Compiler"
@@ -13,7 +12,13 @@ plugins {
 
 val JDK_18: String by rootProject.extra
 
-val fatJarContents by configurations.creating
+val fatJarContents by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
 val fatJarContentsStripVersions by configurations.creating
@@ -41,10 +46,9 @@ val proguardLibraries by configurations.creating {
 // Libraries to copy to the lib directory
 val libraries by configurations.creating {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
-    attributes {
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-    }
 }
+
+val librariesStripVersion by configurations.creating
 
 // Compiler plugins should be copied without `kotlin-` prefix
 val compilerPlugins by configurations.creating  {
@@ -82,7 +86,8 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-coroutines-experimental-compat",
     ":kotlin-daemon",
     ":kotlin-daemon-client",
-    ":kotlin-daemon-client-new",
+    // TODO: uncomment when new daemon will be put back into dist
+//    ":kotlin-daemon-client-new",
     ":kotlin-imports-dumper-compiler-plugin",
     ":kotlin-main-kts",
     ":kotlin-preloader",
@@ -95,7 +100,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-jvm",
     ":kotlin-scripting-js",
     ":js:js.engines",
-    ":kotlin-source-sections-compiler-plugin",
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-jvm",
@@ -147,12 +151,13 @@ dependencies {
         }
 
     libraries(intellijDep()) { includeIntellijCoreJarDependencies(project) { it.startsWith("trove4j") } }
-    libraries(commonDep("io.ktor", "ktor-network"))
     libraries(kotlinStdlib("jdk8"))
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         libraries(kotlinStdlib("js", "distLibrary"))
         libraries(project(":kotlin-test:kotlin-test-js", configuration = "distLibrary"))
     }
+
+    librariesStripVersion(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
@@ -197,10 +202,16 @@ dependencies {
     fatJarContents(protobufFull())
     fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))
     fatJarContents(commonDep("io.javaslang", "javaslang"))
-    fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    fatJarContents(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
 
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
     fatJarContents(intellijDep()) { includeJars("jna-platform") }
+
+    if (Platform.P202()) {
+        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
+    } else if (Platform.P203.orHigher()) {
+        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-2") }
+    }
 
     if (Platform.P192.orHigher()) {
         fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
@@ -342,6 +353,11 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
     into("lib") {
         from(jar) { rename { "$compilerBaseName.jar" } }
         from(libraries)
+        from(librariesStripVersion) {
+            rename {
+                it.replace(Regex("-\\d.*\\.jar\$"), ".jar")
+            }
+        }
         from(sources)
         from(compilerPlugins) {
             rename { it.removePrefix("kotlin-") }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 
-class InsertExplicitTypeArgumentsIntention :
-    SelfTargetingRangeIntention<KtCallExpression>(KtCallExpression::class.java, KotlinBundle.message("add.explicit.type.arguments")),
-    LowPriorityAction {
-    override fun applicabilityRange(element: KtCallExpression): TextRange? {
-        return if (isApplicableTo(element, element.analyze())) element.calleeExpression?.textRange else null
-    }
+class InsertExplicitTypeArgumentsIntention : SelfTargetingRangeIntention<KtCallExpression>(
+    KtCallExpression::class.java,
+    KotlinBundle.lazyMessage("add.explicit.type.arguments")
+), LowPriorityAction {
+    override fun applicabilityRange(element: KtCallExpression): TextRange? =
+        if (isApplicableTo(element, element.analyze())) element.calleeExpression?.textRange else null
 
     override fun applyTo(element: KtCallExpression, editor: Editor?) = applyTo(element)
 
@@ -47,8 +47,7 @@ class InsertExplicitTypeArgumentsIntention :
                 }
             }
 
-            return typeArgs.isNotEmpty() && typeArgs.values
-                .none { ErrorUtils.containsErrorType(it) || it is CapturedType || it is NewCapturedType }
+            return typeArgs.isNotEmpty() && typeArgs.values.none { ErrorUtils.containsErrorType(it) || it is CapturedType || it is NewCapturedType }
         }
 
         fun applyTo(element: KtCallElement, shortenReferences: Boolean = true) {

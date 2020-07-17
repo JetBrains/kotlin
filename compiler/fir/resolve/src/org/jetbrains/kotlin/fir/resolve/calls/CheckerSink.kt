@@ -32,7 +32,11 @@ suspend inline fun CheckerSink.yieldApplicability(new: CandidateApplicability) {
     yieldIfNeed()
 }
 
-class CheckerSinkImpl(override val components: InferenceComponents, var continuation: Continuation<Unit>? = null) : CheckerSink() {
+class CheckerSinkImpl(
+    override val components: InferenceComponents,
+    var continuation: Continuation<Unit>? = null,
+    val stopOnFirstError: Boolean = true
+) : CheckerSink() {
     var current = CandidateApplicability.RESOLVED
         private set
 
@@ -47,6 +51,6 @@ class CheckerSinkImpl(override val components: InferenceComponents, var continua
     }
 
     override val needYielding: Boolean
-        get() = current < CandidateApplicability.SYNTHETIC_RESOLVED
+        get() = stopOnFirstError && current < CandidateApplicability.SYNTHETIC_RESOLVED
 
 }

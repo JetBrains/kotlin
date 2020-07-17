@@ -33,6 +33,14 @@ data class ScriptDiagnostic(
      */
     enum class Severity { FATAL, ERROR, WARNING, INFO, DEBUG }
 
+    constructor(
+        code: Int,
+        message: String,
+        severity: Severity = Severity.ERROR,
+        locationWithId: SourceCode.LocationWithId?,
+        exception: Throwable? = null
+    ) : this(code, message, severity, locationWithId?.codeLocationId, locationWithId?.locationInText, exception)
+
     override fun toString(): String = render()
 
     /**
@@ -86,6 +94,7 @@ data class ScriptDiagnostic(
         const val unspecifiedInfo = 0
         const val unspecifiedError = -1
         const val unspecifiedException = -2
+        const val incompleteCode = -3
     }
 }
 
@@ -211,6 +220,12 @@ fun makeFailureResult(message: String, path: String? = null, location: SourceCod
     ResultWithDiagnostics.Failure(message.asErrorDiagnostics(ScriptDiagnostic.unspecifiedError, path, location))
 
 /**
+ * Makes Failure result with diagnostic [message] with optional [locationWithId]
+ */
+fun makeFailureResult(message: String, locationWithId: SourceCode.LocationWithId?): ResultWithDiagnostics.Failure =
+    ResultWithDiagnostics.Failure(message.asErrorDiagnostics(ScriptDiagnostic.unspecifiedError, locationWithId))
+
+/**
  * Converts the receiver Throwable to the Failure results wrapper with optional [customMessage], [path] and [location]
  */
 fun Throwable.asDiagnostics(
@@ -223,6 +238,17 @@ fun Throwable.asDiagnostics(
     ScriptDiagnostic(code, customMessage ?: message ?: "$this", severity, path, location, this)
 
 /**
+ * Converts the receiver Throwable to the Failure results wrapper with optional [customMessage], [locationWithId]
+ */
+fun Throwable.asDiagnostics(
+    code: Int = ScriptDiagnostic.unspecifiedException,
+    customMessage: String? = null,
+    locationWithId: SourceCode.LocationWithId?,
+    severity: ScriptDiagnostic.Severity = ScriptDiagnostic.Severity.ERROR
+): ScriptDiagnostic =
+    ScriptDiagnostic(code, customMessage ?: message ?: "$this", severity, locationWithId, this)
+
+/**
  * Converts the receiver String to error diagnostic report with optional [path] and [location]
  */
 fun String.asErrorDiagnostics(
@@ -231,6 +257,15 @@ fun String.asErrorDiagnostics(
     location: SourceCode.Location? = null
 ): ScriptDiagnostic =
     ScriptDiagnostic(code, this, ScriptDiagnostic.Severity.ERROR, path, location)
+
+/**
+ * Converts the receiver String to error diagnostic report with optional [locationWithId]
+ */
+fun String.asErrorDiagnostics(
+    code: Int = ScriptDiagnostic.unspecifiedError,
+    locationWithId: SourceCode.LocationWithId?
+): ScriptDiagnostic =
+    ScriptDiagnostic(code, this, ScriptDiagnostic.Severity.ERROR, locationWithId)
 
 /**
  * Extracts the result value from the receiver wrapper or null if receiver represents a Failure

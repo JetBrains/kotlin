@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.tasks.withType
 import javax.inject.Inject
 
 open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
@@ -21,7 +22,7 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     private val runTaskName = disambiguateCamelCased("run")
 
     override fun runTask(body: NodeJsExec.() -> Unit) {
-        (project.tasks.getByName(runTaskName) as NodeJsExec).body()
+        project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
     }
 
     override fun testTask(body: KotlinJsTest.() -> Unit) {
@@ -40,7 +41,8 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
         compilation: KotlinJsCompilation
     ) {
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
-            inputFileProperty.set(compilation.compileKotlinTask.outputFile)
+            group = taskGroupName
+            inputFileProperty.set(project.layout.file(compilation.compileKotlinTaskProvider.map { it.outputFile }))
         }
         target.runTask.dependsOn(runTaskHolder)
     }

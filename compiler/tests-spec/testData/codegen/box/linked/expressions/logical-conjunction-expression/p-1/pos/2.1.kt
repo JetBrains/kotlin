@@ -4,8 +4,8 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, logical-conjunction-expression -> paragraph 1 -> sentence 2
- * RELEVANT PLACES: expressions, logical-conjunction-expression -> paragraph 1 -> sentence 1
+ * MAIN LINK: expressions, logical-conjunction-expression -> paragraph 1 -> sentence 2
+ * PRIMARY LINKS: expressions, logical-conjunction-expression -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: operator && does not evaluate the right hand side argument unless the left hand side argument evaluated to false.
  */

@@ -34,7 +34,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val isPrimary: Boolean,
     override var returnTypeRef: FirTypeRef,
     override val valueParameters: MutableList<FirValueParameter>,
-    override val typeParameters: MutableList<FirTypeParameter>,
+    override val typeParameters: MutableList<FirTypeParameterRef>,
     override val annotations: MutableList<FirAnnotationCall>,
     override var status: FirDeclarationStatus,
     override var resolvePhase: FirResolvePhase,
@@ -50,6 +50,11 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override val body: FirBlock?
         get() = null
+
+    override val origin: FirDeclarationOrigin
+        get() = FirDeclarationOrigin.Java
+
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
     override val controlFlowGraphReference: FirControlFlowGraphReference get() = FirEmptyControlFlowGraphReference
 
@@ -101,6 +106,14 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDelegatedConstructor(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
+        return this
+    }
+
+    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirConstructor {
         return this
     }
 
@@ -177,6 +190,13 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
 
     @Deprecated("Modification of 'receiverTypeRef' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
     override var receiverTypeRef: FirTypeRef?
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'origin' has no impact for FirJavaConstructorBuilder", level = DeprecationLevel.HIDDEN)
+    override var origin: FirDeclarationOrigin
         get() = throw IllegalStateException()
         set(value) {
             throw IllegalStateException()

@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS_IR_ES6
 
 package test
 

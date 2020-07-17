@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
+
 // FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: lParams$default
 
@@ -47,17 +47,6 @@ fun box(): String {
 }
 
 // FILE: 1.smap
-SMAP
-1.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 1.kt
-test/_1Kt
-*L
-1#1,40:1
-*E
-
 SMAP
 1.kt
 Kotlin

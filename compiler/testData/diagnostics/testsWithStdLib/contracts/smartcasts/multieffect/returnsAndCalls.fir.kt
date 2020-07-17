@@ -22,7 +22,7 @@ fun smartcastAndInitialization(x: Any?) {
 
     if (callsAndInverts(x !is String) { y = 42 }) {
         println(y)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     } else {
         println(y)
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -34,35 +34,35 @@ fun inPresenceOfLazy(x: Any?, unknownBoolean: Boolean) {
     val y: Int
 
     if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) {
-        println(y)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        println(<!UNINITIALIZED_VARIABLE!>y<!>)
+        x.length
     }
     else {
-        println(y)
+        println(<!UNINITIALIZED_VARIABLE!>y<!>)
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
-    println(y)
+    println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }
 
 fun isPresenceOfLazy2(x: Any?, unknownBoolean: Boolean) {
     val y: Int
     if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     else {
-        println(y)
+        println(<!UNINITIALIZED_VARIABLE!>y<!>)
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
-    println(y)
+    println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }
 
 fun isPresenceOfLazy3(x: Any?, unknownBoolean: Boolean) {
     val y: Int
     if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
-    println(y)
+    println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }

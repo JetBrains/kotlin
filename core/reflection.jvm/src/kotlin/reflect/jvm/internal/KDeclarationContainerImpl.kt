@@ -17,7 +17,11 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
+import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
+import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
+import org.jetbrains.kotlin.descriptors.runtime.structure.createArrayType
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
+import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -25,11 +29,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
-import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
-import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
-import org.jetbrains.kotlin.descriptors.runtime.structure.createArrayType
-import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
-import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
     abstract inner class Data {
@@ -51,17 +50,10 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     abstract fun getLocalProperty(index: Int): PropertyDescriptor?
 
     protected fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<KCallableImpl<*>> {
-        val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>, Unit>() {
-            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*> =
-                createProperty(descriptor)
-
-            override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallableImpl<*> =
-                KFunctionImpl(this@KDeclarationContainerImpl, descriptor)
-
+        val visitor = object : CreateKCallableVisitor(this) {
             override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): KCallableImpl<*> =
-                throw IllegalStateException("No constructors should appear in this scope: $descriptor")
+                throw IllegalStateException("No constructors should appear here: $descriptor")
         }
-
         return scope.getContributedDescriptors().mapNotNull { descriptor ->
             if (descriptor is CallableMemberDescriptor &&
                 descriptor.visibility != Visibilities.INVISIBLE_FAKE &&
@@ -76,26 +68,6 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
         fun accept(member: CallableMemberDescriptor): Boolean =
             member.kind.isReal == (this == DECLARED)
-    }
-
-    private fun createProperty(descriptor: PropertyDescriptor): KPropertyImpl<*> {
-        val receiverCount = (descriptor.dispatchReceiverParameter?.let { 1 } ?: 0) +
-                (descriptor.extensionReceiverParameter?.let { 1 } ?: 0)
-
-        when {
-            descriptor.isVar -> when (receiverCount) {
-                0 -> return KMutableProperty0Impl<Any?>(this, descriptor)
-                1 -> return KMutableProperty1Impl<Any?, Any?>(this, descriptor)
-                2 -> return KMutableProperty2Impl<Any?, Any?, Any?>(this, descriptor)
-            }
-            else -> when (receiverCount) {
-                0 -> return KProperty0Impl<Any?>(this, descriptor)
-                1 -> return KProperty1Impl<Any?, Any?>(this, descriptor)
-                2 -> return KProperty2Impl<Any?, Any?, Any?>(this, descriptor)
-            }
-        }
-
-        throw KotlinReflectionInternalError("Unsupported property: $descriptor")
     }
 
     fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
@@ -184,7 +156,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
             // Static "$default" methods should be looked up in each DefaultImpls class, see KT-33430
             if (isStaticDefault) {
-                val defaultImpls = superInterface.classLoader.tryLoadClass(superInterface.name + JvmAbi.DEFAULT_IMPLS_SUFFIX)
+                val defaultImpls = superInterface.safeClassLoader.tryLoadClass(superInterface.name + JvmAbi.DEFAULT_IMPLS_SUFFIX)
                 if (defaultImpls != null) {
                     parameterTypes[0] = superInterface
                     defaultImpls.tryGetMethod(name, parameterTypes, returnType)?.let { return it }

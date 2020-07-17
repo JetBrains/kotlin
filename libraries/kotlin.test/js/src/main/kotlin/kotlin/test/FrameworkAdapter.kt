@@ -11,6 +11,7 @@ package kotlin.test
  * The tests structure is defined using internal functions suite and test, which delegate to corresponding functions of a [FrameworkAdapter].
  * Sample test layout:
  *
+ * ```js
  * suite('a suite', false, function() {
  *   suite('a subsuite', false, function() {
  *     test('a test', false, function() {...});
@@ -18,6 +19,7 @@ package kotlin.test
  *   });
  *   suite('an ignored/pending test', true, function() {...});
  * });
+ * ```
  *
  */
 public external interface FrameworkAdapter {

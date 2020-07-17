@@ -45,6 +45,8 @@ compileKotlin {
         freeCompilerArgs = ["-version",
                             "-Xallow-kotlin-package",
                             "-Xnormalize-constructor-calls=enable",
+                            "-Xno-optimized-callable-references",
+                            "-Xno-kotlin-nothing-value-exception",
                             "-module-name", "kotlin-reflection"]
     }
 }

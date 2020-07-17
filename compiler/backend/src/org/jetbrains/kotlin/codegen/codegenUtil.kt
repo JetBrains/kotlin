@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspend
 import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.ApiVersion
@@ -62,11 +60,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.org.objectweb.asm.util.Textifier
-import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
-import java.io.PrintWriter
-import java.io.StringWriter
+import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import java.util.*
 
 fun generateIsCheck(
@@ -319,6 +313,11 @@ fun MemberDescriptor.isToArrayFromCollection(): Boolean {
 
     return isGenericToArray() || isNonGenericToArray()
 }
+
+val CallableDescriptor.arity: Int
+    get() = valueParameters.size +
+            (if (extensionReceiverParameter != null) 1 else 0) +
+            (if (dispatchReceiverParameter != null) 1 else 0)
 
 fun FqName.topLevelClassInternalName() = JvmClassName.byClassId(ClassId(parent(), shortName())).internalName
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
@@ -668,3 +667,22 @@ private fun generateLambdaForRunSuspend(
     lambdaBuilder.done()
     return lambdaBuilder.thisName
 }
+
+internal fun LabelNode.linkWithLabel(): LabelNode {
+    // Remember labelNode in label and vise versa.
+    // Before ASM 8 there was JB patch in MethodNode that makes such linking in constructor of LabelNode.
+    //
+    // protected LabelNode getLabelNode(final Label label) {
+    //    if (!(label.info instanceof LabelNode)) {
+    //      //label.info = new LabelNode(label); //[JB: needed for Coverage agent]
+    //      label.info = new LabelNode(); //ASM 8
+    //    }
+    //    return (LabelNode) label.info;
+    //  }
+    if (label.info == null) {
+        label.info = this
+    }
+    return this
+}
+
+fun linkedLabel(): Label = LabelNode().linkWithLabel().label

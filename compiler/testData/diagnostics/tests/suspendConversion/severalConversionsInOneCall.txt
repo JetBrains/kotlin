@@ -1,0 +1,4 @@
+package
+
+public fun foo(/*0*/ f: () -> kotlin.String, /*1*/ g: suspend () -> kotlin.String, /*2*/ h: suspend () -> kotlin.String): kotlin.Unit
+public fun test(/*0*/ f: () -> kotlin.String, /*1*/ g: suspend () -> kotlin.String): kotlin.Unit

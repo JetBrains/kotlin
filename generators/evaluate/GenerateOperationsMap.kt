@@ -19,7 +19,7 @@ import java.io.File
 val DEST_FILE: File = File("compiler/frontend/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt")
 private val EXCLUDED_FUNCTIONS = listOf("rangeTo", "hashCode", "inc", "dec", "subSequence")
 
-fun main(args: Array<String>) {
+fun main() {
     GeneratorsFileUtil.writeFileIfContentChanged(DEST_FILE, generate())
 }
 

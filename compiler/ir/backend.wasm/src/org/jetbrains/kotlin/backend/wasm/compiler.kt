@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.wasm.codegen.IrModuleToWasm
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -42,7 +43,8 @@ fun compileWasm(
     // Load declarations referenced during `context` initialization
     dependencyModules.forEach {
         val irProviders = generateTypicalIrProviderList(it.descriptor, irBuiltIns, symbolTable, deserializer)
-        ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings)
+            .generateUnboundSymbolsAsDependencies()
     }
 
     val irFiles = dependencyModules.flatMap { it.files } + moduleFragment.files
@@ -52,9 +54,9 @@ fun compileWasm(
 
     // Create stubs
     val irProviders = generateTypicalIrProviderList(moduleDescriptor, irBuiltIns, symbolTable, deserializer)
-    ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(symbolTable, irProviders, configuration.languageVersionSettings).generateUnboundSymbolsAsDependencies()
     moduleFragment.patchDeclarationParents()
-    deserializer.finalizeExpectActualLinker()
+    deserializer.postProcess()
 
     wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 

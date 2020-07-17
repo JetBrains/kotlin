@@ -25,9 +25,16 @@ import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 
 abstract class AbstractParcelBoxTest : CodegenTestCase() {
-    protected companion object {
-        const val BASE_DIR = "plugins/android-extensions/android-extensions-compiler/testData/parcel/box"
-        val LIBRARY_KT = File(File(BASE_DIR).parentFile, "boxLib.kt")
+    companion object {
+        val LIBRARY_KT = File("plugins/android-extensions/android-extensions-compiler/testData/parcel/boxLib.kt")
+
+        private val androidPluginPath: String by lazy {
+            System.getProperty("ideaSdk.androidPlugin.path")?.takeIf { File(it).isDirectory }
+                ?: throw RuntimeException("Unable to get a valid path from 'ideaSdk.androidPlugin.path' property, please point it to the Idea android plugin location")
+        }
+
+        val layoutlibJar: File by lazy { File(androidPluginPath, "layoutlib-26.5.0.2.jar") }
+        val layoutlibApiJar: File by lazy { File(androidPluginPath, "layoutlib-api-26.5.0.jar") }
 
         private val JUNIT_GENERATED_TEST_CLASS_BYTES by lazy { constructSyntheticTestClass() }
         private const val JUNIT_GENERATED_TEST_CLASS_FQNAME = "test.JunitTest"
@@ -43,7 +50,7 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
                 }
 
                 with(visitAnnotation("Lorg/robolectric/annotation/Config;", true)) {
-                    visit("sdk", intArrayOf(19))
+                    visit("sdk", intArrayOf(21))
                     visit("manifest", "--none")
                     visitEnd()
                 }
@@ -92,10 +99,6 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
         }
     }
 
-    override fun doTest(filePath: String) {
-        super.doTest(File(BASE_DIR, "$filePath.kt").absolutePath)
-    }
-
     private val androidPluginPath: String by lazy {
         System.getProperty("ideaSdk.androidPlugin.path")?.takeIf { File(it).isDirectory }
             ?: throw RuntimeException("Unable to get a valid path from 'ideaSdk.androidPlugin.path' property, please point it to the Idea android plugin location")
@@ -103,7 +106,6 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
 
     private fun getClasspathForTest(): List<File> {
         val kotlinRuntimeJar = PathUtil.kotlinPathsForIdeaPlugin.stdlibPath
-        val layoutLibJars = listOf(File(androidPluginPath, "layoutlib.jar"), File(androidPluginPath, "layoutlib-api.jar"))
 
         val robolectricClasspath = System.getProperty("robolectric.classpath")
             ?: throw RuntimeException("Unable to get a valid classpath from 'robolectric.classpath' property, please set it accordingly")
@@ -112,12 +114,13 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
             .sortedBy { it.nameWithoutExtension }
 
         val junitCoreResourceName = JUnitCore::class.java.name.replace('.', '/') + ".class"
-        val junitJar = File(JUnitCore::class.java.classLoader.getResource(junitCoreResourceName).file.substringBeforeLast('!'))
+        val junitJar =
+            File(JUnitCore::class.java.classLoader.getResource(junitCoreResourceName).file.substringAfter("file:").substringBeforeLast('!'))
 
         val androidExtensionsRuntimeJars = System.getProperty("androidExtensionsRuntime.classpath")?.split(File.pathSeparator)?.map(::File)
             ?: error("Unable to get a valid classpath from 'androidExtensionsRuntime.classpath' property")
 
-        return listOf(kotlinRuntimeJar) + layoutLibJars + robolectricJars + junitJar + androidExtensionsRuntimeJars
+        return listOf(kotlinRuntimeJar, layoutlibJar, layoutlibApiJar) + robolectricJars + junitJar + androidExtensionsRuntimeJars
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
@@ -138,6 +141,7 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
         try {
             writeClass(JUNIT_GENERATED_TEST_CLASS_FQNAME, JUNIT_GENERATED_TEST_CLASS_BYTES)
             classFileFactory.getClassFiles().forEach { writeClass(it.relativePath, it.asByteArray()) }
+            javaClassesOutputDirectory?.listFiles()?.forEach { writeClass(it.name, it.readBytes()) }
 
             val process = ProcessBuilder(
                 javaExe.absolutePath,
@@ -146,9 +150,10 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
                 (libraryClasspath + dirForTestClasses).joinToString(File.pathSeparator),
                 JUnitCore::class.java.name,
                 JUNIT_GENERATED_TEST_CLASS_FQNAME
-            ).inheritIO().start()
+            ).start()
 
             process.waitFor(3, TimeUnit.MINUTES)
+            println(process.inputStream.bufferedReader().lineSequence().joinToString("\n"))
             if (process.exitValue() != 0) {
                 throw AssertionError("Process exited with exit code ${process.exitValue()} \n" + classFileFactory.createText())
             }
@@ -162,6 +167,10 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         AndroidComponentRegistrar.registerParcelExtensions(environment.project)
         addAndroidExtensionsRuntimeLibrary(environment)
-        environment.updateClasspath(listOf(JvmClasspathRoot(File(androidPluginPath, "layoutlib.jar"))))
+        environment.updateClasspath(listOf(JvmClasspathRoot(layoutlibJar)))
+    }
+
+    override fun updateJavaClasspath(javaClasspath: MutableList<String>) {
+        javaClasspath += layoutlibJar.path
     }
 }

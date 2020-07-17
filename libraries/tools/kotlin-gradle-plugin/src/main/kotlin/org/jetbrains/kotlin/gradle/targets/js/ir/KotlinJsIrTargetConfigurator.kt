@@ -1,20 +1,22 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.attributes.Usage
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsIrSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
+import org.jetbrains.kotlin.gradle.utils.klibModuleName
 
 open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true, true, kotlinPluginVersion),
@@ -53,27 +55,34 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
         return KotlinJsIrSourceSetProcessor(tasksProvider, compilation, kotlinPluginVersion)
     }
 
-    override fun createArchiveTasks(target: KotlinJsIrTarget): Zip {
+    override fun createArchiveTasks(target: KotlinJsIrTarget): TaskProvider<out Zip> {
         return super.createArchiveTasks(target).apply {
-            // not archiveExtension because it is since Gradle 5.1 only
-            extension = KLIB_TYPE
+            configure { it.archiveExtension.set(KLIB_TYPE) }
         }
     }
 
     override fun configureCompilations(target: KotlinJsIrTarget) {
         super.configureCompilations(target)
 
-        target.compilations.all {
-            it.compileKotlinTask.kotlinOptions {
+        target.compilations.all { compilation ->
+            compilation.kotlinOptions {
                 configureOptions()
 
                 freeCompilerArgs += listOf(
                     DISABLE_PRE_IR,
                     PRODUCE_UNZIPPED_KLIB
                 )
+
+                // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
+                val baseName = if (compilation.isMain()) {
+                    target.project.name
+                } else {
+                    "${target.project.name}_${compilation.name}"
+                }
+                freeCompilerArgs += listOf("$MODULE_NAME=${target.project.klibModuleName(baseName)}")
             }
 
-            it.binaries
+            compilation.binaries
                 .withType(JsIrBinary::class.java)
                 .all {
                     it.linkTask.configure { linkTask ->
@@ -91,5 +100,18 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {
         super.defineConfigurationsForTarget(target)
         implementationToApiElements(target)
+
+        if (target.isMpp!!) return
+
+        target.project.configurations.maybeCreate(
+            target.commonFakeApiElementsConfigurationName
+        ).apply {
+            description = "Common Fake API elements for main."
+            isVisible = false
+            isCanBeResolved = false
+            isCanBeConsumed = true
+            attributes.attribute<Usage>(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+        }
     }
 }

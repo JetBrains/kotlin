@@ -1,6 +1,6 @@
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 // FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: lParams$default
+
 
 package test
 //A lot of blank lines [Don't delete]
@@ -88,17 +88,6 @@ Kotlin
 *S Kotlin
 *F
 + 1 1.kt
-test/_1Kt
-*L
-1#1,75:1
-*E
-
-SMAP
-1.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 1.kt
 test/_1Kt$lParams$1
 + 2 1.kt
 test/_1Kt
@@ -133,7 +122,6 @@ test/_1Kt$lParams$1
 71#2,2:12
 30#2:15
 51#3:14
-69#3:16
 *E
 *S KotlinDebug
 *F
@@ -144,5 +132,4 @@ _2Kt
 6#1,2:12
 6#1:15
 6#1:14
-6#1:16
 *E

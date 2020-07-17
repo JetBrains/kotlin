@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/resultInReturnType.kt
+-d
+$TEMP_DIR$
+-XXLanguage\:+InlineClasses

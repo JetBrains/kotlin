@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.addMember
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
-import org.jetbrains.kotlin.psi2ir.findFirstFunction
+import org.jetbrains.kotlin.ir.util.findFirstFunction
 
 class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generateSpecialMembers(irClass: IrClass) {

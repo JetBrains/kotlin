@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
@@ -24,8 +21,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
-import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
-import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -33,6 +28,8 @@ import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckVisibility : ResolutionPart() {
@@ -241,6 +238,10 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
             if (!callComponents.statelessCallbacks.isCoroutineCall(argument, parameter)) continue
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
 
+            if (argument is LambdaKotlinCallArgument && !argument.hasBuilderInferenceAnnotation) {
+                argument.hasBuilderInferenceAnnotation = true
+            }
+
             for (freshVariable in resolvedCall.freshVariablesSubstitutor.freshVariables) {
                 if (resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(freshVariable.originalTypeParameter) is SimpleTypeArgument)
                     continue
@@ -251,6 +252,24 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
                 }
             }
         }
+    }
+}
+
+internal object CompatibilityOfTypeVariableAsIntersectionTypePart : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        for ((_, variableWithConstraints) in csBuilder.currentStorage().notFixedTypeVariables) {
+            val constraints = variableWithConstraints.constraints.filter { csBuilder.isProperType(it.type) }
+
+            if (constraints.size <= 1) continue
+            if (constraints.any { it.kind.isLower() || it.kind.isEqual() }) continue
+
+            // See TypeBoundsImpl.computeValues(). It returns several values for such situation which means an error in OI
+            if (callComponents.statelessCallbacks.isOldIntersectionIsEmpty(constraints.map { it.type }.cast())) {
+                markCandidateForCompatibilityResolve()
+                return
+            }
+        }
+
     }
 }
 
@@ -319,27 +338,28 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
         dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> = listOf()
     ): List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> {
         val context = asConstraintSystemCompleterContext()
-        val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.mapNotNull { (typeConstructor, constraints) ->
-            val upperBounds = constraints.constraints.filter {
-                it.position.from is DeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER
-            }
+        val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.asSequence()
+            .flatMap { (typeConstructor, constraints) ->
+                val upperBounds = constraints.constraints.filter {
+                    it.position.from is DeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER
+                }
 
-            upperBounds.mapNotNull { constraint ->
-                if (constraint.type.typeConstructor(context) != variable) {
-                    val suitableUpperBound = upperBounds.find { upperBound ->
-                        with(context) { upperBound.type.contains { it.typeConstructor() == variable } }
-                    }?.type
+                upperBounds.mapNotNull { constraint ->
+                    if (constraint.type.typeConstructor(context) != variable) {
+                        val suitableUpperBound = upperBounds.find { upperBound ->
+                            with(context) { upperBound.type.contains { it.typeConstructor() == variable } }
+                        }?.type
 
-                    if (suitableUpperBound != null) typeConstructor to suitableUpperBound else null
-                } else typeConstructor to null
-            }
-        }.flatten().filter { it !in dependentTypeParametersSeen && it.first != variable }
+                        if (suitableUpperBound != null) typeConstructor to suitableUpperBound else null
+                    } else typeConstructor to null
+                }
+            }.filter { it !in dependentTypeParametersSeen && it.first != variable }.toList()
 
-        return dependentTypeParameters + dependentTypeParameters.mapNotNull { (typeConstructor, _) ->
+        return dependentTypeParameters + dependentTypeParameters.flatMapTo(SmartList()) { (typeConstructor, _) ->
             if (typeConstructor != variable) {
                 getDependentTypeParameters(typeConstructor, dependentTypeParameters + dependentTypeParametersSeen)
-            } else null
-        }.flatten()
+            } else emptyList()
+        }
     }
 
     private fun NewConstraintSystem.isContainedInInvariantOrContravariantPositionsAmongUpperBound(
@@ -418,8 +438,23 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
     candidateParameter: ParameterDescriptor?,
     receiverInfo: ReceiverInfo
 ) {
-    val expectedType = candidateParameter?.let { prepareExpectedType(argument, candidateParameter) }
-    val convertedArgument = if (expectedType != null && shouldRunConversionForConstants(expectedType)) {
+    val candidateExpectedType = candidateParameter?.let { argument.getExpectedType(it, callComponents.languageVersionSettings) }
+
+    val isReceiver = receiverInfo.isReceiver
+    val conversionDataBeforeSubtyping =
+        if (isReceiver || candidateParameter == null || candidateExpectedType == null) {
+            null
+        } else {
+            TypeConversions.performCompositeConversionBeforeSubtyping(
+                this, argument, candidateParameter, candidateExpectedType
+            )
+        }
+
+    val convertedExpectedType = conversionDataBeforeSubtyping?.convertedType
+    val unsubstitutedExpectedType = conversionDataBeforeSubtyping?.convertedType ?: candidateExpectedType
+    val expectedType = unsubstitutedExpectedType?.let { prepareExpectedType(it) }
+
+    val convertedArgument = if (expectedType != null && !isReceiver && shouldRunConversionForConstants(expectedType)) {
         val convertedConstant = resolutionCallbacks.convertSignedConstantToUnsigned(argument)
         if (convertedConstant != null) {
             resolvedCall.registerArgumentWithConstantConversion(argument, convertedConstant)
@@ -428,16 +463,74 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
         convertedConstant
     } else null
 
-    addResolvedKtPrimitive(
-        resolveKtPrimitive(
+
+    val inferenceSession = resolutionCallbacks.inferenceSession
+    if (candidateExpectedType == null || // Nothing to convert
+        convertedExpectedType != null || // Type is already converted
+        isReceiver || // Receivers don't participate in conversions
+        conversionDataBeforeSubtyping?.wasConversion == true || // We tried to convert type but failed
+        conversionDataBeforeSubtyping?.conversionDefinitelyNotNeeded == true ||
+        csBuilder.hasContradiction
+    ) {
+        val resolvedAtom = resolveKtPrimitive(
             csBuilder,
             argument,
             expectedType,
             this,
             receiverInfo,
-            convertedArgument?.unknownIntegerType?.unwrap()
+            convertedArgument?.unknownIntegerType?.unwrap(),
+            inferenceSession
         )
-    )
+
+        addResolvedKtPrimitive(resolvedAtom)
+    } else {
+        var convertedTypeAfterSubtyping: UnwrappedType? = null
+        csBuilder.runTransaction {
+            val resolvedAtom = resolveKtPrimitive(
+                csBuilder,
+                argument,
+                expectedType,
+                this@resolveKotlinArgument,
+                receiverInfo,
+                convertedArgument?.unknownIntegerType?.unwrap(),
+                inferenceSession
+            )
+
+            if (!hasContradiction) {
+                addResolvedKtPrimitive(resolvedAtom)
+                return@runTransaction true
+            }
+
+            convertedTypeAfterSubtyping =
+                TypeConversions.performCompositeConversionAfterSubtyping(
+                    this@resolveKotlinArgument,
+                    argument,
+                    candidateParameter,
+                    candidateExpectedType
+                )?.let { prepareExpectedType(it) }
+
+            if (convertedTypeAfterSubtyping == null) {
+                addResolvedKtPrimitive(resolvedAtom)
+                return@runTransaction true
+            }
+
+            false
+        }
+
+        if (convertedTypeAfterSubtyping != null) {
+            val resolvedAtom = resolveKtPrimitive(
+                csBuilder,
+                argument,
+                convertedTypeAfterSubtyping,
+                this@resolveKotlinArgument,
+                receiverInfo,
+                convertedArgument?.unknownIntegerType?.unwrap(),
+                inferenceSession
+            )
+            addResolvedKtPrimitive(resolvedAtom)
+        }
+
+    }
 }
 
 private fun KotlinResolutionCandidate.shouldRunConversionForConstants(expectedType: UnwrappedType): Boolean {
@@ -479,62 +572,9 @@ private fun KotlinResolutionCandidate.checkUnsafeImplicitInvokeAfterSafeCall(arg
     return ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE
 }
 
-private fun KotlinResolutionCandidate.prepareExpectedType(
-    argument: KotlinCallArgument,
-    candidateParameter: ParameterDescriptor
-): UnwrappedType {
-    val argumentType = getExpectedTypeWithSAMConversion(argument, candidateParameter) ?: argument.getExpectedType(
-        candidateParameter,
-        callComponents.languageVersionSettings
-    )
-    val resultType = knownTypeParametersResultingSubstitutor?.substitute(argumentType) ?: argumentType
+private fun KotlinResolutionCandidate.prepareExpectedType(expectedType: UnwrappedType): UnwrappedType {
+    val resultType = knownTypeParametersResultingSubstitutor?.substitute(expectedType) ?: expectedType
     return resolvedCall.freshVariablesSubstitutor.safeSubstitute(resultType)
-}
-
-private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
-    argument: KotlinCallArgument,
-    candidateParameter: ParameterDescriptor
-): UnwrappedType? {
-    val generatingAdditionalSamCandidateIsEnabled =
-        !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
-                !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
-
-    if (generatingAdditionalSamCandidateIsEnabled) return null
-    val samConversionOracle = callComponents.samConversionOracle
-    if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) {
-        if (!samConversionOracle.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
-    }
-
-    val argumentIsFunctional = when (argument) {
-        is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
-        is LambdaKotlinCallArgument, is CallableReferenceKotlinCallArgument -> true
-        else -> false
-    }
-    if (!argumentIsFunctional) return null
-
-    val originalExpectedType = argument.getExpectedType(candidateParameter.original, callComponents.languageVersionSettings)
-
-    val convertedTypeByOriginal =
-        callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(originalExpectedType, samConversionOracle) ?: return null
-
-    val candidateExpectedType = argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
-    val convertedTypeByCandidate =
-        callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(candidateExpectedType, samConversionOracle)
-
-    assert(candidateExpectedType.constructor == originalExpectedType.constructor && convertedTypeByCandidate != null) {
-        "If original type is SAM type, then candidate should have same type constructor and corresponding function type\n" +
-                "originalExpectType: $originalExpectedType, candidateExpectType: $candidateExpectedType\n" +
-                "functionTypeByOriginal: $convertedTypeByOriginal, functionTypeByCandidate: $convertedTypeByCandidate"
-    }
-
-    resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
-
-    val samDescriptor = originalExpectedType.constructor.declarationDescriptor
-    if (samDescriptor is ClassDescriptor) {
-        callComponents.lookupTracker.record(scopeTower.location, samDescriptor, SAM_LOOKUP_NAME)
-    }
-
-    return convertedTypeByCandidate
 }
 
 internal object CheckReceivers : ResolutionPart() {
@@ -602,7 +642,7 @@ internal object EagerResolveOfCallableReferences : ResolutionPart() {
         getSubResolvedAtoms()
             .filterIsInstance<EagerCallableReferenceAtom>()
             .forEach {
-                callableReferenceResolver.processCallableReferenceArgument(csBuilder, it, this)
+                callableReferenceResolver.processCallableReferenceArgument(csBuilder, it, this, resolutionCallbacks)
             }
     }
 }

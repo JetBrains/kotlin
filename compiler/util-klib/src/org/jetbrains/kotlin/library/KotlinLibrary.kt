@@ -11,11 +11,15 @@ const val KLIB_PROPERTY_LIBRARY_VERSION = "library_version"
 const val KLIB_PROPERTY_METADATA_VERSION = "metadata_version"
 const val KLIB_PROPERTY_IR_VERSION = "ir_version"
 const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
+const val KLIB_PROPERTY_SHORT_NAME = "short_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
+const val KLIB_PROPERTY_BUILTINS_PLATFORM = "builtins_platform"
+
+// Native-specific:
 const val KLIB_PROPERTY_INTEROP = "interop"
 const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations"
-const val KLIB_PROPERTY_BUILTINS_PLATFORM = "builtins_platform"
+const val KLIB_PROPERTY_NATIVE_TARGETS = "native_targets"
 
 /**
  * Abstractions for getting access to the information stored inside of Kotlin/Native library.
@@ -52,6 +56,9 @@ interface IrLibrary {
 val BaseKotlinLibrary.uniqueName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)!!
 
+val BaseKotlinLibrary.shortName: String?
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_SHORT_NAME)
+
 val BaseKotlinLibrary.unresolvedDependencies: List<UnresolvedLibrary>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
         .map { UnresolvedLibrary(it, manifestProperties.getProperty("dependency_version_$it")) }
@@ -59,15 +66,14 @@ val BaseKotlinLibrary.unresolvedDependencies: List<UnresolvedLibrary>
 interface KotlinLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
 
 // TODO: should we move the below ones to Native?
-val KotlinLibrary.isInterop
+val KotlinLibrary.isInterop: Boolean
     get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP) == "true"
 
 val KotlinLibrary.packageFqName: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_PACKAGE)
 
-val KotlinLibrary.exportForwardDeclarations
+val KotlinLibrary.exportForwardDeclarations: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, escapeInQuotes = true)
-        .asSequence()
-        .map { it.trim() }
-        .filter { it.isNotEmpty() }
-        .toList()
+
+val BaseKotlinLibrary.nativeTargets: List<String>
+    get() = manifestProperties.propertyList(KLIB_PROPERTY_NATIVE_TARGETS)

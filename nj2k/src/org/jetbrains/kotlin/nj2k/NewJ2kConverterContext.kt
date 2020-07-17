@@ -18,7 +18,8 @@ data class NewJ2kConverterContext(
     val inConversionContext: (PsiElement) -> Boolean,
     val importStorage: JKImportStorage,
     val elementsInfoStorage: JKElementInfoStorage,
-    val externalCodeProcessor: NewExternalCodeProcessing
+    val externalCodeProcessor: NewExternalCodeProcessing,
+    val functionalInterfaceConversionEnabled: Boolean
 ) : ConverterContext {
     val project: Project
         get() = converter.project

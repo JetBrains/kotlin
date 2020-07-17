@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower.inlineclasses
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.codegen.state.md5base64
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -20,6 +21,14 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 fun IrType.unboxInlineClass() = InlineClassAbi.unboxType(this) ?: this
 
 object InlineClassAbi {
+    /**
+     * An origin for IrFunctionReferences which prevents inline class mangling. This only exists because of
+     * inconsistencies between `RuntimeTypeMapper` and `KotlinTypeMapper`. The `RuntimeTypeMapper` does not
+     * perform inline class mangling and so in the absence of jvm signatures in the metadata we need to avoid
+     * inline class mangling as well in the function references used as arguments to the signature string intrinsic.
+     */
+    object UNMANGLED_FUNCTION_REFERENCE : IrStatementOriginImpl("UNMANGLED_FUNCTION_REFERENCE")
+
     /**
      * Unwraps inline class types to their underlying representation.
      * Returns null if the type cannot be unboxed.
@@ -53,7 +62,7 @@ object InlineClassAbi {
      * Returns a mangled name for a function taking inline class arguments
      * to avoid clashes between overloaded methods.
      */
-    fun mangledNameFor(irFunction: IrFunction): Name {
+    fun mangledNameFor(irFunction: IrFunction, mangleReturnTypes: Boolean): Name {
         if (irFunction is IrConstructor) {
             // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
             assert(irFunction.constructedClass.isInline) {
@@ -65,6 +74,8 @@ object InlineClassAbi {
         val suffix = when {
             irFunction.fullValueParameterList.any { it.type.requiresMangling } ->
                 hashSuffix(irFunction)
+            mangleReturnTypes && irFunction.hasMangledReturnType ->
+                returnHashSuffix(irFunction)
             (irFunction.parent as? IrClass)?.isInline == true -> "impl"
             else -> return irFunction.name
         }
@@ -85,6 +96,9 @@ object InlineClassAbi {
 
     private val IrFunction.propertyName: Name
         get() = (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.name
+
+    fun returnHashSuffix(irFunction: IrFunction) =
+        md5base64(":${irFunction.returnType.eraseToString()}")
 
     private fun hashSuffix(irFunction: IrFunction) =
         md5base64(irFunction.fullValueParameterList.joinToString { it.type.eraseToString() })
@@ -110,6 +124,9 @@ internal val IrFunction.hasMangledParameters: Boolean
     get() = dispatchReceiverParameter != null && parentAsClass.isInline ||
             fullValueParameterList.any { it.type.requiresMangling } ||
             (this is IrConstructor && constructedClass.isInline)
+
+internal val IrFunction.hasMangledReturnType: Boolean
+    get() = returnType.erasedUpperBound.isInline && parentClassOrNull?.isFileClass != true
 
 internal val IrClass.inlineClassFieldName: Name
     get() = primaryConstructor!!.valueParameters.single().name

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // !LANGUAGE: +NewInference
 // SKIP_TXT
@@ -6,7 +7,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-213
- * PLACE: expressions, built-in-types-and-their-semantics, kotlin.unit -> paragraph 1 -> sentence 1
+ * MAIN LINK: expressions, built-in-types-and-their-semantics, kotlin.unit -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Check of Unit type
  * HELPERS: checkType

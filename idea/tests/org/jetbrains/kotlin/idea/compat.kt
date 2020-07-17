@@ -12,7 +12,7 @@ import com.intellij.openapi.util.Computable
 import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 @Suppress("UNUSED_PARAMETER")
 fun doHierarchyTestCompat(
     hierarchyFixture: HierarchyViewTestFixture,

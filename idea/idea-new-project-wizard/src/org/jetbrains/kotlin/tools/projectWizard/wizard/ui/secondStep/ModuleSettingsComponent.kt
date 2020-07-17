@@ -1,13 +1,11 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
-import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.CommonTargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.getConfiguratorSettings
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
@@ -23,14 +21,13 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIB
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.TitledComponentsList
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.createSettingComponent
 import javax.swing.JComponent
 
 class ModuleSettingsComponent(
     private val context: Context,
-    uiEditorUsagesStats: UiEditorUsageStats
+    private val uiEditorUsagesStats: UiEditorUsageStats
 ) : DynamicComponent(context) {
     private val settingsList = TitledComponentsList(emptyList(), context).asSubComponent()
     private val moduleDependenciesComponent = ModuleDependenciesComponent(context)
@@ -61,13 +58,18 @@ class ModuleSettingsComponent(
         settingsList.setComponents(moduleSettingComponents)
     }
 
-    private fun createTemplatesListComponentForModule(module: Module) =
-        read { availableTemplatesFor(module) }.takeIf { it.isNotEmpty() }?.let { templates ->
-            ModuleTemplateComponent(context, module, templates) {
-                updateModule(module)
-                component.updateUI()
-            }
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun createTemplatesListComponentForModule(module: Module): ModuleTemplateComponent? {
+        val templates = read { availableTemplatesFor(module) }.takeIf { it.isNotEmpty() } ?: return null
+        val templatesWithNoneTemplate = buildList {
+            add(NoneTemplate)
+            addAll(templates)
         }
+        return ModuleTemplateComponent(context, module, templatesWithNoneTemplate, uiEditorUsagesStats) {
+            updateModule(module)
+            component.updateUI()
+        }
+    }
 }
 
 private class ModuleNameComponent(context: Context, private val module: Module) : TitledComponent(context) {
@@ -113,27 +115,26 @@ private class ModuleTemplateComponent(
     context: Context,
     private val module: Module,
     templates: List<Template>,
+    uiEditorUsagesStats: UiEditorUsageStats,
     onTemplateChanged: () -> Unit
 ) : TitledComponent(context) {
     @OptIn(ExperimentalStdlibApi::class)
     private val dropDown = DropDownComponent(
         context,
-        initialValues = buildList {
-            add(NoneTemplate)
-            addAll(templates)
-        },
+        initialValues = templates,
         initiallySelectedValue = module.template ?: NoneTemplate,
+        filter = { template: Template -> read { template.isApplicableTo(this, module) } },
         labelText = null,
     ) { value ->
         module.template = value.takeIf { it != NoneTemplate }
+        uiEditorUsagesStats.moduleTemplateChanged++
         changeTemplateDescription(module.template)
         onTemplateChanged()
     }.asSubComponent()
 
     override val forceLabelCenteringOffset: Int? = 4
-    private val templateDescriptionLabel = label("") {
-        fontColor = UIUtil.FontColor.BRIGHTER
-        addBorder(JBUI.Borders.empty(4, 4))
+    private val templateDescriptionLabel = CommentLabel().apply {
+        addBorder(JBUI.Borders.empty(2, 4))
     }
 
     override fun onInit() {
@@ -142,7 +143,8 @@ private class ModuleTemplateComponent(
     }
 
     private fun changeTemplateDescription(template: Template?) {
-        templateDescriptionLabel.text = template?.description
+        templateDescriptionLabel.text = template?.description?.asHtml()
+        templateDescriptionLabel.isVisible = template?.description != null
     }
 
     override val component = borderPanel {
@@ -150,19 +152,24 @@ private class ModuleTemplateComponent(
         addToBottom(templateDescriptionLabel)
     }
 
-    override val title: String = KotlinNewProjectWizardUIBundle.message("module.settings.template")
-
-    private object NoneTemplate : Template() {
-        override val title = KotlinNewProjectWizardUIBundle.message("module.settings.template.none")
-        override val description: String = ""
-        override val moduleTypes: Set<ModuleType> = ModuleType.ALL
-        override val id: String = "none"
+    override fun onValueUpdated(reference: SettingReference<*, *>?) {
+        super.onValueUpdated(reference)
+        dropDown.filterValues()
     }
+
+    override val title: String = KotlinNewProjectWizardUIBundle.message("module.settings.template")
+}
+
+private object NoneTemplate : Template() {
+    override val title = KotlinNewProjectWizardUIBundle.message("module.settings.template.none")
+    override val description: String = ""
+    override val moduleTypes: Set<ModuleType> = ModuleType.ALL
+    override val id: String = "none"
 }
 
 fun Reader.availableTemplatesFor(module: Module) =
     TemplatesPlugin::templates.propertyValue.values.filter { template ->
-        module.configurator.moduleType in template.moduleTypes && template.isApplicableTo(module)
+        module.configurator.moduleType in template.moduleTypes
     }
 
 

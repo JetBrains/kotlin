@@ -10,9 +10,6 @@ dependencies {
     compileOnly(project(":idea:idea-jvm"))
     compileOnly(project(":idea:idea-native"))
     compile(project(":idea:kotlin-gradle-tooling"))
-    Platform[193].orLower {
-        compile(project(":idea:idea-gradle-tooling-api"))
-    }
 
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
@@ -88,6 +85,10 @@ dependencies {
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
 
+    if (Ide.AS41.orHigher()) {
+         testRuntime(intellijPluginDep("platform-images"))
+    }
+
     if (Ide.AS36.orHigher()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
     }
@@ -104,6 +105,7 @@ sourceSets {
 testsJar()
 
 projectTest(parallel = false) {
+    dependsOnKotlinPluginInstall()
     workingDir = rootDir
     useAndroidSdk()
 
@@ -121,3 +123,9 @@ projectTest(parallel = false) {
 }
 
 configureFormInstrumentation()
+
+if (Ide.AS41.orHigher()) {
+    getOrCreateTask<Test>("test") {
+        setExcludes(listOf("**"))
+    }
+}

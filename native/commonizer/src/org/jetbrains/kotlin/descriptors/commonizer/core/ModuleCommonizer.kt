@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirModule
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirModule
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirModuleFactory
 import org.jetbrains.kotlin.name.Name
 
-interface ModuleCommonizer : Commonizer<CirModule, CirModule> {
-    companion object {
-        fun default(): ModuleCommonizer = DefaultModuleCommonizer()
-    }
-}
-
-private class DefaultModuleCommonizer : ModuleCommonizer, AbstractStandardCommonizer<CirModule, CirModule>() {
+class ModuleCommonizer : AbstractStandardCommonizer<CirModule, CirModule>() {
     private lateinit var name: Name
 
-    override fun commonizationResult() = CirModule(name = name)
+    override fun commonizationResult() = CirModuleFactory.create(name = name)
 
     override fun initialize(first: CirModule) {
         name = first.name

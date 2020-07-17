@@ -16,7 +16,6 @@ import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.File
 
 internal class ResolvedMppVariantsProvider private constructor(private val project: Project) {
@@ -105,7 +104,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
 
         configuration.incoming.resolutionResult.allComponents { component ->
             val moduleId = ModuleIds.fromComponent(project, component)
-            val variants = component.variantsCompatible
+            val variants = component.variants
 
             val isMpp = variants.any { variant -> variant.attributes.keySet().any { it.name == KotlinPlatformType.attribute.name } }
             if (isMpp) {
@@ -208,11 +207,3 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
         val chosenPlatformModuleByConfiguration: MutableMap<Configuration, ModuleEntry?> = HashMap()
     }
 }
-
-private val ResolvedComponentResult.variantsCompatible: List<ResolvedVariantResult>
-    get() = if (isGradleVersionAtLeast(5, 2)) {
-        variants
-    } else {
-        @Suppress("DEPRECATION")
-        listOf(variant)
-    }

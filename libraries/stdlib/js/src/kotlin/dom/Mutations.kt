@@ -5,21 +5,28 @@
 
 package kotlin.dom
 
-import org.w3c.dom.*
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import kotlin.internal.LowPriorityInOverloadResolution
+import kotlinx.dom.appendText as newAppendText
+import kotlinx.dom.clear as newClear
 
 /** Removes all the children from this node. */
-public fun Node.clear() {
-    while (hasChildNodes()) {
-        removeChild(firstChild!!)
-    }
-}
+@LowPriorityInOverloadResolution
+@Deprecated(
+    message = "This API is moved to another package, use 'kotlinx.dom.clear' instead.",
+    replaceWith = ReplaceWith("this.clear()", "kotlinx.dom.clear")
+)
+public inline fun Node.clear() = this.newClear()
 
 /**
  * Creates text node and append it to the element.
  *
  * @return this element
  */
-fun Element.appendText(text: String): Element {
-    appendChild(ownerDocument!!.createTextNode(text))
-    return this
-}
+@LowPriorityInOverloadResolution
+@Deprecated(
+    message = "This API is moved to another package, use 'kotlinx.dom.appendText' instead.",
+    replaceWith = ReplaceWith("this.appendText(text)", "kotlinx.dom.appendText")
+)
+inline fun Element.appendText(text: String): Element = this.newAppendText(text)

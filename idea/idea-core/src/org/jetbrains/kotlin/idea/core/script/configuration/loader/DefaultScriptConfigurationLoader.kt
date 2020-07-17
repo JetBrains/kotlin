@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.debug
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.runReadAction
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.LegacyResolverWrapper
 import org.jetbrains.kotlin.scripting.resolve.refineScriptCompilationConfiguration
@@ -39,11 +41,13 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
     ): Boolean {
         val virtualFile = ktFile.originalFile.virtualFile
 
-        if (ScriptConfigurationManager.isManualConfigurationLoading(virtualFile)) return false
-
         val result = getConfigurationThroughScriptingApi(ktFile, virtualFile, scriptDefinition)
 
-        context.suggestNewConfiguration(virtualFile, result)
+        if (KotlinScriptingSettings.getInstance(project).autoReloadConfigurations(scriptDefinition)) {
+            context.saveNewConfiguration(virtualFile, result)
+        } else {
+            context.suggestNewConfiguration(virtualFile, result)
+        }
 
         return true
     }

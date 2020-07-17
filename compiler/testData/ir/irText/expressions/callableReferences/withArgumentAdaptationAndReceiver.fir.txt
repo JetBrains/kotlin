@@ -22,6 +22,7 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
       BLOCK_BODY
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
           FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
+            $this: GET_VAR '<this>: <root>.Host declared in <root>.Host.testImplicitThis' type=<root>.Host origin=null
     FUN name:testBoundReceiverLocalVal visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       BLOCK_BODY

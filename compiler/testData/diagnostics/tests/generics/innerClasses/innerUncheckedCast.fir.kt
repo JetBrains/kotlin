@@ -15,12 +15,12 @@ class Outer<E> {
         if (y is Inner) return
 
         if (z is Inner) {
-            z.prop.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any?>() }
+            z.prop.checkType { _<Any?>() }
             return
         }
 
         if (y is Outer<*>.Inner<*>) {
-            y.prop.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any?>() }
+            y.prop.checkType { _<Any?>() }
         }
     }
 

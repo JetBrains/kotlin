@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 
 interface NativeTargetConfigurator : TargetConfigurator {
     val isDesktopTarget: Boolean
+    val isIosTarget: Boolean
 }
 
 class RealNativeTargetConfigurator private constructor(
@@ -25,16 +26,15 @@ class RealNativeTargetConfigurator private constructor(
     override val isDesktopTarget: Boolean
         get() = moduleSubType.isNativeDesktop
 
-    override fun createInnerTargetIrs(reader: Reader, module: Module): List<BuildSystemIR> = if (moduleSubType.isIOS) {
-        listOf(
-            GradleSectionIR("binaries") {
-                add(
-                    GradleSectionIR("framework") {
-                        add(GradleAssignmentIR("baseName", GradleStringConstIR(module.parent!!.name)))
-                    }
-                )
+    override val isIosTarget: Boolean
+        get() = moduleSubType.isIOS
+
+    override fun createInnerTargetIrs(reader: Reader, module: Module): List<BuildSystemIR> = if (moduleSubType.isIOS) irsList {
+        "binaries" {
+            "framework"  {
+                "baseName" assign const(module.parent!!.name)
             }
-        )
+        }
     } else emptyList()
 
     companion object {
@@ -49,6 +49,7 @@ class RealNativeTargetConfigurator private constructor(
 object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleType = ModuleType.native
     override val isDesktopTarget: Boolean = true
+    override val isIosTarget: Boolean = false
 
     @NonNls
     override val id = "nativeForCurrentSystem"
@@ -62,12 +63,11 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
         val moduleName = module.name
         val variableName = "${moduleName}Target"
 
-        return buildList {
-            +CreateGradleValueIR("hostOs", RawGradleIR { +"System.getProperty(\"os.name\")" })
-            +CreateGradleValueIR("isMingwX64", RawGradleIR { +"hostOs.startsWith(\"Windows\")" })
+        return irsList {
+            "hostOs" createValue raw("System.getProperty(\"os.name\")")
+            "isMingwX64" createValue raw("hostOs.startsWith(\"Windows\")")
 
-            //TODO do not use RawGradleIR here
-            +RawGradleIR {
+            addRaw {
                 when (dsl) {
                     GradlePrinter.GradleDsl.KOTLIN -> {
                         +"val $variableName = when "
@@ -102,9 +102,9 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
         reader: Reader,
         configurationData: ModulesToIrConversionData,
         module: Module
-    ): List<BuildSystemIR> = buildList {
+    ): List<BuildSystemIR> = irsList {
         if (configurationData.buildSystemType == BuildSystemType.GradleGroovyDsl) {
-            +GradleImportIR("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests")
+            import("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests")
         }
     }
 }

@@ -16,18 +16,20 @@
 
 package org.jetbrains.kotlin.load.kotlin.incremental
 
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
 
 class IncrementalPackagePartProvider(
-        private val parent: PackagePartProvider,
-        incrementalCaches: List<IncrementalCache>,
-        storageManager: StorageManager
+    private val parent: PackagePartProvider,
+    incrementalCaches: List<IncrementalCache>,
+    storageManager: StorageManager
 ) : PackagePartProvider {
     lateinit var deserializationConfiguration: DeserializationConfiguration
 
@@ -48,4 +50,8 @@ class IncrementalPackagePartProvider(
     override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
         return parent.getAnnotationsOnBinaryModule(moduleName)
     }
+
+    override fun getAllOptionalAnnotationClasses(): List<ClassData> =
+        moduleMappings().flatMap((JvmPackagePartProviderBase)::getAllOptionalAnnotationClasses) +
+                parent.getAllOptionalAnnotationClasses()
 }

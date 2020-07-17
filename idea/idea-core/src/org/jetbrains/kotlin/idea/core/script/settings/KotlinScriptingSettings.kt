@@ -10,9 +10,11 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
 import com.intellij.util.addOptionTag
-import com.intellij.util.attribute
 import com.intellij.util.getAttributeBooleanValue
 import org.jdom.Element
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings.KotlinScriptDefinitionValue.Companion.DEFAULT
+import org.jetbrains.kotlin.idea.util.application.executeOnPooledThread
 import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 
@@ -20,8 +22,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
     name = "KotlinScriptingSettings",
     storages = [Storage("kotlinScripting.xml")]
 )
-class KotlinScriptingSettings : PersistentStateComponent<Element> {
-    var isAutoReloadEnabled = false
+class KotlinScriptingSettings(private val project: Project) : PersistentStateComponent<Element> {
 
     /**
      * true if notification about multiple script definition applicable for one script file is suppressed
@@ -32,13 +33,6 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
 
     override fun getState(): Element {
         val definitionsRootElement = Element("KotlinScriptingSettings")
-
-        if (isAutoReloadEnabled) {
-            definitionsRootElement.addOptionTag(
-                KotlinScriptingSettings::isAutoReloadEnabled.name,
-                isAutoReloadEnabled.toString()
-            )
-        }
 
         if (suppressDefinitionsCheck) {
             definitionsRootElement.addOptionTag(
@@ -59,9 +53,6 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
     }
 
     override fun loadState(state: Element) {
-        state.getOptionTag(KotlinScriptingSettings::isAutoReloadEnabled.name)?.let {
-            isAutoReloadEnabled = it
-        }
         state.getOptionTag(KotlinScriptingSettings::suppressDefinitionsCheck.name)?.let {
             suppressDefinitionsCheck = it
         }
@@ -70,29 +61,63 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
         for (scriptDefinitionElement in scriptDefinitionsList) {
             scriptDefinitions[scriptDefinitionElement.toKey()] = scriptDefinitionElement.toValue()
         }
+
+        if (scriptDefinitionsList.isNotEmpty()) {
+            executeOnPooledThread {
+                ScriptDefinitionsManager.getInstance(project).reorderScriptDefinitions()
+            }
+        }
     }
 
     fun setOrder(scriptDefinition: ScriptDefinition, order: Int) {
-        scriptDefinitions[scriptDefinition.toKey()] = scriptDefinitions[scriptDefinition.toKey()]?.copy(order = order) ?:
-                KotlinScriptDefinitionValue(order)
+        scriptDefinitions[scriptDefinition.toKey()] =
+            scriptDefinitions[scriptDefinition.toKey()]?.copy(order = order) ?: KotlinScriptDefinitionValue(order)
     }
 
 
     fun setEnabled(scriptDefinition: ScriptDefinition, isEnabled: Boolean) {
-        scriptDefinitions[scriptDefinition.toKey()] = scriptDefinitions[scriptDefinition.toKey()]?.copy(isEnabled = isEnabled) ?:
-                KotlinScriptDefinitionValue(scriptDefinitions.size, isEnabled)
+        scriptDefinitions[scriptDefinition.toKey()] =
+            scriptDefinitions[scriptDefinition.toKey()]?.copy(isEnabled = isEnabled) ?: KotlinScriptDefinitionValue(
+                scriptDefinition.order,
+                isEnabled = isEnabled
+            )
+    }
+
+    fun setAutoReloadConfigurations(scriptDefinition: ScriptDefinition, autoReloadScriptDependencies: Boolean) {
+        scriptDefinitions[scriptDefinition.toKey()] =
+            scriptDefinitions[scriptDefinition.toKey()]?.copy(autoReloadConfigurations = autoReloadScriptDependencies)
+                ?: KotlinScriptDefinitionValue(
+                    scriptDefinition.order,
+                    autoReloadConfigurations = autoReloadScriptDependencies
+                )
     }
 
     fun getScriptDefinitionOrder(scriptDefinition: ScriptDefinition): Int {
-        return scriptDefinitions[scriptDefinition.toKey()]?.order ?: Integer.MAX_VALUE
+        return scriptDefinitions[scriptDefinition.toKey()]?.order ?: DEFAULT.order
     }
 
     fun isScriptDefinitionEnabled(scriptDefinition: ScriptDefinition): Boolean {
-        return scriptDefinitions[scriptDefinition.toKey()]?.isEnabled ?: true
+        return scriptDefinitions[scriptDefinition.toKey()]?.isEnabled ?: DEFAULT.isEnabled
     }
 
-    private data class KotlinScriptDefinitionKey(val definitionName: String, val className: String)
-    private data class KotlinScriptDefinitionValue(val order: Int, val isEnabled: Boolean = true)
+    fun autoReloadConfigurations(scriptDefinition: ScriptDefinition): Boolean {
+        return scriptDefinitions[scriptDefinition.toKey()]?.autoReloadConfigurations ?: DEFAULT.autoReloadConfigurations
+    }
+
+    private data class KotlinScriptDefinitionKey(
+        val definitionName: String,
+        val className: String
+    )
+
+    private data class KotlinScriptDefinitionValue(
+        val order: Int,
+        val isEnabled: Boolean = true,
+        val autoReloadConfigurations: Boolean = false
+    ) {
+        companion object {
+            val DEFAULT = KotlinScriptDefinitionValue(Integer.MAX_VALUE)
+        }
+    }
 
     private fun Element.toKey() = KotlinScriptDefinitionKey(
         getAttributeValue(KotlinScriptDefinitionKey::definitionName.name),
@@ -104,8 +129,8 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
 
     private fun Element.addScriptDefinitionContentElement(definition: KotlinScriptDefinitionKey, settings: KotlinScriptDefinitionValue) {
         addElement(SCRIPT_DEFINITION_TAG).apply {
-            attribute(KotlinScriptDefinitionKey::className.name, definition.className)
-            attribute(KotlinScriptDefinitionKey::definitionName.name, definition.definitionName)
+            setAttribute(KotlinScriptDefinitionKey::className.name, definition.className)
+            setAttribute(KotlinScriptDefinitionKey::definitionName.name, definition.definitionName)
 
             addElement(KotlinScriptDefinitionValue::order.name).apply {
                 text = settings.order.toString()
@@ -114,6 +139,11 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
             if (!settings.isEnabled) {
                 addElement(KotlinScriptDefinitionValue::isEnabled.name).apply {
                     text = settings.isEnabled.toString()
+                }
+            }
+            if (settings.autoReloadConfigurations) {
+                addElement(KotlinScriptDefinitionValue::autoReloadConfigurations.name).apply {
+                    text = settings.autoReloadConfigurations.toString()
                 }
             }
         }
@@ -126,10 +156,14 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
     }
 
     private fun Element.toValue(): KotlinScriptDefinitionValue {
-        val order = getChildText(KotlinScriptDefinitionValue::order.name)?.toInt() ?: Integer.MAX_VALUE
-        val isEnabled = getChildText(KotlinScriptDefinitionValue::isEnabled.name)?.toBoolean() ?: true
+        val order = getChildText(KotlinScriptDefinitionValue::order.name)?.toInt()
+            ?: DEFAULT.order
+        val isEnabled = getChildText(KotlinScriptDefinitionValue::isEnabled.name)?.toBoolean()
+            ?: DEFAULT.isEnabled
+        val autoReloadScriptDependencies = getChildText(KotlinScriptDefinitionValue::autoReloadConfigurations.name)?.toBoolean()
+            ?: DEFAULT.autoReloadConfigurations
 
-        return KotlinScriptDefinitionValue(order, isEnabled)
+        return KotlinScriptDefinitionValue(order, isEnabled, autoReloadScriptDependencies)
     }
 
     private fun Element.getOptionTag(name: String) =

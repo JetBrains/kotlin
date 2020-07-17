@@ -17,8 +17,3 @@ fun externalFunction2() {}
 
 inline fun inlineFunction1() {}
 fun inlineFunction2() {}
-
-@Deprecated
-fun deprecatedFunction1() {}
-@Deprecated
-fun deprecatedFunction3() {}

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branches
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -66,7 +67,9 @@ object BranchedFoldingUtils {
     ): Boolean {
         val left = this.left ?: return false
         val otherLeft = other.left ?: return false
-        if (left.text != otherLeft.text || operationToken != other.operationToken) return false
+        if (left.text != otherLeft.text || operationToken != other.operationToken ||
+            left.mainReference?.resolve() != otherLeft.mainReference?.resolve()
+        ) return false
         val rightType = other.rightType() ?: return false
         return rightType.constructor == rightTypeConstructor || (operationToken == KtTokens.EQ && rightType.isSubtypeOf(leftType))
     }
@@ -192,9 +195,10 @@ object BranchedFoldingUtils {
                 lhs = left!!.copy() as KtExpression
                 op = operationReference.text
             }
+
             val rhs = right!!
             if (rhs is KtLambdaExpression && this.parent !is KtBlockExpression) {
-                replace(psiFactory.createExpressionByPattern("{ $0 }", rhs))
+                replace(psiFactory.createSingleStatementBlock(rhs))
             } else {
                 replace(rhs)
             }

@@ -11,7 +11,7 @@ private typealias A3 = B
 fun A3(x: Any) = "OK"
 
 fun bar() {
-    A3("") checkType { <!UNRESOLVED_REFERENCE!>_<!><B>() }
+    A3("") checkType { _<B>() }
 }
 
 // FILE: main.kt
@@ -23,7 +23,7 @@ fun baz() {
     a.A1("") // resolved to B constructor, OK
     a.A2("") // resolved to B constructor, INVISIBLE_MEMBER because type alias is private, OK
 
-    a.A3("") checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    a.A3("") checkType { _<String>() }
 
     val x: a.A2 = B("") // A2 is unresolved because it's private in file, OK
 }

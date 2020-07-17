@@ -1,19 +1,4 @@
 <idea-plugin>
-    <application-components>
-        <component>
-            <implementation-class>org.jetbrains.kotlin.idea.JvmPluginStartupComponent</implementation-class>
-        </component>
-    </application-components>
-
-    <project-components>
-        <component>
-            <implementation-class>org.jetbrains.kotlin.idea.compiler.KotlinCompilerManager</implementation-class>
-        </component>
-        <component>
-            <implementation-class>org.jetbrains.kotlin.idea.scratch.ScratchFileModuleInfoProvider</implementation-class>
-        </component>
-    </project-components>
-
     <actions>
         <!-- Kotlin Console REPL-->
         <action id="KotlinConsoleREPL" class="org.jetbrains.kotlin.console.actions.RunKotlinConsoleAction"
@@ -171,7 +156,7 @@
 
       <registryKey key="kotlin.uast.force.uinjectionhost"
                    description="Whether to convert `KtStringTemplateExpression` to `KotlinStringTemplateUPolyadicExpression` in all cases"
-                   defaultValue="true"
+                   defaultValue="false"
                    restartRequired="false"/>
 
       <registryKey key="kotlin.jps.instrument.bytecode"

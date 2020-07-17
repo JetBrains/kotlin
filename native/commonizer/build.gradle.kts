@@ -1,18 +1,17 @@
-import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer.COMPILE
-
 plugins {
-    maven
     kotlin("jvm")
     id("jps-compatible")
 }
 
-val mavenCompileScope by configurations.creating {
-    the<MavenPluginConvention>()
-        .conf2ScopeMappings
-        .addMapping(0, this, COMPILE)
-}
-
 description = "Kotlin KLIB Library Commonizer"
+
+publish()
+
+configurations {
+    testRuntimeOnly {
+        extendsFrom(compileOnly.get())
+    }
+}
 
 dependencies {
     compileOnly(project(":compiler:cli-common"))
@@ -21,17 +20,15 @@ dependencies {
     compileOnly(project(":native:frontend.native"))
     compileOnly(project(":kotlin-util-klib-metadata"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("trove4j") }
 
     // This dependency is necessary to keep the right dependency record inside of POM file:
-    mavenCompileScope(project(":kotlin-compiler"))
+    publishedCompile(project(":kotlin-compiler"))
 
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
 
-    testCompile(commonDep("junit:junit"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":native:frontend.native"))
-
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testImplementation(commonDep("junit:junit"))
+    testImplementation(projectTests(":compiler:tests-common"))
 }
 
 val runCommonizer by tasks.registering(NoDebugJavaExec::class) {
@@ -40,10 +37,7 @@ val runCommonizer by tasks.registering(NoDebugJavaExec::class) {
 }
 
 sourceSets {
-    "main" {
-        projectDefault()
-        runtimeClasspath += configurations.compileOnly
-    }
+    "main" { projectDefault() }
     "test" { projectDefault() }
 }
 
@@ -51,7 +45,5 @@ projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
 }
-
-publish()
 
 standardPublicJars()

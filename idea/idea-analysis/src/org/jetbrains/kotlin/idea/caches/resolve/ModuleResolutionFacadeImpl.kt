@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.container.tryGetService
@@ -57,7 +58,14 @@ internal class ModuleResolutionFacadeImpl(
     override fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext {
         ResolveInDispatchThreadManager.assertNoResolveInDispatchThread()
 
-        if (elements.isEmpty()) return BindingContext.EMPTY
+        when (elements.size) {
+            0 -> return BindingContext.EMPTY
+            1 -> {
+                runWithCancellationCheck {
+                    projectFacade.fetchAnalysisResultsForElement(elements.first())?.bindingContext
+                }?.let { return it }
+            }
+        }
 
         val resolveElementCache = getFrontendService(elements.first(), ResolveElementCache::class.java)
         return runWithCancellationCheck {
@@ -107,6 +115,10 @@ internal class ModuleResolutionFacadeImpl(
 
     override fun <T : Any> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
         return projectFacade.resolverForDescriptor(moduleDescriptor).componentProvider.getService(serviceClass)
+    }
+
+    override fun getResolverForProject(): ResolverForProject<IdeaModuleInfo> {
+        return projectFacade.getResolverForProject()
     }
 }
 

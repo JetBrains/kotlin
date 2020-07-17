@@ -16,7 +16,8 @@ dependencies {
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
     compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijDep())
- }
+    compileOnly(project(":idea:kotlin-gradle-tooling"))
+}
 
 sourceSets {
     "main" { projectDefault() }

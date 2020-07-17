@@ -11,25 +11,24 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.createEvaluationConfigurationFromTemplate
+import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.impl.createScriptFromClassLoader
 
 @Suppress("unused") // script codegen generates a call to it
 fun runCompiledScript(scriptClass: Class<*>, vararg args: String) {
     val script = createScriptFromClassLoader(scriptClass.name, scriptClass.classLoader)
     val evaluator = BasicJvmScriptEvaluator()
-    val hostConfiguration = script.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]
-        ?: defaultJvmScriptingHostConfiguration
-    val baseEvaluationConfiguration =
+    val evaluationConfiguration =
         createEvaluationConfigurationFromTemplate(
             script.compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!,
-            hostConfiguration,
+            script.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]
+                .withDefaultsFrom(defaultJvmScriptingHostConfiguration),
             scriptClass.kotlin
-        )
-    val evaluationConfiguration = ScriptEvaluationConfiguration(baseEvaluationConfiguration) {
-        jvm {
-            mainArguments(args)
+        ) {
+            jvm {
+                mainArguments(args)
+            }
         }
-    }
     runScriptSuspend {
         evaluator(script, evaluationConfiguration).onFailure {
             it.reports.forEach(System.err::println)

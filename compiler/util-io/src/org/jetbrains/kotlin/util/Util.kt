@@ -52,8 +52,8 @@ fun parseSpaceSeparatedArgs(argsString: String): List<String> {
     val parsedArgs = mutableListOf<String>()
     var inQuotes = false
     var currentCharSequence = StringBuilder()
-    fun saveArg() {
-        if (!currentCharSequence.isEmpty()) {
+    fun saveArg(wasInQuotes: Boolean) {
+        if (wasInQuotes || currentCharSequence.isNotBlank()) {
             parsedArgs.add(currentCharSequence.toString())
             currentCharSequence = StringBuilder()
         }
@@ -63,11 +63,11 @@ fun parseSpaceSeparatedArgs(argsString: String): List<String> {
             inQuotes = !inQuotes
             // Save value which was in quotes.
             if (!inQuotes) {
-                saveArg()
+                saveArg(true)
             }
-        } else if (char == ' ' && !inQuotes) {
+        } else if (char.isWhitespace() && !inQuotes) {
             // Space is separator.
-            saveArg()
+            saveArg(false)
         } else {
             currentCharSequence.append(char)
         }
@@ -75,6 +75,6 @@ fun parseSpaceSeparatedArgs(argsString: String): List<String> {
     if (inQuotes) {
         error("No close-quote was found in $currentCharSequence.")
     }
-    saveArg()
+    saveArg(false)
     return parsedArgs
 }

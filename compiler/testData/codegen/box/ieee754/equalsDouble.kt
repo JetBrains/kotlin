@@ -1,6 +1,6 @@
 // !LANGUAGE: -ProperIeee754Comparisons
-// IGNORE_BACKEND_FIR: JVM_IR
 // DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR_ES6
 
 fun equals1(a: Double, b: Double) = a == b
 

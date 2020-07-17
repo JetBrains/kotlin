@@ -1,3 +1,4 @@
-11 val x = <bold>foo</bold>
-4 	var <bold>foo: Int</bold>
-5 		get() = <bold>1</bold>
+11 val x = <bold>foo</bold> (in A.test())
+4 	<bold>var foo: Int</bold> = 0 (in A)
+4 		var foo: Int = <bold>0</bold> (in A.foo)
+5 		get() = <bold>1</bold> (in A.foo.get)

@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: ANDROID
 
 // WITH_RUNTIME
 // FULL_JDK
@@ -20,7 +20,7 @@ fun box(): String {
         return "Link error expected"
     }
     catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.message != "C.foo()V") return "Fail 1: " + e.message
+        if (e.message != "C.foo()V" && e.message != "'void C.foo()'") return "Fail 1: " + e.message
     }
 
     return "OK"

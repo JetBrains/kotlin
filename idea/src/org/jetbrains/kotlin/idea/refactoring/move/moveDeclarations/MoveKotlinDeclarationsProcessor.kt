@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
+import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.core.deleteSingle
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
@@ -376,8 +377,8 @@ class MoveKotlinDeclarationsProcessor(
             internalUsageScopes.forEach { newInternalUsages += restoreInternalUsages(it, oldToNewElementsMapping) }
 
             usagesToProcess += newInternalUsages
-
             nonCodeUsages = postProcessMoveUsages(usagesToProcess, oldToNewElementsMapping).toTypedArray()
+            performDelayedRefactoringRequests(project)
         } catch (e: IncorrectOperationException) {
             nonCodeUsages = null
             RefactoringUIUtil.processIncorrectOperation(myProject, e)

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.BranchedValue
 import org.jetbrains.kotlin.codegen.NumberCompare
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -64,6 +66,20 @@ object CompareTo : IntrinsicMethod() {
         return IrIntrinsicFunction.create(expression, signature, context, listOf(parameterType, parameterType)) {
             genInvoke(parameterType, it)
         }
+    }
+}
+
+class IntegerZeroComparison(val op: IElementType, val a: MaterialValue) : BooleanValue(a.codegen) {
+    override fun jumpIfFalse(target: Label) {
+        mv.visitJumpInsn(Opcodes.IFNE, target)
+    }
+
+    override fun jumpIfTrue(target: Label) {
+        mv.visitJumpInsn(Opcodes.IFEQ, target)
+    }
+
+    override fun discard() {
+        a.discard()
     }
 }
 
@@ -116,6 +132,53 @@ class NonIEEE754FloatComparison(val op: IElementType, val a: MaterialValue, val 
     override fun discard() {
         b.discard()
         a.discard()
+    }
+}
+
+class PrimitiveToObjectComparison(
+    val op: IElementType,
+    private val boxedValue: MaterialValue,
+    private val useNullCheck: Boolean,
+    private val primitiveType: Type,
+    private val loadOther: () -> MaterialValue,
+) : BooleanValue(boxedValue.codegen) {
+
+    override fun jumpIfFalse(target: Label) {
+        val compareLabel = Label()
+        mv.dup()
+        if (useNullCheck) {
+            mv.ifnonnull(compareLabel)
+        } else {
+            mv.instanceOf(AsmUtil.boxType(primitiveType))
+            mv.ifne(compareLabel)
+        }
+        mv.pop()
+        mv.goTo(target)
+        mv.mark(compareLabel)
+        val unboxedValue = boxedValue.materializedAt(primitiveType, boxedValue.irType)
+        BooleanComparison(op, unboxedValue, loadOther()).jumpIfFalse(target)
+    }
+
+    override fun jumpIfTrue(target: Label) {
+        val compareLabel = Label()
+        val endLabel = Label()
+        mv.dup()
+        if (useNullCheck) {
+            mv.ifnonnull(compareLabel)
+        } else {
+            mv.instanceOf(AsmUtil.boxType(primitiveType))
+            mv.ifne(compareLabel)
+        }
+        mv.pop()
+        mv.goTo(endLabel)
+        mv.mark(compareLabel)
+        val unboxedValue = boxedValue.materializedAt(primitiveType, boxedValue.irType)
+        BooleanComparison(op, unboxedValue, loadOther()).jumpIfTrue(target)
+        mv.mark(endLabel)
+    }
+
+    override fun discard() {
+        boxedValue.discard()
     }
 }
 

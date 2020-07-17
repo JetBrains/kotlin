@@ -11,7 +11,7 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
@@ -25,9 +25,12 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.framework.platform
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.addDependency
@@ -347,10 +350,8 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     fun testSdkForScript() {
         // The first known jdk will be used for scripting if there is no jdk in the project
         runWriteAction {
-            val jdkTable = getProjectJdkTableSafe()
-
-            jdkTable.addJdk(mockJdk6())
-            jdkTable.addJdk(mockJdk9())
+            addJdk(testRootDisposable, ::mockJdk6)
+            addJdk(testRootDisposable, ::mockJdk9)
 
             ProjectRootManager.getInstance(project).projectSdk = null
         }
@@ -364,10 +365,8 @@ class IdeaModuleInfoTest : ModuleTestCase() {
 
     fun testSdkForScriptProjectSdk() {
         runWriteAction {
-            val jdkTable = getProjectJdkTableSafe()
-
-            jdkTable.addJdk(mockJdk6())
-            jdkTable.addJdk(mockJdk9())
+            addJdk(testRootDisposable, ::mockJdk6)
+            addJdk(testRootDisposable, ::mockJdk9)
 
             ProjectRootManager.getInstance(project).projectSdk = mockJdk9()
         }
@@ -381,10 +380,8 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         val a = module("a")
 
         runWriteAction {
-            val jdkTable = getProjectJdkTableSafe()
-
-            jdkTable.addJdk(mockJdk6())
-            jdkTable.addJdk(mockJdk9())
+            addJdk(testRootDisposable, ::mockJdk6)
+            addJdk(testRootDisposable, ::mockJdk9)
 
             ProjectRootManager.getInstance(project).projectSdk = mockJdk6()
             with(ModuleRootManager.getInstance(a).modifiableModel) {
@@ -437,8 +434,11 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     private val Module.test: ModuleTestSourceInfo
         get() = testSourceInfo()!!
 
-    private val Library.classes: LibraryInfo
-        get() = LibraryInfo(project!!, this)
+    private val LibraryEx.classes: LibraryInfo
+        get() = object : LibraryInfo(project!!, this) {
+            override val platform: TargetPlatform
+                get() = kind.platform
+        }
 
     private fun module(name: String, hasProductionRoot: Boolean = true, hasTestRoot: Boolean = true): Module {
         return createModuleFromTestData(createTempDirectory().absolutePath, name, StdModuleTypes.JAVA, false).apply {
@@ -467,15 +467,15 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         UsefulTestCase.assertSameElements(this.getDependentModules(), expected.toList())
     }
 
-    private fun stdlibCommon(): Library = projectLibrary(
+    private fun stdlibCommon(): LibraryEx = projectLibrary(
         "kotlin-stdlib-common",
         ForTestCompileRuntime.stdlibCommonForTests().jarRoot,
         kind = CommonLibraryKind
     )
 
-    private fun stdlibJvm(): Library = projectLibrary("kotlin-stdlib", ForTestCompileRuntime.runtimeJarForTests().jarRoot)
+    private fun stdlibJvm(): LibraryEx = projectLibrary("kotlin-stdlib", ForTestCompileRuntime.runtimeJarForTests().jarRoot)
 
-    private fun stdlibJs(): Library = projectLibrary(
+    private fun stdlibJs(): LibraryEx = projectLibrary(
         "kotlin-stdlib-js",
         ForTestCompileRuntime.runtimeJarForTests().jarRoot,
         kind = JSLibraryKind
@@ -488,8 +488,6 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     }
 
     override fun tearDown() {
-        clearSdkTable(testRootDisposable)
-
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
         super.tearDown()

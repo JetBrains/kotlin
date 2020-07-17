@@ -60,7 +60,9 @@ class ExtractionEngine(
         val project = extractionData.project
 
         val adjustExtractionData = helper.adjustExtractionData(extractionData)
-        val analysisResult = ProgressIndicatorUtils.underModalProgress(project, "Analyze extraction data...") {
+        val analysisResult = ProgressIndicatorUtils.underModalProgress(project,
+                                                                       KotlinBundle.message("progress.title.analyze.extraction.data")
+        ) {
             adjustExtractionData.performAnalysis()
         }
 

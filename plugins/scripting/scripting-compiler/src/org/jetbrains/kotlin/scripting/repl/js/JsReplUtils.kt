@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzer
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.ScriptLightVirtualFile
 import org.jetbrains.kotlin.util.Logger
@@ -85,7 +85,7 @@ class ReplMessageCollector : MessageCollector {
         messages.clear()
     }
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         if (severity == CompilerMessageSeverity.ERROR) hasErrors = true
         messages.add(Pair(severity, message))
     }
@@ -132,7 +132,7 @@ fun readLibrariesFromConfiguration(configuration: CompilerConfiguration): List<M
         .map { descriptorMap.getOrPut(it.libraryName) { getModuleDescriptorByLibrary(it, descriptorMap) } }
 }
 
-fun createCompileResult(code: String) = createCompileResult(LineId(ReplCodeLine(0, 0, "")), code)
+fun createCompileResult(code: String) = createCompileResult(LineId(0, 0, 0), code)
 
 fun createCompileResult(lineId: LineId, code: String): ReplCompileResult.CompiledClasses {
     return ReplCompileResult.CompiledClasses(
@@ -149,7 +149,7 @@ fun createCompileResult(lineId: LineId, code: String): ReplCompileResult.Compile
 
 class DependencyLoader {
     // TODO: this should be taken from CompilerConfiguration
-    private val commonPath = "libraries/stdlib/js-ir/build/fullRuntime/klib"
+    private val commonPath = "libraries/stdlib/js-ir/build/classes/kotlin/js/main/"
     private val mappedNamesPath = "$commonPath/mappedNames.txt"
     private val scriptDependencyBinaryPath = "$commonPath/scriptDependencyBinary.js"
 
@@ -219,7 +219,7 @@ class JsReplCompilationState(
     lock: ReentrantReadWriteLock,
     nameTables: NameTables,
     dependencies: List<ModuleDescriptor>,
-    val replState: ReplCodeAnalyzer.ResettableAnalyzerState,
+    val replState: ReplCodeAnalyzerBase.ResettableAnalyzerState,
     val symbolTable: SymbolTable
 ) : JsCompilationState(lock, nameTables, dependencies)
 

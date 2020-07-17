@@ -17,15 +17,15 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -122,7 +122,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 visibility = Visibilities.LOCAL
                 // A callable reference results in a synthetic class, while a lambda is not synthetic.
                 // We don't produce GENERATED_SAM_IMPLEMENTATION, which is always synthetic.
-                origin = if (isKReference) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
+                origin = if (isKReference || !isLambda) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
                 name = SpecialNames.NO_NAME_PROVIDED
             }.apply {
                 superTypes = listOf(superClass, reference.type)
@@ -143,14 +143,6 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             if (boundReceiver != null) {
                 boundReceiverField = addField(BOUND_RECEIVER_NAME, boundReceiver.type)
             }
-        }
-
-        private fun IrClass.createDispatchReceiver(): IrValueParameter {
-            val vpDescriptor = WrappedReceiverParameterDescriptor()
-            val vpSymbol = IrValueParameterSymbolImpl(vpDescriptor)
-            val declaration = IrValueParameterImpl(startOffset, endOffset, origin, vpSymbol, THIS_NAME, -1, defaultType, null, false, false)
-            vpDescriptor.bind(declaration)
-            return declaration
         }
 
         private fun createConstructor(clazz: IrClass): IrConstructor {
@@ -206,7 +198,8 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 isOperator = superMethod.isOperator
             }.apply {
                 overriddenSymbols = listOf(superMethod.symbol)
-                dispatchReceiverParameter = clazz.createDispatchReceiver().also { it.parent = this }
+                dispatchReceiverParameter = buildReceiverParameter(this, clazz.origin, clazz.defaultType, startOffset, endOffset)
+
                 if (isLambda) createLambdaInvokeMethod() else createFunctionReferenceInvokeMethod()
             }
         }
@@ -293,11 +286,11 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             val argumentTypes = parameterTypes.dropLast(1)
 
             valueParameters = argumentTypes.mapIndexed { i, t ->
-                buildValueParameter {
+                buildValueParameter(this) {
                     name = Name.identifier("p$i")
                     type = t
                     index = i
-                }.also { it.parent = this }
+                }
             }
 
             body = IrBlockBodyImpl(reference.startOffset, reference.endOffset, listOf(reference.run {
@@ -326,10 +319,10 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 returnType = stringType
             }
             getter.overriddenSymbols += supperGetter.symbol
-            getter.dispatchReceiverParameter = buildValueParameter {
+            getter.dispatchReceiverParameter = buildValueParameter(getter) {
                 name = THIS_NAME
                 type = clazz.defaultType
-            }.also { it.parent = getter }
+            }
 
             getter.body = IrBlockBodyImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(

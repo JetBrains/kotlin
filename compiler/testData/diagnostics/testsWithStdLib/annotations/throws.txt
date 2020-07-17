@@ -1,0 +1,82 @@
+package
+
+package abc1 {
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo2(): kotlin.Unit
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+}
+
+package abc2 {
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo2(): kotlin.Unit
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+}
+
+package abc3 {
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo2(): kotlin.Unit
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+}
+
+package abc4 {
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo2(): kotlin.Unit
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+}
+
+package abc5 {
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo2(): kotlin.Unit
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+}
+
+package abc6 {
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo2(): kotlin.Unit
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+}
+
+package abc7 {
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo2(): kotlin.Unit
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+}
+
+package abc8 {
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo2(): kotlin.Unit
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+}
+
+package abc9 {
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo1(): kotlin.Unit
+    @kotlin.Throws /* = kotlin.jvm.Throws */(exceptionClasses = {java.lang.Exception::class}) public fun foo2(): kotlin.Unit
+    @kotlin.jvm.Throws(exceptionClasses = {java.lang.Exception::class}) public fun foo3(): kotlin.Unit
+    public fun foo5(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo6(/*0*/ x: kotlin.Throws /* = kotlin.jvm.Throws */): kotlin.Unit
+    public fun foo7(/*0*/ x: kotlin.jvm.Throws): kotlin.Unit
+}

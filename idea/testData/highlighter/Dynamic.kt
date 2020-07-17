@@ -1,3 +1,4 @@
+// IGNORE_FIR
 package testing
 
 fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">tst</info>(<info textAttributesKey="KOTLIN_PARAMETER">d</info>: <error><info>dynamic</info></error>) {

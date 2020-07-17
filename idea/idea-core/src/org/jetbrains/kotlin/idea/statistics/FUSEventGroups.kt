@@ -15,7 +15,7 @@ package org.jetbrains.kotlin.idea.statistics
 enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf()) {
 
     GradleTarget("gradle.target", gradleTargetEvents),
-    Refactoring("ide.action.refactoring", refactoringEvents),
+    Refactoring("ide.refactoring", refactoringEvents),
     NewFileTemplate("ide.newFileTempl", newFileTemplateEvents),
     NPWizards("ide.npwizards"),
     Debug("ide.debugger"),
@@ -23,7 +23,8 @@ enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf
     Editor("ide.editor"),
     Settings("ide.settings"),
     GradlePerformance("gradle.performance"),
-    NewWizard("ide.new.wizard");
+    NewWizard("ide.new.wizard"),
+    MigrationTool("ide.migrationTool");
 
     val GROUP_ID: String = "kotlin.$groupIdSuffix"
 }

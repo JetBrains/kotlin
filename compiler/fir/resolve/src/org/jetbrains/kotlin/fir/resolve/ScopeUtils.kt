@@ -9,44 +9,42 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerLiteralTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.scope
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 
-fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
+fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? {
     return when (this) {
         is ConeKotlinErrorType -> null
         is ConeClassLikeType -> {
             val fullyExpandedType = fullyExpandedType(useSiteSession)
             val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass<*> ?: return null
 
-            val substitution = when (fir) {
-                is FirTypeParametersOwner -> createSubstitution(fir.typeParameters, fullyExpandedType.typeArguments, useSiteSession)
-                else -> emptyMap()
-            }
+            val substitution = createSubstitution(fir.typeParameters, fullyExpandedType.typeArguments, useSiteSession)
 
             fir.scope(substitutorByMap(substitution), useSiteSession, scopeSession, skipPrivateMembers = false)
         }
         is ConeTypeParameterType -> {
-            // TODO: support LibraryTypeParameterSymbol or get rid of it
-            val fir = lookupTag.toSymbol().fir
-            FirCompositeScope(
-                fir.bounds.mapNotNullTo(mutableListOf()) {
-                    it.coneTypeUnsafe<ConeKotlinType>().scope(useSiteSession, scopeSession)
-                }
-            )
+            val symbol = lookupTag.toSymbol()
+            scopeSession.getOrBuild(symbol, TYPE_PARAMETER_SCOPE_KEY) {
+                val intersectionType = ConeTypeIntersector.intersectTypes(
+                    useSiteSession.typeContext,
+                    symbol.fir.bounds.map { it.coneType }
+                )
+                intersectionType.scope(useSiteSession, scopeSession) ?: FirTypeScope.Empty
+            }
         }
         is ConeRawType -> lowerBound.scope(useSiteSession, scopeSession)
         is ConeFlexibleType -> lowerBound.scope(useSiteSession, scopeSession)
-        is ConeIntersectionType -> FirSuperTypeScope.prepareSupertypeScope(
+        is ConeIntersectionType -> FirTypeIntersectionScope.prepareIntersectionScope(
             useSiteSession,
             FirStandardOverrideChecker(useSiteSession),
             intersectedTypes.mapNotNullTo(mutableListOf()) {
@@ -55,7 +53,6 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
         )
         is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession)
         is ConeIntegerLiteralType -> {
-
             @Suppress("USELESS_CAST") // TODO: remove once fixed: https://youtrack.jetbrains.com/issue/KT-35635
             scopeSession.getOrBuild(
                 when {
@@ -65,7 +62,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
                 FirIntegerLiteralTypeScope.SCOPE_SESSION_KEY
             ) {
                 FirIntegerLiteralTypeScope(useSiteSession, isUnsigned)
-            } as FirScope
+            } as FirTypeScope
         }
         else -> null
     }
@@ -84,10 +81,12 @@ fun FirRegularClass.defaultType(): ConeClassLikeTypeImpl {
     )
 }
 
-fun FirAnonymousObject.defaultType(): ConeClassLikeTypeImpl {
-    return ConeClassLikeTypeImpl(
+fun FirAnonymousObject.defaultType(): ConeClassLikeType {
+    return this.typeRef.coneTypeSafe() ?: ConeClassLikeTypeImpl(
         symbol.toLookupTag(),
         emptyArray(),
         isNullable = false
     )
 }
+
+val TYPE_PARAMETER_SCOPE_KEY = scopeSessionKey<FirTypeParameterSymbol, FirTypeScope>()

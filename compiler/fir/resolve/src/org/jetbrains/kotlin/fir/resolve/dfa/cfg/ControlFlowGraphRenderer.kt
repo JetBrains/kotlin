@@ -26,10 +26,12 @@ class FirControlFlowGraphRenderVisitor(
 
         private val EDGE_STYLE = EnumMap(
             mapOf(
-                EdgeKind.Simple to "",
-                EdgeKind.Dead to "[style=dotted]",
-                EdgeKind.Cfg to "[color=green]",
-                EdgeKind.Dfg to "[color=red]",
+                EdgeKind.Forward to "",
+                EdgeKind.DeadForward to "[style=dotted]",
+                EdgeKind.CfgForward to "[color=green]",
+                EdgeKind.DfgForward to "[color=red]",
+                EdgeKind.CfgBackward to "[color=green style=dashed]",
+                EdgeKind.DeadBackward to "[color=green style=dotted]"
             )
         )
     }
@@ -132,11 +134,19 @@ class FirControlFlowGraphRenderVisitor(
 
     override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
         val controlFlowGraph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
-        controlFlowGraph.collectNodes()
-        if (controlFlowGraph.owner == null) {
-            topLevelGraphs += controlFlowGraph
+        initializeNodes(controlFlowGraph)
+    }
+
+    private fun initializeNodes(graph: ControlFlowGraph) {
+        if (graph in allGraphs) return
+        graph.collectNodes()
+        if (graph.owner == null) {
+            topLevelGraphs += graph
         }
-        allGraphs += controlFlowGraph
+        allGraphs += graph
+        for (subGraph in graph.subGraphs) {
+            initializeNodes(subGraph)
+        }
     }
 
     private fun Printer.enterCluster(color: String) {

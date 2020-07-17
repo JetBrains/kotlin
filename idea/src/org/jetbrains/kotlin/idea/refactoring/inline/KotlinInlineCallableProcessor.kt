@@ -25,10 +25,10 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.replaceUsages
 import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.pullUp.deleteWithCompanion
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -54,7 +54,8 @@ class KotlinInlineCallableProcessor(
         else -> KotlinBundle.message("text.declaration")
     }
 
-    private val commandName = KotlinBundle.message("text.inlining.0.1",
+    private val commandName = KotlinBundle.message(
+        "text.inlining.0.1",
         kind,
         DescriptiveNameUtil.getDescriptiveName(declaration)
     )
@@ -69,23 +70,24 @@ class KotlinInlineCallableProcessor(
     }
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
-        val simpleNameUsages = usages.mapNotNull { it.element as? KtSimpleNameExpression }
+        val referenceUsages = usages.mapNotNull { it.element as? KtReferenceExpression }
         replacementStrategy.replaceUsages(
-            simpleNameUsages,
+            referenceUsages,
             declaration,
             myProject,
             commandName,
             postAction = {
                 if (deleteAfter) {
-                    if (usages.size == simpleNameUsages.size) {
+                    if (usages.size == referenceUsages.size) {
                         declaration.deleteWithCompanion()
                         statementToDelete?.delete()
                     } else {
                         CommonRefactoringUtil.showErrorHint(
                             declaration.project,
                             null,
-                            KotlinBundle.message("text.cannot.inline.0.1.usages",
-                                usages.size - simpleNameUsages.size,
+                            KotlinBundle.message(
+                                "text.cannot.inline.0.1.usages",
+                                usages.size - referenceUsages.size,
                                 usages.size
                             ),
                             KotlinBundle.message("text.inline.0", kind),

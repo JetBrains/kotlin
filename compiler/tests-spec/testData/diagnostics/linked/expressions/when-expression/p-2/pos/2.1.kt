@@ -4,7 +4,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, when-expression -> paragraph 2 -> sentence 2
+ * MAIN LINK: expressions, when-expression -> paragraph 2 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: When without bound value, various boolean values in the when condition.
  * HELPERS: typesProvider, enumClasses, sealedClasses, classes

@@ -146,7 +146,8 @@ interface KotlinTarget : Serializable {
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
     val compilations: Collection<KotlinCompilation>
-    val testTasks: Collection<KotlinTestTask>
+    val testRunTasks: Collection<KotlinTestRunTask>
+    val nativeMainRunTasks: Collection<KotlinNativeMainRunTask>
     val jar: KotlinTargetJar?
     val konanArtifacts: List<KonanArtifactModel>
 
@@ -155,9 +156,16 @@ interface KotlinTarget : Serializable {
     }
 }
 
-interface KotlinTestTask : Serializable {
+interface KotlinRunTask : Serializable {
     val taskName: String
     val compilationName: String
+}
+
+interface KotlinTestRunTask : KotlinRunTask
+
+interface KotlinNativeMainRunTask : KotlinRunTask {
+    val entryPoint: String
+    val debuggable: Boolean
 }
 
 interface ExtraFeatures : Serializable {

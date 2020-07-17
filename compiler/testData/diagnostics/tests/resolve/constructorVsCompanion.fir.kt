@@ -17,7 +17,7 @@ class E private constructor() {
 }
 
 val a = A
-val b = B
+val <!EXPOSED_PROPERTY_TYPE!>b<!> = B
 val c = C
 val d = D
 val e = E(42)

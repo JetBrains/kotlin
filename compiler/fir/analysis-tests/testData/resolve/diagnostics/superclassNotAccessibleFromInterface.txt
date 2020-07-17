@@ -10,7 +10,7 @@ FILE: superclassNotAccessibleFromInterface.kt
     }
     public abstract interface ATrait : R|A| {
         public open override fun foo(): R|kotlin/Unit| {
-            super<R|A|>.R|/A.foo|()
+            this@R|/ATrait|.super<R|A|>.R|/A.foo|()
         }
 
     }

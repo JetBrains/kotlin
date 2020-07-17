@@ -28,10 +28,11 @@ fun createGeneratorContext(
     bindingContext: BindingContext,
     languageVersionSettings: LanguageVersionSettings,
     symbolTable: SymbolTable,
-    extensions: GeneratorExtensions,
-    signaturer: IdSignatureComposer
+    extensions: GeneratorExtensions
 ): GeneratorContext {
-    val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, builtIns = moduleDescriptor.builtIns)
+    val typeTranslator = TypeTranslator(
+        symbolTable, languageVersionSettings, builtIns = moduleDescriptor.builtIns, extensions = extensions
+    )
     val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
     typeTranslator.constantValueGenerator = constantValueGenerator
     constantValueGenerator.typeTranslator = typeTranslator
@@ -44,7 +45,7 @@ fun createGeneratorContext(
         extensions,
         typeTranslator,
         constantValueGenerator,
-        IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, signaturer, symbolTable)
+        IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
     )
 }
 
@@ -58,7 +59,7 @@ class GeneratorContext(
     val typeTranslator: TypeTranslator,
     val constantValueGenerator: ConstantValueGenerator,
     override val irBuiltIns: IrBuiltIns
-) : IrGeneratorContext() {
+) : IrGeneratorContext {
 
     val callToSubstitutedDescriptorMap = mutableMapOf<IrDeclarationReference, CallableDescriptor>()
 

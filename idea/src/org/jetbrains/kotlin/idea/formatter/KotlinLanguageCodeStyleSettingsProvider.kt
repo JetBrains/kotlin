@@ -1,174 +1,40 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.formatter
 
+import com.intellij.application.options.CodeStyleAbstractConfigurable
+import com.intellij.application.options.CodeStyleAbstractPanel
 import com.intellij.application.options.IndentOptionsEditor
 import com.intellij.application.options.SmartIndentOptionsEditor
+import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationBundle
-import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings
-import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
+import com.intellij.psi.codeStyle.*
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import kotlin.reflect.KProperty
 
 class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
-    override fun getLanguage() = KotlinLanguage.INSTANCE
+    override fun getLanguage(): Language = KotlinLanguage.INSTANCE
+    override fun getConfigurableDisplayName(): String = KotlinBundle.message("codestyle.name.kotlin")
+    override fun createConfigurable(settings: CodeStyleSettings, modelSettings: CodeStyleSettings): CodeStyleConfigurable =
+        object : CodeStyleAbstractConfigurable(settings, modelSettings, KotlinLanguage.NAME) {
+            override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel =
+                KotlinCodeStylePanel(currentSettings, settings)
 
-    override fun getCodeSample(settingsType: SettingsType): String = when (settingsType) {
-        SettingsType.WRAPPING_AND_BRACES_SETTINGS ->
-            """
-               @Deprecated("Foo") public class ThisIsASampleClass : Comparable<*>, Appendable {
-                   val test =
-                       12
+            override fun getHelpTopic(): String = "reference.settingsdialog.codestyle.kotlin"
+        }
 
-                   @Deprecated("Foo") fun foo1(i1: Int, i2: Int, i3: Int) : Int {
-                       when (i1) {
-                           is Number -> 0
-                           else -> 1
-                       }
-                       if (i2 > 0 &&
-                               i3 < 0) {
-                           return 2
-                       }
-                       return 0
-                   }
-                   private fun foo2():Int {
-               // todo: something
-                       try {            return foo1(12, 13, 14)
-                       }        catch (e: Exception) {            return 0        }        finally {           if (true) {               return 1           }           else {               return 2           }        }    }
-                   private val f = {a: Int->a*2}
+    override fun getIndentOptionsEditor(): IndentOptionsEditor = SmartIndentOptionsEditor()
 
-                   fun longMethod(@Named("param1") param1: Int,
-                    param2: String) {
-                       @Deprecated val foo = 1
-                   }
-
-                   fun multilineMethod(
-                           foo: String,
-                           bar: String?,
-                           x: Int?
-                       ) {
-                       foo.toUpperCase().trim()
-                           .length
-                       val barLen = bar?.length() ?: x ?: -1
-                       if (foo.length > 0 &&
-                           barLen > 0) {
-                           println("> 0")
-                       }
-                   }
-               }
-
-               @Deprecated val bar = 1
-
-               enum class Enumeration {
-                   A, B
-               }
-
-               fun veryLongExpressionBodyMethod() = "abc"
-            """.trimIndent()
-
-        SettingsType.BLANK_LINES_SETTINGS ->
-            """
-                class Foo {
-                   private var field1: Int = 1
-                   private val field2: String? = null
-
-
-                   init {
-                       field1 = 2;
-                   }
-
-                   fun foo1() {
-                       run {
-
-
-
-                           field1
-                       }
-
-                       when(field1) {
-                           1 -> println("1")
-                           2 -> println("2")
-                           3 ->
-                                println("3" +
-                                     "4")
-                       }
-
-                       when(field2) {
-                           1 -> {
-                               println("1")
-                           }
-
-                           2 -> {
-                               println("2")
-                           }
-                       }
-                   }
-
-
-                   class InnerClass {
-                   }
-               }
-
-
-
-               class AnotherClass {
-               }
-
-               interface TestInterface {
-               }
-               fun run(f: () -> Unit) {
-                   f()
-               }""".trimIndent()
-
-        else -> """open class Some {
-                       private val f: (Int)->Int = { a: Int -> a * 2 }
-                       fun foo(): Int {
-                           val test: Int = 12
-                           for (i in 10..42) {
-                               println (when {
-                                   i < test -> -1
-                                   i > test -> 1
-                                   else -> 0
-                               })
-                           }
-                           if (true) { }
-                           while (true) { break }
-                           try {
-                               when (test) {
-                                   12 -> println("foo")
-                                   else -> println("bar")
-                               }
-                           } catch (e: Exception) {
-                           } finally {
-                           }
-                           return test
-                       }
-                       private fun <T>foo2(): Int where T : List<T> {
-                           return 0
-                       }
-
-                       fun multilineMethod(
-                           foo: String,
-                           bar: String
-                       ) {
-                           foo
-                               .length
-                       }
-
-                       fun expressionBodyMethod() =
-                               "abc"
-                   }
-                   class AnotherClass<T : Any> : Some()
-                   """.trimIndent()
+    override fun getDefaultCommonSettings(): CommonCodeStyleSettings = KotlinCommonCodeStyleSettings().apply {
+        initIndentOptions()
     }
 
-    override fun getLanguageName(): String = KotlinLanguage.NAME
+    override fun createCustomSettings(settings: CodeStyleSettings?): CustomCodeStyleSettings = KotlinCodeStyleSettings(settings)
 
     override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: SettingsType) {
         fun showCustomOption(field: KProperty<*>, title: String, groupName: String? = null, vararg options: Any) {
@@ -284,17 +150,20 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     "ENUM_CONSTANTS_WRAP",
                     "METHOD_CALL_CHAIN_WRAP",
                     "WRAP_FIRST_METHOD_IN_CALL_CHAIN",
-                    "ASSIGNMENT_WRAP"
+                    "ASSIGNMENT_WRAP",
                 )
+
                 consumer.renameStandardOption(
                     CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT,
                     KotlinBundle.message("formatter.title.when.statements")
                 )
+
                 consumer.renameStandardOption("FIELD_ANNOTATION_WRAP", KotlinBundle.message("formatter.title.property.annotations"))
                 consumer.renameStandardOption(
                     "METHOD_PARAMETERS_WRAP",
                     KotlinBundle.message("formatter.title.function.declaration.parameters")
                 )
+
                 consumer.renameStandardOption("CALL_PARAMETERS_WRAP", KotlinBundle.message("formatter.title.function.call.arguments"))
                 consumer.renameStandardOption("METHOD_CALL_CHAIN_WRAP", KotlinBundle.message("formatter.title.chained.function.calls"))
                 consumer.renameStandardOption("METHOD_ANNOTATION_WRAP", KotlinBundle.message("formatter.title.function.annotations"))
@@ -302,8 +171,6 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     CodeStyleSettingsCustomizable.WRAPPING_METHOD_PARENTHESES,
                     KotlinBundle.message("formatter.title.function.parentheses")
                 )
-
-                showCustomOption(KotlinCodeStyleSettings::ALLOW_TRAILING_COMMA, "Use trailing comma")
 
                 showCustomOption(
                     KotlinCodeStyleSettings::ALIGN_IN_COLUMNS_CASE_BRANCH,
@@ -322,16 +189,19 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     KotlinBundle.message("formatter.title.use.continuation.indent"),
                     CodeStyleSettingsCustomizable.WRAPPING_METHOD_PARAMETERS
                 )
+
                 showCustomOption(
                     KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_ARGUMENT_LISTS,
                     KotlinBundle.message("formatter.title.use.continuation.indent"),
                     CodeStyleSettingsCustomizable.WRAPPING_METHOD_ARGUMENTS_WRAPPING
                 )
+
                 showCustomOption(
                     KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_CHAINED_CALLS,
                     KotlinBundle.message("formatter.title.use.continuation.indent"),
                     CodeStyleSettingsCustomizable.WRAPPING_CALL_CHAIN
                 )
+
                 showCustomOption(
                     KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_SUPERTYPE_LISTS,
                     KotlinBundle.message("formatter.title.use.continuation.indent"),
@@ -346,11 +216,13 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         CodeStyleSettingsCustomizable.WRAP_VALUES_FOR_SINGLETON
                     )
                 )
+
                 showCustomOption(
                     KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES,
                     KotlinBundle.message("formatter.title.use.continuation.indent"),
                     KotlinBundle.message("formatter.title.expression.body.functions")
                 )
+
                 showCustomOption(
                     KotlinCodeStyleSettings::WRAP_ELVIS_EXPRESSIONS,
                     KotlinBundle.message("formatter.title.elvis.expressions"),
@@ -364,12 +236,13 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     title = KotlinBundle.message("formatter.title.use.continuation.indent"),
                     groupName = KotlinBundle.message("formatter.title.elvis.expressions")
                 )
-                @Suppress("InvalidBundleOrProperty")
+
                 showCustomOption(
                     KotlinCodeStyleSettings::IF_RPAREN_ON_NEW_LINE,
                     ApplicationBundle.message("wrapping.rpar.on.new.line"),
                     CodeStyleSettingsCustomizable.WRAPPING_IF_STATEMENT
                 )
+
                 showCustomOption(
                     KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_IF_CONDITIONS,
                     KotlinBundle.message("formatter.title.use.continuation.indent.in.conditions"),
@@ -383,9 +256,16 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     "KEEP_BLANK_LINES_BEFORE_RBRACE",
                     "BLANK_LINES_AFTER_CLASS_HEADER"
                 )
+
                 showCustomOption(
                     KotlinCodeStyleSettings::BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES,
                     KotlinBundle.message("formatter.title.around.when.branches.with"),
+                    CodeStyleSettingsCustomizable.BLANK_LINES
+                )
+
+                showCustomOption(
+                    KotlinCodeStyleSettings::BLANK_LINES_BEFORE_DECLARATION_WITH_COMMENT_OR_ANNOTATION_ON_SEPARATE_LINE,
+                    KotlinBundle.message("formatter.title.before.declaration.with.comment.or.annotation"),
                     CodeStyleSettingsCustomizable.BLANK_LINES
                 )
             }
@@ -396,11 +276,169 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
         }
     }
 
-    override fun getIndentOptionsEditor(): IndentOptionsEditor = SmartIndentOptionsEditor()
+    override fun getCodeSample(settingsType: SettingsType): String = when (settingsType) {
+        SettingsType.WRAPPING_AND_BRACES_SETTINGS ->
+            """
+               @Deprecated("Foo") public class ThisIsASampleClass : Comparable<*>, Appendable {
+                   val test =
+                       12
 
-    override fun getDefaultCommonSettings(): CommonCodeStyleSettings {
-        return KotlinCommonCodeStyleSettings().apply {
-            initIndentOptions()
-        }
+                   @Deprecated("Foo") fun foo1(i1: Int, i2: Int, i3: Int) : Int {
+                       when (i1) {
+                           is Number -> 0
+                           else -> 1
+                       }
+                       if (i2 > 0 &&
+                               i3 < 0) {
+                           return 2
+                       }
+                       return 0
+                   }
+                   private fun foo2():Int {
+               // todo: something
+                       try {            return foo1(12, 13, 14)
+                       }        catch (e: Exception) {            return 0        }        finally {           if (true) {               return 1           }           else {               return 2           }        }    }
+                   private val f = {a: Int->a*2}
+
+                   fun longMethod(@Named("param1") param1: Int,
+                    param2: String) {
+                       @Deprecated val foo = 1
+                   }
+
+                   fun multilineMethod(
+                           foo: String,
+                           bar: String?,
+                           x: Int?
+                       ) {
+                       foo.toUpperCase().trim()
+                           .length
+                       val barLen = bar?.length() ?: x ?: -1
+                       if (foo.length > 0 &&
+                           barLen > 0) {
+                           println("> 0")
+                       }
+                   }
+               }
+
+               @Deprecated val bar = 1
+
+               enum class Enumeration {
+                   A, B
+               }
+
+               fun veryLongExpressionBodyMethod() = "abc"
+            """.trimIndent()
+
+        SettingsType.BLANK_LINES_SETTINGS ->
+            """
+                class Foo {
+                   private var field1: Int = 1
+                   private val field2: String? = null
+
+
+                   init {
+                       field1 = 2;
+                   }
+
+                   fun foo1() {
+                       run {
+
+
+
+                           field1
+                       }
+
+                       when(field1) {
+                           1 -> println("1")
+                           2 -> println("2")
+                           3 ->
+                                println("3" +
+                                     "4")
+                       }
+
+                       when(field2) {
+                           1 -> {
+                               println("1")
+                           }
+
+                           2 -> {
+                               println("2")
+                           }
+                       }
+                   }
+
+
+                   class InnerClass {
+                   }
+               }
+
+
+
+               class AnotherClass {
+               }
+
+               interface TestInterface {
+               }
+               fun run(f: () -> Unit) {
+                   f()
+               }
+               
+               class Bar {
+                   @Annotation
+                   val a = 42
+                   @Annotation
+                   val b = 43
+                   fun c() {
+                       a + b
+                   }
+                   fun d() = Unit
+                   // smth
+                   fun e() {
+                       d()
+                   }
+                   fun f() = d()
+               }
+               """.trimIndent()
+
+        else -> """open class Some {
+                       private val f: (Int)->Int = { a: Int -> a * 2 }
+                       fun foo(): Int {
+                           val test: Int = 12
+                           for (i in 10..42) {
+                               println (when {
+                                   i < test -> -1
+                                   i > test -> 1
+                                   else -> 0
+                               })
+                           }
+                           if (true) { }
+                           while (true) { break }
+                           try {
+                               when (test) {
+                                   12 -> println("foo")
+                                   else -> println("bar")
+                               }
+                           } catch (e: Exception) {
+                           } finally {
+                           }
+                           return test
+                       }
+                       private fun <T>foo2(): Int where T : List<T> {
+                           return 0
+                       }
+
+                       fun multilineMethod(
+                           foo: String,
+                           bar: String
+                       ) {
+                           foo
+                               .length
+                       }
+
+                       fun expressionBodyMethod() =
+                               "abc"
+                   }
+                   class AnotherClass<T : Any> : Some()
+                   """.trimIndent()
     }
 }

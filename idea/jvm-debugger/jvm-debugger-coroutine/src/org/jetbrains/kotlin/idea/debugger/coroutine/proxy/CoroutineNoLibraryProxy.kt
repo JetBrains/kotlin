@@ -6,15 +6,20 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 
 import com.intellij.openapi.util.registry.Registry
-import com.sun.jdi.*
+import com.sun.jdi.Field
+import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.CancellableContinuationImpl
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.findCancellableContinuationImplReferenceType
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.findCoroutineMetadataType
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.findDispatchedContinuationReferenceType
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
-class CoroutineNoLibraryProxy(val executionContext: DefaultExecutionContext) : CoroutineInfoProvider {
+class CoroutineNoLibraryProxy(private val executionContext: DefaultExecutionContext) : CoroutineInfoProvider {
     val log by logger
-    val debugMetadataKtType = executionContext.findCoroutineMetadataType()
+    private val debugMetadataKtType = executionContext.findCoroutineMetadataType()
+    private val holder = ContinuationHolder.instance(executionContext)
 
     override fun dumpCoroutinesInfo(): List<CoroutineInfoData> {
         val vm = executionContext.vm
@@ -25,7 +30,6 @@ class CoroutineNoLibraryProxy(val executionContext: DefaultExecutionContext) : C
                 "CANCELLABLE_CONTINUATION" -> cancellableContinuation(resultList)
                 else -> dispatchedContinuation(resultList)
             }
-
         } else
             log.warn("Remote JVM doesn't support canGetInstanceInfo capability (perhaps JDK-8197943).")
         return resultList
@@ -46,15 +50,13 @@ class CoroutineNoLibraryProxy(val executionContext: DefaultExecutionContext) : C
         return false
     }
 
-    fun extractCancellableContinuation(
+    private fun extractCancellableContinuation(
         dispatchedContinuation: ObjectReference,
         ccMirrorProvider: CancellableContinuationImpl
     ): CoroutineInfoData? {
         val mirror = ccMirrorProvider.mirror(dispatchedContinuation, executionContext) ?: return null
         val continuation = mirror.delegate?.continuation ?: return null
-        val ch = ContinuationHolder(continuation, executionContext)
-        val coroutineWithRestoredStack = ch.getAsyncStackTraceIfAny() ?: return null
-        return CoroutineInfoData.suspendedCoroutineInfoData(coroutineWithRestoredStack, continuation)
+        return holder.extractCoroutineInfoData(continuation)
     }
 
     private fun dispatchedContinuation(resultList: MutableList<CoroutineInfoData>): Boolean {
@@ -71,14 +73,11 @@ class CoroutineNoLibraryProxy(val executionContext: DefaultExecutionContext) : C
         return false
     }
 
-    fun extractDispatchedContinuation(dispatchedContinuation: ObjectReference, continuation: Field): CoroutineInfoData? {
+    private fun extractDispatchedContinuation(dispatchedContinuation: ObjectReference, continuation: Field): CoroutineInfoData? {
         debugMetadataKtType ?: return null
         val initialContinuation = dispatchedContinuation.getValue(continuation) as ObjectReference
-        val ch = ContinuationHolder(initialContinuation, executionContext)
-        val coroutineWithRestoredStack = ch.getAsyncStackTraceIfAny() ?: return null
-        return CoroutineInfoData.suspendedCoroutineInfoData(coroutineWithRestoredStack, initialContinuation)
+        return holder.extractCoroutineInfoData(initialContinuation)
     }
-
 }
 
 fun maxCoroutines() = Registry.intValue("kotlin.debugger.coroutines.max", 1000).toLong()

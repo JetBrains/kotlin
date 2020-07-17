@@ -1,13 +1,14 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE -EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE
 // SKIP_TXT
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-280
- * PLACE: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 1 -> sentence 2
- * RELEVANT PLACES: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 2 -> sentence 1
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 1 -> sentence 2
+ * PRIMARY LINKS: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 2 -> sentence 1
  * overload-resolution, building-the-overload-candidate-set-ocs, call-with-specified-type-parameters -> paragraph 1 -> sentence 2
  * NUMBER: 13
  * DESCRIPTION: Explicit receiver: The overload candidate sets for each pair of implicit receivers: Local extension callables
@@ -70,11 +71,11 @@ import libPackageCase2Explicit.listOf
 class Case2(){
 
     fun case1_0() {
-        fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+        fun <T> Case2.listOf(vararg elements1: T): List<T> = TODO()
         <!DEBUG_INFO_CALL("fqName: testsCase2.Case2.case1_0.listOf; typeCall: extension function")!>listOf(elements1= arrayOf(1))<!>
 
         fun case1_1() {
-            fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+            fun <T> Case2.listOf(vararg elements1: T): List<T> = TODO()
             <!DEBUG_INFO_CALL("fqName: testsCase2.Case2.case1_0.case1_1.listOf; typeCall: extension function")!>listOf(elements1= arrayOf(1))<!>
         }
     }
@@ -82,7 +83,7 @@ class Case2(){
     val Case2.listOf: A
         get() = A()
 
-    fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+    fun <T> Case2.listOf(vararg elements1: T): List<T> = TODO()
 
     fun case2_0(){
         <!DEBUG_INFO_CALL("fqName: testsCase2.Case2.listOf; typeCall: extension function")!>listOf(elements1= arrayOf(1))<!>
@@ -100,7 +101,7 @@ import testsCase2.*
 val Case2.listOf: A
     get() = A()
 public fun <T> listOf(vararg elements1: T): List<T> = TODO()
-fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+fun <T> Case2.listOf(vararg elements1: T): List<T> = TODO()
 
 // FILE: Lib.kt
 // TESTCASE NUMBER: 2
@@ -108,7 +109,7 @@ fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>list
 package libPackageCase2Explicit
 import testsCase2.*
 
-fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+fun <T> Case2.listOf(vararg elements1: T): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T): List<T> = TODO()
 
@@ -116,7 +117,7 @@ public fun <T> listOf(vararg elements1: T): List<T> = TODO()
 // TESTCASE NUMBER: 2
 
 package testsCase2
-fun <T> Case2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+fun <T> Case2.listOf(vararg elements1: T): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T): List<T> = TODO()
 
@@ -165,7 +166,7 @@ import testsCase3.*
 val Case3.listOf: A
     get() = A()
 public fun <T> listOf(vararg elements1: T): List<T> = TODO()
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+fun <T> Case3.listOf(vararg elements1: T): List<T> = TODO()
 
 // FILE: Lib.kt
 // TESTCASE NUMBER: 3
@@ -173,14 +174,14 @@ fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>list
 package libPackageCase3Explicit
 import testsCase3.*
 
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+fun <T> Case3.listOf(vararg elements1: T): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T): List<T> = TODO()
 
 // FILE: LibtestsPack.kt
 // TESTCASE NUMBER: 3
 package testsCase3
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+fun <T> Case3.listOf(vararg elements1: T): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T): List<T> = TODO()
 

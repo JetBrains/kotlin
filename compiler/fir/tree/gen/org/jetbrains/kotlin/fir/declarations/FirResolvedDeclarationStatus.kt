@@ -38,6 +38,7 @@ interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val isStatic: Boolean
     override val isFromSealedClass: Boolean
     override val isFromEnumClass: Boolean
+    override val isFun: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedDeclarationStatus(this, data)
 }

@@ -62,7 +62,7 @@ class KotlinUObjectLiteralExpression(
         psi.typeArguments.map { it.typeReference.toPsiType(this, boxed = true) }
     }
 
-    override fun resolve() = superClassConstructorCall?.resolveCallToDeclaration() as? PsiMethod
+    override fun resolve() = superClassConstructorCall?.let { resolveToPsiMethod(it) }
 
     override fun getArgumentForParameter(i: Int): UExpression? =
         superClassConstructorCall?.let { it.getResolvedCall(it.analyze()) }?.let { getArgumentExpressionByIndex(i, it, this) }
@@ -75,7 +75,7 @@ class KotlinUObjectLiteralExpression(
         override val javaPsi: PsiElement? get() = null
         override val psi: KtSuperTypeCallEntry get() = sourcePsi
 
-        override fun resolve() = (sourcePsi.resolveCallToDeclaration() as? PsiMethod)?.containingClass
+        override fun resolve() = resolveToPsiMethod(sourcePsi)?.containingClass
 
         override val annotations: List<UAnnotation>
             get() = emptyList()

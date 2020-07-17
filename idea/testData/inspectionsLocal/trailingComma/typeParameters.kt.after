@@ -1,0 +1,7 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+TrailingCommas
+// FIX: Add line break
+
+fun <
+        T,
+        B,
+        > a() = Unit

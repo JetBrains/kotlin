@@ -1,29 +1,3 @@
-ext.configureJvmProject = { Project project ->
-    project.configure(project) {
-        configurations {
-            sources
-        }
-
-        task sourcesJar(type: Jar, dependsOn: classes) {
-            classifier = 'sources'
-            from sourceSets.main.kotlin
-        }
-
-        tasks.withType(JavaCompile) {
-            options.fork = true
-            options.forkOptions.javaHome = file(JDK_18)
-        }
-
-        tasks.withType(project.compileKotlin.class) {
-            kotlinOptions.jdkHome = JDK_18
-        }
-
-        test {
-            executable = "$JDK_16/bin/java"
-        }
-    }
-}
-
 ext.configureJavaOnlyJvm6Project = { Project project ->
     project.tasks.withType(JavaCompile) {
         sourceCompatibility = 1.6
@@ -63,6 +37,7 @@ ext.configureJvm6Project = { Project project ->
 ext.compileJava9Sources = { Project project, String moduleName, Collection<FileCollection> moduleOutputs = [project.sourceSets.main.output] ->
     // module-info.java should be in java9 source set by convention
     SourceDirectorySet java9SourceSet = project.sourceSets.java9.java
+    project.configurations.java9CompileClasspath.extendsFrom(project.configurations.compileClasspath)
     project.tasks.getByName("compileJava9Java").configure { JavaCompile it ->
         dependsOn(moduleOutputs)
         it.sourceCompatibility = 1.9
@@ -74,7 +49,7 @@ ext.compileJava9Sources = { Project project, String moduleName, Collection<FileC
 
         doFirst {
             def moduleFiles = files(*moduleOutputs)
-            def modulePath = project.configurations.compileClasspath.filter { !(it in moduleFiles.files) }
+            def modulePath = project.configurations.java9CompileClasspath.filter { !(it in moduleFiles.files) }
 
             options.compilerArgs = [
                     '--module-path', modulePath.asPath,
@@ -140,7 +115,18 @@ ext.signPom = { Project project, MavenDeployer deployer ->
     }
 }
 
-ext.configurePublishing = { Project project ->
+ext.configurePublishing = { Project project, configure = { } ->
+    ArtifactsKt.publish(project, false) { publication ->
+        configure.delegate = publication
+        configure()
+    }
+}
+
+ext.configurePluginMarkers = { Project project, withEmptyJars = true ->
+    PluginMarkersKt.publishPluginMarkers(project, withEmptyJars)
+}
+
+ext.configureLegacyPublishing = { Project project ->
     project.configure(project) {
         apply plugin: 'maven'
 
@@ -206,8 +192,25 @@ ext.configurePublishing = { Project project ->
 }
 
 allprojects { project ->
-    project.ext.javadocJar = { lambda = {} ->
-        ArtifactsKt.javadocJar(project, lambda)
+    project.ext.configureSourcesJar = { lambda = {} ->
+        ArtifactsKt.sourcesJar(project) { task ->
+            lambda.delegate = task
+            lambda()
+        }
+    }
+
+    project.ext.configureJavadocJar = { lambda = {} ->
+        ArtifactsKt.javadocJar(project) { task ->
+            lambda.delegate = task
+            lambda()
+        }
+    }
+
+    project.ext.configureModularJar = { lambda = {} ->
+        ArtifactsKt.modularJar(project) { task ->
+            lambda.delegate = task
+            lambda()
+        }
     }
 
     dependencies.ext.kotlinStdlib = { suffix ->

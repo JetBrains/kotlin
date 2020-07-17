@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.components.isVararg
 
 class RemoveArgumentNameIntention : SelfTargetingRangeIntention<KtValueArgument>(
     KtValueArgument::class.java,
-    KotlinBundle.message("remove.argument.name")
+    KotlinBundle.lazyMessage("remove.argument.name")
 ) {
     override fun applicabilityRange(element: KtValueArgument): TextRange? {
         if (!element.isNamed()) return null
@@ -42,6 +42,7 @@ class RemoveArgumentNameIntention : SelfTargetingRangeIntention<KtValueArgument>
                 .map { psiFactory.createArgument(it) }
                 .reversed()
                 .forEach { argumentList.addArgumentAfter(it, element) }
+
             argumentList.removeArgument(element)
         } else {
             val newArgument = psiFactory.createArgument(argumentExpr, null, element.getSpreadElement() != null)

@@ -18,4 +18,4 @@ class B(vararg val s: Foo) {
     constructor(a: Int, vararg s: Foo) : this(*s)
 }
 
-annotation class Ann(vararg val f: Foo)
+annotation class Ann(vararg val f: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Foo<!>)

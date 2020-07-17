@@ -1,0 +1,6 @@
+package
+
+public fun </*0*/ T> id1(/*0*/ x: T): T
+public fun </*0*/ T> id2(/*0*/ x: T): T
+public fun </*0*/ T> select(/*0*/ vararg x: T /*kotlin.Array<out T>*/): T
+public fun test(): kotlin.Unit

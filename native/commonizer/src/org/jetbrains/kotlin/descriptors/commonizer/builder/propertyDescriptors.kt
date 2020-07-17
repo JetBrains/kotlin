@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirProperty
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirPropertyNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirProperty
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirPropertyNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -23,17 +23,23 @@ internal fun CirPropertyNode.buildDescriptors(
     output: CommonizedGroup<PropertyDescriptor>,
     containingDeclarations: List<DeclarationDescriptor?>
 ) {
-    val commonProperty = common()
-    val markAsExpectAndActual = commonProperty != null && commonProperty.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
+    val commonProperty = commonDeclaration()
 
-    target.forEachIndexed { index, property ->
-        property?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsExpectAndActual)
+    val isLiftedUp = commonProperty?.isLiftedUp == true
+    val markAsExpectAndActual = commonProperty != null
+            && commonProperty.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
+            && !isLiftedUp
+
+    if (!isLiftedUp) {
+        targetDeclarations.forEachIndexed { index, property ->
+            property?.buildDescriptor(components, output, index, containingDeclarations, isActual = markAsExpectAndActual)
+        }
     }
 
     commonProperty?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)
 
     // log stats
-    components.statsCollector?.logStats(output.toList())
+    components.statsCollector?.logStats(output)
 }
 
 private fun CirProperty.buildDescriptor(

@@ -16,23 +16,16 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTypesUtil
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
@@ -151,21 +144,17 @@ class KotlinUFunctionCallExpression(
             }
 
             val ktNameReferenceExpression = sourcePsi.calleeExpression as? KtNameReferenceExpression ?: return null
-            val variableCallDescriptor =
-                (resolvedCall as? VariableAsFunctionResolvedCall)?.variableCall?.resultingDescriptor
-                    ?: (resolvedCall?.resultingDescriptor as? FunctionDescriptor)?.takeIf { it.visibility == Visibilities.LOCAL }
-                    ?: return null
+            val localCallableDeclaration = resolveToDeclaration(ktNameReferenceExpression) as? PsiVariable ?: return null
+            if (localCallableDeclaration !is PsiLocalVariable && localCallableDeclaration !is PsiParameter) return null
 
             // an implicit receiver for variables calls (KT-25524)
             return object : KotlinAbstractUExpression(this), UReferenceExpression {
 
-                private val resolvedDeclaration = variableCallDescriptor.toSource()
+                override val sourcePsi: KtNameReferenceExpression get() = ktNameReferenceExpression
 
-                override val psi: KtNameReferenceExpression get() = ktNameReferenceExpression
+                override val resolvedName: String? get() = localCallableDeclaration.name
 
-                override val resolvedName: String? get() = (resolvedDeclaration as? PsiNamedElement)?.name
-
-                override fun resolve(): PsiElement? = resolvedDeclaration
+                override fun resolve(): PsiElement? = localCallableDeclaration
 
             }
 
@@ -177,9 +166,10 @@ class KotlinUFunctionCallExpression(
         val methodName = methodName ?: calleeExpression.text ?: return emptyList()
         val variants = getReferenceVariants(calleeExpression, methodName)
         return variants.flatMap {
-            when (val source = it.toSource()) {
-                is KtClass -> source.toLightClass()?.constructors?.asSequence().orEmpty()
-                else -> resolveSource(sourcePsi, it, source)?.let { sequenceOf(it) }.orEmpty()
+            when (it) {
+                is PsiClass -> it.constructors.asSequence()
+                is PsiMethod -> sequenceOf(it)
+                else -> emptySequence()
             }
         }.map { TypedResolveResult(it) }.asIterable()
     })
@@ -189,8 +179,7 @@ class KotlinUFunctionCallExpression(
 
     override fun resolve(): PsiMethod? {
         val descriptor = resolvedCall?.resultingDescriptor ?: return null
-        val source = descriptor.toSource()
-        return resolveSource(sourcePsi, descriptor, source)
+        return resolveToPsiMethod(sourcePsi, descriptor)
     }
 
     override fun accept(visitor: UastVisitor) {

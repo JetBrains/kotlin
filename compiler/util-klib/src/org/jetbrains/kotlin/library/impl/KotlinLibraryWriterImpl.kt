@@ -23,7 +23,9 @@ open class BaseWriterImpl(
     moduleName: String,
     override val versions: KotlinLibraryVersioning,
     builtInsPlatform: BuiltInsPlatform,
-    val nopack: Boolean = false
+    nativeTargets: List<String> = emptyList(),
+    val nopack: Boolean = false,
+    val shortName: String? = null
 ) : BaseWriter {
 
     val klibFile = File("${libraryLayout.libDir.path}.$KLIB_FILE_EXTENSION")
@@ -38,8 +40,14 @@ open class BaseWriterImpl(
         // TODO: <name>:<hash> will go somewhere around here.
         manifestProperties.setProperty(KLIB_PROPERTY_UNIQUE_NAME, moduleName)
         manifestProperties.writeKonanLibraryVersioning(versions)
-        if (builtInsPlatform != BuiltInsPlatform.COMMON)
+
+        if (builtInsPlatform != BuiltInsPlatform.COMMON) {
             manifestProperties.setProperty(KLIB_PROPERTY_BUILTINS_PLATFORM, builtInsPlatform.name)
+            if (builtInsPlatform == BuiltInsPlatform.NATIVE)
+                manifestProperties.setProperty(KLIB_PROPERTY_NATIVE_TARGETS, nativeTargets.joinToString(" "))
+        }
+
+        shortName?.let { manifestProperties.setProperty(KLIB_PROPERTY_SHORT_NAME, it) }
     }
 
     override fun addLinkDependencies(libraries: List<KotlinLibrary>) {
@@ -77,23 +85,25 @@ open class BaseWriterImpl(
 /**
  * Requires non-null [target].
  */
-class KoltinLibraryWriterImpl(
+class KotlinLibraryWriterImpl(
     libDir: File,
     moduleName: String,
     versions: KotlinLibraryVersioning,
     builtInsPlatform: BuiltInsPlatform,
+    nativeTargets: List<String>,
     nopack: Boolean = false,
+    shortName: String? = null,
 
     val layout: KotlinLibraryLayoutForWriter = KotlinLibraryLayoutForWriter(libDir),
 
-    val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nopack),
+    val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
     ir: IrWriter = IrMonoliticWriterImpl(layout)
 //    ir: IrWriter = IrPerFileWriterImpl(layout)
 
 ) : BaseWriter by base, MetadataWriter by metadata, IrWriter by ir, KotlinLibraryWriter
 
-fun buildKoltinLibrary(
+fun buildKotlinLibrary(
     linkDependencies: List<KotlinLibrary>,
     metadata: SerializedMetadata,
     ir: SerializedIrModule?,
@@ -101,12 +111,26 @@ fun buildKoltinLibrary(
     output: String,
     moduleName: String,
     nopack: Boolean,
+    perFile: Boolean,
     manifestProperties: Properties?,
     dataFlowGraph: ByteArray?,
-    builtInsPlatform: BuiltInsPlatform
+    builtInsPlatform: BuiltInsPlatform,
+    nativeTargets: List<String> = emptyList()
 ): KotlinLibraryLayout {
 
-    val library = KoltinLibraryWriterImpl(File(output), moduleName, versions, builtInsPlatform, nopack)
+    val klibDirectory = File(output)
+    val layout = KotlinLibraryLayoutForWriter(klibDirectory)
+    val irWriter = if (perFile) IrPerFileWriterImpl(layout) else IrMonoliticWriterImpl(layout)
+    val library = KotlinLibraryWriterImpl(
+        klibDirectory,
+        moduleName,
+        versions,
+        builtInsPlatform,
+        nativeTargets,
+        nopack,
+        layout = layout,
+        ir = irWriter
+    )
 
     library.addMetadata(metadata)
 
@@ -120,6 +144,33 @@ fun buildKoltinLibrary(
 
     library.commit()
     return library.layout
+}
+
+class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: KotlinLibraryVersioning, platform: BuiltInsPlatform, nativeTargets: List<String>, perFile: Boolean) {
+    val outputDir = File(output)
+    val library = createLibrary(perFile, moduleName, versions, platform, nativeTargets, outputDir)
+
+    private fun createLibrary(
+        perFile: Boolean,
+        moduleName: String,
+        versions: KotlinLibraryVersioning,
+        platform: BuiltInsPlatform,
+        nativeTargets: List<String>,
+        directory: File
+    ): KotlinLibraryWriterImpl {
+        val layout = KotlinLibraryLayoutForWriter(directory)
+        val irWriter = if (perFile) IrPerFileWriterImpl(layout) else IrMonoliticWriterImpl(layout)
+        return KotlinLibraryWriterImpl(directory, moduleName, versions, platform, nativeTargets, nopack = true, layout = layout, ir = irWriter)
+    }
+
+    fun invalidate() {
+        outputDir.deleteRecursively()
+        library.layout.irDir.mkdirs()
+    }
+
+    fun writeIr(serializedIrModule: SerializedIrModule) {
+        library.addIr(serializedIrModule)
+    }
 }
 
 enum class BuiltInsPlatform {

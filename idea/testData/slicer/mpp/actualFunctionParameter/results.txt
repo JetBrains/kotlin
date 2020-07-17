@@ -1,0 +1,3 @@
+4 println(<bold>p</bold>) (in foo(Any))
+3 	actual fun foo(<bold>p: Any</bold>) { (in foo(Any))
+4 		foo(<bold>1</bold>) (in bar())

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.decompiler.navigation.ByDescriptorIndexer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
@@ -46,7 +47,7 @@ fun buildDecompiledText(
         builder.append("// IntelliJ API Decompiler stub source generated from a class file\n" + "// Implementation of methods is not available")
         builder.append("\n\n")
         if (!packageFqName.isRoot) {
-            builder.append("package ").append(packageFqName).append("\n\n")
+            builder.append("package ").append(packageFqName.quoteIfNeeded()).append("\n\n")
         }
     }
 

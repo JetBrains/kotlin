@@ -109,9 +109,12 @@ internal class KotlinOutputChecker(
         val disconnectedIndex = lines.indexOfFirst { it.startsWith(DISCONNECT_PREFIX) }
         lines[disconnectedIndex] = DISCONNECT_PREFIX
 
-        return lines.filter {
-            !(it.matches(JDI_BUG_OUTPUT_PATTERN_1) || it.matches(JDI_BUG_OUTPUT_PATTERN_2))
-        }.joinToString("\n")
+        return lines
+            .map { it.replace("FRAME:(.*):\\d+".toRegex(), "$1:!LINE_NUMBER!") }
+            // kotlinx-coroutines-core temporary fix for windows agents
+            .filterNot { it == "Failed to install signal handler: java.lang.IllegalArgumentException: Unknown signal: TRAP" }
+            .filter { !(it.matches(JDI_BUG_OUTPUT_PATTERN_1) || it.matches(JDI_BUG_OUTPUT_PATTERN_2)) }
+            .joinToString("\n")
     }
 
     private fun buildOutputString(): String {

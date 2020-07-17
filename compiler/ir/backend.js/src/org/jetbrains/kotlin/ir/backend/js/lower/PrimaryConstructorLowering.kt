@@ -38,7 +38,7 @@ class PrimaryConstructorLowering(context: JsCommonBackendContext) : DeclarationT
         return null
     }
 
-    private object SYNTHETIC_PRIMARY_CONSTRUCTOR : IrDeclarationOriginImpl("SYNTHETIC_PRIMARY_CONSTRUCTOR")
+    object SYNTHETIC_PRIMARY_CONSTRUCTOR : IrDeclarationOriginImpl("SYNTHETIC_PRIMARY_CONSTRUCTOR")
 
     private val unitType = context.irBuiltIns.unitType
 
@@ -71,7 +71,12 @@ class DelegateToSyntheticPrimaryConstructor(context: JsCommonBackendContext) : B
                     override fun visitDeclaration(declaration: IrDeclaration) = declaration // optimize visiting
 
                     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression.run {
-                        IrDelegatingConstructorCallImpl(startOffset, endOffset, type, primary.symbol)
+                        IrDelegatingConstructorCallImpl(
+                            startOffset, endOffset, type,
+                            primary.symbol,
+                            valueArgumentsCount = primary.valueParameters.size,
+                            typeArgumentsCount = primary.typeParameters.size
+                        )
                     }
                 }
 

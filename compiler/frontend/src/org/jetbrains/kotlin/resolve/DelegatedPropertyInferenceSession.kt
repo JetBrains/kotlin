@@ -90,7 +90,7 @@ class DelegatedPropertyInferenceSession(
     override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
 }
 
-object InferenceSessionForExistingCandidates : InferenceSession {
+class InferenceSessionForExistingCandidates(private val resolveReceiverIndependently: Boolean) : InferenceSession {
     override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
         return !ErrorUtils.isError(candidate.resolvedCall.candidateDescriptor)
     }
@@ -111,4 +111,10 @@ object InferenceSessionForExistingCandidates : InferenceSession {
     override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom): Boolean {
         return !ErrorUtils.isError(resolvedCallAtom.candidateDescriptor)
     }
+
+    override fun computeCompletionMode(
+        candidate: KotlinResolutionCandidate
+    ): KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode? = null
+
+    override fun resolveReceiverIndependently(): Boolean = resolveReceiverIndependently
 }

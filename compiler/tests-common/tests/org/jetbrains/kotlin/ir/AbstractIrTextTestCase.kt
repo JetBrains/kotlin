@@ -179,6 +179,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             element.acceptChildrenVoid(this)
         }
 
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun visitDeclaration(declaration: IrDeclaration) {
             if (declaration is IrSymbolOwner) {
                 declaration.symbol.checkBinding("decl", declaration)
@@ -205,18 +206,11 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             visitDeclaration(declaration)
 
             require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.descriptor}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
+                "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
             }
         }
 
-        override fun visitField(declaration: IrField) {
-            visitDeclaration(declaration)
-
-            require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.descriptor}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
-            }
-        }
-
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun visitFunction(declaration: IrFunction) {
             visitDeclaration(declaration)
 
@@ -257,7 +251,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             visitFunction(declaration)
 
             require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.descriptor}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
+                "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
             }
         }
 
@@ -283,7 +277,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
         private fun IrSymbol.checkBinding(kind: String, irElement: IrElement) {
             if (!isBound) {
-                error("${javaClass.simpleName} $descriptor is unbound @$kind ${irElement.render()}")
+                error("${javaClass.simpleName} descriptor is unbound @$kind ${irElement.render()}")
             } else {
                 val irDeclaration = owner as? IrDeclaration
                 if (irDeclaration != null) {
@@ -297,16 +291,18 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
             val otherSymbol = symbolForDeclaration.getOrPut(owner) { this }
             if (this != otherSymbol) {
-                error("Multiple symbols for $descriptor @$kind ${irElement.render()}")
+                error("Multiple symbols for descriptor of @$kind ${irElement.render()}")
             }
         }
 
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun visitClass(declaration: IrClass) {
             visitDeclaration(declaration)
 
             checkTypeParameters(declaration.descriptor, declaration, declaration.descriptor.declaredTypeParameters)
         }
 
+        @ObsoleteDescriptorBasedAPI
         private fun checkTypeParameters(
             descriptor: DeclarationDescriptor,
             declaration: IrTypeParametersContainer,

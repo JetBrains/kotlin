@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
-interface ValueParameterCarrier : DeclarationCarrier<ValueParameterCarrier> {
+interface ValueParameterCarrier : DeclarationCarrier {
     var defaultValueField: IrExpressionBody?
 
     override fun clone(): ValueParameterCarrier {

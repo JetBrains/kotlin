@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.ClosureContext;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -53,9 +51,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.CallableReferenceUtilKt.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.initDefaultSourceMappingIfNeeded;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -74,7 +72,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     protected final Type asmType;
     protected final int visibilityFlag;
     private final boolean shouldHaveBoundReferenceReceiver;
+    private final boolean isLegacyFunctionReference;
     private final boolean isOptimizedFunctionReference;
+    private final boolean isAdaptedFunctionReference;
 
     private Method constructor;
     protected Type superClassAsmType;
@@ -125,9 +125,17 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         assert closure != null : "Closure must be calculated for class: " + classDescriptor;
 
         this.shouldHaveBoundReferenceReceiver = CallableReferenceUtilKt.isForBoundCallableReference(closure);
+
+        ClassifierDescriptor superClassDescriptor = superClassType.getConstructor().getDeclarationDescriptor();
+        this.isLegacyFunctionReference =
+                functionReferenceTarget != null &&
+                superClassDescriptor == state.getJvmRuntimeTypes().getFunctionReference();
         this.isOptimizedFunctionReference =
                 functionReferenceTarget != null &&
-                superClassType.getConstructor().getDeclarationDescriptor() == state.getJvmRuntimeTypes().getFunctionReferenceImpl();
+                superClassDescriptor == state.getJvmRuntimeTypes().getFunctionReferenceImpl();
+        this.isAdaptedFunctionReference =
+                functionReferenceTarget != null &&
+                superClassDescriptor == state.getJvmRuntimeTypes().getAdaptedFunctionReference();
 
         this.asmType = typeMapper.mapClass(classDescriptor);
 
@@ -161,7 +169,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 superInterfaceAsmTypes
         );
 
-        initDefaultSourceMappingIfNeeded(context, this, state);
+        initDefaultSourceMappingIfNeeded();
 
         v.visitSource(element.getContainingFile().getName(), null);
     }
@@ -177,6 +185,12 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         generateBridges();
         generateClosureBody();
 
+        if (samType != null) {
+            SamWrapperCodegen.generateDelegatesToDefaultImpl(
+                    asmType, classDescriptor, samType.getClassDescriptor(), functionCodegen, state
+            );
+        }
+
         this.constructor = generateConstructor();
 
         if (isConst(closure)) {
@@ -189,7 +203,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     protected void generateClosureBody() {
         functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), funDescriptor, strategy);
 
-        if (functionReferenceTarget != null && !isOptimizedFunctionReference) {
+        if (isLegacyFunctionReference) {
             generateFunctionReferenceMethods(functionReferenceTarget);
         }
 
@@ -235,9 +249,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                         CallableMemberDescriptor.Kind.DECLARATION, descriptor.getSource());
 
         descriptorForBridges
-                .initialize(null, erasedInterfaceFunction.getDispatchReceiverParameter(), erasedInterfaceFunction.getTypeParameters(),
-                            erasedInterfaceFunction.getValueParameters(), erasedInterfaceFunction.getReturnType(),
-                            Modality.OPEN, erasedInterfaceFunction.getVisibility());
+                .initialize(erasedInterfaceFunction.getExtensionReceiverParameter(), erasedInterfaceFunction.getDispatchReceiverParameter(),
+                            erasedInterfaceFunction.getTypeParameters(), erasedInterfaceFunction.getValueParameters(),
+                            erasedInterfaceFunction.getReturnType(), Modality.OPEN, erasedInterfaceFunction.getVisibility());
 
         descriptorForBridges.setSuspend(descriptor.isSuspend());
 
@@ -251,7 +265,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         Method method = v.getSerializationBindings().get(METHOD_FOR_FUNCTION, frontendFunDescriptor);
         assert method != null : "No method for " + frontendFunDescriptor;
 
-        FunctionDescriptor freeLambdaDescriptor = FakeDescriptorsForReferencesKt.createFreeFakeLambdaDescriptor(frontendFunDescriptor);
+        FunctionDescriptor freeLambdaDescriptor = FakeDescriptorsForReferencesKt.createFreeFakeLambdaDescriptor(
+                frontendFunDescriptor, state.getTypeApproximator()
+        );
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, freeLambdaDescriptor, method);
 
         DescriptorSerializer serializer =
@@ -398,68 +414,11 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             if (generateBody) {
                 mv.visitCode();
                 InstructionAdapter iv = new InstructionAdapter(mv);
-                PropertyReferenceCodegen.generateCallableReferenceSignature(iv, descriptor, state);
+                CallableReferenceUtilKt.generateFunctionReferenceSignature(iv, descriptor, state);
                 iv.areturn(JAVA_STRING_TYPE);
                 FunctionCodegen.endVisit(iv, "function reference getSignature", element);
             }
         }
-    }
-
-    // Returns false if null was generated.
-    public static boolean generateCallableReferenceDeclarationContainerClass(
-            @NotNull InstructionAdapter iv,
-            @NotNull CallableDescriptor descriptor,
-            @NotNull GenerationState state
-    ) {
-        KotlinTypeMapper typeMapper = state.getTypeMapper();
-        DeclarationDescriptor container = descriptor.getContainingDeclaration();
-
-        if (container instanceof ClassDescriptor) {
-            // TODO: would it work for arrays?
-            SimpleType containerKotlinType = ((ClassDescriptor) container).getDefaultType();
-            Type containerType = typeMapper.mapClass((ClassDescriptor) container);
-            putJavaLangClassInstance(iv, containerType, containerKotlinType, typeMapper);
-        }
-        else if (container instanceof PackageFragmentDescriptor) {
-            iv.aconst(typeMapper.mapOwner(descriptor));
-        }
-        else if (descriptor instanceof VariableDescriptorWithAccessors) {
-            iv.aconst(state.getBindingContext().get(
-                    CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER, ((VariableDescriptorWithAccessors) descriptor)
-            ));
-        }
-        else {
-            iv.aconst(null);
-            return false;
-        }
-
-        return true;
-    }
-
-    public static void generateCallableReferenceDeclarationContainer(
-            @NotNull InstructionAdapter iv,
-            @NotNull CallableDescriptor descriptor,
-            @NotNull GenerationState state
-    ) {
-        if (!generateCallableReferenceDeclarationContainerClass(iv, descriptor, state)) return;
-
-        if (isTopLevelCallableReference(descriptor)) {
-            // Note that this name is not used in reflection. There should be the name of the referenced declaration's module instead,
-            // but there's no nice API to obtain that name here yet
-            // TODO: write the referenced declaration's module name and use it in reflection
-            iv.aconst(state.getModuleName());
-            iv.invokestatic(REFLECTION, "getOrCreateKotlinPackage",
-                            Type.getMethodDescriptor(K_DECLARATION_CONTAINER_TYPE, getType(Class.class), getType(String.class)), false);
-        }
-        else {
-            wrapJavaClassIntoKClass(iv);
-        }
-    }
-
-    public static boolean isTopLevelCallableReference(@NotNull CallableDescriptor descriptor) {
-        return descriptor instanceof LocalVariableDescriptor
-               ? DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class) == null
-               : descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
     }
 
     @NotNull
@@ -498,11 +457,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             iv.load(0, superClassAsmType);
 
             List<Type> superCtorArgTypes = new ArrayList<>();
-            if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE) ||
-                superClassAsmType.equals(FUNCTION_REFERENCE_IMPL) ||
-                CoroutineCodegenUtilKt.isCoroutineSuperClass(state.getLanguageVersionSettings(), superClassAsmType.getInternalName())) {
-                int arity = calculateArity();
-                iv.iconst(arity);
+            if (superClassAsmType.equals(LAMBDA) || functionReferenceTarget != null ||
+                CoroutineCodegenUtilKt.isCoroutineSuperClass(state.getLanguageVersionSettings(), superClassAsmType.getInternalName())
+            ) {
+                iv.iconst(CodegenUtilKt.getArity(funDescriptor));
                 superCtorArgTypes.add(Type.INT_TYPE);
                 if (shouldHaveBoundReferenceReceiver) {
                     CallableReferenceUtilKt.loadBoundReferenceReceiverParameter(
@@ -510,13 +468,13 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                     );
                     superCtorArgTypes.add(OBJECT_TYPE);
                 }
-                if (isOptimizedFunctionReference) {
+                if (isOptimizedFunctionReference || isAdaptedFunctionReference) {
                     assert functionReferenceTarget != null : "No function reference target: " + funDescriptor;
                     generateCallableReferenceDeclarationContainerClass(iv, functionReferenceTarget, state);
                     iv.aconst(functionReferenceTarget.getName().asString());
-                    PropertyReferenceCodegen.generateCallableReferenceSignature(iv, functionReferenceTarget, state);
+                    CallableReferenceUtilKt.generateFunctionReferenceSignature(iv, functionReferenceTarget, state);
                     int flags =
-                            (isTopLevelCallableReference(functionReferenceTarget) ? 1 : 0) +
+                            getCallableReferenceTopLevelFlag(functionReferenceTarget) +
                             (calculateFunctionReferenceFlags(functionReferenceCall, funDescriptor) << 1);
                     iv.aconst(flags);
                     superCtorArgTypes.add(JAVA_CLASS_TYPE);
@@ -541,36 +499,38 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     }
 
     private static int calculateFunctionReferenceFlags(
-            @NotNull ResolvedCall<?> call, @NotNull FunctionDescriptor anonymousAdaptedFunction
+            @NotNull ResolvedCall<?> call,
+            @NotNull FunctionDescriptor anonymousAdapterFunction
     ) {
         boolean hasVarargMappedToElement = false;
-        CallableDescriptor target = call.getResultingDescriptor();
+        FunctionDescriptor target = (FunctionDescriptor) call.getResultingDescriptor();
         int shift =
                 (call.getDispatchReceiver() instanceof TransientReceiver ? 1 : 0) +
                 (call.getExtensionReceiver() instanceof TransientReceiver ? 1 : 0);
         for (int i = shift;
-             i < anonymousAdaptedFunction.getValueParameters().size() && i - shift < target.getValueParameters().size();
+             i < anonymousAdapterFunction.getValueParameters().size() && i - shift < target.getValueParameters().size();
              i++) {
-            KotlinType varargElementType = target.getValueParameters().get(i - shift).getVarargElementType();
-            if (varargElementType != null && !varargElementType.equals(anonymousAdaptedFunction.getValueParameters().get(i).getType())) {
+            ValueParameterDescriptor targetParameter = target.getValueParameters().get(i - shift);
+            ValueParameterDescriptor adaptedParameter = anonymousAdapterFunction.getValueParameters().get(i);
+
+            // Vararg to element conversion is happening if the target parameter is vararg (e.g. `vararg xs: Int`),
+            // but the adapted parameter's type is not equal to the target parameter's type (which is `IntArray`).
+            if (targetParameter.getVarargElementType() != null &&
+                !targetParameter.getType().equals(adaptedParameter.getType())) {
                 hasVarargMappedToElement = true;
                 break;
             }
         }
 
         //noinspection ConstantConditions
-        boolean hasCoercionToUnit = KotlinBuiltIns.isUnit(anonymousAdaptedFunction.getReturnType()) &&
+        boolean hasCoercionToUnit = KotlinBuiltIns.isUnit(anonymousAdapterFunction.getReturnType()) &&
                                     !KotlinBuiltIns.isUnit(target.getReturnType());
 
-        return (hasVarargMappedToElement ? 1 : 0) +
-               ((hasCoercionToUnit ? 1 : 0) << 1);
-    }
+        boolean hasSuspendConversion = !target.isSuspend() && anonymousAdapterFunction.isSuspend();
 
-    protected int calculateArity() {
-        int arity = funDescriptor.getValueParameters().size();
-        if (funDescriptor.getExtensionReceiverParameter() != null) arity++;
-        if (funDescriptor.getDispatchReceiverParameter() != null) arity++;
-        return arity;
+        return (hasVarargMappedToElement ? 1 : 0) +
+               (hasSuspendConversion ? 2 : 0) +
+               ((hasCoercionToUnit ? 1 : 0) << 2);
     }
 
     @NotNull

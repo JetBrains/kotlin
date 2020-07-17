@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,8 +24,13 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import javax.inject.Inject
 
-open class KotlinJsTest :
+open class KotlinJsTest
+@Inject
+constructor(
+    @Internal override var compilation: KotlinJsCompilation
+) :
     KotlinTest(),
     RequiresNpmDependencies {
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
@@ -42,9 +47,6 @@ open class KotlinJsTest :
 
     @Input
     var debug: Boolean = false
-
-    @Internal
-    override lateinit var compilation: KotlinJsCompilation
 
     @Suppress("unused")
     val runtimeClasspath: FileCollection
@@ -67,7 +69,7 @@ open class KotlinJsTest :
     override val nodeModulesRequired: Boolean
         @Internal get() = testFramework!!.nodeModulesRequired
 
-    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
 
     @Deprecated("Use useMocha instead", ReplaceWith("useMocha()"))

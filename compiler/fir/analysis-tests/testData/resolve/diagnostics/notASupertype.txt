@@ -10,12 +10,12 @@ FILE: notASupertype.kt
     }
     public final class B : R|A| {
         public constructor(): R|B| {
-            super<R|kotlin/Any|>()
+            super<R|A|>()
         }
 
         public final fun g(): R|kotlin/Unit| {
-            super<R|kotlin/String|>.<Unresolved name: f>#()
-            super<R|A|>.R|/A.f|()
+            this@R|/B|.super<R|kotlin/String|>.<Unresolved name: f>#()
+            this@R|/B|.super<R|A|>.R|/A.f|()
         }
 
     }

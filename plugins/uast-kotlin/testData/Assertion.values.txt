@@ -4,8 +4,7 @@ UFile (package = ) [public final class AssertionKt {...]
             UBlockExpression [{...}] = Nothing
                 UDeclarationsExpression [var s: java.lang.String = "Not Null"] = Undetermined
                     ULocalVariable (name = s) [var s: java.lang.String = "Not Null"]
-                        UPolyadicExpression (operator = +) ["Not Null"] = "Not Null"
-                            ULiteralExpression (value = "Not Null") ["Not Null"] = "Not Null"
+                        ULiteralExpression (value = "Not Null") ["Not Null"] = "Not Null"
                 UReturnExpression [return s!!] = Nothing
                     UPostfixExpression (operator = !!) [s!!] = (var s = "Not Null")
                         USimpleNameReferenceExpression (identifier = s) [s] = (var s = "Not Null")

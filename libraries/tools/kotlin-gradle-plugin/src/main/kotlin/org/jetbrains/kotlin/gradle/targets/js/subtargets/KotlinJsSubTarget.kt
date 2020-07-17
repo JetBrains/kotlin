@@ -1,17 +1,20 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -24,13 +27,13 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
 abstract class KotlinJsSubTarget(
     val target: KotlinJsTarget,
     private val disambiguationClassifier: String
 ) : KotlinJsSubTargetDsl {
     val project get() = target.project
+
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
     abstract val testTaskDescription: String
@@ -38,8 +41,14 @@ abstract class KotlinJsSubTarget(
     final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
         private set
 
-    internal open fun produceExecutable() {
+    protected val taskGroupName = "Kotlin $disambiguationClassifier"
+
+    private val produceExecutable: Unit by lazy {
         configureMain()
+    }
+
+    internal fun produceExecutable() {
+        produceExecutable
     }
 
     internal fun configure() {
@@ -49,7 +58,9 @@ abstract class KotlinJsSubTarget(
 
         target.compilations.all {
             val npmProject = it.npmProject
-            it.compileKotlinTask.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
+            it.kotlinOptions {
+                outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
+            }
         }
     }
 
@@ -83,23 +94,24 @@ abstract class KotlinJsSubTarget(
             )
         )
 
-        val testJs = project.registerTask<KotlinJsTest>(testRun.subtargetTestTaskName()) { testJs ->
-            val compileTask = compilation.compileKotlinTask
+        val testJs = project.registerTask<KotlinJsTest>(
+            testRun.subtargetTestTaskName(),
+            listOf(compilation)
+        ) { testJs ->
+            val compileTask = compilation.compileKotlinTaskProvider
 
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            testJs.inputFileProperty.set(project.newFileProperty {
-                compileTask.outputFile
-            })
+            val compileOutputFile = compileTask.map { it.outputFile }
+            testJs.inputFileProperty.set(project.layout.file(compileOutputFile))
 
-            testJs.dependsOn(nodeJs.npmInstallTask, compileTask, nodeJs.nodeJsSetupTask)
+            testJs.dependsOn(nodeJs.npmInstallTaskProvider, compileTask, nodeJs.nodeJsSetupTaskProvider)
 
             testJs.onlyIf {
-                compileTask.outputFile.exists()
+                compileOutputFile.get().exists()
             }
 
-            testJs.compilation = compilation
             testJs.targetName = listOfNotNull(target.disambiguationClassifier, disambiguationClassifier)
                 .takeIf { it.isNotEmpty() }
                 ?.joinToString()
@@ -121,6 +133,10 @@ abstract class KotlinJsSubTarget(
                 if (it.testFramework == null) {
                     configureDefaultTestFramework(it)
                 }
+
+                if (it.enabled) {
+                    nodeJs.taskRequirements.addTaskRequirements(it)
+                }
             }
         }
     }
@@ -129,13 +145,23 @@ abstract class KotlinJsSubTarget(
 
     private fun configureMain() {
         target.compilations.all { compilation ->
-            if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+            if (compilation.isMain()) {
                 configureMain(compilation)
             }
         }
     }
 
     protected abstract fun configureMain(compilation: KotlinJsCompilation)
+
+    internal inline fun <reified T : Task> registerSubTargetTask(
+        name: String,
+        args: List<Any> = emptyList(),
+        noinline body: (T) -> (Unit)
+    ): TaskProvider<T> =
+        project.registerTask(name, args) {
+            it.group = taskGroupName
+            body(it)
+        }
 
     companion object {
         const val RUN_TASK_NAME = "run"

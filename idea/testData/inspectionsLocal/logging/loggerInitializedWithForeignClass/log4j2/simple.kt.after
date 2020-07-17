@@ -1,0 +1,12 @@
+// WITH_RUNTIME
+package org.apache.logging.log4j
+
+class Foo {
+    private val logger = LogManager.getLogger(Foo::class.java)
+}
+
+class Bar
+
+object LogManager {
+    fun getLogger(clazz: Class<*>) {}
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,8 +41,8 @@ public actual fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
 /**
  * Counts the number of set bits in the binary representation of this [Int] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.countOneBits(): Int {
     // Hacker's Delight 5-1 algorithm
     var v = this
@@ -57,17 +57,17 @@ public actual fun Int.countOneBits(): Int {
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Int] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@Suppress("DEPRECATION")
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
+@Suppress("DEPRECATION_ERROR")
 @kotlin.internal.InlineOnly
 public actual inline fun Int.countLeadingZeroBits(): Int = kotlin.js.Math.clz32(this)
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Int] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.countTrailingZeroBits(): Int =
     // Hacker's Delight 5-4 algorithm for expressing countTrailingZeroBits with countLeadingZeroBits
     Int.SIZE_BITS - (this or -this).inv().countLeadingZeroBits()
@@ -76,8 +76,8 @@ public actual fun Int.countTrailingZeroBits(): Int =
  * Returns a number having a single bit set in the position of the most significant set bit of this [Int] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.takeHighestOneBit(): Int =
     if (this == 0) 0 else 1.shl(Int.SIZE_BITS - 1 - countLeadingZeroBits())
 
@@ -85,8 +85,8 @@ public actual fun Int.takeHighestOneBit(): Int =
  * Returns a number having a single bit set in the position of the least significant set bit of this [Int] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.takeLowestOneBit(): Int =
     // Hacker's Delight 2-1 algorithm for isolating rightmost 1-bit
     this and -this
@@ -126,16 +126,16 @@ public actual fun Int.rotateRight(bitCount: Int): Int =
 /**
  * Counts the number of set bits in the binary representation of this [Long] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.countOneBits(): Int =
     high.countOneBits() + low.countOneBits()
 
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.countLeadingZeroBits(): Int =
     when (val high = this.high) {
         0 -> Int.SIZE_BITS + low.countLeadingZeroBits()
@@ -145,8 +145,8 @@ public actual fun Long.countLeadingZeroBits(): Int =
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.countTrailingZeroBits(): Int =
     when (val low = this.low) {
         0 -> Int.SIZE_BITS + high.countTrailingZeroBits()
@@ -157,8 +157,8 @@ public actual fun Long.countTrailingZeroBits(): Int =
  * Returns a number having a single bit set in the position of the most significant set bit of this [Long] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.takeHighestOneBit(): Long =
     when (val high = this.high) {
         0 -> Long(low.takeHighestOneBit(), 0)
@@ -169,8 +169,8 @@ public actual fun Long.takeHighestOneBit(): Long =
  * Returns a number having a single bit set in the position of the least significant set bit of this [Long] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.takeLowestOneBit(): Long =
     when (val low = this.low) {
         0 -> Long(0, high.takeLowestOneBit())

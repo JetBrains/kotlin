@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.SinceKotlinAccessibility
 import org.jetbrains.kotlin.resolve.calls.checkers.isOperatorMod
@@ -64,6 +65,14 @@ class DeprecationResolver(
         call: Call? = null,
         bindingContext: BindingContext? = null,
         isSuperCall: Boolean = false
+    ): Boolean =
+        isHiddenInResolution(descriptor, call?.callElement, bindingContext, isSuperCall)
+
+    fun isHiddenInResolution(
+        descriptor: DeclarationDescriptor,
+        callElement: KtElement?,
+        bindingContext: BindingContext?,
+        isSuperCall: Boolean
     ): Boolean {
         if (descriptor is FunctionDescriptor) {
             if (descriptor.isHiddenToOvercomeSignatureClash) return true
@@ -74,10 +83,10 @@ class DeprecationResolver(
         if (sinceKotlinAccessibility is SinceKotlinAccessibility.NotAccessible) return true
 
         if (sinceKotlinAccessibility is SinceKotlinAccessibility.NotAccessibleButWasExperimental) {
-            if (call != null && bindingContext != null) {
+            if (callElement != null && bindingContext != null) {
                 return with(ExperimentalUsageChecker) {
                     sinceKotlinAccessibility.markerClasses.any { classDescriptor ->
-                        !call.callElement.isExperimentalityAccepted(classDescriptor.fqNameSafe, languageVersionSettings, bindingContext)
+                        !callElement.isExperimentalityAccepted(classDescriptor.fqNameSafe, languageVersionSettings, bindingContext)
                     }
                 }
             }
@@ -186,24 +195,26 @@ class DeprecationResolver(
     }
 
     private fun DeclarationDescriptor.addDeprecationIfPresent(result: MutableList<Deprecation>) {
-        val annotation = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated)
-            ?: annotations.findAnnotation(JAVA_DEPRECATED)
+        val annotation = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: annotations.findAnnotation(JAVA_DEPRECATED)
         if (annotation != null) {
             val deprecatedByAnnotation =
-                DeprecatedByAnnotation(
-                    annotation, this,
-                    deprecationSettings.propagatedToOverrides(annotation)
+                DeprecatedByAnnotation.create(
+                    annotation, annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecatedSinceKotlin),
+                    this, deprecationSettings.propagatedToOverrides(annotation),
+                    languageVersionSettings.apiVersion
                 )
-            val deprecation = when {
-                this is TypeAliasConstructorDescriptor ->
-                    DeprecatedTypealiasByAnnotation(typeAliasDescriptor, deprecatedByAnnotation)
+            if (deprecatedByAnnotation != null) {
+                val deprecation = when {
+                    this is TypeAliasConstructorDescriptor ->
+                        DeprecatedTypealiasByAnnotation(typeAliasDescriptor, deprecatedByAnnotation)
 
-                isBuiltInOperatorMod ->
-                    DeprecatedOperatorMod(languageVersionSettings, deprecatedByAnnotation)
+                    isBuiltInOperatorMod ->
+                        DeprecatedOperatorMod(languageVersionSettings, deprecatedByAnnotation)
 
-                else -> deprecatedByAnnotation
+                    else -> deprecatedByAnnotation
+                }
+                result.add(deprecation)
             }
-            result.add(deprecation)
         }
 
         for (deprecation in getDeprecationByVersionRequirement(this)) {
@@ -272,6 +283,6 @@ class DeprecationResolver(
     }
 
     companion object {
-        private val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
+        val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
     }
 }

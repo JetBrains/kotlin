@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirPackage
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirPackageNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackage
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirPackageNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
@@ -19,11 +19,11 @@ internal fun CirPackageNode.buildDescriptors(
     output: CommonizedGroup<CommonizedPackageFragmentDescriptor>,
     modules: List<ModuleDescriptorImpl?>
 ) {
-    target.forEachIndexed { index, pkg ->
+    targetDeclarations.forEachIndexed { index, pkg ->
         pkg?.buildDescriptor(components, output, index, modules)
     }
 
-    common()?.buildDescriptor(components, output, indexOfCommon, modules)
+    commonDeclaration()?.buildDescriptor(components, output, indexOfCommon, modules)
 }
 
 private fun CirPackage.buildDescriptor(

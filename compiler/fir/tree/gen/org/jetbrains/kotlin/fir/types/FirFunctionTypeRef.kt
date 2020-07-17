@@ -22,6 +22,7 @@ interface FirFunctionTypeRef : FirTypeRefWithNullability {
     val receiverTypeRef: FirTypeRef?
     val valueParameters: List<FirValueParameter>
     val returnTypeRef: FirTypeRef
+    val isSuspend: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunctionTypeRef(this, data)
 

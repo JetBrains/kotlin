@@ -17,16 +17,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
-import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedCommonSourceSets
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.utils.setArchiveAppendixCompatible
-import org.jetbrains.kotlin.gradle.utils.setArchiveClassifierCompatible
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
@@ -62,8 +60,8 @@ open class KotlinNativeTarget @Inject constructor(
 
             if (hostSpecificSourceSets.isNotEmpty()) {
                 val hostSpecificMetadataJar = project.locateOrRegisterTask<Jar>(hostSpecificMetadataJarTaskName) {
-                    it.setArchiveAppendixCompatible { disambiguationClassifier.orEmpty().toLowerCase() }
-                    it.setArchiveClassifierCompatible { "metadata" }
+                    it.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCase() })
+                    it.archiveClassifier.set("metadata")
                 }
                 project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, hostSpecificMetadataJar)
 
@@ -71,7 +69,7 @@ open class KotlinNativeTarget @Inject constructor(
                     metadataJar.onlyIf { this@KotlinNativeTarget.publishable }
 
                     val metadataCompilations = hostSpecificSourceSets.mapNotNull {
-                        project.multiplatformExtension.metadata().compilations.findByName(it.name)
+                        project.getMetadataCompilationForSourceSet(it)
                     }
 
                     metadataCompilations.forEach {
@@ -147,6 +145,8 @@ internal fun getHostSpecificSourceSets(project: Project): List<KotlinSourceSet> 
     fun canBeBuiltOnHosts(konanTarget: KonanTarget) = enabledByHost.filterValues { konanTarget in it }.keys
 
     return project.kotlinExtension.sourceSets.filter { sourceSet ->
+        if (sourceSet !in compilationsBySourceSet) return@filter false
+
         // If the source set participates in compilations such that some host can't run either of them, then on that host,
         // we can't analyze the source set, so the source set's metadata can't be published from that host, and therefore
         // we consider it platform-specific and publish as a part of the Native targets where the source set takes part,

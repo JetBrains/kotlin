@@ -42,7 +42,7 @@ fun test() {
         y: Int -> fun named12(): Int {return 1}
     }
 
-    x4 checkType { <!UNRESOLVED_REFERENCE!>_<!><Function1<Int, Unit>>() }
+    x4 checkType { _<Function1<Int, Unit>>() }
 
     { y: Int -> fun named14(): Int {return 1} }
     val b = <!UNRESOLVED_REFERENCE!>(<!EXPRESSION_REQUIRED!>fun named15(): Boolean { return true }<!>)()<!>
@@ -61,7 +61,7 @@ fun success() {
     run2 { fun named2() = 1 }
 
     val x = run { fun named3() = 1 }
-    x checkType { <!UNRESOLVED_REFERENCE!>_<!><Unit>() }
+    x checkType { _<Unit>() }
 
     val y = when (1) {
         0 -> {
@@ -71,5 +71,5 @@ fun success() {
             fun named5(): Int {return 1}
         }
     }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><Unit>() }
+    y checkType { _<Unit>() }
 }

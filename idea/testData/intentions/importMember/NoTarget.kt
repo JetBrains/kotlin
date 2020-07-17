@@ -1,10 +1,9 @@
 // IS_APPLICABLE: false
 // WITH_RUNTIME
-// ERROR: Unresolved reference: xxx
+// ERROR: Unresolved reference: unresolved
 
-import javax.swing.SwingUtilities
+import java.util.regex.Pattern
 
 fun foo() {
-    SwingUtilities.<caret>xxx {
-    }
+    Pattern.<caret>unresolved()
 }

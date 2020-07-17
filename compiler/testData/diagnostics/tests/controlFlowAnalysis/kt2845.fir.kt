@@ -12,7 +12,7 @@ private fun doTest() : Int {
         return 0 ;
     }
     finally {
-        if(list != null) { // Must be an ERROR
+        if(<!UNINITIALIZED_VARIABLE!>list<!> != null) { // Must be an ERROR
         }
     }
 }

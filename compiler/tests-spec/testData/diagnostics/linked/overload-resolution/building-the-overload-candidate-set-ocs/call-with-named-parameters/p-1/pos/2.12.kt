@@ -1,13 +1,14 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE -EXTENSION_SHADOWED_BY_MEMBER
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -NOTHING_TO_INLINE -EXTENSION_SHADOWED_BY_MEMBER -EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE
 // SKIP_TXT
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-280
- * PLACE: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 1 -> sentence 2
- * RELEVANT PLACES: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 2 -> sentence 1
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 1 -> sentence 2
+ * PRIMARY LINKS: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 2 -> sentence 1
  * overload-resolution, building-the-overload-candidate-set-ocs, call-with-specified-type-parameters -> paragraph 1 -> sentence 2
  * NUMBER: 12
  * DESCRIPTION: Explicit receiver:  The overload candidate sets for each pair of implicit receivers: Local extension callables
@@ -111,13 +112,13 @@ import libPackageCase3.*
 import libPackageCase3Explicit.listOf
 
 class Case3(){
-    fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+    fun <T> Case3.listOf(vararg elements1: T): List<T> = TODO()
 
     val listOf: A
         get() = A()
 
     fun case1() {
-        fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+        fun <T> Case3.listOf(vararg elements1: T): List<T> = TODO()
 
         <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>listOf(elements1= arrayOf(1))<!>
     }
@@ -134,7 +135,7 @@ import testsCase3.*
 val Case3.listOf: A
     get() = A()
 public fun <T> listOf(vararg elements1: T): List<T> = TODO()
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+fun <T> Case3.listOf(vararg elements1: T): List<T> = TODO()
 
 // FILE: Lib.kt
 // TESTCASE NUMBER: 3
@@ -144,7 +145,7 @@ import testsCase3.*
 
 val Case3.listOf: A
     get() = A()
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+fun <T> Case3.listOf(vararg elements1: T): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T): List<T> = TODO()
 
@@ -155,7 +156,7 @@ package testsCase3
 val Case3.listOf: A
     get() = A()
 
-fun <T> Case3.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>listOf<!>(vararg elements1: T): List<T> = TODO()
+fun <T> Case3.listOf(vararg elements1: T): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T): List<T> = TODO()
 

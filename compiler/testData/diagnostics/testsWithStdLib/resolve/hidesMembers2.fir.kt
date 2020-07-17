@@ -17,7 +17,7 @@ class B {
     fun A.forEach() = this@B
 
     fun test(a: A) {
-        a.forEach() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A>() } // todo
+        a.forEach() checkType { _<A>() } // todo
 
         with(a) {
             forEach() checkType { _<A>() } // todo
@@ -34,7 +34,7 @@ fun test2(a: A) {
     @kotlin.internal.HidesMembers
     fun A.forEach(i: Int) = ""
 
-    a.forEach() checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    a.forEach() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
     a.forEach(1)
 
     with(a) {

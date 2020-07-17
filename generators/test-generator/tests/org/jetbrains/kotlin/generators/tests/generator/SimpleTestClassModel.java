@@ -53,6 +53,8 @@ public class SimpleTestClassModel extends TestClassModel {
     private final String testRunnerMethodName;
     private final List<String> additionalRunnerArguments;
 
+    private boolean skipTestsForExperimentalCoroutines;
+
     public SimpleTestClassModel(
             @NotNull File rootFile,
             boolean recursive,
@@ -68,7 +70,8 @@ public class SimpleTestClassModel extends TestClassModel {
             String testRunnerMethodName,
             List<String> additionalRunnerArguments,
             Integer deep,
-            @NotNull Collection<AnnotationModel> annotations
+            @NotNull Collection<AnnotationModel> annotations,
+            boolean skipTestsForExperimentalCoroutines
     ) {
         this.rootFile = rootFile;
         this.recursive = recursive;
@@ -85,6 +88,7 @@ public class SimpleTestClassModel extends TestClassModel {
         this.additionalRunnerArguments = additionalRunnerArguments;
         this.deep = deep;
         this.annotations = annotations;
+        this.skipTestsForExperimentalCoroutines = skipTestsForExperimentalCoroutines;
     }
 
     @NotNull
@@ -104,7 +108,8 @@ public class SimpleTestClassModel extends TestClassModel {
                         children.add(new SimpleTestClassModel(
                                 file, true, excludeParentDirs, filenamePattern, excludePattern, checkFilenameStartsLowerCase,
                                 doTestMethodName, innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName()),
-                                skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep != null ? deep - 1 : null, annotations)
+                                skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep != null ? deep - 1 : null, annotations,
+                                skipTestsForExperimentalCoroutines)
                         );
 
                     }
@@ -156,7 +161,7 @@ public class SimpleTestClassModel extends TestClassModel {
                 if (CoroutinesKt.isCommonCoroutineTest(rootFile)) {
                     testMethods = CoroutinesKt.createCommonCoroutinesTestMethodModels(rootFile, rootFile, filenamePattern,
                                                                                       checkFilenameStartsLowerCase, targetBackend,
-                                                                                      skipIgnored);
+                                                                                      skipIgnored, skipTestsForExperimentalCoroutines);
                 }
                 else {
                     testMethods = Collections.singletonList(new SimpleTestMethodModel(
@@ -189,7 +194,8 @@ public class SimpleTestClassModel extends TestClassModel {
                                 result.addAll(CoroutinesKt.createCommonCoroutinesTestMethodModels(rootFile, file,
                                                                                                   filenamePattern,
                                                                                                   checkFilenameStartsLowerCase,
-                                                                                                  targetBackend, skipIgnored));
+                                                                                                  targetBackend, skipIgnored,
+                                                                                                  skipTestsForExperimentalCoroutines));
                             }
                             else {
                                 result.add(new SimpleTestMethodModel(rootFile, file, filenamePattern,

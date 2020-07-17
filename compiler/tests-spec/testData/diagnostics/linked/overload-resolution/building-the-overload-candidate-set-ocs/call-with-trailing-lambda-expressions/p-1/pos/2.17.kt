@@ -1,13 +1,13 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -EXTENSION_SHADOWED_BY_MEMBER
 // SKIP_TXT
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-300
- * PLACE: overload-resolution, building-the-overload-candidate-set-ocs, call-with-trailing-lambda-expressions -> paragraph 1 -> sentence 2
- * RELEVANT PLACES: overload-resolution, building-the-overload-candidate-set-ocs, infix-function-call -> paragraph 2 -> sentence 1
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, call-with-trailing-lambda-expressions -> paragraph 1 -> sentence 2
+ * PRIMARY LINKS: overload-resolution, building-the-overload-candidate-set-ocs, infix-function-call -> paragraph 2 -> sentence 1
  * overload-resolution, building-the-overload-candidate-set-ocs, infix-function-call -> paragraph 2 -> sentence 2
  * overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 6 -> sentence 1
  * NUMBER: 17
@@ -28,7 +28,7 @@ class A() {
 package sentence3
 import libPackage.A
 
-infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "pack scope extension fun foo"
+infix fun A.foo(x: ()->Int) = "pack scope extension fun foo"
 
 // FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
@@ -37,7 +37,7 @@ package sentence3
 import libPackage.A
 
 class Case1() {
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "local extension fun foo"
+    infix fun A.foo(x: ()->Int) = "local extension fun foo"
 
     fun case1() {
         val a = A()
@@ -52,7 +52,7 @@ package sentence3
 import libPackage.A
 
 interface Case2 {
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "local extension fun foo"
+    infix fun A.foo(x: ()->Int) = "local extension fun foo"
 
     fun case2() {
         val a = A()
@@ -66,11 +66,11 @@ interface Case2 {
 package testPack
 import libPackage.A
 
-infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "my package scope top level trim"
+infix fun A.foo(x: ()->Int) = "my package scope top level trim"
 
 
 fun case3() {
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "my local scope trim"
+    infix fun A.foo(x: ()->Int) = "my local scope trim"
 
     val a = A()
     <!DEBUG_INFO_CALL("fqName: libPackage.A.foo; typeCall: infix function")!>a foo {1}<!>
@@ -82,15 +82,15 @@ fun case3() {
 package testPackNew
 import libPackage.A
 
-infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "my package scope top level trim"
+infix fun A.foo(x: ()->Int) = "my package scope top level trim"
 
 
 fun case4() {
 
-    infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "my local trim"
+    infix fun A.foo(x: ()->Int) = "my local trim"
 
     fun subfun() {
-        infix fun A.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(x: ()->Int) = "my local trim"
+        infix fun A.foo(x: ()->Int) = "my local trim"
         val a = A()
         <!DEBUG_INFO_CALL("fqName: libPackage.A.foo; typeCall: infix function")!>a foo {1}<!>
         <!DEBUG_INFO_CALL("fqName: libPackage.A.foo; typeCall: infix function")!>A() foo {1}<!>

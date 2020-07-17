@@ -6,7 +6,7 @@ fun main(args: Array<String>) {
     val i = 1
 }
 
-// ADDITIONAL_BREAKPOINT: stopInInlineInOtherFileWithLambdaArgument.Other.kt: Breakpoint 1
+// ADDITIONAL_BREAKPOINT: stopInInlineInOtherFileWithLambdaArgument.Other.kt / Breakpoint 1
 
 // FILE: stopInInlineInOtherFileWithLambdaArgument.Other.kt
 package stopInInlineInOtherFileWithLambdaArgument

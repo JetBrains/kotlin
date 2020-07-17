@@ -7,5 +7,5 @@ fun foo(p: Any?, p1: Any?) {
         /* STATEMENT DELETED: print(p1!!) */
     }
 
-    <caret>p.length()
+    <caret>p.length
 }

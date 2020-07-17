@@ -1,19 +1,19 @@
 public final class Boo /* Boo*/ {
   @null()
-  public  Boo();
+  public  Boo();//  .ctor()
 
-  public final void fooBar();
+  public final void fooBar();//  fooBar()
 
 }
 
 public static final class LocalClassBase /* null*/ {
   @null()
-  public  LocalClassBase();
+  public  LocalClassBase();//  .ctor()
 
 }
 
 public static final class LocalClassDerived /* null*/ extends LocalClassBase {
   @null()
-  public  LocalClassDerived();
+  public  LocalClassDerived();//  .ctor()
 
 }

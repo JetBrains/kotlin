@@ -74,6 +74,7 @@ class NewResolutionOldInference(
     private val coroutineInferenceSupport: CoroutineInferenceSupport,
     private val deprecationResolver: DeprecationResolver,
     private val typeApproximator: TypeApproximator,
+    private val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter,
     private val callResolver: CallResolver,
     private val candidateInterceptor: CandidateInterceptor
 ) {
@@ -174,7 +175,7 @@ class NewResolutionOldInference(
 
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
         val scopeTower = ImplicitScopeTowerImpl(
-            context, dynamicScope, syntheticScopes, context.call.createLookupLocation(), typeApproximator, callResolver, candidateInterceptor
+            context, dynamicScope, syntheticScopes, context.call.createLookupLocation(), typeApproximator, implicitsResolutionFilter, callResolver, candidateInterceptor
         )
 
         val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
@@ -362,6 +363,7 @@ class NewResolutionOldInference(
         override val syntheticScopes: SyntheticScopes,
         override val location: LookupLocation,
         override val typeApproximator: TypeApproximator,
+        override val implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter,
         val callResolver: CallResolver,
         val candidateInterceptor: CandidateInterceptor
     ) : ImplicitScopeTower {
@@ -379,13 +381,27 @@ class NewResolutionOldInference(
         override val isNewInferenceEnabled: Boolean
             get() = resolutionContext.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
 
-        override fun interceptCandidates(
+
+        override fun interceptFunctionCandidates(
             resolutionScope: ResolutionScope,
             name: Name,
             initialResults: Collection<FunctionDescriptor>,
-            location: LookupLocation
+            location: LookupLocation,
+            dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+            extensionReceiver: ReceiverValueWithSmartCastInfo?
         ): Collection<FunctionDescriptor> {
-            return candidateInterceptor.interceptCandidates(initialResults, this, resolutionContext, resolutionScope, callResolver, name, location)
+            return candidateInterceptor.interceptFunctionCandidates(initialResults, this, resolutionContext, resolutionScope, callResolver, name, location)
+        }
+
+        override fun interceptVariableCandidates(
+            resolutionScope: ResolutionScope,
+            name: Name,
+            initialResults: Collection<VariableDescriptor>,
+            location: LookupLocation,
+            dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+            extensionReceiver: ReceiverValueWithSmartCastInfo?
+        ): Collection<VariableDescriptor> {
+            return candidateInterceptor.interceptVariableCandidates(initialResults, this, resolutionContext, resolutionScope, callResolver, name, location)
         }
     }
 
@@ -406,6 +422,10 @@ class NewResolutionOldInference(
 
         override val resultingApplicability: ResolutionCandidateApplicability by lazy(LazyThreadSafetyMode.NONE) {
             getResultApplicability(diagnostics)
+        }
+
+        override fun addCompatibilityWarning(other: Candidate) {
+            // Only applicable for new inference
         }
 
         override val isSuccessful = getResultApplicability(eagerDiagnostics).isSuccess
@@ -601,7 +621,8 @@ internal fun createPreviousResolveError(status: ResolutionStatus): PreviousResol
     return PreviousResolutionError(level)
 }
 
-private val BasicCallResolutionContext.isSuperCall: Boolean get() = call.explicitReceiver is SuperCallReceiverValue
+internal fun Call.isCallWithSuperReceiver(): Boolean = explicitReceiver is SuperCallReceiverValue 
+private val BasicCallResolutionContext.isSuperCall: Boolean get() = call.isCallWithSuperReceiver()
 
 internal fun reportResolvedUsingDeprecatedVisibility(
     call: Call,

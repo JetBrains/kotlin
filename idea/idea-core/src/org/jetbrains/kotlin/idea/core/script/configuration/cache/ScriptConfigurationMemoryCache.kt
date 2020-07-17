@@ -24,11 +24,17 @@ open class ScriptConfigurationMemoryCache(
         return memoryCache.get(file)
     }
 
+    override fun getAnyLoadedScript(): ScriptCompilationConfigurationWrapper? =
+        memoryCache.entrySet().firstOrNull()?.value?.loaded?.configuration
+
     @Synchronized
     override fun setApplied(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
         val old = memoryCache[file] ?: ScriptConfigurationState()
         memoryCache.put(file, old.copy(applied = configurationSnapshot))
     }
+
+    override fun remove(file: VirtualFile) =
+        memoryCache.remove(file)
 
     @Synchronized
     override fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
@@ -37,35 +43,12 @@ open class ScriptConfigurationMemoryCache(
     }
 
     @Synchronized
-    override fun markOutOfDate(scope: ScriptConfigurationCacheScope) {
-        when (scope) {
-            is ScriptConfigurationCacheScope.File -> {
-                val file = scope.file.originalFile.virtualFile
-                markFileOutOfDate(file)
-            }
-            is ScriptConfigurationCacheScope.Except -> {
-                val file = scope.file.originalFile.virtualFile
-                memoryCache.entrySet().forEach {
-                    if (it.key != file) {
-                        markFileOutOfDate(it.key)
-                    }
-                }
-            }
-            is ScriptConfigurationCacheScope.All ->{
-                memoryCache.entrySet().forEach {
-                    markFileOutOfDate(it.key)
-                }
-            }
-        }
-    }
-
-    @Synchronized
     @Suppress("UNCHECKED_CAST")
-    override fun allApplied(): Map<VirtualFile, ScriptCompilationConfigurationWrapper> {
-        val result = hashMapOf<VirtualFile, ScriptCompilationConfigurationWrapper>()
+    override fun allApplied(): List<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>> {
+        val result = mutableListOf<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>()
         for ((file, configuration) in memoryCache.entrySet()) {
             if (configuration.applied?.configuration != null) {
-                result[file] = configuration.applied.configuration
+                result.add(Pair(file, configuration.applied.configuration))
             }
         }
         return result
@@ -76,14 +59,4 @@ open class ScriptConfigurationMemoryCache(
         memoryCache.clear()
     }
 
-    @Synchronized
-    private fun markFileOutOfDate(file: VirtualFile) {
-        val old = memoryCache[file] ?: return
-        memoryCache.put(
-            file, old.copy(
-                applied = old.applied?.copy(inputs = CachedConfigurationInputs.OutOfDate),
-                loaded = old.loaded?.copy(inputs = CachedConfigurationInputs.OutOfDate)
-            )
-        )
-    }
 }

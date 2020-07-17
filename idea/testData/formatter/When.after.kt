@@ -22,18 +22,25 @@ fun some(x: Any) {
     }
 
     when
-        (true) {
+            (true) {
 
     }
 
     when
 
 
-        (true) {
+            (true) {
 
     }
 
     when {
+    }
+}
+
+val a = when {
+    true && true && true -> {
+    }
+    else -> {
     }
 }
 

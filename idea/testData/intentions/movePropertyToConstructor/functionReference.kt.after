@@ -6,5 +6,5 @@ fun foo(a: Int, b: String, d: Baz) {
 
 }
 
-class TestClass(val prop1: KFunction3<@ParameterName(name = "a") Int, @ParameterName(name = "b") String, @ParameterName(name = "d") Baz, Unit> = ::foo) {
+class TestClass(val prop1: KFunction3<Int, String, Baz, Unit> = ::foo) {
 }

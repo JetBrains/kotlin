@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package templates
 
+import templates.ArrayOps.rangeDoc
 import templates.Family.*
 import templates.SequenceClass.*
 
@@ -50,6 +51,38 @@ object Ordering : TemplateGroupBase() {
             on(Platform.JVM) {
                 body { """java.util.Collections.reverse(this)""" }
             }
+        }
+    }
+
+    val f_reverse_range = fn("reverse(fromIndex: Int, toIndex: Int)") {
+        include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
+    } builder {
+        since("1.4")
+        doc {
+            """
+            Reverses elements of the ${f.collection} in the specified range in-place.
+            
+            ${rangeDoc(hasDefault = false, action = "reverse")}
+            """
+        }
+        returns("Unit")
+        body {
+            """
+            AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+            val midPoint = (fromIndex + toIndex) / 2
+            if (fromIndex == midPoint) return
+            var reverseIndex = toIndex - 1
+            for (index in fromIndex until midPoint) {
+                val tmp = this[index]
+                this[index] = this[reverseIndex]
+                this[reverseIndex] = tmp
+                reverseIndex--
+            }
+            """
+        }
+        specialFor(ArraysOfUnsigned) {
+            inlineOnly()
+            body { """storage.reverse(fromIndex, toIndex)""" }
         }
     }
 
@@ -399,7 +432,6 @@ object Ordering : TemplateGroupBase() {
         if (f != ArraysOfPrimitives) {
             appendStableSortNote()
         }
-
         specialFor(Sequences) {
             returns("SELF")
             doc {
@@ -408,6 +440,8 @@ object Ordering : TemplateGroupBase() {
             appendStableSortNote()
             sequenceClassification(intermediate, stateful)
         }
+        sample("samples.collections.Collections.Sorting.sortedBy")
+
         body {
             "return sortedWith(compareBy(selector))"
         }
@@ -457,4 +491,57 @@ object Ordering : TemplateGroupBase() {
         }
     }
 
+
+    val f_shuffle = fn("shuffle()") {
+        include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
+    } builder {
+        since("1.4")
+        returns("Unit")
+        doc {
+            """
+            Randomly shuffles elements in this ${f.collection} in-place.
+            """
+        }
+        body {
+            "shuffle(Random)"
+        }
+    }
+
+    val f_shuffleRandom = fn("shuffle(random: Random)") {
+        include(Lists, InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
+    } builder {
+        since("1.4")
+        returns("Unit")
+        doc {
+            """
+            Randomly shuffles elements in this ${f.collection} in-place using the specified [random] instance as the source of randomness.
+            
+            See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+            """
+        }
+        specialFor(Lists) {
+            since("1.3")
+            receiver("MutableList<T>")
+        }
+        body {
+            """
+            for (i in lastIndex downTo 1) {
+                val j = random.nextInt(i + 1)
+                val copy = this[i]
+                this[i] = this[j]
+                this[j] = copy
+            }
+            """
+        }
+        specialFor(Lists) {
+            body {
+                """
+                for (i in lastIndex downTo 1) {
+                    val j = random.nextInt(i + 1)
+                    this[j] = this.set(i, this[j])
+                }
+                """
+            }
+        }
+    }
 }

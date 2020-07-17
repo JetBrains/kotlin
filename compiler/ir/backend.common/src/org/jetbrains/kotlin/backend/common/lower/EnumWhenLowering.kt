@@ -102,7 +102,12 @@ open class EnumWhenLowering(protected val context: CommonBackendContext) : IrEle
             else -> return super.visitCall(expression)
         }
         val subjectOrdinal = topmostOrdinalProvider.value
-        return IrCallImpl(expression.startOffset, expression.endOffset, expression.type, expression.symbol).apply {
+        return IrCallImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type, expression.symbol,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 2
+        ).apply {
             putValueArgument(0, IrGetValueImpl(lhs.startOffset, lhs.endOffset, subjectOrdinal.type, subjectOrdinal.symbol))
             putValueArgument(1, IrConstImpl.int(rhs.startOffset, rhs.endOffset, context.irBuiltIns.intType, entryOrdinal))
         }

@@ -42,7 +42,6 @@ class FirJavaField @FirImplementationDetail constructor(
     override val isVar: Boolean,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameter>,
-    val isEnumEntry: Boolean
 ) : FirField() {
     init {
         symbol.bind(this)
@@ -52,6 +51,11 @@ class FirJavaField @FirImplementationDetail constructor(
     override val isVal: Boolean get() = !isVar
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
+
+    override val origin: FirDeclarationOrigin
+        get() = FirDeclarationOrigin.Java
+
+    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
@@ -133,7 +137,6 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     var modality: Modality? = null
     lateinit var visibility: Visibility
     var isStatic: Boolean by Delegates.notNull()
-    var isEnumEntry: Boolean by Delegates.notNull()
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
@@ -157,9 +160,15 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             isVar,
             annotations,
             typeParameters,
-            isEnumEntry
         )
     }
+
+    @Deprecated("Modification of 'origin' has no impact for FirJavaFieldBuilder", level = DeprecationLevel.HIDDEN)
+    override var origin: FirDeclarationOrigin
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
 }
 
 @OptIn(ExperimentalContracts::class)

@@ -8,6 +8,7 @@ apply plugin: 'kotlin-platform-js'
 apply plugin: 'idea'
 
 configurePublishing(project)
+configureJavadocJar()
 
 configurations {
     sources
@@ -15,7 +16,6 @@ configurations {
     distSources
     distJs
     distLibrary
-    publishedArtifacts
 }
 
 def builtinsSrcDir = "${buildDir}/builtin-sources"
@@ -258,17 +258,16 @@ task libraryJarWithoutIr(type: Jar, dependsOn: compileJs) {
 }
 
 task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
-
     archiveExtension = "jar"
     destinationDirectory = file("$buildDir/libs")
 
     duplicatesStrategy DuplicatesStrategy.FAIL
 
     from zipTree(libraryJarWithoutIr.archiveFile)
-    if (rootProject.includeStdlibJsIr) {
-        def irKlib = tasks.getByPath(":kotlin-stdlib-js-ir:generateFullRuntimeKLib")
-        dependsOn(irKlib)
-        from fileTree(irKlib.outputs.files.singleFile.path)
+    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+    from {
+        def irKlib = tasks.getByPath(":kotlin-stdlib-js-ir:compileKotlinJs")
+        fileTree(irKlib.outputs.files.first().path)
     }
 }
 
@@ -306,33 +305,22 @@ task distSourcesJar(type: Jar) {
     }
 }
 
-def javadocJar = javadocJar()
-
 artifacts {
     runtime libraryJarWithIr
-    publishedArtifacts libraryJarWithIr
-    publishedArtifacts sourcesJar
-    publishedArtifacts javadocJar
+    publishedRuntime libraryJarWithIr
+    publishedRuntime sourcesJar
     sources sourcesJar
     distSources distSourcesJar
-    distLibrary libraryJarWithoutIr
+    distLibrary libraryJarWithIr
 
     compileJs.outputs.files.forEach { artifact ->
         distJs(artifact) { builtBy(compileJs) }
     }
 }
 
-uploadArchives {
-    configuration = configurations.publishedArtifacts
-}
-
-install {
-    configuration = configurations.publishedArtifacts
-}
-
 node {
     download = true
-    version = '8.9.4' // The default 6.9.1 has buggy hyperbolic functions implementation
+    version = '12.18.0'
     nodeModulesDir = buildDir
 }
 
@@ -342,11 +330,11 @@ task deleteLegacyNodeModules(type: Delete) {
 }
 
 task installMocha(type: NpmTask, dependsOn: [deleteLegacyNodeModules]) {
-    args = ['install', 'mocha']
+    args = ['install', 'mocha@8.0.1']
 }
 
 task installTeamcityReporter(type: NpmTask, dependsOn: [deleteLegacyNodeModules]) {
-    args = ['install', 'mocha-teamcity-reporter']
+    args = ['install', 'mocha-teamcity-reporter@3.0.0']
 }
 
 task runMocha(type: NodeTask, dependsOn: [testClasses, installMocha, ':kotlin-test:kotlin-test-js:testClasses']) {

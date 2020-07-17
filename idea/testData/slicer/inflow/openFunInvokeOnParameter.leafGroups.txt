@@ -1,7 +1,8 @@
-8 other?.bar(<bold>p + 1</bold>)
-11 	fun bar(<bold>p: Int</bold>) {
-8 		other?.bar(<bold>p + 1</bold>)
+22 other?.bar(<bold>p + 3</bold>) (in D.foo(Int))
+12 	open fun bar(<bold>p: Int</bold>) { (in C.bar(Int))
+22 		other?.bar(<bold>p + 3</bold>) (in D.foo(Int))
 
-21 other?.bar(<bold>p + 3</bold>)
-11 	fun bar(<bold>p: Int</bold>) {
-21 		other?.bar(<bold>p + 3</bold>)
+9 other?.bar(<bold>p + 1</bold>) (in C.foo(Int))
+12 	open fun bar(<bold>p: Int</bold>) { (in C.bar(Int))
+9 		other?.bar(<bold>p + 1</bold>) (in C.foo(Int))
+

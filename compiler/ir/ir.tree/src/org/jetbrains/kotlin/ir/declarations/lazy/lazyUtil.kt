@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 import org.jetbrains.kotlin.ir.declarations.withInitialIr
 import kotlin.reflect.KProperty
 
-internal fun <T> lazyVar(initializer: () -> T): UnsafeLazyVar<T> = UnsafeLazyVar(initializer)
+fun <T> lazyVar(initializer: () -> T): UnsafeLazyVar<T> = UnsafeLazyVar(initializer)
 
-internal class UnsafeLazyVar<T>(initializer: () -> T) {
+class UnsafeLazyVar<T>(initializer: () -> T) {
     private var isInitialized = false;
     private var initializer: (() -> T)? = initializer
     private var _value: Any? = null

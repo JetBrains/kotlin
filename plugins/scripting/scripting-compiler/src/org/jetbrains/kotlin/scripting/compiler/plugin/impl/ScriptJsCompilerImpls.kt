@@ -31,7 +31,7 @@ class JsScriptCompilerWithDependenciesProxy(private val environment: KotlinCoreE
     override fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>> {
+    ): ResultWithDiagnostics<CompiledScript> {
         val parentMessageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]
         return withMessageCollector(script = script, parentMessageCollector = parentMessageCollector) { messageCollector ->
             environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
@@ -45,7 +45,7 @@ class JsScriptCompilerWithDependenciesProxy(private val environment: KotlinCoreE
                         )
                     }
                     is ReplCompileResult.Incomplete -> ResultWithDiagnostics.Failure(
-                        ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, "Incomplete code")
+                        ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code")
                     )
                     is ReplCompileResult.Error -> ResultWithDiagnostics.Failure(
                         ScriptDiagnostic(

@@ -2,8 +2,8 @@
 open class B0(x: Int)
 
 class A0 : B0 {
-    constructor()
-    constructor(x: Int) : super()
+    <!INAPPLICABLE_CANDIDATE!>constructor()<!>
+    constructor(x: Int) : <!INAPPLICABLE_CANDIDATE!>super<!>()
 }
 
 // --------------------------
@@ -26,8 +26,8 @@ open class B2 {
 }
 
 class A2 : B2 {
-    constructor()
-    constructor(x: Int) : super()
+    <!INAPPLICABLE_CANDIDATE!>constructor()<!>
+    constructor(x: Int) : <!INAPPLICABLE_CANDIDATE!>super<!>()
 }
 
 // --------------------------
@@ -37,6 +37,6 @@ open class B3 {
 }
 
 class A3 : B3 {
-    constructor()
-    constructor(x: Int) : super()
+    <!INAPPLICABLE_CANDIDATE!>constructor()<!>
+    constructor(x: Int) : <!INAPPLICABLE_CANDIDATE!>super<!>()
 }

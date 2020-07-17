@@ -20,13 +20,13 @@ class CompilerInitializationMeasurement(private val milliseconds: Long) : Perfor
 }
 
 
-class CodeAnalysisMeasurement(private val files: Int, val lines: Int, private val milliseconds: Long, private val description: String?) :
+class CodeAnalysisMeasurement(val files: Int, val lines: Int, val milliseconds: Long, private val description: String?) :
     PerformanceMeasurement {
 
-    private val speed: Double = lines.toDouble() * 1000 / milliseconds
+    val lps: Double = lines.toDouble() * 1000 / milliseconds
 
     override fun render(): String =
-        "ANALYZE: $files files ($lines lines) ${description ?: ""}in $milliseconds ms - ${"%.3f".format(speed)} loc/s"
+        "ANALYZE: $files files ($lines lines) ${description ?: ""}in $milliseconds ms - ${"%.3f".format(lps)} loc/s"
 }
 
 
@@ -40,11 +40,23 @@ class CodeGenerationMeasurement(private val files: Int, val lines: Int, private 
 }
 
 
-class GarbageCollectionMeasurement(private val garbageCollectionKind: String, private val milliseconds: Long) : PerformanceMeasurement {
-    override fun render(): String = "GC time for $garbageCollectionKind is $milliseconds ms"
+class GarbageCollectionMeasurement(val garbageCollectionKind: String, val milliseconds: Long, val count: Long) : PerformanceMeasurement {
+    override fun render(): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
 }
 
 
 class PerformanceCounterMeasurement(private val counterReport: String) : PerformanceMeasurement {
     override fun render(): String = counterReport
+}
+
+class IRMeasurement(val files: Int, val lines: Int, val milliseconds: Long, private val description: String?, val kind: Kind) :
+    PerformanceMeasurement {
+
+    val lps: Double = lines.toDouble() * 1000 / milliseconds
+    override fun render(): String =
+        "IR: $kind $files files ($lines lines) ${description ?: ""}in $milliseconds ms - ${"%.3f".format(lps)} loc/s"
+
+    enum class Kind {
+        Generation, Translation
+    }
 }

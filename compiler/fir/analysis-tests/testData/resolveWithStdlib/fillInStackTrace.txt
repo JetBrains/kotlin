@@ -1,0 +1,4 @@
+FILE: fillInStackTrace.kt
+    public final fun test(t: R|kotlin/Throwable|): R|kotlin/Unit| {
+        R|<local>/t|.R|java/lang/Throwable.fillInStackTrace|()
+    }

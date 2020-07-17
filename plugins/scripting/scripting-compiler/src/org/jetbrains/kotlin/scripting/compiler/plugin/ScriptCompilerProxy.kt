@@ -14,5 +14,5 @@ interface ScriptCompilerProxy {
     fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>>
+    ): ResultWithDiagnostics<CompiledScript>
 }

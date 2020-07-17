@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNREACHABLE_CODE  -UNUSED_PARAMETER -UNUSED_VARIABLE
 // SKIP_TXT
@@ -6,7 +7,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, type-checking-and-containment-checking-expressions, containment-checking-expression -> paragraph 5 -> sentence 2
+ * MAIN LINK: expressions, type-checking-and-containment-checking-expressions, containment-checking-expression -> paragraph 5 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: Containment-checking expressions always have type kotlin.Boolean.
  * HELPERS: checkType

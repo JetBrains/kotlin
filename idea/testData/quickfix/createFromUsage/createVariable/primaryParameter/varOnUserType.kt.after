@@ -4,5 +4,5 @@
 class A<T>(val n: T, var foo: String)
 
 fun test() {
-    A(1, ).foo = "1"
+    A(1,).foo = "1"
 }

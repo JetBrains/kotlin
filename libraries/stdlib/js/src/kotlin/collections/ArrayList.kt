@@ -13,6 +13,7 @@ package kotlin.collections
  * capacity and "growth increment" concepts.
  */
 public actual open class ArrayList<E> internal constructor(private var array: Array<Any?>) : AbstractMutableList<E>(), MutableList<E>, RandomAccess {
+    private var isReadOnly: Boolean = false
 
     /**
      * Creates an empty [ArrayList].
@@ -31,6 +32,13 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
      */
     public actual constructor(elements: Collection<E>) : this(elements.toTypedArray<Any?>()) {}
 
+    @PublishedApi
+    internal fun build(): List<E> {
+        checkIsMutable()
+        isReadOnly = true
+        return this
+    }
+
     /** Does nothing in this ArrayList implementation. */
     public actual fun trimToSize() {}
 
@@ -41,23 +49,27 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     @Suppress("UNCHECKED_CAST")
     actual override fun get(index: Int): E = array[rangeCheck(index)] as E
     actual override fun set(index: Int, element: E): E {
+        checkIsMutable()
         rangeCheck(index)
         @Suppress("UNCHECKED_CAST")
         return array[index].apply { array[index] = element } as E
     }
 
     actual override fun add(element: E): Boolean {
+        checkIsMutable()
         array.asDynamic().push(element)
         modCount++
         return true
     }
 
     actual override fun add(index: Int, element: E): Unit {
+        checkIsMutable()
         array.asDynamic().splice(insertionRangeCheck(index), 0, element)
         modCount++
     }
 
     actual override fun addAll(elements: Collection<E>): Boolean {
+        checkIsMutable()
         if (elements.isEmpty()) return false
 
         array += elements.toTypedArray<Any?>()
@@ -66,6 +78,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     }
 
     actual override fun addAll(index: Int, elements: Collection<E>): Boolean {
+        checkIsMutable()
         insertionRangeCheck(index)
 
         if (index == size) return addAll(elements)
@@ -81,6 +94,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     }
 
     actual override fun removeAt(index: Int): E {
+        checkIsMutable()
         rangeCheck(index)
         modCount++
         return if (index == lastIndex)
@@ -90,6 +104,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     }
 
     actual override fun remove(element: E): Boolean {
+        checkIsMutable()
         for (index in array.indices) {
             if (array[index] == element) {
                 array.asDynamic().splice(index, 1)
@@ -101,11 +116,13 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     }
 
     override fun removeRange(fromIndex: Int, toIndex: Int) {
+        checkIsMutable()
         modCount++
         array.asDynamic().splice(fromIndex, toIndex - fromIndex)
     }
 
     actual override fun clear() {
+        checkIsMutable()
         array = emptyArray()
         modCount++
     }
@@ -118,6 +135,10 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     override fun toString() = arrayToString(array)
     override fun toArray(): Array<Any?> = js("[]").slice.call(array)
 
+
+    internal override fun checkIsMutable() {
+        if (isReadOnly) throw UnsupportedOperationException()
+    }
 
     private fun rangeCheck(index: Int) = index.apply {
         AbstractList.checkElementIndex(index, size)

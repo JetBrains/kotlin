@@ -6,13 +6,17 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check the allowance of returning Nothing where String is expected",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "todo",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

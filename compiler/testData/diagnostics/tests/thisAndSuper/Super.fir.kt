@@ -31,7 +31,7 @@ class A<E>() : C(), T {
         fun test() {
             super<T>.foo();
             <!NOT_A_SUPERTYPE!>super<C><!>.bar()
-            <!NOT_A_SUPERTYPE!>super<C>@A<!>.bar()
+            super<C>@A.bar()
             super<T>@A.foo()
             super<T>@B.foo()
             <!NOT_A_SUPERTYPE!>super<C>@B<!>.<!UNRESOLVED_REFERENCE!>foo<!>()

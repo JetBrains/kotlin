@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.types.checker
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -316,6 +317,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.isUnit(): Boolean {
         require(this is UnwrappedType, this::errorMessage)
         return KotlinBuiltIns.isUnit(this)
+    }
+
+    override fun KotlinTypeMarker.isBuiltinFunctionalTypeOrSubtype(): Boolean {
+        require(this is UnwrappedType, this::errorMessage)
+        return isBuiltinFunctionalTypeOrSubtype
     }
 
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {

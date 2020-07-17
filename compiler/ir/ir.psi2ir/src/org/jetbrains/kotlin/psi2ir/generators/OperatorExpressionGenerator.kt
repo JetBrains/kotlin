@@ -45,9 +45,7 @@ import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.intersectTypes
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.types.typeUtil.*
 
 
 class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -501,7 +499,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             ?: throw AssertionError("No type for !! argument")
         val expressionType = argumentType.makeNotNullable()
 
-        val checkNotNull = context.irBuiltIns.checkNotNull
+        val checkNotNull = context.irBuiltIns.checkNotNullSymbol.descriptor
         val checkNotNullSubstituted =
             checkNotNull.substitute(
                 TypeSubstitutor.create(

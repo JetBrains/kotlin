@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -25,12 +26,14 @@ import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import java.util.*
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class TypeTranslator(
     private val symbolTable: ReferenceSymbolTable,
     val languageVersionSettings: LanguageVersionSettings,
     builtIns: KotlinBuiltIns,
     private val typeParametersResolver: TypeParametersResolver = ScopedTypeParametersResolver(),
-    private val enterTableScope: Boolean = false
+    private val enterTableScope: Boolean = false,
+    private val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ) {
 
     private val erasureStack = Stack<PropertyDescriptor>()
@@ -41,14 +44,14 @@ class TypeTranslator(
     fun enterScope(irElement: IrTypeParametersContainer) {
         typeParametersResolver.enterTypeParameterScope(irElement)
         if (enterTableScope) {
-            symbolTable.enterScope(irElement.descriptor)
+            symbolTable.enterScope(irElement)
         }
     }
 
     fun leaveScope(irElement: IrTypeParametersContainer) {
         typeParametersResolver.leaveTypeParameterScope()
         if (enterTableScope) {
-            symbolTable.leaveScope(irElement.descriptor)
+            symbolTable.leaveScope(irElement)
         }
     }
 
@@ -106,7 +109,7 @@ class TypeTranslator(
 
         return IrSimpleTypeBuilder().apply {
             this.kotlinType = flexibleApproximatedType
-            this.hasQuestionMark = approximatedType.isMarkedNullable
+            this.hasQuestionMark = approximatedType.isMarkedNullable || extensions.enhancedNullability.hasEnhancedNullability(approximatedType)
             this.variance = variance
             this.abbreviation = approximatedType.getAbbreviation()?.toIrTypeAbbreviation()
             when (ktTypeDescriptor) {

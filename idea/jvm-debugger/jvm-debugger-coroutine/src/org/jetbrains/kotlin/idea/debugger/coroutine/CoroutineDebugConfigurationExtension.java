@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.idea.debugger.coroutine;
 
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunConfigurationExtension;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.RunConfigurationBase;
@@ -12,14 +11,15 @@ import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class CoroutineDebugConfigurationExtension extends RunConfigurationExtension {
     private static final Logger log = Logger.getInstance(CoroutineDebugConfigurationExtension.class);
 
     @Override
     public <T extends RunConfigurationBase> void updateJavaParameters(
-            T configuration, JavaParameters params, RunnerSettings runnerSettings
-    ) throws ExecutionException {
+            T configuration, @NotNull JavaParameters params, RunnerSettings runnerSettings
+    ) {
         if (configuration != null) {
             Project project = configuration.getProject();
             DebuggerListener listener = ServiceManager.getService(project, DebuggerListener.class);
@@ -31,7 +31,7 @@ public class CoroutineDebugConfigurationExtension extends RunConfigurationExtens
     }
 
     @Override
-    public boolean isApplicableFor(RunConfigurationBase<?> configuration) {
+    public boolean isApplicableFor(@NotNull RunConfigurationBase<?> configuration) {
         return true;
     }
 }

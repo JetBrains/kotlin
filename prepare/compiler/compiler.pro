@@ -13,7 +13,6 @@
 -dontwarn com.intellij.ui.**
 -dontwarn com.intellij.util.IconUtil
 -dontwarn com.intellij.util.ImageLoader
--dontwarn kotlinx.coroutines.flow.FlowKt__MergeKt
 -dontwarn net.sf.cglib.**
 -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 -dontwarn com.sun.jna.NativeString
@@ -63,7 +62,6 @@
 -dontwarn org.w3c.dom.Location
 -dontwarn org.w3c.dom.Window
 -dontwarn org.slf4j.**
-
 
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
@@ -218,9 +216,6 @@
 # for tools.jar
 -keep class com.sun.tools.javac.** { *; }
 -keep class com.sun.source.** { *; }
-
-# for coroutines
--keep class kotlinx.coroutines.** { *; }
 
 # for webdemo
 -keep class com.intellij.openapi.progress.ProgressManager { *; }

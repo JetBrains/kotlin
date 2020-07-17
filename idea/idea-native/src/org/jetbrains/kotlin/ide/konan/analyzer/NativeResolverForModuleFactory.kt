@@ -47,7 +47,7 @@ class NativeResolverForModuleFactory(
             moduleContext,
             declarationProviderFactory,
             CodeAnalyzerInitializer.getInstance(moduleContext.project).createTrace(),
-            NativePlatforms.defaultNativePlatform,
+            moduleDescriptor.platform!!,
             NativePlatformAnalyzerServices,
             targetEnvironment,
             languageVersionSettings
@@ -56,7 +56,7 @@ class NativeResolverForModuleFactory(
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 
         val klibPackageFragmentProvider =
-            NativePlatforms.defaultNativePlatform.idePlatformKind.resolution.createKlibPackageFragmentProvider(
+            NativePlatforms.unspecifiedNativePlatform.idePlatformKind.resolution.createKlibPackageFragmentProvider(
                 moduleContent.moduleInfo,
                 moduleContext.storageManager,
                 languageVersionSettings,

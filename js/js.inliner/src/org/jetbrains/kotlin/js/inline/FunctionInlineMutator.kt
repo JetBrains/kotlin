@@ -46,8 +46,16 @@ private constructor(
     }
 
     private fun process() {
-        val arguments = getArguments()
+        var arguments = getArguments()
         val parameters = getParameters()
+
+        if (arguments.size > parameters.size) {
+            // Due to suspend conversions it is possible to have an extra argument, e.g. `fn($this$)` for `function fn() {...}`
+            // In such cases all missing arguments for default parameters are passed as `void 0` explicitly.
+            // Thus it is safe to drop it.
+            assert(arguments.size == parameters.size + 1) { "arguments.size (${arguments.size}) may only exceed the parameters.size (${parameters.size}) by one and only in case of suspend conversions" }
+            arguments = arguments.subList(0, parameters.size)
+        }
 
         removeDefaultInitializers(arguments, parameters, body)
         aliasArgumentsIfNeeded(namingContext, arguments, parameters, call.source)

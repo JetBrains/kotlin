@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FULL_JDK
 
 abstract class A : MutableList<String> {

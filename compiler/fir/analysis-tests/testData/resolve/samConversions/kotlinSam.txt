@@ -38,12 +38,12 @@ FILE: kotlinSam.kt
         }
         )
         R|/foo1|(R|<local>/f|)
-        <Inapplicable(INAPPLICABLE): [/foo2]>#(<L> = foo2@fun <anonymous>(x: R|ERROR CLASS: No type for parameter|): R|kotlin/Boolean| {
+        <Inapplicable(INAPPLICABLE): [/foo2]>#(<L> = foo2@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Boolean| {
             ^ CMP(>, R|<local>/x|.<Unresolved name: compareTo>#(Int(1)))
         }
         )
         <Inapplicable(INAPPLICABLE): [/foo2]>#(R|<local>/f|)
-        <Inapplicable(INAPPLICABLE): [/foo3]>#(<L> = foo3@fun <anonymous>(x: R|ERROR CLASS: No type for parameter|): R|kotlin/Boolean| {
+        <Inapplicable(INAPPLICABLE): [/foo3]>#(<L> = foo3@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Boolean| {
             ^ CMP(>, R|<local>/x|.<Unresolved name: compareTo>#(Int(1)))
         }
         )

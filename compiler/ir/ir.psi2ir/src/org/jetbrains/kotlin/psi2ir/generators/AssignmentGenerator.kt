@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
+import org.jetbrains.kotlin.psi2ir.resolveFakeOverride
 import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.psi2ir.unwrappedSetMethod
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -190,7 +194,6 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 createBackingFieldLValue(ktExpr, descriptor.propertyDescriptor, receiverValue, origin)
             }
             is LocalVariableDescriptor ->
-                @Suppress("DEPRECATION")
                 if (descriptor.isDelegated)
                     DelegatedLocalPropertyLValue(
                         context,
@@ -309,7 +312,6 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         origin: IrStatementOrigin?,
         superQualifier: ClassDescriptor?
     ): PropertyLValueBase {
-        val superQualifierSymbol = superQualifier?.let { context.symbolTable.referenceClass(it) }
 
         val unwrappedPropertyDescriptor = descriptor.unwrapPropertyDescriptor()
         val getterDescriptor = unwrappedPropertyDescriptor.unwrappedGetMethod
@@ -320,6 +322,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
         val propertyIrType = descriptor.type.toIrType()
         return if (getterSymbol != null || setterSymbol != null) {
+            val superQualifierSymbol = superQualifier?.let { context.symbolTable.referenceClass(it) }
             val typeArgumentsList =
                 typeArgumentsMap?.let { typeArguments ->
                     descriptor.original.typeParameters.map { typeArguments[it]!!.toIrType() }
@@ -330,24 +333,31 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
                 propertyIrType,
                 getterSymbol,
-                getterDescriptor?.let { computeSubstitutedSyntheticAccessor(unwrappedPropertyDescriptor, it) },
+                getterDescriptor?.let {
+                    computeSubstitutedSyntheticAccessor(unwrappedPropertyDescriptor, it, unwrappedPropertyDescriptor.getter!!)
+                },
                 setterSymbol,
-                setterDescriptor?.let { computeSubstitutedSyntheticAccessor(unwrappedPropertyDescriptor, it) },
+                setterDescriptor?.let {
+                    computeSubstitutedSyntheticAccessor(unwrappedPropertyDescriptor, it, unwrappedPropertyDescriptor.setter!!)
+                },
                 typeArgumentsList,
                 propertyReceiver,
                 superQualifierSymbol
             )
-        } else
+        } else {
+            val superQualifierSymbol = (superQualifier
+                ?: unwrappedPropertyDescriptor.containingDeclaration as? ClassDescriptor)?.let { context.symbolTable.referenceClass(it) }
             FieldPropertyLValue(
                 context,
                 scope,
                 ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
-                context.symbolTable.referenceField(unwrappedPropertyDescriptor.original),
+                context.symbolTable.referenceField(unwrappedPropertyDescriptor.resolveFakeOverride().original),
                 unwrappedPropertyDescriptor,
                 propertyIrType,
                 propertyReceiver,
                 superQualifierSymbol
             )
+        }
     }
 
     private fun generateArrayAccessAssignmentReceiver(

@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.config.JvmTarget;
-import org.jetbrains.kotlin.config.LanguageFeature;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -41,10 +39,10 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.*;
+import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
@@ -68,7 +66,6 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineWithReified;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
-import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmSyntheticAnnotation;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -308,9 +305,10 @@ public class AsmUtil {
         return new Method(name, Type.getMethodDescriptor(returnType, parameterTypes));
     }
 
-    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
+    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind, JvmDefaultMode jvmDefaultMode) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT ||
-                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor)))
+                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !JvmAnnotationUtilKt
+                        .isCompiledToJvmDefault(functionDescriptor, jvmDefaultMode)))
                && !isStaticMethod(kind, functionDescriptor);
     }
 
@@ -325,10 +323,15 @@ public class AsmUtil {
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
-        return getMethodAsmFlags(functionDescriptor, kind, state.getDeprecationProvider());
+        return getMethodAsmFlags(functionDescriptor, kind, state.getDeprecationProvider(), state.getJvmDefaultMode());
     }
 
-    public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, DeprecationResolver deprecationResolver) {
+    public static int getMethodAsmFlags(
+            FunctionDescriptor functionDescriptor,
+            OwnerKind kind,
+            DeprecationResolver deprecationResolver,
+            JvmDefaultMode jvmDefaultMode
+    ) {
         int flags = getCommonCallableFlags(functionDescriptor, kind, deprecationResolver);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
@@ -356,7 +359,7 @@ public class AsmUtil {
             flags |= ACC_STATIC;
         }
 
-        if (isAbstractMethod(functionDescriptor, kind)) {
+        if (isAbstractMethod(functionDescriptor, kind, jvmDefaultMode)) {
             flags |= ACC_ABSTRACT;
         }
 
@@ -428,9 +431,6 @@ public class AsmUtil {
     public static int getVisibilityAccessFlagForClass(@NotNull ClassDescriptor descriptor) {
         if (descriptor instanceof SyntheticClassDescriptorForLambda) {
             return getVisibilityAccessFlagForAnonymous(descriptor);
-        }
-        if (ExpectedActualDeclarationChecker.isOptionalAnnotationClass(descriptor)) {
-            return NO_FLAG_PACKAGE_PRIVATE;
         }
         if (descriptor.getKind() == ClassKind.ENUM_ENTRY) {
             return NO_FLAG_PACKAGE_PRIVATE;

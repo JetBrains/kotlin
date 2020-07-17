@@ -47,3 +47,14 @@ inline fun buildErrorTypeRef(init: FirErrorTypeRefBuilder.() -> Unit): FirErrorT
     }
     return FirErrorTypeRefBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildErrorTypeRefCopy(original: FirErrorTypeRef, init: FirErrorTypeRefBuilder.() -> Unit): FirErrorTypeRef {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirErrorTypeRefBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.diagnostic = original.diagnostic
+    return copyBuilder.apply(init).build()
+}

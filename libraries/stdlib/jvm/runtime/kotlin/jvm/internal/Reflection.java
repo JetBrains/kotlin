@@ -16,7 +16,7 @@ import java.util.Collections;
  * This class serves as a facade to the actual reflection implementation. JVM back-end generates calls to static methods of this class
  * on any reflection-using construct.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "rawtypes"})
 public class Reflection {
     private static final ReflectionFactory factory;
 
@@ -118,6 +118,11 @@ public class Reflection {
     // typeOf
 
     @SinceKotlin(version = "1.4")
+    public static KType typeOf(KClassifier classifier) {
+        return factory.typeOf(classifier, Collections.<KTypeProjection>emptyList(), false);
+    }
+
+    @SinceKotlin(version = "1.4")
     public static KType typeOf(Class klass) {
         return factory.typeOf(getOrCreateKotlinClass(klass), Collections.<KTypeProjection>emptyList(), false);
     }
@@ -138,6 +143,11 @@ public class Reflection {
     }
 
     @SinceKotlin(version = "1.4")
+    public static KType nullableTypeOf(KClassifier classifier) {
+        return factory.typeOf(classifier, Collections.<KTypeProjection>emptyList(), true);
+    }
+
+    @SinceKotlin(version = "1.4")
     public static KType nullableTypeOf(Class klass) {
         return factory.typeOf(getOrCreateKotlinClass(klass), Collections.<KTypeProjection>emptyList(), true);
     }
@@ -155,5 +165,22 @@ public class Reflection {
     @SinceKotlin(version = "1.4")
     public static KType nullableTypeOf(Class klass, KTypeProjection... arguments) {
         return factory.typeOf(getOrCreateKotlinClass(klass), ArraysKt.<KTypeProjection>toList(arguments), true);
+    }
+
+    // Support of non-reified type parameters for typeOf
+
+    @SinceKotlin(version = "1.4")
+    public static KTypeParameter typeParameter(Object container, String name, KVariance variance, boolean isReified) {
+        return factory.typeParameter(container, name, variance, isReified);
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static void setUpperBounds(KTypeParameter typeParameter, KType bound) {
+        factory.setUpperBounds(typeParameter, Collections.singletonList(bound));
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static void setUpperBounds(KTypeParameter typeParameter, KType... bounds) {
+        factory.setUpperBounds(typeParameter, ArraysKt.toList(bounds));
     }
 }

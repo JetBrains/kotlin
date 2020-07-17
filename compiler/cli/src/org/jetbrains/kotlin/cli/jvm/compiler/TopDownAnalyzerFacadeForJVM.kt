@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -65,13 +66,14 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
+import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
@@ -134,7 +136,8 @@ object TopDownAnalyzerFacadeForJVM {
         declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory,
         targetEnvironment: TargetEnvironment = CompilerEnvironment,
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files),
-        klibList: List<KotlinLibrary> = emptyList()
+        klibList: List<KotlinLibrary> = emptyList(),
+        implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null
     ): ComponentProvider {
         val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT)
         val languageVersionSettings = configuration.languageVersionSettings
@@ -185,7 +188,8 @@ object TopDownAnalyzerFacadeForJVM {
                 targetEnvironment, lookupTracker, expectActualTracker,
                 packagePartProvider(dependencyScope), languageVersionSettings,
                 useBuiltInsProvider = true,
-                configureJavaClassFinder = configureJavaClassFinder
+                configureJavaClassFinder = configureJavaClassFinder,
+                implicitsResolutionFilter = implicitsResolutionFilter
             )
 
             moduleClassResolver.compiledCodeResolver = dependenciesContainer.get()
@@ -195,7 +199,8 @@ object TopDownAnalyzerFacadeForJVM {
                 CompositePackageFragmentProvider(
                     listOf(
                         moduleClassResolver.compiledCodeResolver.packageFragmentProvider,
-                        dependenciesContainer.get<JvmBuiltInsPackageFragmentProvider>()
+                        dependenciesContainer.get<JvmBuiltInsPackageFragmentProvider>(),
+                        dependenciesContainer.get<OptionalAnnotationPackageFragmentProvider>()
                     )
                 )
             )
@@ -218,7 +223,8 @@ object TopDownAnalyzerFacadeForJVM {
             partProvider, languageVersionSettings,
             useBuiltInsProvider = true,
             configureJavaClassFinder = configureJavaClassFinder,
-            javaClassTracker = configuration[JVMConfigurationKeys.JAVA_CLASSES_TRACKER]
+            javaClassTracker = configuration[JVMConfigurationKeys.JAVA_CLASSES_TRACKER],
+            implicitsResolutionFilter = implicitsResolutionFilter
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()
             (partProvider as? IncrementalPackagePartProvider)?.deserializationConfiguration = get()
@@ -252,7 +258,10 @@ object TopDownAnalyzerFacadeForJVM {
         )
         module.initialize(
             CompositePackageFragmentProvider(
-                listOf(container.get<KotlinCodeAnalyzer>().packageFragmentProvider) + additionalProviders
+                listOf(
+                    container.get<KotlinCodeAnalyzer>().packageFragmentProvider,
+                    container.get<OptionalAnnotationPackageFragmentProvider>()
+                ) + additionalProviders
             )
         )
 
@@ -324,7 +333,8 @@ private fun getModuleDescriptorByLibrary(
         LanguageVersionSettingsImpl.DEFAULT,
         LockBasedStorageManager.NO_LOCKS,
         null,
-        packageAccessHandler = null // TODO: This is a speed optimization used by Native. Don't bother for now.
+        packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
+        lookupTracker = LookupTracker.DO_NOTHING
     )
 
     val dependencies = current.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).mapNotNull {

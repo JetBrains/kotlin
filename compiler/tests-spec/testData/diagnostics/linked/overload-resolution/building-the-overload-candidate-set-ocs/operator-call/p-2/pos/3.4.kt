@@ -1,13 +1,13 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -EXTENSION_SHADOWED_BY_MEMBER
 // SKIP_TXT
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-268
- * PLACE: overload-resolution, building-the-overload-candidate-set-ocs, operator-call -> paragraph 2 -> sentence 3
- * RELEVANT PLACES: overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 6 -> sentence 4
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, operator-call -> paragraph 2 -> sentence 3
+ * PRIMARY LINKS: overload-resolution, building-the-overload-candidate-set-ocs, call-with-an-explicit-receiver -> paragraph 6 -> sentence 4
  * overload-resolution, building-the-overload-candidate-set-ocs, operator-call -> paragraph 4 -> sentence 1
  * NUMBER: 4
  * DESCRIPTION: Extension callables declared in the package scope
@@ -43,7 +43,7 @@ class Case() {
     }
 
     fun foo(e: E) {
-        /*operator*/ fun E.<!EXTENSION_SHADOWED_BY_MEMBER!>plus<!>(value: Int) = Case()
+        /*operator*/ fun E.plus(value: Int) = Case()
 
         run {
             <!DEBUG_INFO_CALL("fqName: testPackCase1.plus; typeCall: operator extension function")!>e + 1<!>
@@ -92,10 +92,10 @@ class Case() {
     }
 
     fun foo(e: E) {
-        /*operator*/ fun E.<!EXTENSION_SHADOWED_BY_MEMBER!>plus<!>(value: Int) = Case()
+        /*operator*/ fun E.plus(value: Int) = Case()
 
         run {
-            /*operator*/ fun E.<!EXTENSION_SHADOWED_BY_MEMBER!>plus<!>(value: Int) = Case()
+            /*operator*/ fun E.plus(value: Int) = Case()
 
             <!DEBUG_INFO_CALL("fqName: testPackCase2.plus; typeCall: operator extension function")!>e + 1<!>
         }
@@ -133,7 +133,7 @@ class Case() {
     }
 
     fun foo(e: E) {
-        /*operator*/ fun E.<!EXTENSION_SHADOWED_BY_MEMBER!>plusAssign<!>(value: Int) {}
+        /*operator*/ fun E.plusAssign(value: Int) {}
 
         run {
             <!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>e += 1<!>
@@ -182,10 +182,10 @@ class Case() {
     }
 
     fun foo(e: E) {
-        /*operator*/ fun E.<!EXTENSION_SHADOWED_BY_MEMBER!>plusAssign<!>(value: Int) {}
+        /*operator*/ fun E.plusAssign(value: Int) {}
 
         run {
-            /*operator*/ fun E.<!EXTENSION_SHADOWED_BY_MEMBER!>plusAssign<!>(value: Int) {}
+            /*operator*/ fun E.plusAssign(value: Int) {}
 
             <!DEBUG_INFO_CALL("fqName: testPackCase4.plusAssign; typeCall: operator extension function")!>e += 1<!>
         }

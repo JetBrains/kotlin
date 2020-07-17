@@ -9,8 +9,10 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import org.jetbrains.kotlin.cli.common.setupCommonArguments
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -52,14 +54,14 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.util.KotlinJars
 import kotlin.script.experimental.jvm.withUpdatedClasspath
 
-internal class SharedScriptCompilationContext(
+class SharedScriptCompilationContext(
     val disposable: Disposable?,
     val baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     val environment: KotlinCoreEnvironment,
     val ignoredOptionsReportingState: IgnoredOptionsReportingState
 )
 
-internal fun createIsolatedCompilationContext(
+fun createIsolatedCompilationContext(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     messageCollector: ScriptDiagnosticsMessageCollector,
@@ -147,6 +149,8 @@ internal fun createInitialConfigurations(
         ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
     )
 
+    kotlinCompilerConfiguration.loadPlugins()
+
     initialScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]?.let { compilerOptions ->
         kotlinCompilerConfiguration.updateWithCompilerOptions(compilerOptions, messageCollector, ignoredOptionsReportingState, false)
     }
@@ -163,6 +167,13 @@ private fun CompilerConfiguration.updateWithCompilerOptions(
     val compilerArguments = K2JVMCompilerArguments()
     parseCommandLineArguments(compilerOptions, compilerArguments)
 
+    validateArguments(compilerArguments.errors)?.let {
+        messageCollector.report(CompilerMessageSeverity.ERROR, it)
+        return
+    }
+
+    messageCollector.reportArgumentParseProblems(compilerArguments)
+
     reportArgumentsIgnoredGenerally(
         compilerArguments,
         messageCollector,
@@ -175,6 +186,8 @@ private fun CompilerConfiguration.updateWithCompilerOptions(
             ignoredOptionsReportingState
         )
     }
+
+    processPluginsCommandLine(compilerArguments)
 
     setupCommonArguments(compilerArguments)
 
@@ -213,7 +226,8 @@ private fun createInitialCompilerConfiguration(
         // Default value differs from the argument's default (see #KT-29405 and #KT-29319)
         put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
 
-        val jdkHomeFromConfigurations = scriptCompilationConfiguration.getNoDefault(ScriptCompilationConfiguration.jvm.jdkHome)
+        val jdkHomeFromConfigurations = scriptCompilationConfiguration[ScriptCompilationConfiguration.jvm.jdkHome]
+            // TODO: check if this is redundant and/or incorrect since the default is now taken from the host configuration anyway (the one linked to the compilation config)
             ?: hostConfiguration[ScriptingHostConfiguration.jvm.jdkHome]
         if (jdkHomeFromConfigurations != null) {
             messageCollector.report(CompilerMessageSeverity.LOGGING, "Using JDK home directory $jdkHomeFromConfigurations")

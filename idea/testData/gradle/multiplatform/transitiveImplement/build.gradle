@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        mavenCentral()
+        {{kotlin_plugin_repositories}}
     }
 
     dependencies {

@@ -1,4 +1,6 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <xi:include href="ide-frontend-independent.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
     <extensionPoints>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.projectConfigurator" interface="org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator"/>
@@ -6,9 +8,6 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.declarationAttributeAltererExtension"
                         interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
                         area="IDEA_PROJECT"/>
-
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindResolution"
-                        interface="org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.highlighterExtension"
                         interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"/>
@@ -21,8 +20,7 @@
             <with attribute="implementationClass" implements="org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider"/>
         </extensionPoint>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.binaryExtension"
-                        interface="org.jetbrains.kotlin.idea.util.KotlinBinaryExtension"/>
+
         <extensionPoint qualifiedName="org.jetbrains.kotlin.facetValidatorCreator"
                         interface="org.jetbrains.kotlin.idea.facet.KotlinFacetValidatorCreator"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.clearBuildState"
@@ -31,13 +29,7 @@
                         interface="org.jetbrains.kotlin.idea.actions.NewKotlinFileHook"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.completionExtension"
                         interface="org.jetbrains.kotlin.idea.completion.KotlinCompletionExtension"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.buildSystemTypeDetector"
-                        interface="org.jetbrains.kotlin.idea.configuration.BuildSystemTypeDetector"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKind"
-                        interface="org.jetbrains.kotlin.platform.IdePlatformKind"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindTooling"
-                        interface="org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptAdditionalIdeaDependenciesProvider"
                         interface="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDependenciesProvider"
@@ -73,6 +65,10 @@
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.experimentalFeature"
                         interface="org.jetbrains.kotlin.idea.configuration.ExperimentalFeature"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.foreignUsagesRenameProcessor"
+                        interface="org.jetbrains.kotlin.idea.refactoring.rename.ForeignUsagesRenameProcessor" dynamic="true"/>
+
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -98,12 +94,11 @@
         <scriptDefinitionContributor id="ConsoleScriptDefinitionContributor"
                                      implementation="org.jetbrains.kotlin.console.ConsoleScriptDefinitionContributor"/>
 
+        <scriptDefinitionContributor id="ScriptDefinitionForExtensionAndIdeConsoleRootsSource"
+                                     implementation="org.jetbrains.kotlin.jsr223.ScriptDefinitionForExtensionAndIdeConsoleRootsSource"/>
+
         <scriptDefinitionsProvider id="MainKtsScriptDefinitionSource"
                                    implementation="org.jetbrains.kotlin.idea.script.MainKtsScriptDefinitionSource"/>
-
-        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformKindResolution"/>
-        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformKindResolution"/>
-        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.CommonPlatformKindResolution"/>
 
         <scratchFileLanguageProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileLanguageProvider"/>
         <scriptAdditionalIdeaDependenciesProvider implementation="org.jetbrains.kotlin.idea.scratch.ScratchAdditionalIdeaDependenciesProvider"/>
@@ -121,14 +116,6 @@
                      description="Add all transitive dependencies on MPP modules when Android project is imported"
                      defaultValue="true"
                      restartRequired="false"/>
-        <registryKey key="kotlin.use.fir.resolution"
-                     description="Use Kotlin resolution via frontend IR for reference resolve and diagnostics in IDEA"
-                     defaultValue="false"
-                     restartRequired="true"/>
-        <registryKey key="kotlin.gradle.scripts.useIdeaProjectImport"
-                     description="Use IDEA project import mechanics to load Kotlin Gradle scripts configuration"
-                     defaultValue="false"
-                     restartRequired="false"/>
         <registryKey key="kotlin.formatter.allowTrailingCommaInAnyProject"
                      description="Allow a trailing comma regardless of plugin version"
                      defaultValue="false"
@@ -142,13 +129,20 @@
                      description="Enable new Java to Kotlin converter"
                      defaultValue="true"
                      restartRequired="false"/>
-        <registryKey key="kotlin.experimental.project.wizard"
-                     description="Enable new Kotlin project wizard"
+
+        <registryKey key="kotlin.code-vision.usages"
+                     description="Enable Code-Vision usages search"
+                     defaultValue="false"
+                     restartRequired="false"/>
+
+        <registryKey key="kotlin.code-vision.inheritors"
+                     description="Enable Code-Vision inheritors search"
                      defaultValue="false"
                      restartRequired="false"/>
 
         <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
 
         <moduleBuilder builderClass="org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBuilder"/>
+        <jbProtocolCommand implementation="org.jetbrains.kotlin.tools.projectWizard.wizard.OpenNewProjectWizardProtocolCommand"/>
     </extensions>
 </idea-plugin>

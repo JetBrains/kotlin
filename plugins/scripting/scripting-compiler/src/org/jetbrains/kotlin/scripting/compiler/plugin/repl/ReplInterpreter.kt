@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -54,7 +54,7 @@ class ReplInterpreter(
             hasErrors = false
         }
 
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
             val msg = messageRenderer.render(severity, message, location).trimEnd()
             with(replConfiguration.writer) {
                 when (severity) {
@@ -76,7 +76,7 @@ class ReplInterpreter(
     }
 
     // TODO: add script definition with project-based resolving for IDEA repl
-    private val scriptCompiler: ReplCompiler by lazy {
+    private val scriptCompiler: ReplCompilerWithoutCheck by lazy {
         GenericReplCompiler(
             disposable,
             REPL_LINE_AS_SCRIPT_DEFINITION,

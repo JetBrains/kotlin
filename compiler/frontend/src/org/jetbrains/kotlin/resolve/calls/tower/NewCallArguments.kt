@@ -72,7 +72,7 @@ class ParseErrorKotlinCallArgument(
 ) : ExpressionKotlinCallArgument, SimplePSIKotlinCallArgument() {
     override val receiver = ReceiverValueWithSmartCastInfo(
         TransientReceiver(ErrorUtils.createErrorType("Error type for ParseError-argument $valueArgument")),
-        possibleTypes = emptySet(),
+        typesFromSmartCasts = emptySet(),
         isStable = true
     )
 
@@ -110,6 +110,12 @@ class LambdaKotlinCallArgumentImpl(
 ) : PSIFunctionKotlinCallArgument(outerCallContext, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
     override val ktFunction get() = ktLambdaExpression.functionLiteral
     override val expression get() = containingBlockForLambda
+
+    override var hasBuilderInferenceAnnotation = false
+        set(value) {
+            assert(!field)
+            field = value
+        }
 }
 
 class FunctionExpressionImpl(

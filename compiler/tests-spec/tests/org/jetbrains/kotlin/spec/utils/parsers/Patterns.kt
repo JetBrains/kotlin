@@ -55,7 +55,7 @@ interface BasePatterns {
 }
 
 object NotLinkedSpecTestPatterns : BasePatterns {
-    private const val FILENAME_REGEX = """(?<testNumber>$INTEGER_REGEX)\.kt"""
+    private const val FILENAME_REGEX = """(?<testNumber>$INTEGER_REGEX)(?:\.fir)?\.kt"""
 
     override val pathPartRegex = SpecTestLinkedType.NOT_LINKED.testDataPath + ps + sectionsInPathRegex
     override val testPathPattern: Pattern =
@@ -65,7 +65,10 @@ object NotLinkedSpecTestPatterns : BasePatterns {
 }
 
 object LinkedSpecTestPatterns : BasePatterns {
-    private const val FILENAME_REGEX = """(?<sentenceNumber>$INTEGER_REGEX)\.(?<testNumber>$INTEGER_REGEX)\.kt"""
+    private const val FILENAME_REGEX = """(?<sentenceNumber>$INTEGER_REGEX)\.(?<testNumber>$INTEGER_REGEX)(?:\.fir)?\.kt"""
+
+    const val PRIMARY_LINKS = "PRIMARY LINKS"
+    const val SECONDARY_LINKS = "SECONDARY LINKS"
 
     override val pathPartRegex =
         """${SpecTestLinkedType.LINKED.testDataPath}$ps$sectionsInPathRegex${ps}p-(?<paragraphNumber>$INTEGER_REGEX)"""
@@ -74,16 +77,17 @@ object LinkedSpecTestPatterns : BasePatterns {
     override val testInfoPattern: Pattern =
         Pattern.compile(MULTILINE_COMMENT_REGEX.format(""" $ASTERISK_REGEX KOTLIN $testAreaRegex SPEC TEST \($testTypeRegex\)\n(?<infoElements>[\s\S]*?\n)"""))
 
-    val placePattern: Pattern =
+    val mainLinkPattern: Pattern =
         Pattern.compile("""(?<sections>$SECTIONS_IN_FILE_REGEX) -> paragraph (?<paragraphNumber>$INTEGER_REGEX) -> sentence (?<sentenceNumber>$INTEGER_REGEX)""")
 
-    val relevantPlacesPattern: Pattern =
+    val relevantLinksPattern: Pattern =
         Pattern.compile("""(( $ASTERISK_REGEX )?\s*((?<sections>$SECTIONS_IN_FILE_REGEX) -> )?(paragraph (?<paragraphNumber>$INTEGER_REGEX) -> )?sentence (?<sentenceNumber>$INTEGER_REGEX))+""")
 
-    private val relevantPlaceRegex =
+    private val linkRegex =
         Regex("""(( $ASTERISK_REGEX )?\s*($SECTIONS_IN_FILE_REGEX -> )?(paragraph $INTEGER_REGEX -> )?sentence $INTEGER_REGEX)""")
 
-    val relevantPlaces: Pattern = Pattern.compile("""RELEVANT PLACES: (?<places>(${relevantPlaceRegex}(\s)*\n)+)""")
+    val primaryLinks: Pattern = Pattern.compile("""$PRIMARY_LINKS\s*:\s*(?<places>(${linkRegex}(\s)*\n)+)""")
+    val secondaryLinks: Pattern = Pattern.compile("""$SECONDARY_LINKS\s*:\s*(?<places>(${linkRegex}(\s)*\n)+)""")
 }
 
 object TestCasePatterns {
@@ -102,11 +106,4 @@ object TestCasePatterns {
 
     val testCaseInfoPattern: Pattern = Pattern.compile("(?:$testCaseInfoSingleLineRegex)|(?:$testCaseInfoMultilineRegex)")
     val testCaseNumberPattern: Pattern = Pattern.compile("""([1-9]\d*)(,\s*[1-9]\d*)*""")
-}
-
-object ImplementationTestPatterns {
-    val testInfoPattern: Pattern =
-        Pattern.compile(MULTILINE_COMMENT_REGEX.format("""\*\s+RELEVANT SPEC SENTENCES \(spec version: (?<specVersion>\d+\.[0-9]\d*\-[0-9]\d*), test type: (?<testType>pos|neg)\):(?<testSpecSentenceList>(\n\s+\*\s+-\s+.*?)+)"""))
-    val relevantSpecSentencesPattern: Pattern =
-        Pattern.compile("""\n\s+\*\s+-\s+(?<specSections>.*?) -> paragraph (?<specParagraph>[1-9]\d*) -> sentence (?<specSentence>[1-9]\d*)""")
 }

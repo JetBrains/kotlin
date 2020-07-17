@@ -7,7 +7,8 @@
           "casesNumber": 0,
           "description": "Property not initialized",
           "path": "compiler/testData/diagnostics/tests/when/PropertyNotInitialized.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 class UnfoldAssignmentToWhenIntention :
     SelfTargetingRangeIntention<KtBinaryExpression>(
         KtBinaryExpression::class.java,
-        KotlinBundle.message("replace.assignment.with.when.expression")
+        KotlinBundle.lazyMessage("replace.assignment.with.when.expression")
     ),
     LowPriorityAction {
     override fun applicabilityRange(element: KtBinaryExpression): TextRange? {
@@ -33,7 +33,5 @@ class UnfoldAssignmentToWhenIntention :
         return TextRange(element.startOffset, right.whenKeyword.endOffset)
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
-        BranchedUnfoldingUtils.unfoldAssignmentToWhen(element, editor)
-    }
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) = BranchedUnfoldingUtils.unfoldAssignmentToWhen(element, editor)
 }

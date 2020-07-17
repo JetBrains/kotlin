@@ -168,9 +168,9 @@ internal class KeepFirstErrorMessageCollector(compilerMessagesStream: PrintStrea
     private val innerCollector = PrintingMessageCollector(compilerMessagesStream, MessageRenderer.WITHOUT_PATHS, false)
 
     internal var firstErrorMessage: String? = null
-    internal var firstErrorLocation: CompilerMessageLocation? = null
+    internal var firstErrorLocation: CompilerMessageSourceLocation? = null
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         if (firstErrorMessage == null && severity.isError) {
             firstErrorMessage = message
             firstErrorLocation = location

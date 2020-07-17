@@ -46,7 +46,7 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
         element: PsiElement,
         searchScope: SearchScope,
         searchInCommentsAndStrings: Boolean
-    ): MutableCollection<PsiReference> {
+    ): Collection<PsiReference> {
         if (element !is KtParameter) return super.findReferences(element, searchScope, searchInCommentsAndStrings)
         val ownerFunction = element.ownerFunction
             ?: return super.findReferences(element, searchScope, searchInCommentsAndStrings)

@@ -42,7 +42,7 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirResolveWithSessionTestC
         for (name in provider.getAllCallableNamesInPackage(packageFqName)) {
             for (symbol in provider.getTopLevelCallableSymbols(packageFqName, name)) {
                 symbol.fir.accept(firRenderer)
-                builder.appendln()
+                builder.appendLine()
             }
         }
 
@@ -51,7 +51,7 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirResolveWithSessionTestC
                 provider.getClassLikeSymbolByFqName(ClassId.topLevel(packageFqName.child(name))) as FirClassSymbol?
                     ?: continue
             classLikeSymbol.fir.accept(firRenderer)
-            builder.appendln()
+            builder.appendLine()
         }
 
 

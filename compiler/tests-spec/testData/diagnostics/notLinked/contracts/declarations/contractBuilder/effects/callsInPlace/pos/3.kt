@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 

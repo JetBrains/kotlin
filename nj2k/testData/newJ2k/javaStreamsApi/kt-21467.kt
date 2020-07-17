@@ -4,18 +4,18 @@ import java.util.stream.Stream
 internal class Test {
     fun main() {
         val activities = Stream.of("12")
-                .map { v: String -> v + "nya" }
-                .filter { v: String? -> v != null }
-                .flatMap { v: String ->
-                    Stream.of(v)
-                            .flatMap { s: String -> Stream.of(s) }
-                }.filter { v: String ->
-                    val name = v.javaClass.name
-                    if (name == "name") {
-                        return@filter false
-                    }
-                    name != "other_name"
+            .map { v: String -> v + "nya" }
+            .filter { v: String? -> v != null }
+            .flatMap { v: String ->
+                Stream.of(v)
+                    .flatMap { s: String -> Stream.of(s) }
+            }.filter { v: String ->
+                val name = v.javaClass.name
+                if (name == "name") {
+                    return@filter false
                 }
-                .collect(Collectors.toList())
+                name != "other_name"
+            }
+            .collect(Collectors.toList())
     }
 }

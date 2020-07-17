@@ -1,7 +1,6 @@
 apply plugin: 'kotlin'
 apply plugin: 'jps-compatible'
 
-configureJvmProject(project)
 configurePublishing(project)
 
 compileJava {
@@ -41,12 +40,8 @@ jar {
 }
 
 ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
-
-artifacts {
-    archives sourcesJar
-}
-
-javadocJar()
+configureSourcesJar()
+configureJavadocJar()
 
 pluginBundle {
     plugins {
@@ -60,5 +55,7 @@ pluginBundle {
         }
     }
 }
+
+configurePluginMarkers(project)
 
 test.executable = "${JDK_18}/bin/java"

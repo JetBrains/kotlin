@@ -931,6 +931,39 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         public void testWhenWithoutExpression() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/whenWithoutExpression.kt");
         }
+
+        @TestMetadata("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Coroutines extends AbstractKotlinSteppingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doStepOverTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCoroutines() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("sequenceNested.kt")
+            public void testSequenceNested() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines/sequenceNested.kt");
+            }
+
+            @TestMetadata("sequenceNested2.kt")
+            public void testSequenceNested2() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines/sequenceNested2.kt");
+            }
+
+            @TestMetadata("sequenceSimple.kt")
+            public void testSequenceSimple() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines/sequenceSimple.kt");
+            }
+
+            @TestMetadata("sequenceTake2.kt")
+            public void testSequenceTake2() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines/sequenceTake2.kt");
+            }
+        }
     }
 
     @TestMetadata("idea/jvm-debugger/jvm-debugger-test/testData/stepping/filters")
@@ -1014,6 +1047,26 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             KotlinTestUtils.runTest(this::doCustomTest, this, testDataFilePath);
         }
 
+        @TestMetadata("afterDefaultParameterValues.kt")
+        public void testAfterDefaultParameterValues() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValues.kt");
+        }
+
+        @TestMetadata("afterDefaultParameterValues2.kt")
+        public void testAfterDefaultParameterValues2() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValues2.kt");
+        }
+
+        @TestMetadata("afterDefaultParameterValues2Intf.kt")
+        public void testAfterDefaultParameterValues2Intf() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValues2Intf.kt");
+        }
+
+        @TestMetadata("afterDefaultParameterValuesIntf.kt")
+        public void testAfterDefaultParameterValuesIntf() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/afterDefaultParameterValuesIntf.kt");
+        }
+
         public void testAllFilesPresentInCustom() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
@@ -1051,6 +1104,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("funLiteral.kt")
         public void testFunLiteral() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/funLiteral.kt");
+        }
+
+        @TestMetadata("functionBreakpointInStdlib.kt")
+        public void testFunctionBreakpointInStdlib() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/functionBreakpointInStdlib.kt");
         }
 
         @TestMetadata("functionBreakpoints.kt")
@@ -1101,6 +1159,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("inlinePropertyAccessors.kt")
         public void testInlinePropertyAccessors() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/inlinePropertyAccessors.kt");
+        }
+
+        @TestMetadata("kt14057.kt")
+        public void testKt14057() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/kt14057.kt");
         }
 
         @TestMetadata("kt15823.kt")

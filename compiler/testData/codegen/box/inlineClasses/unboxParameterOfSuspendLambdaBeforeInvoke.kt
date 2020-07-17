@@ -1,7 +1,7 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_COROUTINES
 // WITH_RUNTIME
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 import helpers.*
 import kotlin.coroutines.*

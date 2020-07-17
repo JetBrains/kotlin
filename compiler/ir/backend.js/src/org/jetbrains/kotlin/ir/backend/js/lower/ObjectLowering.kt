@@ -18,16 +18,10 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -87,7 +81,18 @@ class ObjectUsageLowering(
                 val initInstanceField = context.createIrBuilder(container.symbol).buildStatement(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                     irSetField(null, instanceField, irGet(irClass.thisReceiver!!))
                 }
-                (irBody as IrBlockBody).statements.add(0, initInstanceField)
+                if (context.es6mode) {
+                    //find `superCall` and put after
+                    (irBody as IrBlockBody).statements.transformFlat {
+                        if (it is IrDelegatingConstructorCall) listOf(it, initInstanceField)
+                        else if (it is IrVariable && it.origin === ES6_THIS_VARIABLE_ORIGIN) {
+                            initInstanceField.value = JsIrBuilder.buildGetValue(it.symbol)
+                            listOf(it, initInstanceField)
+                        } else null
+                    }
+                } else {
+                    (irBody as IrBlockBody).statements.add(0, initInstanceField)
+                }
             }
         }
 

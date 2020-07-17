@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.konan.file.File
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 
-class IrArrayReader(file: File) {
-    private val buffer = file.map(FileChannel.MapMode.READ_ONLY)
+abstract class IrArrayReader(private val buffer: ByteBuffer) {
     private val indexToOffset: IntArray
 
     fun entryCount() = indexToOffset.size - 1
@@ -35,8 +34,10 @@ class IrArrayReader(file: File) {
     }
 }
 
-class IrMultiArrayReader(file: File) {
-    private val buffer = file.map(FileChannel.MapMode.READ_ONLY)
+class IrArrayFileReader(file: File) : IrArrayReader(file.readBuffer)
+class IrArrayMemoryReader(bytes: ByteArray) : IrArrayReader(bytes.buffer)
+
+abstract class IrMultiArrayReader(private val buffer: ByteBuffer) {
     private val indexToOffset: IntArray
     private val indexIndexToOffset = mutableMapOf<Int, IntArray>()
 
@@ -84,8 +85,10 @@ class IrMultiArrayReader(file: File) {
     }
 }
 
-abstract class IrMultiTableReader<K>(file: File, private val keyReader: ByteBuffer.() -> K) {
-    private val buffer = file.map(FileChannel.MapMode.READ_ONLY)
+class IrMultiArrayFileReader(file: File) : IrMultiArrayReader(file.readBuffer)
+class IrMultiArrayMemoryReader(bytes: ByteArray) : IrMultiArrayReader(bytes.buffer)
+
+abstract class IrMultiTableReader<K>(private val buffer: ByteBuffer, private val keyReader: ByteBuffer.() -> K) {
     private val indexToOffset: IntArray
     private val indexToIndexMap = mutableMapOf<Int, Map<K, Pair<Int, Int>>>()
 
@@ -141,8 +144,7 @@ abstract class IrMultiTableReader<K>(file: File, private val keyReader: ByteBuff
     }
 }
 
-abstract class IrTableReader<K>(file: File, keyReader: ByteBuffer.() -> K) {
-    private val buffer = file.map(FileChannel.MapMode.READ_ONLY)
+abstract class IrTableReader<K>(private val buffer: ByteBuffer, keyReader: ByteBuffer.() -> K) {
     private val indexToOffset = mutableMapOf<K, Pair<Int, Int>>()
 
     init {
@@ -167,9 +169,16 @@ abstract class IrTableReader<K>(file: File, keyReader: ByteBuffer.() -> K) {
     }
 }
 
-class IndexIrTableReader(file: File) : IrTableReader<Long>(file, { long })
+val File.readBuffer: ByteBuffer get() = this.readBytes().buffer
+val ByteArray.buffer: ByteBuffer get() = ByteBuffer.wrap(this)
+
+class IndexIrTableFileReader(file: File) : IrTableReader<Long>(file.readBuffer, { long })
+class IndexIrTableMemoryReader(bytes: ByteArray) : IrTableReader<Long>(bytes.buffer, { long })
 
 data class DeclarationId(val id: Int)
 
-class DeclarationIrTableReader(file: File) : IrTableReader<DeclarationId>(file, { DeclarationId(int) })
-class DeclarationIrMultiTableReader(file: File) : IrMultiTableReader<DeclarationId>(file, { DeclarationId(int) })
+class DeclarationIrTableFileReader(file: File) : IrTableReader<DeclarationId>(file.readBuffer, { DeclarationId(int) })
+class DeclarationIrTableMemoryReader(bytes: ByteArray) : IrTableReader<DeclarationId>(bytes.buffer, { DeclarationId(int) })
+
+class DeclarationIrMultiTableFileReader(file: File) : IrMultiTableReader<DeclarationId>(file.readBuffer, { DeclarationId(int) })
+class DeclarationIrMultiTableMemoryReader(bytes: ByteArray) : IrMultiTableReader<DeclarationId>(bytes.buffer, { DeclarationId(int) })

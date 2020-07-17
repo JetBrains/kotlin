@@ -60,7 +60,7 @@ fun analyzeLiveness(node: MethodNode): List<VariableLivenessFrame> {
 
 private fun analyzeVisibleByDebuggerVariables(
     node: MethodNode,
-    typeAnnotatedFrames: Array<Frame<BasicValue>?>
+    typeAnnotatedFrames: TypeAnnotatedFrames
 ): Array<BitSet> {
     val res = Array(node.instructions.size()) { BitSet(node.maxLocals) }
     for (local in node.localVariables) {

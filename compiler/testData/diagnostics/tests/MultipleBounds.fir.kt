@@ -36,8 +36,8 @@ class Test1<T>()
 }
 
 fun test() {
-  Test1<B>()
-  Test1<A>()
+  Test1<<!UPPER_BOUND_VIOLATED!>B<!>>()
+  Test1<<!UPPER_BOUND_VIOLATED!>A<!>>()
   Test1<C>()
 }
 

@@ -57,7 +57,14 @@ open class TargetPlatform(val componentPlatforms: Set<SimplePlatform>) : Collect
  * Ideally, each specific subtype should be either a data class or singleton.
  */
 abstract class SimplePlatform(val platformName: String) {
-    override fun toString(): String = platformName
+    override fun toString(): String {
+        val targetName = targetName
+        return if (targetName.isNotEmpty()) "$platformName ($targetName)" else platformName
+    }
+
+    // description of TargetPlatformVersion or name of custom platform-specific target; used in serialization
+    open val targetName: String
+        get() = targetPlatformVersion.description
 
     /** See KDoc for [TargetPlatform.oldFashionedDescription] */
     abstract val oldFashionedDescription: String
@@ -77,8 +84,22 @@ interface TargetPlatformVersion {
     }
 }
 
-fun TargetPlatform?.isCommon(): Boolean = this != null && this.size > 1
+/**
+ * Whether this is a [TargetPlatform] that targets multiple [SimplePlatform]s.
+ */
+fun TargetPlatform?.isMultiPlatform(): Boolean = this != null && size > 1
+
+/**
+ * Whether this is "Common" platform in its classical sense (MPP v1).
+ */
+fun TargetPlatform?.isCommon(): Boolean = isMultiPlatform() && this!!.iterator().let { i ->
+    val firstPlatformName = i.next().platformName
+    while (i.hasNext()) {
+        if (i.next().platformName != firstPlatformName) return@let true
+    }
+    false
+}
 
 fun SimplePlatform.toTargetPlatform(): TargetPlatform = TargetPlatform(setOf(this))
 
-fun SimplePlatform.serializeToString() = "${this.platformName} [${this.targetPlatformVersion.description}]"
+fun SimplePlatform.serializeToString(): String = "$platformName [$targetName]"

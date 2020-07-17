@@ -42,7 +42,9 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.findSynchronizedAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.isInlineClassThatRequiresMangling
-import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameMangling
+import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
+import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
+import javax.rmi.CORBA.ClassDesc
 
 class LocalFunInlineChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -148,7 +150,8 @@ class JvmNameAnnotationChecker : DeclarationChecker {
             if (DescriptorUtils.isOverride(descriptor) || descriptor.isOverridable) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             } else if (descriptor.containingDeclaration.isInlineClassThatRequiresMangling() ||
-                requiresFunctionNameMangling(descriptor.valueParameters.map { it.type })
+                requiresFunctionNameManglingForParameterTypes(descriptor) ||
+                requiresFunctionNameManglingForReturnType(descriptor)
             ) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             }

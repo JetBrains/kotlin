@@ -1,4 +1,4 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect -ContractsOnCallsWithImplicitReceiver
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 //

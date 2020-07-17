@@ -3,9 +3,9 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().map{}.max()'"
 fun getMaxLineWidth(count: Int): Double {
     val max = (0..count-1)
-            .map { getLineWidth(it) }
-            .max()
-            ?: 0.0
+        .map { getLineWidth(it) }
+        .max()
+        ?: 0.0
     return max
 }
 

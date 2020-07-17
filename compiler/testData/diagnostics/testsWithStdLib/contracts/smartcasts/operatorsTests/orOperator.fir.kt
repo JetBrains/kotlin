@@ -51,7 +51,7 @@ fun truefalse(x: Any?) {
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.inc()
     }
 }
 
@@ -61,7 +61,7 @@ fun falsetrue(x: Any?) {
         x.<!AMBIGUITY!>inc<!>()
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         x.<!AMBIGUITY!>inc<!>()
     }
 }
@@ -72,7 +72,7 @@ fun falsefalse(x: Any?) {
         x.<!AMBIGUITY!>inc<!>()
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.length
+        x.inc()
     }
 }

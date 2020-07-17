@@ -148,9 +148,7 @@ private fun KtQualifiedExpression.findCallChain(): CallChain? {
     if (calls.isEmpty()) return null
 
     val lastCall = calls.last()
-    val receiverType =
-        (lastCall.getQualifiedExpressionForSelector())?.receiverExpression?.getResolvedCall(context)?.resultingDescriptor?.returnType
-            ?: lastCall.implicitReceiver(context)?.type
+    val receiverType = lastCall.receiverType(context)
     if (receiverType?.isIterable(DefaultBuiltIns.Instance) != true) return null
 
     val firstCall = calls.first()
@@ -184,10 +182,6 @@ private fun KtQualifiedExpression.collectCallExpression(context: BindingContext)
     if (transformationCalls.size < 2) return emptyList()
 
     return transformationCalls
-}
-
-private fun KtExpression.implicitReceiver(context: BindingContext): ImplicitReceiver? {
-    return getResolvedCall(context)?.getImplicitReceiverValue()
 }
 
 private fun KtCallExpression.hasReturn(): Boolean = valueArguments.any { arg ->
@@ -242,10 +236,9 @@ private val transformations = listOf(
     "windowed",
     "withIndex",
     "zipWithNext"
-).associate { it to FqName("kotlin.collections.$it") }
+).associateWith { FqName("kotlin.collections.$it") }
 
-@NonNls
-private val terminations = listOf(
+internal val collectionTerminationFunctionNames = listOf(
     "all",
     "any",
     "asIterable",
@@ -309,9 +302,12 @@ private val terminations = listOf(
     "toSet",
     "toSortedSet",
     "unzip"
-).associate {
+)
+
+@NonNls
+private val terminations = collectionTerminationFunctionNames.associateWith {
     val pkg = if (it in listOf("contains", "indexOf", "lastIndexOf")) "kotlin.collections.List" else "kotlin.collections"
-    it to FqName("$pkg.$it")
+    FqName("$pkg.$it")
 }
 
 private val lazyTerminations = terminations.filter { (key, _) -> key == "groupingBy" }

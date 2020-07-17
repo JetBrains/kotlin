@@ -3,8 +3,6 @@ plugins {
     kotlin("jvm")
 }
 
-jvmTarget = "1.6"
-
 val embeddableTestRuntime by configurations.creating
 
 dependencies {
@@ -33,5 +31,7 @@ sourceSets {
 }
 
 projectTest(parallel = true) {
+    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+    systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
     workingDir = rootDir
 }

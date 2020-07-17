@@ -11,18 +11,16 @@ import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import kotlin.reflect.KClass
 
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
@@ -49,10 +47,16 @@ open class KotlinProjectExtension : KotlinSourceSetContainer {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
 
+    lateinit var coreLibrariesVersion: String
+
     var explicitApi: ExplicitApiMode? = null
 
     fun explicitApi() {
         explicitApi = ExplicitApiMode.Strict
+    }
+
+    fun explicitApiWarning() {
+        explicitApi = ExplicitApiMode.Warning
     }
 
     override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
@@ -96,9 +100,19 @@ open class KotlinJsProjectExtension :
 
     // target is public property
     // Users can write kotlin.target and it should work
-    // So call of target should init default canfiguration
+    // So call of target should init default configuration
     internal var _target: KotlinJsTargetDsl? = null
         private set
+
+    companion object {
+        internal fun reportJsCompilerMode(compilerType: KotlinJsCompilerType) {
+            when (compilerType) {
+                KotlinJsCompilerType.LEGACY -> KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "legacy")
+                KotlinJsCompilerType.IR -> KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "ir")
+                KotlinJsCompilerType.BOTH -> KotlinBuildStatsService.getInstance()?.report(StringMetrics.JS_COMPILER_MODE, "both")
+            }
+        }
+    }
 
     @Deprecated("Use js() instead", ReplaceWith("js()"))
     override var target: KotlinJsTargetDsl
@@ -126,14 +140,20 @@ open class KotlinJsProjectExtension :
         }
 
         if (_target == null) {
-            val target: KotlinJsTargetDsl = when (compiler ?: defaultJsCompilerType) {
-                LEGACY -> legacyPreset
-                    .also { it.irPreset = null }
+            val compilerOrDefault = compiler ?: defaultJsCompilerType
+            reportJsCompilerMode(compilerOrDefault)
+            val target: KotlinJsTargetDsl = when (compilerOrDefault) {
+                KotlinJsCompilerType.LEGACY -> legacyPreset
+                    .also {
+                        it.irPreset = null
+                    }
                     .createTarget("js")
-                IR -> irPreset
-                    .also { it.mixedMode = false }
+                KotlinJsCompilerType.IR -> irPreset
+                    .also {
+                        it.mixedMode = false
+                    }
                     .createTarget("js")
-                BOTH -> legacyPreset
+                KotlinJsCompilerType.BOTH -> legacyPreset
                     .also {
                         irPreset.mixedMode = true
                         it.irPreset = irPreset
@@ -162,12 +182,25 @@ open class KotlinJsProjectExtension :
     ): KotlinJsTargetDsl = jsInternal(compiler, body)
 
     fun js(
+        compiler: String,
+        body: KotlinJsTargetDsl.() -> Unit = { }
+    ): KotlinJsTargetDsl = js(
+        KotlinJsCompilerType.byArgument(compiler),
+        body
+    )
+
+    fun js(
         body: KotlinJsTargetDsl.() -> Unit = { }
     ) = jsInternal(body = body)
 
     fun js() = js { }
 
     fun js(compiler: KotlinJsCompilerType, configure: Closure<*>) =
+        js(compiler = compiler) {
+            ConfigureUtil.configure(configure, this)
+        }
+
+    fun js(compiler: String, configure: Closure<*>) =
         js(compiler = compiler) {
             ConfigureUtil.configure(configure, this)
         }
@@ -183,8 +216,11 @@ open class KotlinJsProjectExtension :
         "Needed for IDE import using the MPP import mechanism",
         level = DeprecationLevel.HIDDEN
     )
-    fun getTargets() =
-        target.project.container(KotlinTarget::class.java).apply { add(target) }
+    fun getTargets(): NamedDomainObjectContainer<KotlinTarget>? =
+        _target?.let { target ->
+            target.project.container(KotlinTarget::class.java)
+                .apply { add(target) }
+        }
 }
 
 open class KotlinCommonProjectExtension : KotlinSingleJavaTargetExtension() {
@@ -234,25 +270,4 @@ enum class ExplicitApiMode(private val cliOption: String) {
     Disabled("disabled");
 
     fun toCompilerArg() = "-Xexplicit-api=$cliOption"
-}
-
-enum class NativeDistributionType(val suffix: String?) {
-    REGULAR(null) {
-        override fun isAvailableFor(host: KonanTarget, version: CompilerVersion) = true
-    },
-    RESTRICTED("restricted") {
-        override fun isAvailableFor(host: KonanTarget, version: CompilerVersion): Boolean =
-            host == KonanTarget.MACOS_X64 && version.major == 1 && version.minor == 3
-    },
-    PREBUILT("prebuilt") {
-        override fun isAvailableFor(host: KonanTarget, version: CompilerVersion): Boolean =
-            version.isAtLeast(1, 4, 0)
-    };
-
-    abstract fun isAvailableFor(host: KonanTarget, version: CompilerVersion): Boolean
-
-    companion object {
-        fun byCompilerArgument(argument: String): NativeDistributionType? =
-            values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -45,14 +45,6 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.SmartList
 
-inline fun <reified T : PsiElement> PsiElement.replaced(newElement: T): T {
-    val result = replace(newElement)
-    return result as? T ?: (result as KtParenthesizedExpression).expression as T
-}
-
-@Suppress("UNCHECKED_CAST")
-fun <T : PsiElement> T.copied(): T = copy() as T
-
 fun KtLambdaArgument.moveInsideParentheses(bindingContext: BindingContext): KtCallExpression {
     val ktExpression = this.getArgumentExpression()
         ?: throw KotlinExceptionWithAttachments("no argument expression for $this")
@@ -74,18 +66,20 @@ fun KtLambdaArgument.getLambdaArgumentName(bindingContext: BindingContext): Name
 
 fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
     replacement: KtExpression,
-    functionLiteralArgumentName: Name?
+    functionLiteralArgumentName: Name?,
+    withNameCheck: Boolean = true,
 ): KtCallExpression {
     val oldCallExpression = parent as KtCallExpression
     val newCallExpression = oldCallExpression.copy() as KtCallExpression
 
     val psiFactory = KtPsiFactory(project)
 
-    val argument = if (shouldLambdaParameterBeNamed(newCallExpression.getValueArgumentsInParentheses(), oldCallExpression)) {
-        psiFactory.createArgument(replacement, functionLiteralArgumentName)
-    } else {
-        psiFactory.createArgument(replacement)
-    }
+    val argument =
+        if (withNameCheck && shouldLambdaParameterBeNamed(newCallExpression.getValueArgumentsInParentheses(), oldCallExpression)) {
+            psiFactory.createArgument(replacement, functionLiteralArgumentName)
+        } else {
+            psiFactory.createArgument(replacement)
+        }
 
     val functionLiteralArgument = newCallExpression.lambdaArguments.firstOrNull()!!
     val valueArgumentList = newCallExpression.valueArgumentList ?: psiFactory.createCallArguments("()")
@@ -190,8 +184,9 @@ fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
     val expression = argument.getArgumentExpression()!!
     assert(expression.unpackFunctionLiteral() != null)
 
-    val dummyCall = KtPsiFactory(this).createExpressionByPattern("foo()$0:'{}'", expression) as KtCallExpression
+    val dummyCall = KtPsiFactory(project).createExpression("foo() {}") as KtCallExpression
     val functionLiteralArgument = dummyCall.lambdaArguments.single()
+    functionLiteralArgument.getArgumentExpression()?.replace(expression)
     this.add(functionLiteralArgument)
     /* we should not remove empty parenthesis when callee is a call too - it won't parse */
     if (argumentList.arguments.size == 1 && calleeExpression !is KtCallExpression) {

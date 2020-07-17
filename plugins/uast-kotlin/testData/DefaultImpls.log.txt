@@ -3,7 +3,6 @@ UFile (package = )
         UMethod (name = bar)
             UBlockExpression
                 UReturnExpression
-                    UPolyadicExpression (operator = +)
-                        ULiteralExpression (value = "Hello!")
+                    ULiteralExpression (value = "Hello!")
     UClass (name = Baz)
         UMethod (name = Baz)

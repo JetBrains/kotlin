@@ -1,12 +1,11 @@
-8 val x = foo(1, 2) { { <bold>it</bold> } }
-8 	val x = foo(1, 2) { <bold>{ it }</bold> }
-8 		[LAMBDA] val x = foo(1, 2) { <bold>{ it }</bold> }
-8 			[LAMBDA] val x = foo(1, 2) <bold>{ { it } }</bold>
-8 				[LAMBDA] [LAMBDA] val x = foo(1, 2) <bold>{ { it } }</bold>
-3 					[LAMBDA] [LAMBDA] fun foo(a: Int, b: Int, <bold>f: (Int) -> (Int) -> Int</bold>): Int {
-4 						[LAMBDA] [LAMBDA] return <bold>f</bold>(a)(b)
-4 							[LAMBDA] return <bold>f(a)</bold>(b)
-4 								return <bold>f(a)(b)</bold>
-3 									fun <bold>foo(a: Int, b: Int, f: (Int) -> (Int) -> Int): Int {</bold>
-8 										val x = <bold>foo(1, 2) { { it } }</bold>
-8 											val <bold>x = foo(1, 2) { { it } }</bold>
+8 val x = foo(1, 2) { { <bold>it</bold> } } (in test())
+8 	val x = foo(1, 2) { <bold>{ it }</bold> } (in test())
+8 		[LAMBDA CALLS] val x = foo(1, 2) { <bold>{ it }</bold> } (in test())
+8 			[LAMBDA CALLS] val x = foo(1, 2) <bold>{ { it } }</bold> (in test())
+8 				[LAMBDA CALLS] [LAMBDA CALLS] val x = foo(1, 2) <bold>{ { it } }</bold> (in test())
+3 					[LAMBDA CALLS] [LAMBDA CALLS] fun foo(a: Int, b: Int, <bold>f: (Int) -> (Int) -> Int</bold>): Int { (in foo(Int, Int,…))
+4 						[LAMBDA CALLS] return <bold>f(a)</bold>(b) (in foo(Int, Int,…))
+4 							return <bold>f(a)(b)</bold> (in foo(Int, Int,…))
+3 								<bold>fun foo(a: Int, b: Int, f: (Int) -> (Int) -> Int): Int</bold> {
+8 									val x = <bold>foo(1, 2) { { it } }</bold> (in test())
+8 										<bold>val x</bold> = foo(1, 2) { { it } } (in test())

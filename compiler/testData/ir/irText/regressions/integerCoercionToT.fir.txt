@@ -1,4 +1,5 @@
 FILE fqName:<root> fileName:/integerCoercionToT.kt
+  TYPEALIAS name:CInt32Var visibility:public expandedType:<root>.CInt32VarX<kotlin.Int>
   CLASS INTERFACE name:CPointed modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CPointed
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

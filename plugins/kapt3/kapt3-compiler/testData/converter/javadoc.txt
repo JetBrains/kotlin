@@ -32,14 +32,12 @@ public final class B {
      * member
      * comment.
      */
-    @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = "";
 
     /**
      * Mixed
      * tabs/spaces
      */
-    @org.jetbrains.annotations.NotNull()
     private final java.lang.String b = "";
 
     /**
@@ -47,14 +45,12 @@ public final class B {
      * * first item
      * * second item
      */
-    @org.jetbrains.annotations.NotNull()
     private final java.lang.String c = "";
 
     /**
      * Without
      * stars
      */
-    @org.jetbrains.annotations.NotNull()
     private final java.lang.String d = "";
 
     @org.jetbrains.annotations.NotNull()

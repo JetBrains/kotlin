@@ -6,7 +6,7 @@ interface I {
 
 class C : I, JavaInterface {
     override fun foo(p: Int) {
-        println(<caret>p)
+        val v = <caret>p
     }
 
     fun f() {
@@ -18,6 +18,6 @@ fun f(i: I) {
     i.foo(2)
 }
 
-fun g(i: JavaInterface) {
+internal fun g(i: JavaInterface) {
     i.foo(3)
 }

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
@@ -36,14 +36,25 @@ class AddDefaultConstructorFix(expectClass: KtClass) : KotlinQuickFixAction<KtCl
             return DescriptorToSourceUtils.descriptorToDeclaration(baseClassDescriptor) as? KtClass
         }
 
+        private fun annotationEntryToClass(entry: KtAnnotationEntry, context: BindingContext): KtClass? {
+            val descriptor =
+                context[BindingContext.ANNOTATION, entry]?.type?.constructor?.declarationDescriptor as? ClassDescriptor ?: return null
+            if (!descriptor.isExpect) return null
+            return DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtClass
+        }
+
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtClass>? {
-            val argumentList = diagnostic.psiElement as? KtValueArgumentList ?: return null
-            if (argumentList.arguments.isNotEmpty()) return null
-            val derivedClass = argumentList.getStrictParentOfType<KtClassOrObject>() ?: return null
-            val context = derivedClass.analyze()
-            val baseTypeCallEntry = derivedClass.superTypeListEntries.asSequence().filterIsInstance<KtSuperTypeCallEntry>().firstOrNull()
-                ?: return null
-            val baseClass = superTypeEntryToClass(baseTypeCallEntry, context) ?: return null
+            val element = diagnostic.psiElement
+            if (element is KtValueArgumentList && element.arguments.isNotEmpty()) return null
+            val parent = element.getParentOfTypes(true, KtClassOrObject::class.java, KtAnnotationEntry::class.java) ?: return null
+            val context by lazy { parent.analyze() }
+            val baseClass = when (parent) {
+                is KtClassOrObject -> parent.superTypeListEntries.asSequence().filterIsInstance<KtSuperTypeCallEntry>().firstOrNull()?.let {
+                    superTypeEntryToClass(it, context)
+                }
+                is KtAnnotationEntry -> annotationEntryToClass(parent, context)
+                else -> null
+            } ?: return null
             return AddDefaultConstructorFix(baseClass)
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,17 +34,14 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 @Suppress("DEPRECATION")
 class RemoveExplicitTypeArgumentsInspection : IntentionBasedInspection<KtTypeArgumentList>(RemoveExplicitTypeArgumentsIntention::class) {
-    override fun problemHighlightType(element: KtTypeArgumentList): ProblemHighlightType =
-        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+    override fun problemHighlightType(element: KtTypeArgumentList): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveExplicitTypeArgumentsIntention :
-    SelfTargetingOffsetIndependentIntention<KtTypeArgumentList>(
-        KtTypeArgumentList::class.java,
-        KotlinBundle.message("remove.explicit.type.arguments")
-    ) {
+class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentIntention<KtTypeArgumentList>(
+    KtTypeArgumentList::class.java,
+    KotlinBundle.lazyMessage("remove.explicit.type.arguments")
+) {
     companion object {
-
         fun isApplicableTo(element: KtTypeArgumentList, approximateFlexible: Boolean): Boolean {
             val callExpression = element.parent as? KtCallExpression ?: return false
             if (callExpression.typeArguments.isEmpty()) return false
@@ -141,11 +138,7 @@ class RemoveExplicitTypeArgumentsIntention :
         }
     }
 
-    override fun isApplicableTo(element: KtTypeArgumentList): Boolean {
-        return isApplicableTo(element, approximateFlexible = false)
-    }
+    override fun isApplicableTo(element: KtTypeArgumentList): Boolean = isApplicableTo(element, approximateFlexible = false)
 
-    override fun applyTo(element: KtTypeArgumentList, editor: Editor?) {
-        element.delete()
-    }
+    override fun applyTo(element: KtTypeArgumentList, editor: Editor?) = element.delete()
 }

@@ -1,21 +1,27 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
-
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
-import org.jetbrains.kotlin.tools.projectWizard.core.buildPersistenceList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleStringConstIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetAccessIR
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JSConfigurator.Companion.cssSupport
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
+import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
@@ -57,16 +63,26 @@ interface SimpleTargetConfigurator : TargetConfigurator {
     }
 }
 
-private fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
+internal fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
     TargetAccessIR(
         moduleSubType,
         name.takeIf { it != moduleSubType.name }
     )
 
 
-interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexistenceTargetConfigurator
+interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexistenceTargetConfigurator, ModuleConfiguratorWithSettings
+
+enum class JsTargetKind(override val text: String) : DisplayableSettingItem {
+    LIBRARY(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.library")),
+    APPLICATION(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.application"))
+}
 
 object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWithTests {
+    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
+        super<ModuleConfiguratorWithTests>.getConfiguratorSettings() +
+                super<JsTargetConfigurator>.getConfiguratorSettings() +
+                cssSupport
+
     @NonNls
     override val id = "jsBrowser"
 
@@ -75,20 +91,16 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
 
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.js.browser")
 
-
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 
     override fun Reader.createTargetIrs(
         module: Module
-    ): List<BuildSystemIR> = buildList {
+    ): List<BuildSystemIR> = irsList {
         +DefaultTargetConfigurationIR(
-            module.createTargetAccessIr(ModuleSubType.js),
-            buildPersistenceList {
-                +RawGradleIR {
-                    sectionCall("browser") {}
-                }
-            }
-        )
+            module.createTargetAccessIr(ModuleSubType.js)
+        ) {
+            browserSubTarget(module, this@createTargetIrs)
+        }
     }
 }
 
@@ -104,15 +116,12 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
 
     override fun Reader.createTargetIrs(
         module: Module
-    ): List<BuildSystemIR> = buildList {
+    ): List<BuildSystemIR> = irsList {
         +DefaultTargetConfigurationIR(
-            module.createTargetAccessIr(ModuleSubType.js),
-            buildPersistenceList {
-                +RawGradleIR {
-                    sectionCall("nodejs") {}
-                }
-            }
-        )
+            module.createTargetAccessIr(ModuleSubType.js)
+        ) {
+            nodejsSubTarget(module, this@createTargetIrs)
+        }
     }
 }
 
@@ -135,20 +144,18 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
     override fun createInnerTargetIrs(
         reader: Reader,
         module: Module
-    ): List<BuildSystemIR> = buildList {
+    ): List<BuildSystemIR> = irsList {
         reader {
             withSettingsOf(module) {
                 val targetVersionValue = JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
                 if (buildSystemType.isGradle) {
-                    +GradleSectionIR(
-                        "compilations.all",
-                        BodyIR(
-                            GradleAssignmentIR("kotlinOptions.jvmTarget", GradleStringConstIR(targetVersionValue))
-                        )
-                    )
+                    "compilations.all" {
+                        "kotlinOptions.jvmTarget" assign GradleStringConstIR(targetVersionValue)
+                    }
+
                 }
                 if (Settings.javaSupport.reference.settingValue) {
-                    +GradleCallIr("withJava")
+                    "withJava"()
                 }
             }
         }

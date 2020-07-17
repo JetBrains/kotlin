@@ -1,8 +1,9 @@
+// FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, constant-literals, real-literals -> paragraph 3 -> sentence 1
+ * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 3 -> sentence 1
  * NUMBER: 3
  * DESCRIPTION: Real literals separeted by comments with omitted a whole-number part.
  */

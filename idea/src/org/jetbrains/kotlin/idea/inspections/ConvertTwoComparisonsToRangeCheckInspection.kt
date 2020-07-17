@@ -156,6 +156,8 @@ class ConvertTwoComparisonsToRangeCheckInspection :
             if (valType.isPrimitiveNumberType() && minType.isPrimitiveNumberType() && maxType.isPrimitiveNumberType()) {
                 //char is comparable to chars only
                 if (KotlinBuiltIns.isChar(valType) || KotlinBuiltIns.isChar(minType) || KotlinBuiltIns.isChar(maxType)) return null
+                //floating point ranges can't contain integer types and vise versa
+                if (valType.isInteger() && (minType.isFloatingPoint() || maxType.isFloatingPoint())) return null
 
                 if (valType.isFloatingPoint()) {
                     if (minType.isInteger())

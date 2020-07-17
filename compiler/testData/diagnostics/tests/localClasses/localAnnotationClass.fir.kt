@@ -1,9 +1,9 @@
 // !LANGUAGE: -ProhibitLocalAnnotations
 
 fun f() {
-    annotation class Anno
+    <!LOCAL_ANNOTATION_CLASS_ERROR!>annotation class Anno<!>
 
     @Anno class Local {
-        annotation class Nested
+        <!LOCAL_ANNOTATION_CLASS_ERROR!>annotation class Nested<!>
     }
 }

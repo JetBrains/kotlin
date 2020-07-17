@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.ConstructorCarrier
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 class IrConstructorImpl(
     startOffset: Int,
@@ -49,30 +49,11 @@ class IrConstructorImpl(
     IrConstructor,
     ConstructorCarrier {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrConstructorSymbol,
-        returnType: IrType,
-        body: IrBody? = null
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name,
-        symbol.descriptor.visibility,
-        returnType,
-        isInline = symbol.descriptor.isInline,
-        isExternal = symbol.descriptor.isEffectivelyExternal(),
-        isPrimary = symbol.descriptor.isPrimary,
-        isExpect = symbol.descriptor.isExpect
-    ) {
-        this.body = body
-    }
-
     init {
         symbol.bind(this)
     }
 
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

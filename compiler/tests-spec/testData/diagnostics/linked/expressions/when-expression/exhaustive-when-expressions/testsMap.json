@@ -6,47 +6,59 @@
           "specVersion": "0.1-100",
           "casesNumber": 6,
           "description": "Non-exhaustive when using nullable enum values.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/10.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "enumClasses"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 10,
           "description": "Non-exhaustive when using subclasses of the nullable sealed class.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/10.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "sealedClasses"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 3,
           "description": "Non-exhaustive when using nullable boolean values.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/10.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanNullable.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive warning null",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningNull.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Else on nullable enum",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnum.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Else on nullable enum with smart cast",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnumWithSmartCast.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "1": [
@@ -54,48 +66,57 @@
           "specVersion": "0.1-100",
           "casesNumber": 3,
           "description": "Non-exhaustive when, with bound value, without else branch.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 3,
           "description": "Non-exhaustive when, without bound value, without else branch.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "When and lambda with expected type",
           "path": "compiler/testData/diagnostics/tests/when/whenAndLambdaWithExpectedType.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "When type disjunctions",
           "path": "compiler/testData/diagnostics/tests/when/WhenTypeDisjunctions.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Reserved exhaustive when",
           "path": "compiler/testData/diagnostics/tests/when/ReservedExhaustiveWhen.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive warning else",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningElse.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "When with nothing and lambdas",
           "path": "compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "3": [
@@ -103,56 +124,65 @@
           "specVersion": "0.1-100",
           "casesNumber": 5,
           "description": "Non-exhaustive when using boolean values.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanNullable.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Exhaustive val over conditional init",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveValOverConditionalInit.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean brackets",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanBrackets.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean complex",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanComplex.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBoolean.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Exhaustive var over conditional init",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveVarOverConditionalInit.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Redundant else",
           "path": "compiler/testData/diagnostics/tests/when/RedundantElse.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "6": [
@@ -160,28 +190,34 @@
           "specVersion": "0.1-100",
           "casesNumber": 12,
           "description": "Non-exhaustive when using subclasses of the sealed class.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/neg/6.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "sealedClasses"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive warning for sealed class",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningForSealedClass.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Redundant else",
           "path": "compiler/testData/diagnostics/tests/when/RedundantElse.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Top level sealed",
           "path": "compiler/testData/diagnostics/tests/when/TopLevelSealed.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "4": [
@@ -190,28 +226,32 @@
           "casesNumber": 0,
           "description": "Exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanNullable.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean brackets",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanBrackets.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean complex",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanComplex.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBoolean.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "9": [
@@ -220,91 +260,104 @@
           "casesNumber": 0,
           "description": "Non exhaustive warning null",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningNull.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive warning",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarning.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive warning false",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningFalse.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive platform enum",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustivePlatformEnum.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive enum mixed",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumMixed.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Property not initialized",
           "path": "compiler/testData/diagnostics/tests/when/PropertyNotInitialized.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive warning else",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningElse.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Redundant else",
           "path": "compiler/testData/diagnostics/tests/when/RedundantElse.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive with nullability check",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWithNullabilityCheck.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive enum is",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumIs.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive break continue",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBreakContinue.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Else on nullable enum",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnum.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Else on nullable enum with smart cast",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnumWithSmartCast.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "5": [
@@ -313,21 +366,24 @@
           "casesNumber": 0,
           "description": "Exhaustive boolean brackets",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanBrackets.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean complex",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanComplex.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBoolean.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "7": [
@@ -336,14 +392,16 @@
           "casesNumber": 0,
           "description": "Non exhaustive warning for sealed class",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningForSealedClass.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Top level sealed",
           "path": "compiler/testData/diagnostics/tests/when/TopLevelSealed.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "8": [
@@ -352,7 +410,8 @@
           "casesNumber": 0,
           "description": "Top level sealed",
           "path": "compiler/testData/diagnostics/tests/when/TopLevelSealed.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     },
@@ -362,40 +421,51 @@
           "specVersion": "0.1-100",
           "casesNumber": 7,
           "description": "Exhaustive when using subclasses of the nullable sealed class.",
-          "unexpectedBehaviour": true
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/10.3.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main",
+          "helpers": "sealedClasses"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 3,
           "description": "Exhaustive when using nullable enum values.",
-          "unexpectedBehaviour": true
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/10.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main",
+          "helpers": "enumClasses"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 2,
           "description": "Exhaustive when using nullable boolean values.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/10.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNullable.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveBooleanNullable.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum null",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumNull.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "1": [
@@ -403,61 +473,74 @@
           "specVersion": "0.1-100",
           "casesNumber": 4,
           "description": "Exhaustive when, with bound value, with else branch.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 8,
           "description": "Exhaustive when, with bound value (sealed, enum, boolean), with redundant else branch.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "enumClasses, sealedClasses"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 3,
           "description": "Exhaustive when, without bound value, with else branch.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum else",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumElse.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt4434",
           "path": "compiler/testData/diagnostics/tests/when/kt4434.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt10811",
           "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt9972",
           "path": "compiler/testData/diagnostics/tests/when/kt9972.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass else",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt10809",
           "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "3": [
@@ -465,28 +548,33 @@
           "specVersion": "0.1-100",
           "casesNumber": 2,
           "description": "Exhaustive when using boolean values.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Exhaustive with nullability check boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBoolean.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveBooleanNullable.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive no initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "8": [
@@ -494,7 +582,10 @@
           "specVersion": "0.1-100",
           "casesNumber": 2,
           "description": "Exhaustive when using enum values.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/8.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "enumClasses"
         }
       ],
       "6": [
@@ -502,7 +593,10 @@
           "specVersion": "0.1-100",
           "casesNumber": 9,
           "description": "Exhaustive when using subclasses of the sealed class.",
-          "unexpectedBehaviour": true
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/exhaustive-when-expressions/p-2/pos/6.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main",
+          "helpers": "sealedClasses"
         }
       ],
       "9": [
@@ -511,91 +605,114 @@
           "casesNumber": 0,
           "description": "Exhaustive platform enum else",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumElse.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Exhaustive with nullability check before",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBefore.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Exhaustive with nullability check else",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckElse.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Exhaustive platform enum statement",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumStatement.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnum.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNullable.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Exhaustive with nullability check",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheck.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum annotated",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumAnnotated.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Exhaustive return throw",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveReturnThrow.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Exhaustive return",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveReturn.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum null",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumNull.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "923": [
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Exhaustive platform enum statement",
+          "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumStatement.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "4": [
@@ -604,14 +721,16 @@
           "casesNumber": 0,
           "description": "Exhaustive with nullability check boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBoolean.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive no initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "5": [
@@ -620,14 +739,16 @@
           "casesNumber": 0,
           "description": "Exhaustive with nullability check boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBoolean.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive no initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }
@@ -640,91 +761,104 @@
           "casesNumber": 0,
           "description": "Non exhaustive warning null",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningNull.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "No else returned unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedUnit.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "No else expected unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseExpectedUnit.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass val",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive warning",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarning.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "No else returned coercion to unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedCoercionToUnit.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive warning for sealed class",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningForSealedClass.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass var",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive platform enum",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustivePlatformEnum.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "No else returned from lambda expected int",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedFromLambdaExpectedInt.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive with nullability check",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWithNullabilityCheck.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "No else no expected type",
           "path": "compiler/testData/diagnostics/tests/when/NoElseNoExpectedType.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "No else returned non unit",
           "path": "compiler/testData/diagnostics/tests/when/NoElseReturnedNonUnit.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     },
@@ -735,14 +869,16 @@
           "casesNumber": 0,
           "description": "Kt4434",
           "path": "compiler/testData/diagnostics/tests/when/kt4434.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Non exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveBooleanNullable.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }
@@ -755,7 +891,8 @@
           "casesNumber": 0,
           "description": "Non exhaustive warning for sealed class",
           "path": "compiler/testData/diagnostics/tests/when/NonExhaustiveWarningForSealedClass.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

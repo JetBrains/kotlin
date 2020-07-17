@@ -1,11 +1,14 @@
 plugins {
-    kotlin("multiplatform") version "1.3.70"
+    kotlin("multiplatform") version "KOTLIN_VERSION"
 }
 group = "testGroupId"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://dl.bintray.com/kotlin/kotlin-dev")
+    }
 }
 kotlin {
     jvm {
@@ -15,25 +18,29 @@ kotlin {
     }
     js("a") {
         browser {
-
+            binaries.executable()
+            webpackTask {
+                cssSupport.enabled = true
+            }
+            runTask {
+                cssSupport.enabled = true
+            }
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                    webpackConfig.cssSupport.enabled = true
+                }
+            }
         }
     }
     sourceSets {
-        val jvmMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-jdk8"))
-            }
-        }
+        val jvmMain by getting
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
             }
         }
-        val aMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-js"))
-            }
-        }
+        val aMain by getting
         val aTest by getting {
             dependencies {
                 implementation(kotlin("test-js"))

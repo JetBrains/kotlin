@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 typealias ReportError = (element: IrElement, message: String) -> Unit
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class CheckIrElementVisitor(
     val irBuiltIns: IrBuiltIns,
     val reportError: ReportError,
@@ -73,6 +75,19 @@ class CheckIrElementVisitor(
     private fun IrSymbol.ensureBound(expression: IrExpression) {
         if (!this.isBound && expression.type !is IrDynamicType) {
             reportError(expression, "Unbound symbol ${this}")
+        }
+    }
+
+    private fun IrElement.checkFunction(function: IrFunction) {
+        if (function is IrSimpleFunction && config.checkProperties) {
+            val property = function.correspondingPropertySymbol?.owner
+            if (property != null && property.getter != function && property.setter != function) {
+                reportError(this, "Orphaned property getter/setter ${function.render()}")
+            }
+        }
+
+        if (function.dispatchReceiverParameter?.type is IrDynamicType) {
+            reportError(this, "Dispatch receivers with 'dynamic' type are not allowed")
         }
     }
 
@@ -152,10 +167,8 @@ class CheckIrElementVisitor(
         super.visitCall(expression)
 
         val function = expression.symbol.owner
+        expression.checkFunction(function)
 
-        if (function.dispatchReceiverParameter?.type is IrDynamicType) {
-            reportError(expression, "Dispatch receivers with 'dynamic' type are not allowed")
-        }
         // TODO: Why don't we check parameters as well?
 
         val returnType = expression.symbol.owner.returnType
@@ -267,10 +280,7 @@ class CheckIrElementVisitor(
 
     override fun visitFunction(declaration: IrFunction) {
         super.visitFunction(declaration)
-
-        if (declaration.dispatchReceiverParameter?.type is IrDynamicType) {
-            reportError(declaration, "Dispatch receivers with 'dynamic' type are not allowed")
-        }
+        declaration.checkFunction(declaration)
 
         for ((i, p) in declaration.valueParameters.withIndex()) {
             if (p.index != i) {
@@ -323,7 +333,7 @@ class CheckIrElementVisitor(
 
     override fun visitFunctionReference(expression: IrFunctionReference) {
         super.visitFunctionReference(expression)
-
+        expression.checkFunction(expression.symbol.owner)
         expression.symbol.ensureBound(expression)
     }
 

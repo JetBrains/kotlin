@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,10 +34,11 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 
 class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinInspection() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return lambdaExpressionVisitor(fun(lambdaExpression) {
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor =
+        lambdaExpressionVisitor(fun(lambdaExpression) {
             val callableReference = lambdaExpression.bodyExpression?.statements?.singleOrNull() as? KtCallableReferenceExpression
             if (callableReference != null) {
                 val context = lambdaExpression.analyze()
@@ -54,10 +55,12 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
                         }
                     }
                 }
+
                 val quickFix = if (canMove(lambdaExpression, callableReference, context))
                     IntentionWrapper(MoveIntoParenthesesIntention(), lambdaExpression.containingFile)
                 else
                     null
+
                 holder.registerProblem(
                     lambdaExpression,
                     KotlinBundle.message("suspicious.callable.reference.as.the.only.lambda.element"),
@@ -66,7 +69,6 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
                 )
             }
         })
-    }
 
     private fun canMove(
         lambdaExpression: KtLambdaExpression,
@@ -90,7 +92,7 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
     }
 
     class MoveIntoParenthesesIntention : ConvertLambdaToReferenceIntention(
-        KotlinBundle.message("move.suspicious.callable.reference.into.parentheses")
+        KotlinBundle.lazyMessage("move.suspicious.callable.reference.into.parentheses")
     ) {
         override fun buildReferenceText(element: KtLambdaExpression): String? {
             val callableReferenceExpression =
@@ -112,6 +114,7 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
                     receiverExpression.text
                 }
             }
+
             return "$receiver::${callableReference.text}"
         }
 

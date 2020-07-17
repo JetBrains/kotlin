@@ -26,25 +26,26 @@ import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.VfsTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TagsTestDataUtil
 import org.jetbrains.kotlin.test.TagsTestDataUtil.TagInfo
-import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
-class GradleMultiplatformHighlightingTest : GradleImportingTestCase() {
+class GradleMultiplatformHighlightingTest : MultiplePluginVersionGradleImportingTestCase() {
 
-    @TargetVersions("4.7+")
     @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testFirst() {
         doTest()
     }
 
-    @TargetVersions("4.7+")
     @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testNoErrors() {
         doTest()
     }

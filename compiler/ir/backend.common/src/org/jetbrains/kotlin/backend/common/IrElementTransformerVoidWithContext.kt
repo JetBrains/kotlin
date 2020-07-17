@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -101,6 +102,7 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
     protected val allScopes get() = scopeStack
     protected val currentDeclarationParent get() = scopeStack.lastOrNull { it.irElement is IrDeclarationParent }?.irElement as? IrDeclarationParent
 
+    @ObsoleteDescriptorBasedAPI
     fun printScopeStack() {
         scopeStack.forEach { println(it.scope.scopeOwner) }
     }
@@ -138,6 +140,7 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
 
     private val scopeStack = mutableListOf<ScopeWithIr>()
@@ -164,7 +167,7 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
     }
 
     final override fun visitField(declaration: IrField) {
-        @Suppress("DEPRECATION") val isDelegated = declaration.descriptor.isDelegated
+        val isDelegated = declaration.descriptor.isDelegated
         if (isDelegated) scopeStack.push(createScope(declaration))
         visitFieldNew(declaration)
         if (isDelegated) scopeStack.pop()
@@ -198,6 +201,7 @@ abstract class IrElementVisitorVoidWithContext : IrElementVisitorVoid {
     protected val parentScope get() = if (scopeStack.size < 2) null else scopeStack[scopeStack.size - 2]
     protected val allScopes get() = scopeStack
 
+    @ObsoleteDescriptorBasedAPI
     fun printScopeStack() {
         scopeStack.forEach { println(it.scope.scopeOwner) }
     }

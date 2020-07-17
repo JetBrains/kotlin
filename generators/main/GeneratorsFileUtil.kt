@@ -24,7 +24,7 @@ object GeneratorsFileUtil {
                 throw IllegalStateException("Cannot create directory: $parentFile")
             }
         }
-        if (checkFileIgnoringLineSeparators(file, newText)) {
+        if (!isFileContentChangedIgnoringLineSeparators(file, newText)) {
             if (logNotChanged) {
                 println("Not changed: " + file.absolutePath)
             }
@@ -42,12 +42,12 @@ object GeneratorsFileUtil {
         println()
     }
 
-    private fun checkFileIgnoringLineSeparators(file: File, content: String): Boolean {
+    fun isFileContentChangedIgnoringLineSeparators(file: File, content: String): Boolean {
         val currentContent: String = try {
             StringUtil.convertLineSeparators(file.readText(Charsets.UTF_8))
         } catch (ignored: Throwable) {
-            return false
+            return true
         }
-        return StringUtil.convertLineSeparators(content) == currentContent
+        return StringUtil.convertLineSeparators(content) != currentContent
     }
 }

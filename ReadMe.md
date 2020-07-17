@@ -1,5 +1,5 @@
 [![official project](https://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
-[![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/Kotlin_dev_Compiler.svg)](https://teamcity.jetbrains.com/viewType.html?buildTypeId=Kotlin_dev_Compiler&branch_Kotlin_dev=%3Cdefault%3E&tab=buildTypeStatusDiv)
+[![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/Kotlin_KotlinPublic_Compiler.svg)](https://teamcity.jetbrains.com/buildConfiguration/Kotlin_KotlinPublic_Compiler?branch=%3Cdefault%3E&buildTypeTab=overview&mode=builds)
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlin/kotlin-maven-plugin.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.jetbrains.kotlin%22)
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -37,11 +37,16 @@ In order to build Kotlin distribution you need to have:
         JDK_18="path to JDK 1.8"
         JDK_9="path to JDK 9"
 
-For local development, if you're not working on bytecode generation or the standard library, it's OK to have only JDK 1.8 and JDK 9 installed, and to point JDK_16 and JDK_17 environment variables to your JDK 1.8 installation.
+For local development, if you're not working on bytecode generation or the standard library, it's OK to have only JDK 1.8 and JDK 9 installed, and to point `JDK_16` and `JDK_17` environment variables to your JDK 1.8 installation.
 
-You also can use [Gradle properties](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_configuration_properties) to setup JDK_* variables.
+You also can use [Gradle properties](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_configuration_properties) to setup `JDK_*` variables.
 
-> Note: The JDK 6 for MacOS is not available on Oracle's site. You can [download it here](https://support.apple.com/kb/DL1572).
+Note: The JDK 6 for MacOS is not available on Oracle's site. You can install it by
+
+```bash
+$ brew tap caskroom/versions
+$ brew cask install java6
+```
 
 On Windows you might need to add long paths setting to the repo:
 
@@ -106,22 +111,22 @@ bunch switch 191
 
 Working with the Kotlin project requires at least IntelliJ IDEA 2019.1. You can download IntelliJ IDEA 2019.1 [here](https://www.jetbrains.com/idea/download).
 
-After cloning the project, to import the project in Intellij choose the project directory in the Open project dialog. Then, after project opened, Select 
-`File` -> `New...` -> `Module from Existing Sources` in the menu, and select `build.gradle.kts` file in the project's root folder.
+After cloning the project, to import the project in IntelliJ choose the project directory in the Open project dialog. Then, after project opened, select 
+`File` -> `New` -> `Module from Existing Sources...` in the menu, and select `build.gradle.kts` file in the project's root folder.
 
 In the import dialog, select `use default gradle wrapper`.
 
 To be able to run tests from IntelliJ easily, check `Delegate IDE build/run actions to Gradle` and choose `Gradle Test Runner` in the Gradle runner settings after importing the project.
 
-At this time, you can use the latest released 1.3.x version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use Tools | Kotlin | Configure Kotlin Plugin Updates and press "Check for updates now".
+At this time, you can use the latest released `1.3.x` version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use `Tools` -> `Kotlin` -> `Configure Kotlin Plugin Updates`.
 
 ### Compiling and running
 
-From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest and greatest IDEA plugin
+From this root project there are Run/Debug Configurations for running `IDEA` or the `Generate Compiler Tests` for example; so if you want to try out the latest and greatest IDEA plugin
 
-* VCS -> Git -> Pull
-* Run the "IDEA" run configuration in the project
-* a child IntelliJ IDEA with the Kotlin plugin will then startup
+* `VCS` -> `Git` -> `Pull`
+* Run the `IDEA` run configuration in the project
+* A child IntelliJ IDEA with the Kotlin plugin will then startup
 
 ### Including into composite build
 

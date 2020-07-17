@@ -21,12 +21,10 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -35,6 +33,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class NullableFieldsForLateinitCreationLowering(val backendContext: CommonBackendContext) : DeclarationTransformer {
+
+    override fun lower(irFile: IrFile) {
+        runPostfix(true).toFileLoweringPass().lower(irFile)
+    }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrField) {
@@ -51,6 +53,10 @@ class NullableFieldsForLateinitCreationLowering(val backendContext: CommonBacken
 
 // Transform declarations
 class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext) : DeclarationTransformer {
+
+    override fun lower(irFile: IrFile) {
+        runPostfix(true).toFileLoweringPass().lower(irFile)
+    }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         when (declaration) {
@@ -110,21 +116,15 @@ class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLowe
 
                 if (!declaration.isLateinit) return declaration
 
-                val descriptor = WrappedVariableDescriptor()
-                val type = declaration.type.makeNullable()
-                val newVar = IrVariableImpl(
+                val newVar = buildVariable(
+                    declaration.parent,
                     declaration.startOffset,
                     declaration.endOffset,
                     declaration.origin,
-                    IrVariableSymbolImpl(descriptor),
                     declaration.name,
-                    type,
-                    true,
-                    false,
-                    true
+                    declaration.type.makeNullable(),
+                    isVar = true,
                 ).also {
-                    descriptor.bind(it)
-                    it.parent = declaration.parent
                     it.initializer =
                         IrConstImpl.constNull(declaration.startOffset, declaration.endOffset, backendContext.irBuiltIns.nothingNType)
                 }

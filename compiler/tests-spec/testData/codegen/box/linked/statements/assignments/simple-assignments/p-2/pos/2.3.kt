@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-222
- * PLACE: statements, assignments, simple-assignments -> paragraph 2 -> sentence 2
+ * MAIN LINK: statements, assignments, simple-assignments -> paragraph 2 -> sentence 2
  * NUMBER: 3
  * DESCRIPTION: If a property has a setter (including delegated properties), it is called using the right-hand side expression as its argument
  */

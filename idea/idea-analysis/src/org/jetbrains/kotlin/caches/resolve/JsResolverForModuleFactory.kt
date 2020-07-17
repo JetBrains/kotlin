@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.caches.resolve
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -25,6 +26,9 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.createKotlinJavascriptPackageFragmentProvider
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
+import java.io.File
+
+private val LOG = Logger.getInstance(JsResolverForModuleFactory::class.java)
 
 class JsResolverForModuleFactory(
     private val targetEnvironment: TargetEnvironment
@@ -85,7 +89,15 @@ internal fun <M : ModuleInfo> createPackageFragmentProvider(
     }
     is LibraryModuleInfo -> {
         moduleInfo.getLibraryRoots()
-            .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) }
+            .flatMap {
+                if (File(it).exists()) {
+                    KotlinJavascriptMetadataUtils.loadMetadata(it)
+                } else {
+                    // TODO can/should we warn a user about a problem in a library root? If so how?
+                    LOG.error("Library $it not found")
+                    emptyList()
+                }
+            }
             .filter { it.version.isCompatible() }
             .map { metadata ->
                 val (header, packageFragmentProtos) =

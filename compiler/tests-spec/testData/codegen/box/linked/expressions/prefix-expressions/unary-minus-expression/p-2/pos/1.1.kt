@@ -4,8 +4,8 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, prefix-expressions, unary-minus-expression -> paragraph 2 -> sentence 1
- * RELEVANT PLACES: expressions, prefix-expressions, unary-minus-expression -> paragraph 1 -> sentence 2
+ * MAIN LINK: expressions, prefix-expressions, unary-minus-expression -> paragraph 2 -> sentence 1
+ * PRIMARY LINKS: expressions, prefix-expressions, unary-minus-expression -> paragraph 1 -> sentence 2
  * expressions, prefix-expressions, unary-minus-expression -> paragraph 1 -> sentence 1
  * expressions, prefix-expressions, unary-minus-expression -> paragraph 3 -> sentence 1
  * NUMBER: 1

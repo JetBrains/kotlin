@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
 import org.jetbrains.kotlin.idea.klib.createKlibPackageFragmentProvider
 import org.jetbrains.kotlin.idea.klib.isKlibLibraryRootForPlatform
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
@@ -74,7 +75,7 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
                 JsKlibLibraryInfo(project, library, path)
             }
         } else {
-            super.createLibraryInfo(project, library)
+            listOf(JsMetadataLibraryInfo(project, library))
         }
     }
 
@@ -90,7 +91,8 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
                 storageManager = storageManager,
                 metadataModuleDescriptorFactory = metadataModuleDescriptorFactory,
                 languageVersionSettings = languageVersionSettings,
-                moduleDescriptor = moduleDescriptor
+                moduleDescriptor = moduleDescriptor,
+                lookupTracker = LookupTracker.DO_NOTHING
             )
     }
 
@@ -107,6 +109,11 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
 }
 
 class JsKlibLibraryInfo(project: Project, library: Library, libraryRoot: String) : AbstractKlibLibraryInfo(project, library, libraryRoot) {
+    override val platform: TargetPlatform
+        get() = JsPlatforms.defaultJsPlatform
+}
+
+class JsMetadataLibraryInfo(project: Project, library: Library) : LibraryInfo(project, library) {
     override val platform: TargetPlatform
         get() = JsPlatforms.defaultJsPlatform
 }

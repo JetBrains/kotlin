@@ -8,16 +8,17 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.common.overrides.PlatformFakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
+import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdsigCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.ValueCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.OperationCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdsigCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement.VarargElementCase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -27,12 +28,15 @@ import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
+import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
@@ -99,12 +103,15 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWh
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
 import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature as ProtoPublicIdSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature as ProtoFileLocalIdSignature
 
-abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBuiltIns, val symbolTable: SymbolTable) {
+abstract class IrFileDeserializer(
+    val logger: LoggingContext,
+    val builtIns: IrBuiltIns,
+    val symbolTable: SymbolTable,
+    protected var deserializeBodies: Boolean,
+    private val deserializeFakeOverrides: Boolean
+) {
 
     abstract fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, IdSignature>
     abstract fun deserializeIrSymbol(code: Long): IrSymbol
@@ -113,15 +120,23 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
     abstract fun deserializeString(index: Int): String
     abstract fun deserializeExpressionBody(index: Int): IrExpression
     abstract fun deserializeStatementBody(index: Int): IrElement
-    abstract fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase): IrLoopBase
+    abstract fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoop): IrLoop
 
     abstract fun referenceIrSymbol(symbol: IrSymbol, signature: IdSignature)
 
     private val parentsStack = mutableListOf<IrDeclarationParent>()
+    private val delegatedSymbolMap = mutableMapOf<IrSymbol, IrSymbol>()
 
-    fun deserializeFqName(fqn: List<Int>): FqName {
-        return fqn.run {
-            if (isEmpty()) FqName.ROOT else FqName.fromSegments(map { deserializeString(it) })
+    abstract val deserializeInlineFunctions: Boolean
+    abstract val platformFakeOverrideClassFilter: PlatformFakeOverrideClassFilter
+
+    fun deserializeFqName(fqn: List<Int>): String =
+        fqn.joinToString(".", transform = ::deserializeString)
+
+    private fun deserializeIrSymbolAndRemap(code: Long): IrSymbol {
+        // TODO: could be simplified
+        return deserializeIrSymbol(code).let {
+            delegatedSymbolMap[it] ?: it
         }
     }
 
@@ -145,7 +160,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
     }
 
     private fun deserializeSimpleType(proto: ProtoSimpleType): IrSimpleType {
-        val symbol = deserializeIrSymbol(proto.classifier) as? IrClassifierSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.classifier) as? IrClassifierSymbol
             ?: error("could not convert sym to ClassifierSymbol")
         logger.log { "deserializeSimpleType: symbol=$symbol" }
 
@@ -167,7 +182,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
 
     private fun deserializeTypeAbbreviation(proto: ProtoTypeAbbreviation): IrTypeAbbreviation =
         IrTypeAbbreviationImpl(
-            deserializeIrSymbol(proto.typeAlias).let {
+            deserializeIrSymbolAndRemap(proto.typeAlias).let {
                 it as? IrTypeAliasSymbol
                     ?: error("IrTypeAliasSymbol expected: $it")
             },
@@ -214,9 +229,8 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         val hash = proto.accessorHashId
         val mask = proto.flags
 
-        val accessorSignature = with(propertySignature) {
-            IdSignature.PublicSignature(packageFqn, declarationFqn.child(Name.special(name)), hash, mask)
-        }
+        val accessorSignature =
+            IdSignature.PublicSignature(propertySignature.packageFqName, "${propertySignature.declarationFqName}.$name", hash, mask)
 
         return IdSignature.AccessorSignature(propertySignature, accessorSignature)
     }
@@ -317,7 +331,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         return IrBlockImpl(start, end, type, origin, statements)
     }
 
-    private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression, proto: ProtoMemberAccessCommon) {
+    private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression<*>, proto: ProtoMemberAccessCommon) {
 
         proto.valueArgumentList.mapIndexed { i, arg ->
             if (arg.hasExpression()) {
@@ -344,14 +358,14 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         end: Int,
         type: IrType
     ): IrClassReference {
-        val symbol = deserializeIrSymbol(proto.classSymbol) as IrClassifierSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.classSymbol) as IrClassifierSymbol
         val classType = deserializeIrType(proto.classType)
         /** TODO: [createClassifierSymbolForClassReference] is internal function */
         return IrClassReferenceImpl(start, end, type, symbol, classType)
     }
 
     private fun deserializeConstructorCall(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrConstructorCall {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrConstructorSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrConstructorSymbol
         return IrConstructorCallImpl(
             start, end, type,
             symbol, typeArgumentsCount = proto.memberAccess.typeArgumentCount,
@@ -363,10 +377,10 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
     }
 
     private fun deserializeCall(proto: ProtoCall, start: Int, end: Int, type: IrType): IrCall {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrFunctionSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrFunctionSymbol
 
         val superSymbol = if (proto.hasSuper()) {
-            deserializeIrSymbol(proto.`super`) as IrClassSymbol
+            deserializeIrSymbolAndRemap(proto.`super`) as IrClassSymbol
         } else null
 
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
@@ -400,7 +414,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         start: Int,
         end: Int
     ): IrDelegatingConstructorCall {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrConstructorSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrConstructorSymbol
         val call = IrDelegatingConstructorCallImpl(
             start,
             end,
@@ -421,7 +435,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         end: Int,
         type: IrType
     ): IrEnumConstructorCall {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrConstructorSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrConstructorSymbol
         val call = IrEnumConstructorCallImpl(
             start,
             end,
@@ -451,10 +465,10 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         start: Int, end: Int, type: IrType
     ): IrFunctionReference {
 
-        val symbol = deserializeIrSymbol(proto.symbol) as IrFunctionSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrFunctionSymbol
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
         val reflectionTarget =
-            if (proto.hasReflectionTargetSymbol()) deserializeIrSymbol(proto.reflectionTargetSymbol) as IrFunctionSymbol else null
+            if (proto.hasReflectionTargetSymbol()) deserializeIrSymbolAndRemap(proto.reflectionTargetSymbol) as IrFunctionSymbol else null
         val callable = IrFunctionReferenceImpl(
             start,
             end,
@@ -477,11 +491,11 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
 
     private fun deserializeGetField(proto: ProtoGetField, start: Int, end: Int, type: IrType): IrGetField {
         val access = proto.fieldAccess
-        val symbol = deserializeIrSymbol(access.symbol) as IrFieldSymbol
+        val symbol = deserializeIrSymbolAndRemap(access.symbol) as IrFieldSymbol
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
 
         val superQualifier = if (access.hasSuper()) {
-            deserializeIrSymbol(access.symbol) as IrClassSymbol
+            deserializeIrSymbolAndRemap(access.symbol) as IrClassSymbol
         } else null
         val receiver = if (access.hasReceiver()) {
             deserializeExpression(access.receiver)
@@ -491,7 +505,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
     }
 
     private fun deserializeGetValue(proto: ProtoGetValue, start: Int, end: Int, type: IrType): IrGetValue {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrValueSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrValueSymbol
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
         // TODO: origin!
         return IrGetValueImpl(start, end, type, symbol, origin)
@@ -503,7 +517,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         end: Int,
         type: IrType
     ): IrGetEnumValue {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrEnumEntrySymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrEnumEntrySymbol
         return IrGetEnumValueImpl(start, end, type, symbol)
     }
 
@@ -513,7 +527,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         end: Int,
         type: IrType
     ): IrGetObjectValue {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrClassSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrClassSymbol
         return IrGetObjectValueImpl(start, end, type, symbol)
     }
 
@@ -522,7 +536,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         start: Int,
         end: Int
     ): IrInstanceInitializerCall {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrClassSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrClassSymbol
         return IrInstanceInitializerCallImpl(start, end, symbol, builtIns.unitType)
     }
 
@@ -533,10 +547,10 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         type: IrType
     ): IrLocalDelegatedPropertyReference {
 
-        val delegate = deserializeIrSymbol(proto.delegate) as IrVariableSymbol
-        val getter = deserializeIrSymbol(proto.getter) as IrSimpleFunctionSymbol
-        val setter = if (proto.hasSetter()) deserializeIrSymbol(proto.setter) as IrSimpleFunctionSymbol else null
-        val symbol = deserializeIrSymbol(proto.symbol) as IrLocalDelegatedPropertySymbol
+        val delegate = deserializeIrSymbolAndRemap(proto.delegate) as IrVariableSymbol
+        val getter = deserializeIrSymbolAndRemap(proto.getter) as IrSimpleFunctionSymbol
+        val setter = if (proto.hasSetter()) deserializeIrSymbolAndRemap(proto.setter) as IrSimpleFunctionSymbol else null
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrLocalDelegatedPropertySymbol
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
 
         return IrLocalDelegatedPropertyReferenceImpl(
@@ -551,11 +565,11 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
 
     private fun deserializePropertyReference(proto: ProtoPropertyReference, start: Int, end: Int, type: IrType): IrPropertyReference {
 
-        val symbol = deserializeIrSymbol(proto.symbol) as IrPropertySymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrPropertySymbol
 
-        val field = if (proto.hasField()) deserializeIrSymbol(proto.field) as IrFieldSymbol else null
-        val getter = if (proto.hasGetter()) deserializeIrSymbol(proto.getter) as IrSimpleFunctionSymbol else null
-        val setter = if (proto.hasSetter()) deserializeIrSymbol(proto.setter) as IrSimpleFunctionSymbol else null
+        val field = if (proto.hasField()) deserializeIrSymbolAndRemap(proto.field) as IrFieldSymbol else null
+        val getter = if (proto.hasGetter()) deserializeIrSymbolAndRemap(proto.getter) as IrSimpleFunctionSymbol else null
+        val setter = if (proto.hasSetter()) deserializeIrSymbolAndRemap(proto.setter) as IrSimpleFunctionSymbol else null
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
 
         val callable = IrPropertyReferenceImpl(
@@ -572,16 +586,16 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
     }
 
     private fun deserializeReturn(proto: ProtoReturn, start: Int, end: Int, type: IrType): IrReturn {
-        val symbol = deserializeIrSymbol(proto.returnTarget) as IrReturnTargetSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.returnTarget) as IrReturnTargetSymbol
         val value = deserializeExpression(proto.value)
         return IrReturnImpl(start, end, builtIns.nothingType, symbol, value)
     }
 
     private fun deserializeSetField(proto: ProtoSetField, start: Int, end: Int): IrSetField {
         val access = proto.fieldAccess
-        val symbol = deserializeIrSymbol(access.symbol) as IrFieldSymbol
+        val symbol = deserializeIrSymbolAndRemap(access.symbol) as IrFieldSymbol
         val superQualifier = if (access.hasSuper()) {
-            deserializeIrSymbol(access.symbol) as IrClassSymbol
+            deserializeIrSymbolAndRemap(access.symbol) as IrClassSymbol
         } else null
         val receiver = if (access.hasReceiver()) {
             deserializeExpression(access.receiver)
@@ -593,7 +607,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
     }
 
     private fun deserializeSetVariable(proto: ProtoSetVariable, start: Int, end: Int): IrSetVariable {
-        val symbol = deserializeIrSymbol(proto.symbol) as IrVariableSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrVariableSymbol
         val value = deserializeExpression(proto.value)
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
         return IrSetVariableImpl(start, end, builtIns.unitType, symbol, value, origin)
@@ -695,7 +709,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         return IrWhenImpl(start, end, type, origin, branches)
     }
 
-    private fun deserializeLoop(proto: ProtoLoop, loop: IrLoopBase): IrLoopBase {
+    private fun deserializeLoop(proto: ProtoLoop, loop: IrLoop): IrLoop {
         val label = if (proto.hasLabel()) deserializeString(proto.label) else null
         val body = if (proto.hasBody()) deserializeExpression(proto.body) else null
         val condition = deserializeExpression(proto.condition)
@@ -902,6 +916,18 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         }
     }
 
+    private fun recordDelegatedSymbol(symbol: IrSymbol) {
+        if (symbol is IrDelegatingSymbol<*, *, *>) {
+            delegatedSymbolMap[symbol] = symbol.delegate
+        }
+    }
+
+    private fun eraseDelegatedSymbol(symbol: IrSymbol) {
+        if (symbol is IrDelegatingSymbol<*, *, *>) {
+            delegatedSymbolMap.remove(symbol)
+        }
+    }
+
     private inline fun <T : IrDeclarationParent> T.usingParent(block: T.() -> Unit): T =
         this.apply { usingParent(this) { block(it) } }
 
@@ -911,15 +937,20 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
     ): T where T : IrDeclaration, T : IrSymbolOwner {
         val (s, uid) = deserializeIrSymbolToDeclare(proto.symbol)
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
-        val result = block(
-            s,
-            uid,
-            coordinates.startOffset, coordinates.endOffset,
-            deserializeIrDeclarationOrigin(proto.originName), proto.flags
-        )
-        result.annotations += deserializeAnnotations(proto.annotationList)
-        result.parent = parentsStack.peek()!!
-        return result
+        try {
+            recordDelegatedSymbol(s)
+            val result = block(
+                s,
+                uid,
+                coordinates.startOffset, coordinates.endOffset,
+                deserializeIrDeclarationOrigin(proto.originName), proto.flags
+            )
+            result.annotations += deserializeAnnotations(proto.annotationList)
+            result.parent = parentsStack.peek()!!
+            return result
+        } finally {
+            eraseDelegatedSymbol(s)
+        }
     }
 
     private fun deserializeIrTypeParameter(proto: ProtoTypeParameter, index: Int, isGlobal: Boolean): IrTypeParameter {
@@ -966,7 +997,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         return result
     }
 
-    private fun deserializeIrValueParameter(proto: ProtoValueParameter, index: Int) =
+    private fun deserializeIrValueParameter(proto: ProtoValueParameter, index: Int): IrValueParameter =
         withDeserializedIrDeclarationBase(proto.base) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = ValueParameterFlags.decode(fcode)
             val nameAndType = BinaryNameAndType.decode(proto.nameType)
@@ -988,7 +1019,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
             }
         }
 
-    private fun deserializeIrClass(proto: ProtoClass) =
+    private fun deserializeIrClass(proto: ProtoClass): IrClass =
         withDeserializedIrDeclarationBase(proto.base) { symbol, signature, startOffset, endOffset, origin, fcode ->
             val flags = ClassFlags.decode(fcode)
 
@@ -1011,17 +1042,19 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
             }.usingParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true)
 
-                proto.declarationList.mapTo(declarations) { deserializeDeclaration(it) }
+                superTypes = proto.superTypeList.map { deserializeIrType(it) }
+
+                proto.declarationList
+                    .filterNot { isSkippableFakeOverride(it, this) }
+                    .mapTo(declarations) { deserializeDeclaration(it) }
 
                 thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
-
-                superTypes = proto.superTypeList.map { deserializeIrType(it) }
 
                 (descriptor as? WrappedClassDescriptor)?.bind(this)
             }
         }
 
-    private fun deserializeIrTypeAlias(proto: ProtoTypeAlias) =
+    private fun deserializeIrTypeAlias(proto: ProtoTypeAlias): IrTypeAlias =
         withDeserializedIrDeclarationBase(proto.base) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
             symbolTable.declareTypeAliasFromLinker((symbol as IrTypeAliasSymbol).descriptor, uniqId) {
                 val flags = TypeAliasFlags.decode(fcode)
@@ -1067,24 +1100,75 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         return result
     }
 
+
+    /**
+     * In `declarations-only` mode in case of private property/function with inferred anonymous private type like this
+     * class C {
+     *   private val p = object {
+     *     fun foo() = 42
+     *   }
+     *
+     *   private fun f() = object {
+     *     fun bar() = "42"
+     *   }
+     *
+     *   private val pp = p.foo()
+     *   private fun ff() = f().bar()
+     * }
+     * object's classifier is leaked outside p/f scopes and accessible on C's level so
+     * if their initializer/body weren't read we have unbound `foo/bar` symbol and unbound `object` symbols.
+     * To fix this make sure that such declaration forced to be deserialized completely.
+     *
+     * For more information see `anonymousClassLeak.kt` test and issue KT-40216
+     */
+    private fun IrType.checkObjectLeak(isPrivate: Boolean): Boolean {
+        return isPrivate && this is IrSimpleType && classifier.let { !it.isPublicApi && it !is IrTypeParameterSymbol }
+    }
+
+    private fun <T : IrFunction> T.withBodyGuard(block: T.() -> Unit) {
+        val oldBodiesPolicy = deserializeBodies
+
+        fun checkInlineBody(): Boolean = deserializeInlineFunctions && this is IrSimpleFunction && isInline
+
+        try {
+            deserializeBodies = oldBodiesPolicy || checkInlineBody() || returnType.checkObjectLeak(!symbol.isPublicApi)
+            block()
+        } finally {
+            deserializeBodies = oldBodiesPolicy
+        }
+    }
+
+
+    private fun IrField.withInitializerGuard(isPrivateProperty: Boolean, f: IrField.() -> Unit) {
+        val oldBodiesPolicy = deserializeBodies
+
+        try {
+            deserializeBodies = oldBodiesPolicy || type.checkObjectLeak(isPrivateProperty)
+            f()
+        } finally {
+            deserializeBodies = oldBodiesPolicy
+        }
+    }
+
     private inline fun <T : IrFunction> withDeserializedIrFunctionBase(
         proto: ProtoFunctionBase,
         block: (IrFunctionSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T
-    ) = withDeserializedIrDeclarationBase(proto.base) { symbol, idSig, startOffset, endOffset, origin, fcode ->
+    ): T = withDeserializedIrDeclarationBase(proto.base) { symbol, idSig, startOffset, endOffset, origin, fcode ->
         symbolTable.withScope(symbol.descriptor) {
             block(symbol as IrFunctionSymbol, idSig, startOffset, endOffset, origin, fcode).usingParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, false)
-                valueParameters = deserializeValueParameters(proto.valueParameterList)
-
                 val nameType = BinaryNameAndType.decode(proto.nameType)
                 returnType = deserializeIrType(nameType.typeIndex)
 
-                if (proto.hasDispatchReceiver())
-                    dispatchReceiverParameter = deserializeIrValueParameter(proto.dispatchReceiver, -1)
-                if (proto.hasExtensionReceiver())
-                    extensionReceiverParameter = deserializeIrValueParameter(proto.extensionReceiver, -1)
-                if (proto.hasBody()) {
-                    body = deserializeStatementBody(proto.body) as IrBody
+                withBodyGuard {
+                    valueParameters = deserializeValueParameters(proto.valueParameterList)
+                    if (proto.hasDispatchReceiver())
+                        dispatchReceiverParameter = deserializeIrValueParameter(proto.dispatchReceiver, -1)
+                    if (proto.hasExtensionReceiver())
+                        extensionReceiverParameter = deserializeIrValueParameter(proto.extensionReceiver, -1)
+                    if (proto.hasBody()) {
+                        body = deserializeStatementBody(proto.body) as IrBody
+                    }
                 }
             }
         }
@@ -1111,14 +1195,14 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
                     flags.isFakeOverride
                 )
             }.apply {
-                overriddenSymbols = proto.overriddenList.map { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
+                overriddenSymbols = proto.overriddenList.map { deserializeIrSymbolAndRemap(it) as IrSimpleFunctionSymbol }
 
                 (descriptor as? WrappedSimpleFunctionDescriptor)?.bind(this)
             }
         }
     }
 
-    private fun deserializeIrVariable(proto: ProtoVariable) =
+    private fun deserializeIrVariable(proto: ProtoVariable): IrVariable =
         withDeserializedIrDeclarationBase(proto.base) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = LocalVariableFlags.decode(fcode)
             val nameType = BinaryNameAndType.decode(proto.nameType)
@@ -1152,7 +1236,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
             }
         }
 
-    private fun deserializeIrAnonymousInit(proto: ProtoAnonymousInit) =
+    private fun deserializeIrAnonymousInit(proto: ProtoAnonymousInit): IrAnonymousInitializer =
         withDeserializedIrDeclarationBase(proto.base) { symbol, _, startOffset, endOffset, origin, _ ->
             IrAnonymousInitializerImpl(startOffset, endOffset, origin, symbol as IrAnonymousInitializerSymbol).apply {
 //                body = deserializeBlockBody(proto.body.blockBody, startOffset, endOffset)
@@ -1162,7 +1246,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
             }
         }
 
-    private fun deserializeIrConstructor(proto: ProtoConstructor) =
+    private fun deserializeIrConstructor(proto: ProtoConstructor): IrConstructor =
         withDeserializedIrFunctionBase(proto.base) { symbol, idSig, startOffset, endOffset, origin, fcode ->
             val flags = FunctionFlags.decode(fcode)
             val nameType = BinaryNameAndType.decode(proto.base.nameType)
@@ -1183,7 +1267,9 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
             }
         }
 
-    private fun deserializeIrField(proto: ProtoField) =
+
+
+    private fun deserializeIrField(proto: ProtoField, isPrivateProperty: Boolean): IrField =
         withDeserializedIrDeclarationBase(proto.base) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
             val nameType = BinaryNameAndType.decode(proto.nameType)
             val type = deserializeIrType(nameType.typeIndex)
@@ -1198,17 +1284,19 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
                     flags.isFinal,
                     flags.isExternal,
                     flags.isStatic,
-                    flags.isFakeOverride
                 )
             }.usingParent {
-                if (proto.hasInitializer())
-                    initializer = IrExpressionBodyImpl(deserializeExpressionBody(proto.initializer))
+                if (proto.hasInitializer()) {
+                    withInitializerGuard(isPrivateProperty) {
+                        initializer = IrExpressionBodyImpl(deserializeExpressionBody(proto.initializer))
+                    }
+                }
 
                 (descriptor as? WrappedFieldDescriptor)?.bind(this)
             }
         }
 
-    private fun deserializeIrLocalDelegatedProperty(proto: ProtoLocalDelegatedProperty) =
+    private fun deserializeIrLocalDelegatedProperty(proto: ProtoLocalDelegatedProperty): IrLocalDelegatedProperty =
         withDeserializedIrDeclarationBase(proto.base) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = LocalVariableFlags.decode(fcode)
             val nameAndType = BinaryNameAndType.decode(proto.nameType)
@@ -1228,7 +1316,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
             }
         }
 
-    private fun deserializeIrProperty(proto: ProtoProperty) =
+    private fun deserializeIrProperty(proto: ProtoProperty): IrProperty =
         withDeserializedIrDeclarationBase(proto.base) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
             val flags = PropertyFlags.decode(fcode)
             symbolTable.declarePropertyFromLinker((symbol as IrPropertySymbol).descriptor, uniqId) {
@@ -1258,7 +1346,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
                     }
                 }
                 if (proto.hasBackingField()) {
-                    backingField = deserializeIrField(proto.backingField).also {
+                    backingField = deserializeIrField(proto.backingField, !symbol.isPublicApi).also {
                         // A property symbol and its field symbol share the same descriptor.
                         // Unfortunately symbol deserialization doesn't know anything about that.
                         // So we can end up with two wrapped property descriptors for property and its field.
@@ -1306,7 +1394,7 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         val declaration: IrDeclaration = when (proto.declaratorCase!!) {
             IR_ANONYMOUS_INIT -> deserializeIrAnonymousInit(proto.irAnonymousInit)
             IR_CONSTRUCTOR -> deserializeIrConstructor(proto.irConstructor)
-            IR_FIELD -> deserializeIrField(proto.irField)
+            IR_FIELD -> deserializeIrField(proto.irField, false)
             IR_CLASS -> deserializeIrClass(proto.irClass)
             IR_FUNCTION -> deserializeIrFunction(proto.irFunction)
             IR_PROPERTY -> deserializeIrProperty(proto.irProperty)
@@ -1324,10 +1412,31 @@ abstract class IrFileDeserializer(val logger: LoggingContext, val builtIns: IrBu
         return declaration
     }
 
-    fun deserializeDeclaration(proto: ProtoDeclaration, parent: IrDeclarationParent) =
+    // Depending on deserialization strategy we either deserialize public api fake overrides
+    // or reconstruct them after IR linker completes.
+    private fun isSkippableFakeOverride(proto: ProtoDeclaration, parent: IrClass): Boolean {
+        if (deserializeFakeOverrides) return false
+        if (!platformFakeOverrideClassFilter.constructFakeOverrides(parent)) return false
+
+        val symbol = when (proto.declaratorCase!!) {
+            IR_FUNCTION -> deserializeIrSymbol(proto.irFunction.base.base.symbol)
+            IR_PROPERTY -> deserializeIrSymbol(proto.irProperty.base.symbol)
+            // Don't consider IR_FIELDS here.
+            else -> return false
+        }
+        if (symbol !is IrPublicSymbolBase<*>) return false
+        if (!symbol.signature.isPublic) return false
+
+        return when (proto.declaratorCase!!) {
+            IR_FUNCTION -> FunctionFlags.decode(proto.irFunction.base.base.flags).isFakeOverride
+            IR_PROPERTY -> PropertyFlags.decode(proto.irProperty.base.flags).isFakeOverride
+            // Don't consider IR_FIELDS here.
+            else -> false
+        }
+    }
+
+    fun deserializeDeclaration(proto: ProtoDeclaration, parent: IrDeclarationParent): IrDeclaration =
         usingParent(parent) {
             deserializeDeclaration(proto)
         }
 }
-
-val irrelevantOrigin = object : IrDeclarationOriginImpl("irrelevant") {}

@@ -9,6 +9,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
@@ -24,15 +25,15 @@ fun HeavyPlatformTestCase.projectLibrary(
         classesRoot: VirtualFile? = null,
         sourcesRoot: VirtualFile? = null,
         kind: PersistentLibraryKind<*>? = null
-): Library {
+): LibraryEx {
     return runWriteAction {
         val modifiableModel = ProjectLibraryTable.getInstance(project).modifiableModel
         val library = try {
-            modifiableModel.createLibrary(libraryName, kind)
+            modifiableModel.createLibrary(libraryName, kind) as LibraryEx
         } finally {
             modifiableModel.commit()
         }
-        with (library.modifiableModel) {
+        with(library.modifiableModel) {
             classesRoot?.let { addRoot(it, OrderRootType.CLASSES) }
             sourcesRoot?.let { addRoot(it, OrderRootType.SOURCES) }
             commit()

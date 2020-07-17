@@ -11,6 +11,7 @@ class User(
         val binder: IBinder,
         val binderArray: Array<IBinder>,
         val binderList: List<IBinder>,
-        val binderArrayList: ArrayList<IBinder>, // should be serialized using our strategy, not using Parcel.writeBinderList()
-        val intf: IInterface?
+        val binderArrayList: ArrayList<IBinder> // should be serialized using our strategy, not using Parcel.writeBinderList()
+        // There is no readStrongInterface method in Parcel.
+        // val intf: IInterface?
 ) : Parcelable

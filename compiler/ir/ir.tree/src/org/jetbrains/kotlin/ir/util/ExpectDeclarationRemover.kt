@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -23,11 +23,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
 // `doRemove` means should expect-declaration be removed from IR
-class ExpectDeclarationRemover(
-    val symbolTable: ReferenceSymbolTable,
-    private val doRemove: Boolean,
-    private val keepOptionalAnnotations: Boolean
-) : IrElementVisitorVoid {
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -58,10 +55,12 @@ class ExpectDeclarationRemover(
     }
 
     private fun shouldRemoveTopLevelDeclaration(declaration: IrDeclaration): Boolean {
-        // TODO: rewrite findCompatibleActualForExpected using IR structures instead of descriptors
-        val descriptor = declaration.descriptor
-        return doRemove && descriptor is MemberDescriptor && descriptor.isExpect &&
-                !(keepOptionalAnnotations && descriptor is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))
+        return doRemove && when (declaration) {
+            is IrClass -> declaration.isExpect
+            is IrProperty -> declaration.isExpect
+            is IrFunction -> declaration.isExpect
+            else -> false
+        }
     }
 
     private fun tryCopyDefaultArguments(declaration: IrValueParameter) {

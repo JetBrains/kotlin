@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -24,12 +25,12 @@ internal class FirCallableReferenceAccessImpl(
     override val source: FirSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
-    override var safe: Boolean,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override var calleeReference: FirNamedReference,
+    override var hasQuestionMarkAtLHS: Boolean,
 ) : FirCallableReferenceAccess(), FirModifiableQualifiedAccess {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -97,5 +98,18 @@ internal class FirCallableReferenceAccessImpl(
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
+    }
+
+    override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {
+        calleeReference = newCalleeReference
+    }
+
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        require(newCalleeReference is FirNamedReference)
+        replaceCalleeReference(newCalleeReference)
+    }
+
+    override fun replaceHasQuestionMarkAtLHS(newHasQuestionMarkAtLHS: Boolean) {
+        hasQuestionMarkAtLHS = newHasQuestionMarkAtLHS
     }
 }

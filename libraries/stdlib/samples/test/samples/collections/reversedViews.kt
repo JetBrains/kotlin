@@ -16,8 +16,7 @@
 
 package samples.collections
 
-import samples.Sample
-import samples.assertPrints
+import samples.*
 
 class ReversedViews {
     @Sample

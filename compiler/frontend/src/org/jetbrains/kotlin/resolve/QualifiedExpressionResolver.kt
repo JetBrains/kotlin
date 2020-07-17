@@ -249,7 +249,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
                 return null
             }
 
-            return AllUnderImportScope(packageOrClassDescriptor, excludedImportNames)
+            return AllUnderImportScope.create(packageOrClassDescriptor, excludedImportNames)
         } else {
             return processSingleImport(moduleDescriptor, trace, importDirective, path, lastPart, packageFragmentForCheck)
         }

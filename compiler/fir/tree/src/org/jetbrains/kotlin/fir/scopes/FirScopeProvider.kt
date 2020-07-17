@@ -14,7 +14,7 @@ abstract class FirScopeProvider {
         klass: FirClass<*>,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ): FirScope
+    ): FirTypeScope
 
     abstract fun getStaticMemberScopeForCallables(
         klass: FirClass<*>,
@@ -27,4 +27,19 @@ abstract class FirScopeProvider {
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope?
+
+    fun getStaticScope(
+        klass: FirClass<*>,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession
+    ): FirScope? {
+        val nestedClassifierScope = getNestedClassifierScope(klass, useSiteSession, scopeSession)
+        val callableScope = getStaticMemberScopeForCallables(klass, useSiteSession, scopeSession)
+
+        return when {
+            nestedClassifierScope != null && callableScope != null ->
+                FirCompositeScope(listOf(nestedClassifierScope, callableScope))
+            else -> nestedClassifierScope ?: callableScope
+        }
+    }
 }

@@ -1,94 +1,105 @@
 FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
-  FUN name:scopedFlow visibility:public modality:FINAL <R> (block:kotlin.Function2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit>) returnType:<root>.Flow<R of <root>.scopedFlow>
+  FUN name:scopedFlow visibility:public modality:FINAL <R> (block:kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit>) returnType:<root>.Flow<R of <root>.scopedFlow>
+    annotations:
+      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalTypeInference modality:FINAL visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?]
-    VALUE_PARAMETER name:block index:0 type:kotlin.Function2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit>
+    VALUE_PARAMETER name:block index:0 type:kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit>
+      annotations:
+        BuilderInference
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun scopedFlow <R> (block: kotlin.Function2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit>): <root>.Flow<R of <root>.scopedFlow> declared in <root>'
-        CALL 'public final fun flow <T> (block: kotlin.Function1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>): <root>.Flow<T of <root>.flow> declared in <root>' type=<root>.Flow<R of <root>.scopedFlow> origin=null
+      RETURN type=kotlin.Nothing from='public final fun scopedFlow <R> (block: kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit>): <root>.Flow<R of <root>.scopedFlow> declared in <root>'
+        CALL 'public final fun flow <T> (block: kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>): <root>.Flow<T of <root>.flow> declared in <root>' type=<root>.Flow<R of <root>.scopedFlow> origin=null
           <T>: R of <root>.scopedFlow
-          block: FUN_EXPR type=kotlin.Function1<<root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<R of <root>.scopedFlow>) returnType:kotlin.Unit
+          block: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<R of <root>.scopedFlow>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:<this> type:<root>.FlowCollector<R of <root>.scopedFlow>
               BLOCK_BODY
-                VAR name:collector type:<root>.FlowCollector<R of <root>.scopedFlow> [val]
-                  GET_VAR '<this>: <root>.FlowCollector<R of <root>.scopedFlow> declared in <root>.scopedFlow.<anonymous>' type=<root>.FlowCollector<R of <root>.scopedFlow> origin=null
-                CALL 'public final fun flowScope <R> (block: kotlin.Function1<<root>.CoroutineScope, R of <root>.flowScope>): R of <root>.flowScope [suspend] declared in <root>' type=kotlin.Unit origin=null
+                VAR name:collector type:<root>.FlowCollector<IrErrorType> [val]
+                  GET_VAR '<this>: <root>.FlowCollector<R of <root>.scopedFlow> declared in <root>.scopedFlow.<anonymous>' type=<root>.FlowCollector<IrErrorType> origin=null
+                CALL 'public final fun flowScope <R> (block: kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>): R of <root>.flowScope [suspend] declared in <root>' type=kotlin.Unit origin=null
                   <R>: kotlin.Unit
-                  block: FUN_EXPR type=kotlin.Function1<<root>.CoroutineScope, kotlin.Unit> origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.CoroutineScope) returnType:kotlin.Unit
+                  block: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, kotlin.Unit> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.CoroutineScope) returnType:kotlin.Unit [suspend]
                       $receiver: VALUE_PARAMETER name:<this> type:<root>.CoroutineScope
                       BLOCK_BODY
-                        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function2, p2: P2 of kotlin.Function2): R of kotlin.Function2 [operator] declared in kotlin.Function2' type=kotlin.Unit origin=INVOKE
-                          $this: GET_VAR 'block: kotlin.Function2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> declared in <root>.scopedFlow' type=kotlin.Function2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> origin=null
+                        CALL 'public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction2, p2: P2 of kotlin.coroutines.SuspendFunction2): R of kotlin.coroutines.SuspendFunction2 [suspend,operator] declared in kotlin.coroutines.SuspendFunction2' type=kotlin.Unit origin=null
+                          $this: GET_VAR 'block: kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> declared in <root>.scopedFlow' type=kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> origin=null
                           p1: GET_VAR '<this>: <root>.CoroutineScope declared in <root>.scopedFlow.<anonymous>.<anonymous>' type=<root>.CoroutineScope origin=null
-                          p2: GET_VAR 'val collector: <root>.FlowCollector<R of <root>.scopedFlow> [val] declared in <root>.scopedFlow.<anonymous>' type=<root>.FlowCollector<R of <root>.scopedFlow> origin=null
-  FUN name:onCompletion visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.onCompletion>, action:kotlin.Function2<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Throwable?, kotlin.Unit>) returnType:<root>.Flow<T of <root>.onCompletion>
+                          p2: GET_VAR 'val collector: <root>.FlowCollector<IrErrorType> [val] declared in <root>.scopedFlow.<anonymous>' type=<root>.FlowCollector<IrErrorType> origin=null
+  FUN name:onCompletion visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.onCompletion>, action:kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Throwable?, kotlin.Unit>) returnType:<root>.Flow<T of <root>.onCompletion>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Flow<T of <root>.onCompletion>
-    VALUE_PARAMETER name:action index:0 type:kotlin.Function2<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Throwable?, kotlin.Unit>
+    VALUE_PARAMETER name:action index:0 type:kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Throwable?, kotlin.Unit>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun onCompletion <T> (action: kotlin.Function2<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Throwable?, kotlin.Unit>): <root>.Flow<T of <root>.onCompletion> declared in <root>'
-        CALL 'public final fun unsafeFlow <T> (block: kotlin.Function1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>): <root>.Flow<T of <root>.unsafeFlow> [inline] declared in <root>' type=<root>.Flow<T of <root>.onCompletion> origin=null
+      RETURN type=kotlin.Nothing from='public final fun onCompletion <T> (action: kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Throwable?, kotlin.Unit>): <root>.Flow<T of <root>.onCompletion> declared in <root>'
+        CALL 'public final fun unsafeFlow <T> (block: kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>): <root>.Flow<T of <root>.unsafeFlow> [inline] declared in <root>' type=<root>.Flow<T of <root>.onCompletion> origin=null
           <T>: T of <root>.onCompletion
-          block: FUN_EXPR type=kotlin.Function1<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<T of <root>.onCompletion>) returnType:kotlin.Unit
+          block: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.FlowCollector<T of <root>.onCompletion>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:<this> type:<root>.FlowCollector<T of <root>.onCompletion>
               BLOCK_BODY
-                VAR name:safeCollector type:<root>.SafeCollector<T of <root>.onCompletion> [val]
-                  CONSTRUCTOR_CALL 'public constructor <init> (collector: <root>.FlowCollector<T of <root>.SafeCollector>) [primary] declared in <root>.SafeCollector' type=<root>.SafeCollector<T of <root>.onCompletion> origin=null
-                    <class: T>: T of <root>.onCompletion
-                    collector: GET_VAR '<this>: <root>.FlowCollector<T of <root>.onCompletion> declared in <root>.onCompletion.<anonymous>' type=<root>.FlowCollector<T of <root>.onCompletion> origin=null
-                CALL 'public final fun invokeSafely <T> (action: kotlin.Function2<<root>.FlowCollector<T of <root>.invokeSafely>, kotlin.Throwable?, kotlin.Unit>): kotlin.Unit [suspend] declared in <root>' type=kotlin.Unit origin=null
+                VAR name:safeCollector type:<root>.SafeCollector<IrErrorType> [val]
+                  CONSTRUCTOR_CALL 'public constructor <init> (collector: <root>.FlowCollector<T of <root>.SafeCollector>) [primary] declared in <root>.SafeCollector' type=<root>.SafeCollector<IrErrorType> origin=null
+                    <class: T>: IrErrorType
+                    collector: GET_VAR '<this>: <root>.FlowCollector<T of <root>.onCompletion> declared in <root>.onCompletion.<anonymous>' type=<root>.FlowCollector<IrErrorType> origin=null
+                CALL 'public final fun invokeSafely <T> (action: kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.invokeSafely>, kotlin.Throwable?, kotlin.Unit>): kotlin.Unit [suspend] declared in <root>' type=kotlin.Unit origin=null
                   <T>: T of <root>.onCompletion
-                  $receiver: GET_VAR 'val safeCollector: <root>.SafeCollector<T of <root>.onCompletion> [val] declared in <root>.onCompletion.<anonymous>' type=<root>.SafeCollector<T of <root>.onCompletion> origin=null
-                  action: GET_VAR 'action: kotlin.Function2<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Throwable?, kotlin.Unit> declared in <root>.onCompletion' type=kotlin.Function2<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Throwable?, kotlin.Unit> origin=null
-  FUN name:invokeSafely visibility:public modality:FINAL <T> ($receiver:<root>.FlowCollector<T of <root>.invokeSafely>, action:kotlin.Function2<<root>.FlowCollector<T of <root>.invokeSafely>, kotlin.Throwable?, kotlin.Unit>) returnType:kotlin.Unit [suspend]
+                  $receiver: GET_VAR 'val safeCollector: <root>.SafeCollector<IrErrorType> [val] declared in <root>.onCompletion.<anonymous>' type=<root>.SafeCollector<IrErrorType> origin=null
+                  action: GET_VAR 'action: kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Throwable?, kotlin.Unit> declared in <root>.onCompletion' type=kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Throwable?, kotlin.Unit> origin=null
+  FUN name:invokeSafely visibility:public modality:FINAL <T> ($receiver:<root>.FlowCollector<T of <root>.invokeSafely>, action:kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.invokeSafely>, kotlin.Throwable?, kotlin.Unit>) returnType:kotlin.Unit [suspend]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.FlowCollector<T of <root>.invokeSafely>
-    VALUE_PARAMETER name:action index:0 type:kotlin.Function2<<root>.FlowCollector<T of <root>.invokeSafely>, kotlin.Throwable?, kotlin.Unit>
+    VALUE_PARAMETER name:action index:0 type:kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.invokeSafely>, kotlin.Throwable?, kotlin.Unit>
     BLOCK_BODY
-  FUN name:unsafeFlow visibility:public modality:FINAL <T> (block:kotlin.Function1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>) returnType:<root>.Flow<T of <root>.unsafeFlow> [inline]
+  FUN name:unsafeFlow visibility:public modality:FINAL <T> (block:kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>) returnType:<root>.Flow<T of <root>.unsafeFlow> [inline]
+    annotations:
+      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalTypeInference modality:FINAL visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    VALUE_PARAMETER name:block index:0 type:kotlin.Function1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit> [crossinline]
+    VALUE_PARAMETER name:block index:0 type:kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit> [crossinline]
+      annotations:
+        BuilderInference
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun unsafeFlow <T> (block: kotlin.Function1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>): <root>.Flow<T of <root>.unsafeFlow> [inline] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun unsafeFlow <T> (block: kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>): <root>.Flow<T of <root>.unsafeFlow> [inline] declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
-  FUN name:onCompletion visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.onCompletion>, action:kotlin.Function1<kotlin.Throwable?, kotlin.Unit>) returnType:IrErrorType
+  FUN name:onCompletion visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.onCompletion>, action:kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit>) returnType:IrErrorType
+    annotations:
+      Deprecated(message = 'binary compatibility with a version w/o FlowCollector receiver', replaceWith = <null>, level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:HIDDEN' type=kotlin.DeprecationLevel)
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Flow<T of <root>.onCompletion>
-    VALUE_PARAMETER name:action index:0 type:kotlin.Function1<kotlin.Throwable?, kotlin.Unit>
+    VALUE_PARAMETER name:action index:0 type:kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun onCompletion <T> (action: kotlin.Function1<kotlin.Throwable?, kotlin.Unit>): IrErrorType declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun onCompletion <T> (action: kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit>): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Ambiguity: onCompletion, [/onCompletion, /onCompletion]>#' type=IrErrorType
           FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
-                CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
-                  $this: GET_VAR 'action: kotlin.Function1<kotlin.Throwable?, kotlin.Unit> declared in <root>.onCompletion' type=kotlin.Function1<kotlin.Throwable?, kotlin.Unit> origin=null
+                CALL 'public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction1): R of kotlin.coroutines.SuspendFunction1 [suspend,operator] declared in kotlin.coroutines.SuspendFunction1' type=kotlin.Unit origin=null
+                  $this: GET_VAR 'action: kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit> declared in <root>.onCompletion' type=kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit> origin=null
                   p1: ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType
   FUN name:asFairChannel visibility:private modality:FINAL <> ($receiver:<root>.CoroutineScope, flow:<root>.Flow<*>) returnType:<root>.ReceiveChannel<kotlin.Any>
     $receiver: VALUE_PARAMETER name:<this> type:<root>.CoroutineScope
     VALUE_PARAMETER name:flow index:0 type:<root>.Flow<*>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='private final fun asFairChannel (flow: <root>.Flow<*>): <root>.ReceiveChannel<kotlin.Any> declared in <root>'
-        CALL 'public final fun produce <E> (block: kotlin.Function1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>): <root>.ReceiveChannel<E of <root>.produce> declared in <root>' type=<root>.ReceiveChannel<kotlin.Any> origin=null
+        CALL 'public final fun produce <E> (block: kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>): <root>.ReceiveChannel<E of <root>.produce> declared in <root>' type=<root>.ReceiveChannel<kotlin.Any> origin=null
           <E>: kotlin.Any
           $receiver: GET_VAR '<this>: <root>.CoroutineScope declared in <root>.asFairChannel' type=<root>.CoroutineScope origin=null
-          block: FUN_EXPR type=kotlin.Function1<<root>.ProducerScope<kotlin.Any>, kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScope<kotlin.Any>) returnType:kotlin.Unit
+          block: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<kotlin.Any>, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScope<kotlin.Any>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:<this> type:<root>.ProducerScope<kotlin.Any>
               BLOCK_BODY
                 VAR name:channel type:<root>.ChannelCoroutine<kotlin.Any> [val]
                   TYPE_OP type=<root>.ChannelCoroutine<kotlin.Any> origin=CAST typeOperand=<root>.ChannelCoroutine<kotlin.Any>
-                    CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
-                      $this: GET_VAR '<this>: <root>.ProducerScope<kotlin.Any> declared in <root>.asFairChannel.<anonymous>' type=<root>.ProducerScope<kotlin.Any> origin=null
-                CALL 'public abstract fun collect (collector: <root>.FlowCollector<T of <root>.Flow>): kotlin.Unit [suspend] declared in <root>.Flow' type=kotlin.Unit origin=null
-                  $this: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asFairChannel' type=<root>.Flow<*> origin=null
-                  collector: FUN_EXPR type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:kotlin.Any?) returnType:kotlin.Unit
+                    CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<IrErrorType> origin=GET_PROPERTY
+                      $this: GET_VAR '<this>: <root>.ProducerScope<kotlin.Any> declared in <root>.asFairChannel.<anonymous>' type=<root>.ProducerScope<IrErrorType> origin=null
+                CALL 'public final fun collect <T> (action: kotlin.coroutines.SuspendFunction1<T of <root>.collect, kotlin.Unit>): kotlin.Unit [inline,suspend] declared in <root>' type=kotlin.Unit origin=null
+                  <T>: kotlin.Any?
+                  $receiver: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asFairChannel' type=<root>.Flow<*> origin=null
+                  action: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:kotlin.Any?) returnType:kotlin.Unit [suspend]
                       VALUE_PARAMETER name:value index:0 type:kotlin.Any?
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Any?): kotlin.Unit declared in <root>.asFairChannel.<anonymous>'
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Any?): kotlin.Unit [suspend] declared in <root>.asFairChannel.<anonymous>'
                           CALL 'public final fun sendFair (element: E of <root>.ChannelCoroutine): kotlin.Unit [suspend] declared in <root>.ChannelCoroutine' type=kotlin.Unit origin=null
                             $this: GET_VAR 'val channel: <root>.ChannelCoroutine<kotlin.Any> [val] declared in <root>.asFairChannel.<anonymous>' type=<root>.ChannelCoroutine<kotlin.Any> origin=null
                             element: BLOCK type=kotlin.Any origin=ELVIS
@@ -109,23 +120,24 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
     VALUE_PARAMETER name:flow index:0 type:<root>.Flow<*>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='private final fun asChannel (flow: <root>.Flow<*>): <root>.ReceiveChannel<kotlin.Any> declared in <root>'
-        CALL 'public final fun produce <E> (block: kotlin.Function1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>): <root>.ReceiveChannel<E of <root>.produce> declared in <root>' type=<root>.ReceiveChannel<kotlin.Any> origin=null
+        CALL 'public final fun produce <E> (block: kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>): <root>.ReceiveChannel<E of <root>.produce> declared in <root>' type=<root>.ReceiveChannel<kotlin.Any> origin=null
           <E>: kotlin.Any
           $receiver: GET_VAR '<this>: <root>.CoroutineScope declared in <root>.asChannel' type=<root>.CoroutineScope origin=null
-          block: FUN_EXPR type=kotlin.Function1<<root>.ProducerScope<kotlin.Any>, kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScope<kotlin.Any>) returnType:kotlin.Unit
+          block: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<kotlin.Any>, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScope<kotlin.Any>) returnType:kotlin.Unit [suspend]
               $receiver: VALUE_PARAMETER name:<this> type:<root>.ProducerScope<kotlin.Any>
               BLOCK_BODY
-                CALL 'public abstract fun collect (collector: <root>.FlowCollector<T of <root>.Flow>): kotlin.Unit [suspend] declared in <root>.Flow' type=kotlin.Unit origin=null
-                  $this: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asChannel' type=<root>.Flow<*> origin=null
-                  collector: FUN_EXPR type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:kotlin.Any?) returnType:kotlin.Unit
+                CALL 'public final fun collect <T> (action: kotlin.coroutines.SuspendFunction1<T of <root>.collect, kotlin.Unit>): kotlin.Unit [inline,suspend] declared in <root>' type=kotlin.Unit origin=null
+                  <T>: kotlin.Any?
+                  $receiver: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asChannel' type=<root>.Flow<*> origin=null
+                  action: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (value:kotlin.Any?) returnType:kotlin.Unit [suspend]
                       VALUE_PARAMETER name:value index:0 type:kotlin.Any?
                       BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Any?): kotlin.Unit declared in <root>.asChannel.<anonymous>'
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: kotlin.Any?): kotlin.Unit [suspend] declared in <root>.asChannel.<anonymous>'
                           CALL 'public abstract fun send (e: E of <root>.SendChannel): kotlin.Unit [suspend] declared in <root>.SendChannel' type=kotlin.Unit origin=null
-                            $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
-                              $this: GET_VAR '<this>: <root>.ProducerScope<kotlin.Any> declared in <root>.asChannel.<anonymous>' type=<root>.ProducerScope<kotlin.Any> origin=null
+                            $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<IrErrorType> origin=GET_PROPERTY
+                              $this: GET_VAR '<this>: <root>.ProducerScope<kotlin.Any> declared in <root>.asChannel.<anonymous>' type=<root>.ProducerScope<IrErrorType> origin=null
                             e: BLOCK type=kotlin.Any origin=ELVIS
                               VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
                                 GET_VAR 'value: kotlin.Any? declared in <root>.asChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
@@ -159,6 +171,8 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:collector type:<root>.FlowCollector<T of <root>.SafeCollector> visibility:private [final]' type=<root>.FlowCollector<T of <root>.SafeCollector> origin=null
               receiver: GET_VAR '<this>: <root>.SafeCollector<T of <root>.SafeCollector> declared in <root>.SafeCollector.<get-collector>' type=<root>.SafeCollector<T of <root>.SafeCollector> origin=null
     FUN name:emit visibility:public modality:FINAL <> ($this:<root>.SafeCollector<T of <root>.SafeCollector>, value:T of <root>.SafeCollector) returnType:kotlin.Unit [suspend]
+      overridden:
+        public abstract fun emit (value: T of <root>.FlowCollector): kotlin.Unit [suspend] declared in <root>.FlowCollector
       $this: VALUE_PARAMETER name:<this> type:<root>.SafeCollector<T of <root>.SafeCollector>
       VALUE_PARAMETER name:value index:0 type:T of <root>.SafeCollector
       BLOCK_BODY
@@ -175,22 +189,30 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:flow visibility:public modality:FINAL <T> (block:kotlin.Function1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>) returnType:<root>.Flow<T of <root>.flow>
+  FUN name:flow visibility:public modality:FINAL <T> (block:kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>) returnType:<root>.Flow<T of <root>.flow>
+    annotations:
+      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalTypeInference modality:FINAL visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    VALUE_PARAMETER name:block index:0 type:kotlin.Function1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>
+    VALUE_PARAMETER name:block index:0 type:kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>
+      annotations:
+        BuilderInference
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun flow <T> (block: kotlin.Function1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>): <root>.Flow<T of <root>.flow> declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun flow <T> (block: kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>): <root>.Flow<T of <root>.flow> declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
-  FUN name:flowScope visibility:public modality:FINAL <R> (block:kotlin.Function1<<root>.CoroutineScope, R of <root>.flowScope>) returnType:R of <root>.flowScope [suspend]
+  FUN name:flowScope visibility:public modality:FINAL <R> (block:kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>) returnType:R of <root>.flowScope [suspend]
+    annotations:
+      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalTypeInference modality:FINAL visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?]
-    VALUE_PARAMETER name:block index:0 type:kotlin.Function1<<root>.CoroutineScope, R of <root>.flowScope>
+    VALUE_PARAMETER name:block index:0 type:kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>
+      annotations:
+        BuilderInference
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun flowScope <R> (block: kotlin.Function1<<root>.CoroutineScope, R of <root>.flowScope>): R of <root>.flowScope [suspend] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun flowScope <R> (block: kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>): R of <root>.flowScope [suspend] declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
-  FUN name:collect visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.collect>, action:kotlin.Function1<T of <root>.collect, kotlin.Unit>) returnType:kotlin.Unit [inline,suspend]
+  FUN name:collect visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.collect>, action:kotlin.coroutines.SuspendFunction1<T of <root>.collect, kotlin.Unit>) returnType:kotlin.Unit [inline,suspend]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Flow<T of <root>.collect>
-    VALUE_PARAMETER name:action index:0 type:kotlin.Function1<T of <root>.collect, kotlin.Unit> [crossinline]
+    VALUE_PARAMETER name:action index:0 type:kotlin.coroutines.SuspendFunction1<T of <root>.collect, kotlin.Unit> [crossinline]
     BLOCK_BODY
   CLASS CLASS name:ChannelCoroutine modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ChannelCoroutine<E of <root>.ChannelCoroutine>
@@ -285,12 +307,16 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:produce visibility:public modality:FINAL <E> ($receiver:<root>.CoroutineScope, block:kotlin.Function1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>) returnType:<root>.ReceiveChannel<E of <root>.produce>
+  FUN name:produce visibility:public modality:FINAL <E> ($receiver:<root>.CoroutineScope, block:kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>) returnType:<root>.ReceiveChannel<E of <root>.produce>
+    annotations:
+      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalTypeInference modality:FINAL visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
     TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.CoroutineScope
-    VALUE_PARAMETER name:block index:0 type:kotlin.Function1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>
+    VALUE_PARAMETER name:block index:0 type:kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>
+      annotations:
+        BuilderInference
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun produce <E> (block: kotlin.Function1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>): <root>.ReceiveChannel<E of <root>.produce> declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun produce <E> (block: kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>): <root>.ReceiveChannel<E of <root>.produce> declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
   CLASS INTERFACE name:ProducerScope modality:ABSTRACT visibility:public superTypes:[<root>.CoroutineScope; <root>.SendChannel<E of <root>.ProducerScope>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ProducerScope<E of <root>.ProducerScope>

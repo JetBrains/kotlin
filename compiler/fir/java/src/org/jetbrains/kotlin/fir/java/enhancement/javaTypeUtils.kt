@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -120,7 +119,7 @@ private fun coneFlexibleOrSimpleType(
             // TODO: we need enhancement for type parameter bounds for this code to work properly
             // At this moment, this condition is always true
             if (lookupTag.typeParameterSymbol.fir.bounds.any {
-                    val type = (it as FirResolvedTypeRef).type
+                    val type = it.coneType
                     type is ConeTypeParameterType || type.isNullable
                 }
             ) {

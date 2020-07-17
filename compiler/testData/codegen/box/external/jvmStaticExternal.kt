@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: ANDROID
 
 // WITH_RUNTIME
 // FULL_JDK
@@ -23,7 +23,8 @@ fun box(): String {
         return "Link error expected"
     }
     catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.message != "foo.WithNative.bar(JLjava/lang/String;)D") return "Fail 1: " + e.message
+        if (e.message != "foo.WithNative.bar(JLjava/lang/String;)D" &&
+            e.message != "'double foo.WithNative.bar(long, java.lang.String)'") return "Fail 1: " + e.message
     }
 
     try {
@@ -31,7 +32,8 @@ fun box(): String {
         return "Link error expected on object"
     }
     catch (e: java.lang.UnsatisfiedLinkError) {
-        if (e.message != "foo.ObjWithNative.bar(JLjava/lang/String;)D") return "Fail 2: " + e.message
+        if (e.message != "foo.ObjWithNative.bar(JLjava/lang/String;)D" &&
+            e.message != "'double foo.ObjWithNative.bar(long, java.lang.String)'") return "Fail 2: " + e.message
     }
     return "OK"
 }

@@ -29,7 +29,9 @@ class RemoveCurlyBracesFromTemplateInspection(@JvmField var reportWithoutWhitesp
     override fun isApplicable(element: KtBlockStringTemplateEntry): Boolean = element.canDropBraces()
 
     override fun applyTo(element: KtBlockStringTemplateEntry, project: Project, editor: Editor?) {
-        element.dropBraces()
+        if (element.canDropBraces()) {
+            element.dropBraces()
+        }
     }
 
     override fun createOptionsPanel() = MultipleCheckboxOptionsPanel(this).apply {

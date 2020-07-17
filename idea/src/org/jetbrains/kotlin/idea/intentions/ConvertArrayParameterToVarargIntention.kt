@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
 class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParameter>(
-    KtParameter::class.java, DEFAULT_TEXT
+    KtParameter::class.java, KotlinBundle.lazyMessage("convert.to.vararg.parameter")
 ) {
     override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean {
         val typeReference = element.getChildOfType<KtTypeReference>() ?: return false
@@ -25,7 +25,7 @@ class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParamete
         val type = element.descriptor?.type ?: return false
         return when {
             KotlinBuiltIns.isPrimitiveArray(type) -> {
-                setTextGetter(DEFAULT_TEXT)
+                setTextGetter(defaultTextGetter)
                 true
             }
             KotlinBuiltIns.isArray(type) -> {
@@ -33,12 +33,15 @@ class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParamete
                 val typeProjection = typeArgument?.parent as? KtTypeProjection
                 if (typeProjection?.hasModifier(KtTokens.IN_KEYWORD) == false) {
                     setTextGetter(
-                        if (!typeProjection.hasModifier(KtTokens.OUT_KEYWORD)
-                            && !KotlinBuiltIns.isPrimitiveType(element.builtIns.getArrayElementType(type))
+                        if (!typeProjection.hasModifier(KtTokens.OUT_KEYWORD) && !KotlinBuiltIns.isPrimitiveType(
+                                element.builtIns.getArrayElementType(
+                                    type
+                                )
+                            )
                         ) {
-                            BREAKING_TEXT
+                            { KotlinBundle.message("0.may.break.code", defaultText) }
                         } else {
-                            DEFAULT_TEXT
+                            defaultTextGetter
                         }
                     )
                     true
@@ -57,14 +60,8 @@ class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParamete
         val newType = KotlinBuiltIns.getPrimitiveArrayElementType(type)?.typeName?.asString()
             ?: typeReference.typeElement?.typeArgumentsAsTypes?.firstOrNull()?.text
             ?: return
+
         typeReference.replace(KtPsiFactory(element).createType(newType))
         element.addModifier(KtTokens.VARARG_KEYWORD)
     }
-
-    companion object {
-        private val DEFAULT_TEXT: () -> String get() = KotlinBundle.lazyMessage("convert.to.vararg.parameter")
-
-        private val BREAKING_TEXT: () -> String get() = KotlinBundle.lazyMessage("0.may.break.code", DEFAULT_TEXT)
-    }
-
 }

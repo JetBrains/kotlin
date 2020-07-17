@@ -88,7 +88,7 @@ class FirJavaElementFinder(
 
         newTypeParameterList(
             stub,
-            firClass.typeParameters.map { Pair(it.name.asString(), arrayOf(CommonClassNames.JAVA_LANG_OBJECT)) }
+            firClass.typeParameters.filterIsInstance<FirTypeParameter>().map { Pair(it.name.asString(), arrayOf(CommonClassNames.JAVA_LANG_OBJECT)) }
         )
 
         val superTypeRefs = when {

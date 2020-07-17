@@ -503,7 +503,7 @@ class StateMachineBuilder(
         return newArguments
     }
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression) {
+    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
 
         if (expression !in suspendableNodes) {
             addExceptionEdge()

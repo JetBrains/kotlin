@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
+import kotlin.test.assertNull
 
 abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
@@ -265,6 +266,15 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         if (!filter.shouldWriteInnerClass(name)) {
             return
         }
-        declarationsInsideClass.add(Declaration("inner class $name"))
+        if (innerName == null) {
+            assertNull(outerName, "Anonymous classes should have neither innerName nor outerName. Name=$name, outerName=$outerName")
+            declarationsInsideClass.add(Declaration("inner (anonymous) class $name"))
+        } else if (outerName == null) {
+            declarationsInsideClass.add(Declaration("inner (local) class $name $innerName"))
+        } else if (name == "$outerName$$innerName") {
+            declarationsInsideClass.add(Declaration("inner class $name"))
+        } else {
+            declarationsInsideClass.add(Declaration("inner (unrecognized) class $name $outerName $innerName"))
+        }
     }
 }

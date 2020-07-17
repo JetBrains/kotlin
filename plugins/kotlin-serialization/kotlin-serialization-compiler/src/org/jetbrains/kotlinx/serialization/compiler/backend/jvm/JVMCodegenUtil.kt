@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
@@ -137,7 +126,7 @@ internal fun InstructionAdapter.buildInternalConstructorDesc(
         load(propVar, propertyType)
         propVar += propertyType.size
     }
-    constructorDesc.append("Lkotlinx/serialization/$SERIAL_CTOR_MARKER_NAME;)V")
+    constructorDesc.append("Lkotlinx/serialization/internal/$SERIAL_CTOR_MARKER_NAME;)V")
     aconst(null)
     return constructorDesc.toString()
 }
@@ -302,6 +291,20 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
                 aconst(codegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
                 AsmUtil.wrapJavaClassIntoKClass(this)
                 signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
+                if (serializer.classId == contextSerializerId && serializer.constructors.any { it.valueParameters.size == 3 }) {
+                    // append new additional arguments
+                    val fallbackDefaultSerializer = findTypeSerializer(module, kType)
+                    if (fallbackDefaultSerializer != null) {
+                        instantiate(kType to fallbackDefaultSerializer, writeSignature = false)
+                    } else {
+                        aconst(null)
+                    }
+                    signature.append(kSerializerType.descriptor)
+                    fillArray(kSerializerType, argSerializers) { _, serializer ->
+                        instantiate(serializer, writeSignature = false)
+                    }
+                    signature.append(kSerializerArrayType.descriptor)
+                }
             }
             referenceArraySerializerId -> {
                 // a special way to instantiate reference array serializer -- need an element KClass reference
@@ -370,7 +373,7 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
 
 fun InstructionAdapter.wrapStackValueIntoNullableSerializer() =
     invokestatic(
-        "kotlinx/serialization/internal/NullableSerializerKt", "makeNullable",
+        "kotlinx/serialization/builtins/BuiltinSerializersKt", "getNullable",
         "(" + kSerializerType.descriptor + ")" + kSerializerType.descriptor, false
     )
 

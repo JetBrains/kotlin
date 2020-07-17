@@ -7,16 +7,18 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -33,6 +35,9 @@ class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : FileLowe
         }
     }
 
+    private fun IrExpression.nullConst() = IrConstImpl.constNull(startOffset, endOffset, type.makeNullable())
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun lower(script: IrScript): List<IrScript> {
         val transformer: IrElementTransformerVoid = object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
@@ -40,6 +45,11 @@ class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : FileLowe
                     expression.dispatchReceiver = null
                 }
                 return super.visitCall(expression)
+            }
+
+            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                return if (expression.symbol === script.thisReceiver.symbol) expression.nullConst()
+                else expression
             }
 
             override fun visitFieldAccess(expression: IrFieldAccessExpression): IrExpression {

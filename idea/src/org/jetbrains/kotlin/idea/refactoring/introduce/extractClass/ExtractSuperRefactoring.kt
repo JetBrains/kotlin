@@ -32,6 +32,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.NewKotlinFileAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getChildrenToAnalyze
@@ -137,7 +137,8 @@ class ExtractSuperRefactoring(
                     ?.let {
                         conflicts.putValue(
                             it,
-                            KotlinBundle.message("text.class.0.already.exists.in.the.target.scope",
+                            KotlinBundle.message(
+                                "text.class.0.already.exists.in.the.target.scope",
                                 newClassName
                             )
                         )
@@ -247,7 +248,7 @@ class ExtractSuperRefactoring(
             newClass.addAfter(psiFactory.createTypeParameterList(typeParameterListText), newClass.nameIdentifier)
         }
 
-        val targetPackageFqName = (targetParent as? PsiDirectory)?.getFqNameWithImplicitPrefix()?.asString()
+        val targetPackageFqName = (targetParent as? PsiDirectory)?.getFqNameWithImplicitPrefix()?.quoteSegmentsIfNeeded()
 
         val superTypeText = buildString {
             if (!targetPackageFqName.isNullOrEmpty()) {

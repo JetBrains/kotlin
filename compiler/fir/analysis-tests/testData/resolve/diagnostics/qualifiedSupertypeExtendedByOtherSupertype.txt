@@ -1,0 +1,49 @@
+FILE: qualifiedSupertypeExtendedByOtherSupertype.kt
+    public abstract interface IBase<T> : R|kotlin/Any| {
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+        public open fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final typealias AliasedIBase1 = R|IBase<kotlin/String>|
+    public final typealias AliasedIBase = R|AliasedIBase1|
+    public abstract interface IDerived<T> : R|IBase<T>| {
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+        public open fun qux(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class Test : R|IDerived<kotlin/String>|, R|IBase<kotlin/String>| {
+        public constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/Test|.super<R|IBase|>.R|/IBase.foo|()
+            this@R|/Test|.super<R|IBase|>.R|/IBase.bar|()
+            this@R|/Test|.super<R|IDerived|>.R|/IDerived.foo|()
+            this@R|/Test|.super<R|IDerived|>.R|/IBase.bar|()
+            this@R|/Test|.super<R|IDerived|>.R|/IDerived.qux|()
+        }
+
+    }
+    public final class Test2 : R|IDerived<kotlin/String>|, R|AliasedIBase| {
+        public constructor(): R|Test2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/Test2|.super<R|IBase|>.R|/IBase.foo|()
+            this@R|/Test2|.super<R|IBase|>.R|/IBase.bar|()
+            this@R|/Test2|.super<R|AliasedIBase|>.R|/IBase.foo|()
+            this@R|/Test2|.super<R|AliasedIBase|>.R|/IBase.bar|()
+            this@R|/Test2|.super<R|IDerived|>.R|/IDerived.foo|()
+            this@R|/Test2|.super<R|IDerived|>.R|/IBase.bar|()
+            this@R|/Test2|.super<R|IDerived|>.R|/IDerived.qux|()
+        }
+
+    }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun Int.thisRef1() = fun () = this
 fun Int.thisRef2() = fun (): Int {return this}

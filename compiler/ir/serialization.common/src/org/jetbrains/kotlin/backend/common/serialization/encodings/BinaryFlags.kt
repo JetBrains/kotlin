@@ -191,13 +191,12 @@ inline class FieldFlags(val flags: Long) {
     val isFinal: Boolean get() = IrFlags.IS_FINAL.get(flags.toInt())
     val isExternal: Boolean get() = IrFlags.IS_EXTERNAL_FIELD.get(flags.toInt())
     val isStatic: Boolean get() = IrFlags.IS_STATIC.get(flags.toInt())
-    val isFakeOverride: Boolean get() = IrFlags.IS_FAKE_OVERRIDE.get(flags.toInt())
 
     companion object {
         fun encode(field: IrField): Long {
             return field.run {
                 val visibility = ProtoEnumFlags.visibility(visibility)
-                IrFlags.getFieldFlags(annotations.isNotEmpty(), visibility, isFinal, isExternal, isStatic, isFakeOverride).toLong()
+                IrFlags.getFieldFlags(annotations.isNotEmpty(), visibility, isFinal, isExternal, isStatic).toLong()
             }
         }
 

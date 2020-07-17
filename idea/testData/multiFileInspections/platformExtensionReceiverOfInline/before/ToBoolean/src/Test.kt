@@ -13,6 +13,8 @@ fun test() {
     }
 }
 
+inline fun String.toBoolean(): Boolean = true
+
 fun String.contentNotInline() {}
 
 class My {

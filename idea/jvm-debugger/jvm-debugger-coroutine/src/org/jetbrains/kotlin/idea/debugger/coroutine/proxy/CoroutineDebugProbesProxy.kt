@@ -6,9 +6,9 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.engine.SuspendContextImpl
-import org.jetbrains.kotlin.idea.debugger.coroutine.command.CoroutineBuilder
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoCache
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.executionContext
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
@@ -25,7 +25,7 @@ class CoroutineDebugProbesProxy(val suspendContext: SuspendContextImpl) {
         val coroutineInfoCache = CoroutineInfoCache()
         try {
             val executionContext = suspendContext.executionContext() ?: return coroutineInfoCache.fail()
-            val libraryAgentProxy = findProvider(executionContext)
+            val libraryAgentProxy = findProvider(executionContext) ?: return coroutineInfoCache.ok()
             val infoList = libraryAgentProxy.dumpCoroutinesInfo()
             coroutineInfoCache.ok(infoList)
         } catch (e: Throwable) {
@@ -35,8 +35,14 @@ class CoroutineDebugProbesProxy(val suspendContext: SuspendContextImpl) {
         return coroutineInfoCache
     }
 
-    private fun findProvider(executionContext: DefaultExecutionContext) =
-        CoroutineLibraryAgentProxy.instance(executionContext) ?: CoroutineNoLibraryProxy(executionContext)
-
-    fun frameBuilder() = CoroutineBuilder(suspendContext)
+    private fun findProvider(executionContext: DefaultExecutionContext): CoroutineInfoProvider? {
+        val agentProxy = CoroutineLibraryAgent2Proxy.instance(executionContext)
+        if (agentProxy != null)
+            return agentProxy
+        if (standaloneCoroutineDebuggerEnabled())
+            return CoroutineNoLibraryProxy(executionContext)
+        return null
+    }
 }
+
+fun standaloneCoroutineDebuggerEnabled() = Registry.`is`("kotlin.debugger.coroutines.standalone")

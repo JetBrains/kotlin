@@ -2,7 +2,7 @@
  * KOTLIN PSI SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, constant-literals, the-types-for-integer-literals -> paragraph 1 -> sentence 1
+ * MAIN LINK: expressions, constant-literals, the-types-for-integer-literals -> paragraph 1 -> sentence 1
  * NUMBER: 6
  * DESCRIPTION: Binary integer literals suffixed by the long literal mark.
  */

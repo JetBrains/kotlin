@@ -7,7 +7,8 @@
           "casesNumber": 0,
           "description": "When and lambda with expected type",
           "path": "compiler/testData/diagnostics/tests/when/whenAndLambdaWithExpectedType.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     },
@@ -18,7 +19,8 @@
           "casesNumber": 0,
           "description": "Kt10811",
           "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,9 +17,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 abstract class AbstractJoinListIntention<TList : KtElement, TElement : KtElement>(
     listClass: Class<TList>,
     elementClass: Class<TElement>,
-    text: String
-) : AbstractChopListIntention<TList, TElement>(listClass, elementClass, text) {
-
+    textGetter: () -> String
+) : AbstractChopListIntention<TList, TElement>(listClass, elementClass, textGetter) {
     override fun isApplicableTo(element: TList): Boolean {
         val elements = element.elements()
         if (elements.isEmpty()) return false
@@ -48,7 +47,7 @@ abstract class AbstractJoinListIntention<TList : KtElement, TElement : KtElement
 class JoinParameterListIntention : AbstractJoinListIntention<KtParameterList, KtParameter>(
     KtParameterList::class.java,
     KtParameter::class.java,
-    KotlinBundle.message("put.parameters.on.one.line")
+    KotlinBundle.lazyMessage("put.parameters.on.one.line")
 ) {
     override fun isApplicableTo(element: KtParameterList): Boolean {
         if (element.parent is KtFunctionLiteral) return false
@@ -59,5 +58,5 @@ class JoinParameterListIntention : AbstractJoinListIntention<KtParameterList, Kt
 class JoinArgumentListIntention : AbstractJoinListIntention<KtValueArgumentList, KtValueArgument>(
     KtValueArgumentList::class.java,
     KtValueArgument::class.java,
-    KotlinBundle.message("put.arguments.on.one.line")
+    KotlinBundle.lazyMessage("put.arguments.on.one.line")
 )

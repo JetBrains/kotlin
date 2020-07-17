@@ -53,7 +53,8 @@ data class IrValidatorConfig(
     val abortOnError: Boolean,
     val ensureAllNodesAreDifferent: Boolean,
     val checkTypes: Boolean = true,
-    val checkDescriptors: Boolean = true
+    val checkDescriptors: Boolean = true,
+    val checkProperties: Boolean = false,
 )
 
 class IrValidator(val context: CommonBackendContext, val config: IrValidatorConfig) : IrElementVisitorVoid {
@@ -106,11 +107,11 @@ object CheckDeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationPare
         val parent = try {
             declaration.parent
         } catch (e: Throwable) {
-            error("$declaration for ${declaration.descriptor} has no parent")
+            error("$declaration for ${declaration.render()} has no parent")
         }
 
         if (parent != expectedParent) {
-            error("$declaration for ${declaration.descriptor} has unexpected parent $parent")
+            error("$declaration for ${declaration.render()} has unexpected parent $parent")
         }
     }
 }

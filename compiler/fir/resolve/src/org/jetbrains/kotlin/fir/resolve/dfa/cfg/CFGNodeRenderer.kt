@@ -104,6 +104,16 @@ fun CFGNode<*>.render(): String =
                 is LocalClassExitNode -> "Exit local class ${owner.name}"
                 is AnonymousObjectExitNode -> "Exit anonymous object"
 
+                is ContractDescriptionEnterNode -> "Enter contract description"
+
+                is EnterDefaultArgumentsNode -> "Enter default value of ${fir.name}"
+                is ExitDefaultArgumentsNode -> "Exit default value of ${fir.name}"
+
+                is ElvisLhsExitNode -> "Exit lhs of ?:"
+                is ElvisLhsIsNotNullNode -> "Lhs of ?: is not null"
+                is ElvisRhsEnterNode -> "Enter rhs of ?:"
+                is ElvisExitNode -> "Exit ?:"
+
                 is AbstractBinaryExitNode -> throw IllegalStateException()
             },
         )

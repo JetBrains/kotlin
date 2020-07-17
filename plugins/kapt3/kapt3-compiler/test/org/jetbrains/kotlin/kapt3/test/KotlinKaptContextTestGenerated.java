@@ -28,6 +28,11 @@ public class KotlinKaptContextTestGenerated extends AbstractKotlinKaptContextTes
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("DefaultParameterValues.kt")
+    public void testDefaultParameterValues() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/DefaultParameterValues.kt");
+    }
+
     @TestMetadata("NestedClasses.kt")
     public void testNestedClasses() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/kotlinRunner/NestedClasses.kt");

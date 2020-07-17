@@ -7,6 +7,6 @@ class A<T> {
 fun <E> A<E>.bar(): A<in E> = this
 
 fun baz(x: A<out CharSequence>) {
-    x.bar() checkType { <!UNRESOLVED_REFERENCE!>_<!><A<*>>() }
-    x.bar().foo() checkType { <!UNRESOLVED_REFERENCE!>_<!><Any?>() } // See KT-10448
+    x.bar() checkType { _<A<*>>() }
+    x.bar().foo() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any?>() } // See KT-10448
 }

@@ -80,6 +80,7 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 context.irBuiltIns.anyType,
                 originalFunction.symbol,
                 typeArgumentsCount = 0,
+                valueArgumentsCount = originalFunction.valueParameters.size,
                 reflectionTarget = originalFunction.symbol,
                 origin = BIND_CALL
             )
@@ -91,8 +92,10 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 endOffset,
                 context.irBuiltIns.anyType,
                 context.intrinsics.jsBind.symbol,
-                BIND_CALL,
-                superQualifierSymbol
+                valueArgumentsCount = 2,
+                typeArgumentsCount = 0,
+                origin = BIND_CALL,
+                superQualifierSymbol = superQualifierSymbol
             )
         }.apply {
             putValueArgument(0, irCall.dispatchReceiver?.deepCopyWithSymbols())

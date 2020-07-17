@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
-import java.util.*
 
 interface Qualifier : QualifierReceiver {
     val referenceExpression: KtSimpleNameExpression
@@ -72,17 +71,13 @@ class ClassQualifier(
     }
 
     override val staticScope: MemberScope
-        get() {
-            val scopes = ArrayList<MemberScope>(2)
-
-            scopes.add(descriptor.staticScope)
-
-            if (descriptor.kind != ClassKind.ENUM_ENTRY) {
-                scopes.add(descriptor.unsubstitutedInnerClassesScope)
-            }
-
-            return ChainedMemberScope("Static scope for ${descriptor.name} as class or object", scopes)
-        }
+        get() =
+            if (descriptor.kind == ClassKind.ENUM_ENTRY) descriptor.staticScope
+            else ChainedMemberScope.create(
+                "Static scope for ${descriptor.name} as class or object",
+                descriptor.staticScope,
+                descriptor.unsubstitutedInnerClassesScope
+            )
 
     override fun toString() = "Class{$descriptor}"
 }
@@ -100,9 +95,10 @@ class TypeAliasQualifier(
     override val staticScope: MemberScope
         get() = when {
             DescriptorUtils.isEnumClass(classDescriptor) ->
-                ChainedMemberScope(
+                ChainedMemberScope.create(
                     "Static scope for typealias ${descriptor.name}",
-                    listOf(classDescriptor.staticScope, EnumEntriesScope())
+                    classDescriptor.staticScope,
+                    EnumEntriesScope()
                 )
             else ->
                 classDescriptor.staticScope

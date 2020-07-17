@@ -13,7 +13,7 @@ FILE: test.kt
 
         public final class Extra : R|test/Test| {
             public constructor(x: R|kotlin/Int|): R|test/Test.Extra| {
-                super<R|kotlin/Any|>()
+                super<R|test/Test|>()
             }
 
             public final val x: R|kotlin/Int| = R|<local>/x|

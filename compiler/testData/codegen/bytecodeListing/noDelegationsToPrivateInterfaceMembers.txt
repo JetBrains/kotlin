@@ -2,7 +2,7 @@
 public final class A$DefaultImpls {
     inner class A$DefaultImpls
     private static method bar(p0: A): java.lang.String
-    public static @org.jetbrains.annotations.NotNull method foo(p0: A): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: A): java.lang.String
     private static method getLog(p0: A): java.lang.String
 }
 
@@ -15,7 +15,7 @@ public interface A {
 @kotlin.Metadata
 public final class B$DefaultImpls {
     inner class B$DefaultImpls
-    public static @org.jetbrains.annotations.NotNull method foo(p0: B): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: B): java.lang.String
 }
 
 @kotlin.Metadata

@@ -7,25 +7,26 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.ir.isSuspend
-import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -40,7 +41,7 @@ internal val functionReferencePhase = makeIrFilePhase(
 
 internal class FunctionReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     // This pass ignores suspend function references and function references used in inline arguments to inline functions.
-    private val ignoredFunctionReferences = mutableSetOf<IrCallableReference>()
+    private val ignoredFunctionReferences = mutableSetOf<IrCallableReference<*>>()
 
     private val IrFunctionReference.isIgnored: Boolean
         get() = (!type.isFunctionOrKFunction() || ignoredFunctionReferences.contains(this)) && !isSuspendFunctionReference()
@@ -119,12 +120,48 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     context.ir.symbols.getJvmFunctionClass(argumentTypes.size)
         private val superMethod =
             functionSuperClass.functions.single { it.owner.modality == Modality.ABSTRACT }
+
         private val useOptimizedSuperClass =
             context.state.generateOptimizedCallableReferenceSuperClasses
+
+        private val adapteeCall: IrFunctionAccessExpression? =
+            if (callee.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
+                // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator
+                // applied to a call. That call's target is the original function which we need to get owner/name/signature.
+                val call = when (val statement = callee.body!!.statements.single()) {
+                    is IrTypeOperatorCall -> {
+                        assert(statement.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
+                            "Unexpected type operator in ADAPTER_FOR_CALLABLE_REFERENCE: ${callee.render()}"
+                        }
+                        statement.argument
+                    }
+                    is IrReturn -> statement.value
+                    else -> statement
+                }
+                if (call !is IrFunctionAccessExpression) {
+                    throw UnsupportedOperationException("Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE: ${callee.render()}")
+                }
+                call
+            } else {
+                null
+            }
+
+        private val adaptedReferenceOriginalTarget: IrFunction? = adapteeCall?.symbol?.owner
+        private val isAdaptedReference = adaptedReferenceOriginalTarget != null
+
+        private val isKotlinFunInterface =
+            samSuperType != null && samSuperType.getClass()?.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+
+        private val needToGenerateSamEqualsHashCodeMethods =
+            isKotlinFunInterface && (isAdaptedReference || !isLambda)
+
         private val superType =
             samSuperType ?: when {
                 isLambda -> context.ir.symbols.lambdaClass
-                useOptimizedSuperClass -> context.ir.symbols.functionReferenceImpl
+                useOptimizedSuperClass -> when {
+                    isAdaptedReference -> context.ir.symbols.adaptedFunctionReference
+                    else -> context.ir.symbols.functionReferenceImpl
+                }
                 else -> context.ir.symbols.functionReference
             }.defaultType
 
@@ -137,41 +174,39 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             name = SpecialNames.NO_NAME_PROVIDED
         }.apply {
             parent = currentDeclarationParent ?: error("No current declaration parent at ${irFunctionReference.dump()}")
-            superTypes += superType
-            if (samSuperType == null)
-                superTypes += functionSuperClass.typeWith(parameterTypes)
-            if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType
+            superTypes = listOfNotNull(
+                superType,
+                if (samSuperType == null)
+                    functionSuperClass.typeWith(parameterTypes)
+                else null,
+                if (irFunctionReference.isSuspend)
+                    context.ir.symbols.suspendFunctionInterface.defaultType
+                else null,
+                if (needToGenerateSamEqualsHashCodeMethods)
+                    context.ir.symbols.functionAdapter.defaultType
+                else null,
+            )
             createImplicitParameterDeclarationWithWrappedDescriptor()
             copyAttributes(irFunctionReference)
             if (isLambda) {
-                (this as IrClassImpl).metadata = irFunctionReference.symbol.owner.metadata
+                metadata = irFunctionReference.symbol.owner.metadata
             }
         }
 
-        private val receiverFieldFromSuper = context.ir.symbols.functionReferenceReceiverField.owner
-
-        val fakeOverrideReceiverField = functionReferenceClass.addField {
-            name = receiverFieldFromSuper.name
-            isFakeOverride = true
-            origin = IrDeclarationOrigin.FAKE_OVERRIDE
-            type = receiverFieldFromSuper.type
-            isFinal = receiverFieldFromSuper.isFinal
-            isStatic = receiverFieldFromSuper.isStatic
-            visibility = receiverFieldFromSuper.visibility
-        }
+        private val receiverField = context.ir.symbols.functionReferenceReceiverField.owner
 
         fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
-            irBlock {
+            irBlock(irFunctionReference.startOffset, irFunctionReference.endOffset) {
                 val constructor = createConstructor()
-                createInvokeMethod(
+                val boundReceiverVar =
                     if (samSuperType != null && boundReceiver != null) {
                         irTemporary(boundReceiver.second)
                     } else null
-                )
+                createInvokeMethod(boundReceiverVar)
 
                 if (!isLambda && samSuperType == null && !useOptimizedSuperClass) {
                     createLegacyMethodOverride(irSymbols.functionReferenceGetSignature.owner) {
-                        generateSignature()
+                        generateSignature(callee.symbol)
                     }
                     createLegacyMethodOverride(irSymbols.functionReferenceGetName.owner) {
                         irString(callee.originalName.asString())
@@ -181,11 +216,52 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     }
                 }
 
+                if (needToGenerateSamEqualsHashCodeMethods) {
+                    generateSamEqualsHashCodeMethods(boundReceiverVar)
+                }
+                if (isKotlinFunInterface) {
+                    functionReferenceClass.addFakeOverridesViaIncorrectHeuristic()
+                }
+
                 +functionReferenceClass
                 +irCall(constructor.symbol).apply {
                     if (valueArgumentsCount > 0) putValueArgument(0, boundReceiver!!.second)
                 }
             }
+        }
+
+        private fun JvmIrBuilder.generateSamEqualsHashCodeMethods(boundReceiverVar: IrVariable?) {
+            checkNotNull(samSuperType) { "equals/hashCode can only be generated for fun interface wrappers: ${callee.render()}" }
+
+            if (!useOptimizedSuperClass) {
+                // This is the case of a fun interface wrapper over a (maybe adapted) function reference,
+                // with `-Xno-optimized-callable-referenced` enabled. We can't use constructors of FunctionReferenceImpl,
+                // so we'd need to basically generate a full class for a reference inheriting from FunctionReference,
+                // effectively disabling the optimization of fun interface wrappers over references.
+                // This scenario is probably not very popular because it involves using equals/hashCode on function references
+                // and enabling the mentioned internal compiler argument.
+                // Right now we generate them as abstract so that any call would result in AbstractMethodError.
+                // TODO: generate getFunctionDelegate, equals and hashCode properly in this case
+                functionReferenceClass.addFunction("equals", backendContext.irBuiltIns.booleanType, Modality.ABSTRACT).apply {
+                    addValueParameter("other", backendContext.irBuiltIns.anyNType)
+                }
+                functionReferenceClass.addFunction("hashCode", backendContext.irBuiltIns.intType, Modality.ABSTRACT)
+                return
+            }
+
+            SamEqualsHashCodeMethodsGenerator(backendContext, functionReferenceClass, samSuperType) { receiver ->
+                val internalClass = when {
+                    isAdaptedReference -> backendContext.ir.symbols.adaptedFunctionReference
+                    else -> backendContext.ir.symbols.functionReferenceImpl
+                }
+                val constructor = internalClass.owner.constructors.single {
+                    // arity, [receiver], owner, name, signature, flags
+                    it.valueParameters.size == 1 + (if (boundReceiver != null) 1 else 0) + 4
+                }
+                irCallConstructor(constructor.symbol, emptyList()).apply {
+                    generateConstructorCallArguments(this) { irGet(boundReceiverVar!!) }
+                }
+            }.generate()
         }
 
         private fun createConstructor(): IrConstructor =
@@ -216,7 +292,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     context.irBuiltIns.anyClass.owner.constructors.single()
                 } else {
                     val expectedArity =
-                        if (isLambda) 1
+                        if (isLambda && !isAdaptedReference) 1
                         else 1 + (if (boundReceiver != null) 1 else 0) + (if (useOptimizedSuperClass) 4 else 0)
                     superType.getClass()!!.constructors.single {
                         it.valueParameters.size == expectedArity
@@ -225,21 +301,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
                 body = context.createJvmIrBuilder(symbol).run {
                     irBlockBody(startOffset, endOffset) {
-                        +irDelegatingConstructorCall(constructor).apply {
+                        +irDelegatingConstructorCall(constructor).also { call ->
                             if (samSuperType == null) {
-                                var index = 0
-                                putValueArgument(index++, irInt(argumentTypes.size + if (irFunctionReference.isSuspend) 1 else 0))
-                                if (boundReceiver != null) {
-                                    putValueArgument(index++, irGet(valueParameters.first()))
-                                }
-                                if (!isLambda && useOptimizedSuperClass) {
-                                    val owner = calculateOwnerKClass(callee.parent, backendContext)
-                                    putValueArgument(index++, kClassToJavaClass(owner, backendContext))
-                                    putValueArgument(index++, irString(callee.originalName.asString()))
-                                    putValueArgument(index++, generateSignature())
-                                    // TODO: use correct parents for adapted function references
-                                    putValueArgument(index, irInt(if (callee.parent.let { it is IrClass && it.isFileClass }) 1 else 0))
-                                }
+                                generateConstructorCallArguments(call) { irGet(valueParameters.first()) }
                             }
                         }
                         +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
@@ -247,10 +311,64 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 }
             }
 
+        private fun JvmIrBuilder.generateConstructorCallArguments(
+            call: IrFunctionAccessExpression,
+            generateBoundReceiver: IrBuilder.() -> IrExpression
+        ) {
+            var index = 0
+            call.putValueArgument(index++, irInt(argumentTypes.size + if (irFunctionReference.isSuspend) 1 else 0))
+            if (boundReceiver != null) {
+                call.putValueArgument(index++, generateBoundReceiver())
+            }
+            if (!isLambda && useOptimizedSuperClass) {
+                val callableReferenceTarget = adaptedReferenceOriginalTarget ?: callee
+                val owner = calculateOwnerKClass(callableReferenceTarget.parent, backendContext)
+                call.putValueArgument(index++, kClassToJavaClass(owner, backendContext))
+                call.putValueArgument(index++, irString(callableReferenceTarget.originalName.asString()))
+                call.putValueArgument(index++, generateSignature(callableReferenceTarget.symbol))
+                call.putValueArgument(index, irInt(getFunctionReferenceFlags(callableReferenceTarget)))
+            }
+        }
+
+        private fun getFunctionReferenceFlags(callableReferenceTarget: IrFunction): Int {
+            val isTopLevelBit = getCallableReferenceTopLevelFlag(callableReferenceTarget)
+            val adaptedCallableReferenceFlags = getAdaptedCallableReferenceFlags()
+            return isTopLevelBit + (adaptedCallableReferenceFlags shl 1)
+        }
+
+        private fun getAdaptedCallableReferenceFlags(): Int {
+            if (adaptedReferenceOriginalTarget == null) return 0
+
+            val isVarargMappedToElementBit = if (hasVarargMappedToElement()) 1 else 0
+            val isSuspendConvertedBit = if (!adaptedReferenceOriginalTarget.isSuspend && callee.isSuspend) 1 else 0
+            val isCoercedToUnitBit = if (!adaptedReferenceOriginalTarget.returnType.isUnit() && callee.returnType.isUnit()) 1 else 0
+
+            return isVarargMappedToElementBit +
+                    (isSuspendConvertedBit shl 1) +
+                    (isCoercedToUnitBit shl 2)
+        }
+
+        private fun hasVarargMappedToElement(): Boolean {
+            if (adapteeCall == null) return false
+            for (i in 0 until adapteeCall.valueArgumentsCount) {
+                val arg = adapteeCall.getValueArgument(i) ?: continue
+                if (arg !is IrVararg) continue
+                for (varargElement in arg.elements) {
+                    if (varargElement is IrGetValue) return true
+                }
+            }
+            return false
+        }
+
         private fun createInvokeMethod(receiverVar: IrValueDeclaration?): IrSimpleFunction =
             functionReferenceClass.addFunction {
                 setSourceRange(if (isLambda) callee else irFunctionReference)
-                name = superMethod.owner.name
+                name = if (callee.returnType.erasedUpperBound.isInline && context.state.functionsWithInlineClassReturnTypesMangled) {
+                    // For functions with inline class return type we need to mangle the invoke method.
+                    // Otherwise, bridge lowering may fail to generate bridges for inline class types erasing to Any.
+                    val suffix = InlineClassAbi.returnHashSuffix(callee)
+                    Name.identifier("${superMethod.owner.name.asString()}-${suffix}")
+                } else superMethod.owner.name
                 returnType = callee.returnType
                 isSuspend = callee.isSuspend
             }.apply {
@@ -292,7 +410,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                                 // will put it into a field.
                                 if (samSuperType == null)
                                     irImplicitCast(
-                                        irGetField(irGet(dispatchReceiverParameter!!), fakeOverrideReceiverField),
+                                        irGetField(irGet(dispatchReceiverParameter!!),
+                                                   this@FunctionReferenceBuilder.receiverField
+                                        ),
                                         boundReceiver.second.type
                                     )
                                 else
@@ -344,16 +464,15 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
 
         private val IrFunction.originalName: Name
-            get() = (metadata as? MetadataSource.Function)?.descriptor?.name ?: name
+            get() = metadata?.name ?: name
 
-        private fun JvmIrBuilder.generateSignature(): IrExpression =
+        private fun JvmIrBuilder.generateSignature(target: IrFunctionSymbol): IrExpression =
             irCall(backendContext.ir.symbols.signatureStringIntrinsic).apply {
                 putValueArgument(
                     0,
                     //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
                     IrFunctionReferenceImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, irFunctionReference.symbol, 0,
-                        irFunctionReference.reflectionTarget, null
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target, 0, irFunctionReference.reflectionTarget, null
                     )
                 )
             }
@@ -400,14 +519,21 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
 
         internal fun IrBuilderWithScope.calculateOwnerKClass(irContainer: IrDeclarationParent, context: JvmBackendContext): IrExpression =
-            kClassReference(
-                if (irContainer is IrClass) irContainer.defaultType
-                else {
-                    // For built-in members (i.e. top level `toString`) we generate reference to an internal class for an owner.
-                    // This allows kotlin-reflect to understand that this is a built-in intrinsic which has no real declaration,
-                    // and construct a special KCallable object.
-                    context.ir.symbols.intrinsicsKotlinClass.defaultType
-                }
-            )
+            kClassReference(getOwnerKClassType(irContainer, context))
+
+        internal fun getOwnerKClassType(irContainer: IrDeclarationParent, context: JvmBackendContext): IrType =
+            if (irContainer is IrClass) irContainer.defaultType
+            else {
+                // For built-in members (i.e. top level `toString`) we generate reference to an internal class for an owner.
+                // This allows kotlin-reflect to understand that this is a built-in intrinsic which has no real declaration,
+                // and construct a special KCallable object.
+                context.ir.symbols.intrinsicsKotlinClass.defaultType
+            }
+
+        internal fun getCallableReferenceTopLevelFlag(declaration: IrDeclaration): Int =
+            if (isCallableReferenceTopLevel(declaration)) 1 else 0
+
+        internal fun isCallableReferenceTopLevel(declaration: IrDeclaration): Boolean =
+            declaration.parent.let { it is IrClass && it.isFileClass }
     }
 }

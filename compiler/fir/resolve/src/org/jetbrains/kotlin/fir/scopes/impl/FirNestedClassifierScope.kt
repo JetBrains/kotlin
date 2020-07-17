@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope() {
-
     private val classIndex: Map<Name, FirRegularClassSymbol> = run {
         val result = mutableMapOf<Name, FirRegularClassSymbol>()
         for (declaration in klass.declarations) {
@@ -24,11 +24,13 @@ class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope() {
         result
     }
 
-    override fun processClassifiersByName(
+    fun isEmpty() = classIndex.isEmpty()
+
+    override fun processClassifiersByNameWithSubstitution(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> Unit
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
         val matchedClass = classIndex[name] ?: return
-        processor(matchedClass)
+        processor(matchedClass, ConeSubstitutor.Empty)
     }
 }

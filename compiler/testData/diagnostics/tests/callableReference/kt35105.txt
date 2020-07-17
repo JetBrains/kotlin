@@ -1,0 +1,12 @@
+package
+
+public final class Testclass {
+    public constructor Testclass()
+    public final var entry: kotlin.String
+    public final inline fun </*0*/ reified T : kotlin.Any> distinct(/*0*/ distinctField: kotlin.reflect.KMutableProperty1<out kotlin.Any, T>, /*1*/ vararg filter: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
+    public final fun </*0*/ T : kotlin.Any> distinct(/*0*/ distinctField: kotlin.reflect.KMutableProperty1<out kotlin.Any, T>, /*1*/ entryClazz: kotlin.reflect.KClass<T>, /*2*/ vararg filter: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -5,7 +5,6 @@
 
 package kotlin.script.experimental.jvmhost
 
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemory
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 import java.io.FileOutputStream
@@ -14,25 +13,22 @@ import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-import kotlin.script.experimental.jvm.impl.copyWithoutModule
-import kotlin.script.experimental.jvm.impl.scriptMetadataPath
-import kotlin.script.experimental.jvm.impl.toBytes
-import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
+import kotlin.script.experimental.jvm.impl.*
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
 
 // TODO: generate execution code (main)
 
 open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvaluator {
 
     override suspend operator fun invoke(
-        compiledScript: CompiledScript<*>,
+        compiledScript: CompiledScript,
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> {
         try {
-            if (compiledScript !is KJvmCompiledScript<*>)
+            if (compiledScript !is KJvmCompiledScript)
                 return failure("Cannot generate classes: unsupported compiled script type $compiledScript")
-            val module = (compiledScript.compiledModule as? KJvmCompiledModuleInMemory)
-                ?: return failure("Cannot generate classes: unsupported module type ${compiledScript.compiledModule}")
+            val module = (compiledScript.getCompiledModule() as? KJvmCompiledModuleInMemory)
+                ?: return failure("Cannot generate classes: unsupported module type ${compiledScript.getCompiledModule()}")
             for ((path, bytes) in module.compilerOutputFiles) {
                 File(outputDir, path).apply {
                     if (!parentFile.isDirectory) {
@@ -50,18 +46,18 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
     }
 }
 
-fun KJvmCompiledScript<*>.saveToJar(outputJar: File) {
-    val module = (compiledModule as? KJvmCompiledModuleInMemory)
-        ?: throw IllegalArgumentException("Unsupported module type $compiledModule")
+fun KJvmCompiledScript.saveToJar(outputJar: File) {
+    val module = (getCompiledModule() as? KJvmCompiledModuleInMemory)
+        ?: throw IllegalArgumentException("Unsupported module type ${getCompiledModule()}")
     val dependenciesFromScript = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
         ?.filterIsInstance<JvmDependency>()
         ?.flatMap { it.classpath }
         .orEmpty()
-    val dependenciesForMain = scriptCompilationClasspathFromContext(
+    val dependenciesForMain = scriptCompilationClasspathFromContextOrNull(
         KotlinPaths.Jar.ScriptingLib.baseName, KotlinPaths.Jar.ScriptingJvmLib.baseName,
         classLoader = this::class.java.classLoader,
         wholeClasspath = false
-    )
+    ) ?: emptyList()
     val dependencies = (dependenciesFromScript + dependenciesForMain).distinct()
     FileOutputStream(outputJar).use { fileStream ->
         val manifest = Manifest()
@@ -93,11 +89,11 @@ fun KJvmCompiledScript<*>.saveToJar(outputJar: File) {
 open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
 
     override suspend operator fun invoke(
-        compiledScript: CompiledScript<*>,
+        compiledScript: CompiledScript,
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> {
         try {
-            if (compiledScript !is KJvmCompiledScript<*>)
+            if (compiledScript !is KJvmCompiledScript)
                 return failure("Cannot generate jar: unsupported compiled script type $compiledScript")
             compiledScript.saveToJar(outputJar)
             return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.NotEvaluated, scriptEvaluationConfiguration))

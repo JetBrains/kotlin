@@ -11,12 +11,16 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -33,6 +37,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     open lateinit var session: FirSession
     open var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    open lateinit var origin: FirDeclarationOrigin
     open lateinit var returnTypeRef: FirTypeRef
     open lateinit var name: Name
     open lateinit var symbol: FirVariableSymbol<FirValueParameter>
@@ -48,6 +53,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
             source,
             session,
             resolvePhase,
+            origin,
             returnTypeRef,
             name,
             symbol,
@@ -67,4 +73,25 @@ inline fun buildValueParameter(init: FirValueParameterBuilder.() -> Unit): FirVa
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return FirValueParameterBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValueParameterBuilder.() -> Unit): FirValueParameter {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirValueParameterBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.session = original.session
+    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.origin = original.origin
+    copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.name = original.name
+    copyBuilder.symbol = original.symbol
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.defaultValue = original.defaultValue
+    copyBuilder.isCrossinline = original.isCrossinline
+    copyBuilder.isNoinline = original.isNoinline
+    copyBuilder.isVararg = original.isVararg
+    return copyBuilder.apply(init).build()
 }

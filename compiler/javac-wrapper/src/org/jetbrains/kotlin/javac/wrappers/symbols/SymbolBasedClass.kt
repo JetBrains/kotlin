@@ -133,6 +133,8 @@ class SymbolBasedClass(
             .filter { it.kind == ElementKind.CONSTRUCTOR }
             .map { SymbolBasedConstructor(it as ExecutableElement, this, javac) }
 
+    override fun hasDefaultConstructor() = false // default constructors are explicit in symbols
+
     override val innerClassNames: Collection<Name>
         get() = innerClasses.keys
 

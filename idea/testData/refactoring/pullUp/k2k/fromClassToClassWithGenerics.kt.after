@@ -34,7 +34,8 @@ abstract class A<T: I, U: I, V>(x: T, y: Any?) {
     }
 
     // INFO: {"checked": "true"}
-    inner class Foo<S>(x1: T, x2: Z<T>, y1: Any?, y2: Z<Any?>, w1: I, w2: Z<I>, s1: S, s2: Z<S>): A<T, I, Z<Any?>>(), Z<I> {
+    inner class Foo<S>(x1: T, x2: Z<T>, y1: Any?, y2: Z<Any?>, w1: I, w2: Z<I>, s1: S, s2: Z<S>): A<T, I, Z<Any?>>(),
+        Z<I> {
 
     }
 }

@@ -9,4 +9,4 @@ suspend fun main() {
     Unit
 }
 
-// RESUME: 3
+// RESUME: 1

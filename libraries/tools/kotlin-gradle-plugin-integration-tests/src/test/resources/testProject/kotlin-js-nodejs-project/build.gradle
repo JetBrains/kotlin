@@ -1,0 +1,21 @@
+plugins {
+    id("org.jetbrains.kotlin.js") version "<pluginMarkerVersion>"
+}
+
+dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+kotlin {
+    target {
+        useCommonJs()
+        binaries.executable()
+        nodejs {
+        }
+    }
+}

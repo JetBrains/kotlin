@@ -21,8 +21,8 @@ import kotlin.script.experimental.jvmhost.repl.JvmReplEvaluator
 class LegacyReplTest : TestCase() {
     fun testReplBasics() {
         LegacyTestRepl().use { repl ->
-            val res1 = repl.replCompiler.check(repl.state, ReplCodeLine(0, 0, "val x ="))
-            TestCase.assertTrue("Unexpected check results: $res1", res1 is ReplCheckResult.Incomplete)
+            val res1 = repl.replCompiler.compile(repl.state, ReplCodeLine(0, 0, "val x ="))
+            TestCase.assertTrue("Unexpected check results: $res1", res1 is ReplCompileResult.Incomplete)
 
             assertEvalResult(repl, "val l1 = listOf(1 + 2)\nl1.first()", 3)
 
@@ -54,8 +54,8 @@ class LegacyReplTest : TestCase() {
     fun testReplCodeFormat() {
         LegacyTestRepl().use { repl ->
             val codeLine0 = ReplCodeLine(0, 0, "val l1 = 1\r\nl1\r\n")
-            val res0 = repl.replCompiler.check(repl.state, codeLine0)
-            val res0c = res0 as? ReplCheckResult.Ok
+            val res0 = repl.replCompiler.compile(repl.state, codeLine0)
+            val res0c = res0 as? ReplCompileResult.CompiledClasses
             TestCase.assertNotNull("Unexpected compile result: $res0", res0c)
         }
     }
@@ -125,7 +125,7 @@ internal class LegacyTestRepl : Closeable {
     fun nextCodeLine(code: String): ReplCodeLine = ReplCodeLine(currentLineCounter.getAndIncrement(), 0, code)
 
     val replCompiler: JvmReplCompiler by lazy {
-        JvmReplCompiler(simpleScriptompilationConfiguration)
+        JvmReplCompiler(simpleScriptCompilationConfiguration, false)
     }
 
     val compiledEvaluator: ReplEvaluator by lazy {

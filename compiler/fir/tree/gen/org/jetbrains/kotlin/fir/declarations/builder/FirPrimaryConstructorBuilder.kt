@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.builder.FirAbstractConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
@@ -37,9 +39,10 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
     override var source: FirSourceElement? = null
     override lateinit var session: FirSession
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override lateinit var origin: FirDeclarationOrigin
     override lateinit var returnTypeRef: FirTypeRef
     override var receiverTypeRef: FirTypeRef? = null
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override lateinit var status: FirDeclarationStatus
     override var containerSource: DeserializedContainerSource? = null
@@ -53,6 +56,7 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
             source,
             session,
             resolvePhase,
+            origin,
             returnTypeRef,
             receiverTypeRef,
             typeParameters,

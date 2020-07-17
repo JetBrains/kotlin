@@ -2,13 +2,11 @@ public final class WhenIsKt {
     public static final fun foo(@org.jetbrains.annotations.NotNull bar: java.lang.Object) : java.lang.String {
         return switch (bar)  {
             it is java.lang.String -> {
-                bar
-                break
+                yield bar
             }
 
             it !is java.lang.String -> {
-                "<error>"
-                break
+                yield "<error>"
             }
 
         }

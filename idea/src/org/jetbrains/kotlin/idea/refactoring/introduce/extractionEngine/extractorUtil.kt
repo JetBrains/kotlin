@@ -603,7 +603,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
             val bodyExpression = body.statements.singleOrNull()
             val bodyOwner = body.parent as KtDeclarationWithBody
             val useExpressionBodyInspection = UseExpressionBodyInspection()
-            if (bodyExpression != null && !bodyExpression.isMultiLine() && useExpressionBodyInspection.isActiveFor(bodyOwner)) {
+            if (bodyExpression != null && useExpressionBodyInspection.isActiveFor(bodyOwner)) {
                 useExpressionBodyInspection.simplify(bodyOwner, !useExplicitReturnType())
             }
         }

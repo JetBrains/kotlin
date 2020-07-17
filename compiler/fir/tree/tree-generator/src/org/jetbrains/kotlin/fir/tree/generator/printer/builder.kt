@@ -111,6 +111,11 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
     if (builder is LeafBuilder) {
         println()
         printDslBuildFunction(builder, hasRequiredFields)
+
+        if (builder.wantsCopy) {
+            println()
+            printDslBuildCopyFunction(builder, hasRequiredFields)
+        }
     }
 }
 
@@ -259,6 +264,42 @@ private fun SmartPrinter.printDslBuildFunction(
         } else {
             println("$builderType().apply(init).build()")
         }
+    }
+    println("}")
+}
+
+private fun SmartPrinter.printDslBuildCopyFunction(
+    builder: LeafBuilder,
+    hasRequiredFields: Boolean
+) {
+    println("@OptIn(ExperimentalContracts::class)")
+    print("inline ")
+    print("fun ")
+    builder.implementation.element.typeArguments.takeIf { it.isNotEmpty() }?.let {
+        print(it.joinToString(separator = ", ", prefix = "<", postfix = "> ") { it.name })
+    }
+    val builderType = builder.typeWithArguments
+    val name = builder.implementation.name?.replaceFirst("Fir", "") ?: builder.implementation.element.name
+    print("build${name}Copy(")
+    print("original: ${builder.implementation.element.typeWithArguments}, init: $builderType.() -> Unit")
+    if (!hasRequiredFields) {
+        print(" = {}")
+    }
+    println("): ${builder.implementation.element.typeWithArguments} {")
+    withIndent {
+        println("contract {")
+        withIndent {
+            println("callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)")
+        }
+        println("}")
+        println("val copyBuilder = $builderType()")
+        for (field in builder.allFields) {
+            when (field.origin) {
+                is FieldList -> println("copyBuilder.${field.name}.addAll(original.${field.name})")
+                else -> println("copyBuilder.${field.name} = original.${field.name}")
+            }
+        }
+        println("return copyBuilder.apply(init).build()")
     }
     println("}")
 }

@@ -11,7 +11,7 @@ sealed class Field : Importable {
     abstract val name: String
     open val arguments = mutableListOf<Importable>()
     abstract val nullable: Boolean
-    abstract val withReplace: Boolean
+    open var withReplace: Boolean = false
     abstract val isFirType: Boolean
 
     var fromParent: Boolean = false
@@ -22,9 +22,10 @@ sealed class Field : Importable {
     abstract var isMutable: Boolean
     open var isMutableInInterface: Boolean = false
     open val withGetter: Boolean get() = false
-    open val isLateinit: Boolean get() = false
     open val customSetter: String? get() = null
     open val fromDelegate: Boolean get() = false
+
+    open val overridenTypes: MutableSet<Importable> = mutableSetOf()
 
     fun copy(): Field = internalCopy().also {
         updateFieldsInCopy(it)
@@ -37,6 +38,7 @@ sealed class Field : Importable {
             copy.needsSeparateTransform = needsSeparateTransform
             copy.needTransformInOtherChildren = needTransformInOtherChildren
             copy.isMutable = isMutable
+            copy.overridenTypes += overridenTypes
         }
         copy.fromParent = fromParent
     }
@@ -66,7 +68,9 @@ class FieldWithDefault(val origin: Field) : Field() {
     override val name: String get() = origin.name
     override val type: String get() = origin.type
     override val nullable: Boolean get() = origin.nullable
-    override val withReplace: Boolean get() = origin.withReplace
+    override var withReplace: Boolean
+        get() = origin.withReplace
+        set(_) {}
     override val packageName: String? get() = origin.packageName
     override val isFirType: Boolean get() = origin.isFirType
     override var needsSeparateTransform: Boolean
@@ -91,6 +95,8 @@ class FieldWithDefault(val origin: Field) : Field() {
     override var customSetter: String? = null
     override var fromDelegate: Boolean = false
     var needAcceptAndTransform: Boolean = true
+    override val overridenTypes: MutableSet<Importable>
+        get() = origin.overridenTypes
 
     override fun internalCopy(): Field {
         return FieldWithDefault(origin).also {
@@ -109,7 +115,7 @@ class SimpleField(
     override val packageName: String?,
     val customType: Importable? = null,
     override val nullable: Boolean,
-    override val withReplace: Boolean
+    override var withReplace: Boolean
 ) : Field() {
     override val isFirType: Boolean = false
     override val fullQualifiedName: String?
@@ -144,7 +150,7 @@ class FirField(
     override val name: String,
     val element: AbstractElement,
     override val nullable: Boolean,
-    override val withReplace: Boolean
+    override var withReplace: Boolean
 ) : Field() {
     init {
         if (element is ElementWithArguments) {
@@ -173,7 +179,7 @@ class FirField(
 class FieldList(
     override val name: String,
     val baseType: Importable,
-    override val withReplace: Boolean
+    override var withReplace: Boolean
 ) : Field() {
     override var defaultValueInImplementation: String? = null
     override val packageName: String? get() = baseType.packageName

@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -39,14 +41,16 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     override var source: FirSourceElement? = null
     override lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override lateinit var origin: FirDeclarationOrigin
     override lateinit var returnTypeRef: FirTypeRef
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
+    var contractDescription: FirContractDescription = FirEmptyContractDescription
     lateinit var symbol: FirPropertyAccessorSymbol
     var isGetter: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     lateinit var status: FirDeclarationStatus
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirPropertyAccessor {
@@ -54,14 +58,16 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
             source,
             session,
             resolvePhase,
+            origin,
             returnTypeRef,
-            typeParameters,
             valueParameters,
             body,
+            contractDescription,
             symbol,
             isGetter,
             status,
             annotations,
+            typeParameters,
         )
     }
 

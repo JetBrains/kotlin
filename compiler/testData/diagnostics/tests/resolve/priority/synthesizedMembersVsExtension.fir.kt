@@ -6,5 +6,5 @@ operator fun A.component1(): String = ""
 
 fun test(a: A) {
     val (b) = a
-    b checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    b checkType { _<Int>() }
 }

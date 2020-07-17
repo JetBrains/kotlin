@@ -1,0 +1,4 @@
+package
+
+public fun test(): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ @kotlin.internal.OnlyInputTypes K, /*1*/ V, /*2*/ V1 : V?> kotlin.collections.Map<out K, V>.getOrDefault_Exact(/*0*/ key: K, /*1*/ defaultValue: V1): V1

@@ -75,4 +75,14 @@ class A {
         double d4 = Double.NEGATIVE_INFINITY;
         double d5 = Double.NaN;
     }
+
+    void kt35593() {
+        Number number = 1;
+        byte b = number.byteValue();
+        double d = number.doubleValue();
+        float f = number.floatValue();
+        int i = number.intValue();
+        long l = number.longValue();
+        short s = number.shortValue();
+    }
 }

@@ -5,7 +5,7 @@ fun main(args: Array<String>) {
     inlineInObject.other.TestInlineInObject.inlineFun()
 }
 
-// ADDITIONAL_BREAKPOINT: inlineInObject.Other.kt: Breakpoint 1
+// ADDITIONAL_BREAKPOINT: inlineInObject.Other.kt / Breakpoint 1
 
 // FILE: inlineInObject.Other.kt
 package inlineInObject.other

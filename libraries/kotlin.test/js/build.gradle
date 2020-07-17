@@ -5,7 +5,6 @@ apply plugin: 'kotlin-platform-js'
 configurePublishing(project)
 
 configurations {
-    sources
     distJs
     distLibrary
 }
@@ -59,10 +58,11 @@ task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
     duplicatesStrategy DuplicatesStrategy.FAIL
 
     from zipTree(libraryJarWithoutIr.archiveFile)
-    if (rootProject.includeStdlibJsIr) {
-        def irKlib = tasks.getByPath(":kotlin-stdlib-js-ir:generateKotlinTestKLib")
-        dependsOn(irKlib)
-        from fileTree(irKlib.outputs.files.singleFile.path)
+
+    dependsOn(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
+    from {
+        def irKlib = tasks.getByPath(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
+        fileTree(irKlib.outputs.files.first().path)
     }
 }
 
@@ -76,12 +76,14 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 artifacts {
     runtime libraryJarWithIr
     archives libraryJarWithIr
-    distLibrary libraryJarWithoutIr
+    publishedRuntime libraryJarWithIr
+    distLibrary libraryJarWithIr
     archives sourcesJar
-    sources sourcesJar
     distJs(file(compileKotlin2Js.kotlinOptions.outputFile)) {
         builtBy(compileKotlin2Js)
     }
 }
 
-javadocJar()
+configureSourcesJar()
+
+configureJavadocJar()

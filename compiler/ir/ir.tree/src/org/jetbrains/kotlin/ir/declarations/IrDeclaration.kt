@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
@@ -29,11 +31,13 @@ interface IrSymbolOwner : IrElement {
 }
 
 interface IrMetadataSourceOwner : IrElement {
-    val metadata: MetadataSource?
+    var metadata: MetadataSource?
 }
 
-interface IrDeclaration : IrStatement, IrMutableAnnotationContainer, IrMetadataSourceOwner {
+interface IrDeclaration : IrStatement, IrMutableAnnotationContainer {
+    @ObsoleteDescriptorBasedAPI
     val descriptor: DeclarationDescriptor
+
     var origin: IrDeclarationOrigin
 
     var parent: IrDeclarationParent
@@ -51,10 +55,13 @@ interface IrOverridableDeclaration<S : IrSymbol> : IrDeclaration {
 }
 
 interface IrDeclarationWithVisibility : IrDeclaration {
-    val visibility: Visibility
+    var visibility: Visibility
 }
 
 interface IrDeclarationWithName : IrDeclaration {
     val name: Name
 }
 
+interface IrOverridableMember : IrDeclarationWithVisibility, IrDeclarationWithName, IrSymbolOwner {
+    val modality: Modality
+}

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.highlighter.markers.LineMarkerInfos
 import org.jetbrains.kotlin.idea.inspections.RecursivePropertyAccessorInspection
 import org.jetbrains.kotlin.idea.util.getReceiverTargetDescriptor
 import org.jetbrains.kotlin.lexer.KtToken
@@ -45,7 +46,7 @@ import java.util.*
 class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement) = null
 
-    override fun collectSlowLineMarkers(elements: MutableList<PsiElement>, result: MutableCollection<LineMarkerInfo<*>>) {
+    override fun collectSlowLineMarkers(elements: MutableList<PsiElement>, result: LineMarkerInfos) {
         val markedLineNumbers = HashSet<Int>()
 
         for (element in elements) {

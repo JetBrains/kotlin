@@ -1,14 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
+ext {
+    isD8Enabled = project.findProperty('android.enableD8').toBoolean()
+}
 buildscript {
     repositories {
         google()
         jcenter()
     }
     dependencies {        
-        classpath 'com.android.tools.build:gradle:3.3.2'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle:3.5.3'
     }
 }
 apply plugin: 'com.android.application'
@@ -19,7 +19,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 26
     buildToolsVersion "28.0.3"
 
     defaultConfig {
@@ -51,7 +51,7 @@ android {
 
     dexOptions {
         dexInProcess false
-        javaMaxHeapSize "1200m"
+        javaMaxHeapSize "1500m"
         maxProcessCount 4
         additionalParameters "--debug"
     }
@@ -60,20 +60,41 @@ android {
         resultsDir = "build/test/results"
     }
 
+    if (isD8Enabled) {
+        compileOptions {
+            sourceCompatibility = 1.8
+            targetCompatibility = 1.8
+        }
+    }
 
     flavorDimensions "box"
 
     productFlavors {
-        ktest0 {
+        common0 {
             dimension "box"
         }
 
-        ktest1 {
+        common1 {
             dimension "box"
         }
 
-        ktest2 {
+        common2 {
             dimension "box"
+        }
+
+        reflect0 {
+            dimension "box"
+        }
+
+
+        if (isD8Enabled) {
+            jvm80 {
+                dimension "box"
+            }
+
+            reflectjvm80 {
+                dimension "box"
+            }
         }
     }
 
@@ -82,9 +103,9 @@ android {
 task jarTestFolders() {
     println "Jar folders..."
     new File("${projectDir}/libs/").listFiles().each { File file ->
-        if (file.isDirectory() && !file.name.equals("test")) {
+        if (file.isDirectory()) {
             println "Jar '${file.name}' folder..."
-            ant.jar(basedir: "libs/${file.name}/", destfile: "libs/test/" +  file.name  + ".jar")
+            ant.jar(basedir: "libs/${file.name}/", destfile: "libs/" +  file.name  + ".jar")
         }
     }
 }
@@ -94,11 +115,18 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['kotlin-test.jar', 'kotlin-stdlib.jar'])
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
 
-    ktest0Implementation fileTree(dir: 'libs/test', include: ['libtest0.jar'])
-    ktest1Implementation fileTree(dir: 'libs/test', include: ['libtest1.jar'])
-    ktest2Implementation fileTree(dir: 'libs/test', include: ['libtest2.jar'])
+    android.applicationVariants.all { variant ->
+        variant.productFlavors.each {
+            def configuration = configurations.getByName(it.name + 'Implementation').name
+            add(configuration, project.fileTree(dir: 'libs', include: [it.name + ".jar"]))
+
+            if (it.name.startsWith("reflect")) {
+                add(configuration, project.fileTree(dir: 'libs', include: ['kotlin-reflect.jar']))
+            }
+        }
+    }
 }

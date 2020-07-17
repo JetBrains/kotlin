@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
@@ -33,7 +34,12 @@ abstract class FirAbstractImportingScope(
                 return getStaticsScope(expansionSymbol.classId)
             }
         } else {
-            return (symbol as FirClassSymbol<*>).fir.unsubstitutedScope(session, scopeSession)
+            val firClass = (symbol as FirClassSymbol<*>).fir
+
+            return if (firClass.classKind == ClassKind.OBJECT)
+                FirObjectImportedCallableScope(classId, firClass.unsubstitutedScope(session, scopeSession))
+            else
+                firClass.scopeProvider.getStaticScope(firClass, session, scopeSession)
         }
 
         return null

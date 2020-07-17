@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
+import com.intellij.openapi.actionSystem.CommonShortcuts
+import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.ui.ColoredListCellRenderer
@@ -18,12 +20,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.awt.Dimension
 import javax.swing.Icon
 import javax.swing.JPanel
+import kotlin.reflect.KFunction0
 
 class ModuleDependenciesComponent(
     context: Context
 ) : TitledComponent(context) {
     override val title: String = KotlinNewProjectWizardUIBundle.message("module.dependencies.module.dependencies")
-    private val dependenciesList = ModuleDependenciesList()
+    private val dependenciesList = ModuleDependenciesList(::possibleDependencies)
     override val forceLabelCenteringOffset: Int? = 4
     override val additionalComponentPadding: Int = 1
     override val maximumWidth: Int = 500
@@ -102,9 +105,25 @@ private class AddModulesPopUp(
     }
 }
 
-private class ModuleDependenciesList : AbstractSingleSelectableListWithIcon<Module>() {
+private class ModuleDependenciesList(getDependencies: () -> List<Module>) : AbstractSingleSelectableListWithIcon<Module>() {
     init {
-        setEmptyText(KotlinNewProjectWizardUIBundle.message("module.settings.dependencies.empty"))
+        emptyText.apply {
+            clear()
+            appendText(KotlinNewProjectWizardUIBundle.message("module.settings.dependencies.empty"))
+            appendSecondaryText(
+                KotlinNewProjectWizardUIBundle.message("module.settings.dependencies.empty.suggest.add"),
+                SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES
+            ) {
+                AddModulesPopUp.create(
+                    getDependencies(),
+                    ::addDependency
+                ).showInCenterOf(this@ModuleDependenciesList)
+            }
+            val shortcutText = KeymapUtil.getFirstKeyboardShortcutText(CommonShortcuts.getNewForDialogs())
+            if (shortcutText.isNotEmpty()) {
+                appendSecondaryText(" ($shortcutText)", SimpleTextAttributes.GRAYED_ATTRIBUTES, null)
+            }
+        }
     }
 
     override fun ColoredListCellRenderer<Module>.render(value: Module) {

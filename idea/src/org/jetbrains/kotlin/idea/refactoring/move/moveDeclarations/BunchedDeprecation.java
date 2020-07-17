@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.util.TextOccurrencesUtil;
 import com.intellij.usageView.UsageInfo;
 
 import java.util.Collection;
 
-// BUNCH: 201
+// FIX ME WHEN BUNCH 201 REMOVED
 final class BunchedDeprecation {
     public static void findNonCodeUsages(
             PsiElement element,
@@ -20,6 +21,7 @@ final class BunchedDeprecation {
             boolean searchInNonJavaFiles,
             String newQName,
             Collection<? super UsageInfo> results) {
-        TextOccurrencesUtil.findNonCodeUsages(element, stringToSearch, searchInStringsAndComments, searchInNonJavaFiles, newQName, results);
+        TextOccurrencesUtil.findNonCodeUsages(element, GlobalSearchScope.projectScope(element.getProject()),
+                                              stringToSearch, searchInStringsAndComments, searchInNonJavaFiles, newQName, results);
     }
 }

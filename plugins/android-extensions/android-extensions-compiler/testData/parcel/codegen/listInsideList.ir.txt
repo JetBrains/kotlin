@@ -1,0 +1,71 @@
+public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final Test createFromParcel(android.os.Parcel parcel)
+
+    public java.lang.Object createFromParcel(android.os.Parcel source)
+
+    public final Test[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+}
+
+public final class Test : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final java.util.List names
+
+    static void <clinit>()
+
+    public void <init>(java.util.List names)
+
+    public int describeContents()
+
+    public final java.util.List getNames()
+
+    public void writeToParcel(android.os.Parcel out, int flags) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (out)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (0)
+          GETFIELD (names, Ljava/util/List;)
+          ASTORE (3)
+          ALOAD (1)
+          ALOAD (3)
+          INVOKEINTERFACE (java/util/List, size, ()I)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          ALOAD (3)
+          INVOKEINTERFACE (java/util/List, iterator, ()Ljava/util/Iterator;)
+          ASTORE (4)
+        LABEL (L1)
+          ALOAD (4)
+          INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
+          IFEQ (L2)
+          ALOAD (4)
+          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
+          ASTORE (5)
+          ALOAD (1)
+          ALOAD (5)
+          CHECKCAST
+          INVOKEINTERFACE (java/util/List, size, ()I)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          ALOAD (5)
+          CHECKCAST
+          INVOKEINTERFACE (java/util/List, iterator, ()Ljava/util/Iterator;)
+          ASTORE (6)
+        LABEL (L3)
+          ALOAD (6)
+          INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
+          IFEQ (L1)
+          ALOAD (1)
+          ALOAD (6)
+          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
+          CHECKCAST
+          INVOKEVIRTUAL (android/os/Parcel, writeStringList, (Ljava/util/List;)V)
+          GOTO (L3)
+        LABEL (L2)
+          RETURN
+        LABEL (L4)
+    }
+}

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
+import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSession;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
@@ -245,6 +246,10 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         boolean lhsAssignable = basic.checkLValue(ignoreReportsTrace, context, left, right, expression, false);
         if (assignmentOperationType == null || lhsAssignable) {
             // Check for '+'
+            // We should clear calls info for coroutine inference within right side as here we analyze it a second time in another context
+            if (context.inferenceSession instanceof CoroutineInferenceSession) {
+                ((CoroutineInferenceSession) context.inferenceSession).clearCallsInfoByContainingElement(right);
+            }
             Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
             binaryOperationDescriptors = components.callResolver.resolveBinaryCall(
                     context.replaceTraceAndCache(temporaryForBinaryOperation).replaceScope(scope),

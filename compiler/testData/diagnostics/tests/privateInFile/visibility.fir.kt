@@ -20,7 +20,7 @@ private fun bar() {
     xx = 30
 }
 
-fun makeA() = A()
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>makeA<!>() = A()
 
 private object PO {}
 
@@ -43,7 +43,7 @@ fun test() {
     xx = 40
 }
 
-class B : <!INAPPLICABLE_CANDIDATE!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS, INAPPLICABLE_CANDIDATE!>A<!>() {}
 
 class Q {
     class W {

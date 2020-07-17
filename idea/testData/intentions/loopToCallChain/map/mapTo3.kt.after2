@@ -5,8 +5,8 @@ import java.util.ArrayList
 
 fun foo(list: List<String>): List<Int> {
     val <caret>target = list
-            .asSequence()
-            .filter { it.length > 0 }
-            .mapTo(ArrayList<Int>(100)) { it.hashCode() }
+        .asSequence()
+        .filter { it.length > 0 }
+        .mapTo(ArrayList<Int>(100)) { it.hashCode() }
     return target
 }

@@ -29,19 +29,19 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @TestMetadata("indirectInlineCycle.kt")
-    public void testIndirectInlineCycle() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJvmBackend/indirectInlineCycle.kt");
+    @TestMetadata("indirectInlineCycle_ir.kt")
+    public void testIndirectInlineCycle_ir() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/indirectInlineCycle_ir.kt");
     }
 
-    @TestMetadata("inlineCycle.kt")
-    public void testInlineCycle() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle.kt");
+    @TestMetadata("inlineCycle_ir.kt")
+    public void testInlineCycle_ir() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle_ir.kt");
     }
 
-    @TestMetadata("suspendInlineCycle.kt")
-    public void testSuspendInlineCycle() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle.kt");
+    @TestMetadata("suspendInlineCycle_ir.kt")
+    public void testSuspendInlineCycle_ir() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle_ir.kt");
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature")
@@ -103,9 +103,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/classPropertyOverriddenByFunction.kt");
             }
 
-            @TestMetadata("defaultFunction.kt")
-            public void testDefaultFunction() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/defaultFunction.kt");
+            @TestMetadata("defaultFunction_ir.kt")
+            public void testDefaultFunction_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides/defaultFunction_ir.kt");
             }
 
             @TestMetadata("delegatedFunctionOverriddenByProperty_ir.kt")
@@ -438,9 +438,9 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/dataClassCopy.kt");
             }
 
-            @TestMetadata("defaults.kt")
-            public void testDefaults() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/defaults.kt");
+            @TestMetadata("defaults_ir.kt")
+            public void testDefaults_ir() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames/defaults_ir.kt");
             }
 
             @TestMetadata("delegationBy_ir.kt")

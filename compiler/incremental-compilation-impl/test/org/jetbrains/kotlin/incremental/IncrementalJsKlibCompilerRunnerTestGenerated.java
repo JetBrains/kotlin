@@ -312,6 +312,11 @@ public class IncrementalJsKlibCompilerRunnerTestGenerated extends AbstractIncrem
             runTest("jps-plugin/testData/incremental/pureKotlin/inlineUsedWhereDeclared/");
         }
 
+        @TestMetadata("innerClassesFromSupertypes")
+        public void testInnerClassesFromSupertypes() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/innerClassesFromSupertypes/");
+        }
+
         @TestMetadata("internalClassChanged")
         public void testInternalClassChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/internalClassChanged/");
@@ -744,6 +749,11 @@ public class IncrementalJsKlibCompilerRunnerTestGenerated extends AbstractIncrem
         @TestMetadata("inferredTypeChanged")
         public void testInferredTypeChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/classHierarchyAffected/inferredTypeChanged/");
+        }
+
+        @TestMetadata("interfaceAnyMethods")
+        public void testInterfaceAnyMethods() throws Exception {
+            runTest("jps-plugin/testData/incremental/classHierarchyAffected/interfaceAnyMethods/");
         }
 
         @TestMetadata("lambdaParameterAffected")

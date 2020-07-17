@@ -4,9 +4,9 @@
 fun foo(list: List<String>, o: Any): Int? {
     if (o is CharSequence) {
         <caret>return list
-                .map { it.length + (o as String).capitalize().hashCode() }
-                .map { it * o.length }
-                .firstOrNull { it > 1000 }
+            .map { it.length + (o as String).capitalize().hashCode() }
+            .map { it * o.length }
+            .firstOrNull { it > 1000 }
     }
     return 0
 }

@@ -40,9 +40,8 @@ import java.io.File
 @CacheableTask
 open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
 
-    private val kotlinOptionsImpl = KotlinMultiplatformCommonOptionsImpl()
     override val kotlinOptions: KotlinMultiplatformCommonOptions
-        get() = kotlinOptionsImpl
+        get() = taskData.compilation.kotlinOptions as KotlinMultiplatformCommonOptionsImpl
 
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
         K2MetadataCompilerArguments()
@@ -60,7 +59,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
         args.moduleName = this@KotlinCompileCommon.moduleName
 
         if ((taskData.compilation as? KotlinCommonCompilation)?.isKlibCompilation == true) {
-            args.klibBasedMpp = true
+            args.expectActualLinker = true
         }
 
         if (defaultsOnly) return
@@ -75,7 +74,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
             refinesPaths = refinesMetadataPaths.map { it.absolutePath }.toTypedArray()
         }
 
-        kotlinOptionsImpl.updateArguments(args)
+        (kotlinOptions as KotlinMultiplatformCommonOptionsImpl).updateArguments(args)
     }
 
     private fun outputPathsFromMetadataCompilationsOf(sourceSets: Iterable<KotlinSourceSet>): List<File> {

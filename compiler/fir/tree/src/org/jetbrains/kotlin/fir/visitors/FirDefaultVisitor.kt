@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.*
@@ -79,10 +78,6 @@ abstract class FirDefaultVisitor<R, D> : FirVisitor<R, D>() {
 
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: D): R {
         return visitWrappedArgumentExpression(namedArgumentExpression, data)
-    }
-
-    override fun visitSealedClass(sealedClass: FirSealedClass, data: D): R {
-        return visitRegularClass(sealedClass, data)
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: D): R {
