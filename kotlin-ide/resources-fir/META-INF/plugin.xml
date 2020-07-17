@@ -13,8 +13,6 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="201.7223.91" until-build="201.*"/>
-
   <depends>com.intellij.modules.platform</depends>
 
   <depends optional="true" config-file="gradle.xml">com.intellij.gradle</depends>
