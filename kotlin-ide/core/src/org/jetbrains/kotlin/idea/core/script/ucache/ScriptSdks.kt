@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.idea.core.script.ucache
 
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.util.application.runReadAction
 
-class ScriptSdks(val project: Project, private val sdks: Map<SdkId, Sdk?>) {
-    fun rebuild(remove: Sdk?): ScriptSdks {
+class ScriptSdks(
+    private val sdks: Map<SdkId, Sdk?>,
+    val nonIndexedClassRoots: Set<VirtualFile>,
+    val nonIndexedSourceRoots: Set<VirtualFile>
+) {
+    fun rebuild(project: Project, remove: Sdk?): ScriptSdks {
         val builder = ScriptSdksBuilder(project, remove = remove)
         sdks.keys.forEach { id ->
             builder.addSdk(id)
@@ -22,27 +22,9 @@ class ScriptSdks(val project: Project, private val sdks: Map<SdkId, Sdk?>) {
         return builder.build()
     }
 
-    val nonIndexedClassRoots = mutableSetOf<VirtualFile>()
-    val nonIndexedSourceRoots = mutableSetOf<VirtualFile>()
-
     val first: Sdk? = sdks.values.firstOrNull()
 
     operator fun get(sdkId: SdkId) = sdks[sdkId]
-
-    init {
-        val nonIndexedSdks = sdks.values.filterNotNullTo(mutableSetOf())
-
-        runReadAction {
-            ModuleManager.getInstance(project).modules.map {
-                nonIndexedSdks.remove(ModuleRootManager.getInstance(it).sdk)
-            }
-
-            nonIndexedSdks.forEach {
-                nonIndexedClassRoots.addAll(it.rootProvider.getFiles(OrderRootType.CLASSES))
-                nonIndexedSourceRoots.addAll(it.rootProvider.getFiles(OrderRootType.SOURCES))
-            }
-        }
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

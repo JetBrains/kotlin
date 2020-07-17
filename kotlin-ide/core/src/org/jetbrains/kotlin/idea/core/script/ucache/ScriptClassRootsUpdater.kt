@@ -68,11 +68,10 @@ abstract class ScriptClassRootsUpdater(
     /**
      * Wee need CAS due to concurrent unblocking sync update in [checkInvalidSdks]
      */
-    private val cache: AtomicReference<ScriptClassRootsCache> = AtomicReference(recreateRootsCache())
+    private val cache: AtomicReference<ScriptClassRootsCache> = AtomicReference(ScriptClassRootsCache.EMPTY)
 
     init {
-        @Suppress("LeakingThis")
-        afterUpdate()
+        ensureUpdateScheduled()
     }
 
     val classpathRoots: ScriptClassRootsCache
@@ -213,7 +212,7 @@ abstract class ScriptClassRootsUpdater(
         // sdks should be updated synchronously to avoid disposed roots usage
         do {
             val old = cache.get()
-            val actualSdks = old.sdks.rebuild(remove = remove)
+            val actualSdks = old.sdks.rebuild(project, remove = remove)
             if (actualSdks == old.sdks) return
             val new = old.withUpdatedSdks(actualSdks)
         } while (!cache.compareAndSet(old, new))
