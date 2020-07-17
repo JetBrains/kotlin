@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.codeInsight.unwrap;
 
 import com.intellij.codeInsight.unwrap.Unwrapper;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
@@ -77,7 +77,7 @@ public abstract class AbstractUnwrapRemoveTest extends KotlinLightCodeInsightFix
         boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
 
         String option = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// OPTION: ");
-        Integer optionIndex = option != null ? Integer.parseInt(option) : 0;
+        int optionIndex = option != null ? Integer.parseInt(option) : 0;
 
         List<Pair<PsiElement, Unwrapper>> unwrappersWithPsi =
                 new KotlinUnwrapDescriptor().collectUnwrappers(getProject(), getEditor(), getFile());
@@ -87,24 +87,18 @@ public abstract class AbstractUnwrapRemoveTest extends KotlinLightCodeInsightFix
             assertEquals(unwrapperClass, selectedUnwrapperWithPsi.second.getClass());
 
             final PsiElement first = selectedUnwrapperWithPsi.first;
-
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                @Override
-                public void run() {
-                    selectedUnwrapperWithPsi.second.unwrap(getEditor(), first);
-                }
-            });
+            CommandProcessor.getInstance().executeCommand(
+                    getProject(),
+                    () -> ApplicationManager.getApplication().runWriteAction(() -> {
+                        selectedUnwrapperWithPsi.second.unwrap(getEditor(), first);
+                    }),
+                    "Test",
+                    null
+            );
 
             myFixture.checkResultByFile(path + ".after");
         } else {
-            assertTrue(
-                    ContainerUtil.and(unwrappersWithPsi, new Condition<Pair<PsiElement, Unwrapper>>() {
-                        @Override
-                        public boolean value(Pair<PsiElement, Unwrapper> pair) {
-                            return pair.second.getClass() != unwrapperClass;
-                        }
-                    })
-            );
+            assertTrue(ContainerUtil.and(unwrappersWithPsi, pair -> pair.second.getClass() != unwrapperClass));
         }
     }
 
