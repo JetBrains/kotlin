@@ -60,3 +60,26 @@ org.jetbrains.kotlin.jvm.compiler.CompileKotlinAgainstJavaTestGenerated.WithoutA
 org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncLambdas, redesign test AsyncStackTraces,,
 org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testStepOverInlinedLambdaStdlib, fails after advancing bootstrap KT-37879,,
 org.jetbrains.kotlin.incremental.IncrementalJsKlibCompilerRunnerTestGenerated.ClassHierarchyAffected.testMethodRemoved, full fledged FO in klib required,,
+org.jetbrains.kotlin.gradle.Kotlin2JsIrGradlePluginIT.testBuildAndClean,Test was removed in master in 80a310540ea936b8 commit as obsoleted,, FLAKY
+org.jetbrains.kotlin.gradle.Kotlin2JsIrGradlePluginIT.testNoSeparateClassesDirWarning,Test was removed in master in 80a310540ea936b8 commit as obsoleted,, FLAKY
+org.jetbrains.kotlin.gradle.KotlinGradleIT.testDowngradeTo106,Test was removed in master in 80a310540ea936b8 commit as obsoleted,, FLAKY
+org.jetbrains.kotlin.gradle.Kotlin2JsGradlePluginIT.testBuildAndClean,Test was removed in master in 80a310540ea936b8 commit as obsoleted,, FLAKY
+org.jetbrains.kotlin.gradle.Kotlin2JsGradlePluginIT.testNoSeparateClassesDirWarning,Test was removed in master in 80a310540ea936b8 commit as obsoleted,, FLAKY
+org.jetbrains.kotlin.gradle.KotlinAndroid32GradleIT.testAndroidExtensionsSpecificFeatures,Fixed in master in a766369e7283d7b,,
+org.jetbrains.kotlin.gradle.KotlinAndroid33GradleIT.testAndroidExtensionsSpecificFeatures,Fixed in master in a766369e7283d7b,,
+org.jetbrains.kotlin.gradle.KotlinAndroid36GradleIT.testAndroidExtensionsSpecificFeatures,Fixed in master in a766369e7283d7b,,
+org.jetbrains.kotlin.gradle.NewMultiplatformIT.testJavaSupportInJvmTargets,STABLE failed in master,,
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated$CreateFromUsage$CreateClass$DelegationSpecifier.testCreateSuperClassFromSuperTypeEntry3,"Seems like non-interesting, KT-32511  is not super priority, fixed in master by some random commit. Also related only 201 IDEA",,
+"org.jetbrains.kotlin.gradle.ImportAndCheckNavigation.testNavigationToCommonizedLibrary[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable]",Ignored in master,,
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testAndroidDependencyOnMPP[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable]",Ignored in master,,
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testDetectAndroidSources[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable]",Ignored in master,,
+org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated$Custom.testFunctionBreakpointInStdlib,"STABLE in AS in master, under investigation",,
+org.jetbrains.uast.test.kotlin.KotlinUastTypesTest.testEa101715,STABLE (same test is failing in platform different from 202) in master,,
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated$RedundantSemicolon.testBetweenSoftModifierKeywordAndDeclaration,"minor problem, fixed in master: 9a0808514648",,
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated$RedundantSemicolon.testBetweenSoftModifierKeywordAndDeclaration2,"minor problem, fixed in master: 9a0808514648",,
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated$RedundantSemicolon.testBetweenSoftModifierKeywordAndDeclaration3,"minor problem, fixed in master: 9a0808514648",,
+org.jetbrains.kotlin.idea.refactoring.introduce.ExtractionTestGenerated$ExtractFunction$Basic.testSameParameterNames,STABLE in as36 -- investigation in master,,
+org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated$MakePrivateAndOverrideMember.testSetter,Muted in master in csv,,
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated$CreateFromUsage$CreateFunction$Invoke.testLambdaArgument,"STABLE failed, investigation in master",,
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated$ConvertToAnonymousObject.testHasConcreateMember2,muted in csv in master,,
+org.jetbrains.kotlin.fir.lightTree.compare.TreesCompareTest.testCompareAll,fir test,,
