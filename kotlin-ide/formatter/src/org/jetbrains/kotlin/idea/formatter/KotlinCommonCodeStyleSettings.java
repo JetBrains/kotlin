@@ -35,12 +35,6 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
     @ReflectionUtil.SkipInEquals
     public String CODE_STYLE_DEFAULTS = null;
 
-    /**
-     * Load settings with previous IDEA defaults to have an ability to restore them.
-     */
-    @Nullable
-    private KotlinCommonCodeStyleSettings settingsAgainstPreviousDefaults = null;
-
     private final boolean isTempForDeserialize;
 
     public KotlinCommonCodeStyleSettings() {
@@ -66,14 +60,7 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         KotlinCommonCodeStyleSettings tempDeserialize = createForTempDeserialize();
         tempDeserialize.readExternal(element);
 
-        String customDefaults = tempDeserialize.CODE_STYLE_DEFAULTS;
-        boolean isSuccess = FormatterUtilKt.applyKotlinCodeStyle(customDefaults, this, true);
-        if (!isSuccess && customDefaults == null && FormatterUtilKt.isDefaultIntellijOrObsoleteCodeStyle(tempDeserialize)) {
-            // Temporary load settings against previous defaults
-            settingsAgainstPreviousDefaults = createForTempDeserialize();
-            KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(settingsAgainstPreviousDefaults, true);
-            settingsAgainstPreviousDefaults.readExternal(element);
-        }
+        FormatterUtilKt.applyKotlinCodeStyle(tempDeserialize.CODE_STYLE_DEFAULTS, this, true);
 
         readExternalBase(element);
     }
@@ -127,8 +114,6 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
     @Override
     public CommonCodeStyleSettings clone(@NotNull CodeStyleSettings rootSettings) {
         KotlinCommonCodeStyleSettings commonSettings = new KotlinCommonCodeStyleSettings();
-
-        commonSettings.settingsAgainstPreviousDefaults = settingsAgainstPreviousDefaults;
 
         copyPublicFieldsOwn(this, commonSettings);
 
@@ -219,16 +204,6 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
     private Set<String> getSupportedFields() {
         final LanguageCodeStyleSettingsProvider provider = LanguageCodeStyleSettingsProvider.forLanguage(myLanguage);
         return provider == null ? null : provider.getSupportedFields();
-    }
-
-    public boolean canRestore() {
-        return settingsAgainstPreviousDefaults != null;
-    }
-
-    public void restore() {
-        if (settingsAgainstPreviousDefaults != null) {
-            copyFrom(settingsAgainstPreviousDefaults);
-        }
     }
 
     private static class SupportedFieldsDiffFilter extends DifferenceFilter<CommonCodeStyleSettings> {

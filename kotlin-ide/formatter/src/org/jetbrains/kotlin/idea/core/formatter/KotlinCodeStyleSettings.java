@@ -14,16 +14,12 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle;
 import org.jetbrains.kotlin.idea.util.FormatterUtilKt;
 import org.jetbrains.kotlin.idea.util.ReflectionUtil;
 
-import static com.intellij.util.ReflectionUtil.copyFields;
-
 public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
-    public final KotlinPackageEntryTable PACKAGES_TO_USE_IMPORT_ON_DEMAND = new KotlinPackageEntryTable();
-    public final KotlinPackageEntryTable IMPORTS_LAYOUT = new KotlinPackageEntryTable();
+    public KotlinPackageEntryTable PACKAGES_TO_USE_IMPORT_ON_DEMAND = new KotlinPackageEntryTable();
+    public KotlinPackageEntryTable IMPORTS_LAYOUT = new KotlinPackageEntryTable();
     public boolean SPACE_AROUND_RANGE = false;
     public boolean SPACE_BEFORE_TYPE_COLON = false;
     public boolean SPACE_AFTER_TYPE_COLON = true;
@@ -57,12 +53,6 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     @ReflectionUtil.SkipInEquals
     public String CODE_STYLE_DEFAULTS = null;
 
-    /**
-     * Load settings with previous IDEA defaults to have an ability to restore them.
-     */
-    @Nullable
-    private KotlinCodeStyleSettings settingsAgainstPreviousDefaults = null;
-
     private final boolean isTempForDeserialize;
 
     public KotlinCodeStyleSettings(CodeStyleSettings container) {
@@ -94,24 +84,17 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         return CodeStyle.getSettings(project).getCustomSettings(KotlinCodeStyleSettings.class);
     }
 
-    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public Object clone() {
-        return cloneSettings();
-    }
+        KotlinCodeStyleSettings clone = (KotlinCodeStyleSettings)super.clone();
 
-    @NotNull
-    public KotlinCodeStyleSettings cloneSettings() {
-        KotlinCodeStyleSettings clone = new KotlinCodeStyleSettings(getContainer());
-        clone.copyFrom(this);
-        clone.settingsAgainstPreviousDefaults = this.settingsAgainstPreviousDefaults;
+        clone.PACKAGES_TO_USE_IMPORT_ON_DEMAND = new KotlinPackageEntryTable();
+        clone.PACKAGES_TO_USE_IMPORT_ON_DEMAND.copyFrom(this.PACKAGES_TO_USE_IMPORT_ON_DEMAND);
+
+        clone.IMPORTS_LAYOUT = new KotlinPackageEntryTable();
+        clone.IMPORTS_LAYOUT.copyFrom(this.IMPORTS_LAYOUT);
+
         return clone;
-    }
-
-    private void copyFrom(@NotNull KotlinCodeStyleSettings from) {
-        copyFields(getClass().getFields(), from, this);
-        PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(from.PACKAGES_TO_USE_STAR_IMPORTS);
-        PACKAGES_IMPORT_LAYOUT.copyFrom(from.PACKAGES_IMPORT_LAYOUT);
     }
 
     @Override
@@ -144,13 +127,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         KotlinCodeStyleSettings tempSettings = readExternalToTemp(parentElement);
         String customDefaults = tempSettings.CODE_STYLE_DEFAULTS;
 
-        boolean isSuccess = FormatterUtilKt.applyKotlinCodeStyle(customDefaults, this, true);
-        if (!isSuccess && customDefaults == null && FormatterUtilKt.isDefaultIntellijOrObsoleteCodeStyle(tempSettings)) {
-            // Temporary load settings against previous defaults
-            settingsAgainstPreviousDefaults = new KotlinCodeStyleSettings(null, true);
-            KotlinObsoleteCodeStyle.Companion.applyToKotlinCustomSettings(settingsAgainstPreviousDefaults, true);
-            settingsAgainstPreviousDefaults.readExternal(parentElement);
-        }
+        FormatterUtilKt.applyKotlinCodeStyle(customDefaults, this, true);
 
         // Actual read
         super.readExternal(parentElement);
@@ -162,15 +139,5 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         tempSettings.readExternal(parentElement);
 
         return tempSettings;
-    }
-
-    public boolean canRestore() {
-        return settingsAgainstPreviousDefaults != null;
-    }
-
-    public void restore() {
-        if (settingsAgainstPreviousDefaults != null) {
-            copyFrom(settingsAgainstPreviousDefaults);
-        }
     }
 }
