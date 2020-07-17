@@ -2422,6 +2422,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/function/functionInFinalClass.java");
         }
 
+        @TestMetadata("genericMemberFunctionRef.java")
+        public void testGenericMemberFunctionRef() throws Exception {
+            runTest("nj2k/testData/newJ2k/function/genericMemberFunctionRef.java");
+        }
+
         @TestMetadata("internal.java")
         public void testInternal() throws Exception {
             runTest("nj2k/testData/newJ2k/function/internal.java");

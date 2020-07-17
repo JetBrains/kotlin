@@ -84,6 +84,7 @@ abstract class JKVisitor {
     open fun visitPackageAccessExpression(packageAccessExpression: JKPackageAccessExpression) = visitExpression(packageAccessExpression)
     open fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression) = visitExpression(classAccessExpression)
     open fun visitMethodAccessExpression(methodAccessExpression: JKMethodAccessExpression) = visitExpression(methodAccessExpression)
+    open fun visitTypeQualifierExpression(typeQualifierExpression: JKTypeQualifierExpression) = visitExpression(typeQualifierExpression)
     open fun visitMethodReferenceExpression(methodReferenceExpression: JKMethodReferenceExpression) =
         visitExpression(methodReferenceExpression)
 
