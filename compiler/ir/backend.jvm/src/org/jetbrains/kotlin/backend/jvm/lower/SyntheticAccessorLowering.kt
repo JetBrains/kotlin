@@ -582,12 +582,16 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         // `internal` maps to public and requires no accessor.
         if (!withSuper && !declaration.visibility.isPrivate && !declaration.visibility.isProtected) return true
 
-        //`toArray` is always accessible cause mapped to public functions
+        // `toArray` is always accessible cause mapped to public functions
         if (symbolOwner is IrSimpleFunction && (symbolOwner.isNonGenericToArray(context) || symbolOwner.isGenericToArray(context))) {
             if (symbolOwner.parentAsClass.isCollectionSubClass) {
                 return true
             }
         }
+
+        // EnumEntry constructors are always accessible (they are only called from the enclosing Enum class)
+        if (symbolOwner is IrConstructor && symbolOwner.parentClassOrNull?.isEnumEntry == true)
+            return true
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val ownerClass = declaration.parent as? IrClass ?: return true
