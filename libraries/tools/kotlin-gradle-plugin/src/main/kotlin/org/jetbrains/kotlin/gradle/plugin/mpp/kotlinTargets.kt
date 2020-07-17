@@ -99,11 +99,7 @@ abstract class AbstractKotlinTarget(
                         ?: project.configurations.create(kotlinUsageContext.name).also { configuration ->
                             configuration.isCanBeConsumed = false
                             configuration.isCanBeResolved = false
-                            /** Add dependencies lazily to avoid freezing the content of the configuration held by [kotlinUsageContext] */
-                            configuration.withDependencies { dependencies ->
-                                dependencies.addAll(kotlinUsageContext.dependencies)
-                            }
-                            configuration.dependencyConstraints.addAll(kotlinUsageContext.dependencyConstraints)
+                            configuration.extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
                             configuration.artifacts.addAll(kotlinUsageContext.artifacts)
 
                             val attributes = kotlinUsageContext.attributes
