@@ -590,6 +590,7 @@ class Fir2IrDeclarationStorage(
         get() = when {
             isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
+            hasJvmFieldAnnotation -> status.visibility
             else -> Visibilities.PRIVATE
         }
 
