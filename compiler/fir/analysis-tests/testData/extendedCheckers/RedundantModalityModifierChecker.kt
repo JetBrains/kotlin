@@ -1,3 +1,27 @@
+// Interface
+interface Interface {
+    // Redundant
+    <!REDUNDANT_MODALITY_MODIFIER!>open<!> val gav: Int
+        get() = 42
+    // Redundant
+    <!REDUNDANT_MODALITY_MODIFIER!>abstract<!> fun foo()
+    // Redundant
+    private <!REDUNDANT_MODALITY_MODIFIER!>final<!> fun bar() {}
+}
+interface B {
+    <!REDUNDANT_MODALITY_MODIFIER!>abstract<!> var bar: Unit
+    <!REDUNDANT_MODALITY_MODIFIER!>abstract<!> fun foo()
+}
+
+expect abstract class AbstractClass : Foo {
+    abstract override fun foo()
+
+    abstract fun bar()
+
+    abstract val baz: Int
+}
+
+
 // Abstract
 abstract class Base {
     // Redundant final
@@ -23,16 +47,6 @@ open class OpenDerived : Base() {
 }
 // Redundant final
 <!REDUNDANT_MODALITY_MODIFIER!>final<!> class Final
-// Interface
-interface Interface {
-    // Redundant
-    <!REDUNDANT_MODALITY_MODIFIER!>abstract<!> fun foo()
-    // Redundant
-    private <!REDUNDANT_MODALITY_MODIFIER!>final<!> fun bar() {}
-    // Redundant
-    <!REDUNDANT_MODALITY_MODIFIER!>open<!> val gav: Int
-        get() = 42
-}
 // Derived interface
 interface Derived : Interface {
     // Redundant

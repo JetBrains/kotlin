@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 

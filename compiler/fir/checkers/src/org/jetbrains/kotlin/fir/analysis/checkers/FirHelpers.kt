@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
@@ -268,7 +269,7 @@ fun FirMemberDeclaration.implicitModality(context: CheckerContext): KtModifierKe
 private fun FirDeclaration.modifierListOrNull() = (this.source.getModifierList() as? FirPsiModifierList)?.modifierList
 
 private fun FirDeclaration.hasBody(): Boolean = when (this) {
-    is FirSimpleFunction -> this.body != null && this.body !is FirSingleExpressionBlock
-    is FirProperty -> this.setter != null || this.getter != null
+    is FirSimpleFunction -> this.body != null && this.body !is FirEmptyExpressionBlock
+    is FirProperty -> this.setter?.body !is FirEmptyExpressionBlock? || this.getter?.body !is FirEmptyExpressionBlock?
     else -> false
 }
