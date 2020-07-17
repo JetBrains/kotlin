@@ -9,8 +9,8 @@ import com.intellij.openapi.util.InvalidDataException
 import com.intellij.openapi.util.JDOMExternalizable
 import org.jdom.Element
 
-class KotlinPackageEntryTable : JDOMExternalizable, Cloneable {
-    private val entries = mutableListOf<KotlinPackageEntry>()
+class KotlinPackageEntryTable(private val entries: MutableList<KotlinPackageEntry>) : JDOMExternalizable, Cloneable {
+    constructor() : this(mutableListOf())
 
     val entryCount: Int get() = entries.size
 
