@@ -188,14 +188,21 @@ class NewJavaToKotlinConverter(
     companion object {
         fun KtFile.addImports(imports: Collection<FqName>) {
             val factory = KtPsiFactory(this)
-            var importList = importList
-            for (import in imports) {
-                val importDirective = factory.createImportDirective(ImportPath(import, isAllUnder = false))
-                if (importList == null) {
-                    importList = addImportList(importDirective.parent as KtImportList)
-                } else {
-                    importList.add(importDirective)
-                }
+
+
+            if (imports.isEmpty()) return
+            val importPsi = factory.createImportDirectives(
+                imports.map { ImportPath(it, isAllUnder = false) }
+            )
+            val createdImportList = importPsi.first().parent as KtImportList
+            val importList = importList
+            if (importList == null) {
+                addImportList(createdImportList)
+            } else {
+                val updatedList = if(importList.firstChild != null) {
+                    createdImportList.addRangeBefore(importList.firstChild, importList.lastChild, createdImportList.firstChild)
+                } else createdImportList
+                importList.replace(updatedList)
             }
         }
 
