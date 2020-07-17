@@ -324,6 +324,72 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
         TestCase.assertEquals("message", resolved.name)
     }
 
+    fun testExtensionReceiverAnnotation() {
+        testExtensionReceiverAnnotation("""fun @receiver:Suppress("unused") String.foo() {}""", "s.foo()") {
+            val ref = file.findUElementByTextFromPsi<UQualifiedReferenceExpression>(it)
+            ref.resolve() as PsiMethod
+        }
+    }
+
+    fun testInfixReceiverAnnotation() {
+        testExtensionReceiverAnnotation("""infix fun @receiver:Suppress("unused") String.foo(x: Int) {}""", "s foo 7") {
+            val ref = file.findUElementByTextFromPsi<UBinaryExpression>(it)
+            ref.resolveOperator()!!
+        }
+    }
+
+    fun testBinaryOpReceiverAnnotation() {
+        testExtensionReceiverAnnotation("""operator fun @receiver:Suppress("unused") String.times(x: Int) = this""", "s * 7") {
+            val ref = file.findUElementByTextFromPsi<UBinaryExpression>(it)
+            ref.resolveOperator()!!
+        }
+    }
+
+    fun testPrefixOpReceiverAnnotation() {
+        testExtensionReceiverAnnotation("""operator fun @receiver:Suppress("unused") String.unaryPlus() = this""", "+s") {
+            val ref = file.findUElementByTextFromPsi<UUnaryExpression>(it)
+            ref.resolveOperator()!!
+        }
+    }
+
+    fun testPostfixOpReceiverAnnotation() {
+        testExtensionReceiverAnnotation("""operator fun @receiver:Suppress("unused") String.inc() = this""", "s++") {
+            val ref = file.findUElementByTextFromPsi<UUnaryExpression>(it)
+            ref.resolveOperator()!!
+        }
+    }
+
+    private fun testExtensionReceiverAnnotation(
+        declaration: String, reference: String, annoQn: String = "kotlin.Suppress", resolve: (String) -> PsiMethod
+    ) {
+        myFixture.configureByText(
+            "MyClass.kt", """
+            $declaration
+            fun reference(s: String) {
+                $reference
+            }
+        """
+        )
+
+        val resolved = resolve(reference)
+        TestCase.assertTrue(resolved.parameterList.parametersCount >= 1)
+
+        val receiverParam = resolved.parameterList.parameters[0]
+        val actualAnnos = receiverParam.modifierList?.annotations ?: throw AssertionError("empty modifier list: ${receiverParam}")
+        TestCase.assertEquals("$receiverParam: ${actualAnnos.toList()}", 2, actualAnnos.size) // @NonNull + @Suppress
+        TestCase.assertNotNull(actualAnnos.find { it.hasQualifiedName(annoQn) })
+        TestCase.assertEquals(actualAnnos.find { it.hasQualifiedName(annoQn) }, receiverParam.getAnnotation(annoQn))
+
+        val method = file.findUElementByTextFromPsi<UMethod>(declaration)
+        TestCase.assertEquals(method.uastParameters.size, resolved.parameterList.parametersCount)
+        TestCase.assertEquals(method.uastParameters[0].javaPsi, receiverParam)
+
+        val resolvedSourceParam = receiverParam.toUElement() as UParameter
+        TestCase.assertEquals(method.uastParameters[0], resolvedSourceParam)
+        TestCase.assertNotNull(resolvedSourceParam.findAnnotation(annoQn))
+        // TODO: resolvedSourceParam.sourcePsi is null, while method.uastParameters[0].sourcePsi is non-null; they should be the same
+    }
+
     fun testAssigningArrayElementType() {
         myFixture.configureByText(
             "MyClass.kt", """ 
