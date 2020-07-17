@@ -43,7 +43,7 @@ class KotlinExprTypePredicate(
             }
             node is KtStringTemplateEntry && node !is KtSimpleNameStringTemplateEntry -> null
             node is KtSimpleNameStringTemplateEntry -> node.expression?.resolveType()
-            else -> throw IllegalStateException("Kotlin matching element should either be an expression or a statement.")
+            else -> throw IllegalStateException(KSSRBundle.message("error.type.filter.node"))
         } ?: return false
 
         val project = node.project
