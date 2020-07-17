@@ -2601,6 +2601,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
+                @TestMetadata("adaptedReferenceAgainstKCallable.kt")
+                public void testAdaptedReferenceAgainstKCallable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/adaptedReferenceAgainstKCallable.kt");
+                }
+
+                @TestMetadata("adaptedReferenceAgainstReflectionType.kt")
+                public void testAdaptedReferenceAgainstReflectionType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/adaptedReferenceAgainstReflectionType.kt");
+                }
+
                 public void testAllFilesPresentInResolve() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/resolve"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
@@ -2663,6 +2673,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("commonSupertypeFromReturnTypesOfCallableReference.kt")
                 public void testCommonSupertypeFromReturnTypesOfCallableReference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/commonSupertypeFromReturnTypesOfCallableReference.kt");
+                }
+
+                @TestMetadata("compatibilityWarningOnReferenceAgainstReflectiveType.kt")
+                public void testCompatibilityWarningOnReferenceAgainstReflectiveType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/compatibilityWarningOnReferenceAgainstReflectiveType.kt");
                 }
 
                 @TestMetadata("constructor.kt")
