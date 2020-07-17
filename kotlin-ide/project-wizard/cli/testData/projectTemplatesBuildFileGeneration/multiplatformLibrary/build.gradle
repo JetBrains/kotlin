@@ -39,9 +39,7 @@ kotlin {
 
     sourceSets {
         commonMain {
-            dependencies {
-                implementation kotlin('stdlib-common')
-            }
+
         }
         commonTest {
             dependencies {
@@ -50,9 +48,7 @@ kotlin {
             }
         }
         jvmMain {
-            dependencies {
-                implementation kotlin('stdlib-jdk8')
-            }
+
         }
         jvmTest {
             dependencies {
@@ -60,9 +56,7 @@ kotlin {
             }
         }
         jsMain {
-            dependencies {
-                implementation kotlin('stdlib-js')
-            }
+
         }
         jsTest {
             dependencies {

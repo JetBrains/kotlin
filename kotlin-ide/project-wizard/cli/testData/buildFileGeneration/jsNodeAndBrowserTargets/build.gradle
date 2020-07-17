@@ -35,17 +35,13 @@ kotlin {
     }
     sourceSets {
         nodeJsMain {
-            dependencies {
-                implementation kotlin('stdlib-js')
-            }
+
         }
         nodeJsTest {
 
         }
         browserMain {
-            dependencies {
-                implementation kotlin('stdlib-js')
-            }
+
         }
         browserTest {
             dependencies {

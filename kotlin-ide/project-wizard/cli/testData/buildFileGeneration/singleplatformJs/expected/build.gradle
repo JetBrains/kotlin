@@ -12,7 +12,6 @@ repositories {
 }
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test-js'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
 }
 kotlin {
     js {

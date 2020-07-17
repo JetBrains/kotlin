@@ -12,7 +12,6 @@ repositories {
 }
 dependencies {
     testImplementation(kotlin("test-js"))
-    implementation(kotlin("stdlib-js"))
 }
 kotlin {
     js {

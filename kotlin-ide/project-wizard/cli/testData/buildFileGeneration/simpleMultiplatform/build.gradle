@@ -35,9 +35,7 @@ kotlin {
     }
     sourceSets {
         jvmMain {
-            dependencies {
-                implementation kotlin('stdlib-jdk8')
-            }
+
         }
         jvmTest {
             dependencies {
@@ -45,9 +43,7 @@ kotlin {
             }
         }
         aMain {
-            dependencies {
-                implementation kotlin('stdlib-js')
-            }
+
         }
         aTest {
             dependencies {

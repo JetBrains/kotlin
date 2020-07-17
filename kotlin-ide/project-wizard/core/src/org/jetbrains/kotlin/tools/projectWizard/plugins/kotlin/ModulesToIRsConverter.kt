@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
-import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
 
 data class ModulesToIrConversionData(
@@ -143,16 +143,7 @@ class ModulesToIRsConverter(
             val dependenciesIRs = buildPersistenceList<BuildSystemIR> {
                 +moduleDependencies
                 with(configurator) { +createModuleIRs(this@createSinglePlatformModule, data, module) }
-                addIfNotNull(
-                    configurator.createStdlibType(data, module)?.let { stdlibType ->
-                        KotlinStdlibDependencyIR(
-                            type = stdlibType,
-                            isInMppModule = false,
-                            kotlinVersion = data.kotlinVersion,
-                            dependencyType = DependencyType.MAIN
-                        )
-                    }
-                )
+                addIfNotNull(addSdtLibForNonGradleSignleplatformModule(module))
             }
 
             val moduleIr = SingleplatformModuleIR(
@@ -237,25 +228,11 @@ class ModulesToIRsConverter(
         mutateProjectStructureByModuleConfigurator(target, modulePath)
         val sourcesetss = target.sourcesets.map { sourceset ->
             val sourcesetName = target.name + sourceset.sourcesetType.name.capitalize()
-            val sourcesetIrs = buildList<BuildSystemIR> {
-                if (sourceset.sourcesetType == SourcesetType.main) {
-                    addIfNotNull(
-                        target.configurator.createStdlibType(data, target)?.let { stdlibType ->
-                            KotlinStdlibDependencyIR(
-                                type = stdlibType,
-                                isInMppModule = true,
-                                kotlinVersion = data.kotlinVersion,
-                                dependencyType = DependencyType.MAIN
-                            )
-                        }
-                    )
-                }
-            }
             MultiplatformSourcesetIR(
                 sourceset.sourcesetType,
                 modulePath / Defaults.SRC_DIR / sourcesetName,
                 target.name,
-                sourcesetIrs.toPersistentList(),
+                persistentListOf(),
                 sourceset
             )
         }
@@ -281,6 +258,18 @@ class ModulesToIRsConverter(
                 GradlePlugin::settingsGradleFileIRs.addValues(createSettingsGradleIRs(module)).ensure()
             }
         }
+    }
+
+    private fun Reader.addSdtLibForNonGradleSignleplatformModule(module: Module): KotlinStdlibDependencyIR? {
+        // for gradle stdlib is added by default KT-38221
+        if (buildSystemType.isGradle) return null
+        val stdlibType = module.configurator.createStdlibType(data, module) ?: return null
+        return KotlinStdlibDependencyIR(
+            type = stdlibType,
+            isInMppModule = false,
+            kotlinVersion = data.kotlinVersion,
+            dependencyType = DependencyType.MAIN
+        )
     }
 
     private fun Reader.createBuildFileIRs(

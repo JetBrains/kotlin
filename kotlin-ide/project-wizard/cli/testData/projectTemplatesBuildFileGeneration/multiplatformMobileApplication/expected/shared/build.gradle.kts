@@ -27,11 +27,7 @@ kotlin {
         }
     }
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
-            }
-        }
+        val commonMain by getting
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
@@ -40,7 +36,6 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-jdk7"))
                 implementation("androidx.core:core-ktx:1.2.0")
             }
         }

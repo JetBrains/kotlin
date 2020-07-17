@@ -48,11 +48,7 @@ kotlin {
         }
     }
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
-            }
-        }
+        val commonMain by getting
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
@@ -61,7 +57,6 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-jdk8"))
                 implementation("io.ktor:ktor-server-netty:1.3.2-KOTLIN_VERSION")
                 implementation("io.ktor:ktor-html-builder:1.3.2-KOTLIN_VERSION")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.1-KOTLIN_VERSION")
@@ -74,7 +69,6 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-js"))
                 implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.1-KOTLIN_VERSION")
                 implementation("org.jetbrains:kotlin-react:16.13.1-pre.109-kotlin-KOTLIN_VERSION")
                 implementation("org.jetbrains:kotlin-react-dom:16.13.1-pre.109-kotlin-KOTLIN_VERSION")
