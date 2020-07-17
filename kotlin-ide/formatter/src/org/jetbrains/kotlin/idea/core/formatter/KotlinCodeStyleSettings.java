@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.idea.util.ReflectionUtil;
 import static com.intellij.util.ReflectionUtil.copyFields;
 
 public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
-    public final KotlinPackageEntryTable PACKAGES_TO_USE_STAR_IMPORTS = new KotlinPackageEntryTable();
-    public final KotlinPackageEntryTable PACKAGES_IMPORT_LAYOUT = new KotlinPackageEntryTable();
+    public final KotlinPackageEntryTable PACKAGES_TO_USE_IMPORT_ON_DEMAND = new KotlinPackageEntryTable();
+    public final KotlinPackageEntryTable IMPORTS_LAYOUT = new KotlinPackageEntryTable();
     public boolean SPACE_AROUND_RANGE = false;
     public boolean SPACE_BEFORE_TYPE_COLON = false;
     public boolean SPACE_AFTER_TYPE_COLON = true;
@@ -76,18 +76,18 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
 
         // defaults in IDE but not in tests
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
-            PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("java.util", false));
-            PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("kotlinx.android.synthetic", true));
-            PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("io.ktor", true));
+            PACKAGES_TO_USE_IMPORT_ON_DEMAND.addEntry(new KotlinPackageEntry("java.util", false));
+            PACKAGES_TO_USE_IMPORT_ON_DEMAND.addEntry(new KotlinPackageEntry("kotlinx.android.synthetic", true));
+            PACKAGES_TO_USE_IMPORT_ON_DEMAND.addEntry(new KotlinPackageEntry("io.ktor", true));
         }
 
         // Many of test data actually depend on this order of imports,
         // that is why we put it here even for test mode
-        PACKAGES_IMPORT_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_IMPORTS_ENTRY);
-        PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("java", true));
-        PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("javax", true));
-        PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("kotlin", true));
-        PACKAGES_IMPORT_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY);
+        IMPORTS_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_IMPORTS_ENTRY);
+        IMPORTS_LAYOUT.addEntry(new KotlinPackageEntry("java", true));
+        IMPORTS_LAYOUT.addEntry(new KotlinPackageEntry("javax", true));
+        IMPORTS_LAYOUT.addEntry(new KotlinPackageEntry("kotlin", true));
+        IMPORTS_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY);
     }
 
     public static KotlinCodeStyleSettings getInstance(Project project) {
