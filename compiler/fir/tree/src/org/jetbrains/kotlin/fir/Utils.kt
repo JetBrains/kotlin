@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.fir.types.impl.FirFunctionTypeRefImpl
 
 fun ModuleInfo.dependenciesWithoutSelf(): Sequence<ModuleInfo> = dependencies().asSequence().filter { it != this }
 
@@ -25,7 +24,7 @@ fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: FirFakeSourceElementKind):
     if (source == null) return this
     if (source?.kind == newKind) return this
     if (this is FirDelegatedTypeRef) return this
-    val newSource = source?.withKind(newKind)
+    val newSource = source?.fakeElement(newKind)
 
     @Suppress("UNCHECKED_CAST")
     return when (val typeRef = this) {

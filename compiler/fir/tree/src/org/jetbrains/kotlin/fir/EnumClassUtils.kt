@@ -32,7 +32,7 @@ private val VALUE = Name.identifier("value")
 fun FirRegularClassBuilder.generateValuesFunction(
     session: FirSession, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
 ) {
-    val sourceElement = source?.withKind(FirFakeSourceElementKind.EnumGeneratedDeclaration)
+    val sourceElement = source?.fakeElement(FirFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
         source = sourceElement
         origin = FirDeclarationOrigin.Source
@@ -61,7 +61,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
 fun FirRegularClassBuilder.generateValueOfFunction(
     session: FirSession, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
 ) {
-    val sourceElement = source?.withKind(FirFakeSourceElementKind.EnumGeneratedDeclaration)
+    val sourceElement = source?.fakeElement(FirFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
         source = sourceElement
         origin = FirDeclarationOrigin.Source

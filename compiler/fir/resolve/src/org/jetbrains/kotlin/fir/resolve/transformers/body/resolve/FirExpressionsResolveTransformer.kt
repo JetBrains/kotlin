@@ -317,7 +317,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             rightArgument = rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
 
             fun createFunctionCall(name: Name) = buildFunctionCall {
-                source = operatorCall.source?.withKind(FirFakeSourceElementKind.DesugaredCompoundAssignment)
+                source = operatorCall.source?.fakeElement(FirFakeSourceElementKind.DesugaredCompoundAssignment)
                 explicitReceiver = leftArgument
                 argumentList = buildUnaryArgumentList(rightArgument)
                 calleeReference = buildSimpleNamedReference {

@@ -311,7 +311,7 @@ class RawFirBuilder(
                 extractValueParametersTo(this, propertyTypeRef)
                 if (!isGetter && valueParameters.isEmpty()) {
                     valueParameters += buildDefaultSetterValueParameter {
-                        this.source = source.withKind(FirFakeSourceElementKind.DefaultAccessor)
+                        this.source = source.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
                         session = baseSession
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = propertyTypeRef
@@ -384,7 +384,7 @@ class RawFirBuilder(
                 symbol = FirPropertySymbol(callableIdForName(propertyName))
                 isLocal = false
                 this.status = status
-                val defaultAccessorSource = propertySource.withKind(FirFakeSourceElementKind.DefaultAccessor)
+                val defaultAccessorSource = propertySource.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
                 getter = FirDefaultPropertyGetter(defaultAccessorSource, baseSession, FirDeclarationOrigin.Source, type, visibility)
                 setter = if (isMutable) FirDefaultPropertySetter(
                     defaultAccessorSource,
@@ -574,7 +574,7 @@ class RawFirBuilder(
             val constructorSource = this?.toFirSourceElement()
                 ?: owner.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitConstructor)
             val firDelegatedCall = buildDelegatedConstructorCall {
-                source = constructorCallee ?: constructorSource.withKind(FirFakeSourceElementKind.DelegatingConstructorCall)
+                source = constructorCallee ?: constructorSource.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
                 constructedTypeRef = delegatedSuperTypeRef
                 isThis = false
                 if (!stubMode) {
@@ -995,7 +995,7 @@ class RawFirBuilder(
                 val expressionSource = expression.toFirSourceElement()
                 label = context.firLabels.pop() ?: context.calleeNamesForLambda.lastOrNull()?.let {
                     buildLabel {
-                        source = expressionSource.withKind(FirFakeSourceElementKind.GeneratedLambdaLabel)
+                        source = expressionSource.fakeElement(FirFakeSourceElementKind.GeneratedLambdaLabel)
                         name = it.asString()
                     }
                 }
@@ -1011,10 +1011,10 @@ class RawFirBuilder(
                         if (statements.isEmpty()) {
                             statements.add(
                                 buildReturnExpression {
-                                    source = expressionSource.withKind(FirFakeSourceElementKind.ImplicitReturn)
+                                    source = expressionSource.fakeElement(FirFakeSourceElementKind.ImplicitReturn)
                                     this.target = target
                                     result = buildUnitExpression {
-                                        source = expressionSource.withKind(FirFakeSourceElementKind.ImplicitUnit)
+                                        source = expressionSource.fakeElement(FirFakeSourceElementKind.ImplicitUnit)
                                     }
                                 }
                             )
@@ -1706,7 +1706,7 @@ class RawFirBuilder(
 
                 else -> {
                     buildSimpleNamedReference {
-                        source = defaultSource.withKind(FirFakeSourceElementKind.ImplicitInvokeCall)
+                        source = defaultSource.fakeElement(FirFakeSourceElementKind.ImplicitInvokeCall)
                         name = OperatorNameConventions.INVOKE
                     } to calleeExpression.toFirExpression("Incorrect invoke receiver")
                 }
@@ -1793,7 +1793,7 @@ class RawFirBuilder(
                 val sourceElement = expression.toFirSourceElement()
                 source = sourceElement
                 calleeReference = buildExplicitThisReference {
-                    source = sourceElement.withKind(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
+                    source = sourceElement.fakeElement(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
                     labelName = expression.getLabelName()
                 }
             }
@@ -1805,7 +1805,7 @@ class RawFirBuilder(
             return buildQualifiedAccessExpression {
                 this.source = source
                 calleeReference = buildExplicitSuperReference {
-                    source.withKind(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
+                    source.fakeElement(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
                     labelName = expression.getLabelName()
                     superTypeRef = superType.toFirOrImplicitType()
                 }

@@ -165,15 +165,10 @@ class FirRealPsiSourceElement<out P : PsiElement>(psi: P) : FirPsiSourceElement<
 
 class FirFakeSourceElement<out P : PsiElement>(psi: P, override val kind: FirFakeSourceElementKind) : FirPsiSourceElement<P>(psi)
 
-fun FirSourceElement.withKind(newKind: FirSourceElementKind?): FirSourceElement {
-    if (newKind == null) return this
+fun FirSourceElement.fakeElement(newKind: FirFakeSourceElementKind): FirSourceElement {
     return when (this) {
         is FirLightSourceElement -> this
-        is FirPsiSourceElement<*> -> when (newKind) {
-            kind -> this
-            FirRealSourceElementKind -> FirRealPsiSourceElement(psi)
-            is FirFakeSourceElementKind -> FirFakeSourceElement(psi, newKind)
-        }
+        is FirPsiSourceElement<*> -> FirFakeSourceElement(psi, newKind)
     }
 }
 

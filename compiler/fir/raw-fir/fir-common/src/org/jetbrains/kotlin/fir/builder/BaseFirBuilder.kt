@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.lexer.KtTokens.CLOSING_QUOTE
 import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
 import org.jetbrains.kotlin.name.FqName
@@ -341,7 +340,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                             hasExpressions = true
                             val firExpression = entry.convertTemplateEntry("Incorrect template argument")
-                            val source = firExpression.source?.withKind(FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry)
+                            val source = firExpression.source?.fakeElement(FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry)
                             buildFunctionCall {
                                 this.source = source
                                 explicitReceiver = firExpression
@@ -408,7 +407,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
         return buildBlock {
             val baseSource = baseExpression?.toFirSourceElement()
-            val desugaredSource = baseSource?.withKind(FirFakeSourceElementKind.DesugaredIncrementOrDecrement)
+            val desugaredSource = baseSource?.fakeElement(FirFakeSourceElementKind.DesugaredIncrementOrDecrement)
             source = desugaredSource
             val tempName = Name.special("<unary>")
             val temporaryVariable = generateTemporaryVariable(
@@ -744,7 +743,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 componentIndex++
                 val parameterSource = sourceNode?.toFirSourceElement()
                 val componentFunction = buildSimpleFunction {
-                    source = parameterSource?.withKind(FirFakeSourceElementKind.DataClassGeneratedMembers)
+                    source = parameterSource?.fakeElement(FirFakeSourceElementKind.DataClassGeneratedMembers)
                     session = this@DataClassMembersGenerator.session
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = firProperty.returnTypeRef

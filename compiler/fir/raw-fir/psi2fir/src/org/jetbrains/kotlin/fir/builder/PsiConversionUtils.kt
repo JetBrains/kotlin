@@ -105,7 +105,7 @@ internal fun generateDestructuringBlock(
                 returnTypeRef = entry.typeReference.toFirOrImplicitTypeRef()
                 this.name = name
                 initializer = buildComponentCall {
-                    val componentCallSource = entrySource.withKind(FirFakeSourceElementKind.DesugaredComponentFunctionCall)
+                    val componentCallSource = entrySource.fakeElement(FirFakeSourceElementKind.DesugaredComponentFunctionCall)
                     source = componentCallSource
                     explicitReceiver = generateResolvedAccessExpression(componentCallSource, container)
                     componentIndex = index + 1
