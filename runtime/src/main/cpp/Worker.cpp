@@ -493,6 +493,7 @@ class State {
         "Unfinished workers detected, %lu workers leaked!\n"
         "Use `Platform.isMemoryLeakCheckerActive = false` to avoid this check.\n",
         remainingNativeWorkers);
+      konan::consoleFlush();
       konan::abort();
     }
   }

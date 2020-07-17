@@ -1859,6 +1859,7 @@ void deinitMemory(MemoryState* memoryState) {
     konan::consoleErrorf(
         "Memory leaks detected, %d objects leaked!\n"
         "Use `Platform.isMemoryLeakCheckerActive = false` to avoid this check.\n", allocCount);
+    konan::consoleFlush();
     konan::abort();
   }
 #endif  // USE_GC

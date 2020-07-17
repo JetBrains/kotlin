@@ -172,6 +172,11 @@ void consoleErrorf(const char* format, ...) {
   consoleErrorUtf8(buffer, rv);
 }
 
+void consoleFlush() {
+  ::fflush(stdout);
+  ::fflush(stderr);
+}
+
 // Thread execution.
 #if !KONAN_NO_THREADS
 

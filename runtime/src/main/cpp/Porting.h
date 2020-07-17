@@ -32,6 +32,7 @@ void consoleWriteUtf8(const void* utf8, uint32_t sizeBytes);
 void consoleErrorUtf8(const void* utf8, uint32_t sizeBytes);
 // Negative return value denotes that read wasn't successful.
 int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes);
+void consoleFlush();
 
 // Process control.
 RUNTIME_NORETURN void abort(void);
