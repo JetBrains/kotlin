@@ -4,6 +4,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.structuralsearch.StructuralSearchUtil
 import com.intellij.structuralsearch.impl.matcher.MatchContext
 import com.intellij.structuralsearch.impl.matcher.predicates.MatchPredicate
+import com.intellij.structuralsearch.impl.matcher.predicates.RegExpPredicate
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
@@ -21,11 +22,16 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 
 class KotlinExprTypePredicate(
-    private val searchedTypeNames: List<String>,
+    private val search: String,
     private val withinHierarchy: Boolean,
-    private val ignoreCase: Boolean
+    private val ignoreCase: Boolean,
+    private val target: Boolean,
+    private val baseName: String,
+    private val regex: Boolean
 ) : MatchPredicate() {
+
     override fun match(matchedNode: PsiElement, start: Int, end: Int, context: MatchContext): Boolean {
+        val searchedTypeNames = if (regex) listOf() else search.split('|')
         if (matchedNode is KtExpression && matchedNode.isNull() && searchedTypeNames.contains("null")) return true
         val node = StructuralSearchUtil.getParentIfIdentifier(matchedNode)
         val type = when {
@@ -42,6 +48,11 @@ class KotlinExprTypePredicate(
 
         val project = node.project
         val scope = project.allScope()
+
+        if (regex) {
+            val delegate = RegExpPredicate(search, !ignoreCase, baseName, false, target)
+            return delegate.doMatch(type.fqName.toString(), context, matchedNode)
+        }
 
         for (searchedType in searchedTypeNames) {
             if (searchedType == "null") continue

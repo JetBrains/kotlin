@@ -163,7 +163,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         target: Boolean
     ): Boolean {
         when (constraintName) {
-            UIUtil.TYPE -> return when (variableNode) {
+            UIUtil.TYPE, UIUtil.TYPE_REGEX -> return when (variableNode) {
                 null -> false
                 else -> isApplicableType(variableNode)
             }
@@ -267,13 +267,18 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         options: MatchOptions
     ): MutableList<MatchPredicate> {
         val result = SmartList<MatchPredicate>()
-        if (!StringUtil.isEmptyOrSpaces(constraint!!.expressionTypes)) {
-            val predicate = KotlinExprTypePredicate(
-                searchedTypeNames = constraint.expressionTypes.split("|"),
-                withinHierarchy = constraint.isExprTypeWithinHierarchy,
-                ignoreCase = !options.isCaseSensitiveMatch
-            )
-            result.add(if (constraint.isInvertExprType) NotPredicate(predicate) else predicate)
+        constraint?.apply {
+            if (!StringUtil.isEmptyOrSpaces(nameOfExprType)) {
+                val predicate = KotlinExprTypePredicate(
+                    search = if (isRegexExprType) nameOfExprType else expressionTypes,
+                    withinHierarchy = isExprTypeWithinHierarchy,
+                    ignoreCase = !options.isCaseSensitiveMatch,
+                    target = isPartOfSearchResults,
+                    baseName = name,
+                    regex = isRegexExprType
+                )
+                result.add(if (isInvertExprType) NotPredicate(predicate) else predicate)
+            }
         }
         return result
     }
