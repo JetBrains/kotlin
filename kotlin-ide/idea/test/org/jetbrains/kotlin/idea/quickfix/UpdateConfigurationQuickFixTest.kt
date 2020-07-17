@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.facet.FacetManager
 import com.intellij.facet.impl.FacetUtil
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments.Companion.DEFAULT
 import org.jetbrains.kotlin.config.CompilerSettings.Companion.DEFAULT_ADDITIONAL_ARGUMENTS
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
@@ -27,16 +27,15 @@ import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.configureKotlinFacet
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.junit.internal.runners.JUnit38ClassRunner
-import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
-class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
+class UpdateConfigurationQuickFixTest : BasePlatformTestCase() {
     fun testDisableInlineClasses() {
         configureRuntime("mockRuntime11")
         resetProjectSettings(LanguageVersion.KOTLIN_1_3)
@@ -188,9 +187,10 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
     private fun configureRuntime(path: String) {
         val name = if (path == "mockRuntime106") "kotlin-runtime.jar" else "kotlin-stdlib.jar"
         val sourcePath = when (path) {
-            "actualRuntime" -> PathUtil.kotlinPathsForIdeaPlugin.jar(KotlinPaths.Jar.StdLib)
-            else -> File("idea/testData/configuration/$path/$name")
+            "actualRuntime" -> KotlinArtifacts.instance.kotlinStdlib
+            else -> File("${PluginTestCaseBase.getTestDataPathBase()}/configuration/$path/$name")
         }
+
         val tempFile = File(FileUtil.createTempDirectory("kotlin-update-configuration", null), name)
         FileUtil.copy(sourcePath, tempFile)
         val tempVFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tempFile) ?: error("Can't find file: $tempFile")
