@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -455,7 +456,8 @@ class RawFirBuilder(
             delegatedSelfTypeRef: FirTypeRef?,
             delegatedEnumSuperTypeRef: FirTypeRef?,
             classKind: ClassKind,
-            containerTypeParameters: List<FirTypeParameterRef>
+            containerTypeParameters: List<FirTypeParameterRef>,
+            containerSymbol: AbstractFirBasedSymbol<*>
         ): FirTypeRef {
             var superTypeCallEntry: KtSuperTypeCallEntry? = null
             var delegatedSuperTypeRef: FirTypeRef? = null
@@ -475,7 +477,7 @@ class RawFirBuilder(
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
                         val delegateExpression = { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate")
                         container.superTypeRefs += type
-                        val delegateName = Name.identifier("\$\$delegate_$delegateNumber")
+                        val delegateName = Name.special("<\$\$delegate_$delegateNumber>")
                         val delegateSource = superTypeListEntry.delegateExpression?.toFirSourceElement()
                         val delegateField = buildField {
                             source = delegateSource
@@ -491,10 +493,17 @@ class RawFirBuilder(
                             buildVariableAssignment {
                                 source = delegateSource
                                 calleeReference =
-                                    buildSimpleNamedReference {
+                                    buildResolvedNamedReference {
                                         name = delegateName
+                                        resolvedSymbol = delegateField.symbol
                                     }
                                 rValue = delegateExpression
+                                dispatchReceiver = buildThisReceiverExpression {
+                                    calleeReference = buildImplicitThisReference {
+                                        boundSymbol = containerSymbol
+                                    }
+                                    delegatedSelfTypeRef?.let { typeRef = it }
+                                }
                             }
                         )
                         container.declarations.add(delegateField)
@@ -747,8 +756,14 @@ class RawFirBuilder(
                         addCapturedTypeParameters(typeParameters.take(classOrObject.typeParameters.size))
 
                         val delegatedSelfType = classOrObject.toDelegatedSelfType(this)
-                        val delegatedSuperType =
-                            classOrObject.extractSuperTypeListEntriesTo(this, delegatedSelfType, null, classKind, typeParameters)
+                        val delegatedSuperType = classOrObject.extractSuperTypeListEntriesTo(
+                            this,
+                            delegatedSelfType,
+                            null,
+                            classKind,
+                            typeParameters,
+                            symbol
+                        )
 
                         val primaryConstructor = classOrObject.primaryConstructor
                         val firPrimaryConstructor = declarations.firstOrNull {it is FirConstructor} as? FirConstructor
@@ -827,7 +842,8 @@ class RawFirBuilder(
                         delegatedSelfType,
                         null,
                         ClassKind.CLASS,
-                        containerTypeParameters = emptyList()
+                        containerTypeParameters = emptyList(),
+                        symbol
                     )
                     typeRef = delegatedSelfType
 

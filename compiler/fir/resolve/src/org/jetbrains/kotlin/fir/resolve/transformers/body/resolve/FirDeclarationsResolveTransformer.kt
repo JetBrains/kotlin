@@ -526,12 +526,72 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (constructor.isPrimary && containingClass?.classKind == ClassKind.ANNOTATION_CLASS) {
             return withFirArrayOfCallTransformer {
                 @Suppress("UNCHECKED_CAST")
-                transformFunction(constructor, data) as CompositeTransformResult<FirDeclaration>
+                doTransformConstructor(constructor, data)
             }
         }
         @Suppress("UNCHECKED_CAST")
-        return transformFunction(constructor, data) as CompositeTransformResult<FirDeclaration>
+        return doTransformConstructor(constructor, data)
     }
+
+    private fun doTransformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirConstructor> {
+        return context.withContainer(constructor) {
+            constructor.replaceResolvePhase(transformerPhase)
+            dataFlowAnalyzer.enterFunction(constructor)
+
+            constructor.transformTypeParameters(transformer, data)
+                .transformAnnotations(transformer, data)
+                .transformReceiverTypeRef(transformer, data)
+                .transformReturnTypeRef(transformer, data)
+
+            /*
+             * Default values of constructor can't access members of constructing class
+             */
+            context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+                withNewLocalScope {
+                    constructor.transformValueParameters(transformer, data)
+                }
+            }
+
+            val scopeWithValueParameters = if (constructor.isPrimary) {
+                context.getPrimaryConstructorParametersScope()
+            } else {
+                constructor.scopeWithParameters()
+            }
+
+            /*
+             * Delegated constructor call is called before constructor body, so we need to
+             *   analyze it before body, so body can access smartcasts from that call
+             */
+            context.withTowerDataCleanup {
+                addLocalScope(scopeWithValueParameters)
+                constructor.transformDelegatedConstructor(transformer, data)
+            }
+
+            if (constructor.body != null) {
+                if (constructor.isPrimary) {
+                    /*
+                     * Primary constructor may have body only if class delegates implementation to some property
+                     *   In it's body we don't have this receiver for building class, so we need to use
+                     *   special towerDataContext
+                     */
+                    context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+                        addLocalScope(scopeWithValueParameters)
+                        constructor.transformBody(transformer, data)
+                    }
+                } else {
+                    withLocalScopeCleanup {
+                        addLocalScope(scopeWithValueParameters)
+                        constructor.transformBody(transformer, data)
+                    }
+                }
+            }
+
+            val graph = dataFlowAnalyzer.exitFunction(constructor)
+            constructor.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, graph)
+            constructor.compose()
+        }
+    }
+
 
     override fun transformAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
@@ -753,7 +813,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
         val primaryConstructorParametersScope =
             if (constructor?.isPrimary == true) {
-                constructor.valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
+                constructor.scopeWithParameters()
             } else null
 
         components.context.replaceTowerDataContext(forMembersResolution)
@@ -768,6 +828,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         context.withNewTowerDataForClassParts(newContexts) {
             block()
         }
+    }
+
+    private fun FirConstructor.scopeWithParameters(): FirLocalScope {
+        return valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
     }
 
     protected inline fun <T> withLabelAndReceiverType(
