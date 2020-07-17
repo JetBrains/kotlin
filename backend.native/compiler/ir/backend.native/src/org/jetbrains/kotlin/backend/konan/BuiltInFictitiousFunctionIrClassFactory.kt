@@ -144,7 +144,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
             with(descriptor) {
                 IrFunctionImpl(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin, it, name, visibility, modality, returnType,
-                    isInline, isExternal, isTailrec, isSuspend, isOperator, isExpect
+                    isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
                 )
             }
         }
@@ -289,7 +289,8 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                 descriptor.run {
                     IrFunctionImpl(
                             offset, offset, memberOrigin, s, name, visibility, modality, returnType,
-                            isInline, isExternal, isTailrec, isSuspend, isOperator, isExpect, true
+                            isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
+                            isFakeOverride = true
                     )
                 }
             }

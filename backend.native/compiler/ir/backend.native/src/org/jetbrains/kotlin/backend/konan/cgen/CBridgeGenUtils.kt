@@ -123,7 +123,8 @@ private fun createKotlinBridge(
             isSuspend = false,
             isExpect = false,
             isFakeOverride = false,
-            isOperator = false
+            isOperator = false,
+            isInfix = false
     )
     bridgeDescriptor.bind(bridge)
     if (isExternal) {

@@ -258,7 +258,8 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                 isSuspend = false,
                 isExpect = false,
                 isFakeOverride = false,
-                isOperator = false
+                isOperator = false,
+                isInfix = false
         ).also { result ->
             resultDescriptor.bind(result)
             result.parent = irClass
@@ -402,7 +403,8 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                     isSuspend = false,
                     isExpect = false,
                     isFakeOverride = false,
-                    isOperator = false
+                    isOperator = false,
+                    isInfix = false
             ).apply {
                 it.bind(this)
             }

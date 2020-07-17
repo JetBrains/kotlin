@@ -509,7 +509,8 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
             returnType = irConstructor.returnType,
             isExpect = false,
             isFakeOverride = false,
-            isOperator = false
+            isOperator = false,
+            isInfix = false
     ).apply {
         descriptor.bind(this)
         parent = irConstructor.parent

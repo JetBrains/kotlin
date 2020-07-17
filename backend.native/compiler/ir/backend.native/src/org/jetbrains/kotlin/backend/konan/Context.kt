@@ -148,7 +148,8 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                 returnType = returnType,
                 isExpect = false,
                 isFakeOverride = false,
-                isOperator = false
+                isOperator = false,
+                isInfix = false
         ).apply {
             val bridge = this
             descriptor.bind(bridge)
