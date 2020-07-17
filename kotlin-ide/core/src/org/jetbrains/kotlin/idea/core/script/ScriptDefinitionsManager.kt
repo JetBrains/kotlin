@@ -67,6 +67,7 @@ class LoadScriptDefinitionsStartupActivity : StartupActivity {
         } else {
             ApplicationManager.getApplication().executeOnPooledThread {
                 ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitionsIfNeeded()
+                ScriptConfigurationManager.getInstance(project).loadPlugins()
             }
         }
     }
