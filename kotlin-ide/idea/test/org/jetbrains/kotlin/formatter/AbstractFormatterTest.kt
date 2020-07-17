@@ -1,168 +1,129 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.formatter
 
-package org.jetbrains.kotlin.formatter;
-
-import com.intellij.application.options.CodeStyle;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.impl.DocumentImpl;
-import com.intellij.openapi.roots.LanguageLevelProjectExtension;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.registry.RegistryValue;
-import com.intellij.pom.java.LanguageLevel;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.testFramework.LightIdeaTestCase;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.SettingsConfigurator;
-
-import java.io.File;
-import java.util.EnumMap;
-import java.util.Map;
+import com.intellij.application.options.CodeStyle
+import com.intellij.openapi.roots.LanguageLevelProjectExtension
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
+import com.intellij.pom.java.LanguageLevel
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiFile
+import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.testFramework.LightIdeaTestCase
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
+import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 // Based on from com.intellij.psi.formatter.java.AbstractJavaFormatterTest
-@SuppressWarnings("UnusedDeclaration")
-public abstract class AbstractFormatterTest extends LightIdeaTestCase {
-
-    protected enum Action {REFORMAT, INDENT}
+abstract class AbstractFormatterTest : LightIdeaTestCase() {
+    enum class Action {
+        REFORMAT, INDENT
+    }
 
     private interface TestFormatAction {
-        void run(PsiFile psiFile, int startOffset, int endOffset);
+        fun run(psiFile: PsiFile, startOffset: Int, endOffset: Int)
     }
 
-    private static final Map<Action, TestFormatAction> ACTIONS = new EnumMap<Action, TestFormatAction>(Action.class);
-
-    static {
-        ACTIONS.put(Action.REFORMAT,
-                    (psiFile, startOffset, endOffset) -> CodeStyleManager.getInstance(psiFile.getProject())
-                            .reformatText(psiFile, startOffset, endOffset));
-        ACTIONS.put(Action.INDENT,
-                    (psiFile, startOffset, endOffset) -> CodeStyleManager.getInstance(psiFile.getProject())
-                            .adjustLineIndent(psiFile, startOffset));
-    }
-
-    private static final String BASE_PATH =
-            new File(PluginTestCaseBase.getTestDataPathBase(), "/formatter/").getAbsolutePath();
-
-    public TextRange myTextRange;
-    public TextRange myLineRange;
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        LanguageLevelProjectExtension.getInstance(getProject()).setLanguageLevel(LanguageLevel.HIGHEST);
-        Registry.get("kotlin.formatter.allowTrailingCommaInAnyProject").setValue(true);
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        Registry.get("kotlin.formatter.allowTrailingCommaInAnyProject").resetToDefault();
-    }
-
-    public void doTextTest(@NonNls String text, File fileAfter, String extension) throws IncorrectOperationException {
-        doTextTest(Action.REFORMAT, text, fileAfter, extension);
-    }
-
-    public void doTextTest(Action action, String text, File fileAfter, String extension) throws IncorrectOperationException {
-        PsiFile file = createFile("A" + extension, text);
-
-        if (myLineRange != null) {
-            DocumentImpl document = new DocumentImpl(text);
-            myTextRange =
-                    new TextRange(document.getLineStartOffset(myLineRange.getStartOffset()),
-                                  document.getLineEndOffset(myLineRange.getEndOffset()));
-        }
-
-        PsiDocumentManager manager = PsiDocumentManager.getInstance(getProject());
-        Document document = manager.getDocument(file);
-        CommandProcessor.getInstance().executeCommand(getProject(), () -> ApplicationManager.getApplication().runWriteAction(() -> {
-            document.replaceString(0, document.getTextLength(), text);
-            manager.commitDocument(document);
-            try {
-                TextRange rangeToUse = myTextRange;
-                if (rangeToUse == null) {
-                    rangeToUse = file.getTextRange();
+    companion object {
+        private val ACTIONS: Map<Action, TestFormatAction> = mapOf(
+            Action.REFORMAT to object : TestFormatAction {
+                override fun run(psiFile: PsiFile, startOffset: Int, endOffset: Int) {
+                    CodeStyleManager.getInstance(psiFile.project).reformatText(psiFile, startOffset, endOffset)
                 }
-                ACTIONS.get(action).run(file, rangeToUse.getStartOffset(), rangeToUse.getEndOffset());
-            }
-            catch (IncorrectOperationException e) {
-                fail(e.getLocalizedMessage());
-            }
-        }), "", "");
+            },
 
+            Action.INDENT to object : TestFormatAction {
+                override fun run(psiFile: PsiFile, startOffset: Int, endOffset: Int) {
+                    CodeStyleManager.getInstance(psiFile.project).adjustLineIndent(psiFile, startOffset)
+                }
+            },
+        )
+    }
 
-        if (document == null) {
-            fail("Don't expect the document to be null");
-            return;
+    override fun setUp() {
+        super.setUp()
+        LanguageLevelProjectExtension.getInstance(project).languageLevel = LanguageLevel.HIGHEST
+        Registry.get("kotlin.formatter.allowTrailingCommaInAnyProject").setValue(true)
+    }
+
+    override fun tearDown() {
+        super.tearDown()
+        Registry.get("kotlin.formatter.allowTrailingCommaInAnyProject").resetToDefault()
+    }
+
+    fun doTextTest(@NonNls text: String, fileAfter: File?, extension: String) {
+        doTextTest(Action.REFORMAT, text, fileAfter, extension)
+    }
+
+    fun doTextTest(action: Action, text: String, fileAfter: File?, extension: String) {
+        val file = createFile("A$extension", text)
+        val manager = PsiDocumentManager.getInstance(project)
+        val document = manager.getDocument(file) ?: error("Don't expect the document to be null")
+        project.executeWriteCommand("") {
+            document.replaceString(0, document.textLength, text)
+            manager.commitDocument(document)
+            try {
+                val rangeToUse = file.textRange
+                ACTIONS[action]?.run(file, rangeToUse.startOffset, rangeToUse.endOffset)
+            } catch (e: IncorrectOperationException) {
+                fail(e.localizedMessage)
+            }
         }
-        KotlinTestUtils.assertEqualsToFile(fileAfter, document.getText());
-        manager.commitDocument(document);
-        KotlinTestUtils.assertEqualsToFile(fileAfter, file.getText());
+
+        KotlinTestUtils.assertEqualsToFile(fileAfter!!, document.text)
+        manager.commitDocument(document)
+        KotlinTestUtils.assertEqualsToFile(fileAfter, file.text)
     }
 
-    public void doTest(@NotNull String expectedFileNameWithExtension) throws Exception {
-        doTest(expectedFileNameWithExtension, false, false);
+    fun doTestInverted(expectedFileNameWithExtension: String) {
+        doTest(expectedFileNameWithExtension, true, false)
     }
 
-    public void doTestInverted(@NotNull String expectedFileNameWithExtension) throws Exception {
-        doTest(expectedFileNameWithExtension, true, false);
+    fun doTestInvertedCallSite(expectedFileNameWithExtension: String) {
+        doTest(expectedFileNameWithExtension, true, false)
     }
 
-    public void doTestInvertedCallSite(@NotNull String expectedFileNameWithExtension) throws Exception {
-        doTest(expectedFileNameWithExtension, true, false);
+    fun doTestCallSite(expectedFileNameWithExtension: String) {
+        doTest(expectedFileNameWithExtension, false, true)
     }
 
-    public void doTestCallSite(@NotNull String expectedFileNameWithExtension) throws Exception {
-        doTest(expectedFileNameWithExtension, false, true);
-    }
+    @JvmOverloads
+    fun doTest(expectedFileNameWithExtension: String, inverted: Boolean = false, callSite: Boolean = false) {
+        val testFileName = expectedFileNameWithExtension.substring(0, expectedFileNameWithExtension.indexOf("."))
+        val testFileExtension = expectedFileNameWithExtension.substring(expectedFileNameWithExtension.lastIndexOf("."))
+        val originalFileText = FileUtil.loadFile(File(testFileName + testFileExtension), true)
 
-    public void doTest(@NotNull String expectedFileNameWithExtension, boolean inverted, boolean callSite) throws Exception {
-        String testFileName = expectedFileNameWithExtension.substring(0, expectedFileNameWithExtension.indexOf("."));
-        String testFileExtension = expectedFileNameWithExtension.substring(expectedFileNameWithExtension.lastIndexOf("."));
-        String originalFileText = FileUtil.loadFile(new File(testFileName + testFileExtension), true);
-
-        CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(getProject());
-        KotlinCodeStyleSettings customSettings = codeStyleSettings.getCustomSettings(KotlinCodeStyleSettings.class);
-        try {
-            Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
+        configureCodeStyleAndRun(project) {
+            val codeStyleSettings = CodeStyle.getSettings(project)
+            val customSettings = codeStyleSettings.kotlinCustomSettings
+            val rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ")
             if (rightMargin != null) {
-                codeStyleSettings.setRightMargin(KotlinLanguage.INSTANCE, rightMargin);
+                codeStyleSettings.setRightMargin(KotlinLanguage.INSTANCE, rightMargin)
             }
 
-            Boolean trailingComma = InTextDirectivesUtils.getPrefixedBoolean(originalFileText, "// TRAILING_COMMA: ");
+            val trailingComma = InTextDirectivesUtils.getPrefixedBoolean(originalFileText, "// TRAILING_COMMA: ")
             if (trailingComma != null) {
-                customSettings.ALLOW_TRAILING_COMMA = trailingComma;
+                customSettings.ALLOW_TRAILING_COMMA = trailingComma
             }
 
-            SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings);
+            val configurator = FormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings)
             if (!inverted) {
-                configurator.configureSettings();
-            }
-            else {
-                configurator.configureInvertedSettings();
+                configurator.configureSettings()
+            } else {
+                configurator.configureInvertedSettings()
             }
 
-            customSettings.ALLOW_TRAILING_COMMA_ON_CALL_SITE = callSite;
-            doTextTest(originalFileText, new File(expectedFileNameWithExtension), testFileExtension);
-        }
-        finally {
-            codeStyleSettings.clearCodeStyleSettings();
+            customSettings.ALLOW_TRAILING_COMMA_ON_CALL_SITE = callSite
+            doTextTest(originalFileText, File(expectedFileNameWithExtension), testFileExtension)
         }
     }
 }
