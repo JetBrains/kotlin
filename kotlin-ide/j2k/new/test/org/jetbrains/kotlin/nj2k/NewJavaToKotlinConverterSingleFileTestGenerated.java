@@ -2266,6 +2266,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("testData/newJ2k/function/functionInFinalClass.java");
         }
 
+        @TestMetadata("genericMemberFunctionRef.java")
+        public void testGenericMemberFunctionRef() throws Exception {
+            runTest("testData/newJ2k/function/genericMemberFunctionRef.java");
+        }
+
         @TestMetadata("internal.java")
         public void testInternal() throws Exception {
             runTest("testData/newJ2k/function/internal.java");
@@ -3324,7 +3329,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
 
         @TestMetadata("kt-40363.java")
         public void testKt_40363() throws Exception {
-            runTest("nj2k/testData/newJ2k/literalExpression/kt-40363.java");
+            runTest("testData/newJ2k/literalExpression/kt-40363.java");
         }
 
         @TestMetadata("long.java")
