@@ -12,10 +12,11 @@ import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.formatter.KotlinPackageEntry
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
@@ -32,11 +33,7 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
 
     protected fun doPerfTest(unused: String) {
         val testName = getTestName(false)
-
-        CodeStyle.setTemporarySettings(project, CodeStyle.getSettings(project).clone())
-        val codeStyleSettings = KotlinCodeStyleSettings.getInstance(project)
-
-        try {
+        configureCodeStyleAndRun(project, file){
             val fixture = myFixture
             val dependencySuffixes = listOf(".dependency.kt", ".dependency.java", ".dependency1.kt", ".dependency2.kt")
             for (suffix in dependencySuffixes) {
@@ -51,7 +48,7 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
             var file = fixture.file as KtFile
 
             var fileText = file.text
-
+            val codeStyleSettings = CodeStyle.getSettings(file).kotlinCustomSettings
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT =
                 InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS =
@@ -112,8 +109,6 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
                     }
                 }
             }
-        } finally {
-            CodeStyle.dropTemporarySettings(project)
         }
     }
 

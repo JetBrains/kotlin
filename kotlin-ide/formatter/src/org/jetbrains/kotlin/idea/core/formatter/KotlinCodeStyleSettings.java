@@ -90,10 +90,6 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         PACKAGES_IMPORT_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY);
     }
 
-    public static KotlinCodeStyleSettings getInstance(Project project) {
-        return CodeStyle.getSettings(project).getCustomSettings(KotlinCodeStyleSettings.class);
-    }
-
     @Override
     public Object clone() {
         KotlinCodeStyleSettings clone = (KotlinCodeStyleSettings)super.clone();

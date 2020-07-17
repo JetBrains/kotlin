@@ -8,11 +8,12 @@ package org.jetbrains.kotlin
 import com.intellij.application.options.CodeStyle
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.formatter.KotlinPackageEntry
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -24,10 +25,8 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
 
     protected fun doTest(unused: String) {
         val testPath = testPath()
-        CodeStyle.setTemporarySettings(project, CodeStyle.getSettings(project).clone())
-        val codeStyleSettings = KotlinCodeStyleSettings.getInstance(project)
-
-        try {
+        configureCodeStyleAndRun(project, file) {
+            val codeStyleSettings = CodeStyle.getSettings(file).kotlinCustomSettings
             val fixture = myFixture
             val dependencySuffixes = listOf(".dependency.kt", ".dependency.java", ".dependency1.kt", ".dependency2.kt")
             for (suffix in dependencySuffixes) {
@@ -47,17 +46,25 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
 
             val fileText = file.text
 
-            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT =
-                InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
-            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS =
-                InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS:")
-                    ?: nameCountToUseStarImportForMembersDefault
-            codeStyleSettings.IMPORT_NESTED_CLASSES =
-                InTextDirectivesUtils.getPrefixedBoolean(fileText, "// IMPORT_NESTED_CLASSES:") ?: false
+            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(
+                fileText,
+                "// NAME_COUNT_TO_USE_STAR_IMPORT:"
+            ) ?: nameCountToUseStarImportDefault
+
+            codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = InTextDirectivesUtils.getPrefixedInt(
+                fileText,
+                "// NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS:"
+            ) ?: nameCountToUseStarImportForMembersDefault
+
+            codeStyleSettings.IMPORT_NESTED_CLASSES = InTextDirectivesUtils.getPrefixedBoolean(
+                fileText,
+                "// IMPORT_NESTED_CLASSES:"
+            ) ?: false
 
             InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PACKAGE_TO_USE_STAR_IMPORTS:").forEach {
                 codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS.addEntry(KotlinPackageEntry(it.trim(), false))
             }
+
             InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PACKAGES_TO_USE_STAR_IMPORTS:").forEach {
                 codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS.addEntry(KotlinPackageEntry(it.trim(), true))
             }
@@ -73,8 +80,6 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
                     TestCase.assertFalse(logFile.exists())
                 }
             }
-        } finally {
-            CodeStyle.dropTemporarySettings(project)
         }
     }
 

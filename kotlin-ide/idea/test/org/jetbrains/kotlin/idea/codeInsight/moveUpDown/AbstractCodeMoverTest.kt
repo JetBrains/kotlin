@@ -87,6 +87,7 @@ abstract class AbstractCodeMoverTest : KotlinLightCodeInsightFixtureTestCase() {
 
         configureCodeStyleAndRun(
             project,
+            file,
             {
                 FormatSettingsUtil.createConfigurator(fileText, it).configureSettings()
                 if (trailingComma) it.kotlinCustomSettings.ALLOW_TRAILING_COMMA = true

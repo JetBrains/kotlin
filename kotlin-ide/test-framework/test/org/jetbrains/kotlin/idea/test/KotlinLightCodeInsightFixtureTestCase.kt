@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiClassOwner
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -308,16 +309,18 @@ fun configureRegistryAndRun(fileText: String, body: () -> Unit) {
 
 fun configureCodeStyleAndRun(
     project: Project,
-    configurator: (CodeStyleSettings) -> Unit,
+    file: PsiFile? = null,
+    configurator: (CodeStyleSettings) -> Unit = { },
     body: () -> Unit
 ) {
-    val codeStyleSettings = CodeStyle.getSettings(project)
-    try {
-        configurator(codeStyleSettings)
+    val testSettings = CodeStyle.createTestSettings(
+        file?.let { CodeStyle.getSettings(it) } ?: CodeStyle.getSettings(project)
+    )
+
+    CodeStyle.doWithTemporarySettings(project, testSettings, Runnable {
+        configurator(testSettings)
         body()
-    } finally {
-        codeStyleSettings.clearCodeStyleSettings()
-    }
+    })
 }
 
 fun enableKotlinOfficialCodeStyle(project: Project) {

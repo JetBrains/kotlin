@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHand
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.LOOKUP_STRING_PREFIX
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.TAIL_TEXT_PREFIX
 import org.jetbrains.kotlin.idea.completion.test.handlers.CompletionHandlerTestBase
-import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.kotlinCommonSettings
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -59,46 +61,46 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         val testPath = testPath()
         setUpFixture(testPath)
 
-        val tempSettings = CodeStyle.getSettings(project).clone()
-        CodeStyle.setTemporarySettings(project, tempSettings)
-        try {
-            val fileText = FileUtil.loadFile(File(testPath))
-            withCustomCompilerOptions(fileText, project, module) {
-                assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"))
+        configureCodeStyleAndRun(project, file) {
+            try {
+                val fileText = FileUtil.loadFile(File(testPath))
+                withCustomCompilerOptions(fileText, project, module) {
+                    assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"))
 
-                val invocationCount = InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX) ?: 1
-                val lookupString = InTextDirectivesUtils.findStringWithPrefixes(fileText, LOOKUP_STRING_PREFIX)
-                val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)
-                val tailText = InTextDirectivesUtils.findStringWithPrefixes(fileText, TAIL_TEXT_PREFIX)
-                val completionChars = completionChars(fileText)
+                    val invocationCount = InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX) ?: 1
+                    val lookupString = InTextDirectivesUtils.findStringWithPrefixes(fileText, LOOKUP_STRING_PREFIX)
+                    val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)
+                    val tailText = InTextDirectivesUtils.findStringWithPrefixes(fileText, TAIL_TEXT_PREFIX)
+                    val completionChars = completionChars(fileText)
 
-                val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
+                    val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
 
-                val kotlinStyleSettings = KotlinCodeStyleSettings.getInstance(project)
-                val commonStyleSettings = CodeStyle.getLanguageSettings(file)
-                for (line in InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, CODE_STYLE_SETTING_PREFIX)) {
-                    val index = line.indexOfOrNull('=') ?: error("Invalid code style setting '$line': '=' expected")
-                    val settingName = line.substring(0, index).trim()
-                    val settingValue = line.substring(index + 1).trim()
-                    val (field, settings) = try {
-                        kotlinStyleSettings::class.java.getField(settingName) to kotlinStyleSettings
-                    } catch (e: NoSuchFieldException) {
-                        commonStyleSettings::class.java.getField(settingName) to commonStyleSettings
+                    val codeStyleSettings = CodeStyle.getSettings(file)
+                    val kotlinStyleSettings = codeStyleSettings.kotlinCustomSettings
+                    val commonStyleSettings = codeStyleSettings.kotlinCommonSettings
+                    for (line in InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, CODE_STYLE_SETTING_PREFIX)) {
+                        val index = line.indexOfOrNull('=') ?: error("Invalid code style setting '$line': '=' expected")
+                        val settingName = line.substring(0, index).trim()
+                        val settingValue = line.substring(index + 1).trim()
+                        val (field, settings) = try {
+                            kotlinStyleSettings::class.java.getField(settingName) to kotlinStyleSettings
+                        } catch (e: NoSuchFieldException) {
+                            commonStyleSettings::class.java.getField(settingName) to commonStyleSettings
+                        }
+                        when (field.type.name) {
+                            "boolean" -> field.setBoolean(settings, settingValue.toBoolean())
+                            "int" -> field.setInt(settings, settingValue.toInt())
+                            else -> error("Unsupported setting type: ${field.type}")
+                        }
                     }
-                    when (field.type.name) {
-                        "boolean" -> field.setBoolean(settings, settingValue.toBoolean())
-                        "int" -> field.setInt(settings, settingValue.toInt())
-                        else -> error("Unsupported setting type: ${field.type}")
-                    }
+
+                    doPerfTestWithTextLoaded(
+                        testPath, completionType, invocationCount, lookupString, itemText, tailText, completionChars,
+                    )
                 }
-
-                doPerfTestWithTextLoaded(
-                    testPath, completionType, invocationCount, lookupString, itemText, tailText, completionChars,
-                )
+            } finally {
+                tearDownFixture()
             }
-        } finally {
-            CodeStyle.dropTemporarySettings(project)
-            tearDownFixture()
         }
     }
 
@@ -136,7 +138,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         tailText: String?,
         completionChars: String
     ) {
-        completionChars?.let {
+        completionChars.let {
             for (idx in 0 until it.length - 1) {
                 fixture.type(it[idx])
             }
