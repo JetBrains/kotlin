@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -85,6 +86,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrVararg
@@ -554,6 +556,12 @@ class ComposableFunctionBodyTransformer(
             it.valueParameters.size == 2
         }
 
+    private val cacheDescriptor = composerTypeDescriptor
+        .unsubstitutedMemberScope
+        .findFirstFunction("cache") {
+            it.valueParameters.size == 2
+        }
+
     private var currentScope: Scope = Scope.RootScope()
 
     private fun printScopeStack(): String {
@@ -687,11 +695,18 @@ class ComposableFunctionBodyTransformer(
         return false
     }
 
+    private fun <T : IrAnnotationContainer> T.bindAnnotationsIfNecessary(): T {
+        annotations.forEach { it.symbol.bindIfNecessary() }
+        return this
+    }
+
     private fun IrFunction.shouldElideGroups(): Boolean {
+        bindAnnotationsIfNecessary()
         var readOnly = descriptor.composableReadonlyContract()
         if (readOnly == null && this is IrSimpleFunction) {
             readOnly = correspondingPropertySymbol
                 ?.owner
+                ?.bindAnnotationsIfNecessary()
                 ?.descriptor
                 ?.composableReadonlyContract()
         }
@@ -1830,6 +1845,27 @@ class ComposableFunctionBodyTransformer(
         return irMethodCall(irCurrentComposer(), endRestartGroupDescriptor)
     }
 
+    private fun irCache(
+        startOffset: Int,
+        endOffset: Int,
+        returnType: IrType,
+        invalid: IrExpression,
+        calculation: IrExpression
+    ): IrExpression {
+        val symbol = referenceFunction(cacheDescriptor)
+        return IrCallImpl(
+            startOffset,
+            endOffset,
+            returnType,
+            symbol
+        ).apply {
+            dispatchReceiver = irCurrentComposer()
+            putValueArgument(0, invalid)
+            putValueArgument(1, calculation)
+            putTypeArgument(0, returnType)
+        }
+    }
+
     private fun irChanged(value: IrExpression): IrExpression {
         // compose has a unique opportunity to avoid inline class boxing for changed calls, since
         // we know that the only thing that we are detecting here is "changed or not", we can
@@ -2081,20 +2117,20 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    private fun encounteredComposableCall(call: IrElement?) {
+    private fun encounteredComposableCall(withGroups: Boolean, call: IrElement?) {
         var sourceElement: IrElement? = call
         var location: Scope.SourceLocation? = null
         var scope: Scope? = currentScope
         loop@ while (scope != null) {
             when (scope) {
                 is Scope.FunctionScope -> {
-                    location = scope.recordComposableCall(sourceElement, location)
+                    location = scope.recordComposableCall(withGroups, sourceElement, location)
                     if (!scope.isInlinedLambda) {
                         break@loop
                     }
                 }
                 is Scope.BlockScope -> {
-                    location = scope.recordComposableCall(sourceElement, location)
+                    location = scope.recordComposableCall(withGroups, sourceElement, location)
                     // Only give the call location to the first scope encountered
                     sourceElement = null
                 }
@@ -2374,11 +2410,18 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun visitComposableCall(expression: IrCall): IrExpression {
-        val isKey = expression.symbol.descriptor.fqNameSafe == ComposeFqNames.key
-        encounteredComposableCall(if (isKey) null else expression)
-        if (isKey) {
-            return visitKeyCall(expression)
+        return when (expression.symbol.descriptor.fqNameSafe) {
+            ComposeFqNames.remember -> visitRememberCall(expression)
+            ComposeFqNames.key -> visitKeyCall(expression)
+            else -> visitNormalComposableCall(expression)
         }
+    }
+
+    private fun visitNormalComposableCall(expression: IrCall): IrExpression {
+        encounteredComposableCall(
+            withGroups = !expression.symbol.owner.shouldElideGroups(),
+            call = expression
+        )
         // it's important that we transform all of the parameters here since this will cause the
         // IrGetValue's of remapped default parameters to point to the right variable.
         expression.transformChildrenVoid()
@@ -2477,7 +2520,140 @@ class ComposableFunctionBodyTransformer(
         return expression
     }
 
+    private fun canElideRememberGroup(): Boolean {
+        var scope: Scope? = currentScope
+        loop@ while (scope != null) {
+            when (scope) {
+                is Scope.FunctionScope -> {
+                    return if (scope.hasComposableCallsWithGroups) {
+                        false
+                    } else if (scope.isInlinedLambda) {
+                        scope = scope.parent
+                        continue@loop
+                    } else {
+                        true
+                    }
+                }
+                is Scope.BranchScope -> {
+                    return !scope.hasComposableCallsWithGroups
+                }
+                else -> {
+                    // Any other scope type the behavior is undefined and we cannot rely on
+                    // intrinsic behavior
+                    return false
+                }
+            }
+        }
+        return false
+    }
+
+    private fun visitRememberCall(expression: IrCall): IrExpression {
+        val inputArgs = mutableListOf<IrExpression>()
+        var hasSpreadArgs = false
+        var calculationArg: IrFunctionExpression? = null
+        for (i in 0 until expression.valueArgumentsCount) {
+            val param = expression.symbol.owner.valueParameters[i]
+            val arg = expression.getValueArgument(i)
+                ?: error("Unexpected null argument found on key call")
+            if (param.name.asString().startsWith('$'))
+            // we are done. synthetic args go at
+            // the end
+                break
+
+            when {
+                param.name.identifier == "calculation" && arg is IrFunctionExpression -> {
+                    calculationArg = arg
+                }
+                arg is IrVararg -> {
+                    inputArgs.addAll(arg.elements.mapNotNull {
+                        if (it is IrSpreadElement) hasSpreadArgs = true
+                        it as? IrExpression
+                    })
+                }
+                else -> {
+                    inputArgs.add(arg)
+                }
+            }
+        }
+
+        for (i in inputArgs.indices) {
+            inputArgs[i] = inputArgs[i].transform(this, null)
+        }
+
+        if (calculationArg == null) {
+            encounteredComposableCall(withGroups = true, call = expression)
+            return expression
+        }
+        if (hasSpreadArgs || !canElideRememberGroup()) {
+            encounteredComposableCall(withGroups = true, call = expression)
+            calculationArg.transform(this, null)
+            return expression
+        }
+
+        // TODO: should i pass in null here?
+        encounteredComposableCall(withGroups = false, call = null)
+
+        val invalidExpr = if (inputArgs.isEmpty())
+            irConst(false)
+        else
+            inputArgs
+                .map { irChangedOrInferredChanged(it) }
+                .reduce { acc, changed -> irBooleanOr(acc, changed) }
+
+        return irCache(
+            expression.startOffset,
+            expression.endOffset,
+            expression.type,
+            invalidExpr,
+            calculationArg.transform(this, null)
+        )
+    }
+
+    private fun irChangedOrInferredChanged(arg: IrExpression): IrExpression {
+        val meta = paramMetaOf(arg, isProvided = true)
+        val param = meta.maskParam
+
+        return when {
+            meta.isStatic -> irConst(false)
+            meta.isCertain && param is IrChangedBitMaskVariable -> {
+                // if it's a dirty flag then we know that the value is now CERTAIN,
+                // thus we can avoid calling changed all together
+                //
+                // invalid = invalid or (mask == different)
+                irEqual(
+                    param.irIsolateBitsAtSlot(meta.maskSlot),
+                    irConst(ParamState.Different.bitsForSlot(meta.maskSlot))
+                )
+            }
+            meta.isCertain && param != null -> {
+                // if it's a changed flag then uncertain is a possible value. If it is uncertain,
+                // then we need to call changed. If it is uncertain here it will _always_ be
+                // uncertain here, so this is safe. If it is not uncertain, we can just check to
+                // see if its different
+                //
+                //     invalid = invalid or ((mask == uncertain && changed()) || mask == different)
+                irOrOr(
+                    irAndAnd(
+                        irEqual(
+                            param.irIsolateBitsAtSlot(meta.maskSlot),
+                            // NOTE: this is always "0", but i'm writing it out fully here to
+                            // just make the code more clear
+                            irConst(ParamState.Uncertain.bitsForSlot(meta.maskSlot))
+                        ),
+                        irChanged(arg)
+                    ),
+                    irEqual(
+                        param.irIsolateBitsAtSlot(meta.maskSlot),
+                        irConst(ParamState.Different.bitsForSlot(meta.maskSlot))
+                    )
+                )
+            }
+            else -> irChanged(arg)
+        }
+    }
+
     private fun visitKeyCall(expression: IrCall): IrExpression {
+        encounteredComposableCall(withGroups = true, call = null)
         val keyArgs = mutableListOf<IrExpression>()
         var blockArg: IrExpression? = null
         for (i in 0 until expression.valueArgumentsCount) {
@@ -2647,7 +2823,7 @@ class ComposableFunctionBodyTransformer(
                     }
                     // normal function call. If the function is marked as Stable and the result
                     // is Stable, then the static-ness of it is the static-ness of its arguments
-                    val isStable = symbol.owner.hasStableAnnotation()
+                    val isStable = symbol.bindIfNecessary().owner.hasStableAnnotation()
                     if (!isStable) return false
 
                     val typeIsStable = type.toKotlinType().isStable()
@@ -3136,8 +3312,15 @@ class ComposableFunctionBodyTransformer(
                 realizeEndCalls(makeEnd)
             }
 
-            fun recordComposableCall(call: IrElement?, location: SourceLocation?): SourceLocation? {
+            fun recordComposableCall(
+                withGroups: Boolean,
+                call: IrElement?,
+                location: SourceLocation?
+            ): SourceLocation? {
                 hasComposableCalls = true
+                if (withGroups) {
+                    hasComposableCallsWithGroups = true
+                }
                 if (coalescableChild != null) {
                     // if a call happens after the coalescable child group, then we should
                     // realize the group of the coalescable child
@@ -3227,6 +3410,8 @@ class ComposableFunctionBodyTransformer(
                 }
             }
 
+            var hasComposableCallsWithGroups = false
+                private set
             var hasComposableCalls = false
                 private set
             var hasReturn = false
