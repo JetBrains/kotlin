@@ -66,7 +66,7 @@ class FirCallResolver(
         qualifiedResolver.reset()
         @Suppress("NAME_SHADOWING")
         val functionCall = if (needTransformArguments) {
-            functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
+            functionCall.transformExplicitReceiver()
                 .also {
                     dataFlowAnalyzer.enterQualifiedAccessExpression()
                     functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
@@ -106,6 +106,20 @@ class FirCallResolver(
             resultFunctionCall.resultType = typeRef
         }
         return resultFunctionCall
+    }
+
+    private inline fun <reified Q : FirQualifiedAccess> Q.transformExplicitReceiver(): Q {
+        val explicitReceiver =
+            explicitReceiver as? FirQualifiedAccessExpression
+                ?: return transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent) as Q
+
+        val callee =
+            explicitReceiver.calleeReference as? FirSuperReference
+                ?: return transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent) as Q
+
+        transformer.transformSuperReceiver(callee, explicitReceiver)
+
+        return this
     }
 
     private data class ResolutionResult(
@@ -161,7 +175,7 @@ class FirCallResolver(
         qualifiedResolver.initProcessingQualifiedAccess(callee)
 
         @Suppress("NAME_SHADOWING")
-        val qualifiedAccess = qualifiedAccess.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
+        val qualifiedAccess = qualifiedAccess.transformExplicitReceiver<FirQualifiedAccess>()
         qualifiedResolver.replacedQualifier(qualifiedAccess)?.let { resolvedQualifierPart ->
             return resolvedQualifierPart
         }

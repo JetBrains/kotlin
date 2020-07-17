@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
@@ -85,46 +84,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 qualifiedAccessExpression
             }
             is FirSuperReference -> {
-                val labelName = callee.labelName
-                val implicitReceiver =
-                    if (labelName != null) implicitReceiverStack[labelName] as? ImplicitDispatchReceiverValue
-                    else implicitReceiverStack.lastDispatchReceiver()
-                implicitReceiver?.receiverExpression?.let {
-                    qualifiedAccessExpression.transformDispatchReceiver(StoreReceiver, it)
-                }
-                when (val superTypeRef = callee.superTypeRef) {
-                    is FirResolvedTypeRef -> {
-                        qualifiedAccessExpression.resultType = superTypeRef
-                    }
-                    !is FirImplicitTypeRef -> {
-                        callee.transformChildren(transformer, ResolutionMode.ContextIndependent)
-                        qualifiedAccessExpression.resultType = callee.superTypeRef
-                    }
-                    else -> {
-                        val superTypeRefs = implicitReceiver?.boundSymbol?.phasedFir?.superTypeRefs
-                        val resultType = when {
-                            superTypeRefs?.isNotEmpty() != true -> {
-                                buildErrorTypeRef {
-                                    source = qualifiedAccessExpression.source
-                                    // NB: NOT_A_SUPERTYPE is reported by a separate checker
-                                    diagnostic = ConeStubDiagnostic(ConeSimpleDiagnostic("No super type", DiagnosticKind.Other))
-                                }
-                            }
-                            superTypeRefs.size == 1 -> {
-                                superTypeRefs.single()
-                            }
-                            else -> {
-                                buildComposedSuperTypeRef {
-                                    source = qualifiedAccessExpression.source
-                                    superTypeRefs.mapTo(this.superTypeRefs) { it as FirResolvedTypeRef }
-                                }
-                            }
-                        }
-                        qualifiedAccessExpression.resultType = resultType
-                        callee.replaceSuperTypeRef(resultType)
-                    }
-                }
-                qualifiedAccessExpression
+                transformSuperReceiver(callee, qualifiedAccessExpression)
             }
             is FirDelegateFieldReference -> {
                 val delegateFieldSymbol = callee.resolvedSymbol
@@ -162,6 +122,52 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
         }
         return result.compose()
+    }
+
+    fun transformSuperReceiver(
+        superReference: FirSuperReference,
+        superReferenceContainer: FirQualifiedAccessExpression
+    ): FirQualifiedAccessExpression {
+        val labelName = superReference.labelName
+        val implicitReceiver =
+            if (labelName != null) implicitReceiverStack[labelName] as? ImplicitDispatchReceiverValue
+            else implicitReceiverStack.lastDispatchReceiver()
+        implicitReceiver?.receiverExpression?.let {
+            superReferenceContainer.transformDispatchReceiver(StoreReceiver, it)
+        }
+        when (val superTypeRef = superReference.superTypeRef) {
+            is FirResolvedTypeRef -> {
+                superReferenceContainer.resultType = superTypeRef
+            }
+            !is FirImplicitTypeRef -> {
+                superReference.transformChildren(transformer, ResolutionMode.ContextIndependent)
+                superReferenceContainer.resultType = superReference.superTypeRef
+            }
+            else -> {
+                val superTypeRefs = implicitReceiver?.boundSymbol?.phasedFir?.superTypeRefs
+                val resultType = when {
+                    superTypeRefs?.isNotEmpty() != true -> {
+                        buildErrorTypeRef {
+                            source = superReferenceContainer.source
+                            // NB: NOT_A_SUPERTYPE is reported by a separate checker
+                            diagnostic = ConeStubDiagnostic(ConeSimpleDiagnostic("No super type", DiagnosticKind.Other))
+                        }
+                    }
+                    superTypeRefs.size == 1 -> {
+                        superTypeRefs.single()
+                    }
+                    else -> {
+                        buildComposedSuperTypeRef {
+                            source = superReferenceContainer.source
+                            superTypeRefs.mapTo(this.superTypeRefs) { it as FirResolvedTypeRef }
+                        }
+                    }
+                }
+                superReferenceContainer.resultType = resultType
+                superReference.replaceSuperTypeRef(resultType)
+            }
+        }
+        return superReferenceContainer
     }
 
     protected open fun FirQualifiedAccessExpression.isAcceptableResolvedQualifiedAccess(): Boolean {
