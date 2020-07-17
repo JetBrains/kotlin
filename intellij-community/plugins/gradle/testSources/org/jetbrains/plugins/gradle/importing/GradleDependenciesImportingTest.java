@@ -1890,6 +1890,35 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     assertModuleLibDepScope("project.test", "Gradle: junit:junit:4.11", DependencyScope.COMPILE);
   }
 
+  @Test
+  public void testCompilationTaskClasspathDependencies() throws Exception {
+    importProject(
+      new GradleBuildScriptBuilderEx()
+        .withJavaPlugin()
+        .addPostfix(
+          "  configurations {",
+          "    custom1",
+          "    custom2",
+          "  }",
+          "  sourceSets {",
+          "    customSrc",
+          "  }",
+          "  dependencies {",
+          "    custom1 'junit:junit:4.12'",
+          "    custom2 'org.hamcrest:hamcrest-core:1.3'",
+          "  }",
+          "  compileJava { classpath += configurations.custom1 }",
+          "  compileCustomSrcJava {classpath += configurations.custom2 }"
+        )
+        .generate()
+    );
+
+    assertModules("project", "project.main", "project.test", "project.customSrc");
+    assertModuleLibDeps("project.main", "Gradle: junit:junit:4.12", "Gradle: org.hamcrest:hamcrest-core:1.3");
+    assertModuleLibDeps("project.test");
+    assertModuleLibDeps("project.customSrc", "Gradle: org.hamcrest:hamcrest-core:1.3");
+  }
+
   @SuppressWarnings("SameParameterValue")
   private LibraryOrderEntry assertSingleLibraryOrderEntry(String moduleName, String depName) {
     List<LibraryOrderEntry> moduleLibDeps = getModuleLibDeps(moduleName, depName);

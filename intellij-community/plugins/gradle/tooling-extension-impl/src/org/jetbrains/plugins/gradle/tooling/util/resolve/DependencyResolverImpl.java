@@ -5,6 +5,7 @@ import com.intellij.openapi.util.Getter;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.artifacts.*;
 import org.gradle.api.artifacts.component.*;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
@@ -17,6 +18,7 @@ import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetOutput;
+import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.internal.impldep.com.google.common.collect.ArrayListMultimap;
 import org.gradle.internal.impldep.com.google.common.collect.HashMultimap;
 import org.gradle.internal.impldep.com.google.common.collect.Multimap;
@@ -41,6 +43,7 @@ import java.io.File;
 import java.util.*;
 
 import static java.util.Collections.*;
+import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 
 /**
  * @author Vladislav.Soroka
@@ -128,7 +131,7 @@ public class DependencyResolverImpl implements DependencyResolver {
     Collection<ExternalDependency> result = new ArrayList<ExternalDependency>();
 
     // resolve compile dependencies
-    FileCollection compileClasspath = sourceSet.getCompileClasspath();
+    FileCollection compileClasspath = getCompileClasspath(sourceSet);
     Collection<? extends ExternalDependency> compileDependencies = resolveDependenciesWithDefault(
       compileClasspath, COMPILE_SCOPE,
       new Getter<Collection<? extends ExternalDependency>>() {
@@ -165,6 +168,21 @@ public class DependencyResolverImpl implements DependencyResolver {
       ((AbstractExternalDependency)dependency).setClasspathOrder(++order);
     }
     return result;
+  }
+
+  private FileCollection getCompileClasspath(SourceSet sourceSet) {
+    final String sourceSetCompileTaskPrefix = sourceSet.getName() == "main" ? "" : sourceSet.getName();
+    final String compileTaskName = "compile" + capitalize((CharSequence)sourceSetCompileTaskPrefix) + "Java";
+
+    Task compileTask = myProject.getTasks().findByName(compileTaskName);
+    if (compileTask instanceof AbstractCompile) {
+      try {
+        return ((AbstractCompile)compileTask).getClasspath();
+      } catch (Exception e) {
+        // ignore
+      }
+    }
+    return sourceSet.getCompileClasspath();
   }
 
   private Collection<ExternalDependency> resolveDependencies(@Nullable Configuration configuration, @Nullable String scope) {
