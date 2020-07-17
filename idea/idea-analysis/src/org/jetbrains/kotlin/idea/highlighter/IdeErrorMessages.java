@@ -171,7 +171,7 @@ public class IdeErrorMessages {
                 STRING, HTML_NONE_APPLICABLE_CALLS);
 
         MAP.put(COMPATIBILITY_WARNING,
-                KotlinIdeaAnalysisBundle.htmlMessage("html.candidate.resolution.will.be.changed.please.invoke.explicitly.ul.0.ul.html"),
+                KotlinIdeaAnalysisBundle.htmlMessage("html.candidate.resolution.will.be.changed.soon.please.use.fully.qualified.name.to.invoke.the.following.closer.candidate.explicitly.ul.0.ul.html"),
                 HTML_COMPATIBILITY_CANDIDATE);
 
         MAP.put(CONFLICTING_JVM_DECLARATIONS, KotlinIdeaAnalysisBundle.htmlMessage("html.platform.declaration.clash.0.html"), HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
