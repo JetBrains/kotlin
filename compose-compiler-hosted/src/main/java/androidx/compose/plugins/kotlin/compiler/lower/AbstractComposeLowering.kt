@@ -598,6 +598,17 @@ abstract class AbstractComposeLowering(
         )
     }
 
+    protected fun irBooleanOr(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
+        val boolean = context.builtIns.booleanType
+        return irCall(
+            context.symbols.getBinaryOperator(OperatorNames.OR, boolean, boolean),
+            null,
+            lhs,
+            null,
+            rhs
+        )
+    }
+
     protected fun irOrOr(lhs: IrExpression, rhs: IrExpression): IrExpression {
         return IrWhenImpl(
             UNDEFINED_OFFSET,
