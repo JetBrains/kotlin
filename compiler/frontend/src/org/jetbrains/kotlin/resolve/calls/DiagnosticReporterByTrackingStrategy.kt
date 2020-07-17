@@ -236,6 +236,14 @@ class DiagnosticReporterByTrackingStrategy(
                     )
                 )
             }
+
+            AdaptedCallableReferenceIsUsedWithReflection::class.java -> {
+                trace.report(
+                    ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE.on(
+                        callArgument.psiCallArgument.valueArgument.asElement()
+                    )
+                )
+            }
         }
     }
 

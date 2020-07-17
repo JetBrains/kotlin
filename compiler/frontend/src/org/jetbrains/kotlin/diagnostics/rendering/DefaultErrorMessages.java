@@ -990,6 +990,8 @@ public class DefaultErrorMessages {
 
         MAP.put(CALLABLE_REFERENCE_TO_JAVA_SYNTHETIC_PROPERTY, "References to the synthetic extension properties for a Java get/set methods aren't supported fully, please use reference to a method");
 
+        MAP.put(ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE, "Adapted callable reference cannot be resolved against reflective types");
+
         //Inline
         MAP.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
         MAP.put(PRIVATE_CLASS_MEMBER_FROM_INLINE, "Non-private inline function cannot access members of private classes: ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);

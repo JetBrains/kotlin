@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/funWithDefaultParametersAsKCallableStar.kt
   FUN name:testDefaultsOnlyStar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUNCTION_REFERENCE 'public final fun defaultsOnly (x: kotlin.String): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Int> origin=null reflectionTarget=<same>
+        fn: FUNCTION_REFERENCE 'public final fun defaultsOnly (x: kotlin.String): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.String, kotlin.Int> origin=null reflectionTarget=<same>
   FUN name:testRegularAndDefaultsStar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -66,8 +66,8 @@ FILE fqName:<root> fileName:/funWithDefaultParametersAsKCallableStar.kt
   FUN name:testVarargsStar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUNCTION_REFERENCE 'public final fun varargs (vararg xs: kotlin.String): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Int> origin=null reflectionTarget=<same>
+        fn: FUNCTION_REFERENCE 'public final fun varargs (vararg xs: kotlin.String): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Array<out kotlin.String>, kotlin.Int> origin=null reflectionTarget=<same>
   FUN name:testCtorStar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useKCallableStar (fn: kotlin.reflect.KCallable<*>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.C' type=kotlin.reflect.KFunction0<<root>.C> origin=null reflectionTarget=<same>
+        fn: FUNCTION_REFERENCE 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.C' type=kotlin.reflect.KFunction1<kotlin.String, <root>.C> origin=null reflectionTarget=<same>
