@@ -13,6 +13,9 @@ inline fun <reified T> WithChildren<*>.firstChildOfTypeOrNull(predicate: (T) -> 
 inline fun <reified T> WithChildren<*>.firstChildOfType(): T =
     children.filterIsInstance<T>().first()
 
+inline fun <reified T> WithChildren<*>.childrenOfType(): List<T> =
+    children.filterIsInstance<T>()
+
 inline fun <reified T> WithChildren<*>.firstChildOfType(predicate: (T) -> Boolean): T =
     children.filterIsInstance<T>().first(predicate)
 
