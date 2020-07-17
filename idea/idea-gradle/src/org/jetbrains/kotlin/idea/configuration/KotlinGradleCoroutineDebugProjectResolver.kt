@@ -28,7 +28,7 @@ class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtensi
             //language=Gradle
             """
             gradle.taskGraph.beforeTask { Task task ->
-                if (task instanceof Test) {
+                if (task instanceof Test || task instanceof JavaExec) {
                     def kotlinxCoroutinesCoreJar = task.classpath.find { it.name.startsWith("kotlinx-coroutines-core") }
                     if (kotlinxCoroutinesCoreJar) {
                         def results = (kotlinxCoroutinesCoreJar.getName() =~ /kotlinx-coroutines-core\-([\d\.]+)\.jar${'$'}/).findAll()
