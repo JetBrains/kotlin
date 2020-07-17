@@ -19,7 +19,6 @@ repositories {
 }
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test-js'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
     implementation 'org.jetbrains.kotlinx:kotlinx-html-js:0.7.1-KOTLIN_VERSION'
     implementation 'org.jetbrains:kotlin-react:16.13.1-pre.109-kotlin-KOTLIN_VERSION'
     implementation 'org.jetbrains:kotlin-react-dom:16.13.1-pre.109-kotlin-KOTLIN_VERSION'

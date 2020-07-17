@@ -19,9 +19,7 @@ kotlin {
     }
     sourceSets {
         jvmMain {
-            dependencies {
-                implementation kotlin('stdlib-jdk8')
-            }
+
         }
         jvmTest {
             dependencies {
