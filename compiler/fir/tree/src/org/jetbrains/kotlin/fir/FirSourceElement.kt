@@ -167,7 +167,7 @@ class FirFakeSourceElement<out P : PsiElement>(psi: P, override val kind: FirFak
 
 fun FirSourceElement.fakeElement(newKind: FirFakeSourceElementKind): FirSourceElement {
     return when (this) {
-        is FirLightSourceElement -> this
+        is FirLightSourceElement -> FirLightSourceElement(element, startOffset, endOffset, tree, newKind)
         is FirPsiSourceElement<*> -> FirFakeSourceElement(psi, newKind)
     }
 }
@@ -176,12 +176,11 @@ class FirLightSourceElement(
     val element: LighterASTNode,
     override val startOffset: Int,
     override val endOffset: Int,
-    val tree: FlyweightCapableTreeStructure<LighterASTNode>
+    val tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    override val kind: FirSourceElementKind = FirRealSourceElementKind,
 ) : FirSourceElement() {
     override val elementType: IElementType
         get() = element.tokenType
-
-    override val kind: FirSourceElementKind get() = FirRealSourceElementKind
 }
 
 val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement<*>)?.psi
