@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.core.script.ucache
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
@@ -20,15 +19,21 @@ import java.lang.ref.Reference
 import java.lang.ref.SoftReference
 
 class ScriptClassRootsCache(
-    val project: Project,
     private val scripts: Map<String, LightScriptInfo>,
     private val classes: Set<String>,
     private val sources: Set<String>,
     val customDefinitionsUsed: Boolean,
     val sdks: ScriptSdks
 ) {
+    companion object {
+        val EMPTY = ScriptClassRootsCache(
+            mapOf(), setOf(), setOf(), true,
+            ScriptSdks(mapOf(), setOf(), setOf())
+        )
+    }
+
     fun withUpdatedSdks(newSdks: ScriptSdks) =
-        ScriptClassRootsCache(project, scripts, classes, sources, customDefinitionsUsed, newSdks)
+        ScriptClassRootsCache(scripts, classes, sources, customDefinitionsUsed, newSdks)
 
     abstract class LightScriptInfo(val definition: ScriptDefinition?) {
         @Volatile

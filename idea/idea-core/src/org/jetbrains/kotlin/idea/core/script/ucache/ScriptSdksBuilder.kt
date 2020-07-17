@@ -5,13 +5,18 @@
 
 package org.jetbrains.kotlin.idea.core.script.ucache
 
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.core.script.scriptingWarnLog
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import java.io.File
@@ -23,7 +28,26 @@ class ScriptSdksBuilder(
 ) {
     private val defaultSdk by lazy { getScriptDefaultSdk() }
 
-    fun build() = ScriptSdks(project, sdks)
+    fun build(): ScriptSdks {
+        val nonIndexedClassRoots = mutableSetOf<VirtualFile>()
+        val nonIndexedSourceRoots = mutableSetOf<VirtualFile>()
+
+        val nonIndexedSdks = sdks.values.filterNotNullTo(mutableSetOf())
+
+        runReadAction {
+            for (module in ModuleManager.getInstance(project).modules) {
+                if (nonIndexedSdks.isEmpty()) break
+                nonIndexedSdks.remove(ModuleRootManager.getInstance(module).sdk)
+            }
+
+            nonIndexedSdks.forEach {
+                nonIndexedClassRoots.addAll(it.rootProvider.getFiles(OrderRootType.CLASSES))
+                nonIndexedSourceRoots.addAll(it.rootProvider.getFiles(OrderRootType.SOURCES))
+            }
+        }
+
+        return ScriptSdks(sdks, nonIndexedClassRoots, nonIndexedSourceRoots)
+    }
 
     @Deprecated("Don't use, used only from DefaultScriptingSupport for saving to storage")
     fun addAll(other: ScriptSdksBuilder) {
