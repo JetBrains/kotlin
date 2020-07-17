@@ -17,6 +17,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.util.applyKotlinCodeStyle
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JLabel
@@ -35,8 +36,8 @@ class KotlinSaveStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel
     private val saveDefaultsComboBox = ComboBox<SaveItem>()
     private val saveDefaultsItems = listOf(
         SaveItem("<ide defaults>", null),
+        SaveItem(KotlinStyleGuideCodeStyle.CODE_STYLE_TITLE, KotlinStyleGuideCodeStyle.CODE_STYLE_ID),
         SaveItem(KotlinObsoleteCodeStyle.CODE_STYLE_TITLE, KotlinObsoleteCodeStyle.CODE_STYLE_ID),
-        SaveItem(KotlinStyleGuideCodeStyle.CODE_STYLE_TITLE, KotlinStyleGuideCodeStyle.CODE_STYLE_ID)
     )
 
     var selectedId: String?
@@ -71,19 +72,15 @@ class KotlinSaveStylePanel(settings: CodeStyleSettings) : CodeStyleAbstractPanel
     }
 
     override fun apply(settings: CodeStyleSettings) {
-        settings.kotlinCustomSettings.CODE_STYLE_DEFAULTS = selectedId
-        settings.kotlinCommonSettings.CODE_STYLE_DEFAULTS = selectedId
+        applyKotlinCodeStyle(selectedId, settings)
     }
 
-    override fun isModified(settings: CodeStyleSettings): Boolean {
-        return selectedId != settings.kotlinCustomSettings.CODE_STYLE_DEFAULTS ||
-                selectedId != settings.kotlinCommonSettings.CODE_STYLE_DEFAULTS
-    }
+    override fun isModified(settings: CodeStyleSettings): Boolean = selectedId != settings.kotlinCodeStyleDefaults()
 
     override fun getPanel() = jPanel
 
     override fun resetImpl(settings: CodeStyleSettings) {
-        selectedId = settings.kotlinCustomSettings.CODE_STYLE_DEFAULTS ?: settings.kotlinCommonSettings.CODE_STYLE_DEFAULTS
+        selectedId = settings.kotlinCodeStyleDefaults()
     }
 
     override fun onSomethingChanged() {
