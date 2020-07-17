@@ -37,6 +37,8 @@ hs_err_pid*
 .idea/shelf
 .idea/jsLibraryMappings.xml
 .idea/modules.xml
+.idea/misc.xml
+.idea/compiler.xml
 
 # Sensitive or high-churn files:
 .idea/dataSources.ids
@@ -94,4 +96,11 @@ gradle-app.setting
 local.properties
 android.local.properties
 
-!runners/gradle-integration-tests/testData/basic/classDir/**/*.class
+!integration-tests/gradle-integration-tests/testData/basic/classDir/**/*.class
+
+core/out/
+runners/**/out/
+.idea
+plugins/base/src/main/resources/dokka/scripts/main.js
+plugins/base/src/main/resources/dokka/scripts/main.js.map
+/.idea/compiler.xml
