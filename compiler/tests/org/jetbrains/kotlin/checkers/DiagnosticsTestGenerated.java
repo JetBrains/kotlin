@@ -11043,6 +11043,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     public void testTakingExtensibilityFromDeclarationOfAnonymousFunction() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/takingExtensibilityFromDeclarationOfAnonymousFunction.kt");
                     }
+
+                    @TestMetadata("wrongVariableFixationOrder.kt")
+                    public void testWrongVariableFixationOrder() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/wrongVariableFixationOrder.kt");
+                    }
+
+                    @TestMetadata("wrongVariableFixationOrder2.kt")
+                    public void testWrongVariableFixationOrder2() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/wrongVariableFixationOrder2.kt");
+                    }
                 }
             }
 
