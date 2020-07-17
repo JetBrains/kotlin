@@ -32,14 +32,13 @@ import javax.swing.Icon
 class BinaryRunConfiguration(
     private val workspace: WorkspaceBase,
     project: Project,
-    factory: ConfigurationFactory,
-    konanExecutable: KonanExecutable?
-) : LocatableConfigurationBase<Any>(project, factory, konanExecutable?.base?.name),
+    factory: ConfigurationFactory
+) : LocatableConfigurationBase<Any>(project, factory),
     CommonProgramRunConfigurationParameters,
     CidrDebugProfile {
 
-    var executable: KonanExecutable? = konanExecutable
-    var selectedTarget: BinaryExecutionTarget? = null
+    var executable: KonanExecutable? = workspace.executables.firstOrNull()
+    var selectedTarget: BinaryExecutionTarget? = null  //auto setup via BinaryTargetListener
     var attachmentStrategy: AttachmentStrategy? = null // affects getState
 
     private var directory: String? = null

@@ -71,7 +71,10 @@ class BinaryRunConfigurationSettingsEditor(
 
     override fun resetEditorFrom(runConfiguration: BinaryRunConfiguration) {
         commonProgramParameters.reset(runConfiguration)
-        executableCombo.selectedItem = runConfiguration.executable
+        executableCombo.selectedItem =
+            runConfiguration.executable?.base?.let { base ->
+                availableExecutableItems.firstOrNull { it.exec.base == base }
+            } ?: availableExecutableItems.firstOrNull()
     }
 
     private class KonanExecutableItem(

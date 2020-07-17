@@ -18,5 +18,5 @@ class BinaryRunConfigurationFactory(
     override fun getId() = "BinaryRunConfigurationFactory_" + type.id
 
     override fun createTemplateConfiguration(project: Project): RunConfiguration =
-        BinaryRunConfiguration(getWorkspace(project), project, this, null)
+        BinaryRunConfiguration(getWorkspace(project), project, this)
 }
