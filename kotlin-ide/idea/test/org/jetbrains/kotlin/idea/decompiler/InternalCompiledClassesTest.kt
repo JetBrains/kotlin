@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.idea.decompiler
 
 import com.intellij.psi.ClassFileViewProvider
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
-import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest() {
     private val mockLibraryFacility = MockLibraryFacility(
-        source = File(PluginTestCaseBase.getTestDataPathBase(), "/decompiler/internalClasses"),
+        source = IDEA_TEST_DATA_DIR.resolve("decompiler/internalClasses"),
         attachSources = false
     )
 

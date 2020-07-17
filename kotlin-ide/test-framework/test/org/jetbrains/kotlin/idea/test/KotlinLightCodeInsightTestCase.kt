@@ -13,16 +13,20 @@ import java.io.File
 @Suppress("DEPRECATION")
 @Deprecated("Use KotlinLightCodeInsightFixtureTestCase instead")
 abstract class KotlinLightCodeInsightTestCase : com.intellij.testFramework.LightCodeInsightTestCase() {
-    override fun getTestDataPath(): String {
+    open fun getTestDataDirectory(): File {
         val clazz = this::class.java
         val root = getTestsRoot(clazz)
-        val path = if (filesBasedTest) {
-            File(root)
-        } else {
-            val test = getTestDataFileName(clazz, name) ?: error("No @TestMetadata for ${clazz.name}")
-            File(root, test)
+
+        if (filesBasedTest) {
+            return File(root)
         }
-        return toSlashEndingDirPath(path.path)
+
+        val test = getTestDataFileName(clazz, name) ?: error("No @TestMetadata for ${clazz.name}")
+        return File(root, test)
+    }
+
+    final override fun getTestDataPath(): String {
+        return toSlashEndingDirPath(getTestDataDirectory().path)
     }
 
     protected open val filesBasedTest: Boolean = false

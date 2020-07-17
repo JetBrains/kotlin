@@ -7,27 +7,26 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
-import java.io.File
 
 @TestRoot("idea")
 @TestDataPath("\$CONTENT_ROOT")
 @RunWith(JUnit38ClassRunner::class)
 @TestMetadata("testData/codeInsight/overrideImplement/withLib")
 class OverrideImplementWithLibTest : AbstractOverrideImplementTest() {
-    private companion object {
-        private val MOCK_SOURCES_BASE = File(PluginTestCaseBase.getTestDataPathBase(), "codeInsight/overrideImplement/withLib")
-    }
-
     private lateinit var mockLibraryFacility: MockLibraryFacility
 
     override fun setUp() {
         super.setUp()
-        mockLibraryFacility = MockLibraryFacility(File(MOCK_SOURCES_BASE, getTestName(true) + "Src"), attachSources = false)
+
+        val mockSourcesBase = IDEA_TEST_DATA_DIR.resolve("codeInsight/overrideImplement/withLib")
+        val mockSource = mockSourcesBase.resolve(getTestName(true) + "Src")
+
+        mockLibraryFacility = MockLibraryFacility(mockSource, attachSources = false)
         mockLibraryFacility.setUp(module)
     }
 

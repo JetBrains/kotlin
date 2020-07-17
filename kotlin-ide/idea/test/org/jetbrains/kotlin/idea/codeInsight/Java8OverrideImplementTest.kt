@@ -6,24 +6,14 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
 @RunWith(JUnit38ClassRunner::class)
 class Java8OverrideImplementTest : AbstractOverrideImplementTest() {
-    companion object {
-        private val TEST_PATH = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement/jdk8"
-    }
-
-    override fun setUp() {
-        super.setUp()
-        myFixture.testDataPath = TEST_PATH
-    }
-
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("codeInsight/overrideImplement/jdk8")
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
 
-    fun testOverrideCollectionStream() {
-        doOverrideFileTest("stream")
-    }
+    fun testOverrideCollectionStream() = doOverrideFileTest("stream")
 }

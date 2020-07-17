@@ -16,12 +16,11 @@ import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.test.KotlinLightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
 import org.junit.Assert
-import java.util.concurrent.Callable
 import kotlin.test.assertTrue
 
 abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixtureTestCase() {
@@ -157,7 +156,7 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
 
         private fun replacePlaceholders(actualString: String): String {
             val replaced = PathUtil.toSystemIndependentName(actualString)
-                .replace(PluginTestCaseBase.TEST_DATA_DIR, "/<test dir>")
+                .replace(IDEA_TEST_DATA_DIR.path, "/<test dir>")
                 .replace("//", "/") // additional slashes to fix discrepancy between windows and unix
             if ("!/" in replaced) {
                 return replaced.replace(replaced.substringBefore("!/"), "<jar>")

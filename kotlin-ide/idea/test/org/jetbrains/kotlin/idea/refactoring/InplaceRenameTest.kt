@@ -20,9 +20,10 @@ import org.jetbrains.kotlin.idea.refactoring.rename.KotlinMemberInplaceRenameHan
 import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinImplicitLambdaParameter
 import org.jetbrains.kotlin.idea.refactoring.rename.findElementForRename
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.util.slashedPath
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import kotlin.test.assertFalse
@@ -31,7 +32,8 @@ import kotlin.test.assertTrue
 @RunWith(JUnit38ClassRunner::class)
 class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     override fun isRunInWriteAction(): Boolean = false
-    override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/refactoring/rename/inplace/"
+
+    override fun getTestDataPath() = IDEA_TEST_DATA_DIR.resolve("refactoring/rename/inplace").slashedPath
 
     fun testLocalVal() {
         doTestMemberInplaceRename("y")
@@ -185,20 +187,17 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         configureByFile(getTestName(false) + ".kt")
 
         // This code is copy-pasted from CodeInsightTestUtil.doInlineRename() and slightly modified.
-        // Original method was not suitable because it expects renamed element to be reference to other or referrable
+        // Original method was not suitable because it expects renamed element to be reference to other or referable
 
-        val file = getFile()!!
-        val editor = getEditor()!!
+        val file = file!!
+        val editor = editor!!
         val element = file.findElementForRename<KtNameReferenceExpression>(editor.caretModel.offset)!!
         assertNotNull(element)
 
-        val dataContext = SimpleDataContext.getSimpleContext(
-            CommonDataKeys.PSI_ELEMENT.name, element,
-            getCurrentEditorDataContext()
-        )
+        val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.name, element, currentEditorDataContext)
         val handler = RenameKotlinImplicitLambdaParameter()
 
-        assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for " + element)
+        assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for $element")
 
         val project = editor.project!!
 
@@ -243,11 +242,11 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.name, element!!, currentEditorDataContext)
 
         if (newName == null) {
-            assertFalse(handler.isRenaming(dataContext), "In-place rename is allowed for " + element)
+            assertFalse(handler.isRenaming(dataContext), "In-place rename is allowed for $element")
         } else {
             try {
-                assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for " + element)
-                CodeInsightTestUtil.doInlineRename(handler, newName, getEditor(), element)
+                assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for $element")
+                CodeInsightTestUtil.doInlineRename(handler, newName, editor, element)
                 checkResultByFile(getTestName(false) + ".kt.after")
             } catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
                 val expectedMessage = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// SHOULD_FAIL_WITH: ")

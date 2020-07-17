@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.configureKotlinFacet
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.junit.internal.runners.JUnit38ClassRunner
@@ -188,7 +189,7 @@ class UpdateConfigurationQuickFixTest : BasePlatformTestCase() {
         val name = if (path == "mockRuntime106") "kotlin-runtime.jar" else "kotlin-stdlib.jar"
         val sourcePath = when (path) {
             "actualRuntime" -> KotlinArtifacts.instance.kotlinStdlib
-            else -> File("${PluginTestCaseBase.getTestDataPathBase()}/configuration/$path/$name")
+            else -> File(IDEA_TEST_DATA_DIR, "configuration/$path/$name")
         }
 
         val tempFile = File(FileUtil.createTempDirectory("kotlin-update-configuration", null), name)

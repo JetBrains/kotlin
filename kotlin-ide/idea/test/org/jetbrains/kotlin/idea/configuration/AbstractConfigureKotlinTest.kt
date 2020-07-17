@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.Fil
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.test.runAll
+import org.jetbrains.kotlin.test.KotlinRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
+import org.jetbrains.kotlin.test.util.slashedPath
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
@@ -137,7 +139,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     }
 
     companion object {
-        private val BASE_PATH = "${getHomeDirectory()}/idea/testData/configuration/"
+        private val BASE_PATH = KotlinRoot.DIR.resolve("idea/testData/configuration/").slashedPath
         private val TEMP_DIR_MACRO_KEY = "TEMP_TEST_DIR"
         protected val JAVA_CONFIGURATOR: KotlinJavaModuleConfigurator by lazy {
             object : KotlinJavaModuleConfigurator() {

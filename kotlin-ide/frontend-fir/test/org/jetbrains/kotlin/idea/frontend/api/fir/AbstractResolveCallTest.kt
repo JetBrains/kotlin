@@ -27,10 +27,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaGetter
 
-
 abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") KotlinLightCodeInsightTestCase() {
-    override fun getTestDataPath(): String = ""
-
     protected fun doTest(path: String) {
         addExternalTestFiles(path)
         configureByFile(path)

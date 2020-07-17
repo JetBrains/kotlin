@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.PsiUtil
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.copy.CopyHandler
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
@@ -66,7 +65,6 @@ private enum class CopyAction : AbstractMultifileRefactoringTest.RefactoringActi
 }
 
 abstract class AbstractCopyTest : AbstractMultifileRefactoringTest() {
-
     companion object {
         fun runCopyRefactoring(path: String, config: JsonObject, rootDir: VirtualFile, project: Project) {
             val action = config.getNullableString("type")?.let { CopyAction.valueOf(it) } ?: CopyAction.DEFAULT

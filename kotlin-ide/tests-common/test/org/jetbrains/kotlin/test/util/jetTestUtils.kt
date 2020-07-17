@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@file:JvmName("JetTestUtils")
 package org.jetbrains.kotlin.test.util
 
 import com.intellij.psi.*
@@ -23,6 +23,7 @@ import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 fun String.trimTrailingWhitespaces(): String =
@@ -69,3 +70,6 @@ val CodeInsightTestFixture.elementByOffset: PsiElement
     get() {
         return file.findElementAt(editor.caretModel.offset) ?: error("Can't find element at offset. Probably <caret> is missing.")
     }
+
+val File.slashedPath: String
+    get() = KotlinTestUtils.toSlashEndingDirPath(absolutePath)

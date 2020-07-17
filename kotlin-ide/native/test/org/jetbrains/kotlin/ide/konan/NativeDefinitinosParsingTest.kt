@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.testFramework.ParsingTestCase
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinRoot
+import org.jetbrains.kotlin.test.util.slashedPath
 
 class NativeDefinitionsParsingTest : ParsingTestCase("", "def", NativeDefinitionsParserDefinition()) {
 
@@ -14,7 +15,7 @@ class NativeDefinitionsParsingTest : ParsingTestCase("", "def", NativeDefinition
 
     fun testBadDefinitions() = doTest(true)
 
-    override fun getTestDataPath(): String = "${KotlinTestUtils.getHomeDirectory()}/native/testData/colorHighlighting"
+    override fun getTestDataPath(): String = KotlinRoot.DIR.resolve("native/testData/colorHighlighting").slashedPath
 
     override fun skipSpaces(): Boolean = false
 

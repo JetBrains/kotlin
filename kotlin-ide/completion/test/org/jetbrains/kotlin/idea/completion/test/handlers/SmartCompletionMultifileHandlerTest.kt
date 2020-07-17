@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.completion.test.handlers
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE_PATH
+import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
@@ -71,5 +71,5 @@ class SmartCompletionMultifileHandlerTest : KotlinCompletionTestCase() {
         checkResultByFile("$fileName.kt.after")
     }
 
-    override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, "/handlers/multifile/smart/").path + File.separator
+    override fun getTestDataDirectory() = COMPLETION_TEST_DATA_BASE.resolve("handlers/multifile/smart")
 }

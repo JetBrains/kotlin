@@ -12,10 +12,7 @@ import org.junit.runner.RunWith
 
 @RunWith(JUnit38ClassRunner::class)
 class OverrideImplementTest : AbstractOverrideImplementTest() {
-    override fun setUp() {
-        super.setUp()
-        myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement"
-    }
+    override fun getTestDataDirectory() = PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve("codeInsight/overrideImplement")
 
     fun testAndroidxNotNull() {
         doOverrideDirectoryTest("foo")

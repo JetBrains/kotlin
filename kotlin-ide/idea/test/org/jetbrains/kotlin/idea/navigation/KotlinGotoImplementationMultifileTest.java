@@ -10,11 +10,12 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+
+import static org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR;
 
 @RunWith(JUnit38ClassRunner.class)
 public class KotlinGotoImplementationMultifileTest extends KotlinLightCodeInsightFixtureTestCase {
@@ -84,8 +85,7 @@ public class KotlinGotoImplementationMultifileTest extends KotlinLightCodeInsigh
 
     @NotNull
     @Override
-    protected String getTestDataPath() {
-        return new File(PluginTestCaseBase.getTestDataPathBase(),
-                        "/navigation/implementations/multifile/" + getTestName(false)).getPath() + File.separator;
+    public File getTestDataDirectory() {
+        return new File(IDEA_TEST_DATA_DIR, "navigation/implementations/multifile/" + getTestName(false));
     }
 }

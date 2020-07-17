@@ -12,29 +12,26 @@ import com.intellij.ide.hierarchy.actions.BrowseHierarchyActionBase
 import com.intellij.ide.hierarchy.type.TypeHierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.type.TypeHierarchyTreeStructure
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.MapDataContext
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.KotlinDocumentationProvider
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
+import org.jetbrains.kotlin.test.util.slashedPath
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
 @RunWith(JUnit38ClassRunner::class)
-class QuickDocInHierarchyTest() : CodeInsightTestCase() {
-    override fun getTestDataPath(): String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/kdoc/inTypeHierarchy/"
-    }
+class QuickDocInHierarchyTest : CodeInsightTestCase() {
+    override fun getTestDataPath() = IDEA_TEST_DATA_DIR.resolve("kdoc/inTypeHierarchy").slashedPath
 
     fun testSimple() {
         configureByFile(getTestName(true) + ".kt")
 
         val context = MapDataContext()
-        context.put<Project>(CommonDataKeys.PROJECT, project)
-        context.put<Editor>(CommonDataKeys.EDITOR, editor)
+        context.put(CommonDataKeys.PROJECT, project)
+        context.put(CommonDataKeys.EDITOR, editor)
 
         val provider = BrowseHierarchyActionBase.findProvider(LanguageTypeHierarchy.INSTANCE, file, file, context)!!
         val hierarchyTreeStructure = TypeHierarchyTreeStructure(
@@ -42,6 +39,7 @@ class QuickDocInHierarchyTest() : CodeInsightTestCase() {
             provider.getTarget(context) as PsiClass,
             HierarchyBrowserBaseEx.SCOPE_PROJECT
         )
+
         val hierarchyNodeDescriptor = hierarchyTreeStructure.baseDescriptor as TypeHierarchyNodeDescriptor
         val doc = KotlinDocumentationProvider().generateDoc(hierarchyNodeDescriptor.psiClass as PsiElement, null)!!
 

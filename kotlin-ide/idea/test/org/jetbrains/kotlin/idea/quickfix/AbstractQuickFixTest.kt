@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinRoot
 import org.junit.Assert
 import org.junit.ComparisonFailure
 import java.io.File
@@ -41,7 +41,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
         const val FORCE_PACKAGE_FOLDER_DIRECTIVE = "FORCE_PACKAGE_FOLDER"
 
         private val quickFixesAllowedToResolveInWriteAction = AllowedToResolveUnderWriteActionData(
-                "${KotlinTestUtils.getHomeDirectory()}/idea/testData/quickfix/allowResolveInWriteAction.txt",
+                KotlinRoot.DIR.resolve("idea/testData/quickfix/allowResolveInWriteAction.txt").path,
                 """
                     # Actions that are allowed to resolve in write action. Normally this list shouldn't be extended and eventually should 
                     # be dropped. Please consider rewriting a quick-fix and remove resolve from it before adding a new entry to this list.

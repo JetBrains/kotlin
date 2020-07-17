@@ -9,18 +9,16 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import kotlin.test.assertEquals
 
 abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopyPasteTest() {
-    protected open val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/conversion"
-
     private var oldEditorOptions: KotlinEditorOptions? = null
 
-    override fun getTestDataPath() = BASE_PATH
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("copyPaste/conversion")
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 

@@ -24,11 +24,9 @@ import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class KDocSampleTest : AbstractMultiModuleTest() {
-
-    override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/kdoc/multiModuleSamples/"
+    override fun getTestDataDirectory() = PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve("kdoc/multiModuleSamples")
 
     fun testSimple() {
-
         val code = module("code")
         val samples = module("samples", hasTestRoot = true)
 
@@ -38,7 +36,6 @@ class KDocSampleTest : AbstractMultiModuleTest() {
     }
 
     fun testFqName() {
-
         val code = module("code")
         val samples = module("samples", hasTestRoot = true)
 
@@ -59,7 +56,6 @@ class KDocSampleTest : AbstractMultiModuleTest() {
     }
 
     fun testTypeParameters() {
-
         val code = module("code")
         val samples = module("samples", hasTestRoot = true)
 
@@ -70,7 +66,6 @@ class KDocSampleTest : AbstractMultiModuleTest() {
     }
 
     fun doResolveTest(path: String, link: String) {
-
         configureByFile(path)
         val documentationManager = DocumentationManager.getInstance(myProject)
         val targetElement = documentationManager.findTargetElement(myEditor, file)

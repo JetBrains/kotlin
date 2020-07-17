@@ -65,5 +65,4 @@ abstract class AbstractMultiLineStringIndentTest : KotlinLightCodeInsightFixture
     }
 
     override fun getProjectDescriptor() = JAVA_LATEST
-    override fun getTestDataPath(): String = ""
 }

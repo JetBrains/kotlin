@@ -10,12 +10,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.junit.Assert
-import java.io.File
 
-private val FILE_WITH_KOTLIN_CODE = File(PluginTestCaseBase.TEST_DATA_DIR, "resolve/referenceInJava/dependency/dependencies.kt")
+private val FILE_WITH_KOTLIN_CODE = IDEA_TEST_DATA_DIR.resolve("resolve/referenceInJava/dependency/dependencies.kt")
 
 abstract class AbstractReferenceResolveInJavaTest : AbstractReferenceResolveTest() {
     override fun doTest(path: String) {

@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.idea.test.*
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
@@ -34,7 +35,7 @@ abstract class AbstractDecompiledTextBaseTest(
 
     protected open fun checkStubConsistency(file: VirtualFile, decompiledText: String) {}
 
-    protected val mockSourcesBase = File(PluginTestCaseBase.getTestDataPathBase(), baseDirectory)
+    protected val mockSourcesBase = File(IDEA_TEST_DATA_DIR, baseDirectory)
 
     private lateinit var mockLibraryFacility: MockLibraryFacility
 

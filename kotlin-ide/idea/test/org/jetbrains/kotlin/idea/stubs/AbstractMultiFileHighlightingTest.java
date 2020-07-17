@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 
+import static org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR;
+
 // This test is quite old and is partially failing after IDEA 2018.2
 // ALLOW_AST_ACCESS is added to 'util.kt' in test data to mute the failure
 // Possible solutions:
@@ -36,9 +38,10 @@ public abstract class AbstractMultiFileHighlightingTest extends AbstractMultiHig
         );
     }
 
+    @NotNull
     @Override
-    protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/multiFileHighlighting/";
+    public File getTestDataDirectory() {
+        return new File(IDEA_TEST_DATA_DIR, "multiFileHighlighting");
     }
 
     @Override

@@ -18,16 +18,17 @@ import junit.framework.TestCase
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.test.KotlinRoot
+import org.jetbrains.kotlin.test.util.slashedPath
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
-import java.io.File
 import java.util.*
 
 @RunWith(JUnit38ClassRunner::class)
 class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
-        myFixture.testDataPath = File(TEST_DATA_BASE_PATH).path + File.separator
+        myFixture.testDataPath = KotlinRoot.DIR.resolve("live-templates/testData").slashedPath
         setTemplateTestingCompat(module.project, testRootDisposable)
     }
 

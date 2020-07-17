@@ -35,14 +35,18 @@ import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.slashedPath
 import org.junit.Assert
 import java.io.File
 
 abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
-
     private var vfsDisposable: Ref<Disposable>? = null
 
-    abstract override fun getTestDataPath(): String
+    abstract fun getTestDataDirectory(): File
+
+    final override fun getTestDataPath(): String {
+        return getTestDataDirectory().slashedPath
+    }
 
     override fun setUp() {
         super.setUp()

@@ -8,7 +8,7 @@ import org.jdom.input.SAXBuilder
 import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.idea.maven.aether.ArtifactRepositoryManager
 import org.jetbrains.idea.maven.aether.ProgressConsumer
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinRoot
 import java.io.File
 import java.security.MessageDigest
 
@@ -52,7 +52,7 @@ private fun findLibrary(
         artifactId: String,
         kind: LibraryFileKind = LibraryFileKind.CLASSES
 ): File {
-    val librariesDir = File(KotlinTestUtils.getHomeDirectory(), "../.idea/libraries")
+    val librariesDir = File(KotlinRoot.DIR, "../.idea/libraries")
     if (!librariesDir.exists()) {
         throw IllegalStateException("Can't find $librariesDir")
     }
@@ -117,7 +117,7 @@ private enum class LibraryFileKind(val classifierSuffix: String, val artifactKin
 }
 
 private val remoteMavenRepositories: List<RemoteRepository> by lazy {
-    val jarRepositoriesFile = File(KotlinTestUtils.getHomeDirectory(), "../.idea/jarRepositories.xml")
+    val jarRepositoriesFile = File(KotlinRoot.DIR, "../.idea/jarRepositories.xml")
     val document = jarRepositoriesFile.inputStream().use { stream -> SAXBuilder().build(stream) }
 
     val repositories = mutableListOf<RemoteRepository>()
@@ -140,7 +140,7 @@ private val remoteMavenRepositories: List<RemoteRepository> by lazy {
 
 private fun substitutePathVariables(path: String): String {
     if (path.startsWith("${RepoLocation.PROJECT_DIR}/")) {
-        val projectDir = File(KotlinTestUtils.getHomeDirectory()).parentFile
+        val projectDir = KotlinRoot.DIR.parentFile
         return projectDir.absolutePath + path.drop(RepoLocation.PROJECT_DIR.toString().length)
     }
     else if (path.startsWith("${RepoLocation.MAVEN_REPOSITORY}/")) {

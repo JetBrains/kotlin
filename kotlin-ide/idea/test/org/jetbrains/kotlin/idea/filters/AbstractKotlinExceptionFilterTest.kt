@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.core.util.toVirtualFile
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
@@ -30,9 +29,7 @@ import java.net.URLClassLoader
 
 abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
     private val MOCK_LIBRARY_NAME = "mockLibrary"
-    private val MOCK_LIBRARY_SOURCES = PluginTestCaseBase.getTestDataPathBase() + "/debugger/mockLibraryForExceptionFilter"
-
-    override fun getTestDataPath() = ""
+    private val MOCK_LIBRARY_SOURCES = IDEA_TEST_DATA_DIR.resolve("debugger/mockLibraryForExceptionFilter")
 
     protected fun doTest(path: String) {
         val rootDir = File(path)
@@ -61,7 +58,7 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
             val editor = NewLibraryEditor().apply {
                 name = MOCK_LIBRARY_NAME
                 addRoot(libRootUrl, OrderRootType.CLASSES)
-                addRoot("file://" + MOCK_LIBRARY_SOURCES, OrderRootType.SOURCES)
+                addRoot("file://" + MOCK_LIBRARY_SOURCES.path, OrderRootType.SOURCES)
             }
 
             ConfigLibraryUtil.addLibrary(editor, module)
@@ -148,7 +145,6 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
     }
 
     private fun compileMockLibrary(): File {
-        val sources = listOf(File(MOCK_LIBRARY_SOURCES))
-        return KotlinCompilerStandalone(sources).compile()
+        return KotlinCompilerStandalone(listOf(MOCK_LIBRARY_SOURCES)).compile()
     }
 }

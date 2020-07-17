@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.codeInsight.AbstractLineMarkersTest
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiHighlightingTest
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.allJavaFiles
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.psi.KtFile
@@ -39,6 +39,7 @@ abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTe
 }
 
 abstract class AbstractMultiPlatformHighlightingTest : AbstractMultiModuleHighlightingTest() {
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("multiModuleHighlighting/multiplatform")
 
     protected open fun doTest(path: String) {
         setupMppProjectFromDirStructure(File(path))
@@ -46,8 +47,6 @@ abstract class AbstractMultiPlatformHighlightingTest : AbstractMultiModuleHighli
             (project.allKotlinFiles() + project.allJavaFiles()).excludeByDirective()
         }
     }
-
-    override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/multiModuleHighlighting/multiplatform/"
 }
 
 private fun List<PsiFile>.excludeByDirective() = filter { !it.text.contains("// !CHECK_HIGHLIGHTING") }

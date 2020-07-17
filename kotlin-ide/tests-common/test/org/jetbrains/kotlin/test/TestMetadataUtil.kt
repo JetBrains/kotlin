@@ -12,7 +12,7 @@ object TestMetadataUtil {
 
     @JvmStatic
     fun getTestDataPath(testClass: Class<*>): String {
-        val path = getTestData(testClass)?.absolutePath ?: KotlinTestUtils.getHomeDirectory()
+        val path = (getTestData(testClass) ?: KotlinRoot.DIR).absolutePath
         return if (path.endsWith(File.separator)) path else path + File.separator
     }
 
@@ -29,6 +29,6 @@ object TestMetadataUtil {
         }
 
         val testRootAnnotation = current.getAnnotation(TestRoot::class.java) ?: return null
-        return File(KotlinTestUtils.getHomeDirectory(), testRootAnnotation.value)
+        return KotlinRoot.DIR.resolve(testRootAnnotation.value)
     }
 }

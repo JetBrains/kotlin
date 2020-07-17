@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -51,9 +52,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
-    override fun getTestDataPath(): String {
-        return File(PluginTestCaseBase.getTestDataPathBase(), "/fir/multiModule").path + File.separator
-    }
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("fir/multiModule")
 
     fun doTest(dirPath: String) {
         setupMppProjectFromDirStructure(File(dirPath))

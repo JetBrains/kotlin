@@ -41,8 +41,6 @@ class KotlinExceptionFilterTest : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor() = LightProjectDescriptor.EMPTY_PROJECT_DESCRIPTOR
 
-    override fun getTestDataPath() = ""
-
     override fun setUp() {
         super.setUp()
         val rootDir = File("idea/testData/debugger/nativeExceptions/")

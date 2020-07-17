@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 import org.jetbrains.kotlin.idea.test.findFileWithCaret
 import org.jetbrains.kotlin.psi.KtFile
@@ -17,8 +16,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractSlicerMultiplatformTest : AbstractMultiModuleTest() {
-    override fun getTestDataPath() =
-        File(PluginTestCaseBase.getTestDataPathBase(), "/slicer/mpp").path + File.separator
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("slicer/mpp")
 
     protected fun doTest(filePath: String) {
         val testRoot = File(filePath)

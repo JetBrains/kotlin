@@ -12,8 +12,8 @@ import java.io.File
 
 abstract class AbstractCompiledKotlinInJavaCompletionTest : KotlinFixtureCompletionBaseTestCase() {
     private val mockLibraryFacility = MockLibraryFacility(
-        source = File(COMPLETION_TEST_DATA_BASE_PATH, "injava/mockLib"),
-        attachSources = false
+      source = File(COMPLETION_TEST_DATA_BASE, "injava/mockLib"),
+      attachSources = false
     )
 
     override fun getPlatform() = JvmPlatforms.unspecifiedJvmPlatform

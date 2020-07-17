@@ -14,26 +14,23 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.util.io.createFile
 import com.intellij.util.io.write
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import java.io.File
 import java.nio.file.Files
 
 abstract class AbstractLineMarkersTestInLibrarySources : AbstractLineMarkersTest() {
-
     private var libraryCleanPath: String? = null
-
     private var libraryClean: File? = null
 
     private fun getLibraryCleanPath(): String = libraryCleanPath!!
 
-    private fun getLibraryOriginalPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/codeInsightInLibrary/_library"
+    private val libraryOriginal = IDEA_TEST_DATA_DIR.resolve("codeInsightInLibrary/_library")
 
     override fun getProjectDescriptor(): SdkAndMockLibraryProjectDescriptor {
         if (libraryCleanPath == null) {
             val libraryClean = Files.createTempDirectory("lineMarkers_library")
-            val libraryOriginal = File(getLibraryOriginalPath())
             libraryCleanPath = libraryClean.toString()
 
             for (file in libraryOriginal.walkTopDown().filter { !it.isDirectory }) {
@@ -60,7 +57,6 @@ abstract class AbstractLineMarkersTestInLibrarySources : AbstractLineMarkersTest
     fun doTestWithLibrary(path: String) {
         doTest(path) {
             val fileSystem = VirtualFileManager.getInstance().getFileSystem("file")
-            val libraryOriginal = File(getLibraryOriginalPath())
             val project = myFixture.project
             for (file in libraryOriginal.walkTopDown().filter { !it.isDirectory }) {
                 myFixture.openFileInEditor(fileSystem.findFileByPath(file.absolutePath)!!)

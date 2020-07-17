@@ -10,16 +10,15 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
-import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class NavigateFromJSLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() {
     private val mockLibraryFacility = MockLibraryFacility(
-        source = File(PluginTestCaseBase.getTestDataPathBase(), "decompiler/navigation/fromJSLibSource"),
+        source = IDEA_TEST_DATA_DIR.resolve("decompiler/navigation/fromJSLibSource"),
         platform = KotlinCompilerStandalone.Platform.JavaScript(MockLibraryFacility.MOCK_LIBRARY_NAME, "lib")
     )
 

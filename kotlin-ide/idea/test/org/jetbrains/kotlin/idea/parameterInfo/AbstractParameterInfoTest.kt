@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.slashedPath
 import org.junit.Assert
 import java.io.File
 
@@ -39,7 +40,7 @@ abstract class AbstractParameterInfoTest : LightJavaCodeInsightFixtureTestCase()
 
     override fun setUp() {
         super.setUp()
-        myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/parameterInfo"
+        myFixture.testDataPath = PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve("parameterInfo").slashedPath
     }
 
     protected fun doTest(fileName: String) {

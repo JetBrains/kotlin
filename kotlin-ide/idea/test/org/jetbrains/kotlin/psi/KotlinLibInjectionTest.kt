@@ -12,12 +12,11 @@ import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
-import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class KotlinLibInjectionTest : AbstractInjectionTest() {
     private val mockLibraryFacility = MockLibraryFacility(
-        File(PluginTestCaseBase.getTestDataPathBase(), "injection/lib"),
+        source = PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve("injection/lib"),
         attachSources = false
     )
 

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.refactoring
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.codeInsight.TargetElementUtil
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -49,25 +48,23 @@ abstract class AbstractMultifileRefactoringTest : KotlinLightCodeInsightFixtureT
 
     protected abstract fun runRefactoring(path: String, config: JsonObject, rootDir: VirtualFile, project: Project)
 
-    protected fun doTest(path: String) {
-        val testFile = File(path)
+    protected fun doTest(unused: String) {
+        val testFile = testDataFile()
         val config = JsonParser().parse(FileUtil.loadFile(testFile, true)) as JsonObject
 
         doTestCommittingDocuments(testFile) { rootDir ->
-            runRefactoring(path, config, rootDir, project)
+            runRefactoring(testFile.path, config, rootDir, project)
         }
     }
 
-    protected fun getTestDirName(lowercaseFirstLetter: Boolean): String {
-        val testName = getTestName(lowercaseFirstLetter)
-        val endIndex = testName.lastIndexOf('_')
-        if (endIndex < 0) return testName
-        return testName.substring(0, endIndex).replace('_', '/')
+    override fun getTestDataDirectory(): File {
+        val name = getTestName(true).substringBeforeLast('_').replace('_', '/')
+        return super.getTestDataDirectory().resolve(name)
     }
 
-    override fun getTestDataPath() = super.getTestDataPath() + "/" + getTestDirName(true)
+    override fun fileName() = getTestDataDirectory().name + ".test"
 
-    protected fun doTestCommittingDocuments(testFile: File, action: (VirtualFile) -> Unit) {
+    private fun doTestCommittingDocuments(testFile: File, action: (VirtualFile) -> Unit) {
         val beforeVFile = myFixture.copyDirectoryToProject("before", "")
         PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
 

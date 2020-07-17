@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.test.util.slashedPath
 import java.io.File
 
 abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
@@ -59,5 +60,5 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
 
     override fun getTestRoot(): String = "/multiFileInspections/"
 
-    override fun getTestDataPath(): String = getTestDataPathBase()
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR
 }

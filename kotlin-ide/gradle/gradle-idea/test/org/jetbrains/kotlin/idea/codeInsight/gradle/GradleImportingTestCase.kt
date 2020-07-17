@@ -56,6 +56,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -317,7 +318,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
     protected open fun testDataDirName(): String = ""
 
     protected open fun testDataDirectory(): File {
-        val baseDir = "${PluginTestCaseBase.getTestDataPathBase()}/gradle/${testDataDirName()}/"
+        val baseDir = IDEA_TEST_DATA_DIR.resolve("gradle/${testDataDirName()}")
         return File(baseDir, getTestName(true).substringBefore("_"))
     }
 

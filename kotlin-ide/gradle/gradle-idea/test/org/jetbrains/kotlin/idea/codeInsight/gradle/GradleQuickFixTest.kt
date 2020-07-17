@@ -16,7 +16,7 @@ import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection
 import org.jetbrains.kotlin.idea.inspections.runInspection
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
@@ -25,8 +25,9 @@ import kotlin.reflect.KMutableProperty0
 class GradleQuickFixTest : GradleImportingTestCase() {
     private lateinit var codeInsightTestFixture: CodeInsightTestFixture
 
-    private fun getTestDataPath() =
-        PluginTestCaseBase.getTestDataPathBase() + "/gradle/fixes/" + getTestName(true).substringBefore('_')
+    private fun getTestDataDirectory(): File {
+        return IDEA_TEST_DATA_DIR.resolve("gradle/fixes").resolve(getTestName(true).substringBefore("_"))
+    }
 
     override fun setUpFixtures() {
         myTestFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName()).fixture
@@ -47,7 +48,7 @@ class GradleQuickFixTest : GradleImportingTestCase() {
     }
 
     private fun doGradleQuickFixTest(localInspectionTool: LocalInspectionTool) {
-        val buildGradleVFile = createProjectSubFile("build.gradle", File(getTestDataPath(), "build.gradle").readText())
+        val buildGradleVFile = createProjectSubFile("build.gradle", File(getTestDataDirectory(), "build.gradle").readText())
         importProject()
 
         applyInspectionFixes(localInspectionTool, buildGradleVFile)
@@ -78,6 +79,6 @@ class GradleQuickFixTest : GradleImportingTestCase() {
     }
 
     private fun checkResult(file: VirtualFile) {
-        KotlinTestUtils.assertEqualsToFile(File(getTestDataPath(), "build.gradle.after"), LoadTextUtil.loadText(file).toString())
+        KotlinTestUtils.assertEqualsToFile(File(getTestDataDirectory(), "build.gradle.after"), LoadTextUtil.loadText(file).toString())
     }
 }

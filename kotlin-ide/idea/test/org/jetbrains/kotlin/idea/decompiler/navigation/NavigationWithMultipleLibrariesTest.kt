@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.caches.project.LibrarySourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigationChecker.Companion.checkAnnotatedCode
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
@@ -35,8 +36,7 @@ import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class NavigationWithMultipleCustomLibrariesTest : AbstractNavigationToSourceOrDecompiledTest() {
-
-    override val testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigationMultipleLibs/"
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("decompiler/navigationMultipleLibs")
 
     fun testNavigationToDecompiled() {
         doTest(false, "expected.decompiled")
@@ -47,7 +47,7 @@ class NavigationWithMultipleCustomLibrariesTest : AbstractNavigationToSourceOrDe
     }
 
     override fun createProjectLib(libraryName: String, withSources: Boolean): Library {
-        val sources = listOf(File(testDataPath, "libSrc"))
+        val sources = listOf(File(getTestDataDirectory(), "libSrc"))
         val libraryJar = KotlinCompilerStandalone(sources).compile()
 
         val jarRoot = libraryJar.jarRoot
@@ -56,8 +56,7 @@ class NavigationWithMultipleCustomLibrariesTest : AbstractNavigationToSourceOrDe
 }
 
 class NavigationWithMultipleRuntimesTest : AbstractNavigationToSourceOrDecompiledTest() {
-
-    override val testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigationMultipleRuntimes/"
+    override fun getTestDataDirectory(): File = IDEA_TEST_DATA_DIR.resolve("decompiler/navigationMultipleRuntimes")
 
     fun testNavigationToDecompiled() {
         doTest(false, "expected.decompiled")
@@ -87,7 +86,7 @@ class NavigationWithMultipleRuntimesTest : AbstractNavigationToSourceOrDecompile
 
 abstract class AbstractNavigationToSourceOrDecompiledTest : AbstractNavigationWithMultipleLibrariesTest() {
     fun doTest(withSources: Boolean, expectedFileName: String) {
-        val srcPath = testDataPath + "src"
+        val srcPath = getTestDataDirectory().resolve("src").absolutePath
         val moduleA = module("moduleA", srcPath)
         val moduleB = module("moduleB", srcPath)
 
@@ -105,16 +104,15 @@ abstract class AbstractNavigationToSourceOrDecompiledTest : AbstractNavigationWi
 }
 
 class NavigationToSingleJarInMultipleLibrariesTest : AbstractNavigationWithMultipleLibrariesTest() {
-
-    override val testDataPath = "${PluginTestCaseBase.getTestDataPathBase()}/multiModuleReferenceResolve/sameJarInDifferentLibraries/"
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("multiModuleReferenceResolve/sameJarInDifferentLibraries")
 
     fun testNavigatingToLibrarySharingSameJarOnlyOneHasSourcesAttached() {
-        val srcPath = testDataPath + "src"
+        val srcPath = getTestDataDirectory().resolve("src").absolutePath
         val moduleA = module("m1", srcPath)
         val moduleB = module("m2", srcPath)
         val moduleC = module("m3", srcPath)
 
-        val sources = listOf(File(testDataPath, "libSrc"))
+        val sources = listOf(File(getTestDataDirectory(), "libSrc"))
         val sharedJar = KotlinCompilerStandalone(sources).compile()
 
         val jarRoot = sharedJar.jarRoot
@@ -122,7 +120,7 @@ class NavigationToSingleJarInMultipleLibrariesTest : AbstractNavigationWithMulti
         moduleB.addDependency(projectLibrary("libB", jarRoot, jarRoot.findChild("src")!!))
         moduleC.addDependency(projectLibrary("libC", jarRoot))
 
-        val expectedFile = File(testDataPath + "expected.sources")
+        val expectedFile = File(getTestDataDirectory(), "expected.sources")
         checkAnnotatedCode(findSourceFile(moduleA), expectedFile)
         checkAnnotatedCode(findSourceFile(moduleB), expectedFile)
         checkAnnotatedCode(findSourceFile(moduleC), expectedFile)
@@ -130,12 +128,12 @@ class NavigationToSingleJarInMultipleLibrariesTest : AbstractNavigationWithMulti
 }
 
 abstract class AbstractNavigationWithMultipleLibrariesTest : ModuleTestCase() {
-    abstract val testDataPath: String
+    abstract fun getTestDataDirectory(): File
 
     protected fun module(name: String, srcPath: String) = createModuleFromTestData(srcPath, name, StdModuleTypes.JAVA, true)
 
     protected fun checkReferencesInModule(module: Module, libraryName: String, expectedFileName: String) {
-        checkAnnotatedCode(findSourceFile(module), File(testDataPath + expectedFileName)) {
+        checkAnnotatedCode(findSourceFile(module), File(getTestDataDirectory(), expectedFileName)) {
             checkLibraryName(it, libraryName)
         }
     }
@@ -153,7 +151,7 @@ private fun checkLibraryName(referenceTarget: PsiElement, expectedName: String) 
 }
 
 private fun findSourceFile(module: Module): PsiFile {
-    val ioFile = File(module.getModuleDir()).listFiles().first()
+    val ioFile = File(module.getModuleDir()).listFiles().orEmpty().first()
     val vFile = LocalFileSystem.getInstance().findFileByIoFile(ioFile)!!
     return PsiManager.getInstance(module.project).findFile(vFile)!!
 }

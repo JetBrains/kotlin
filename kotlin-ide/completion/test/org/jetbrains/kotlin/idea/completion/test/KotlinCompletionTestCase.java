@@ -10,7 +10,6 @@ import com.intellij.codeInsight.completion.CompletionTestCase;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
@@ -53,7 +52,11 @@ abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     }
 
     @Override
-    protected @NotNull String getTestDataPath() {
-        return getTestsRoot(getClass());
+    protected final @NotNull String getTestDataPath() {
+        return KotlinTestUtils.toSlashEndingDirPath(getTestDataDirectory().getAbsolutePath());
+    }
+
+    protected @NotNull File getTestDataDirectory() {
+        return new File(getTestsRoot(getClass()));
     }
 }

@@ -19,9 +19,10 @@ package org.jetbrains.kotlin.idea.test;
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Ref;
-import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+
+import java.io.File;
 
 import static com.intellij.testFramework.RunAll.runAll;
 
@@ -31,6 +32,15 @@ import static com.intellij.testFramework.RunAll.runAll;
 @Deprecated
 public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
     private Ref<Disposable> vfsDisposable;
+
+    @Override
+    final protected @NotNull String getTestDataPath() {
+        return KotlinTestUtils.toSlashEndingDirPath(getTestDataDirectory().getAbsolutePath());
+    }
+
+    protected @NotNull File getTestDataDirectory() {
+        return new File(super.getTestDataPath());
+    }
 
     @Override
     protected void setUp() throws Exception {

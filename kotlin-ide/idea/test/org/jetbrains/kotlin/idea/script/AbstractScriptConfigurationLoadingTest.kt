@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.utils.testScriptConfi
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinRoot
 import java.io.File
 
 abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurationTest() {
@@ -66,7 +66,7 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
             testRootDisposable
         )
 
-        configureScriptFile(File(KotlinTestUtils.getHomeDirectory(), "idea/testData/script/definition/loading/async/"))
+        configureScriptFile(KotlinRoot.DIR.resolve("idea/testData/script/definition/loading/async"))
     }
 
     override fun loadScriptConfigurationSynchronously(script: VirtualFile) {

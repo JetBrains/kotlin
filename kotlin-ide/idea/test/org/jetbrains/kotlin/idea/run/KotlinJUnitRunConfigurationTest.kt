@@ -82,7 +82,7 @@ class KotlinJUnitRunConfigurationTest : AbstractRunConfigurationTest() {
         ConfigLibraryUtil.removeLibrary(module, "JUnit")
     }
 
-    override fun getTestDataPath() = getTestDataPathBase() + "/runConfigurations/junit/"
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("runConfigurations/junit")
 }
 
 fun getConfiguration(file: VirtualFile, project: Project, pattern: String): ConfigurationFromContext {

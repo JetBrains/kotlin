@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.completion.test.handlers;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.completion.test.CompletionTestUtilKt;
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase;
 import org.junit.internal.runners.JUnit38ClassRunner;
@@ -30,8 +31,9 @@ public class JavaCompletionHandlerTest extends KotlinCompletionTestCase {
         }
     }
 
+    @NotNull
     @Override
-    protected String getTestDataPath() {
-        return new File(CompletionTestUtilKt.getCOMPLETION_TEST_DATA_BASE_PATH(), "/handlers/injava").getPath() + File.separator;
+    protected File getTestDataDirectory() {
+        return new File(CompletionTestUtilKt.COMPLETION_TEST_DATA_BASE, "/handlers/injava");
     }
 }

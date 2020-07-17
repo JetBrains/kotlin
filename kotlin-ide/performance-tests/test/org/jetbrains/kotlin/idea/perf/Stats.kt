@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.idea.perf.profilers.*
 import org.jetbrains.kotlin.idea.perf.util.TeamCity
 import org.jetbrains.kotlin.idea.perf.util.logMessage
 import org.jetbrains.kotlin.idea.testFramework.suggestOsNeutralFileName
+import org.jetbrains.kotlin.test.KotlinRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.util.PerformanceCounter
 import java.io.*
@@ -47,7 +48,7 @@ class Stats(
 
     private fun plainname() = suggestOsNeutralFileName(name)
 
-    private fun pathToResource(resource: String) = Paths.get(KotlinTestUtils.getHomeDirectory(), "../out/$resource").normalize().toAbsolutePath().toFile()
+    private fun pathToResource(resource: String) = Paths.get(KotlinRoot.PATH, "../out/$resource").normalize().toAbsolutePath().toFile()
 
     private fun append(id: String, statInfosArray: Array<StatInfos>) {
         val timingsMs = toTimingsMs(statInfosArray)

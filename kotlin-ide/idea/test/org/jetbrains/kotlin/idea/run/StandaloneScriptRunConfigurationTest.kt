@@ -21,6 +21,7 @@ import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.runner.RunWith
+import java.io.File
 import kotlin.test.assertNotEquals
 
 @RunWith(JUnit38ClassRunner::class)
@@ -141,7 +142,6 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
         ).run()
     }
 
-
-    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/run/StandaloneScript/"
+    override fun getTestDataDirectory() = PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve("run/StandaloneScript")
     override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()
 }

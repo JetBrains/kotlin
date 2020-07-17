@@ -12,7 +12,7 @@ import java.io.File
 
 abstract class AbstractJvmWithLibBasicCompletionTest : KotlinFixtureCompletionBaseTestCase() {
     private companion object {
-        val MOCK_SOURCES_BASE = File(COMPLETION_TEST_DATA_BASE_PATH, "basic/withLib")
+        val MOCK_SOURCES_BASE = File(COMPLETION_TEST_DATA_BASE, "basic/withLib")
     }
 
     private lateinit var mockLibraryFacility: MockLibraryFacility

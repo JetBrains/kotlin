@@ -277,5 +277,5 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         }
     }
 
-    override fun getTestDataPath() = getTestDataPathBase() + "/run/"
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("run")
 }

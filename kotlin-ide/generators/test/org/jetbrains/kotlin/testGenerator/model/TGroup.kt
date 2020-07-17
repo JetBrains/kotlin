@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.testGenerator.model
 
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinRoot
 import java.io.File
 
 interface TGroup {
@@ -22,7 +22,7 @@ interface MutableTGroup : TGroup {
 }
 
 class TGroupImpl(override val modulePath: String, override val testSourcesPath: String, override val testDataPath: String) : MutableTGroup {
-    override val kotlinRoot = File(KotlinTestUtils.getHomeDirectory())
+    override val kotlinRoot = KotlinRoot.DIR
     override val moduleRoot = File(kotlinRoot, modulePath)
     override val testSourcesRoot = File(moduleRoot, testSourcesPath)
     override val testDataRoot = File(moduleRoot, testDataPath)

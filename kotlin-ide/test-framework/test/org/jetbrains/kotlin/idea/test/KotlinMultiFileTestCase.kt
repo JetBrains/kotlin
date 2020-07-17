@@ -20,6 +20,7 @@ import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
+import java.io.File
 
 abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
     protected var isMultiModule = false
@@ -33,6 +34,14 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
             PluginTestCaseBase.addJdk(testRootDisposable, PluginTestCaseBase::mockJdk6)
             ProjectRootManager.getInstance(project).projectSdk = PluginTestCaseBase.mockJdk6()
         }
+    }
+
+    final override fun getTestDataPath(): String {
+        return toSlashEndingDirPath(getTestDataDirectory().absolutePath)
+    }
+
+    protected open fun getTestDataDirectory(): File {
+        return File(super.getTestDataPath())
     }
 
     protected fun getTestDirName(lowercaseFirstLetter: Boolean): String {

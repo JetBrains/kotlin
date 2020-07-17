@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.highlighter.formatHtml.FormatHtmlUtilKt;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -33,6 +32,8 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
+
+import static org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR;
 
 public abstract class AbstractDiagnosticMessageTest extends KotlinLightCodeInsightFixtureTestCase {
     private static final String DIAGNOSTICS_NUMBER_DIRECTIVE = "DIAGNOSTICS_NUMBER";
@@ -52,8 +53,9 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinLightCodeInsig
     }
 
     @NotNull
-    protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/diagnosticMessage/";
+    @Override
+    public File getTestDataDirectory() {
+        return new File(IDEA_TEST_DATA_DIR, "diagnosticMessage");
     }
 
     protected CompilerConfiguration compilerConfiguration(LanguageVersionSettings languageVersionSettings) {

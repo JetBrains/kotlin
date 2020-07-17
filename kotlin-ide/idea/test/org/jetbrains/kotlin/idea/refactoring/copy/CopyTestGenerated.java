@@ -76,14 +76,14 @@ public class CopyTestGenerated extends AbstractCopyTest {
         runTest("testData/refactoring/copy/copyFIleWithPackageAndDirUnmatched/copyFIleWithPackageAndDirUnmatched.test");
     }
 
-    @TestMetadata("copyFileFromDefaultPackageToDefaultPackage/copyFIleToDefaultPackage.test")
-    public void testCopyFileFromDefaultPackageToDefaultPackage_CopyFIleToDefaultPackage() throws Exception {
-        runTest("testData/refactoring/copy/copyFileFromDefaultPackageToDefaultPackage/copyFIleToDefaultPackage.test");
+    @TestMetadata("copyFileFromDefaultPackageToDefaultPackage/copyFileFromDefaultPackageToDefaultPackage.test")
+    public void testCopyFileFromDefaultPackageToDefaultPackage_CopyFileFromDefaultPackageToDefaultPackage() throws Exception {
+        runTest("testData/refactoring/copy/copyFileFromDefaultPackageToDefaultPackage/copyFileFromDefaultPackageToDefaultPackage.test");
     }
 
-    @TestMetadata("copyFileFromDefaultPackageWithImpicitPrefix/copyFileFromDefaultPackageWithImplicitPrefix.test")
-    public void testCopyFileFromDefaultPackageWithImpicitPrefix_CopyFileFromDefaultPackageWithImplicitPrefix() throws Exception {
-        runTest("testData/refactoring/copy/copyFileFromDefaultPackageWithImpicitPrefix/copyFileFromDefaultPackageWithImplicitPrefix.test");
+    @TestMetadata("copyFileFromDefaultPackageWithImpicitPrefix/copyFileFromDefaultPackageWithImpicitPrefix.test")
+    public void testCopyFileFromDefaultPackageWithImpicitPrefix_CopyFileFromDefaultPackageWithImpicitPrefix() throws Exception {
+        runTest("testData/refactoring/copy/copyFileFromDefaultPackageWithImpicitPrefix/copyFileFromDefaultPackageWithImpicitPrefix.test");
     }
 
     @TestMetadata("copyFileToRoot/copyFileToRoot.test")
@@ -151,9 +151,9 @@ public class CopyTestGenerated extends AbstractCopyTest {
         runTest("testData/refactoring/copy/copyMultipleFilesDifferentDirectoriesToNewDirectory/copyMultipleFilesDifferentDirectoriesToNewDirectory.test");
     }
 
-    @TestMetadata("copyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject/copyMultipleFilesDifferentDirectoriesToNewDirectory.test")
-    public void testCopyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject_CopyMultipleFilesDifferentDirectoriesToNewDirectory() throws Exception {
-        runTest("testData/refactoring/copy/copyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject/copyMultipleFilesDifferentDirectoriesToNewDirectory.test");
+    @TestMetadata("copyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject/copyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject.test")
+    public void testCopyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject_CopyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject() throws Exception {
+        runTest("testData/refactoring/copy/copyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject/copyMultipleFilesDirectoriesToNewDirectoryAsClassOrObject.test");
     }
 
     @TestMetadata("copyMultipleFilesToNewDirectory/copyMultipleFilesToNewDirectory.test")
@@ -221,13 +221,13 @@ public class CopyTestGenerated extends AbstractCopyTest {
         runTest("testData/refactoring/copy/protectedConstructorRefInSuperListEntry/protectedConstructorRefInSuperListEntry.test");
     }
 
-    @TestMetadata("refToImportJavaStaticField/refToImportedJavaStaticField.test")
-    public void testRefToImportJavaStaticField_RefToImportedJavaStaticField() throws Exception {
-        runTest("testData/refactoring/copy/refToImportJavaStaticField/refToImportedJavaStaticField.test");
+    @TestMetadata("refToImportJavaStaticField/refToImportJavaStaticField.test")
+    public void testRefToImportJavaStaticField_RefToImportJavaStaticField() throws Exception {
+        runTest("testData/refactoring/copy/refToImportJavaStaticField/refToImportJavaStaticField.test");
     }
 
-    @TestMetadata("refToImportJavaStaticMethod/refToImportedJavaStaticMethod.test")
-    public void testRefToImportJavaStaticMethod_RefToImportedJavaStaticMethod() throws Exception {
-        runTest("testData/refactoring/copy/refToImportJavaStaticMethod/refToImportedJavaStaticMethod.test");
+    @TestMetadata("refToImportJavaStaticMethod/refToImportJavaStaticMethod.test")
+    public void testRefToImportJavaStaticMethod_RefToImportJavaStaticMethod() throws Exception {
+        runTest("testData/refactoring/copy/refToImportJavaStaticMethod/refToImportJavaStaticMethod.test");
     }
 }

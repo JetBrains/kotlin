@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinRoot
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
@@ -21,10 +21,7 @@ import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class GotoWithMultipleLibrariesTest : AbstractMultiModuleTest() {
-    override fun getTestDataPath(): String {
-        val testDir = File(KotlinTestUtils.getHomeDirectory(), "idea/testData/multiModuleReferenceResolve/sameJarInDifferentLibraries")
-        return KotlinTestUtils.toSlashEndingDirPath(testDir.absolutePath)
-    }
+    override fun getTestDataDirectory() = KotlinRoot.DIR.resolve("idea/testData/multiModuleReferenceResolve/sameJarInDifferentLibraries")
 
     fun testOneHasSourceAndOneDoesNot() {
         doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(withSource = 1, noSource = 1)

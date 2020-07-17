@@ -27,16 +27,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnosticMessageTest {
+import static org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR;
 
+public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnosticMessageTest {
     protected AnalysisResult analyze(Collection<KtFile> files, CompilerConfiguration configuration) {
         return TopDownAnalyzerFacadeForJS.analyzeFiles(files, getConfig(configuration));
     }
 
     @NotNull
     @Override
-    protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/diagnosticMessage/js/";
+    public File getTestDataDirectory() {
+        return new File(IDEA_TEST_DATA_DIR, "diagnosticMessage/js");
     }
 
     @Nullable

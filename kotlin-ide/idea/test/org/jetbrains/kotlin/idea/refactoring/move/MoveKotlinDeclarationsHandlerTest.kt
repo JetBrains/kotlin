@@ -15,18 +15,18 @@ import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.extractMultipleMarkerOffsets
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import java.nio.file.Path
 
 @RunWith(JUnit38ClassRunner::class)
 class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
-    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase()
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR
 
     override fun getTestRoot() = "/refactoring/moveHandler/declarations"
 

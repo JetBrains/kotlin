@@ -11,18 +11,18 @@ import kotlin.Unit;
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseKt;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.RunWith;
 
 import java.io.File;
 
+import static org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR;
+
 @SuppressWarnings("deprecation")
 @RunWith(JUnit38ClassRunner.class)
 public class KotlinCommenterTest extends KotlinLightCodeInsightTestCase {
-    private static final String BASE_PATH =
-            new File(PluginTestCaseBase.getTestDataPathBase(), "/editor/commenter/").getAbsolutePath();
+    private static final File BASE_DIR = new File(IDEA_TEST_DATA_DIR, "editor/commenter");
 
     public void testGenerateDocComment() throws Exception {
         doNewLineTypingTest();
@@ -78,7 +78,7 @@ public class KotlinCommenterTest extends KotlinLightCodeInsightTestCase {
     }
 
     private static File getTestFile(String name) {
-        return new File(BASE_PATH, name);
+        return new File(BASE_DIR, name);
     }
 
     private static String loadFile(String name) throws Exception {

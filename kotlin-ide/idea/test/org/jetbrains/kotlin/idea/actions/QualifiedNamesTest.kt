@@ -93,6 +93,4 @@ class QualifiedNamesTest : KotlinLightCodeInsightFixtureTestCase() {
         })
         return result
     }
-
-    override fun getTestDataPath() = ""
 }

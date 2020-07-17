@@ -141,7 +141,7 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
     @NotNull
     @Override
     protected String getTestDataPath() {
-        return new File(CompletionTestUtilKt.getCOMPLETION_TEST_DATA_BASE_PATH(), "/confidence/").getPath() + File.separator;
+        return new File(CompletionTestUtilKt.COMPLETION_TEST_DATA_BASE, "/confidence/").getPath() + File.separator;
     }
 
     @Override

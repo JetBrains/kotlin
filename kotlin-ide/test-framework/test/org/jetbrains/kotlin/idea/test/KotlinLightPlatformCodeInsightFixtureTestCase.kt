@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.test
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
+import org.jetbrains.kotlin.test.KotlinRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadataUtil
 import java.io.File
@@ -18,7 +19,7 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
     override fun setUp() {
         super.setUp()
         enableKotlinOfficialCodeStyle(project)
-        VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, KotlinRoot.PATH)
 
         if (!isFirPlugin()) {
             invalidateLibraryCache(project)

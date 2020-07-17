@@ -9,7 +9,6 @@ import com.intellij.codeInsight.editorActions.JoinLinesHandler
 import com.intellij.ide.DataManager
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractJoinLinesTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -25,8 +24,6 @@ abstract class AbstractJoinLinesTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val testFile = testDataFile()
         val expectedFile = File(testFile.parentFile, testFile.name + ".after")
-        KotlinTestUtils.assertEqualsToFile(expectedFile, editor)
+        myFixture.checkResultByFile(expectedFile)
     }
-
-    override fun getTestDataPath(): String = ""
 }

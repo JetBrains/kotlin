@@ -8,19 +8,18 @@ package org.jetbrains.kotlin.idea.kdoc
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.util.slashedPath
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Assert
 import org.junit.runner.RunWith
 
 @RunWith(JUnit38ClassRunner::class)
-class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String {
-        return PluginTestCaseBase.getTestDataPathBase() + "/kdoc/finder/"
-    }
+class KDocFinderTest : LightPlatformCodeInsightFixtureTestCase() {
+    override fun getTestDataPath() = IDEA_TEST_DATA_DIR.resolve("kdoc/finder").slashedPath
 
     fun testConstructor() {
         myFixture.configureByFile(getTestName(false) + ".kt")

@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
-import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
+import org.jetbrains.kotlin.test.util.JetTestUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 
@@ -64,9 +64,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -107,19 +104,12 @@ public class KotlinTestUtils {
 
     @NotNull
     public static String getTestDataPathBase() {
-        return getHomeDirectory() + "/compiler/testData";
-    }
-
-    private static final String homeDir = computeHomeDirectory();
-
-    @NotNull
-    public static String getHomeDirectory() {
-        return homeDir;
+        return new File(KotlinRoot.DIR, "compiler/testData").getPath();
     }
 
     @NotNull
     public static Ref<Disposable> allowProjectRootAccess(@NotNull UsefulTestCase testCase) {
-        return allowRootAccess(testCase, Paths.get(getHomeDirectory(), "..").toAbsolutePath().normalize().toString());
+        return allowRootAccess(testCase, KotlinRoot.DIR.getParentFile().getAbsolutePath());
     }
 
     @NotNull
@@ -137,27 +127,14 @@ public class KotlinTestUtils {
         }
     }
 
-    @NotNull
-    private static String computeHomeDirectory() {
-        Path current = Paths.get(".").toAbsolutePath().normalize();
-        while (current != null && !Files.isRegularFile(current.resolve("kotlin.kotlin-ide.iml"))) {
-            current = current.getParent();
-        }
-        if (current == null) {
-            throw new IllegalStateException("Cannot find kotiln-ide root");
-        }
-        current = current.resolve("kotlin");
-        return current.toString();
-    }
-
     public static File findMockJdkRtJar() {
-        return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar");
+        return new File(KotlinRoot.DIR, "compiler/testData/mockJDK/jre/lib/rt.jar");
     }
 
     // Differs from common mock JDK only by one additional 'nonExistingMethod' in Collection and constructor from Double in Throwable
     // It's needed to test the way we load additional built-ins members that neither in black nor white lists
     public static File findMockJdkRtModified() {
-        return new File(getHomeDirectory(), "compiler/testData/mockJDKModified/rt.jar");
+        return new File(KotlinRoot.DIR, "compiler/testData/mockJDKModified/rt.jar");
     }
 
     public static File findAndroidApiJar() {
@@ -415,7 +392,7 @@ public class KotlinTestUtils {
 
     public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
         try {
-            String actualText = JetTestUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
+            String actualText = JetTestUtils.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
 
             if (!expectedFile.exists()) {
                 FileUtil.writeToFile(expectedFile, actualText);
@@ -423,7 +400,7 @@ public class KotlinTestUtils {
             }
             String expected = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
 
-            String expectedText = JetTestUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
+            String expectedText = JetTestUtils.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
 
             if (!Comparing.equal(sanitizer.invoke(expectedText), sanitizer.invoke(actualText))) {
                 throw new FileComparisonFailure(message + ": " + expectedFile.getName(),

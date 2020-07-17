@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService.Companion.DEBUG_LOG_ENABLE_PerModulePackageCache
 import org.jetbrains.kotlin.idea.test.runAll
+import org.jetbrains.kotlin.test.KotlinRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import java.io.File
 
@@ -60,7 +61,7 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
     )
 
     protected fun addFile(fileName: String, dirName: String? = null) {
-        addFile(File(getHomeDirectory(), "j2k/old/testData/$fileName"), dirName)
+        addFile(File(KotlinRoot.DIR, "j2k/old/testData/$fileName"), dirName)
     }
 
     protected fun addFile(file: File, dirName: String?): VirtualFile {

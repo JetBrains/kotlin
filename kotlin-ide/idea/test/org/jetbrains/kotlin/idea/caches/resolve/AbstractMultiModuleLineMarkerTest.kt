@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import java.io.File
 
 abstract class AbstractMultiModuleLineMarkerTest : AbstractMultiModuleHighlightingTest() {
-
-    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleLineMarker/"
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("multiModuleLineMarker")
 
     override val shouldCheckLineMarkers = true
 

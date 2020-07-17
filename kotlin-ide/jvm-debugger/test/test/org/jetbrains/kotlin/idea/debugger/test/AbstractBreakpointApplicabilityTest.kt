@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.idea.core.util.getLineStartOffset
 import org.jetbrains.kotlin.idea.debugger.breakpoints.*
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
@@ -63,9 +62,5 @@ abstract class AbstractBreakpointApplicabilityTest : KotlinLightCodeInsightFixtu
         }
 
         return text.substring(start, end)
-    }
-
-    private fun getPath(path: String): String {
-        return path.substringAfter(PluginTestCaseBase.TEST_DATA_DIR.drop(1), path)
     }
 }

@@ -28,14 +28,15 @@ import java.io.File
 import java.nio.file.Paths
 
 abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), QuickFixTest {
-
     protected fun testDataFile(fileName: String): File = File(testDataPath, fileName)
 
     protected fun testDataFile(): File = testDataFile(fileName())
 
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
-    override fun getTestDataPath() = TestMetadataUtil.getTestDataPath(this::class.java)
+    override fun getTestDataDirectory(): File {
+        return File(TestMetadataUtil.getTestDataPath(this::class.java))
+    }
 
     fun doTest(unused: String) {
         setupMppProjectFromDirStructure(testDataFile())

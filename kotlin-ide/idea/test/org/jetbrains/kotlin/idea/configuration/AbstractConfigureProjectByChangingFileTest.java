@@ -64,7 +64,7 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
 
         collector.showNotification();
 
-        KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath(), afterFile), getFile().getText().replace(version, "$VERSION$"));
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), afterFile), getFile().getText().replace(version, "$VERSION$"));
 
         checkModuleInfoFile(beforeFile);
     }

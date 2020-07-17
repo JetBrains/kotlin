@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.KotlinCompilerStandalone
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.test.TestRoot
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.utils.ReportLevel
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
@@ -32,7 +29,7 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
         val foreignAnnotationsJar = KotlinCompilerStandalone(listOf(File("third-party/annotations"))).compile()
 
         val libraryJar = KotlinCompilerStandalone(
-            listOf(File(KotlinTestUtils.getHomeDirectory(), "idea/testData/highlighterJsr305/library")),
+            listOf(KotlinRoot.DIR.resolve("idea/testData/highlighterJsr305/library")),
             classpath = listOf(foreignAnnotationsJar)
         ).compile()
 

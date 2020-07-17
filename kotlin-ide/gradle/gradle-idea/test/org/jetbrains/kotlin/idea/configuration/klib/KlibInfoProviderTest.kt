@@ -9,7 +9,7 @@ import com.intellij.testFramework.PlatformTestUtil.getTestName
 import junit.framework.TestCase
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.test.KotlinTestUtils.getHomeDirectory
+import org.jetbrains.kotlin.test.KotlinRoot
 import java.io.File
 
 class KlibInfoProviderTest : TestCase() {
@@ -173,8 +173,8 @@ class KlibInfoProviderTest : TestCase() {
     }
 
     companion object {
-        private val testDataDir = File(getHomeDirectory() + "/idea/testData/configuration/klib")
-            .also { assertTrue("Test data directory does not exist: $it", it.isDirectory) }
+        private val testDataDir: File = KotlinRoot.DIR.resolve("idea/testData/configuration/klib")
+                .also { assertTrue("Test data directory does not exist: $it", it.isDirectory) }
 
         private val externalLibsDir = testDataDir.resolve("external-libs")
 

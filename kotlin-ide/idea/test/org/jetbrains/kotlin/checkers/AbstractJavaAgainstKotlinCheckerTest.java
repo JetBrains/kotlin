@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR;
+
 public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonAnalyzerTestCase {
     private static final LocalInspectionTool[] DEFAULT_TOOLS = new LocalInspectionTool[] {
             new StaticCallOnSubclassInspection(),
@@ -68,7 +70,7 @@ public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonA
 
     @NotNull
     private String configPath(String testKind) {
-        return PluginTestCaseBase.getTestDataPathBase() + "/kotlinAndJavaChecker/" + testKind + "/" + getTestName(false) + ".txt";
+        return new File(IDEA_TEST_DATA_DIR, "kotlinAndJavaChecker/" + testKind + "/" + getTestName(false) + ".txt").getAbsolutePath();
     }
 
     @Override

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 import org.jetbrains.kotlin.idea.test.findFileWithCaret
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.util.slashedPath
 import java.io.File
 
 abstract class AbstractMultiPlatformCompletionTest : AbstractMultiModuleTest() {
@@ -46,7 +47,5 @@ abstract class AbstractMultiPlatformCompletionTest : AbstractMultiModuleTest() {
         })
     }
 
-    override fun getTestDataPath(): String {
-        return COMPLETION_TEST_DATA_BASE_PATH + "/smartMultiFile/" + getTestName(false) + "/"
-    }
+    override fun getTestDataDirectory() = COMPLETION_TEST_DATA_BASE.resolve("smartMultiFile").resolve(getTestName(false))
 }

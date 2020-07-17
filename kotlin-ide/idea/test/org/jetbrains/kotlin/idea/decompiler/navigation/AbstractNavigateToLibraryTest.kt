@@ -11,6 +11,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.test.*
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -43,7 +44,7 @@ abstract class AbstractNavigateToDecompiledLibraryTest : AbstractNavigateToLibra
 
     companion object {
         private val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
-            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", false
+            IDEA_TEST_DATA_DIR.resolve("decompiler/navigation/library").path, false
         )
     }
 }
@@ -52,7 +53,7 @@ abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLibraryTe
     override val expectedFileExt: String = ".source.expected"
 
     private val mockLibraryFacility = MockLibraryFacility(
-        source = File(PluginTestCaseBase.getTestDataPathBase(), "decompiler/navigation/library")
+        source = IDEA_TEST_DATA_DIR.resolve("decompiler/navigation/library")
     )
 
     override fun setUp() {
@@ -68,7 +69,7 @@ abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLibraryTe
 
 abstract class AbstractNavigateJavaToLibrarySourceTest : AbstractNavigateToLibraryTest() {
     protected val mockLibraryFacility = MockLibraryFacility(
-        source = File(PluginTestCaseBase.getTestDataPathBase(), "decompiler/navigation/fromJavaSource")
+        source = IDEA_TEST_DATA_DIR.resolve("decompiler/navigation/fromJavaSource")
     )
 
     override val expectedFileExt: String = ".source.expected"
@@ -86,7 +87,7 @@ abstract class AbstractNavigateJavaToLibrarySourceTest : AbstractNavigateToLibra
 
 abstract class AbstractNavigateToLibrarySourceTestWithJS : AbstractNavigateToLibrarySourceTest() {
     private val PROJECT_DESCRIPTOR = SdkAndMockLibraryProjectDescriptor(
-        PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/fromJavaSource", true
+        IDEA_TEST_DATA_DIR.resolve("decompiler/navigation/fromJavaSource").path, true
     )
 
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = KotlinMultiModuleProjectDescriptor(

@@ -22,35 +22,22 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.testFramework.IdeaTestUtil;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.idea.util.IjPlatformUtil;
+import org.jetbrains.kotlin.test.KotlinRoot;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
 
 public class PluginTestCaseBase {
-    public static final String TEST_DATA_DIR = KotlinTestUtils.getHomeDirectory() + "/idea/testData";
+    @NotNull
+    public static final File IDEA_TEST_DATA_DIR = new File(KotlinRoot.DIR, "idea/testData");
 
     private PluginTestCaseBase() {
-    }
-
-    @NotNull
-    public static String getTestDataPathBase() {
-        return TEST_DATA_DIR;
-    }
-
-    @NotNull
-    @TestOnly
-    private static Sdk createMockJdk(@NotNull String name, String path) {
-        return IdeaTestUtil.createMockJdk(name, path, false);
     }
 
     @NotNull
@@ -119,15 +106,5 @@ public class PluginTestCaseBase {
             default:
                 throw new UnsupportedOperationException(kind.toString());
         }
-    }
-
-    @TestOnly
-    public static void clearSdkTable(@NotNull Disposable disposable) {
-        Disposer.register(disposable, () -> ApplicationManager.getApplication().runWriteAction(() -> {
-            ProjectJdkTable jdkTable = IjPlatformUtil.getProjectJdkTableSafe();
-            for (Sdk sdk : jdkTable.getAllJdks()) {
-                jdkTable.removeJdk(sdk);
-            }
-        }));
     }
 }

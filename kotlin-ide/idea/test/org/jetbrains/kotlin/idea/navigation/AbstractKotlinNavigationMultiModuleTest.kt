@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.codeInsight.GotoSuperActionHandler
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 import org.jetbrains.kotlin.idea.test.findFileWithCaret
 import java.io.File
@@ -41,15 +42,13 @@ abstract class AbstractKotlinNavigationMultiModuleTest : AbstractMultiModuleTest
 
 
 abstract class AbstractKotlinGotoImplementationMultiModuleTest : AbstractKotlinNavigationMultiModuleTest() {
-    override fun getTestDataPath() =
-        File(PluginTestCaseBase.getTestDataPathBase(), "/navigation/implementations/multiModule").path + File.separator
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("navigation/implementations/multiModule")
 
     override fun doNavigate(editor: Editor, file: PsiFile) = NavigationTestUtils.invokeGotoImplementations(editor, file)!!
 }
 
 abstract class AbstractKotlinGotoSuperMultiModuleTest : AbstractKotlinNavigationMultiModuleTest() {
-    override fun getTestDataPath() =
-        File(PluginTestCaseBase.getTestDataPathBase(), "/navigation/gotoSuper/multiModule").path + File.separator
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("navigation/gotoSuper/multiModule")
 
     override fun doNavigate(editor: Editor, file: PsiFile): GotoTargetHandler.GotoData {
         val (superDeclarations, _) = GotoSuperActionHandler.SuperDeclarationsAndDescriptor.forDeclarationAtCaret(editor, file)
@@ -58,8 +57,7 @@ abstract class AbstractKotlinGotoSuperMultiModuleTest : AbstractKotlinNavigation
 }
 
 abstract class AbstractKotlinGotoRelatedSymbolMultiModuleTest : AbstractKotlinNavigationMultiModuleTest() {
-    override fun getTestDataPath() =
-        File(PluginTestCaseBase.getTestDataPathBase(), "/navigation/relatedSymbols/multiModule").path + File.separator
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("navigation/relatedSymbols/multiModule")
 
     override fun doNavigate(editor: Editor, file: PsiFile): GotoTargetHandler.GotoData {
         val source = file.findElementAt(editor.caretModel.offset)!!

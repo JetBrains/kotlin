@@ -24,7 +24,7 @@ import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.testFramework.runInEdtAndWait
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.junit.Test
 import java.io.File
 import kotlin.reflect.KMutableProperty0
@@ -32,7 +32,9 @@ import kotlin.reflect.KMutableProperty0
 class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
     private lateinit var codeInsightTestFixture: CodeInsightTestFixture
 
-    fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/gradle/languageFeature/" + getTestName(true).substringBefore('_')
+    private fun getTestDataDirectory(): File {
+        return IDEA_TEST_DATA_DIR.resolve("gradle/languageFeature").resolve(getTestName(true).substringBefore('_'))
+    }
 
     override fun setUpFixtures() {
         myTestFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName()).fixture
@@ -73,8 +75,8 @@ class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
     }
 
     private fun doTest(intentionName: String) {
-        val buildGradleVFile = createProjectSubFile("build.gradle", File(getTestDataPath(), "build.gradle").readText())
-        val sourceVFile = createProjectSubFile("src/main/kotlin/src.kt", File(getTestDataPath(), "src.kt").readText())
+        val buildGradleVFile = createProjectSubFile("build.gradle", File(getTestDataDirectory(), "build.gradle").readText())
+        val sourceVFile = createProjectSubFile("src/main/kotlin/src.kt", File(getTestDataDirectory(), "src.kt").readText())
         importProject()
         runInEdtAndWait {
             codeInsightTestFixture.configureFromExistingVirtualFile(sourceVFile)
@@ -85,7 +87,7 @@ class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
     }
 
     private fun checkResult(file: VirtualFile) {
-        val expectedPath = File(getTestDataPath(), "build.gradle.after")
+        val expectedPath = File(getTestDataDirectory(), "build.gradle.after")
         val expectedContent = StringUtil.convertLineSeparators(expectedPath.readText())
         val actualContent = StringUtil.convertLineSeparators(LoadTextUtil.loadText(file).toString())
         if (actualContent != expectedContent) {

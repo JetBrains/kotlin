@@ -9,25 +9,21 @@ import org.jetbrains.kotlin.idea.liveTemplates.setTemplateTestingCompat
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-
 abstract class AbstractPostfixTemplateProviderTest : KotlinLightCodeInsightFixtureTestCase() {
-
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-    override fun getTestDataPath() = ""
-
 
     override fun setUp() {
         super.setUp()
         KtPostfixTemplateProvider.previouslySuggestedExpressions = emptyList()
     }
 
-    protected fun doTest(fileName: String) {
-        val fileText = File(fileName).readText()
+    protected fun doTest(unused: String) {
+        val testFile = testDataFile()
+        myFixture.configureByFile(testFile)
 
-        myFixture.configureByFile(fileName)
+        val fileText = file.text
         val template = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// TEMPLATE:")
         if (template != null) {
             setTemplateTestingCompat(project, testRootDisposable)
@@ -41,7 +37,8 @@ abstract class AbstractPostfixTemplateProviderTest : KotlinLightCodeInsightFixtu
             fail("Only one expression should be suggested, but $previouslySuggestedExpressions were found")
         }
 
-        myFixture.checkResultByFile("$fileName.after")
+        val expectedFile = File(testFile.parentFile, testFile.name + ".after")
+        myFixture.checkResultByFile(expectedFile)
     }
 
     override fun tearDown() {

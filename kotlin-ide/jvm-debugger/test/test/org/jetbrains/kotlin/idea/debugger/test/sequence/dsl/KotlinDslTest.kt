@@ -8,7 +8,7 @@ import com.intellij.debugger.streams.test.DslTestCase
 import com.intellij.debugger.streams.trace.dsl.impl.DslImpl
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinCollectionsPeekCallFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFactory
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinRoot
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 import java.io.File
@@ -16,6 +16,6 @@ import java.io.File
 @RunWith(JUnit38ClassRunner::class)
 class KotlinDslTest : DslTestCase(DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory()))) {
     override fun getTestDataPath(): String {
-        return File(KotlinTestUtils.getHomeDirectory(), "jvm-debugger/test/testData/sequence/dsl").absolutePath
+        return File(KotlinRoot.DIR, "jvm-debugger/test/testData/sequence/dsl").absolutePath
     }
 }

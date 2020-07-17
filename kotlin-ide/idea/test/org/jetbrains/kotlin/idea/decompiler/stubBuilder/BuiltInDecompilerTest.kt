@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
@@ -52,7 +53,7 @@ class BuiltInDecompilerTest : AbstractBuiltInDecompilerTest() {
 
 @RunWith(JUnit38ClassRunner::class)
 class BuiltInDecompilerForWrongAbiVersionTest : AbstractBuiltInDecompilerTest() {
-    override fun getTestDataPath() = PluginTestCaseBase.TEST_DATA_DIR + "/decompiler/builtins/"
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("decompiler/builtins")
 
     override fun configureAndBuildFileStub(packageFqName: String): PsiFileStub<*> {
         myFixture.configureByFile(BuiltInSerializerProtocol.getBuiltInsFilePath(FqName(packageFqName)))

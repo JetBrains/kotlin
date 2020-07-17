@@ -9,12 +9,12 @@ import com.intellij.psi.PsiManager
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import java.io.File
 
 abstract class AbstractMultiModuleRenameTest : KotlinMultiFileTestCase() {
     override fun getTestRoot(): String = "/refactoring/renameMultiModule/"
-    override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase()
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR
 
     fun doTest(path: String) {
         val renameParamsObject = loadTestConfiguration(File(path))

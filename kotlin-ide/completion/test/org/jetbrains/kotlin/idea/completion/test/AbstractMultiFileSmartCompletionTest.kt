@@ -15,9 +15,9 @@ abstract class AbstractMultiFileSmartCompletionTest : KotlinCompletionTestCase()
         setType(CompletionType.SMART)
     }
 
-    protected fun doTest(testPath: String) {
+    protected fun doTest(unused: String) {
         configureByFile(getTestName(false) + ".kt", "")
-        AstAccessControl.testWithControlledAccessToAst(false, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
+        AstAccessControl.testWithControlledAccessToAst(false, file.virtualFile, project, testRootDisposable, {
             testCompletion(file.text, JvmPlatforms.unspecifiedJvmPlatform, { completionType, invocationCount ->
                 setType(completionType)
                 complete(invocationCount)
@@ -26,7 +26,5 @@ abstract class AbstractMultiFileSmartCompletionTest : KotlinCompletionTestCase()
         })
     }
 
-    override fun getTestDataPath(): String {
-        return COMPLETION_TEST_DATA_BASE_PATH + "/smartMultiFile/" + getTestName(false) + "/"
-    }
+    override fun getTestDataDirectory() = COMPLETION_TEST_DATA_BASE.resolve("smartMultiFile").resolve(getTestName(false))
 }

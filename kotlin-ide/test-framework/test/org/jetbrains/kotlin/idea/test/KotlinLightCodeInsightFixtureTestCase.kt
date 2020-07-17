@@ -32,6 +32,7 @@ import com.intellij.psi.search.ProjectScope
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.intellij.testFramework.RunAll
+import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.util.ThrowableRunnable
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -48,8 +49,10 @@ import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.JVM_TARGET_DIRECTIV
 import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.LANGUAGE_VERSION_DIRECTIVE
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadataUtil
+import org.jetbrains.kotlin.test.util.slashedPath
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
@@ -71,7 +74,11 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
-    override fun getTestDataPath(): String = TestMetadataUtil.getTestDataPath(javaClass)
+    final override fun getTestDataPath(): String = getTestDataDirectory().slashedPath
+
+    open fun getTestDataDirectory(): File {
+        return File(TestMetadataUtil.getTestDataPath(javaClass))
+    }
 
     override fun setUp() {
         super.setUp()
@@ -85,7 +92,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
             UnusedSymbolInspection()
         }
 
-        VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, KotlinRoot.PATH)
 
         editorTrackerProjectOpened(project)
 
@@ -170,11 +177,8 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
             val withLibraryDirective = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "WITH_LIBRARY:")
             return when {
-                !withLibraryDirective.isEmpty() ->
-                    SdkAndMockLibraryProjectDescriptor(
-                        PluginTestCaseBase.getTestDataPathBase() + "/" + withLibraryDirective[0],
-                        true
-                    )
+                withLibraryDirective.isNotEmpty() ->
+                    SdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve(withLibraryDirective[0]).path, true)
 
                 InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_SOURCES") ->
                     ProjectDescriptorWithStdlibSources.INSTANCE
@@ -232,6 +236,15 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         return true
     }
 
+    fun JavaCodeInsightTestFixture.configureByFile(file: File) {
+        val relativePath = file.toRelativeString(getTestDataDirectory())
+        configureByFile(relativePath)
+    }
+
+    fun JavaCodeInsightTestFixture.checkResultByFile(file: File) {
+        val relativePath = file.toRelativeString(getTestDataDirectory())
+        checkResultByFile(relativePath)
+    }
 }
 
 object CompilerTestDirectives {

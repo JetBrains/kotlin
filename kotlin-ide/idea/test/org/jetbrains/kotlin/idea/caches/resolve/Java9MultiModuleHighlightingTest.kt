@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -17,7 +17,7 @@ import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
-    override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/java9/"
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("multiModuleHighlighting/java9")
 
     private fun module(name: String): Module = super.module(name, FULL_JDK_9, false)
 

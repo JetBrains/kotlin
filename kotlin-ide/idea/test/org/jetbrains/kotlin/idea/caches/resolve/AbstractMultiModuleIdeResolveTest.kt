@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.project.KotlinMultiplatformAnalysisModeComponen
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.util.sourceRoots
 import org.jetbrains.kotlin.psi.KtFile
@@ -106,7 +107,7 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
 }
 
 abstract class AbstractMultiplatformAnalysisTest : AbstractMultiModuleIdeResolveTest() {
-    override fun getTestDataPath(): String = "${PluginTestCaseBase.getTestDataPathBase()}/multiplatform"
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("multiplatform")
 
     override fun setUp() {
         super.setUp()

@@ -10,13 +10,13 @@ import com.intellij.psi.impl.source.resolve.reference.impl.PsiDelegateReference
 import org.jetbrains.kotlin.idea.test.AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE
 import org.jetbrains.kotlin.idea.test.AstAccessControl.execute
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
 abstract class AbstractReferenceResolveWithLibTest : AbstractReferenceResolveTest() {
     private companion object {
-        val MOCK_SOURCES_BASE = File(PluginTestCaseBase.getTestDataPathBase(), "/resolve/referenceWithLib")
+        val MOCK_SOURCES_BASE = IDEA_TEST_DATA_DIR.resolve("resolve/referenceWithLib")
     }
 
     private lateinit var mockLibraryFacility: MockLibraryFacility
