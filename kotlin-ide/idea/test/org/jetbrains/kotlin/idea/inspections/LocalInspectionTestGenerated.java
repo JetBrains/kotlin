@@ -6332,6 +6332,16 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
             runTest("testData/inspectionsLocal/moveVariableDeclarationIntoWhen/inUnaryAndProperty.kt");
         }
 
+        @TestMetadata("multiLinePropertywithSingleLineInitializer.kt")
+        public void testMultiLinePropertywithSingleLineInitializer() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/multiLinePropertywithSingleLineInitializer.kt");
+        }
+
+        @TestMetadata("multiLinePropertywithSingleLineInitializer2.kt")
+        public void testMultiLinePropertywithSingleLineInitializer2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/multiLinePropertywithSingleLineInitializer2.kt");
+        }
+
         @TestMetadata("notApplicableInBinaryExpression.kt")
         public void testNotApplicableInBinaryExpression() throws Exception {
             runTest("testData/inspectionsLocal/moveVariableDeclarationIntoWhen/notApplicableInBinaryExpression.kt");
