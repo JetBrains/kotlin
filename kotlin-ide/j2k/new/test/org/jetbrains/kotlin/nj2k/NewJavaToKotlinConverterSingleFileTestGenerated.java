@@ -4695,6 +4695,16 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("Java9.java")
+        public void testJava9() throws Exception {
+            runTest("testData/newJ2k/tryWithResource/Java9.java");
+        }
+
+        @TestMetadata("Java9Multiple.java")
+        public void testJava9Multiple() throws Exception {
+            runTest("testData/newJ2k/tryWithResource/Java9Multiple.java");
+        }
+
         @TestMetadata("Multiline.java")
         public void testMultiline() throws Exception {
             runTest("testData/newJ2k/tryWithResource/Multiline.java");
