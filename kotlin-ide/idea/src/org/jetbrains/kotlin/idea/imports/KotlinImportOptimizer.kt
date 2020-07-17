@@ -264,7 +264,7 @@ class KotlinImportOptimizer : ImportOptimizer {
             val options = OptimizedImportsBuilder.Options(
                 settings.NAME_COUNT_TO_USE_STAR_IMPORT,
                 settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS,
-                isInPackagesToUseStarImport = { fqName -> fqName.asString() in settings.PACKAGES_TO_USE_IMPORT_ON_DEMAND }
+                isInPackagesToUseStarImport = { fqName -> fqName.asString() in settings.PACKAGES_TO_USE_STAR_IMPORTS }
             )
 
             return OptimizedImportsBuilder(file, data, options).buildOptimizedImports()

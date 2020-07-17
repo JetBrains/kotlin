@@ -44,7 +44,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
     private fun getCodeStyleSettings(contextFile: KtFile): KotlinCodeStyleSettings = CodeStyle.getSettings(contextFile).kotlinCustomSettings
 
     override fun getImportSortComparator(contextFile: KtFile): Comparator<ImportPath> = ImportPathComparator(
-        getCodeStyleSettings(contextFile).IMPORTS_LAYOUT
+        getCodeStyleSettings(contextFile).PACKAGES_IMPORT_LAYOUT
     )
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
@@ -197,7 +197,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             if (imports.any { it.importPath == starImportPath }) return false
 
             val codeStyle = getCodeStyleSettings(file)
-            if (containerFqName.asString() in codeStyle.PACKAGES_TO_USE_IMPORT_ON_DEMAND) return true
+            if (containerFqName.asString() in codeStyle.PACKAGES_TO_USE_STAR_IMPORTS) return true
 
             val importsFromPackage = imports.count {
                 val path = it.importPath

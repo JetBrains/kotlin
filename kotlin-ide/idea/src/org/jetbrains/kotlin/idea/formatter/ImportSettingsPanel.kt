@@ -103,13 +103,13 @@ class ImportSettingsPanel(commonSettings: CodeStyleSettings) : JPanel() {
 
         cbImportNestedClasses.isSelected = settings.IMPORT_NESTED_CLASSES
 
-        starImportLayoutPanel.packageTable.copyFrom(settings.PACKAGES_TO_USE_IMPORT_ON_DEMAND)
+        starImportLayoutPanel.packageTable.copyFrom(settings.PACKAGES_TO_USE_STAR_IMPORTS)
         (starImportLayoutPanel.layoutTable.model as AbstractTableModel).fireTableDataChanged()
         if (starImportLayoutPanel.layoutTable.rowCount > 0) {
             starImportLayoutPanel.layoutTable.selectionModel.setSelectionInterval(0, 0)
         }
 
-        importOrderLayoutPanel.packageTable.copyFrom(settings.IMPORTS_LAYOUT)
+        importOrderLayoutPanel.packageTable.copyFrom(settings.PACKAGES_IMPORT_LAYOUT)
         (importOrderLayoutPanel.layoutTable.model as AbstractTableModel).fireTableDataChanged()
         if (importOrderLayoutPanel.layoutTable.rowCount > 0) {
             importOrderLayoutPanel.layoutTable.selectionModel.setSelectionInterval(0, 0)
@@ -122,8 +122,8 @@ class ImportSettingsPanel(commonSettings: CodeStyleSettings) : JPanel() {
         settings.NAME_COUNT_TO_USE_STAR_IMPORT = nameCountToUseStarImportSelector.value
         settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = nameCountToUseStarImportForMembersSelector.value
         settings.IMPORT_NESTED_CLASSES = cbImportNestedClasses.isSelected
-        settings.PACKAGES_TO_USE_IMPORT_ON_DEMAND.copyFrom(getCopyWithoutEmptyPackages(starImportLayoutPanel.packageTable))
-        settings.IMPORTS_LAYOUT.copyFrom(importOrderLayoutPanel.packageTable)
+        settings.PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(getCopyWithoutEmptyPackages(starImportLayoutPanel.packageTable))
+        settings.PACKAGES_IMPORT_LAYOUT.copyFrom(importOrderLayoutPanel.packageTable)
     }
 
     fun isModified(settings: KotlinCodeStyleSettings): Boolean {
@@ -132,8 +132,8 @@ class ImportSettingsPanel(commonSettings: CodeStyleSettings) : JPanel() {
             isModified = isModified || nameCountToUseStarImportSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT
             isModified = isModified || nameCountToUseStarImportForMembersSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
             isModified = isModified || isModified(cbImportNestedClasses, IMPORT_NESTED_CLASSES)
-            isModified = isModified || isModified(getCopyWithoutEmptyPackages(starImportLayoutPanel.packageTable), PACKAGES_TO_USE_IMPORT_ON_DEMAND)
-            isModified = isModified || isModified(importOrderLayoutPanel.packageTable, IMPORTS_LAYOUT)
+            isModified = isModified || isModified(getCopyWithoutEmptyPackages(starImportLayoutPanel.packageTable), PACKAGES_TO_USE_STAR_IMPORTS)
+            isModified = isModified || isModified(importOrderLayoutPanel.packageTable, PACKAGES_IMPORT_LAYOUT)
 
             isModified
         }

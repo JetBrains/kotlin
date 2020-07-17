@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.core.formatter;
 
 import com.intellij.application.options.CodeStyle;
+import com.intellij.configurationStore.Property;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -19,13 +20,15 @@ import org.jetbrains.kotlin.idea.util.FormatterUtilKt;
 import org.jetbrains.kotlin.idea.util.ReflectionUtil;
 
 public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
-    @ReflectionUtil.SkipInEquals
     @NotNull
-    public KotlinPackageEntryTable PACKAGES_TO_USE_IMPORT_ON_DEMAND = new KotlinPackageEntryTable();
+    @ReflectionUtil.SkipInEquals
+    @Property(externalName = "packages_to_use_import_on_demand")
+    public KotlinPackageEntryTable PACKAGES_TO_USE_STAR_IMPORTS = new KotlinPackageEntryTable();
 
-    @ReflectionUtil.SkipInEquals
     @NotNull
-    public KotlinPackageEntryTable IMPORTS_LAYOUT = new KotlinPackageEntryTable();
+    @ReflectionUtil.SkipInEquals
+    @Property(externalName = "imports_layout")
+    public KotlinPackageEntryTable PACKAGES_IMPORT_LAYOUT = new KotlinPackageEntryTable();
 
     public boolean SPACE_AROUND_RANGE = false;
     public boolean SPACE_BEFORE_TYPE_COLON = false;
@@ -73,18 +76,18 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
 
         // defaults in IDE but not in tests
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
-            PACKAGES_TO_USE_IMPORT_ON_DEMAND.addEntry(new KotlinPackageEntry("java.util", false));
-            PACKAGES_TO_USE_IMPORT_ON_DEMAND.addEntry(new KotlinPackageEntry("kotlinx.android.synthetic", true));
-            PACKAGES_TO_USE_IMPORT_ON_DEMAND.addEntry(new KotlinPackageEntry("io.ktor", true));
+            PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("java.util", false));
+            PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("kotlinx.android.synthetic", true));
+            PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("io.ktor", true));
         }
 
         // Many of test data actually depend on this order of imports,
         // that is why we put it here even for test mode
-        IMPORTS_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_IMPORTS_ENTRY);
-        IMPORTS_LAYOUT.addEntry(new KotlinPackageEntry("java", true));
-        IMPORTS_LAYOUT.addEntry(new KotlinPackageEntry("javax", true));
-        IMPORTS_LAYOUT.addEntry(new KotlinPackageEntry("kotlin", true));
-        IMPORTS_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY);
+        PACKAGES_IMPORT_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_IMPORTS_ENTRY);
+        PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("java", true));
+        PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("javax", true));
+        PACKAGES_IMPORT_LAYOUT.addEntry(new KotlinPackageEntry("kotlin", true));
+        PACKAGES_IMPORT_LAYOUT.addEntry(KotlinPackageEntry.ALL_OTHER_ALIAS_IMPORTS_ENTRY);
     }
 
     public static KotlinCodeStyleSettings getInstance(Project project) {
@@ -95,11 +98,11 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public Object clone() {
         KotlinCodeStyleSettings clone = (KotlinCodeStyleSettings)super.clone();
 
-        clone.PACKAGES_TO_USE_IMPORT_ON_DEMAND = new KotlinPackageEntryTable();
-        clone.PACKAGES_TO_USE_IMPORT_ON_DEMAND.copyFrom(this.PACKAGES_TO_USE_IMPORT_ON_DEMAND);
+        clone.PACKAGES_TO_USE_STAR_IMPORTS = new KotlinPackageEntryTable();
+        clone.PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(this.PACKAGES_TO_USE_STAR_IMPORTS);
 
-        clone.IMPORTS_LAYOUT = new KotlinPackageEntryTable();
-        clone.IMPORTS_LAYOUT.copyFrom(this.IMPORTS_LAYOUT);
+        clone.PACKAGES_IMPORT_LAYOUT = new KotlinPackageEntryTable();
+        clone.PACKAGES_IMPORT_LAYOUT.copyFrom(this.PACKAGES_IMPORT_LAYOUT);
 
         return clone;
     }
@@ -110,8 +113,8 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
 
         KotlinCodeStyleSettings that = (KotlinCodeStyleSettings)obj;
 
-        if (!Comparing.equal(PACKAGES_TO_USE_IMPORT_ON_DEMAND, that.PACKAGES_TO_USE_IMPORT_ON_DEMAND)) return false;
-        if (!Comparing.equal(IMPORTS_LAYOUT, that.IMPORTS_LAYOUT)) return false;
+        if (!Comparing.equal(PACKAGES_TO_USE_STAR_IMPORTS, that.PACKAGES_TO_USE_STAR_IMPORTS)) return false;
+        if (!Comparing.equal(PACKAGES_IMPORT_LAYOUT, that.PACKAGES_IMPORT_LAYOUT)) return false;
         if (!ReflectionUtil.comparePublicNonFinalFieldsWithSkip(this, that)) return false;
         return true;
     }

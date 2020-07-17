@@ -24,12 +24,12 @@ class KotlinCodeStyleSettingsTest : LightPlatformTestCase() {
     fun `test json export with obsolete code style`() = doTestWithJson(KotlinObsoleteCodeStyle.INSTANCE, "obsoleteCodeStyle")
     fun `test compare code styles`() = compareCodeStyle { KotlinStyleGuideCodeStyle.apply(it) }
     fun `test compare different import`() = compareCodeStyle {
-        it.kotlinCustomSettings.PACKAGES_TO_USE_IMPORT_ON_DEMAND.addEntry(KotlinPackageEntry("not.my.package.name", true))
+        it.kotlinCustomSettings.PACKAGES_TO_USE_STAR_IMPORTS.addEntry(KotlinPackageEntry("not.my.package.name", true))
         it.kotlinCommonSettings.BRACE_STYLE = 10
     }
 
     fun `test compare different layout`() = compareCodeStyle {
-        it.kotlinCustomSettings.IMPORTS_LAYOUT.addEntry(KotlinPackageEntry("my.package.name", true))
+        it.kotlinCustomSettings.PACKAGES_IMPORT_LAYOUT.addEntry(KotlinPackageEntry("my.package.name", true))
         it.kotlinCommonSettings.BRACE_STYLE = 10
     }
 
@@ -63,9 +63,9 @@ private fun doTestWithJson(codeStyle: KotlinPredefinedCodeStyle, fileName: Strin
     codeStyle.apply(settings)
 
     val kotlinCustomCodeStyle = settings.kotlinCustomSettings
-    kotlinCustomCodeStyle.PACKAGES_TO_USE_IMPORT_ON_DEMAND.addEntry(KotlinPackageEntry("java.util", false))
-    kotlinCustomCodeStyle.PACKAGES_TO_USE_IMPORT_ON_DEMAND.addEntry(KotlinPackageEntry("kotlinx.android.synthetic", true))
-    kotlinCustomCodeStyle.PACKAGES_TO_USE_IMPORT_ON_DEMAND.addEntry(KotlinPackageEntry("io.ktor", true))
+    kotlinCustomCodeStyle.PACKAGES_TO_USE_STAR_IMPORTS.addEntry(KotlinPackageEntry("java.util", false))
+    kotlinCustomCodeStyle.PACKAGES_TO_USE_STAR_IMPORTS.addEntry(KotlinPackageEntry("kotlinx.android.synthetic", true))
+    kotlinCustomCodeStyle.PACKAGES_TO_USE_STAR_IMPORTS.addEntry(KotlinPackageEntry("io.ktor", true))
 
     val exporter = CodeStyleSchemeJsonExporter()
     val outputStream = ByteArrayOutputStream()
