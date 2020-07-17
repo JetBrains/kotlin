@@ -4,6 +4,7 @@
       <w>codegen</w>
       <w>destructured</w>
       <w>kapt</w>
+      <w>kjsm</w>
       <w>kotlinc</w>
       <w>mutators</w>
       <w>subproject</w>

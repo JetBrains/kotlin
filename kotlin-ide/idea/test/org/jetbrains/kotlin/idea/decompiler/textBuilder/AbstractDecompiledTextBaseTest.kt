@@ -12,14 +12,14 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractDecompiledTextBaseTest(
-    private val baseDirectory: String,
+    baseDirectory: String,
     private val isJsLibrary: Boolean = false,
-    private val allowKotlinPackage: Boolean = false,
     private val withRuntime: Boolean = false
 ) : KotlinLightCodeInsightFixtureTestCase() {
     protected companion object {
@@ -41,19 +41,31 @@ abstract class AbstractDecompiledTextBaseTest(
     override fun setUp() {
         super.setUp()
 
+        val platform = when {
+            isJsLibrary -> KotlinCompilerStandalone.Platform.JavaScript(MockLibraryFacility.MOCK_LIBRARY_NAME, TEST_PACKAGE)
+            else -> KotlinCompilerStandalone.Platform.Jvm()
+        }
+
+        val testDirectory = File(mockSourcesBase, getTestName(false))
+
         mockLibraryFacility = MockLibraryFacility(
-            source = File(mockSourcesBase, getTestName(false)),
+            source = testDirectory,
             attachSources = false,
-            platform = run {
-                if (isJsLibrary)
-                    KotlinCompilerStandalone.Platform.JavaScript(MockLibraryFacility.MOCK_LIBRARY_NAME, TEST_PACKAGE)
-                else
-                    KotlinCompilerStandalone.Platform.Jvm()
-            },
-            options = if (allowKotlinPackage) listOf("-Xallow-kotlin-package") else emptyList()
+            platform = platform,
+            options = getCompilationOptions(testDirectory)
         )
 
         mockLibraryFacility.setUp(module)
+    }
+
+    private fun getCompilationOptions(testDirectory: File): List<String> {
+        val directivesText = InTextDirectivesUtils.textWithDirectives(testDirectory)
+
+        if (InTextDirectivesUtils.isDirectiveDefined(directivesText, "ALLOW_KOTLIN_PACKAGE")) {
+            return listOf("-Xallow-kotlin-package")
+        }
+
+        return emptyList()
     }
 
     override fun tearDown() {

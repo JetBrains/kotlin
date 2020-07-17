@@ -23,8 +23,7 @@ import org.junit.Assert
 import java.nio.file.Paths
 import kotlin.test.assertTrue
 
-abstract class AbstractDecompiledTextTest(baseDirectory: String, allowKotlinPackage: Boolean) :
-    AbstractDecompiledTextBaseTest(baseDirectory, allowKotlinPackage = allowKotlinPackage) {
+abstract class AbstractDecompiledTextTest(baseDirectory: String) : AbstractDecompiledTextBaseTest(baseDirectory) {
 
     private val CUSTOM_PACKAGE_FILE = "package.txt"
 
@@ -57,9 +56,9 @@ abstract class AbstractDecompiledTextTest(baseDirectory: String, allowKotlinPack
     override fun textToCheck(psiFile: PsiFile) = psiFile.text
 }
 
-abstract class AbstractCommonDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledText", true)
+abstract class AbstractCommonDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledText")
 
-abstract class AbstractJvmDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledTextJvm", false)
+abstract class AbstractJvmDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledTextJvm")
 
 fun findTestLibraryRoot(module: Module): VirtualFile? {
     for (orderEntry in ModuleRootManager.getInstance(module).orderEntries) {

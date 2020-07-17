@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.junit.Assert.assertEquals
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -48,7 +46,13 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
     includeKotlinStdlib: Boolean = true
 ) {
     sealed class Platform {
-        class JavaScript(val moduleName: String, val packageName: String) : Platform()
+        class JavaScript(val moduleName: String, val packageName: String) : Platform() {
+            init {
+                assert(moduleName.isNotEmpty())
+                assert(packageName.isNotEmpty())
+            }
+        }
+
         class Jvm(val target: JvmTarget = JvmTarget.DEFAULT) : Platform()
     }
 
@@ -102,9 +106,8 @@ class KotlinCompilerStandalone @JvmOverloads constructor(
             when (platform) {
                 is Jvm -> compileKotlin(ktFiles, javaFiles.isNotEmpty(), targetForKotlin)
                 is JavaScript -> {
-                    val targetJsDir = File(targetForKotlin, platform.moduleName + "/" + platform.packageName.replace('.', '/'))
-                    val targetJsFileName = JsSerializerProtocol.getKjsmFilePath(FqName(platform.packageName))
-                    val targetJsFile = File(targetJsDir, "$targetJsFileName.js")
+                    val targetJsDir = File(targetForKotlin, platform.moduleName)
+                    val targetJsFile = File(targetJsDir, platform.packageName.substringAfterLast('.') + ".js")
                     compileKotlin(ktFiles, javaFiles.isNotEmpty(), targetJsFile)
                 }
             }

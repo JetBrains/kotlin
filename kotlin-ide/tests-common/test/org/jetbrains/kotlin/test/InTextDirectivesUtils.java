@@ -205,7 +205,7 @@ public final class InTextDirectivesUtils {
         return result;
     }
 
-    private static String textWithDirectives(File file) {
+    public static String textWithDirectives(File file) {
         try {
             String fileText;
             if (file.isDirectory()) {

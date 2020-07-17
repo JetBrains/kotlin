@@ -27,7 +27,12 @@ private const val CHECK_PACKAGE_DIRECTIVE = "CHECK_PACKAGE"
 
 abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) :
     AbstractDecompiledTextBaseTest(baseDirectory, isJsLibrary = true, withRuntime = true) {
-    override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, module)
+    override fun getFileToDecompile(): VirtualFile = getKjsmFile(module)
+
+    override fun fileName(): String {
+        val testName = getTestName(false)
+        return "$testName/$testName.kt"
+    }
 
     override fun checkPsiFile(psiFile: PsiFile) {
         assertTrue(psiFile is KtDecompiledFile, "Expecting decompiled kotlin javascript file, was: " + psiFile::class.java)
@@ -66,16 +71,18 @@ abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) :
 
         return singleClass
     }
+
+    private fun getKjsmFile(module: Module): VirtualFile {
+        val root = findTestLibraryRoot(module) ?: error("Test library not found for module ${module.name}")
+        root.refresh(false, true)
+
+        val kjsmRoot = File(MockLibraryFacility.MOCK_LIBRARY_NAME, TEST_PACKAGE.replace('.', '/'))
+        val kjsmFile = File(kjsmRoot, JsSerializerProtocol.getKjsmFilePath(FqName(TEST_PACKAGE)))
+
+        return root.findFileByRelativePath(kjsmFile.path) ?: error("KJSM file not found in JS library ${root.name}")
+    }
 }
 
 abstract class AbstractCommonDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledText")
 
 abstract class AbstractJsDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledTextJs")
-
-fun getKjsmFile(packageName: String, module: Module): VirtualFile {
-    val root = findTestLibraryRoot(module)!!
-    root.refresh(false, true)
-    val packagePath = MockLibraryFacility.MOCK_LIBRARY_NAME + "/" + packageName.replace(".", "/")
-    val packageDir = root.findFileByRelativePath(packagePath)!!
-    return packageDir.findChild(JsSerializerProtocol.getKjsmFilePath(FqName(packageName)).substringAfterLast('/'))!!
-}
