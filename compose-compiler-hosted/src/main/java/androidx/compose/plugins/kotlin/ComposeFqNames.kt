@@ -43,6 +43,7 @@ object ComposeFqNames {
     val StableMarker = ComposeUtils.composeFqName("StableMarker")
     val Stable = ComposeUtils.composeFqName("Stable")
     val Composer = ComposeUtils.composeFqName("Composer")
+    val ComposeVersion = FqName("androidx.compose.runtime.ComposeVersion")
     val UiComposer = FqName.fromSegments(listOf("androidx", "ui", "node", "UiComposer"))
     val Package = FqName.fromSegments(listOf("androidx", "compose"))
     val Function0 = FqName.fromSegments(listOf("kotlin", "jvm", "functions", "Function0"))
