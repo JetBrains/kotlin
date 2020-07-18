@@ -22,9 +22,9 @@ internal class ModuleAndPackageDocumentationTransformer(
 
         val modulesAndPackagesDocumentation =
             context.configuration.sourceSets
-                .map {
-                    Pair(it.moduleDisplayName, it) to
-                            it.includes.map { Paths.get(it) }
+                .map { sourceSet ->
+                    Pair(sourceSet.moduleDisplayName, sourceSet) to
+                            sourceSet.includes.map { it.toPath() }
                                 .also {
                                     it.forEach {
                                         if (Files.notExists(it))

@@ -45,7 +45,7 @@ class SuppressedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
         if (documentable !is WithExpectActual) return false
         val sourceFile = File(source(documentable).path).absoluteFile
         return sourceSet(documentable).suppressedFiles.any { suppressedFile ->
-            sourceFile.startsWith(File(suppressedFile).absoluteFile)
+            sourceFile.startsWith(suppressedFile.absoluteFile)
         }
     }
 }
