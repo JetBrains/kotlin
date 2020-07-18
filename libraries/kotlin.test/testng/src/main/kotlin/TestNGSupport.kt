@@ -46,6 +46,16 @@ object TestNGAsserter : Asserter {
         Assert.assertNotEquals(actual, illegal, message)
     }
 
+    @SinceKotlin("1.4")
+    override fun assertNotEquals(message: String?, illegal: Double, actual: Double, delta: Double) {
+        Assert.assertNotEquals(actual, illegal, delta, message)
+    }
+
+    @SinceKotlin("1.4")
+    override fun assertNotEquals(message: String?, illegal: Float, actual: Float, delta: Float) {
+        Assert.assertNotEquals(actual, illegal, delta, message)
+    }
+
     override fun assertSame(message: String?, expected: Any?, actual: Any?) {
         Assert.assertSame(actual, expected, message)
     }

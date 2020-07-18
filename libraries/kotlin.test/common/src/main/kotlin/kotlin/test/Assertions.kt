@@ -75,6 +75,18 @@ fun <@OnlyInputTypes T> assertNotEquals(illegal: T, actual: T, message: String? 
     asserter.assertNotEquals(message, illegal, actual)
 }
 
+/** Asserts that [actual] is not within a [delta] value of the [illegal] value with an optional [message]. */
+@SinceKotlin("1.4")
+fun assertNotEquals(illegal: Double, actual: Double, delta: Double, message: String? = null) {
+    asserter.assertNotEquals(message, illegal, actual, delta)
+}
+
+/** Asserts that [actual] is not within a [delta] value of the [illegal] value with an optional [message]. */
+@SinceKotlin("1.4")
+fun assertNotEquals(illegal: Float, actual: Float, delta: Float, message: String? = null) {
+    asserter.assertNotEquals(message, illegal, actual, delta)
+}
+
 /** Asserts that [expected] is the same instance as [actual], with an optional [message]. */
 fun <@OnlyInputTypes T> assertSame(expected: T, actual: T, message: String? = null) {
     asserter.assertSame(message, expected, actual)
@@ -285,6 +297,26 @@ interface Asserter {
      */
     fun assertNotEquals(message: String?, illegal: Any?, actual: Any?): Unit {
         assertTrue({ messagePrefix(message) + "Illegal value: <$actual>." }, actual != illegal)
+    }
+
+    /**
+     * Asserts that the specified values are not within a delta.
+     *
+     * @param message the message to report if the assertion fails.
+     */
+    @SinceKotlin("1.4")
+    fun assertNotEquals(message: String?, illegal: Double, actual: Double, delta: Double): Unit {
+        assertTrue({ messagePrefix(message) + "Illegal value <$illegal> with delta <$delta>, actual <$actual>" }, abs(illegal - actual) > delta)
+    }
+
+    /**
+     * Asserts that the specified values are not within a delta.
+     *
+     * @param message the message to report if the assertion fails.
+     */
+    @SinceKotlin("1.4")
+    fun assertNotEquals(message: String?, illegal: Float, actual: Float, delta: Float): Unit {
+        assertTrue({ messagePrefix(message) + "Illegal value <$illegal> with delta <$delta>, actual <$actual>" }, abs(illegal - actual) > delta)
     }
 
     /**

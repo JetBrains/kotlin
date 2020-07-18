@@ -108,6 +108,26 @@ class BasicAssertionsTest {
     }
 
     @Test
+    fun testAssertNotEqualsDouble() {
+        assertNotEquals(0.1, 0.3, 0.1)
+    }
+
+    @Test
+    fun testAssertNotEqualsDoubleFails() {
+        checkFailedAssertion { assertNotEquals(0.1, 0.11, 0.1) }
+    }
+
+    @Test
+    fun testAssertNotEqualsFloat() {
+        assertNotEquals(0.1f, 0.3f, 0.1f)
+    }
+
+    @Test
+    fun testAssertNotEqualsFloatFails() {
+        checkFailedAssertion { assertNotEquals(0.1f, 0.11f, .1f) }
+    }
+
+    @Test
     fun testAssertTrue() {
         assertTrue(true)
         assertTrue { true }
