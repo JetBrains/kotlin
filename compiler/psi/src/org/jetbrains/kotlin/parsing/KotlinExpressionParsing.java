@@ -1047,7 +1047,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
     }
 
-    public void parseContractEffectList() {
+    public boolean parseContractEffectList() {
         assert _at(LBRACKET);
 
         PsiBuilder.Marker contractsList = mark();
@@ -1061,6 +1061,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         myBuilder.restoreNewlinesState();
 
         contractsList.done(CONTRACT_EFFECT_LIST);
+        return true;
     }
 
     private void parseContractEffectListElements() {
