@@ -2,16 +2,16 @@
 
 package org.jetbrains.dokka
 
-import org.jetbrains.dokka.utilities.toJsonString
 import org.jetbrains.dokka.utilities.parseJson
+import org.jetbrains.dokka.utilities.toJsonString
 import java.io.File
 import java.io.Serializable
 import java.net.URL
 
 object DokkaDefaults {
-    const val outputDir = "./dokka"
+    val outputDir = File("./dokka")
     const val format: String = "html"
-    val cacheRoot: String? = null
+    val cacheRoot: File? = null
     const val offlineMode: Boolean = false
     const val failOnWarning: Boolean = false
 
@@ -51,6 +51,14 @@ enum class Platform(val key: String) {
     }
 }
 
+interface DokkaConfigurationBuilder<T : Any> {
+    fun build(): T
+}
+
+fun <T : Any> Iterable<DokkaConfigurationBuilder<T>>.build(): List<T> {
+    return this.map { it.build() }
+}
+
 data class DokkaSourceSetID(
     val moduleName: String,
     val sourceSetName: String
@@ -65,8 +73,8 @@ fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl = parseJson(jso
 fun DokkaConfiguration.toJsonString(): String = toJsonString(this)
 
 interface DokkaConfiguration : Serializable {
-    val outputDir: String
-    val cacheRoot: String?
+    val outputDir: File
+    val cacheRoot: File?
     val offlineMode: Boolean
     val failOnWarning: Boolean
     val sourceSets: List<DokkaSourceSet>
@@ -78,11 +86,11 @@ interface DokkaConfiguration : Serializable {
         val sourceSetID: DokkaSourceSetID
         val displayName: String
         val moduleDisplayName: String
-        val classpath: List<String>
+        val classpath: List<File>
         val sourceRoots: List<SourceRoot>
         val dependentSourceSets: Set<DokkaSourceSetID>
-        val samples: List<String>
-        val includes: List<String>
+        val samples: List<File>
+        val includes: List<File>
         val includeNonPublic: Boolean
         val includeRootPackage: Boolean
         val reportUndocumented: Boolean
@@ -96,12 +104,12 @@ interface DokkaConfiguration : Serializable {
         val apiVersion: String?
         val noStdlibLink: Boolean
         val noJdkLink: Boolean
-        val suppressedFiles: List<String>
+        val suppressedFiles: List<File>
         val analysisPlatform: Platform
     }
 
     interface SourceRoot : Serializable {
-        val path: String
+        val directory: File
     }
 
     interface SourceLinkDefinition : Serializable {
@@ -112,8 +120,8 @@ interface DokkaConfiguration : Serializable {
 
     interface DokkaModuleDescription : Serializable {
         val name: String
-        val path: String
-        val docFile: String
+        val path: File
+        val docFile: File
     }
 
     interface PackageOptions : Serializable {
@@ -135,7 +143,7 @@ interface DokkaConfiguration : Serializable {
 
             constructor(root: String, packageList: String? = null) : this(URL(root), packageList?.let { URL(it) })
 
-            fun build(): ExternalDocumentationLink =
+            fun build(): ExternalDocumentationLinkImpl =
                 if (packageListUrl != null && url != null)
                     ExternalDocumentationLinkImpl(url!!, packageListUrl!!)
                 else if (url != null)
@@ -145,5 +153,17 @@ interface DokkaConfiguration : Serializable {
         }
     }
 }
+
+fun ExternalDocumentationLink(
+    url: URL? = null,
+    packageListUrl: URL? = null
+): ExternalDocumentationLinkImpl =
+    DokkaConfiguration.ExternalDocumentationLink.Builder(url = url, packageListUrl = packageListUrl).build()
+
+
+fun ExternalDocumentationLink(
+    url: String, packageListUrl: String? = null
+): ExternalDocumentationLinkImpl =
+    DokkaConfiguration.ExternalDocumentationLink.Builder(root = url, packageList = packageListUrl).build()
 
 
