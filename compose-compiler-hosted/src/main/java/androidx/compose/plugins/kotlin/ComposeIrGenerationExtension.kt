@@ -39,6 +39,8 @@ class ComposeIrGenerationExtension(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
     ) {
+        VersionChecker(pluginContext).check()
+
         // TODO: refactor transformers to work with just BackendContext
         @Suppress("DEPRECATION")
         val bindingTrace = DelegatingBindingTrace(pluginContext.bindingContext, "trace in " +
