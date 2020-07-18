@@ -56,10 +56,10 @@ private object FileSerializer : StdScalarSerializer<File>(File::class.java) {
 
 private object SourceRootSerializer : StdScalarSerializer<SourceRoot>(SourceRoot::class.java) {
     override fun serialize(value: SourceRoot, g: JsonGenerator, provider: SerializerProvider) {
-        g.writeString(value.path)
+        g.writeString(value.directory.path)
     }
 }
 
 private object SourceRootImplDeserializer : StdScalarDeserializer<SourceRootImpl>(SourceRootImpl::class.java) {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SourceRootImpl = SourceRootImpl(p.text)
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SourceRootImpl = SourceRootImpl(File(p.text))
 }
