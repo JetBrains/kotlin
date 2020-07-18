@@ -15,6 +15,7 @@ package kotlin.test
 import kotlin.contracts.*
 import kotlin.internal.*
 import kotlin.jvm.JvmName
+import kotlin.math.abs
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
 
@@ -55,6 +56,18 @@ fun assertFalse(actual: Boolean, message: String? = null) {
 /** Asserts that the [expected] value is equal to the [actual] value, with an optional [message]. */
 fun <@OnlyInputTypes T> assertEquals(expected: T, actual: T, message: String? = null) {
     asserter.assertEquals(message, expected, actual)
+}
+
+/** Asserts that [actual] is within a [delta] value of the [expected] value with an optional [message]. */
+@SinceKotlin("1.4")
+fun assertEquals(expected: Double, actual: Double, delta: Double, message: String? = null) {
+    asserter.assertEquals(message, expected, actual, delta)
+}
+
+/** Asserts that [actual] is within a [delta] value of the [expected] value with an optional [message]. */
+@SinceKotlin("1.4")
+fun assertEquals(expected: Float, actual: Float, delta: Float, message: String? = null) {
+    asserter.assertEquals(message, expected, actual, delta)
 }
 
 /** Asserts that the [actual] value is not equal to the illegal value, with an optional [message]. */
@@ -243,6 +256,26 @@ interface Asserter {
      */
     fun assertEquals(message: String?, expected: Any?, actual: Any?): Unit {
         assertTrue({ messagePrefix(message) + "Expected <$expected>, actual <$actual>." }, actual == expected)
+    }
+
+    /**
+     * Asserts that the specified values are within a delta.
+     *
+     * @param message the message to report if the assertion fails.
+     */
+    @SinceKotlin("1.4")
+    fun assertEquals(message: String?, expected: Double, actual: Double, delta: Double): Unit {
+        assertTrue({ messagePrefix(message) + "Expected value <$expected> with delta <$delta>, actual <$actual>" }, abs(expected - actual) <= delta)
+    }
+
+    /**
+     * Asserts that the specified values are within a delta.
+     *
+     * @param message the message to report if the assertion fails.
+     */
+    @SinceKotlin("1.4")
+    fun assertEquals(message: String?, expected: Float, actual: Float, delta: Float): Unit {
+        assertTrue({ messagePrefix(message) + "Expected value <$expected> with delta <$delta>, actual <$actual>" }, abs(expected - actual) <= delta)
     }
 
     /**
