@@ -63,9 +63,33 @@ fun <@OnlyInputTypes T> assertEquals(expected: T, actual: T, message: String? = 
     asserter.assertEquals(message, expected, actual)
 }
 
+/** Asserts that the difference between the [actual] and the [expected] is within an [absoluteTolerance], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertEquals(expected: Double, actual: Double, absoluteTolerance: Double, message: String? = null) {
+    checkDoublesAreEqual(expected, actual, absoluteTolerance, message)
+}
+
+/** Asserts that the difference between the [actual] and the [expected] is within an [absoluteTolerance], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertEquals(expected: Float, actual: Float, absoluteTolerance: Float, message: String? = null) {
+    checkFloatsAreEqual(expected, actual, absoluteTolerance, message)
+}
+
 /** Asserts that the [actual] value is not equal to the illegal value, with an optional [message]. */
 fun <@OnlyInputTypes T> assertNotEquals(illegal: T, actual: T, message: String? = null) {
     asserter.assertNotEquals(message, illegal, actual)
+}
+
+/** Asserts that the difference between the [actual] and the [illegal] is not within an [absoluteTolerance], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertNotEquals(illegal: Double, actual: Double, absoluteTolerance: Double, message: String? = null) {
+    checkDoublesAreEqual(illegal, actual, absoluteTolerance, message, shouldFail = true)
+}
+
+/** Asserts that the difference between the [actual] and the [illegal] is not within an [absoluteTolerance], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertNotEquals(illegal: Float, actual: Float, absoluteTolerance: Float, message: String? = null) {
+    checkFloatsAreEqual(illegal, actual, absoluteTolerance, message, shouldFail = true)
 }
 
 /** Asserts that [expected] is the same instance as [actual], with an optional [message]. */
