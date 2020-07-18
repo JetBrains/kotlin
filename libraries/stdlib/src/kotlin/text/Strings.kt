@@ -765,6 +765,9 @@ public fun CharSequence.startsWith(prefix: CharSequence, startIndex: Int, ignore
         return regionMatchesImpl(startIndex, prefix, 0, prefix.length, ignoreCase)
 }
 
+/**
+ * Returns `true` if a substring of this char sequence starting at the specified offset [startIndex] starts with any of the specified prefix.
+ */
 public fun CharSequence.startsWithAny(vararg prefixes: CharSequence, startIndex: Int = 0, ignoreCase: Boolean = false): Boolean {
     return prefixes.any { this.startsWith(it, startIndex, ignoreCase) }
 }
@@ -779,6 +782,9 @@ public fun CharSequence.endsWith(suffix: CharSequence, ignoreCase: Boolean = fal
         return regionMatchesImpl(length - suffix.length, suffix, 0, suffix.length, ignoreCase)
 }
 
+/**
+ * Returns `true` if this char sequence ends with any of the specified suffix.
+ */
 public fun CharSequence.endsWithAny(vararg suffixes: CharSequence, ignoreCase: Boolean = false): Boolean {
     return suffixes.any { this.endsWith(it, ignoreCase) }
 }
