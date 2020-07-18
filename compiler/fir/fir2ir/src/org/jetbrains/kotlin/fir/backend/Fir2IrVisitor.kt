@@ -100,12 +100,16 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun FirDeclaration.toIrDeclaration(): IrDeclaration? {
-        if (this is FirTypeAlias) return null
-        return accept(this@Fir2IrVisitor, null) as IrDeclaration
-    }
+    private fun FirDeclaration.toIrDeclaration(): IrDeclaration? =
+        accept(this@Fir2IrVisitor, null) as IrDeclaration
 
     // ==================================================================================
+
+    override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?): IrElement {
+        val irTypeAlias = classifierStorage.getCachedTypeAlias(typeAlias)!!
+        annotationGenerator.generate(irTypeAlias, typeAlias)
+        return irTypeAlias
+    }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?): IrElement {
         val irEnumEntry = classifierStorage.getCachedIrEnumEntry(enumEntry)!!
