@@ -139,6 +139,9 @@ internal object LocalEscapeAnalysis {
                         connectObjects(node, node.array.node)
                     }
                 }
+                is DataFlowIR.Node.Parameter -> {
+                    node.escapeState = EscapeState.ARG_ESCAPE
+                }
             }
         }
 

@@ -451,6 +451,30 @@ __attribute__((swift_name("LibraryKt")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ArraysConstructor")))
+@interface KtArraysConstructor : KtBase
+- (instancetype)initWithInt1:(int32_t)int1 int2:(int32_t)int2 __attribute__((swift_name("init(int1:int2:)"))) __attribute__((objc_designated_initializer));
+- (void)setInt1:(int32_t)int1 int2:(int32_t)int2 __attribute__((swift_name("set(int1:int2:)")));
+- (NSString *)log __attribute__((swift_name("log()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ArraysDefault")))
+@interface KtArraysDefault : KtBase
+- (instancetype)initWithInt1:(int32_t)int1 int2:(int32_t)int2 __attribute__((swift_name("init(int1:int2:)"))) __attribute__((objc_designated_initializer));
+- (void)setInt1:(int32_t)int1 int2:(int32_t)int2 __attribute__((swift_name("set(int1:int2:)")));
+- (NSString *)log __attribute__((swift_name("log()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ArraysInitBlock")))
+@interface KtArraysInitBlock : KtBase
+- (instancetype)initWithInt1:(int32_t)int1 int2:(int32_t)int2 __attribute__((swift_name("init(int1:int2:)"))) __attribute__((objc_designated_initializer));
+- (void)setInt1:(int32_t)int1 int2:(int32_t)int2 __attribute__((swift_name("set(int1:int2:)")));
+- (NSString *)log __attribute__((swift_name("log()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ThrowsEmptyKt")))
 @interface KtThrowsEmptyKt : KtBase
 
