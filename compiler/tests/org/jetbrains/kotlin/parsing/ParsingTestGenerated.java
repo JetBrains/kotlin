@@ -385,14 +385,14 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/FunctionWithMultilineContract.kt");
         }
 
-        @TestMetadata("FunctionWithTypeConstraintsAndContract.kt")
-        public void testFunctionWithTypeConstraintsAndContract() throws Exception {
-            runTest("compiler/testData/psi/FunctionWithTypeConstraintsAndContract.kt");
-        }
-
         @TestMetadata("Functions.kt")
         public void testFunctions() throws Exception {
             runTest("compiler/testData/psi/Functions.kt");
+        }
+
+        @TestMetadata("FunctionsWithTypeConstraintsAndContract.kt")
+        public void testFunctionsWithTypeConstraintsAndContract() throws Exception {
+            runTest("compiler/testData/psi/FunctionsWithTypeConstraintsAndContract.kt");
         }
 
         @TestMetadata("FunctionsWithoutName.kt")
