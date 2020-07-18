@@ -779,7 +779,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         val contractDescription = owner?.contractDescription as? FirResolvedContractDescription ?: return
-        val conditionalEffects = contractDescription.effects.filterIsInstance<ConeConditionalEffectDeclaration>()
+        val conditionalEffects = contractDescription.effects.map { it.effect }.filterIsInstance<ConeConditionalEffectDeclaration>()
         if (conditionalEffects.isEmpty()) return
         val argumentsMapping = createArgumentsMapping(qualifiedAccess) ?: return
         contractDescriptionVisitingMode = true

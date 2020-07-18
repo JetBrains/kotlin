@@ -127,6 +127,7 @@ import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirComposedSuperTypeRef
+import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
@@ -621,6 +622,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitComposedSuperTypeRef(composedSuperTypeRef: FirComposedSuperTypeRef) {
         visitElement(composedSuperTypeRef)
+    }
+
+    open fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration) {
+        visitElement(effectDeclaration)
     }
 
     open fun visitContractDescription(contractDescription: FirContractDescription) {
@@ -1121,6 +1126,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitComposedSuperTypeRef(composedSuperTypeRef: FirComposedSuperTypeRef, data: Nothing?) {
         visitComposedSuperTypeRef(composedSuperTypeRef)
+    }
+
+    final override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: Nothing?) {
+        visitEffectDeclaration(effectDeclaration)
     }
 
     final override fun visitContractDescription(contractDescription: FirContractDescription, data: Nothing?) {

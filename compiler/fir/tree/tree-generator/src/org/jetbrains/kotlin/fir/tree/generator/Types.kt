@@ -74,7 +74,7 @@ val firScopeProviderType = type("fir.scopes", "FirScopeProvider")
 val anonymousInitializerSymbolType = type("fir.symbols.impl", "FirAnonymousInitializerSymbol")
 
 val pureAbstractElementType = generatedType("FirPureAbstractElement")
-val effectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")
+val coneEffectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")
 val emptyContractDescriptionType = generatedType("contracts.impl", "FirEmptyContractDescription")
 val coneDiagnosticType = generatedType("diagnostics", "ConeDiagnostic")
 val coneStubDiagnosticType = generatedType("diagnostics", "ConeStubDiagnostic")
