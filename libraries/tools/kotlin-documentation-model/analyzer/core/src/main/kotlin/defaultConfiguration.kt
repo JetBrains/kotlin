@@ -3,10 +3,12 @@ package org.jetbrains.dokka
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import java.io.File
 import java.net.URL
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.primaryConstructor
 
 data class DokkaConfigurationImpl(
-    override val outputDir: String = DokkaDefaults.outputDir,
-    override val cacheRoot: String? = DokkaDefaults.cacheRoot,
+    override val outputDir: File = DokkaDefaults.outputDir,
+    override val cacheRoot: File? = DokkaDefaults.cacheRoot,
     override val offlineMode: Boolean = DokkaDefaults.offlineMode,
     override val sourceSets: List<DokkaSourceSetImpl> = emptyList(),
     override val pluginsClasspath: List<File> = emptyList(),
@@ -15,15 +17,16 @@ data class DokkaConfigurationImpl(
     override val failOnWarning: Boolean = DokkaDefaults.failOnWarning
 ) : DokkaConfiguration
 
+
 data class DokkaSourceSetImpl(
     override val moduleDisplayName: String,
     override val displayName: String = DokkaDefaults.sourceSetDisplayName,
     override val sourceSetID: DokkaSourceSetID,
-    override val classpath: List<String> = emptyList(),
+    override val classpath: List<File> = emptyList(),
     override val sourceRoots: List<SourceRootImpl>,
     override val dependentSourceSets: Set<DokkaSourceSetID> = emptySet(),
-    override val samples: List<String> = emptyList(),
-    override val includes: List<String> = emptyList(),
+    override val samples: List<File> = emptyList(),
+    override val includes: List<File> = emptyList(),
     override val includeNonPublic: Boolean = DokkaDefaults.includeNonPublic,
     override val includeRootPackage: Boolean = DokkaDefaults.includeRootPackage,
     override val reportUndocumented: Boolean = DokkaDefaults.reportUndocumented,
@@ -37,19 +40,21 @@ data class DokkaSourceSetImpl(
     override val apiVersion: String? = null,
     override val noStdlibLink: Boolean = DokkaDefaults.noStdlibLink,
     override val noJdkLink: Boolean = DokkaDefaults.noJdkLink,
-    override val suppressedFiles: List<String> = emptyList(),
+    override val suppressedFiles: List<File> = emptyList(),
     override val analysisPlatform: Platform = DokkaDefaults.analysisPlatform
 ) : DokkaSourceSet
 
 data class DokkaModuleDescriptionImpl(
     override val name: String,
-    override val path: String,
-    override val docFile: String
+    override val path: File,
+    override val docFile: File
 ) : DokkaConfiguration.DokkaModuleDescription
 
 data class SourceRootImpl(
-    override val path: String
-) : DokkaConfiguration.SourceRoot
+    override val directory: File
+) : DokkaConfiguration.SourceRoot {
+    constructor(directoryPath: String) : this(File(directoryPath))
+}
 
 data class SourceLinkDefinitionImpl(
     override val path: String,

@@ -70,38 +70,8 @@ class DokkaBootstrapImpl : DokkaBootstrap {
 
     private lateinit var generator: DokkaGenerator
 
-    fun configure(logger: DokkaLogger, configuration: DokkaConfigurationImpl) = with(configuration) {
-
-        fun defaultLinks(config: DokkaSourceSetImpl): List<ExternalDocumentationLinkImpl> {
-            val links = mutableListOf<ExternalDocumentationLinkImpl>()
-            if (!config.noJdkLink) {
-                val javadocLink =
-                    if (config.jdkVersion < 11) "https://docs.oracle.com/javase/${config.jdkVersion}/docs/api/"
-                    else "https://docs.oracle.com/en/java/javase/${config.jdkVersion}/docs/api/java.base/"
-                val packageListLink =
-                    if (config.jdkVersion < 11) "${javadocLink}/package-list"
-                    else "https://docs.oracle.com/en/java/javase/${config.jdkVersion}/docs/api/element-list"
-                links += DokkaConfiguration.ExternalDocumentationLink
-                    .Builder(javadocLink, packageListLink)
-                    .build() as ExternalDocumentationLinkImpl
-            }
-
-            if (!config.noStdlibLink)
-                links += DokkaConfiguration.ExternalDocumentationLink
-                    .Builder("https://kotlinlang.org/api/latest/jvm/stdlib/")
-                    .build() as ExternalDocumentationLinkImpl
-            return links
-        }
-
-        val configurationWithLinks = configuration.copy(
-            sourceSets = sourceSets.map {
-                val links: List<ExternalDocumentationLinkImpl> =
-                    it.externalDocumentationLinks + defaultLinks(it)
-                it.copy(externalDocumentationLinks = links)
-            }
-        )
-
-        generator = DokkaGenerator(configurationWithLinks, logger)
+    fun configure(logger: DokkaLogger, configuration: DokkaConfigurationImpl) {
+        generator = DokkaGenerator(configuration, logger)
     }
 
     override fun configure(serializedConfigurationJSON: String, logger: BiConsumer<String, String>) = configure(
