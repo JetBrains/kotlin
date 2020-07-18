@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.contracts
 
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -14,10 +16,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirResolvedContractDescription : FirContractDescription() {
+abstract class FirEffectDeclaration : FirPureAbstractElement(), FirElement {
     abstract override val source: FirSourceElement?
-    abstract val effects: List<FirEffectDeclaration>
-    abstract val unresolvedEffects: List<FirStatement>
+    abstract val effect: ConeEffectDeclaration
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedContractDescription(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEffectDeclaration(this, data)
 }

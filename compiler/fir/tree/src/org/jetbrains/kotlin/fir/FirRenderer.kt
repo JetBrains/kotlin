@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -106,6 +104,16 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         for ((index, element) in this.withIndex()) {
             if (index > 0) {
                 print(", ")
+            }
+            element.accept(this@FirRenderer)
+        }
+    }
+
+    private fun List<FirElement>.renderSeparatedWithNewlines() {
+        for ((index, element) in this.withIndex()) {
+            if (index > 0) {
+                print(",")
+                newLine()
             }
             element.accept(this@FirRenderer)
         }
@@ -1192,13 +1200,23 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         }
     }
 
+    override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration) {
+        newLine()
+        print("[Effect declaration]")
+        renderInBraces("<", ">") {
+            println(buildString { effectDeclaration.effect.accept(ConeContractRenderer(this), null) })
+        }
+    }
+
     override fun visitResolvedContractDescription(resolvedContractDescription: FirResolvedContractDescription) {
         newLine()
         println("[R|Contract description]")
         renderInBraces("<", ">") {
-            for (effect in resolvedContractDescription.effects) {
-                println(buildString { effect.accept(ConeContractRenderer(this), null) })
-            }
+            resolvedContractDescription.effects
+                .map { it.effect }
+                .forEach {
+                    println(buildString { it.accept(ConeContractRenderer(this), null) })
+                }
         }
     }
 
