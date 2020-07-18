@@ -39,4 +39,6 @@ abstract class AbstractFilteringTrace(
     override fun report(diagnostic: Diagnostic) {
         parentTrace.report(diagnostic)
     }
+
+    override fun wantsDiagnostics(): Boolean = parentTrace.wantsDiagnostics()
 }
