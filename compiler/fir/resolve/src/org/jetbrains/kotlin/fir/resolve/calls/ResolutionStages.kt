@@ -295,7 +295,10 @@ private fun FirSession.createKFunctionType(
         else -> expectedParameterNumberWithReceiver
     }
     for ((index, valueParameter) in function.valueParameters.withIndex()) {
-        if (expectedParameterNumber == null || index < expectedParameterNumber || valueParameter.defaultValue == null) {
+        if (expectedParameterNumber == null ||
+            index < expectedParameterNumber ||
+            (valueParameter.defaultValue == null && !valueParameter.isVararg)
+        ) {
             parameterTypes += valueParameter.returnTypeRef.coneType
         }
     }

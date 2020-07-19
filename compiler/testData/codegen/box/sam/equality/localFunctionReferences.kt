@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun checkNotEqual(x: Any, y: Any) {
     if (x == y || y == x) throw AssertionError("$x and $y should NOT be equal")
