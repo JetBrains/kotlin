@@ -13,6 +13,6 @@ FILE fqName:test fileName:/boundInlineAdaptedReference.kt
         GET_VAR 's: kotlin.String declared in test.id' type=kotlin.String origin=null
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [test/foo]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun id (s: kotlin.String, vararg xs: kotlin.Int): kotlin.String declared in test' type=kotlin.reflect.KFunction2<kotlin.String, kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
+      CALL 'public final fun foo (x: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in test' type=kotlin.Unit origin=null
+        x: FUNCTION_REFERENCE 'public final fun id (s: kotlin.String, vararg xs: kotlin.Int): kotlin.String declared in test' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
           $receiver: CONST String type=kotlin.String value="Fail"
