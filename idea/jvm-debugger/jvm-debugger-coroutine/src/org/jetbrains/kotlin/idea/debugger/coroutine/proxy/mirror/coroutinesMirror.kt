@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.util.isSubTypeOrSame
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
-abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext) {
+abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext) : ReferenceTypeProvider {
     val log by logger
-    protected val cls = context.findClassSafe(name) ?: throw IllegalStateException("coroutine-debugger: class $name not found.")
+    private val cls = context.findClassSafe(name) ?: throw IllegalStateException("coroutine-debugger: class $name not found.")
+
+    override fun getCls(): ClassType = cls
 
     fun makeField(fieldName: String): Field? =
         cls.fieldByName(fieldName)
