@@ -1585,6 +1585,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseTypeRef();
         }
 
+        parseFunctionContract();
+
         parseFunctionBody();
 
         closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, true);
