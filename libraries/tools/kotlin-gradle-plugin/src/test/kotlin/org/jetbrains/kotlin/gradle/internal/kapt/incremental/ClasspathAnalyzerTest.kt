@@ -151,10 +151,12 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
             }
         }
-        val transform = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }
-        val outputs = transform.transform(inputJar)
+        val transformAction = StructureTransformTestAction(inputJar)
+        val outputs = TransformOutputsMock(tmp.newFolder())
 
-        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.single())
+        transformAction.transform(outputs)
+
+        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertEquals(setOf("test/A", "test/B", "test/C"), data.classAbiHash.keys)
         assertEquals(setOf("test/A", "test/B", "test/C"), data.classDependencies.keys)
     }
