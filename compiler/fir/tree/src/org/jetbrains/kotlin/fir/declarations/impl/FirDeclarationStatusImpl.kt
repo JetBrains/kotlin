@@ -140,6 +140,12 @@ open class FirDeclarationStatusImpl(
             this[FUN] = value
         }
 
+    override var isContract: Boolean
+        get() = this[CONTRACT]
+        set(value) {
+            this[CONTRACT] = value
+        }
+
     private enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
@@ -158,7 +164,8 @@ open class FirDeclarationStatusImpl(
         STATIC(0x4000),
         FROM_SEALED(0x8000),
         FROM_ENUM(0x10000),
-        FUN(0x20000)
+        FUN(0x20000),
+        CONTRACT(0x40000)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
