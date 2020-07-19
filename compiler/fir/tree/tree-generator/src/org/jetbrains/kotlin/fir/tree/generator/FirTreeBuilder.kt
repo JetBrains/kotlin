@@ -154,6 +154,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val effectDeclaration = element("EffectDeclaration", Contracts)
 
     val contractDescription = element("ContractDescription", Contracts)
+    val legacyRawContractDescription = element("LegacyRawContractDescription", Contracts, contractDescription)
     val rawContractDescription = element("RawContractDescription", Contracts, contractDescription)
     val resolvedContractDescription = element("ResolvedContractDescription", Contracts, contractDescription)
 }

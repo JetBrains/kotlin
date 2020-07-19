@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
@@ -116,7 +117,7 @@ class FirContractResolveTransformer(
         ): CompositeTransformResult<T> {
             dataFlowAnalyzer.enterContractDescription()
             val contractDescription = owner.contractDescription
-            require(contractDescription is FirRawContractDescription)
+            require(contractDescription is FirLegacyRawContractDescription)
             val valueParameters = owner.valueParameters
             val contractCall = withNewLocalScope {
                 for (valueParameter in valueParameters) {
@@ -150,7 +151,7 @@ class FirContractResolveTransformer(
         }
 
         private fun <T : FirContractDescriptionOwner> transformOwnerWithUnresolvedContract(owner: T): CompositeTransformResult<T> {
-            val contractDescription = owner.contractDescription as FirRawContractDescription
+            val contractDescription = owner.contractDescription as FirLegacyRawContractDescription
             val functionCall = contractDescription.contractCall
             owner.replaceContractDescription(FirEmptyContractDescription)
             owner.body.replaceFirstStatement(functionCall)
