@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.contracts.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirRawContractDescriptionImpl
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.impl.FirLegacyRawContractDescriptionImpl
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -19,23 +19,23 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 @FirBuilderDsl
-class FirRawContractDescriptionBuilder {
+class FirLegacyRawContractDescriptionBuilder {
     var source: FirSourceElement? = null
-    val rawEffects: MutableList<FirExpression> = mutableListOf()
+    lateinit var contractCall: FirFunctionCall
 
-    fun build(): FirRawContractDescription {
-        return FirRawContractDescriptionImpl(
+    fun build(): FirLegacyRawContractDescription {
+        return FirLegacyRawContractDescriptionImpl(
             source,
-            rawEffects,
+            contractCall,
         )
     }
 
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildRawContractDescription(init: FirRawContractDescriptionBuilder.() -> Unit = {}): FirRawContractDescription {
+inline fun buildLegacyRawContractDescription(init: FirLegacyRawContractDescriptionBuilder.() -> Unit): FirLegacyRawContractDescription {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirRawContractDescriptionBuilder().apply(init).build()
+    return FirLegacyRawContractDescriptionBuilder().apply(init).build()
 }

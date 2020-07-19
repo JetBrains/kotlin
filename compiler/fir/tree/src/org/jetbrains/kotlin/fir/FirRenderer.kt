@@ -1191,11 +1191,20 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         visitNamedReference(errorNamedReference)
     }
 
+    override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription) {
+        newLine()
+        print("[Contract description]")
+        renderInBraces("<", ">") {
+            legacyRawContractDescription.contractCall.accept(this)
+            newLine()
+        }
+    }
+
     override fun visitRawContractDescription(rawContractDescription: FirRawContractDescription) {
         newLine()
         print("[Contract description]")
         renderInBraces("<", ">") {
-            rawContractDescription.contractCall.accept(this)
+            rawContractDescription.rawEffects.renderSeparatedWithNewlines()
             newLine()
         }
     }

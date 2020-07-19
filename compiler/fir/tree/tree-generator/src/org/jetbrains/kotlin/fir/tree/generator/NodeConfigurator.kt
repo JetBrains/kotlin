@@ -610,12 +610,16 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         rawContractDescription.configure {
-            +field("contractCall", functionCall)
+            +fieldList("rawEffects", expression)
         }
 
         resolvedContractDescription.configure {
             +fieldList("effects", effectDeclaration)
             +fieldList("unresolvedEffects", statement)
+        }
+
+        legacyRawContractDescription.configure {
+            +field("contractCall", functionCall)
         }
     }
 }

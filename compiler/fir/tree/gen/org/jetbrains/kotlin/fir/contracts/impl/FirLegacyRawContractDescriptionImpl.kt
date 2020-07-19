@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.contracts.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -15,16 +15,16 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class FirRawContractDescriptionImpl(
+internal class FirLegacyRawContractDescriptionImpl(
     override val source: FirSourceElement?,
-    override val rawEffects: MutableList<FirExpression>,
-) : FirRawContractDescription() {
+    override var contractCall: FirFunctionCall,
+) : FirLegacyRawContractDescription() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        rawEffects.forEach { it.accept(visitor, data) }
+        contractCall.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRawContractDescriptionImpl {
-        rawEffects.transformInplace(transformer, data)
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLegacyRawContractDescriptionImpl {
+        contractCall = contractCall.transformSingle(transformer, data)
         return this
     }
 }

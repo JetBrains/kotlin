@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
@@ -436,7 +436,7 @@ fun FirBlock?.extractContractDescriptionIfPossible(): Pair<FirBlock?, FirContrac
     if (this == null) return null to null
     if (!isContractPresentFirCheck()) return this to null
     val contractCall = replaceFirstStatement(FirStubStatement) as FirFunctionCall
-    return this to buildRawContractDescription {
+    return this to buildLegacyRawContractDescription {
         source = contractCall.source
         this.contractCall = contractCall
     }
