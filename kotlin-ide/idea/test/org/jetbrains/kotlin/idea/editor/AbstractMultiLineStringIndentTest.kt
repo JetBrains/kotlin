@@ -1,21 +1,21 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.editor
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.EditorTestUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.SettingsConfigurator
 import java.io.File
 
 abstract class AbstractMultiLineStringIndentTest : KotlinLightCodeInsightFixtureTestCase() {
-    val FILE_SEPARATOR = "//-----"
+    private val FILE_SEPARATOR = "//-----"
 
     protected fun doTest(path: String) {
         val testDir = File(path).parentFile
@@ -49,21 +49,21 @@ abstract class AbstractMultiLineStringIndentTest : KotlinLightCodeInsightFixture
         }
 
         val settingsFileText = FileUtil.loadFile(settingsFile, true)
-        try {
-            val indentOptions = CodeStyle.getSettings(project).getIndentOptions(KotlinFileType.INSTANCE)
-            val configurator = SettingsConfigurator(settingsFileText, indentOptions)
-            if (!inverted) {
-                configurator.configureSettings()
-            } else {
-                configurator.configureInvertedSettings()
-            }
-
-            action()
-        } finally {
-            CodeStyle.getSettings(file).clearCodeStyleSettings()
-        }
+        configureCodeStyleAndRun(
+            project,
+            configurator = {
+                val indentOptions = it.getIndentOptions(KotlinFileType.INSTANCE)
+                val configurator = SettingsConfigurator(settingsFileText, indentOptions)
+                if (!inverted) {
+                    configurator.configureSettings()
+                } else {
+                    configurator.configureInvertedSettings()
+                }
+            },
+            body = { action() }
+        )
     }
 
-    override fun getProjectDescriptor() = JAVA_LATEST!!
+    override fun getProjectDescriptor() = JAVA_LATEST
     override fun getTestDataPath(): String = ""
 }
