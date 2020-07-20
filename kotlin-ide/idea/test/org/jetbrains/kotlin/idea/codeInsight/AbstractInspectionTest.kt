@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
@@ -17,6 +15,7 @@ import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.test.*
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -73,9 +72,11 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
             with(myFixture) {
                 testDataPath = srcDir.path
 
-                val afterFiles =
-                    srcDir.listFiles { it -> it.name == "inspectionData" }?.single()?.listFiles { it -> it.extension == "after" }
-                        ?: emptyArray()
+                val afterFiles = srcDir.listFiles { it -> it.name == "inspectionData" }
+                    ?.single()
+                    ?.listFiles { it -> it.extension == "after" }
+                    ?: emptyArray()
+
                 val psiFiles = srcDir.walkTopDown().onEnter { it.name != "inspectionData" }.mapNotNull { file ->
                     when {
                         file.isDirectory -> null
@@ -97,11 +98,13 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                                 configureByText(file.name, fileText)!!
                             }
                         }
+
                         file.extension == "gradle" -> {
                             val text = FileUtil.loadFile(file, true)
                             val fileText = text.replace("\$PLUGIN_VERSION", bundledRuntimeVersion())
                             configureByText(file.name, fileText)!!
                         }
+
                         else -> {
                             val filePath = file.relativeTo(srcDir).invariantSeparatorsPath
                             configureByFile(filePath)
@@ -109,42 +112,39 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                     }
                 }.toList()
 
-                val codeStyleSettings = CodeStyle.getSettings(project)
-                configureRegistryAndRun(options) {
-                    try {
-                        FormatSettingsUtil.createConfigurator(options, codeStyleSettings).configureSettings()
-                        fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, myFixture.module) }
+                configureCodeStyleAndRun(
+                    project,
+                    configurator = { FormatSettingsUtil.createConfigurator(options, it).configureSettings() }
+                ) {
+                    configureRegistryAndRun(options) {
+                        try {
+                            fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, myFixture.module) }
 
-                        configExtra(psiFiles, options)
+                            configExtra(psiFiles, options)
 
-                        val presentation = runInspection(
-                            inspectionClass, project,
-                            settings = settingsElement,
-                            files = psiFiles.map { it.virtualFile!! }, withTestDir = inspectionsTestDir.path,
-                        )
+                            val presentation = runInspection(
+                                inspectionClass, project,
+                                settings = settingsElement,
+                                files = psiFiles.map { it.virtualFile!! }, withTestDir = inspectionsTestDir.path,
+                            )
 
-                        if (afterFiles.isNotEmpty()) {
-                            presentation.problemDescriptors.forEach { problem ->
-                                problem.fixes?.forEach {
-                                    CommandProcessor.getInstance().executeCommand(
-                                        project,
-                                        {
-                                            runWriteAction { it.applyFix(project, problem) }
-                                        },
-                                        it.name, it.familyName,
-                                    )
+                            if (afterFiles.isNotEmpty()) {
+                                presentation.problemDescriptors.forEach { problem ->
+                                    problem.fixes?.forEach { quickFix ->
+                                        project.executeWriteCommand(quickFix.name, quickFix.familyName) {
+                                            quickFix.applyFix(project, problem)
+                                        }
+                                    }
+                                }
+
+                                for (filePath in afterFiles) {
+                                    val kotlinFile = psiFiles.first { filePath.name == it.name + ".after" }
+                                    KotlinTestUtils.assertEqualsToFile(filePath, kotlinFile.text)
                                 }
                             }
-
-                            for (filePath in afterFiles) {
-                                val kotlinFile = psiFiles.first { filePath.name == it.name + ".after" }
-                                KotlinTestUtils.assertEqualsToFile(filePath, kotlinFile.text)
-                            }
+                        } finally {
+                            fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
                         }
-
-                    } finally {
-                        codeStyleSettings.clearCodeStyleSettings()
-                        fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
                     }
                 }
             }
