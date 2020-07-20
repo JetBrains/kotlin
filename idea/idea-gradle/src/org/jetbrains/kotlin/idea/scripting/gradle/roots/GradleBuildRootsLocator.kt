@@ -133,8 +133,7 @@ abstract class GradleBuildRootsLocator {
             return ScriptUnderRoot(filePath, it, scriptInfo)
         }
 
-        // stand-alone scripts: "included", "precompiled" scripts, scripts in unlinked projects,
-        // or just random files with ".gradle.kts" ending OR scripts those Gradle has not provided
+        // stand-alone scripts
         roots.getStandaloneScriptRoot(filePath)?.let { 
             return ScriptUnderRoot(filePath, it, standalone = true) 
         }
@@ -149,6 +148,8 @@ abstract class GradleBuildRootsLocator {
             }
         }
 
+        // other scripts: "included", "precompiled" scripts, scripts in unlinked projects,
+        // or just random files with ".gradle.kts" ending OR scripts those Gradle has not provided
         val nearest =
             if (searchNearestLegacy) roots.findNearestRoot(filePath)
             else null
