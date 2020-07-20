@@ -590,7 +590,7 @@ private fun generateLambdaForRunSuspend(
 
     lambdaBuilder.newField(
         JvmDeclarationOrigin.NO_ORIGIN,
-        ACC_PRIVATE or ACC_FINAL,
+        ACC_PRIVATE or ACC_FINAL or ACC_SYNTHETIC,
         "args",
         ARRAY_OF_STRINGS_TYPE.descriptor, null, null
     )
