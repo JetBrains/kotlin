@@ -15,7 +15,10 @@ configurations {
     distSources
     distJs
     distLibrary
-    publishedArtifacts
+    publishedSignatures
+    publishedArtifacts {
+        extendsFrom(publishedSignatures)
+    }
 }
 
 def builtinsSrcDir = "${buildDir}/builtin-sources"
@@ -319,6 +322,18 @@ artifacts {
     compileJs.outputs.files.forEach { artifact ->
         distJs(artifact) { builtBy(compileJs) }
     }
+}
+
+signing {
+    sign configurations.publishedArtifacts
+}
+
+signPublishedArtifacts {
+    enabled signing.required
+}
+
+signPublishedArtifacts.signatures.forEach {
+    artifacts.add(configurations.publishedSignatures.name, it)
 }
 
 uploadArchives {
