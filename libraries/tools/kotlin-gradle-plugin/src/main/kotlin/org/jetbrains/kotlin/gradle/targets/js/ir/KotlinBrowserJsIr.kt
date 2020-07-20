@@ -94,13 +94,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         it.destinationDir
                             .resolve(binary.linkTask.get().outputFile.name)
                     }
-                    task.commonConfigure(
-                        compilation = compilation,
-                        mode = mode,
-                        entryFileProvider = entryFileProvider,
-                        configurationActions = commonRunConfigurations,
-                        nodeJs = nodeJs
-                    )
 
                     task.bin = "webpack-dev-server/bin/webpack-dev-server.js"
                     task.description = "start ${mode.name.toLowerCase()} webpack dev server"
@@ -111,6 +104,14 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     )
 
                     task.outputs.upToDateWhen { false }
+
+                    task.commonConfigure(
+                        compilation = compilation,
+                        mode = mode,
+                        entryFileProvider = entryFileProvider,
+                        configurationActions = commonRunConfigurations,
+                        nodeJs = nodeJs
+                    )
                 }
 
                 if (mode == KotlinJsBinaryMode.DEVELOPMENT) {
@@ -156,13 +157,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     listOf(compilation)
                 ) { task ->
                     val entryFileProvider = binary.linkTask.map { it.outputFile }
-                    task.commonConfigure(
-                        compilation = compilation,
-                        mode = mode,
-                        entryFileProvider = entryFileProvider,
-                        configurationActions = commonWebpackConfigurations,
-                        nodeJs = nodeJs
-                    )
 
                     task.dependsOn(
                         distributeResourcesTask
@@ -170,6 +164,14 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                     task.description = "build webpack ${mode.name.toLowerCase()} bundle"
                     task._destinationDirectory = distribution.directory
+
+                    task.commonConfigure(
+                        compilation = compilation,
+                        mode = mode,
+                        entryFileProvider = entryFileProvider,
+                        configurationActions = commonWebpackConfigurations,
+                        nodeJs = nodeJs
+                    )
                 }
 
                 if (mode == KotlinJsBinaryMode.PRODUCTION) {
