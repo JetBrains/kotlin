@@ -136,6 +136,10 @@ constructor(
         project.objects.newInstance(KotlinBrowserJs::class.java, this).also {
             it.configure()
 
+            if (!PropertiesProvider(project).jsLegacyExecutableExplicitly) {
+                binaries.executable()
+            }
+
             browserConfiguredHandlers.forEach { handler ->
                 handler(it)
             }
@@ -158,6 +162,11 @@ constructor(
     private val nodejsLazyDelegate = lazy {
         project.objects.newInstance(KotlinNodeJs::class.java, this).also {
             it.configure()
+
+            if (!PropertiesProvider(project).jsLegacyExecutableExplicitly) {
+                binaries.executable()
+            }
+
             nodejsConfiguredHandlers.forEach { handler ->
                 handler(it)
             }

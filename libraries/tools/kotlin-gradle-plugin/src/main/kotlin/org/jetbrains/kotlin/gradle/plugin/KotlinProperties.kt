@@ -202,6 +202,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val jsCompiler: KotlinJsCompilerType
         get() = property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgumentOrNull(it) } ?: KotlinJsCompilerType.LEGACY
 
+    /**
+     * Use Kotlin/JS backend compiler type
+     */
+    val jsLegacyExecutableExplicitly: Boolean
+        get() = booleanProperty("kotlin.js.legacy.executable.explicitly") ?: false
+
     val stdlibDefaultDependency: Boolean
         get() = booleanProperty("kotlin.stdlib.default.dependency") ?: true
 
