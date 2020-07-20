@@ -97,13 +97,22 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             myModule = createTestModuleFromDir(it)
         }
 
-        path.listFiles { file -> file.name.startsWith("module") }.filter { it.exists() }.forEach {
-            val newModule = createTestModuleFromDir(it)
-            assert(myModule != null) { "Main module should exists" }
-            ModuleRootModificationUtil.addDependency(myModule, newModule)
+        path.listFiles { file -> file.name.startsWith("module") }
+            ?.filter { it.exists() }
+            ?.forEach {
+                val newModule = createTestModuleFromDir(it)
+                assert(myModule != null) { "Main module should exists" }
+                ModuleRootModificationUtil.addDependency(myModule, newModule)
+            }
+
+        path.listFiles { file ->
+            file.name.startsWith("script") && file.name != SCRIPT_NAME
+        }?.forEach {
+            createFileAndSyncDependencies(it)
         }
 
-        if (module != null) {
+        // If script is inside module
+        if (module != null && mainScriptFile.parentFile.name.toLowerCase().contains("module")) {
             module.addDependency(
                 projectLibrary(
                     "script-runtime",
@@ -323,7 +332,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     private fun compileLibToDir(srcDir: File, classpath: List<File>): File {
         val outDir = KotlinTestUtils.tmpDirForReusableFolder("${getTestName(false)}${srcDir.name}Out")
-        KotlinCompilerStandalone(listOf(srcDir), target = outDir, classpath = classpath).compile()
+        KotlinCompilerStandalone(listOf(srcDir), target = outDir, classpath = classpath + listOf(outDir)).compile()
         return outDir
     }
 

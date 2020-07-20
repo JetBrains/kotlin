@@ -103,6 +103,11 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
             runTest("testData/script/definition/highlighting/multiModule/");
         }
 
+        @TestMetadata("multipleScripts")
+        public void testMultipleScripts() throws Exception {
+            runTest("testData/script/definition/highlighting/multipleScripts/");
+        }
+
         @TestMetadata("nestedClass")
         public void testNestedClass() throws Exception {
             runTest("testData/script/definition/highlighting/nestedClass/");
