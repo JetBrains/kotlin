@@ -84,7 +84,7 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
     }
 }
 
-object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator,
+open class JsSinglePlatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator,
     ModuleConfiguratorWithSettings {
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
         super<ModuleConfiguratorWithTests>.getConfiguratorSettings() +
@@ -122,6 +122,8 @@ object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWi
         }
     }
 }
+
+object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator()
 
 fun GradleIRListBuilder.applicationSupport() {
     +"binaries.executable()"

@@ -7,7 +7,7 @@ import com.intellij.ui.ToolbarDecorator
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.IOSSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsSingleplatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.BrowserJsSinglePlatformModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -38,7 +38,7 @@ class ModulesEditorToolbarDecorator(
                         && allModules.none { it.configurator == MppModuleConfigurator },
                 allowSinglepaltformJs = isMultiplatformProject()
                         && isRootModule
-                        && allModules.none { it.configurator == JsSingleplatformModuleConfigurator },
+                        && allModules.none { it.configurator == BrowserJsSinglePlatformModuleConfigurator },
                 allowAndroid = isRootModule
                         && isMultiplatformProject()
                         && allModules.none { it.configurator == AndroidSinglePlatformModuleConfigurator },
