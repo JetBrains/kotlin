@@ -43,7 +43,7 @@ open class AppleLauncher<T : MobileRunConfiguration>(
     }
 
     private fun createRunParameters(state: CommandLineState): RunParameters {
-        val bundle = configuration.getProductBundle(state.environment)
+        val bundle = configuration.getProductBundle(device)
         return TrivialRunParameters(createDebuggerDriverConfiguration(), createInstaller(bundle), device.arch.type)
     }
 

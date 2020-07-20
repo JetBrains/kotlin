@@ -16,7 +16,7 @@ class AndroidTestCommandLineState(
     configuration: MobileTestRunConfiguration,
     environment: ExecutionEnvironment
 ) : AndroidCommandLineState(configuration, environment) {
-    private val testRunnerApk = configuration.getTestRunnerBundle(environment)
+    private val testRunnerApk = configuration.getTestRunnerBundle(device)
     private val testData = configuration.testData as AndroidTestRunConfigurationData
     private val testInstrumentationRunner =
         try {

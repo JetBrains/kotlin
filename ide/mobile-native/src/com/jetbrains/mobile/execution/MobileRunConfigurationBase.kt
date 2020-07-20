@@ -40,13 +40,13 @@ abstract class MobileRunConfigurationBase(project: Project, factory: Configurati
                 (module?.isApple == true && target is AppleDevice) ||
                 (module?.isAndroid == true && target is AndroidDevice)
 
-    override fun getProductBundle(environment: ExecutionEnvironment): File {
+    override fun getProductBundle(device: Device): File {
         val moduleRoot = ExternalSystemApiUtil.getExternalProjectPath(module!!)?.let { File(it) }
             ?: throw IllegalStateException()
         val binaryName = GradleUtil.findGradleModuleData(module!!)?.data?.externalName
             ?: throw IllegalStateException()
 
-        return when (val device = environment.executionTarget) {
+        return when (device) {
             is AndroidDevice -> {
                 File(moduleRoot, FileUtil.join("build", "outputs", "apk", "debug", "$binaryName-debug.apk"))
             }

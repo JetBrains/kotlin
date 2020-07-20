@@ -21,10 +21,10 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     MobileRunConfigurationBase(project, factory, name),
     CidrTestRunConfiguration {
 
-    fun getTestRunnerBundle(environment: ExecutionEnvironment): File {
-        val app = getProductBundle(environment)
+    fun getTestRunnerBundle(device: Device): File {
+        val app = getProductBundle(device)
         val appName = app.nameWithoutExtension
-        return when (environment.executionTarget) {
+        return when (device) {
             is AppleDevice -> File(File(app, "PlugIns"), "${appName}Tests.xctest")
             is AndroidDevice -> File(File(File(app.parentFile.parentFile, "androidTest"), app.parentFile.name), "$appName-androidTest.apk")
             else -> throw IllegalStateException()

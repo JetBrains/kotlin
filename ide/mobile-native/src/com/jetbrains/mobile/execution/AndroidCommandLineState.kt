@@ -29,7 +29,7 @@ abstract class AndroidCommandLineState(
 ) : CommandLineState(environment) {
     protected val project = configuration.project
     protected val device = environment.executionTarget as AndroidDevice
-    protected val apk = configuration.getProductBundle(environment)
+    protected val apk = configuration.getProductBundle(device)
 
     override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {
         val isDebug = environment.executor.id == DefaultDebugExecutor.EXECUTOR_ID

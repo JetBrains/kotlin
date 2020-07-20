@@ -11,7 +11,7 @@ import com.jetbrains.cidr.execution.testing.CidrLauncher
 import java.io.File
 
 interface MobileRunConfiguration : RunConfiguration {
-    fun getProductBundle(environment: ExecutionEnvironment): File
+    fun getProductBundle(device: Device): File
 
     fun getExecutionTarget(environment: ExecutionEnvironment): ExecutionTarget =
         environment.executionTarget

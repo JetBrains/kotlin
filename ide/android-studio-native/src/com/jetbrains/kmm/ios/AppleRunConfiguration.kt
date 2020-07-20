@@ -133,7 +133,7 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
             ?.close(DialogWrapper.CANCEL_EXIT_CODE)
     }
 
-    override fun getProductBundle(environment: ExecutionEnvironment): File {
+    override fun getProductBundle(device: Device): File {
         val buildType = if (executionTarget is ApplePhysicalDevice) "Debug-iphoneos" else "Debug-iphonesimulator"
         return File(projectPath).resolve(iosBuildDirectory).resolve("$buildType/$xcodeScheme.app")
     }
