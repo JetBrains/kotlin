@@ -25,7 +25,6 @@ import com.intellij.util.io.exists
 import com.intellij.util.io.move
 import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.text.nullize
-import kotlinx.coroutines.runBlocking
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.streams.asSequence
@@ -74,9 +73,7 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
   final override fun clearStorages() = storageManager.clearStorages()
 
   private fun loadProjectFromTemplate(defaultProject: Project) {
-    val stateStore = defaultProject.stateStore as DefaultProjectStoreImpl
-    runBlocking { stateStore.save() }
-    val element = stateStore.getStateCopy() ?: return
+    val element = (defaultProject.stateStore as DefaultProjectStoreImpl).getStateCopy() ?: return
     LOG.runAndLogException {
       if (isDirectoryBased) {
         normalizeDefaultProjectElement(defaultProject, element, Paths.get(storageManager.expandMacro(PROJECT_CONFIG_DIR)))

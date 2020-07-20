@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
+import com.intellij.CommonBundle
 import com.intellij.conversion.ConversionService
 import com.intellij.ide.FrameStateListener
 import com.intellij.ide.GeneralSettings
@@ -173,10 +174,6 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
     }
   }
 
-  override fun cancelScheduledSave() {
-    saveAlarm.cancel()
-  }
-
   private fun waitForScheduledSave() {
     if (saveAlarm.isEmpty) {
       return
@@ -212,7 +209,8 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
     runInAutoSaveDisabledMode {
       edtPoolDispatcherManager.processTasks()
 
-      ProgressManager.getInstance().run(object : Task.Modal(componentManager as? Project, "Saving " + (if (componentManager is Application) "Application" else "Project"), /* canBeCancelled = */ false) {
+      val project = (componentManager as? Project)?.takeIf { !it.isDefault }
+      ProgressManager.getInstance().run(object : Task.Modal(project, getProgressTitle(componentManager), /* canBeCancelled = */ false) {
         override fun run(indicator: ProgressIndicator) {
           indicator.isIndeterminate = true
 
@@ -305,6 +303,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
 
   override fun blockSaveOnFrameDeactivation() {
     LOG.debug("save blocked")
+    saveAlarm.cancel()
     blockSaveOnFrameDeactivationCount.incrementAndGet()
   }
 
@@ -328,4 +327,12 @@ private val saveAppAndProjectsSettingsTask = SaveAndSyncHandler.SaveTask(saveDoc
 
 internal abstract class BaseSaveAndSyncHandler : SaveAndSyncHandler() {
   internal val edtPoolDispatcherManager = EdtPoolDispatcherManager()
+}
+
+private fun getProgressTitle(componentManager: ComponentManager): String {
+  return when {
+    componentManager is Application -> CommonBundle.message("title.save.app")
+    (componentManager as Project).isDefault -> CommonBundle.message("title.save.default.project")
+    else -> CommonBundle.message("title.save.project")
+  }
 }
