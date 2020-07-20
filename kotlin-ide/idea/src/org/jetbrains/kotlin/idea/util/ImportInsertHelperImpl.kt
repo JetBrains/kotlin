@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
-    private fun getCodeStyleSettings(contextFile: KtFile): KotlinCodeStyleSettings = CodeStyle.getSettings(contextFile).kotlinCustomSettings
+    private fun getCodeStyleSettings(contextFile: KtFile): KotlinCodeStyleSettings = contextFile.kotlinCustomSettings
 
     override fun getImportSortComparator(contextFile: KtFile): Comparator<ImportPath> = ImportPathComparator(
         getCodeStyleSettings(contextFile).PACKAGES_IMPORT_LAYOUT

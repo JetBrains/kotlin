@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.editor
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -16,6 +15,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.util.text.CharArrayUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.editor.fixers.*
+import org.jetbrains.kotlin.idea.formatter.kotlinCommonSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -103,7 +103,7 @@ class KotlinSmartEnterHandler : SmartEnterProcessorWithFixers() {
             CharArrayUtil.regionMatches(chars, caretOffset - "{\n}".length, "{\n}")
         ) {
             commit(editor)
-            val settings = CodeStyle.getLanguageSettings(file)
+            val settings = file.kotlinCommonSettings
             val old = settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE
             settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = false
             val elt = file.findElementAt(caretOffset - 1)?.getStrictParentOfType<KtBlockExpression>()

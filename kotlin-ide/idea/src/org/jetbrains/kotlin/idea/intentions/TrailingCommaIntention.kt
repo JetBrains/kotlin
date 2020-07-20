@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
@@ -19,13 +18,13 @@ class TrailingCommaIntention : SelfTargetingIntention<KtElement>(
     KotlinBundle.lazyMessage("intention.trailing.comma.text")
 ), LowPriorityAction {
     override fun applyTo(element: KtElement, editor: Editor?) {
-        val kotlinCustomSettings = CodeStyle.getSettings(element.containingKtFile).kotlinCustomSettings
+        val kotlinCustomSettings = element.containingKtFile.kotlinCustomSettings
         kotlinCustomSettings.ALLOW_TRAILING_COMMA = !kotlinCustomSettings.ALLOW_TRAILING_COMMA
         CodeStyleSettingsManager.getInstance(element.project).notifyCodeStyleSettingsChanged()
     }
 
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean = element.canAddTrailingCommaWithRegistryCheck().also {
-        val actionNumber = 1.takeIf { CodeStyle.getSettings(element.containingKtFile).kotlinCustomSettings.ALLOW_TRAILING_COMMA } ?: 0
+        val actionNumber = 1.takeIf { element.containingKtFile.kotlinCustomSettings.ALLOW_TRAILING_COMMA } ?: 0
         setTextGetter(KotlinBundle.lazyMessage("intention.trailing.comma.custom.text", actionNumber))
     }
 }

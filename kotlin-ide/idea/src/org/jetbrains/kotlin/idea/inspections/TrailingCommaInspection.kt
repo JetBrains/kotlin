@@ -41,7 +41,7 @@ class TrailingCommaInspection(
 
         override fun process(trailingCommaContext: TrailingCommaContext) {
             val element = trailingCommaContext.ktElement
-            val kotlinCustomSettings = CodeStyle.getSettings(element.containingKtFile).kotlinCustomSettings
+            val kotlinCustomSettings = element.containingKtFile.kotlinCustomSettings
             useTrailingComma = kotlinCustomSettings.addTrailingCommaIsAllowedFor(element)
             when (trailingCommaContext.state) {
                 TrailingCommaState.MISSING, TrailingCommaState.EXISTS -> {

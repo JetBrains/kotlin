@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
+import com.intellij.application.options.CodeStyle
+import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
@@ -18,3 +20,6 @@ val CodeStyleSettings.kotlinCustomSettings: KotlinCodeStyleSettings
 fun CodeStyleSettings.kotlinCodeStyleDefaults(): String? = kotlinCustomSettings.CODE_STYLE_DEFAULTS?.takeIf { customStyleId ->
     customStyleId == kotlinCommonSettings.CODE_STYLE_DEFAULTS
 }
+
+val PsiFile.kotlinCommonSettings: KotlinCommonCodeStyleSettings get() = CodeStyle.getSettings(this).kotlinCommonSettings
+val PsiFile.kotlinCustomSettings: KotlinCodeStyleSettings get() = CodeStyle.getSettings(this).kotlinCustomSettings

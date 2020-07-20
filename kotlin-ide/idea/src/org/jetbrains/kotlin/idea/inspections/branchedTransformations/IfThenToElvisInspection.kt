@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.inspections.branchedTransformations
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
 import com.intellij.openapi.editor.Editor
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.formatter.kotlinCommonSettings
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -60,7 +60,7 @@ class IfThenToElvisInspection @JvmOverloads constructor(
             val factory = KtPsiFactory(element)
 
             val commentSaver = CommentSaver(element, saveLineBreaks = false)
-            val margin = CodeStyle.getLanguageSettings(element.containingKtFile).RIGHT_MARGIN
+            val margin = element.containingKtFile.kotlinCommonSettings.RIGHT_MARGIN
             val elvis = runWriteAction {
                 val replacedBaseClause = ifThenToSelectData.replacedBaseClause(factory)
                 val negatedClause = ifThenToSelectData.negatedClause!!
