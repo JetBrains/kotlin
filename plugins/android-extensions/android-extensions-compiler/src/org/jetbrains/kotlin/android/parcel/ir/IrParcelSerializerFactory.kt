@@ -228,7 +228,9 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
             classifier.isEnumClass ->
                 return wrapNullableSerializerIfNeeded(irType, IrEnumParcelSerializer(classifier))
 
-            classifier.isSubclassOfFqName("java.io.Serializable") ->
+            classifier.isSubclassOfFqName("java.io.Serializable")
+                    // Functions and Continuations are always serializable.
+                    || irType.isFunctionTypeOrSubtype() || irType.isSuspendFunctionTypeOrSubtype() ->
                 return serializableSerializer
 
             strict() ->
