@@ -84,12 +84,18 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
     }
 }
 
-open class JsSinglePlatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator,
+enum class JsTarget {
+    BROWSER,
+    NODE;
+}
+
+open class JsSinglePlatformModuleConfigurator(
+    private val jsTarget: JsTarget
+) : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator,
     ModuleConfiguratorWithSettings {
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
         super<ModuleConfiguratorWithTests>.getConfiguratorSettings() +
-                super<JSConfigurator>.getConfiguratorSettings() +
-                JSConfigurator.cssSupport
+                super<JSConfigurator>.getConfiguratorSettings()
 
     override val moduleKind = ModuleKind.singleplatformJs
 
@@ -117,13 +123,27 @@ open class JsSinglePlatformModuleConfigurator : JSConfigurator, ModuleConfigurat
     ): List<BuildSystemIR> = irsList {
         "kotlin" {
             "js" {
-                browserSubTarget(module, reader)
+                when (jsTarget) {
+                    JsTarget.BROWSER -> browserSubTarget(module, reader)
+                    JsTarget.NODE -> nodejsSubTarget(module, reader)
+                }
             }
         }
     }
 }
 
-object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator()
+object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator(
+    JsTarget.BROWSER
+) {
+    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> {
+        return super.getConfiguratorSettings() +
+                JSConfigurator.cssSupport
+    }
+}
+
+object NodeJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator(
+    JsTarget.NODE
+)
 
 fun GradleIRListBuilder.applicationSupport() {
     +"binaries.executable()"

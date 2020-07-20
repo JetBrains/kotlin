@@ -87,6 +87,7 @@ private val ProjectTemplate.icon: Icon
         FrontendApplicationProjectTemplate -> KotlinIcons.Wizard.JS
         MultiplatformMobileApplicationProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE
         MultiplatformMobileLibraryProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE_LIBRARY
+        NodeJsApplicationProjectTemplate -> KotlinIcons.Wizard.NODE_JS
     }
 
 class TemplateDescriptionComponent : Component() {
