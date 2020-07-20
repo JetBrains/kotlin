@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
-import org.jetbrains.kotlin.tools.projectWizard.library.NpmArtifact
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
-import org.jetbrains.kotlin.tools.projectWizard.templates.withSettingsOf
 
 class SimpleJsClientTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.js.simple.title")
@@ -45,7 +43,7 @@ class SimpleJsClientTemplate : Template() {
         module: Module
     ): Boolean = when (module.configurator) {
         JsBrowserTargetConfigurator -> true
-        JsSingleplatformModuleConfigurator -> {
+        BrowserJsSinglePlatformModuleConfigurator -> {
             with(reader) {
                 withSettingsOf(module, module.configurator) {
                     JSConfigurator.kind.reference.notRequiredSettingValue == JsTargetKind.APPLICATION

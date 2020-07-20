@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem
 
-import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.GeneratedIdentificator
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
@@ -68,7 +67,7 @@ class Module(
             configurator == MppModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.mpp.module")
             configurator == AndroidSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.android.module")
             configurator == IOSSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.ios.module")
-            configurator == JsSingleplatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.js.module")
+            configurator == BrowserJsSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.js.module")
             else -> KotlinNewProjectWizardBundle.message("module.kind.module")
         }
 

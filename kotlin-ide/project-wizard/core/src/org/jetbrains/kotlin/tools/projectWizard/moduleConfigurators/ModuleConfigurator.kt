@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.StdlibType
@@ -264,7 +263,7 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
             +JvmSinglePlatformModuleConfigurator
             +AndroidSinglePlatformModuleConfigurator
             +IOSSinglePlatformModuleConfigurator
-            +JsSingleplatformModuleConfigurator
+            +BrowserJsSinglePlatformModuleConfigurator
         }
 
         init {

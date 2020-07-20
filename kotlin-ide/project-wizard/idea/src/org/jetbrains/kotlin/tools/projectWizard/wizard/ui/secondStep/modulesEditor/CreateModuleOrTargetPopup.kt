@@ -42,7 +42,7 @@ class CreateModuleOrTargetPopup private constructor(
             if (allowMultiplatform) +MppModuleConfigurator
             +JvmSinglePlatformModuleConfigurator
             if (allowAndroid) +AndroidSinglePlatformModuleConfigurator
-            if (allowSinglepaltformJs) +JsSingleplatformModuleConfigurator
+            if (allowSinglepaltformJs) +BrowserJsSinglePlatformModuleConfigurator
             if (allowIos) +IOSSinglePlatformModuleConfigurator
         }
     ) {
