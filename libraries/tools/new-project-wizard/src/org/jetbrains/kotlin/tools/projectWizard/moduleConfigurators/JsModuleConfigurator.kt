@@ -97,7 +97,7 @@ open class JsSinglePlatformModuleConfigurator : JSConfigurator, ModuleConfigurat
     override val suggestedModuleName = "js"
 
     @NonNls
-    override val id = "jsSinglepaltform"
+    override val id = "jsSinglePlatform"
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.js")
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
