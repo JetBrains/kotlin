@@ -40,6 +40,7 @@ repositories {
 dependencies {
     compile(kotlinStdlib())
     compile(project(":compiler:frontend"))
+    compile(projectTests(":compiler:tests-common"))
     compile(project(":compiler:cli"))
     compile(intellijCoreDep()) { includeJars("intellij-core") }
     compile(jpsStandalone()) { includeJars("jps-model") }
@@ -93,5 +94,19 @@ benchmark {
     }
     targets {
         register("main")
+    }
+}
+
+tasks.named("classes") {
+    doLast {
+        tasks.named("mainBenchmarkJar", Zip::class.java) {
+            isZip64 = true
+            archiveName = "benchmarks.jar"
+        }
+        listOf("mainBenchmark", "mainFirBenchmark", "mainNiBenchmark").forEach {
+            tasks.named(it, JavaExec::class.java) {
+                systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+            }
+        }
     }
 }
