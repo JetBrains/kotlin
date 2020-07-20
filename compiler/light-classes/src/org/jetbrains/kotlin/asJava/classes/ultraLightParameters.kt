@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.codegen.AsmUtil.LABELED_THIS_PARAMETER
 import org.jetbrains.kotlin.codegen.AsmUtil.RECEIVER_PARAMETER_NAME
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 
 internal class KtUltraLightSuspendContinuationParameter(
     private val ktFunction: KtFunction,
@@ -144,7 +145,7 @@ internal abstract class KtAbstractUltraLightParameterForDeclaration(
 ) : KtUltraLightParameter(name, kotlinOrigin, support, method) {
 
     protected fun tryGetContainingDescriptor(): CallableDescriptor? =
-        containingDeclaration.resolve() as? CallableMemberDescriptor
+        containingDeclaration.resolve() as? CallableDescriptor
 
     protected abstract fun tryGetKotlinType(): KotlinType?
 
@@ -189,11 +190,16 @@ internal class KtUltraLightParameterForSetterParameter(
     override fun tryGetKotlinType(): KotlinType? = property.getKotlinType()
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>?
-        get() = (property.resolve() as? PropertyDescriptor)
-            ?.setter
-            ?.valueParameters
-            ?.firstOrNull()
-            ?.obtainLightAnnotations(support, this)
+        get() = property.annotationEntries.filter {
+            it.useSiteTarget?.getAnnotationUseSiteTarget() == AnnotationUseSiteTarget.SETTER_PARAMETER
+        }.map { entry ->
+            KtLightAnnotationForSourceEntry(
+                lazyQualifiedName = { entry.analyzeAnnotation()?.fqName?.asString() },
+                kotlinOrigin = entry,
+                parent = this,
+                lazyClsDelegate = null
+            )
+        }
 
     override fun isVarArgs(): Boolean = false
 }
