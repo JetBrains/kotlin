@@ -30,11 +30,10 @@ import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.ui.table.JBTable
 import com.intellij.util.ui.EditableModel
+import com.intellij.util.ui.JBInsets
 import com.intellij.util.ui.JBUI.Borders
 import com.intellij.util.ui.PaintIcon
-import java.awt.BorderLayout
-import java.awt.Color
-import java.awt.Component
+import java.awt.*
 import javax.swing.*
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
@@ -402,6 +401,16 @@ private class TableColorRenderer(val manager: FileColorManagerImpl) : DefaultTab
     val configuration = value as? FileColorConfiguration
     super.getTableCellRendererComponent(table, configuration?.colorPresentableName, selected, focused, row, column)
     return updateColorRenderer(this, selected, configuration?.colorName?.let { manager.getColor(it) })
+  }
+
+  override fun paintComponent(g: Graphics?) {
+    super.paintComponent(g)
+    val bounds = Rectangle(width, height)
+    JBInsets.removeFrom(bounds, insets)
+    val icon = AllIcons.General.ArrowDown
+    icon.paintIcon(this, g,
+                   bounds.x + bounds.width - icon.iconWidth,
+                   bounds.y + (bounds.height - icon.iconHeight) / 2)
   }
 }
 
