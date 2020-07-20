@@ -197,10 +197,10 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
     private fun MatchResult.number() = groupValues[1].toInt()
     private val MatchResult.text get() = groupValues[0]
     private fun MatchResult.isChar(c: String) = text == c
-    private fun MatchResult.isFileName() = groupValues[4].isNotEmpty()
+    private fun MatchResult.isFileName() = groups[4] != null
 
     private fun generateSourceInfo(sourceInfo: String, source: String): String {
-        val r = Regex("(\\d+)|([,])|([*])|([:])|C|L|@")
+        val r = Regex("(\\d+)|([,])|([*])|([:])|C(\\(.*\\))?|L|(P\\(*\\))|@")
         var current = 0
         var currentResult = r.find(sourceInfo, current)
         var result = ""
