@@ -19768,6 +19768,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/samConversions/checkSamConversionsAreDisabledByDefault.kt");
             }
 
+            @TestMetadata("conversionOnLambdaAsLastExpression.kt")
+            public void testConversionOnLambdaAsLastExpression() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/conversionOnLambdaAsLastExpression.kt");
+            }
+
             @TestMetadata("DisabledForKTSimple.kt")
             public void testDisabledForKTSimple() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/DisabledForKTSimple.kt");
