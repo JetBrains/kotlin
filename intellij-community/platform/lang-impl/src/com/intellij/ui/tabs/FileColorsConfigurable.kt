@@ -2,14 +2,17 @@
 package com.intellij.ui.tabs
 
 import com.intellij.icons.AllIcons
+import com.intellij.ide.DataManager
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.options.Configurable.NoScroll
 import com.intellij.ide.IdeBundle.message
 import com.intellij.ide.util.scopeChooser.EditScopesDialog
+import com.intellij.ide.util.scopeChooser.ScopeChooserConfigurable.PROJECT_SCOPES
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.keymap.KeymapUtil.getShortcutsText
 import com.intellij.openapi.options.CheckBoxConfigurable
 import com.intellij.openapi.options.UnnamedConfigurable
+import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.Messages
@@ -34,6 +37,7 @@ import com.intellij.util.ui.JBInsets
 import com.intellij.util.ui.JBUI.Borders
 import com.intellij.util.ui.PaintIcon
 import java.awt.*
+import java.lang.IllegalStateException
 import javax.swing.*
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
@@ -107,6 +111,15 @@ class FileColorsConfigurable(project: Project) : SearchableConfigurable, NoScrol
     south.border = Borders.emptyTop(5)
     south.add(VerticalLayout.TOP, JLabel(message("settings.file.colors.description")))
     south.add(VerticalLayout.TOP, ActionLink(message("settings.file.colors.manage.scopes")) {
+      Settings.KEY.getData(DataManager.getInstance().getDataContext(south))?.let {
+        try {
+          // try to select related configurable in the current Settings dialog
+          if (!it.select(it.find(PROJECT_SCOPES)).isRejected) return@ActionLink
+        }
+        catch (ignored: IllegalStateException) {
+          // see ScopeColorsPageFactory.java:74
+        }
+      }
       EditScopesDialog.showDialog(manager.project, null, true)
     })
 
