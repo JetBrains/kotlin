@@ -278,8 +278,8 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     return true;
   }
 
-  public void scheduleItemUpdate(LookupElement item){
-    LOG.assertTrue(getItems().contains(item), "Item does not present in lookup");
+  public void scheduleItemUpdate(@NotNull LookupElement item) {
+    LOG.assertTrue(getItems().contains(item), "Item isn't present in lookup");
     myCellRenderer.updateItemPresentation(item);
   }
 
