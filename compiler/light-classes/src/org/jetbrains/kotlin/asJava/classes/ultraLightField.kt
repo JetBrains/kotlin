@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.lang.Language
+import com.intellij.navigation.ItemPresentation
+import com.intellij.navigation.ItemPresentationProviders
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightFieldBuilder
 import com.intellij.psi.util.TypeConversionUtil
@@ -62,7 +65,18 @@ internal class KtUltraLightFieldForSourceDeclaration(
     support: KtUltraLightSupport,
     modifiers: Set<String>,
 ) : KtUltraLightFieldImpl(declaration, name, containingClass, support, modifiers),
-    KtLightFieldForSourceDeclarationSupport
+    KtLightFieldForSourceDeclarationSupport {
+
+    override fun getText(): String? = kotlinOrigin.text
+    override fun getTextRange(): TextRange = kotlinOrigin.textRange
+    override fun getTextOffset(): Int = kotlinOrigin.textOffset
+    override fun getStartOffsetInParent(): Int = kotlinOrigin.startOffsetInParent
+    override fun isWritable(): Boolean = kotlinOrigin.isWritable
+    override fun getNavigationElement(): PsiElement = kotlinOrigin.navigationElement ?: this
+    override fun getContainingFile(): PsiFile = parent.containingFile
+    override fun getPresentation(): ItemPresentation? = kotlinOrigin.let { ItemPresentationProviders.getItemPresentation(it) }
+    override fun findElementAt(offset: Int): PsiElement? = kotlinOrigin.findElementAt(offset)
+}
 
 internal open class KtUltraLightFieldImpl protected constructor(
     protected val declaration: KtNamedDeclaration,

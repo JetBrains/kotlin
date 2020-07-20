@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.intellij.navigation.ItemPresentation
+import com.intellij.navigation.ItemPresentationProviders
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
@@ -176,6 +179,16 @@ internal class KtUltraLightParameterForSource(
         kotlinOrigin.setName(name)
         return this
     }
+
+    override fun getText(): String? = kotlinOrigin.text
+    override fun getTextRange(): TextRange = kotlinOrigin.textRange
+    override fun getTextOffset(): Int = kotlinOrigin.textOffset
+    override fun getStartOffsetInParent(): Int = kotlinOrigin.startOffsetInParent
+    override fun isWritable(): Boolean = kotlinOrigin.isWritable
+    override fun getNavigationElement(): PsiElement = kotlinOrigin.navigationElement
+    override fun getContainingFile(): PsiFile = parent.containingFile
+    override fun getPresentation(): ItemPresentation? = kotlinOrigin.let { ItemPresentationProviders.getItemPresentation(it) }
+    override fun findElementAt(offset: Int): PsiElement? = kotlinOrigin.findElementAt(offset)
 }
 
 internal class KtUltraLightParameterForSetterParameter(
