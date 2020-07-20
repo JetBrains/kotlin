@@ -6,7 +6,6 @@ import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.options.Configurable.NoScroll
 import com.intellij.ide.IdeBundle.message
 import com.intellij.ide.util.scopeChooser.EditScopesDialog
-import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.options.CheckBoxConfigurable
 import com.intellij.openapi.options.UnnamedConfigurable
@@ -350,7 +349,6 @@ private class FileColorsTableModel(val manager: FileColorManagerImpl) : Abstract
       }
       .setMoveUpActionUpdater { table.selectedRows.all { canExchangeRows(it, it - 1) } }
       .setMoveDownActionUpdater { table.selectedRows.all { canExchangeRows(it, it + 1) } }
-      .setToolbarPosition(ActionToolbarPosition.TOP)
       .createPanel()
   }
 
