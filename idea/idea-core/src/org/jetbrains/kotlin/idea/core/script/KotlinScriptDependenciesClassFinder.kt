@@ -24,12 +24,6 @@ class KotlinScriptDependenciesClassFinder(
         .getAllScriptsDependenciesClassFiles().filter { it.isValid }.toList()
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
-        val scriptDependencies =
-            ScriptConfigurationManager.getInstance(project).getAllScriptsDependenciesClassFiles()
-        val firstJarInDependencies = scriptDependencies.firstOrNull() ?: return null
-
-        if (!scope.contains(firstJarInDependencies)) return null
-
         val classByFileName = super.findClass(qualifiedName, scope)
         if (classByFileName != null) {
             return classByFileName.isInScope(scope)
