@@ -205,8 +205,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     /**
      * Use Kotlin/JS backend compiler type
      */
-    val jsLegacyExecutableExplicitly: Boolean
-        get() = booleanProperty("kotlin.js.legacy.executable.explicitly") ?: false
+    val jsGenerateExecutableDefault: Boolean
+        get() = booleanProperty("kotlin.js.generate.executable.default") ?: true
 
     val stdlibDefaultDependency: Boolean
         get() = booleanProperty("kotlin.stdlib.default.dependency") ?: true

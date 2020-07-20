@@ -136,7 +136,7 @@ constructor(
         project.objects.newInstance(KotlinBrowserJs::class.java, this).also {
             it.configure()
 
-            if (!PropertiesProvider(project).jsLegacyExecutableExplicitly) {
+            if (PropertiesProvider(project).jsGenerateExecutableDefault) {
                 binaries.executable()
             }
 
@@ -163,7 +163,7 @@ constructor(
         project.objects.newInstance(KotlinNodeJs::class.java, this).also {
             it.configure()
 
-            if (!PropertiesProvider(project).jsLegacyExecutableExplicitly) {
+            if (PropertiesProvider(project).jsGenerateExecutableDefault) {
                 binaries.executable()
             }
 
