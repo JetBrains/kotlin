@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -65,11 +66,13 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
                 runReadAction { pointer.element?.takeIf { it.isValid }?.containingKtFile?.virtualFile }?.let { virtualFile ->
                     val presentableUrl = virtualFile.presentableUrl
                     indicator.text2 = presentableUrl
-                    project.executeWriteCommand(KotlinBundle.message("delete.0", presentableUrl)) {
-                        try {
-                            pointer.element?.delete()
-                        } catch (e: IncorrectOperationException) {
-                            LOG.error(e)
+                    ApplicationManager.getApplication().invokeAndWait {
+                        project.executeWriteCommand(KotlinBundle.message("delete.0", presentableUrl)) {
+                            try {
+                                pointer.element?.delete()
+                            } catch (e: IncorrectOperationException) {
+                                LOG.error(e)
+                            }
                         }
                     }
                 }
