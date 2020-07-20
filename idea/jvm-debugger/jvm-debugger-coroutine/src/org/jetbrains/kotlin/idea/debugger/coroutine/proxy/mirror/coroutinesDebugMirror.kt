@@ -96,7 +96,7 @@ class DebugCoroutineInfoImpl constructor(context: DefaultExecutionContext) :
     private val javaLangMirror = JavaLangMirror(context)
     private val javaLangListMirror = JavaUtilAbstractCollection(context)
     private val stackTraceElement = StackTraceElement(context)
-
+    private val weakReference = WeakReference(context)
 
     val lastObservedThread by FieldDelegate<ThreadReference>("lastObservedThread")
     val _context by MethodDelegate<ObjectReference>("getContext")
@@ -117,6 +117,7 @@ class DebugCoroutineInfoImpl constructor(context: DefaultExecutionContext) :
         val creationStackTraceMirror = javaLangListMirror.mirror(getCreationStackTrace.value(value, context), context)
         val creationStackTrace = creationStackTraceMirror?.values?.mapNotNull { stackTraceElement.mirror(it, context) }
 
+        val lastObservedFrame = weakReference.mirror(_lastObservedFrame.value(value), context)
         return MirrorOfCoroutineInfo(
             value,
             coroutineContext,
@@ -126,10 +127,21 @@ class DebugCoroutineInfoImpl constructor(context: DefaultExecutionContext) :
             creationStackTrace,
             state,
             lastObservedThread.value(value),
-            _lastObservedFrame.value(value)
+            lastObservedFrame?.reference
         )
     }
 }
+
+class WeakReference constructor(context: DefaultExecutionContext) :
+    BaseMirror<MirrorOfWeakReference>("java.lang.ref.WeakReference", context)  {
+    val get by MethodDelegate<ObjectReference>("get")
+
+    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfWeakReference? {
+        return MirrorOfWeakReference(value, get.value(value, context))
+    }
+}
+
+data class MirrorOfWeakReference(val that: ObjectReference, val reference: ObjectReference?)
 
 class CoroutineInfo private constructor(
     private val debugProbesImplMirror: DebugProbesImpl,
