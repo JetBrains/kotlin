@@ -33,6 +33,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.Value
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.inline.SMAP
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContentAndGetResult
 import org.jetbrains.kotlin.idea.core.util.runInReadActionWithWriteActionPriorityWithPCE
 import org.jetbrains.kotlin.idea.debugger.BinaryCacheKey
-import org.jetbrains.kotlin.idea.debugger.BytecodeDebugInfo
 import org.jetbrains.kotlin.idea.debugger.createWeakBytecodeDebugInfoStorage
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -185,13 +185,8 @@ class KotlinDebuggerCaches(project: Project) {
             return newValue
         }
 
-        fun getOrReadDebugInfoFromBytecode(
-            project: Project,
-            jvmName: JvmClassName,
-            file: VirtualFile
-        ): BytecodeDebugInfo? {
-            val cache = getInstance(project)
-            return cache.debugInfoCache.value[BinaryCacheKey(project, jvmName, file)]
+        fun getSmapCached(project: Project, jvmName: JvmClassName, file: VirtualFile): SMAP? {
+            return getInstance(project).debugInfoCache.value[BinaryCacheKey(project, jvmName, file)]
         }
 
         private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =

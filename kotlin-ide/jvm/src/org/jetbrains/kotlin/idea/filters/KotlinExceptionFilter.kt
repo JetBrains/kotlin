@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.debugger.*
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.lang.Math.max
@@ -100,8 +101,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
     private fun createHyperlinks(jvmName: JvmClassName, file: VirtualFile, line: Int, project: Project): InlineFunctionHyperLinkInfo? {
         if (!isInlineFunctionLineNumber(file, line, project)) return null
 
-        val debugInfo = readBytecodeInfo(project, jvmName, file) ?: return null
-        val smapData = debugInfo.smapData ?: return null
+        val smapData = KotlinDebuggerCaches.getSmapCached(project, jvmName, file) ?: return null
 
         val inlineInfos = arrayListOf<InlineFunctionHyperLinkInfo.InlineInfo>()
 

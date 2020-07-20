@@ -9,10 +9,7 @@ import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.jdi.VirtualMachineProxyImpl
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.compiler.CompilerPaths
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ConcurrentFactoryMap
@@ -20,7 +17,6 @@ import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.VirtualMachine
 import org.jetbrains.kotlin.codegen.inline.SMAP
-import org.jetbrains.kotlin.idea.caches.project.implementingModules
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.util.getLineCount
 import org.jetbrains.kotlin.idea.core.util.getLineStartOffset
@@ -29,11 +25,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.tail
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -41,7 +33,6 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.*
-import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentMap
 
@@ -54,114 +45,14 @@ fun isInlineFunctionLineNumber(file: VirtualFile, lineNumber: Int, project: Proj
     return true
 }
 
-fun readBytecodeInfo(
-    project: Project,
-    jvmName: JvmClassName,
-    file: VirtualFile
-): BytecodeDebugInfo? {
-    return KotlinDebuggerCaches.getOrReadDebugInfoFromBytecode(project, jvmName, file)
-}
-
-fun createWeakBytecodeDebugInfoStorage(): ConcurrentMap<BinaryCacheKey, BytecodeDebugInfo?> {
-    return ConcurrentFactoryMap.createWeakMap<BinaryCacheKey, BytecodeDebugInfo?> { key ->
-        val bytes = readClassFileImpl(key.project, key.jvmName, key.file) ?: return@createWeakMap null
-        BytecodeDebugInfo(readDebugInfo(bytes))
+fun createWeakBytecodeDebugInfoStorage(): ConcurrentMap<BinaryCacheKey, SMAP?> {
+    return ConcurrentFactoryMap.createWeakMap<BinaryCacheKey, SMAP?> { key ->
+        val bytes = ClassBytecodeFinder(key.project, key.jvmName, key.file).find() ?: return@createWeakMap null
+        return@createWeakMap readDebugInfo(bytes)
     }
 }
-
-class BytecodeDebugInfo(val smapData: SMAP?)
 
 data class BinaryCacheKey(val project: Project, val jvmName: JvmClassName, val file: VirtualFile)
-
-private fun readClassFileImpl(
-    project: Project,
-    jvmName: JvmClassName,
-    file: VirtualFile
-): ByteArray? {
-    val fqNameWithInners = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName)
-
-    fun readFromLibrary(): ByteArray? {
-        if (!ProjectRootsUtil.isLibrarySourceFile(project, file)) return null
-
-        val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
-
-        // TODO use debugger search scope
-        val fileFinder = VirtualFileFinderFactory.getInstance(project).create(GlobalSearchScope.allScope(project))
-        val classFile = fileFinder.findVirtualFileWithHeader(classId) ?: return null
-        return classFile.contentsToByteArray(false)
-    }
-
-    fun readFromOutput(isForTestClasses: Boolean): ByteArray? {
-        fun readFromOutputOfModule(module: Module): File? {
-            val outputPaths = CompilerPaths.getOutputPaths(arrayOf(module)).toList()
-            val className = fqNameWithInners.asString().replace('.', '$')
-            var classFile = findClassFileByPaths(jvmName.packageFqName.asString(), className, outputPaths)
-
-            if (classFile == null) {
-                if (!isForTestClasses) {
-                    return null
-                }
-
-                val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ isForTestClasses) ?: return null
-
-                val outputModeDirName = outputDir.name
-                // FIXME: It looks like this doesn't work anymore after Kotlin gradle plugin have stopped generating Kotlin classes in java output dir
-                // Originally this code did mapping like 'path/classes/test/debug' -> 'path/classes/androidTest/debug'
-                val androidTestOutputDir = outputDir.parent?.parent?.findChild("androidTest")?.findChild(outputModeDirName) ?: return null
-
-                classFile = findClassFileByPath(jvmName.packageFqName.asString(), className, androidTestOutputDir.path) ?: return null
-            }
-            return classFile
-        }
-
-        if (!ProjectRootsUtil.isProjectSourceFile(project, file)) return null
-
-        val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file) ?: return null
-
-        val classFile = readFromOutputOfModule(module)
-        return if (classFile == null) {
-            for (implementing in module.implementingModules) {
-                readFromOutputOfModule(implementing)?.let { return it.readBytes() }
-            }
-            null
-        } else {
-            classFile.readBytes()
-        }
-    }
-
-    fun readFromSourceOutput(): ByteArray? = readFromOutput(false)
-
-    fun readFromTestOutput(): ByteArray? = readFromOutput(true)
-
-    return readFromLibrary() ?: readFromSourceOutput() ?: readFromTestOutput()
-}
-
-private fun findClassFileByPaths(packageName: String, className: String, paths: List<String>): File? {
-    return paths
-        .mapNotNull { path -> findClassFileByPath(packageName, className, path) }
-        .maxByOrNull { it.lastModified() }
-}
-
-private fun findClassFileByPath(packageName: String, className: String, outputDirPath: String): File? {
-    val outDirFile = File(outputDirPath).takeIf(File::exists) ?: return null
-
-    val parentDirectory = File(outDirFile, packageName.replace(".", File.separator))
-    if (!parentDirectory.exists()) return null
-
-    if (ApplicationManager.getApplication().isUnitTestMode) {
-        val beforeDexFileClassFile = File(parentDirectory, "$className.class.before_dex")
-        if (beforeDexFileClassFile.exists()) {
-            return beforeDexFileClassFile
-        }
-    }
-
-    val classFile = File(parentDirectory, "$className.class")
-    if (classFile.exists()) {
-        return classFile
-    }
-
-    return null
-}
 
 fun getLocationsOfInlinedLine(type: ReferenceType, position: SourcePosition, sourceSearchScope: GlobalSearchScope): List<Location> {
     val line = position.line
@@ -220,8 +111,7 @@ private fun inlinedLinesNumbers(
 
     val virtualFile = file.virtualFile ?: return listOf()
 
-    val debugInfo = readBytecodeInfo(project, jvmClassName, virtualFile) ?: return listOf()
-    val smapData = debugInfo.smapData ?: return listOf()
+    val smapData = KotlinDebuggerCaches.getSmapCached(project, jvmClassName, virtualFile) ?: return listOf()
 
     val mappingsToInlinedFile = smapData.fileMappings.filter { it.name == inlineFileName }
     val mappingIntervals = mappingsToInlinedFile.flatMap { it.lineMappings }
