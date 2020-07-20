@@ -176,7 +176,13 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             val receiverField = info.function.extensionReceiverParameter?.let {
                 assert(info.arity != 0)
                 // Do not put '$' at the start, to avoid being caught by inlineCodegenUtils.isCapturedFieldName()
-                addField("p\$", it.type)
+                addField {
+                    name = Name.identifier("p\$")
+                    // NB extension receiver can't be crossinline
+                    origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
+                    type = it.type
+                    visibility = Visibilities.PRIVATE
+                }
             }
 
             val parametersFields = info.function.valueParameters.map {
