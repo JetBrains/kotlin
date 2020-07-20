@@ -10,7 +10,6 @@ import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.jdi.VirtualMachineProxyImpl
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.compiler.CompilerPaths
-import com.intellij.openapi.compiler.ex.CompilerPathsEx
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.util.*
@@ -67,17 +65,11 @@ fun readBytecodeInfo(
 fun createWeakBytecodeDebugInfoStorage(): ConcurrentMap<BinaryCacheKey, BytecodeDebugInfo?> {
     return ConcurrentFactoryMap.createWeakMap<BinaryCacheKey, BytecodeDebugInfo?> { key ->
         val bytes = readClassFileImpl(key.project, key.jvmName, key.file) ?: return@createWeakMap null
-
-        val smapData = readDebugInfo(bytes)
-        val lineNumberMapping = readLineNumberTableMapping(bytes)
-
-        BytecodeDebugInfo(smapData, lineNumberMapping)
+        BytecodeDebugInfo(readDebugInfo(bytes))
     }
 }
 
-class BytecodeDebugInfo(val smapData: SMAP?, val lineTableMapping: Map<BytecodeMethodKey, Map<String, Set<Int>>>)
-
-data class BytecodeMethodKey(val methodName: String, val signature: String)
+class BytecodeDebugInfo(val smapData: SMAP?)
 
 data class BinaryCacheKey(val project: Project, val jvmName: JvmClassName, val file: VirtualFile)
 
@@ -101,7 +93,7 @@ private fun readClassFileImpl(
 
     fun readFromOutput(isForTestClasses: Boolean): ByteArray? {
         fun readFromOutputOfModule(module: Module): File? {
-            val outputPaths = CompilerPathsEx.getOutputPaths(arrayOf(module)).toList()
+            val outputPaths = CompilerPaths.getOutputPaths(arrayOf(module)).toList()
             val className = fqNameWithInners.asString().replace('.', '$')
             var classFile = findClassFileByPaths(jvmName.packageFqName.asString(), className, outputPaths)
 
@@ -144,8 +136,11 @@ private fun readClassFileImpl(
     return readFromLibrary() ?: readFromSourceOutput() ?: readFromTestOutput()
 }
 
-private fun findClassFileByPaths(packageName: String, className: String, paths: List<String>): File? =
-    paths.mapNotNull { path -> findClassFileByPath(packageName, className, path) }.maxBy { it.lastModified() }
+private fun findClassFileByPaths(packageName: String, className: String, paths: List<String>): File? {
+    return paths
+        .mapNotNull { path -> findClassFileByPath(packageName, className, path) }
+        .maxByOrNull { it.lastModified() }
+}
 
 private fun findClassFileByPath(packageName: String, className: String, outputDirPath: String): File? {
     val outDirFile = File(outputDirPath).takeIf(File::exists) ?: return null
@@ -154,50 +149,18 @@ private fun findClassFileByPath(packageName: String, className: String, outputDi
     if (!parentDirectory.exists()) return null
 
     if (ApplicationManager.getApplication().isUnitTestMode) {
-        val beforeDexFileClassFile = File(parentDirectory, className + ".class.before_dex")
+        val beforeDexFileClassFile = File(parentDirectory, "$className.class.before_dex")
         if (beforeDexFileClassFile.exists()) {
             return beforeDexFileClassFile
         }
     }
 
-    val classFile = File(parentDirectory, className + ".class")
+    val classFile = File(parentDirectory, "$className.class")
     if (classFile.exists()) {
         return classFile
     }
 
     return null
-}
-
-private fun readLineNumberTableMapping(bytes: ByteArray): Map<BytecodeMethodKey, Map<String, Set<Int>>> {
-    val lineNumberMapping = HashMap<BytecodeMethodKey, Map<String, Set<Int>>>()
-
-    ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
-        override fun visitMethod(
-            access: Int,
-            name: String?,
-            desc: String?,
-            signature: String?,
-            exceptions: Array<out String>?
-        ): MethodVisitor? {
-            if (name == null || desc == null) {
-                return null
-            }
-
-            val methodKey = BytecodeMethodKey(name, desc)
-            val methodLinesMapping = HashMap<String, MutableSet<Int>>()
-            lineNumberMapping[methodKey] = methodLinesMapping
-
-            return object : MethodVisitor(Opcodes.API_VERSION, null) {
-                override fun visitLineNumber(line: Int, start: Label?) {
-                    if (start != null) {
-                        methodLinesMapping.getOrPutNullable(start.toString(), { LinkedHashSet<Int>() }).add(line)
-                    }
-                }
-            }
-        }
-    }, ClassReader.SKIP_FRAMES and ClassReader.SKIP_CODE)
-
-    return lineNumberMapping
 }
 
 fun getLocationsOfInlinedLine(type: ReferenceType, position: SourcePosition, sourceSearchScope: GlobalSearchScope): List<Location> {
