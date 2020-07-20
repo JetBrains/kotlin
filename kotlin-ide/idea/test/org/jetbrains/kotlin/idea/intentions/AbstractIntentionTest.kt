@@ -101,7 +101,7 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
         val fileText = FileUtil.loadFile(mainFile, true)
         withCustomCompilerOptions(fileText, project, module) {
             ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
-            configureCodeStyleAndRun(project, file, { FormatSettingsUtil.createConfigurator(fileText, it).configureSettings() }) {
+            configureCodeStyleAndRun(project, { FormatSettingsUtil.createConfigurator(fileText, it).configureSettings() }) {
                 configureRegistryAndRun(fileText) {
                     try {
                         TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFile\"", fileText.contains("<caret>"))

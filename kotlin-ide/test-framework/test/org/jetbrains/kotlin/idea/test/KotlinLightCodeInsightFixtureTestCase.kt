@@ -309,14 +309,10 @@ fun configureRegistryAndRun(fileText: String, body: () -> Unit) {
 
 fun configureCodeStyleAndRun(
     project: Project,
-    file: PsiFile? = null,
     configurator: (CodeStyleSettings) -> Unit = { },
     body: () -> Unit
 ) {
-    val testSettings = CodeStyle.createTestSettings(
-        file?.let { CodeStyle.getSettings(it) } ?: CodeStyle.getSettings(project)
-    )
-
+    val testSettings = CodeStyle.createTestSettings(CodeStyle.getSettings(project))
     CodeStyle.doWithTemporarySettings(project, testSettings, Runnable {
         configurator(testSettings)
         body()

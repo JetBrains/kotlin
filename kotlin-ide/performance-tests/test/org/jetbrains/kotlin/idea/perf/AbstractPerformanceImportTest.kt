@@ -33,7 +33,7 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
 
     protected fun doPerfTest(unused: String) {
         val testName = getTestName(false)
-        configureCodeStyleAndRun(project, file){
+        configureCodeStyleAndRun(project){
             val fixture = myFixture
             val dependencySuffixes = listOf(".dependency.kt", ".dependency.java", ".dependency1.kt", ".dependency2.kt")
             for (suffix in dependencySuffixes) {

@@ -25,8 +25,7 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
 
     protected fun doTest(unused: String) {
         val testPath = testPath()
-        configureCodeStyleAndRun(project, file) {
-            val codeStyleSettings = CodeStyle.getSettings(file).kotlinCustomSettings
+        configureCodeStyleAndRun(project) {
             val fixture = myFixture
             val dependencySuffixes = listOf(".dependency.kt", ".dependency.java", ".dependency1.kt", ".dependency2.kt")
             for (suffix in dependencySuffixes) {
@@ -45,7 +44,7 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
             }
 
             val fileText = file.text
-
+            val codeStyleSettings = CodeStyle.getSettings(file).kotlinCustomSettings
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(
                 fileText,
                 "// NAME_COUNT_TO_USE_STAR_IMPORT:"

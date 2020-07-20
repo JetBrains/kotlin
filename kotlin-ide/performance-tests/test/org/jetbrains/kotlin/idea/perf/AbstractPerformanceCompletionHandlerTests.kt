@@ -61,7 +61,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         val testPath = testPath()
         setUpFixture(testPath)
 
-        configureCodeStyleAndRun(project, file) {
+        configureCodeStyleAndRun(project) {
             try {
                 val fileText = FileUtil.loadFile(File(testPath))
                 withCustomCompilerOptions(fileText, project, module) {

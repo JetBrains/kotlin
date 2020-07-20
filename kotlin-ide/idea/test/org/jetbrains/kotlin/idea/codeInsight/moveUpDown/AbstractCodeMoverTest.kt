@@ -86,15 +86,12 @@ abstract class AbstractCodeMoverTest : KotlinLightCodeInsightFixtureTestCase() {
         isApplicableChecker(isApplicableExpected, direction)
 
         configureCodeStyleAndRun(
-            project,
-            file,
-            {
+            project = project,
+            configurator = {
                 FormatSettingsUtil.createConfigurator(fileText, it).configureSettings()
                 if (trailingComma) it.kotlinCustomSettings.ALLOW_TRAILING_COMMA = true
             }
-        ) {
-            invokeAndCheck(path, action, isApplicableExpected)
-        }
+        ) { invokeAndCheck(path, action, isApplicableExpected) }
     }
 
     private fun invokeAndCheck(path: String, action: EditorAction, isApplicableExpected: Boolean) {

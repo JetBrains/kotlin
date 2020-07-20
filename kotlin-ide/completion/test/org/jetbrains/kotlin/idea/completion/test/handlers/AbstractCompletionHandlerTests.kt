@@ -33,7 +33,7 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
     protected open fun doTest(testPath: String) {
         setUpFixture(fileName())
         try {
-            configureCodeStyleAndRun(project, file) {
+            configureCodeStyleAndRun(project) {
                 val fileText = FileUtil.loadFile(File(testPath))
                 withCustomCompilerOptions(fileText, project, module) {
                     assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"))
