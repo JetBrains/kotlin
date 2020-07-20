@@ -1957,9 +1957,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByDescendingFirst.kt");
             }
 
+            @TestMetadata("sortedByDescendingFirst2.kt")
+            public void testSortedByDescendingFirst2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByDescendingFirst2.kt");
+            }
+
             @TestMetadata("sortedByDescendingFirstOrNull.kt")
             public void testSortedByDescendingFirstOrNull() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByDescendingFirstOrNull.kt");
+            }
+
+            @TestMetadata("sortedByDescendingFirstOrNull2.kt")
+            public void testSortedByDescendingFirstOrNull2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByDescendingFirstOrNull2.kt");
             }
 
             @TestMetadata("sortedByDescendingLast.kt")
@@ -1967,9 +1977,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByDescendingLast.kt");
             }
 
+            @TestMetadata("sortedByDescendingLast2.kt")
+            public void testSortedByDescendingLast2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByDescendingLast2.kt");
+            }
+
             @TestMetadata("sortedByDescendingLastOrNull.kt")
             public void testSortedByDescendingLastOrNull() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByDescendingLastOrNull.kt");
+            }
+
+            @TestMetadata("sortedByDescendingLastOrNull2.kt")
+            public void testSortedByDescendingLastOrNull2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByDescendingLastOrNull2.kt");
             }
 
             @TestMetadata("sortedByFirst.kt")
@@ -1977,9 +1997,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByFirst.kt");
             }
 
+            @TestMetadata("sortedByFirst2.kt")
+            public void testSortedByFirst2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByFirst2.kt");
+            }
+
             @TestMetadata("sortedByFirstOrNull.kt")
             public void testSortedByFirstOrNull() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByFirstOrNull.kt");
+            }
+
+            @TestMetadata("sortedByFirstOrNull2.kt")
+            public void testSortedByFirstOrNull2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByFirstOrNull2.kt");
             }
 
             @TestMetadata("sortedByLast.kt")
@@ -1987,9 +2017,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByLast.kt");
             }
 
+            @TestMetadata("sortedByLast2.kt")
+            public void testSortedByLast2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByLast2.kt");
+            }
+
             @TestMetadata("sortedByLastOrNull.kt")
             public void testSortedByLastOrNull() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByLastOrNull.kt");
+            }
+
+            @TestMetadata("sortedByLastOrNull2.kt")
+            public void testSortedByLastOrNull2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedByLastOrNull2.kt");
             }
 
             @TestMetadata("sortedDescendingFirst.kt")
@@ -1997,9 +2037,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedDescendingFirst.kt");
             }
 
+            @TestMetadata("sortedDescendingFirst2.kt")
+            public void testSortedDescendingFirst2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedDescendingFirst2.kt");
+            }
+
             @TestMetadata("sortedDescendingFirstOrNull.kt")
             public void testSortedDescendingFirstOrNull() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedDescendingFirstOrNull.kt");
+            }
+
+            @TestMetadata("sortedDescendingFirstOrNull2.kt")
+            public void testSortedDescendingFirstOrNull2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedDescendingFirstOrNull2.kt");
             }
 
             @TestMetadata("sortedDescendingLast.kt")
@@ -2007,9 +2057,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedDescendingLast.kt");
             }
 
+            @TestMetadata("sortedDescendingLast2.kt")
+            public void testSortedDescendingLast2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedDescendingLast2.kt");
+            }
+
             @TestMetadata("sortedDescendingLastOrNull.kt")
             public void testSortedDescendingLastOrNull() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedDescendingLastOrNull.kt");
+            }
+
+            @TestMetadata("sortedDescendingLastOrNull2.kt")
+            public void testSortedDescendingLastOrNull2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedDescendingLastOrNull2.kt");
             }
 
             @TestMetadata("sortedFirst.kt")
@@ -2017,9 +2077,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedFirst.kt");
             }
 
+            @TestMetadata("sortedFirst2.kt")
+            public void testSortedFirst2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedFirst2.kt");
+            }
+
             @TestMetadata("sortedFirstOrNull.kt")
             public void testSortedFirstOrNull() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedFirstOrNull.kt");
+            }
+
+            @TestMetadata("sortedFirstOrNull2.kt")
+            public void testSortedFirstOrNull2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedFirstOrNull2.kt");
             }
 
             @TestMetadata("sortedLast.kt")
@@ -2027,9 +2097,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedLast.kt");
             }
 
+            @TestMetadata("sortedLast2.kt")
+            public void testSortedLast2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedLast2.kt");
+            }
+
             @TestMetadata("sortedLastOrNull.kt")
             public void testSortedLastOrNull() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedLastOrNull.kt");
+            }
+
+            @TestMetadata("sortedLastOrNull2.kt")
+            public void testSortedLastOrNull2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/sortedLastOrNull2.kt");
             }
 
             @TestMetadata("idea/testData/inspectionsLocal/collections/simplifiableCallChain/primitiveArray")

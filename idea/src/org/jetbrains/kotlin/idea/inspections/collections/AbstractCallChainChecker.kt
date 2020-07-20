@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.idea.inspections.collections
 
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -33,7 +35,10 @@ abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
         val secondCallExpression = expression.selectorExpression as? KtCallExpression ?: return null
 
         val secondCalleeExpression = secondCallExpression.calleeExpression ?: return null
-        val actualConversions = conversionGroups[ConversionId(firstCalleeExpression, secondCalleeExpression)] ?: return null
+        val languageVersion = expression.languageVersionSettings.languageVersion
+        val actualConversions = conversionGroups[ConversionId(firstCalleeExpression, secondCalleeExpression)]?.filter {
+            it.replaceableLanguageVersion == null || languageVersion >= it.replaceableLanguageVersion
+        } ?: return null
 
         val context = expression.analyze()
         val firstResolvedCall = firstExpression.getResolvedCall(context) ?: return null
@@ -69,7 +74,8 @@ abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
         @NonNls val replacement: String,
         @NonNls val additionalArgument: String? = null,
         val withNotNullAssertion: Boolean = false,
-        val enableSuspendFunctionCall: Boolean = true
+        val enableSuspendFunctionCall: Boolean = true,
+        val replaceableLanguageVersion: LanguageVersion? = null
     ) {
         private fun String.convertToShort() = takeLastWhile { it != '.' }
 

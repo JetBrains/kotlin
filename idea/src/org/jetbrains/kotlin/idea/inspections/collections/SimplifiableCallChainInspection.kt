@@ -9,6 +9,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.name.Name
@@ -118,6 +119,14 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
             Conversion("kotlin.collections.map", "kotlin.collections.filterNotNull", "mapNotNull"),
 
             Conversion("kotlin.collections.listOf", "kotlin.collections.filterNotNull", "listOfNotNull")
-        )
+        ).map {
+            when (val replacement = it.replacement) {
+                "min", "max", "minBy", "maxBy" -> listOf(
+                    it.copy(replacement = "${replacement}OrNull", replaceableLanguageVersion = LanguageVersion.KOTLIN_1_4),
+                    it
+                )
+                else -> listOf(it)
+            }
+        }.flatten()
     }
 }
