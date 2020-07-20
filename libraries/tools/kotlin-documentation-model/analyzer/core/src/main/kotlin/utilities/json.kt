@@ -32,7 +32,6 @@ internal class TypeReference<T> private constructor(
     internal val jackson: JacksonTypeReference<T>
 ) {
     companion object {
-        @OptIn(ExperimentalStdlibApi::class)
         internal inline operator fun <reified T> invoke(): TypeReference<T> = TypeReference(jacksonTypeRef())
     }
 }
@@ -41,14 +40,13 @@ internal class TypeReference<T> private constructor(
 internal fun toJsonString(value: Any): String = objectMapper.writeValueAsString(value)
 
 @PublishedApi
-internal inline fun <reified T : Any> parseJson(json: String): T {
-    return parseJson(json, TypeReference())
-}
+internal inline fun <reified T : Any> parseJson(json: String): T = parseJson(json, TypeReference())
+
 
 @PublishedApi
-internal fun <T : Any> parseJson(json: String, typeReference: TypeReference<T>): T {
-    return objectMapper.readValue(json, typeReference.jackson)
-}
+internal fun <T : Any> parseJson(json: String, typeReference: TypeReference<T>): T =
+    objectMapper.readValue(json, typeReference.jackson)
+
 
 private object FileSerializer : StdScalarSerializer<File>(File::class.java) {
     override fun serialize(value: File, g: JsonGenerator, provider: SerializerProvider) {
@@ -63,7 +61,5 @@ private object SourceRootSerializer : StdScalarSerializer<SourceRoot>(SourceRoot
 }
 
 private object SourceRootImplDeserializer : StdScalarDeserializer<SourceRootImpl>(SourceRootImpl::class.java) {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SourceRootImpl {
-        return SourceRootImpl(p.text)
-    }
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SourceRootImpl = SourceRootImpl(p.text)
 }
