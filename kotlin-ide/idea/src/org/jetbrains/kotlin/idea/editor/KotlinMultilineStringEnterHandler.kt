@@ -239,11 +239,11 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
     }
 
     companion object {
-        const val DEFAULT_TRIM_MARGIN_CHAR = '|'
-        const val TRIM_INDENT_CALL = "trimIndent"
-        const val TRIM_MARGIN_CALL = "trimMargin"
+        private const val DEFAULT_TRIM_MARGIN_CHAR = '|'
+        private const val TRIM_INDENT_CALL = "trimIndent"
+        private const val TRIM_MARGIN_CALL = "trimMargin"
 
-        const val MULTILINE_QUOTE = "\"\"\""
+        private const val MULTILINE_QUOTE = "\"\"\""
 
         class MultilineSettings(file: PsiFile) {
             private val kotlinIndentOptions = CodeStyle.getIndentOptions(file)
