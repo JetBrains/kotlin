@@ -359,6 +359,13 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
+    fun testExtensionPropertyReceiverAnnotation() {
+        testExtensionReceiverAnnotation("""val @receiver:Suppress("unused") String.foo get() = length""", "s.foo") {
+            val ref = file.findUElementByTextFromPsi<UQualifiedReferenceExpression>(it)
+            ref.resolve() as PsiMethod
+        }
+    }
+
     private fun testExtensionReceiverAnnotation(
         declaration: String, reference: String, annoQn: String = "kotlin.Suppress", resolve: (String) -> PsiMethod
     ) {
@@ -387,7 +394,10 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
         val resolvedSourceParam = receiverParam.toUElement() as UParameter
         TestCase.assertEquals(method.uastParameters[0], resolvedSourceParam)
         TestCase.assertNotNull(resolvedSourceParam.findAnnotation(annoQn))
-        // TODO: resolvedSourceParam.sourcePsi is null, while method.uastParameters[0].sourcePsi is non-null; they should be the same
+
+        // TODO: resolvedSourceParam.sourcePsi should equal method.uastParameters[0].sourcePsi and be non-null in all cases
+        // method.uastParameters[0].sourcePsi is already non-null for extension functions but null for extension properties
+        TestCase.assertNull(resolvedSourceParam.sourcePsi)
     }
 
     fun testAssigningArrayElementType() {
