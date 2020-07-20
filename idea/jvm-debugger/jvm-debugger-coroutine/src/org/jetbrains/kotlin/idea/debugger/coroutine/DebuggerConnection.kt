@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.debugger.coroutine
 
 import com.intellij.debugger.DebuggerInvocationUtil
 import com.intellij.debugger.engine.JavaDebugProcess
-import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.execution.configurations.DebuggingRunnerData
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.configurations.RunConfigurationBase
@@ -17,6 +16,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.content.Content
+import com.intellij.util.IncorrectOperationException
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugSession
@@ -24,7 +24,6 @@ import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.XDebuggerManagerListener
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ManagerThreadExecutor
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParamsProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.coroutine.view.XCoroutineView
@@ -80,8 +79,10 @@ class DebuggerConnection(
     override fun processStarted(debugProcess: XDebugProcess) {
         DebuggerInvocationUtil.swingInvokeLater(project) {
             if (debugProcess is JavaDebugProcess) {
-                registerXCoroutinesPanel(debugProcess.session)?.let {
-                    Disposer.register(this, it)
+                if (!Disposer.isDisposed(this)) {
+                    registerXCoroutinesPanel(debugProcess.session)?.let {
+                        Disposer.register(this, it)
+                    }
                 }
             }
         }
