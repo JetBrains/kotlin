@@ -7,7 +7,8 @@ public val test16: TC<kotlin.Number, kotlin.collections.List<kotlin.Any>> /* = T
 public val test5: NA<kotlin.Int> /* = Num<kotlin.Int> */
 public val test6: NA<kotlin.Any> /* = Num<kotlin.Any> */
 public val test7: NL<kotlin.Int> /* = NumColl<kotlin.collections.List<kotlin.Int>> */
-public val test8: NL<kotlin.Any> /* = NumColl<kotlin.collections.List<kotlin.Any>> */
+public val test8: MMMM<kotlin.Int> /* = NumColl<kotlin.collections.List<kotlin.Int>> */
+public val test9dwd: NL<kotlin.Any> /* = NumColl<kotlin.collections.List<kotlin.Any>> */
 public fun test1(/*0*/ x: NA<kotlin.Int> /* = Num<kotlin.Int> */): kotlin.Unit
 public fun test10(/*0*/ x: TC<kotlin.Number, kotlin.collections.Collection<kotlin.Int>> /* = TColl<kotlin.Number, kotlin.collections.Collection<kotlin.Int>> */): kotlin.Unit
 public fun test11(/*0*/ x: TC<kotlin.Number, kotlin.collections.List<kotlin.Int>> /* = TColl<kotlin.Number, kotlin.collections.List<kotlin.Int>> */): kotlin.Unit
@@ -37,6 +38,7 @@ public final class TColl</*0*/ T, /*1*/ C : kotlin.collections.Collection<T>> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias MMMM</*0*/ A3> = NL<A3>
 public typealias NA</*0*/ T> = Num<T>
-public typealias NL</*0*/ T> = NumColl<kotlin.collections.List<T>>
+public typealias NL</*0*/ T2> = NumColl<kotlin.collections.List<T2>>
 public typealias TC</*0*/ T1, /*1*/ T2> = TColl<T1, T2>
