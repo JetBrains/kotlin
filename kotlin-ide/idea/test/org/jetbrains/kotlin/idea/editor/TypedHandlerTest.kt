@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
@@ -1108,20 +1109,13 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     private fun doTypeTest(text: String, beforeText: String, afterText: String, settingsModifier: (() -> Unit)? = null) {
-        try {
-            if (settingsModifier != null) {
-                settingsModifier()
-            }
-
+        configureCodeStyleAndRun(project, configurator = { settingsModifier?.invoke() }) {
             myFixture.configureByText("a.kt", beforeText.trimMargin())
             for (ch in text) {
                 EditorTestUtil.performTypingAction(editor, ch)
             }
+
             myFixture.checkResult(afterText.trimMargin())
-        } finally {
-            if (settingsModifier != null) {
-                CodeStyle.getSettings(project).clearCodeStyleSettings()
-            }
         }
     }
 
@@ -1145,7 +1139,12 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
         myFixture.configureByText("a.kt", initText)
 
         EditorTestUtil.performTypingAction(editor, '<')
-        myFixture.checkResult(if (shouldCloseBeInsert) initText.replace("<caret>", "<<caret>>") else initText.replace("<caret>", "<<caret>"))
+        myFixture.checkResult(
+            if (shouldCloseBeInsert) initText.replace("<caret>", "<<caret>>") else initText.replace(
+                "<caret>",
+                "<<caret>"
+            )
+        )
 
         EditorTestUtil.performTypingAction(editor, EditorTestUtil.BACKSPACE_FAKE_CHAR)
         myFixture.checkResult(initText)
