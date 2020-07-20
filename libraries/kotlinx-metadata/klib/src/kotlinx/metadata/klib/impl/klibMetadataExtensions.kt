@@ -177,8 +177,12 @@ internal class KlibMetadataExtensions : MetadataExtensions {
                 val entryProto = ProtoBuf.EnumEntry.newBuilder()
                     .setName(c[entry.name])
                     .setExtension(KlibMetadataProtoBuf.enumEntryAnnotation, entryAnnotationsProto)
-                    .setExtension(KlibMetadataProtoBuf.enumEntryUniqId, entry.uniqId!!.writeUniqId().build())
-                    .setExtension(KlibMetadataProtoBuf.enumEntryOrdinal, entry.ordinal!!)
+                entry.uniqId?.let { uniqId ->
+                    entryProto.setExtension(KlibMetadataProtoBuf.enumEntryUniqId, uniqId.writeUniqId().build())
+                }
+                entry.ordinal?.let { ordinal ->
+                    entryProto.setExtension(KlibMetadataProtoBuf.enumEntryOrdinal, ordinal)
+                }
                 if (entryIndex == -1) {
                     proto.addEnumEntry(entryProto.build())
                 } else {
