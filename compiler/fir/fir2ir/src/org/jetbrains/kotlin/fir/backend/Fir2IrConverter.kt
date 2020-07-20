@@ -238,14 +238,14 @@ class Fir2IrConverter(
                 session, scopeSession, classifierStorage, declarationStorage, conversionScope, fakeOverrideMode
             )
             components.fakeOverrideGenerator = fakeOverrideGenerator
-            for (firFile in firFiles) {
-                converter.processFileAndClassMembers(firFile)
-            }
-
             val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope)
             val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
             components.callGenerator = callGenerator
             declarationStorage.annotationGenerator = AnnotationGenerator(components)
+            for (firFile in firFiles) {
+                converter.processFileAndClassMembers(firFile)
+            }
+
             for (firFile in firFiles) {
                 val irFile = firFile.accept(fir2irVisitor, null) as IrFile
                 val fileEntry = sourceManager.getOrCreateFileEntry(firFile.psi as KtFile)
