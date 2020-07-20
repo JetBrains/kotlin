@@ -1697,6 +1697,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("deprecated.kt")
+        public void testDeprecated() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");
+        }
+
         @TestMetadata("jsHasMetadata.kt")
         public void testJsHasMetadata() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/jsHasMetadata.kt");
