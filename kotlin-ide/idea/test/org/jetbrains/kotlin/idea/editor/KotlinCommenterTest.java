@@ -1,20 +1,19 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.editor;
 
-import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.testFramework.EditorTestUtil;
+import kotlin.Unit;
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseKt;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.junit.internal.runners.JUnit38ClassRunner;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.SettingsConfigurator;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -54,17 +53,17 @@ public class KotlinCommenterTest extends KotlinLightCodeInsightTestCase {
     private void doLineCommentTest() throws Exception {
         configure();
 
-        CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(getProject());
-        try {
-            String text = getFile().getText();
-
-            SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(text, codeStyleSettings);
-            configurator.configureSettings();
-
-            executeAction("CommentByLineComment");
-        } finally {
-            codeStyleSettings.clearCodeStyleSettings();
-        }
+        KotlinLightCodeInsightFixtureTestCaseKt.configureCodeStyleAndRun(
+                getProject(),
+                settings -> {
+                    FormatSettingsUtil.createConfigurator(getFile().getText(), settings).configureSettings();
+                    return Unit.INSTANCE;
+                },
+                () -> {
+                    executeAction("CommentByLineComment");
+                    return Unit.INSTANCE;
+                }
+        );
 
         check();
     }
