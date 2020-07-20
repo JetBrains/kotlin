@@ -1689,6 +1689,24 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         }
     }
 
+    @TestMetadata("compiler/testData/ir/irText/firProblems")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FirProblems extends AbstractIrTextTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFirProblems() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("deprecated.kt")
+        public void testDeprecated() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/ir/irText/lambdas")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

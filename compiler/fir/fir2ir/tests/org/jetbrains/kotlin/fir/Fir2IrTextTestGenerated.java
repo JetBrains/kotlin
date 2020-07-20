@@ -1690,6 +1690,24 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/ir/irText/firProblems")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FirProblems extends AbstractFir2IrTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+        }
+
+        public void testAllFilesPresentInFirProblems() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("deprecated.kt")
+        public void testDeprecated() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/ir/irText/lambdas")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
