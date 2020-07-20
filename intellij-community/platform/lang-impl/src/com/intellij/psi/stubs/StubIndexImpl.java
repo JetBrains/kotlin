@@ -458,12 +458,16 @@ public final class StubIndexImpl extends StubIndexEx {
       IdFilter finalIdFilter = idFilter;
       myAccessValidator.validate(stubUpdatingIndexId, ()-> {
         // disable up-to-date check to avoid locks on attempt to acquire index write lock while holding at the same time the readLock for this index
+        //noinspection Convert2Lambda (workaround for JBR crash, JBR-2349)
         return FileBasedIndexImpl.disableUpToDateCheckIn(() -> ConcurrencyUtil.withLock(stubUpdatingIndex.getLock().readLock(), () ->
-          index.getData(dataKey).forEach((id, value) -> {
-            if (finalIdFilter == null || finalIdFilter.containsFileId(id)) {
-              result.add(id);
+          index.getData(dataKey).forEach(new ValueContainer.ContainerAction<Void>() {
+            @Override
+            public boolean perform(int id, Void value) {
+              if (finalIdFilter == null || finalIdFilter.containsFileId(id)) {
+                result.add(id);
+              }
+              return true;
             }
-            return true;
           })
         ));
       });
