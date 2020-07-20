@@ -337,6 +337,7 @@ signPublishedArtifacts.signatures.forEach {
 }
 
 uploadArchives {
+    dependsOn(signPublishedArtifacts)
     configuration = configurations.publishedArtifacts
 }
 
