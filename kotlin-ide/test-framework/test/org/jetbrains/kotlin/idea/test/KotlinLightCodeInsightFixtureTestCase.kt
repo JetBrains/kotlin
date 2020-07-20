@@ -23,10 +23,10 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiClassOwner
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.ProjectScope
 import com.intellij.testFramework.LightProjectDescriptor
@@ -320,11 +320,13 @@ fun configureCodeStyleAndRun(
 }
 
 fun enableKotlinOfficialCodeStyle(project: Project) {
-    KotlinStyleGuideCodeStyle.apply(CodeStyle.getSettings(project))
+    val settings = CodeStyleSettingsManager.getInstance(project).createTemporarySettings()
+    KotlinStyleGuideCodeStyle.apply(settings)
+    CodeStyle.setTemporarySettings(project, settings)
 }
 
 fun disableKotlinOfficialCodeStyle(project: Project) {
-    CodeStyle.getSettings(project)
+    CodeStyle.dropTemporarySettings(project)
 }
 
 fun runAll(
