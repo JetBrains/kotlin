@@ -60,9 +60,7 @@ class IfThenToElvisInspection @JvmOverloads constructor(
             val factory = KtPsiFactory(element)
 
             val commentSaver = CommentSaver(element, saveLineBreaks = false)
-            val margin = CodeStyle.getSettings(element.containingKtFile).defaultRightMargin
-
-
+            val margin = CodeStyle.getLanguageSettings(element.containingKtFile).RIGHT_MARGIN
             val elvis = runWriteAction {
                 val replacedBaseClause = ifThenToSelectData.replacedBaseClause(factory)
                 val negatedClause = ifThenToSelectData.negatedClause!!
