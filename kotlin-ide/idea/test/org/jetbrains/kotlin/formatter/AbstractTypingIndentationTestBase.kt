@@ -4,15 +4,14 @@
  */
 package org.jetbrains.kotlin.formatter
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.codeStyle.lineIndent.LineIndentProvider
 import com.intellij.testFramework.EditorTestUtil
-import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.formatter.KotlinLineIndentProvider
 import org.jetbrains.kotlin.idea.test.KotlinLightPlatformCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
@@ -47,22 +46,24 @@ abstract class AbstractTypingIndentationTestBase : KotlinLightPlatformCodeInsigh
             withoutCustomLineIndentProvider && ignoreFormatter
         )
 
-        try {
-            val configurator = FormatSettingsUtil.createConfigurator(originalFileText, CodeStyle.getSettings(project))
-            if (!inverted) {
-                configurator.configureSettings()
-            } else {
-                configurator.configureInvertedSettings()
+        configureCodeStyleAndRun(
+            project = project,
+            configurator = {
+                val configurator = FormatSettingsUtil.createConfigurator(originalFileText, it)
+                if (!inverted) {
+                    configurator.configureSettings()
+                } else {
+                    configurator.configureInvertedSettings()
+                }
+            },
+            body = {
+                doNewlineTest(
+                    originFilePath, afterFilePath,
+                    withoutCustomLineIndentProvider = withoutCustomLineIndentProvider,
+                    ignoreFormatter = ignoreFormatter
+                )
             }
-
-            doNewlineTest(
-                originFilePath, afterFilePath,
-                withoutCustomLineIndentProvider = withoutCustomLineIndentProvider,
-                ignoreFormatter = ignoreFormatter
-            )
-        } finally {
-            CodeStyle.getSettings(project).clearCodeStyleSettings()
-        }
+        )
     }
 
     private fun doNewlineTest(
