@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.idea.completion.handlers.isCharAt
 import org.jetbrains.kotlin.idea.completion.handlers.skipSpaces
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.moveCaret
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -245,13 +245,13 @@ class VariableOrParameterNameWithTypeCompletion(
                 }
             }
 
-            val settings = CodeStyle.getCustomSettings(context.file, KotlinCodeStyleSettings::class.java)
+            val settings = CodeStyle.getSettings(context.file).kotlinCustomSettings
             val spaceBefore = if (settings.SPACE_BEFORE_TYPE_COLON) " " else ""
             val spaceAfter = if (settings.SPACE_AFTER_TYPE_COLON) " " else ""
 
             val startOffset = context.startOffset
             if (shouldInsertType) {
-                val text = parameterName + spaceBefore + ":" + spaceAfter
+                val text = "$parameterName$spaceBefore:$spaceAfter"
                 context.document.insertString(startOffset, text)
 
                 // update start offset so that it does not include the text we inserted
