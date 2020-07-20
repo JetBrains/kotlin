@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.idea.perf
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.EditorTestUtil
-import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.jetbrains.kotlin.idea.testFramework.dispatchAllInvocationEvents
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -38,10 +36,9 @@ abstract class AbstractPerformanceTypingIndentationTest : KotlinLightCodeInsight
         val afterFilePath = "$testFileName.after$testFileExtension"
         val originalFileText = FileUtil.loadFile(testDataFile, true)
 
-        try {
-            val configurator = FormatSettingsUtil.createConfigurator(originalFileText, CodeStyle.getSettings(project))
-            configurator.configureSettings()
-
+        configureCodeStyleAndRun(
+            project,
+            configurator = { FormatSettingsUtil.createConfigurator(originalFileText, it).configureSettings() }) {
             performanceTest<Unit, Unit> {
                 name(testName)
                 stats(stats)
@@ -67,8 +64,6 @@ abstract class AbstractPerformanceTypingIndentationTest : KotlinLightCodeInsight
                     KotlinTestUtils.assertEqualsToFile(File(afterFilePath), actualTextWithCaret)
                 }
             }
-        } finally {
-            CodeStyle.getSettings(project).clearCodeStyleSettings()
         }
     }
 
