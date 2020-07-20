@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -156,7 +157,14 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
                 wrapper.parent = target.parent
 
                 val stringArrayType = backendContext.irBuiltIns.arrayClass.typeWith(backendContext.irBuiltIns.stringType)
-                val argsField = args?.let { wrapper.addField("args", stringArrayType) }
+                val argsField = args?.let {
+                    wrapper.addField {
+                        name = Name.identifier("args")
+                        type = stringArrayType
+                        visibility = Visibilities.PRIVATE
+                        origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
+                    }
+                }
 
                 wrapper.addFunction("invoke", backendContext.irBuiltIns.anyNType, isSuspend = true).also { invoke ->
                     val invokeToOverride = functionClass.functions.single()
