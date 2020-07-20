@@ -4,9 +4,6 @@ public final class CrossinlineKt$box$1$filter$$inlined$source$1$1 {
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
-    field L$3: java.lang.Object
-    field L$4: java.lang.Object
-    field L$5: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: CrossinlineKt$box$1$filter$$inlined$source$1
@@ -20,9 +17,6 @@ public final class CrossinlineKt$box$1$filter$$inlined$source$1$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1$1 {
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
-    field L$2: java.lang.Object
-    field L$3: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1
@@ -62,9 +56,6 @@ public final class CrossinlineKt$box$1$filter$$inlined$source$1 {
 public final class CrossinlineKt$box$1$fold$$inlined$consumeEach$1$1 {
     field L$0: java.lang.Object
     field L$1: java.lang.Object
-    field L$2: java.lang.Object
-    field L$3: java.lang.Object
-    field L$4: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: CrossinlineKt$box$1$fold$$inlined$consumeEach$1
@@ -93,9 +84,6 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$1 {
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
-    field L$3: java.lang.Object
-    field L$4: java.lang.Object
-    field L$5: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1
@@ -109,9 +97,6 @@ public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2$1 {
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
-    field L$2: java.lang.Object
-    field L$3: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$2
@@ -160,9 +145,6 @@ final class CrossinlineKt$box$1 {
     synthetic final field $res: kotlin.jvm.internal.Ref$IntRef
     field L$0: java.lang.Object
     field L$1: java.lang.Object
-    field L$2: java.lang.Object
-    field L$3: java.lang.Object
-    field L$4: java.lang.Object
     field label: int
     inner (anonymous) class CrossinlineKt$box$1
     method <init>(p0: kotlin.jvm.internal.Ref$IntRef, p1: kotlin.coroutines.Continuation): void
@@ -201,9 +183,6 @@ public final class CrossinlineKt$filter$$inlined$source$1$1 {
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field L$2: java.lang.Object
-    field L$3: java.lang.Object
-    field L$4: java.lang.Object
-    field L$5: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: CrossinlineKt$filter$$inlined$source$1
@@ -217,9 +196,6 @@ public final class CrossinlineKt$filter$$inlined$source$1$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class CrossinlineKt$filter$$inlined$source$1$lambda$1$1 {
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
-    field L$2: java.lang.Object
-    field L$3: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: CrossinlineKt$filter$$inlined$source$1$lambda$1
@@ -259,9 +235,6 @@ public final class CrossinlineKt$filter$$inlined$source$1 {
 public final class CrossinlineKt$fold$$inlined$consumeEach$1$1 {
     field L$0: java.lang.Object
     field L$1: java.lang.Object
-    field L$2: java.lang.Object
-    field L$3: java.lang.Object
-    field L$4: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: CrossinlineKt$fold$$inlined$consumeEach$1
@@ -289,10 +262,6 @@ public final class CrossinlineKt$fold$$inlined$consumeEach$1 {
 public final class CrossinlineKt$fold$1 {
     // source: 'crossinline.kt'
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
-    field L$2: java.lang.Object
-    field L$3: java.lang.Object
-    field L$4: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     inner (anonymous) class CrossinlineKt$fold$1
@@ -309,7 +278,6 @@ public final class CrossinlineKt$range$$inlined$source$1$1 {
     field L$1: java.lang.Object
     field L$2: java.lang.Object
     field L$3: java.lang.Object
-    field L$4: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: CrossinlineKt$range$$inlined$source$1

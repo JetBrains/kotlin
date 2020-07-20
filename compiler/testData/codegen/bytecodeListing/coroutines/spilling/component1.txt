@@ -2,7 +2,6 @@
 @kotlin.Metadata
 final class Component1Kt$test$1 {
     // source: 'component1.kt'
-    field L$0: java.lang.Object
     field label: int
     private synthetic field p$: Foo
     inner (anonymous) class Component1Kt$test$1

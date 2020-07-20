@@ -15,17 +15,18 @@ fun box(): String {
 
     builder {
         var shiftSlot: String = ""
-        // Initialize var with Int value
+        // Initialize var with String value
         try {
             var i: String = "abc"
             i = "123"
         } finally { }
 
         // This variable should take the same slot as 'i' had
-        var s: String
+        var s: String = "FAIL"
 
         // We shout not spill 's' to continuation field because it's not effectively initialized
         if (suspendHere() == "OK") {
+            println(s)
             s = "OK"
         }
         else {
@@ -45,5 +46,9 @@ fun box(): String {
 // 1 ALOAD 3\s+ATHROW
 /* 1 load in result = s */
 // 1 ALOAD 3\s+PUTFIELD kotlin/jvm/internal/Ref\$ObjectRef\.element
+/* 1 load in spill */
+// 1 ALOAD 3\s+PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1\.L\$0 : Ljava/lang/Object;
+/* 1 load in println(s) */
+// 1 ALOAD 3\s+INVOKEVIRTUAL java/io/PrintStream.println \(Ljava/lang/Object;\)V
 /* But no further load when spilling 's' to the continuation */
-// 2 ALOAD 3
+// 4 ALOAD 3

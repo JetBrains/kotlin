@@ -48,7 +48,6 @@ public final class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1 
 @kotlin.Metadata
 final class flow/InnerObjectRetransformationKt$check$1 {
     // source: 'innerObjectRetransformation.kt'
-    field L$0: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     inner (anonymous) class flow/InnerObjectRetransformationKt$check$1

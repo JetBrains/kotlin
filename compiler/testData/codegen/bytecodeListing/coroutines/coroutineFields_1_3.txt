@@ -44,7 +44,6 @@ final class CoroutineFieldsKt$box$1 {
     field J$0: long
     field L$0: java.lang.Object
     field L$1: java.lang.Object
-    field L$2: java.lang.Object
     field label: int
     private synthetic field p$: Controller
     inner (anonymous) class CoroutineFieldsKt$box$1
