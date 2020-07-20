@@ -19,6 +19,7 @@ fun test(list: List<Int>): List<Pair<IndexedValue<List<Int>>, IndexedValue<List<
             .minus(1)
             .minusElement(1)
             .onEach {}
+            .onEachIndexed { index, i -> }
             .plus(1)
             .plusElement(1)
             .requireNoNulls()
