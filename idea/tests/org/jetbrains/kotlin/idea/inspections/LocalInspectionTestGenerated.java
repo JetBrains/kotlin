@@ -1922,6 +1922,56 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/listOfNotNullWithComment.kt");
             }
 
+            @TestMetadata("mapMax.kt")
+            public void testMapMax() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapMax.kt");
+            }
+
+            @TestMetadata("mapMax2.kt")
+            public void testMapMax2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapMax2.kt");
+            }
+
+            @TestMetadata("mapMax3.kt")
+            public void testMapMax3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapMax3.kt");
+            }
+
+            @TestMetadata("mapMaxOrNull.kt")
+            public void testMapMaxOrNull() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapMaxOrNull.kt");
+            }
+
+            @TestMetadata("mapMaxOrNull2.kt")
+            public void testMapMaxOrNull2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapMaxOrNull2.kt");
+            }
+
+            @TestMetadata("mapMin.kt")
+            public void testMapMin() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapMin.kt");
+            }
+
+            @TestMetadata("mapMin2.kt")
+            public void testMapMin2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapMin2.kt");
+            }
+
+            @TestMetadata("mapMin3.kt")
+            public void testMapMin3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapMin3.kt");
+            }
+
+            @TestMetadata("mapMinOrNull.kt")
+            public void testMapMinOrNull() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapMinOrNull.kt");
+            }
+
+            @TestMetadata("mapMinOrNull2.kt")
+            public void testMapMinOrNull2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapMinOrNull2.kt");
+            }
+
             @TestMetadata("mapNotNull.kt")
             public void testMapNotNull() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapNotNull.kt");

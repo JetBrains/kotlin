@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 
@@ -100,8 +101,14 @@ class SimplifyCallChainFix(
             }
             callExpression?.moveFunctionLiteralOutsideParentheses()
         }
-        if (conversion.withNotNullAssertion) {
+        if (conversion.addNotNullAssertion) {
             result = result.replaced(factory.createExpressionByPattern("$0!!", result))
+        }
+        if (conversion.removeNotNullAssertion) {
+            val parent = result.parent
+            if (parent is KtPostfixExpression && parent.operationToken == KtTokens.EXCLEXCL) {
+                result = parent.replaced(result)
+            }
         }
 
         result.containingKtFile.commitAndUnblockDocument()

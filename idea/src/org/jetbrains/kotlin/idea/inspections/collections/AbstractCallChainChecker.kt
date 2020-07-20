@@ -73,17 +73,18 @@ abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
         @NonNls val secondFqName: String,
         @NonNls val replacement: String,
         @NonNls val additionalArgument: String? = null,
-        val withNotNullAssertion: Boolean = false,
+        val addNotNullAssertion: Boolean = false,
         val enableSuspendFunctionCall: Boolean = true,
+        val removeNotNullAssertion: Boolean = false,
         val replaceableLanguageVersion: LanguageVersion? = null
     ) {
         private fun String.convertToShort() = takeLastWhile { it != '.' }
 
         val id: ConversionId get() = ConversionId(firstName, secondName)
 
-        private val firstName = firstFqName.convertToShort()
+        val firstName = firstFqName.convertToShort()
 
-        private val secondName = secondFqName.convertToShort()
+        val secondName = secondFqName.convertToShort()
 
         fun withArgument(argument: String) = Conversion(firstFqName, secondFqName, replacement, argument)
     }
