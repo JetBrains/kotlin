@@ -106,10 +106,11 @@ class KotlinSmartEnterHandler : SmartEnterProcessorWithFixers() {
             val settings = CodeStyle.getLanguageSettings(file)
             val old = settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE
             settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = false
-            val elt = file.findElementAt(caretOffset - 1)!!.getStrictParentOfType<KtBlockExpression>()
+            val elt = file.findElementAt(caretOffset - 1)?.getStrictParentOfType<KtBlockExpression>()
             if (elt != null) {
                 reformat(elt)
             }
+
             settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = old
             editor.caretModel.moveToOffset(caretOffset - 1)
         }
