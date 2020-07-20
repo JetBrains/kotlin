@@ -219,13 +219,6 @@ private class FileColorsTableModel(val manager: FileColorManagerImpl) : Abstract
     onRowInserted(0)
   }
 
-  internal fun getScopes(): List<NamedScope> {
-    val list = mutableListOf<NamedScope>()
-    list += DependencyValidationManager.getInstance(manager.project).scopes
-    list += NamedScopeManager.getInstance(manager.project).scopes
-    return list.filter { it.value != null }
-  }
-
   internal fun getColors(): List<String> {
     val list = mutableListOf<String>()
     list += manager.colorNames
@@ -418,17 +411,28 @@ private class TableScopeRenderer(val manager: FileColorManagerImpl) : DefaultTab
   override fun getTableCellRendererComponent(table: JTable?, value: Any?,
                                              selected: Boolean, focused: Boolean, row: Int, column: Int): Component {
     val component = super.getTableCellRendererComponent(table, value, selected, focused, row, column)
-    val unknown = null == value?.toString()?.let { manager.model.getScopeColor(it, manager.project) }
+    val unknown = null == value?.toString()?.let { findScope(it, manager.project) }
     toolTipText = if (unknown) message("settings.file.colors.scope.unknown") else null
     icon = if (unknown) AllIcons.General.Error else null
     return component
   }
 }
 
+private fun getScopes(project: Project): List<NamedScope> {
+  val list = mutableListOf<NamedScope>()
+  list += DependencyValidationManager.getInstance(project).scopes
+  list += NamedScopeManager.getInstance(project).scopes
+  return list.filter { it.value != null }
+}
+
+private fun findScope(scopeName: String, project: Project) =
+  DependencyValidationManager.getInstance(project).scopes.find { it.name == scopeName }
+  ?: NamedScopeManager.getInstance(project).scopes.find { it.name == scopeName }
+
 // popup steps
 
 private class ScopeListPopupStep(val model: FileColorsTableModel)
-  : BaseListPopupStep<NamedScope>(null, model.getScopes()) {
+  : BaseListPopupStep<NamedScope>(null, getScopes(model.manager.project)) {
   override fun getTextFor(scope: NamedScope?) = scope?.name ?: ""
   override fun getIconFor(scope: NamedScope?) = scope?.icon
   override fun hasSubstep(selectedValue: NamedScope?) = true
