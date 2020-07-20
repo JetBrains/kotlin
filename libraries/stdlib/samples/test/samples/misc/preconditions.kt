@@ -28,6 +28,22 @@ class Preconditions {
     }
 
     @Sample
+    fun failRequireNotNullWithLazyMessage() {
+
+        fun execWithParams(params: Map<String, String?>) {
+            val required = requireNotNull(params["required"]) { "Required key must be non-null" } // returns a non-null value
+            println(required)
+            // ...
+        }
+
+        val params: MutableMap<String, String?> = mutableMapOf("required" to null)
+        assertFailsWith<IllegalArgumentException> { execWithParams(params) }
+
+        params["required"] = "non-empty-param"
+        execWithParams(params) // prints "non-empty-param"
+    }
+
+    @Sample
     fun failCheckWithLazyMessage() {
 
         var someState: String? = null
