@@ -7,6 +7,7 @@ import com.intellij.openapi.options.Configurable.NoScroll
 import com.intellij.ide.IdeBundle.message
 import com.intellij.ide.util.scopeChooser.EditScopesDialog
 import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.keymap.KeymapUtil.getShortcutsText
 import com.intellij.openapi.options.CheckBoxConfigurable
 import com.intellij.openapi.options.UnnamedConfigurable
 import com.intellij.openapi.project.Project
@@ -20,7 +21,9 @@ import com.intellij.psi.search.scope.packageSet.NamedScope
 import com.intellij.psi.search.scope.packageSet.NamedScopeManager
 import com.intellij.ui.ColorChooser.chooseColor
 import com.intellij.ui.ColorUtil.toHex
+import com.intellij.ui.CommonActionsPanel
 import com.intellij.ui.FileColorManager
+import com.intellij.ui.SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES
 import com.intellij.ui.ToolbarDecorator.createDecorator
 import com.intellij.ui.components.ActionLink
 import com.intellij.ui.components.panels.HorizontalLayout
@@ -323,6 +326,13 @@ private class FileColorsTableModel(val manager: FileColorManagerImpl) : Abstract
   override fun createComponent(): JComponent {
     val table = JBTable(this)
     table.emptyText.text = message("settings.file.colors.no.colors.specified")
+
+    table.emptyText.appendSecondaryText(message("settings.file.colors.add.colors.link"), LINK_PLAIN_ATTRIBUTES) {
+      val popup = JBPopupFactory.getInstance().createListPopup(ScopeListPopupStep(this))
+      popup.showInCenterOf(table)
+    }
+    val shortcut = getShortcutsText(CommonActionsPanel.getCommonShortcut(CommonActionsPanel.Buttons.ADD).shortcuts)
+    if (shortcut.isNotEmpty()) table.emptyText.appendText(" ($shortcut)")
 
     this.table = table
 
