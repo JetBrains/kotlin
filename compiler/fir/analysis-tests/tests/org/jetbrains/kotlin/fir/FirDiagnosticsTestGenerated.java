@@ -654,6 +654,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/safeCallOnTypeAlias.kt");
         }
 
+        @TestMetadata("superAny.kt")
+        public void testSuperAny() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/superAny.kt");
+        }
+
         @TestMetadata("syntheticPropertiesWrongImplicitReceiver.kt")
         public void testSyntheticPropertiesWrongImplicitReceiver() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/syntheticPropertiesWrongImplicitReceiver.kt");

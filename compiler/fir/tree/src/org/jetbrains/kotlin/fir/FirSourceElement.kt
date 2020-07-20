@@ -138,6 +138,10 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     // a ?: b --> when(val $subj = a) { .... }
     // where `val $subj = a` has a fake source
     object WhenGeneratedSubject : FirFakeSourceElementKind()
+
+    // super.foo() --> super<Supertype>.foo()
+    // where `Supertype` has a fake source
+    object SuperCallImplicitType : FirFakeSourceElementKind()
 }
 
 sealed class FirSourceElement {

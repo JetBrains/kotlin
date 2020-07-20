@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
-import kotlin.math.min
 
 open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
@@ -84,7 +82,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 qualifiedAccessExpression
             }
             is FirSuperReference -> {
-                transformSuperReceiver(callee, qualifiedAccessExpression)
+                transformSuperReceiver(callee, qualifiedAccessExpression, null)
             }
             is FirDelegateFieldReference -> {
                 val delegateFieldSymbol = callee.resolvedSymbol
@@ -126,7 +124,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
     fun transformSuperReceiver(
         superReference: FirSuperReference,
-        superReferenceContainer: FirQualifiedAccessExpression
+        superReferenceContainer: FirQualifiedAccessExpression,
+        containingCall: FirQualifiedAccess?
     ): FirQualifiedAccessExpression {
         val labelName = superReference.labelName
         val implicitReceiver =
@@ -146,21 +145,26 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             else -> {
                 val superTypeRefs = implicitReceiver?.boundSymbol?.phasedFir?.superTypeRefs
                 val resultType = when {
-                    superTypeRefs?.isNotEmpty() != true -> {
+                    superTypeRefs?.isNotEmpty() != true || containingCall == null -> {
                         buildErrorTypeRef {
                             source = superReferenceContainer.source
                             // NB: NOT_A_SUPERTYPE is reported by a separate checker
                             diagnostic = ConeStubDiagnostic(ConeSimpleDiagnostic("No super type", DiagnosticKind.Other))
                         }
                     }
-                    superTypeRefs.size == 1 -> {
-                        superTypeRefs.single()
-                    }
                     else -> {
-                        buildComposedSuperTypeRef {
-                            source = superReferenceContainer.source
-                            superTypeRefs.mapTo(this.superTypeRefs) { it as FirResolvedTypeRef }
-                        }
+                        val types = components.findTypesForSuperCandidates(superTypeRefs, containingCall)
+                        if (types.size == 1)
+                            buildResolvedTypeRef {
+                                source = superReferenceContainer.source?.fakeElement(FirFakeSourceElementKind.SuperCallImplicitType)
+                                type = types.single()
+                            }
+                        else
+                            buildErrorTypeRef {
+                                source = superReferenceContainer.source
+                                // NB: NOT_A_SUPERTYPE is reported by a separate checker
+                                diagnostic = ConeStubDiagnostic(ConeSimpleDiagnostic("Ambiguous supertype", DiagnosticKind.Other))
+                            }
                     }
                 }
                 superReferenceContainer.resultType = resultType
