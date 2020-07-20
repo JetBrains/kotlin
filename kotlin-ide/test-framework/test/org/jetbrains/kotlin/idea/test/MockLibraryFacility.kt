@@ -10,19 +10,27 @@ import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import java.io.File
 
 data class MockLibraryFacility(
-    val source: File,
+    val sources: List<File>,
     val attachSources: Boolean = true,
     val platform: KotlinCompilerStandalone.Platform = KotlinCompilerStandalone.Platform.Jvm(),
     val options: List<String> = emptyList(),
     val classpath: List<File> = emptyList()
 ) {
+    constructor(
+        source: File,
+        attachSources: Boolean = true,
+        platform: KotlinCompilerStandalone.Platform = KotlinCompilerStandalone.Platform.Jvm(),
+        options: List<String> = emptyList(),
+        classpath: List<File> = emptyList()
+    ) : this(listOf(source), attachSources, platform, options, classpath)
+
     companion object {
         const val MOCK_LIBRARY_NAME = "kotlinMockLibrary"
     }
 
     fun setUp(module: Module) {
         val libraryJar = KotlinCompilerStandalone(
-            listOf(source),
+            sources,
             platform = platform,
             options = options,
             classpath = classpath
@@ -34,7 +42,9 @@ data class MockLibraryFacility(
             addRoot("jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/", OrderRootType.CLASSES)
 
             if (attachSources) {
-                addRoot("file://" + FileUtilRt.toSystemIndependentName(source.absolutePath), OrderRootType.SOURCES)
+                for (source in sources) {
+                    addRoot("file://" + FileUtilRt.toSystemIndependentName(source.absolutePath), OrderRootType.SOURCES)
+                }
             }
         }
 
