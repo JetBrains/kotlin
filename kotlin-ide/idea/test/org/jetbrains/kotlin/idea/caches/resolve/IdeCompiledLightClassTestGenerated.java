@@ -36,6 +36,11 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         runTest("testData/compiler/asJava/lightClasses/AnnotatedParameterInInnerClassConstructor.kt");
     }
 
+    @TestMetadata("AnnotatedPropertyWithSites.kt")
+    public void testAnnotatedPropertyWithSites() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/AnnotatedPropertyWithSites.kt");
+    }
+
     @TestMetadata("AnnotationClass.kt")
     public void testAnnotationClass() throws Exception {
         runTest("testData/compiler/asJava/lightClasses/AnnotationClass.kt");
