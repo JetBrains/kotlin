@@ -35,6 +35,7 @@ public class Flags {
     // Constructors
 
     public static final BooleanFlagField IS_SECONDARY = FlagField.booleanAfter(VISIBILITY);
+    public static final BooleanFlagField IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES = FlagField.booleanAfter(IS_SECONDARY);
 
     // Callables
 
@@ -49,6 +50,7 @@ public class Flags {
     public static final BooleanFlagField IS_EXTERNAL_FUNCTION = FlagField.booleanAfter(IS_TAILREC);
     public static final BooleanFlagField IS_SUSPEND = FlagField.booleanAfter(IS_EXTERNAL_FUNCTION);
     public static final BooleanFlagField IS_EXPECT_FUNCTION = FlagField.booleanAfter(IS_SUSPEND);
+    public static final BooleanFlagField IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES = FlagField.booleanAfter(IS_EXPECT_FUNCTION);
 
     // Properties
 
@@ -115,11 +117,13 @@ public class Flags {
     public static int getConstructorFlags(
             boolean hasAnnotations,
             @NotNull ProtoBuf.Visibility visibility,
-            boolean isSecondary
+            boolean isSecondary,
+            boolean hasStableParameterNames
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility)
                | IS_SECONDARY.toFlags(isSecondary)
+               | IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES.toFlags(!hasStableParameterNames)
                 ;
     }
 
@@ -134,7 +138,8 @@ public class Flags {
             boolean isTailrec,
             boolean isExternal,
             boolean isSuspend,
-            boolean isExpect
+            boolean isExpect,
+            boolean hasStableParameterNames
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility)
@@ -147,6 +152,7 @@ public class Flags {
                | IS_EXTERNAL_FUNCTION.toFlags(isExternal)
                | IS_SUSPEND.toFlags(isSuspend)
                | IS_EXPECT_FUNCTION.toFlags(isExpect)
+               | IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.toFlags(!hasStableParameterNames)
                 ;
     }
 

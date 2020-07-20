@@ -958,7 +958,8 @@ private val CLASS_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
 )
 
 private val CONSTRUCTOR_FLAGS_MAP = VISIBILITY_FLAGS_MAP + mapOf(
-    Flag.Constructor.IS_PRIMARY to "/* primary */"
+    Flag.Constructor.IS_PRIMARY to "/* primary */",
+    Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES to "/* non-stable parameter names */"
 )
 
 private val FUNCTION_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
@@ -973,7 +974,9 @@ private val FUNCTION_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
     Flag.Function.IS_TAILREC to "tailrec",
     Flag.Function.IS_EXTERNAL to "external",
     Flag.Function.IS_SUSPEND to "suspend",
-    Flag.Function.IS_EXPECT to "expect"
+    Flag.Function.IS_EXPECT to "expect",
+
+    Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES to "/* non-stable parameter names */"
 )
 
 private val PROPERTY_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(

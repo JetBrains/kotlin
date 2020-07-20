@@ -310,7 +310,8 @@ class FirElementSerializer private constructor(
             simpleFunction?.isTailRec == true,
             simpleFunction?.isExternal == true,
             simpleFunction?.isSuspend == true,
-            simpleFunction?.isExpect == true
+            simpleFunction?.isExpect == true,
+            true // TODO: supply 'hasStableParameterNames' flag for metadata
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -439,7 +440,8 @@ class FirElementSerializer private constructor(
         val flags = Flags.getConstructorFlags(
             constructor.nonSourceAnnotations(session).isNotEmpty(),
             ProtoEnumFlags.visibility(normalizeVisibility(constructor)),
-            !constructor.isPrimary
+            !constructor.isPrimary,
+            true // TODO: supply 'hasStableParameterNames' flag for metadata
         )
         if (flags != builder.flags) {
             builder.flags = flags

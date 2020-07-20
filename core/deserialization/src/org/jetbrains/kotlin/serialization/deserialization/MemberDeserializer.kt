@@ -272,6 +272,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             ProtoEnumFlags.memberKind(Flags.MEMBER_KIND.get(flags)), proto, c.nameResolver, c.typeTable, versionRequirementTable,
             c.containerSource
         )
+
         val local = c.childContext(function, proto.typeParameterList)
 
         function.initializeWithCoroutinesExperimentalityStatus(
@@ -294,6 +295,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         function.isTailrec = Flags.IS_TAILREC.get(flags)
         function.isSuspend = Flags.IS_SUSPEND.get(flags)
         function.isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
+        function.setHasStableParameterNames(!Flags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.get(flags))
 
         val mapValueForContract =
             c.components.contractDeserializer.deserializeContractFromFunction(proto, function, c.typeTable, local.typeDeserializer)
@@ -337,12 +339,15 @@ class MemberDeserializer(private val c: DeserializationContext) {
             isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver, c.typeTable, c.versionRequirementTable,
             c.containerSource
         )
+
         val local = c.childContext(descriptor, listOf())
         descriptor.initialize(
             local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
             ProtoEnumFlags.visibility(Flags.VISIBILITY.get(proto.flags))
         )
         descriptor.returnType = classDescriptor.defaultType
+
+        descriptor.setHasStableParameterNames(!Flags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES.get(proto.flags))
 
         val doesClassContainIncompatibility =
             (c.containingDeclaration as? DeserializedClassDescriptor)

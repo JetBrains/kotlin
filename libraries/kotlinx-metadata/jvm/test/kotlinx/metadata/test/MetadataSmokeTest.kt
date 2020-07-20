@@ -9,7 +9,7 @@ import kotlinx.metadata.*
 import kotlinx.metadata.jvm.*
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Test
 import java.net.URLClassLoader
 import kotlin.coroutines.CoroutineContext
@@ -168,5 +168,39 @@ class MetadataSmokeTest {
             )
         ) as KotlinClassMetadata.SyntheticClass
         metadata.accept(KmLambda())
+    }
+
+    @Test
+    fun unstableParameterNames() {
+        @Suppress("unused")
+        class Test(a: String, b: Int, c: Boolean) {
+            fun foo(a: String, b: Int, c: Boolean) = Unit
+        }
+
+        val classWithStableParameterNames =
+            (KotlinClassMetadata.read(Test::class.java.readMetadata()) as KotlinClassMetadata.Class).toKmClass()
+
+        classWithStableParameterNames.constructors.forEach { assertFalse(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
+        classWithStableParameterNames.functions.forEach { assertFalse(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
+
+        val newMetadata = KotlinClassMetadata.Class.Writer().let { writer ->
+            KmClass().apply {
+                classWithStableParameterNames.accept(
+                    object : KmClassVisitor(this) {
+                        override fun visitConstructor(flags: Flags) =
+                            super.visitConstructor(flags + flagsOf(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES))
+
+                        override fun visitFunction(flags: Flags, name: String) =
+                            super.visitFunction(flags + flagsOf(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES), name)
+                    }
+                )
+            }.accept(writer)
+            writer.write()
+        }
+
+        val classWithUnstableParameterNames = newMetadata.toKmClass()
+
+        classWithUnstableParameterNames.constructors.forEach { assertTrue(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
+        classWithUnstableParameterNames.functions.forEach { assertTrue(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
     }
 }

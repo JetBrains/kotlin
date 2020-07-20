@@ -120,6 +120,7 @@ class DeserializedSimpleFunctionDescriptor(
             newOwner, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind,
             proto, nameResolver, typeTable, versionRequirementTable, containerSource, source
         ).also {
+            it.setHasStableParameterNames(hasStableParameterNames())
             it.coroutinesExperimentalCompatibilityMode = coroutinesExperimentalCompatibilityMode
         }
     }
@@ -209,7 +210,10 @@ class DeserializedClassConstructorDescriptor(
         return DeserializedClassConstructorDescriptor(
             newOwner as ClassDescriptor, original as ConstructorDescriptor?, annotations, isPrimary, kind,
             proto, nameResolver, typeTable, versionRequirementTable, containerSource, source
-        ).also { it.coroutinesExperimentalCompatibilityMode = coroutinesExperimentalCompatibilityMode }
+        ).also {
+            it.setHasStableParameterNames(hasStableParameterNames())
+            it.coroutinesExperimentalCompatibilityMode = coroutinesExperimentalCompatibilityMode
+        }
     }
 
     override fun isExternal(): Boolean = false

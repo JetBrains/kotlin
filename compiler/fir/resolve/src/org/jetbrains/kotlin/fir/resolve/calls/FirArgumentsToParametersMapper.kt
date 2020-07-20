@@ -264,7 +264,9 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
     private val FirExpression.argumentName: Name?
         get() = (this as? FirNamedArgumentExpression)?.name
 
-    // TODO: handle java functions
+    // TODO: handle functions with non-stable parameter names, see also
+    //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
+    //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
     private val FirFunction<*>.hasStableParameterNames: Boolean
         get() = true
 }

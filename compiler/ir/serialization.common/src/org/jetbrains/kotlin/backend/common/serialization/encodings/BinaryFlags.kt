@@ -74,10 +74,10 @@ inline class FunctionFlags(val flags: Long) {
                 val modality = ProtoEnumFlags.modality(modality)
                 val kind = if (isFakeOverride) ProtoBuf.MemberKind.FAKE_OVERRIDE else ProtoBuf.MemberKind.DECLARATION
 
-
                 val flags = IrFlags.getFunctionFlags(
                     hasAnnotation, visibility, modality, kind,
-                    isOperator, isInfix, isInline, isTailrec, isExternal, isSuspend, isExpect
+                    isOperator, isInfix, isInline, isTailrec, isExternal, isSuspend, isExpect,
+                    true // hasStableParameterNames does not make sense for Ir, just pass the default value
                 )
 
                 return flags.toLong()
