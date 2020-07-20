@@ -23,3 +23,4 @@ fun CodeStyleSettings.kotlinCodeStyleDefaults(): String? = kotlinCustomSettings.
 
 val PsiFile.kotlinCommonSettings: KotlinCommonCodeStyleSettings get() = CodeStyle.getSettings(this).kotlinCommonSettings
 val PsiFile.kotlinCustomSettings: KotlinCodeStyleSettings get() = CodeStyle.getSettings(this).kotlinCustomSettings
+val PsiFile.rightMarginOrDefault: Int get() = CodeStyle.getSettings(this).getRightMargin(KotlinLanguage.INSTANCE)

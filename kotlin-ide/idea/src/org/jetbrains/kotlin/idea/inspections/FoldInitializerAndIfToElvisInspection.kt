@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
-import org.jetbrains.kotlin.idea.formatter.kotlinCommonSettings
+import org.jetbrains.kotlin.idea.formatter.rightMarginOrDefault
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.elvisPattern
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.fromIfKeywordToRightParenthesisTextRangeInThis
@@ -85,7 +85,7 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
             val commentSaver = CommentSaver(childRangeBefore)
             val childRangeAfter = childRangeBefore.withoutLastStatement()
 
-            val margin = element.containingKtFile.kotlinCommonSettings.RIGHT_MARGIN
+            val margin = element.containingKtFile.rightMarginOrDefault
             val declarationTextLength = declaration.text.split("\n").lastOrNull()?.trim()?.length ?: 0
             val pattern = elvisPattern(declarationTextLength + ifNullExpr.textLength + 5 >= margin || element.then?.hasComments() == true)
 
