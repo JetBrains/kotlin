@@ -21,6 +21,7 @@ object Versions {
 
     object KOTLINX {
         val KOTLINX_HTML: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("0.7.1-$kotlinVersion") }
+        val KOTLINX_NODEJS: Version = version("0.0.3")
     }
 
     object JS_WRAPPERS {

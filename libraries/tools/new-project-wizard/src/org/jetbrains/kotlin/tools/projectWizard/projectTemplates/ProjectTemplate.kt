@@ -77,7 +77,8 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             MultiplatformLibraryProjectTemplate,
             NativeApplicationProjectTemplate,
             FrontendApplicationProjectTemplate,
-            FullStackWebApplicationProjectTemplate
+            FullStackWebApplicationProjectTemplate,
+            NodeJsApplicationProjectTemplate
         )
 
         fun byId(id: String): ProjectTemplate? = ALL.firstOrNull {
@@ -290,7 +291,7 @@ object FrontendApplicationProjectTemplate : ProjectTemplate() {
             KotlinPlugin::modules withValue listOf(
                 Module(
                     "frontend",
-                    JsSingleplatformModuleConfigurator,
+                    BrowserJsSinglePlatformModuleConfigurator,
                     template = SimpleJsClientTemplate(),
                     sourcesets = SourcesetType.ALL.map { type ->
                         Sourceset(type, dependencies = emptyList())
@@ -390,6 +391,31 @@ object MultiplatformMobileLibraryProjectTemplate : ProjectTemplate() {
                             emptyList()
                         )
                     )
+                )
+            )
+        )
+}
+
+object NodeJsApplicationProjectTemplate : ProjectTemplate() {
+    override val title = KotlinNewProjectWizardBundle.message("project.template.nodejs.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.nodejs.description")
+    override val id = "nodejsApplication"
+
+    @NonNls
+    override val suggestedProjectName = "myKotlinJsApplication"
+    override val projectKind = ProjectKind.Js
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin::modules withValue listOf(
+                Module(
+                    "nodejsApp",
+                    NodeJsSinglePlatformModuleConfigurator,
+                    template = SimpleNodeJsTemplate(),
+                    sourcesets = SourcesetType.ALL.map { type ->
+                        Sourceset(type, dependencies = emptyList())
+                    },
+                    subModules = emptyList()
                 )
             )
         )
