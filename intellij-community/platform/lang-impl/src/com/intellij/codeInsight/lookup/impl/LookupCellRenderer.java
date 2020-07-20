@@ -489,6 +489,10 @@ public final class LookupCellRenderer implements ListCellRenderer<LookupElement>
     updateLookupWidth(element, fastPresentation);
     AsyncRendering.rememberPresentation(element, fastPresentation);
 
+    updateItemPresentation(element);
+  }
+
+  void updateItemPresentation(@NotNull LookupElement element){
     LookupElementRenderer<? extends LookupElement> renderer = element.getExpensiveRenderer();
     if (renderer != null) {
       myAsyncRendering.scheduleRendering(element, renderer);
