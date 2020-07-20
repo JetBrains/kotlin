@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -85,7 +85,7 @@ class FoldInitializerAndIfToElvisInspection : AbstractApplicabilityBasedInspecti
             val commentSaver = CommentSaver(childRangeBefore)
             val childRangeAfter = childRangeBefore.withoutLastStatement()
 
-            val margin = CodeStyle.getSettings(element.containingKtFile).defaultRightMargin
+            val margin = CodeStyle.getLanguageSettings(element.containingKtFile).RIGHT_MARGIN
             val declarationTextLength = declaration.text.split("\n").lastOrNull()?.trim()?.length ?: 0
             val pattern = elvisPattern(declarationTextLength + ifNullExpr.textLength + 5 >= margin || element.then?.hasComments() == true)
 
