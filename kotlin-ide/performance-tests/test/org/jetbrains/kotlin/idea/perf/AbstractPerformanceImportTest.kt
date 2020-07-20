@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.perf
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.LightProjectDescriptor
@@ -48,7 +47,7 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
             var file = fixture.file as KtFile
 
             var fileText = file.text
-            val codeStyleSettings = CodeStyle.getSettings(file).kotlinCustomSettings
+            val codeStyleSettings = file.kotlinCustomSettings
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(
                 fileText,
                 "// NAME_COUNT_TO_USE_STAR_IMPORT:"

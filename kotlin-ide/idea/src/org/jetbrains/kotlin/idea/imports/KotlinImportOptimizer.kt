@@ -260,7 +260,7 @@ class KotlinImportOptimizer : ImportOptimizer {
         }
 
         fun prepareOptimizedImports(file: KtFile, data: OptimizedImportsBuilder.InputData): List<ImportPath>? {
-            val settings = CodeStyle.getSettings(file).kotlinCustomSettings
+            val settings = file.kotlinCustomSettings
             val options = OptimizedImportsBuilder.Options(
                 settings.NAME_COUNT_TO_USE_STAR_IMPORT,
                 settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS,

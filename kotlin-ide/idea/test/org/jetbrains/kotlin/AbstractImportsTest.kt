@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.core.formatter.KotlinPackageEntry
@@ -44,7 +43,7 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
             }
 
             val fileText = file.text
-            val codeStyleSettings = CodeStyle.getSettings(file).kotlinCustomSettings
+            val codeStyleSettings = file.kotlinCustomSettings
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(
                 fileText,
                 "// NAME_COUNT_TO_USE_STAR_IMPORT:"

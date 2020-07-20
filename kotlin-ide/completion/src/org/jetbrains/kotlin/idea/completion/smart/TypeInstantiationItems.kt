@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.completion.smart
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
@@ -34,12 +33,12 @@ import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.util.constructors
@@ -187,7 +186,7 @@ class TypeInstantiationItems(
             insertHandler = InsertHandler<LookupElement> { context, _ ->
                 val startOffset = context.startOffset
 
-                val settings = CodeStyle.getSettings(context.file).kotlinCustomSettings
+                val settings = context.file.kotlinCustomSettings
                 val spaceBefore = if (settings.SPACE_BEFORE_EXTEND_COLON) " " else ""
                 val spaceAfter = if (settings.SPACE_AFTER_EXTEND_COLON) " " else ""
                 val text1 = "object$spaceBefore:$spaceAfter$typeText"

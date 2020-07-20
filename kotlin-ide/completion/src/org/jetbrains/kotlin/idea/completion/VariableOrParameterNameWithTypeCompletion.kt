@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.codeInsight.lookup.*
@@ -245,7 +244,7 @@ class VariableOrParameterNameWithTypeCompletion(
                 }
             }
 
-            val settings = CodeStyle.getSettings(context.file).kotlinCustomSettings
+            val settings = context.file.kotlinCustomSettings
             val spaceBefore = if (settings.SPACE_BEFORE_TYPE_COLON) " " else ""
             val spaceAfter = if (settings.SPACE_AFTER_TYPE_COLON) " " else ""
 
