@@ -225,11 +225,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(operatorCall) {
-            default("typeRef", "FirImplicitTypeRefImpl(null)")
-            useTypes(implicitTypeRefType)
-        }
-
         impl(comparisonExpression) {
             default("typeRef", "FirImplicitBooleanTypeRef(null)")
             useTypes(implicitBooleanTypeRefType)

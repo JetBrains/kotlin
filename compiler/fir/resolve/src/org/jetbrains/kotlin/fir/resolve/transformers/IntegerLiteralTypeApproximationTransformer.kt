@@ -119,10 +119,6 @@ class IntegerLiteralTypeApproximationTransformer(
         }.compose()
     }
 
-    override fun transformOperatorCall(operatorCall: FirOperatorCall, data: ConeKotlinType?): CompositeTransformResult<FirStatement> {
-        return operatorCall.compose()
-    }
-
     // TODO: call outside
     override fun transformTypeOperatorCall(
         typeOperatorCall: FirTypeOperatorCall,

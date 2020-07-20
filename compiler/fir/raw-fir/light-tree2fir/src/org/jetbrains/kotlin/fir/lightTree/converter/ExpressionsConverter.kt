@@ -378,14 +378,7 @@ class ExpressionsConverter(
                     explicitReceiver = getAsFirExpression(argument, "No operand")
                 }
             }
-            else -> {
-                val firOperation = operationToken.toFirOperation()
-                buildOperatorCall {
-                    source = unaryExpression.toFirSourceElement()
-                    operation = firOperation
-                    argumentList = buildUnaryArgumentList(getAsFirExpression<FirExpression>(argument, "No operand"))
-                }
-            }
+            else -> throw IllegalStateException("Unexpected expression: ${unaryExpression.asText}")
         }
     }
 

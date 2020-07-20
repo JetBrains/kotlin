@@ -839,9 +839,6 @@ class Fir2IrVisitor(
     override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: Any?): IrElement =
         operatorGenerator.convertComparisonExpression(comparisonExpression)
 
-    override fun visitOperatorCall(operatorCall: FirOperatorCall, data: Any?): IrElement =
-        operatorGenerator.convertOperatorCall(operatorCall)
-
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Any?): IrElement {
         return stringConcatenationCall.convertWithOffsets { startOffset, endOffset ->
             IrStringConcatenationImpl(

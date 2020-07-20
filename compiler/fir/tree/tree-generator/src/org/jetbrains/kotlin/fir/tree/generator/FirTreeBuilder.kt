@@ -83,7 +83,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val argumentList = element("ArgumentList", Expression)
     val call = element("Call", Expression, statement) // TODO: may smth like `CallWithArguments` or `ElementWithArguments`?
     val annotationCall = element("AnnotationCall", Expression, expression, call)
-    val operatorCall = element("OperatorCall", Expression, expression, call)
     val comparisonExpression = element("ComparisonExpression", Expression, expression)
     val typeOperatorCall = element("TypeOperatorCall", Expression, expression, call)
     val assignmentOperatorStatement = element("AssignmentOperatorStatement", Expression, statement)

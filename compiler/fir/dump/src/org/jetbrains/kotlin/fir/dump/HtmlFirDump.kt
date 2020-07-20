@@ -1331,20 +1331,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         generate(second)
     }
 
-    private fun FlowContent.generateUnary(expression: FirOperatorCall) {
-        unresolved { +expression.operation.operator }
-        ws
-        generate(expression.argument)
-    }
-
-    private fun FlowContent.generate(expression: FirOperatorCall) {
-        when (expression.arguments.size) {
-            1 -> generateUnary(expression)
-            2 -> generateBinary(expression.arguments[0], expression.arguments[1], expression.operation)
-            else -> inlineUnsupported(expression)
-        }
-    }
-
     private fun FlowContent.generate(typeOperatorCall: FirTypeOperatorCall) {
         generate(typeOperatorCall.argument)
         ws
@@ -1569,7 +1555,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     generate(expression.expression)
                 }
                 is FirTypeOperatorCall -> generate(expression)
-                is FirOperatorCall -> generate(expression)
                 is FirAssignmentOperatorStatement -> generateBinary(expression.leftArgument, expression.rightArgument, expression.operation)
                 is FirEqualityOperatorCall -> generate(expression)
                 is FirBinaryLogicExpression -> generate(expression)

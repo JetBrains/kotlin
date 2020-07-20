@@ -1081,16 +1081,6 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         visitCall(functionCall)
     }
 
-    override fun visitOperatorCall(operatorCall: FirOperatorCall) {
-        operatorCall.annotations.renderAnnotations()
-        print(operatorCall.operation.operator)
-        if (operatorCall is FirTypeOperatorCall) {
-            print("/")
-            operatorCall.conversionTypeRef.accept(this)
-        }
-        visitCall(operatorCall)
-    }
-
     override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression) {
         print("CMP(${comparisonExpression.operation.operator}, ")
         comparisonExpression.compareToCall.accept(this)

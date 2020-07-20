@@ -429,10 +429,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return result.compose()
     }
 
-    override fun transformOperatorCall(operatorCall: FirOperatorCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        throw IllegalArgumentException(operatorCall.render())
-    }
-
     private inline fun <T> resolveCandidateForAssignmentOperatorCall(block: () -> T): T {
         return dataFlowAnalyzer.withIgnoreFunctionCalls {
             callResolver.withNoArgumentsTransform {

@@ -222,7 +222,6 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             expression.operationReference.let {
                 expression.allOfTypeWithLocalReplace<FirFunctionCall>(it) { this.calleeReference.name.asString() }
                     ?: expression.firstOfTypeWithLocalReplace<FirVariableAssignment>(it) { this.lValue.toString() }
-                    ?: expression.firstOfTypeWithRender<FirOperatorCall>(it)
             }
             super.visitBinaryExpression(expression)
         }
@@ -390,10 +389,6 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             } else {
                 data.append("[ERROR : ${delegatedConstructorCall.constructedTypeRef.render()}]")
             }
-        }
-
-        override fun visitOperatorCall(operatorCall: FirOperatorCall, data: StringBuilder) {
-            data.append("operator call ${operatorCall.operation}")
         }
 
         override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: StringBuilder) {

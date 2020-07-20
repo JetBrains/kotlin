@@ -34,13 +34,6 @@ internal class OperatorExpressionGenerator(
         }
     }
 
-    fun convertOperatorCall(operatorCall: FirOperatorCall): IrExpression {
-        return when (val operation = operatorCall.operation) {
-            FirOperation.EXCL -> visitor.convertToIrExpression(operatorCall.arguments[0]).negate(IrStatementOrigin.EXCL)
-            else -> error("Unexpected operation: $operation")
-        }
-    }
-
     fun convertEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall): IrExpression {
         return equalityOperatorCall.convertWithOffsets { startOffset, endOffset ->
             generateEqualityOperatorCall(startOffset, endOffset, equalityOperatorCall.operation, equalityOperatorCall.arguments)

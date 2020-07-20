@@ -207,10 +207,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("calleeReference", namedReference)
         }
 
-        operatorCall.configure {
-            +field("operation", operationType)
-        }
-
         comparisonExpression.configure {
             +field("operation", operationType)
             +field("compareToCall", functionCall)
