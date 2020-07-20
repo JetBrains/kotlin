@@ -97,7 +97,7 @@ class MobileAppRunConfiguration(project: Project, factory: ConfigurationFactory,
     override fun isSuitable(module: Module): Boolean = module.isMobileAppMain
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
-        MobileRunConfigurationEditor(project, helper, ::isSuitable)
+        MobileRunConfigurationEditor(project, ::isSuitable)
 
     override fun createOtherState(environment: ExecutionEnvironment): CommandLineState {
         return AndroidAppCommandLineState(this, environment)

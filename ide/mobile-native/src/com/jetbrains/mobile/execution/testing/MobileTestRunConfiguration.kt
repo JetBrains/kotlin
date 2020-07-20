@@ -56,7 +56,7 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     override fun createOtherState(environment: ExecutionEnvironment): CommandLineState = AndroidTestCommandLineState(this, environment)
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
-        MobileTestRunConfigurationEditor(project, helper, ::isSuitable)
+        MobileTestRunConfigurationEditor(project, ::isSuitable)
 
     override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher =
         AppleXCTestLauncher(this, environment, environment.executionTarget as AppleDevice)
