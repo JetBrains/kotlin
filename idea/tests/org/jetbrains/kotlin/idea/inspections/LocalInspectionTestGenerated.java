@@ -1932,6 +1932,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapNotNullWithSuspendFunctionCall.kt");
             }
 
+            @TestMetadata("mapSum.kt")
+            public void testMapSum() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapSum.kt");
+            }
+
+            @TestMetadata("mapSum2.kt")
+            public void testMapSum2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapSum2.kt");
+            }
+
             @TestMetadata("mapWithReturn.kt")
             public void testMapWithReturn() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCallChain/mapWithReturn.kt");

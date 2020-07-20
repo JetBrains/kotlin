@@ -117,6 +117,9 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
             Conversion("kotlin.collections.map", "kotlin.collections.joinTo", "joinTo", enableSuspendFunctionCall = false),
             Conversion("kotlin.collections.map", "kotlin.collections.joinToString", "joinToString", enableSuspendFunctionCall = false),
             Conversion("kotlin.collections.map", "kotlin.collections.filterNotNull", "mapNotNull"),
+            Conversion(
+                "kotlin.collections.map", "kotlin.collections.sum", "sumOf", replaceableLanguageVersion = LanguageVersion.KOTLIN_1_4
+            ),
 
             Conversion("kotlin.collections.listOf", "kotlin.collections.filterNotNull", "listOfNotNull")
         ).map {
