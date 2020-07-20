@@ -20,23 +20,9 @@ abstract class KotlinAbstractHintsProvider<T : Any> : InlayHintsProvider<T> {
 
     override val key: SettingsKey<T> = SettingsKey(this::class.simpleName!!)
     override val previewText: String? = ""
+    open val hintsArePlacedAtTheEndOfLine = false
 
     abstract fun isElementSupported(resolved: HintType?, settings: T): Boolean
-
-    /**
-     * By default [PresentationAndSettings] go directly to the [sink] and later are handled by the outer infrastructure.
-     * The thing is that for lambdas this approach doesn't work: user shouldn't be able to place the caret behind a hint.
-     * Therefore [KotlinLambdasHintsProvider] provides its own "crutch" implementation.
-     */
-    protected open fun handlePresentations(
-        presentations: List<PresentationAndSettings>,
-        editor: Editor,
-        sink: InlayHintsSink
-    ) {
-        presentations.forEach { p ->
-            sink.addInlineElement(p.offset, p.relatesToPrecedingText, p.presentation)
-        }
-    }
 
     override fun getCollectorFor(file: PsiFile, editor: Editor, settings: T, sink: InlayHintsSink): InlayHintsCollector? {
         return object : FactoryInlayHintsCollector(editor) {
@@ -44,9 +30,12 @@ abstract class KotlinAbstractHintsProvider<T : Any> : InlayHintsProvider<T> {
                 val resolved = HintType.resolve(element) ?: return true
                 if (!isElementSupported(resolved, settings)) return true
 
-                val presentations = resolved.provideHints(element).mapNotNull { info -> convert(info, editor.project) }
-                if (presentations.isNotEmpty())
-                    handlePresentations(presentations, editor, sink)
+                resolved.provideHints(element)
+                        .mapNotNull { info -> convert(info, editor.project) }
+                        .forEach { p ->
+                            sink.addInlineElement(p.offset, p.relatesToPrecedingText, p.presentation, hintsArePlacedAtTheEndOfLine)
+                        }
+
                 return true
             }
 
