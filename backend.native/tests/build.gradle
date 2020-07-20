@@ -4428,6 +4428,18 @@ task metadata_compare_typedefs(type: MetadataComparisonTest) {
     defFile = "interop/basics/typedefs.def"
 }
 
+standaloneTest("local_ea_arraysfieldwrite") {
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    goldValue = "Array (constructor init):\nSize: 2\nContents: [1, 2]\n" +
+            "Array (constructor init):\nSize: 2\nContents: [3, 4]\n" +
+            "Array (default value init):\nSize: 2\nContents: [1, 2]\n" +
+            "Array (default value init):\nSize: 2\nContents: [3, 4]\n" +
+            "Array (init block):\nSize: 2\nContents: [1, 2]\n" +
+            "Array (init block):\nSize: 2\nContents: [3, 4]\n"
+    flags = ["-opt"]
+    source = "codegen/localEscapeAnalysis/arraysFieldWrite.kt"
+}
+
 /**
  * Creates tasks to build and execute stdlib tests.
  */
