@@ -5,6 +5,7 @@ package org.jetbrains.dokka
 import org.jetbrains.dokka.utilities.toJsonString
 import org.jetbrains.dokka.utilities.parseJson
 import java.io.File
+import java.io.Serializable
 import java.net.URL
 
 object DokkaDefaults {
@@ -53,7 +54,7 @@ enum class Platform(val key: String) {
 data class DokkaSourceSetID(
     val moduleName: String,
     val sourceSetName: String
-) {
+) : Serializable {
     override fun toString(): String {
         return "$moduleName/$sourceSetName"
     }
@@ -67,7 +68,7 @@ fun DokkaConfiguration.toJsonString(): String {
     return toJsonString(this)
 }
 
-interface DokkaConfiguration {
+interface DokkaConfiguration : Serializable {
     val outputDir: String
     val cacheRoot: String?
     val offlineMode: Boolean
@@ -77,7 +78,7 @@ interface DokkaConfiguration {
     val pluginsClasspath: List<File>
     val pluginsConfiguration: Map<String, String>
 
-    interface DokkaSourceSet {
+    interface DokkaSourceSet: Serializable {
         val sourceSetID: DokkaSourceSetID
         val displayName: String
         val moduleDisplayName: String
@@ -103,23 +104,23 @@ interface DokkaConfiguration {
         val analysisPlatform: Platform
     }
 
-    interface SourceRoot {
+    interface SourceRoot: Serializable {
         val path: String
     }
 
-    interface SourceLinkDefinition {
+    interface SourceLinkDefinition: Serializable {
         val path: String
         val url: String
         val lineSuffix: String?
     }
 
-    interface DokkaModuleDescription {
+    interface DokkaModuleDescription : Serializable {
         val name: String
         val path: String
         val docFile: String
     }
 
-    interface PackageOptions {
+    interface PackageOptions : Serializable{
         val prefix: String
         val includeNonPublic: Boolean
         val reportUndocumented: Boolean?
@@ -127,7 +128,7 @@ interface DokkaConfiguration {
         val suppress: Boolean
     }
 
-    interface ExternalDocumentationLink {
+    interface ExternalDocumentationLink : Serializable {
         val url: URL
         val packageListUrl: URL
 
