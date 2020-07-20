@@ -12,5 +12,6 @@ class A {
     }
 }
 
+// MAIN_CLASS: inlineFunctionInnerClass.InlineFunctionInnerClassKt
 // FILE: inlineFunctionFile.kt
 // LINE: 4

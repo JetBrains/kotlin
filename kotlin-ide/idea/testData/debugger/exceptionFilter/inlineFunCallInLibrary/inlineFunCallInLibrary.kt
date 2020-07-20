@@ -6,6 +6,6 @@ fun box() {
     call()
 }
 
-// WITH_MOCK_LIBRARY: true
+// MAIN_CLASS: inlineFunCallInLibrary.InlineFunCallInLibraryKt
 // FILE: inlineFunInLibrary.kt
 // LINE: 4

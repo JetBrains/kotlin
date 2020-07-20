@@ -8,6 +8,6 @@ fun box() {
     }
 }
 
-// WITH_MOCK_LIBRARY: true
+// MAIN_CLASS: inlineFunFromLibrary.InlineFunFromLibraryKt
 // FILE: inlineFunInLibrary.kt
 // LINE: 4

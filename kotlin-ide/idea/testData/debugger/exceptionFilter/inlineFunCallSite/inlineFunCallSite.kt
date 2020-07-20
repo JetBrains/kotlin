@@ -7,6 +7,7 @@ inline fun foo() {
     null!!
 }
 
+// MAIN_CLASS: InlineFunCallSiteKt
 // NAVIGATE_TO_CALL_SITE
 // FILE: inlineFunCallSite.kt
 // LINE: 2

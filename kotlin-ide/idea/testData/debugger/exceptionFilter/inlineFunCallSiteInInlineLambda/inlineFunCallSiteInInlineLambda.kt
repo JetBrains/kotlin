@@ -12,6 +12,7 @@ inline fun bar(x: () -> Unit) {
     x()
 }
 
+// MAIN_CLASS: InlineFunCallSiteInInlineLambdaKt
 // NAVIGATE_TO_CALL_SITE
 // FILE: inlineFunCallSiteInInlineLambda.kt
 // LINE: 3

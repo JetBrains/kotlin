@@ -5,5 +5,6 @@ fun box() {
     f()
 }
 
+// MAIN_CLASS: multiSameName.MultiSamePackageKt
 // FILE: multiSamePackage.kt
 // LINE: 4

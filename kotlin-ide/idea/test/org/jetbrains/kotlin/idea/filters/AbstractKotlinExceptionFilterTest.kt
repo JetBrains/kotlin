@@ -6,102 +6,74 @@
 package org.jetbrains.kotlin.idea.filters
 
 import com.intellij.execution.filters.FileHyperlinkInfo
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
-import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.core.util.toVirtualFile
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.MockLibraryFacility
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import java.io.File
 import java.lang.reflect.InvocationTargetException
-import java.net.URL
 import java.net.URLClassLoader
 
-abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
-    private val MOCK_LIBRARY_NAME = "mockLibrary"
-    private val MOCK_LIBRARY_SOURCES = IDEA_TEST_DATA_DIR.resolve("debugger/mockLibraryForExceptionFilter")
+abstract class AbstractKotlinExceptionFilterTest : KotlinLightCodeInsightFixtureTestCase() {
+    private companion object {
+        val MOCK_LIBRARY_SOURCES = IDEA_TEST_DATA_DIR.resolve("debugger/mockLibraryForExceptionFilter")
+    }
 
-    protected fun doTest(path: String) {
-        val rootDir = File(path)
-        val mainFile = File(rootDir, rootDir.name + ".kt")
-        rootDir.listFiles().orEmpty().filter { it != mainFile }.forEach { configureByFile(it.canonicalPath) }
-        configureByFile(mainFile.canonicalPath)
+    private lateinit var mockLibraryFacility: MockLibraryFacility
 
-        val fileText = file.text
+    override fun fileName(): String {
+        val testName = getTestName(true)
+        return "$testName/$testName.kt"
+    }
 
-        val outDir = runWriteAction {
-            project.baseDir.findChild("out") ?: project.baseDir.createChildDirectory(this, "out")
-        }
+    override fun setUp() {
+        super.setUp()
 
-        // Clean the output directory as it shared between tests
-        File(outDir.path).listFiles()?.forEach { it.deleteRecursively() }
+        val mainFile = testDataFile()
+        val testDir = mainFile.parentFile ?: error("Invalid test directory")
 
-        PsiTestUtil.setCompilerOutputPath(module, outDir.url, false)
-
+        val fileText = FileUtil.loadFile(mainFile, true)
         val extraOptions = InTextDirectivesUtils.findListWithPrefixes(fileText, "// !LANGUAGE: ").map { "-XXLanguage:$it" }
-        val classLoader: URLClassLoader
-        if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// WITH_MOCK_LIBRARY: ") == true) {
-            val mockLibraryJar = compileMockLibrary()
-            val mockLibraryPath = FileUtilRt.toSystemIndependentName(mockLibraryJar.canonicalPath)
-            val libRootUrl = "jar://$mockLibraryPath!/"
 
-            val editor = NewLibraryEditor().apply {
-                name = MOCK_LIBRARY_NAME
-                addRoot(libRootUrl, OrderRootType.CLASSES)
-                addRoot("file://" + MOCK_LIBRARY_SOURCES.path, OrderRootType.SOURCES)
-            }
+        mockLibraryFacility = MockLibraryFacility(
+            sources = listOf(MOCK_LIBRARY_SOURCES, testDir),
+            options = extraOptions
+        )
 
-            ConfigLibraryUtil.addLibrary(editor, module)
+        mockLibraryFacility.setUp(module)
+    }
 
-            val sources = listOf(File(path))
-            val classpath = listOf(File(mockLibraryPath))
-            KotlinCompilerStandalone(sources, target = File(outDir.path), options = extraOptions, classpath = classpath).compile()
+    override fun tearDown() {
+        mockLibraryFacility.tearDown(module)
+        super.tearDown()
+    }
 
-            classLoader = URLClassLoader(
-                arrayOf(URL(outDir.url + "/"), mockLibraryJar.toURI().toURL()),
-                ForTestCompileRuntime.runtimeJarClassLoader()
-            )
-        } else {
-            val sources = listOf(File(path))
-            val outIoDir = File(outDir.path)
-            outIoDir.deleteRecursively()
-            KotlinCompilerStandalone(sources, target = outIoDir, options = extraOptions).compile()
+    protected fun doTest(unused: String) {
+        val mainFile = testDataFile()
+        val testDir = mainFile.parentFile ?: error("Invalid test directory")
 
-            classLoader = URLClassLoader(
-                arrayOf(URL(outDir.url + "/")),
-                ForTestCompileRuntime.runtimeJarClassLoader()
-            )
-        }
+        val fileText = FileUtil.loadFile(mainFile, true)
 
-        val stackTraceElement = try {
-            val className = JvmFileClassUtil.getFileClassInfoNoResolve(file as KtFile).fileClassFqName
-            val clazz = classLoader.loadClass(className.asString())
-            clazz.getMethod("box").invoke(null)
-            throw AssertionError("class ${className.asString()} should have box() method and throw exception")
-        } catch (e: InvocationTargetException) {
-            e.targetException.stackTrace[0]
-        }
-
-        val filter = KotlinExceptionFilterFactory().create(GlobalSearchScope.allScope(project))
+        val mainClass = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MAIN_CLASS: ") ?: error("Main class directive not found")
         val prefix = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// PREFIX: ") ?: "at"
+
+        val stackTraceElement = getStackTraceElement(mainClass)
         val stackTraceString = stackTraceElement.toString()
         val text = "$prefix $stackTraceString"
-        var result = filter.applyFilter(text, text.length)
-            ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
+
+        val filter = KotlinExceptionFilterFactory().create(GlobalSearchScope.allScope(project))
+        var result = filter.applyFilter(text, text.length) ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
 
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "SMAP_APPLIED")) {
-            val fileHyperlinkInfo = result.firstHyperlinkInfo as FileHyperlinkInfo
-            val descriptor = fileHyperlinkInfo.descriptor!!
+            val info = result.firstHyperlinkInfo as FileHyperlinkInfo
+            val descriptor = info.descriptor!!
 
             val file = descriptor.file
             val line = descriptor.line + 1
@@ -110,41 +82,48 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
                 .replace(mainFile.name, file.name)
                 .replace(Regex(":\\d+\\)"), ":$line)")
 
-            val newLine = "$prefix $newStackString"
-            result = filter.applyFilter(newLine, newLine.length) ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
+            val newText = "$prefix $newStackString"
+            result = filter.applyFilter(newText, newText.length) ?: throw AssertionError("Couldn't apply filter to $stackTraceElement")
         }
 
         val info = result.firstHyperlinkInfo as FileHyperlinkInfo
-        val descriptor = if (InTextDirectivesUtils.isDirectiveDefined(fileText, "NAVIGATE_TO_CALL_SITE"))
+
+        val descriptor = if (InTextDirectivesUtils.isDirectiveDefined(fileText, "NAVIGATE_TO_CALL_SITE")) {
             (info as? InlineFunctionHyperLinkInfo)?.callSiteDescriptor
-                ?: throw AssertionError("`$stackTraceString` did not resolve to an inline function call")
-        else
-            info.descriptor!!
+        } else {
+            info.descriptor
+        }
+
+        if (descriptor == null) {
+            throw AssertionError("`$stackTraceString` did not resolve to an inline function call")
+        }
 
         val expectedFileName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FILE: ")!!
-        val expectedVirtualFile = File(rootDir, expectedFileName).toVirtualFile()
+        val expectedVirtualFile = File(testDir, expectedFileName).toVirtualFile()
             ?: File(MOCK_LIBRARY_SOURCES, expectedFileName).toVirtualFile()
             ?: throw AssertionError("Couldn't find file: name = $expectedFileName")
-        val expectedLineNumber = InTextDirectivesUtils.getPrefixedInt(fileText, "// LINE: ")!!
-
+        val expectedLineNumber = InTextDirectivesUtils.getPrefixedInt(fileText, "// LINE: ") ?: error("Line directive not found")
 
         val document = FileDocumentManager.getInstance().getDocument(expectedVirtualFile)!!
         val expectedOffset = document.getLineStartOffset(expectedLineNumber - 1)
 
-        // TODO compare virtual files
-        assertEquals(
-            "Wrong result for line $stackTraceElement",
-            "$expectedFileName:$expectedOffset",
-            descriptor.file.name + ":" + descriptor.offset
-        )
+        val expectedLocation = "$expectedFileName:$expectedOffset"
+        val actualLocation = descriptor.file.name + ":" + descriptor.offset
+        assertEquals("Wrong result for line $stackTraceElement", expectedLocation, actualLocation)
     }
 
-    override fun tearDown() {
-        ConfigLibraryUtil.removeLibrary(module, MOCK_LIBRARY_NAME)
-        super.tearDown()
-    }
+    private fun getStackTraceElement(mainClass: String): StackTraceElement {
+        val libraryRoots = ModuleRootManager.getInstance(module).orderEntries().runtimeOnly().withoutSdk()
+                .classesRoots.map { VfsUtilCore.virtualToIoFile(it).toURI().toURL() }
 
-    private fun compileMockLibrary(): File {
-        return KotlinCompilerStandalone(listOf(MOCK_LIBRARY_SOURCES)).compile()
+        val classLoader = URLClassLoader(libraryRoots.toTypedArray(), ForTestCompileRuntime.runtimeJarClassLoader())
+
+        return try {
+            val clazz = classLoader.loadClass(mainClass)
+            clazz.getMethod("box").invoke(null)
+            throw AssertionError("class $mainClass should have box() method and throw exception")
+        } catch (e: InvocationTargetException) {
+            e.targetException.stackTrace[0]
+        }
     }
 }

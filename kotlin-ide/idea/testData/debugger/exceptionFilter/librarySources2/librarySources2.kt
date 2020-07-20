@@ -2,6 +2,6 @@ fun box() {
     test.foo()
 }
 
-// WITH_MOCK_LIBRARY: true
+// MAIN_CLASS: LibrarySources2Kt
 // FILE: lib.kt
 // LINE: 10

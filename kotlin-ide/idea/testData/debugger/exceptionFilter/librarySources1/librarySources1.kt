@@ -2,6 +2,6 @@ fun box() {
     test.Foo().member()
 }
 
-// WITH_MOCK_LIBRARY: true
+// MAIN_CLASS: LibrarySources1Kt
 // FILE: lib.kt
 // LINE: 5

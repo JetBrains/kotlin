@@ -8,5 +8,6 @@ fun box() {
     }
 }
 
+// MAIN_CLASS: inlineFunSameFile.InlineFunctionAnotherFileKt
 // FILE: inlineFunctionFile.kt
 // LINE: 4

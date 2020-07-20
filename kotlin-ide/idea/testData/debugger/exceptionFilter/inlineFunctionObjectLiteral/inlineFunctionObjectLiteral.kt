@@ -17,5 +17,6 @@ inline fun t(f: () -> Unit) {
     f()
 }
 
+// MAIN_CLASS: inlineFunctionObjectLiteral.InlineFunctionObjectLiteralKt
 // FILE: inlineFunctionFile.kt
 // LINE: 4

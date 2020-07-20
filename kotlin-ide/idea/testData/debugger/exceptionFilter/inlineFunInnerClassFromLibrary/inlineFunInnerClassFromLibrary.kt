@@ -4,6 +4,6 @@ fun box() {
     inlineFunctionInnerClassInLbrary.A().Inner().test()
 }
 
-// WITH_MOCK_LIBRARY: true
+// MAIN_CLASS: inlineFunInnerClassFromLibrary.InlineFunInnerClassFromLibraryKt
 // FILE: inlineFunInLibrary.kt
 // LINE: 4

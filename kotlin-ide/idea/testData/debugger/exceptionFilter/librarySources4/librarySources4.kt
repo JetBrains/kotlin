@@ -2,6 +2,6 @@ fun box() {
     renamed.foo()
 }
 
-// WITH_MOCK_LIBRARY: true
+// MAIN_CLASS: LibrarySources4Kt
 // FILE: jvmClassNameSameName.kt
 // LINE: 5

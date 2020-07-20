@@ -2,6 +2,6 @@ fun box() {
     test.other()
 }
 
-// WITH_MOCK_LIBRARY: true
+// MAIN_CLASS: LibrarySources3Kt
 // FILE: other.kt
 // LINE: 4
