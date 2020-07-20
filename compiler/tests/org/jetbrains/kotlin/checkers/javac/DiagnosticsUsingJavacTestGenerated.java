@@ -10111,6 +10111,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inference/commonSuperTypeOfErrorTypes.kt");
             }
 
+            @TestMetadata("commonSuperTypeOfTypesWithErrorSupertypes.kt")
+            public void testCommonSuperTypeOfTypesWithErrorSupertypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/commonSuperTypeOfTypesWithErrorSupertypes.kt");
+            }
+
             @TestMetadata("compatibilityResolveWhenVariableHasComplexIntersectionType.kt")
             public void testCompatibilityResolveWhenVariableHasComplexIntersectionType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/compatibilityResolveWhenVariableHasComplexIntersectionType.kt");
