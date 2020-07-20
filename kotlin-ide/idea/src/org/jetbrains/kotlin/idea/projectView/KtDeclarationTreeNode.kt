@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.idea.projectView
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.ide.projectView.PresentationData
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.projectView.impl.nodes.AbstractPsiBasedNode
@@ -12,7 +11,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.psi.*
 
 internal class KtDeclarationTreeNode(
@@ -27,8 +26,7 @@ internal class KtDeclarationTreeNode(
 
     override fun updateImpl(data: PresentationData) {
         val declaration = value ?: return
-        val project = project ?: return
-        data.presentableText = tryGetRepresentableText(declaration, project)
+        data.presentableText = tryGetRepresentableText(declaration)
     }
 
     override fun isDeprecated(): Boolean = value?.let { KtPsiUtil.isDeprecated(it) } ?: false
@@ -39,9 +37,8 @@ internal class KtDeclarationTreeNode(
 
         private fun String?.orErrorName() = if (!isNullOrBlank()) this else ERROR_NAME
 
-        fun tryGetRepresentableText(declaration: KtDeclaration, project: Project): String? {
-
-            val settings = CodeStyle.getSettings(project).getCustomSettings(KotlinCodeStyleSettings::class.java)
+        fun tryGetRepresentableText(declaration: KtDeclaration): String? {
+            val settings = declaration.containingKtFile.kotlinCustomSettings
             fun StringBuilder.appendColon() {
                 if (settings.SPACE_BEFORE_TYPE_COLON) append(" ")
                 append(":")

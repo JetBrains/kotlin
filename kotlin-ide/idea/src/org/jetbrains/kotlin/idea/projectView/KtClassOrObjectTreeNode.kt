@@ -34,9 +34,8 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
     }
 
     override fun updateImpl(data: PresentationData) {
-        val project = project ?: return
         value?.let {
-            data.presentableText = KtDeclarationTreeNode.tryGetRepresentableText(it, project)
+            data.presentableText = KtDeclarationTreeNode.tryGetRepresentableText(it)
         }
     }
 

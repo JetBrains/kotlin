@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinNavBarModelExtension : AbstractNavBarModelExtensionCompatBase() {
-    override fun getPresentableText(item: Any?): String? =
-        (item as? KtDeclaration)?.let { tryGetRepresentableText(it, it.project) }
+    override fun getPresentableText(item: Any?): String? = (item as? KtDeclaration)?.let { tryGetRepresentableText(it) }
 
     override fun adjustElementImpl(psiElement: PsiElement?): PsiElement? {
         if (psiElement is KtDeclaration) {
             return psiElement
         }
+
         val containingFile = psiElement?.containingFile as? KtFile ?: return psiElement
         if (containingFile.isScript()) return psiElement
         return KotlinIconProvider.getSingleClass(containingFile) ?: psiElement
