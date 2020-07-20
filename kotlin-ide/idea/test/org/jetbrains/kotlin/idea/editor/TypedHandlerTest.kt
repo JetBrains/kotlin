@@ -7,12 +7,11 @@
 
 package org.jetbrains.kotlin.idea.editor
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.testFramework.EditorTestUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.kotlinCommonSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.junit.internal.runners.JUnit38ClassRunner
@@ -859,11 +858,11 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
         )
     }
 
-    private val settingsWithInvertedAlignWhenMultiline = {
-        val settings = CodeStyleSettings().getCommonSettings(KotlinLanguage.INSTANCE)
+    private val settingsWithInvertedAlignWhenMultiline = { it: CodeStyleSettings ->
+        val settings = it.kotlinCommonSettings
         settings.ALIGN_MULTILINE_PARAMETERS = !settings.ALIGN_MULTILINE_PARAMETERS
         settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = !settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS
-        enableSmartEnterWithTabs()()
+        enableSmartEnterWithTabs()(it)
     }
 
     fun testSmartEnterWithTabsOnConstructorParametersWithInvertedAlignWhenMultiline() {
@@ -1098,18 +1097,18 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
         doTypeTest('\'', "val c = <caret>", "val c = ''")
     }
 
-    private fun enableSmartEnterWithTabs(): () -> Unit = {
-        val indentOptions = CodeStyle.getSettings(project).getIndentOptions(KotlinFileType.INSTANCE)
+    private fun enableSmartEnterWithTabs(): (CodeStyleSettings) -> Unit = {
+        val indentOptions = it.getIndentOptions(KotlinFileType.INSTANCE)
         indentOptions.USE_TAB_CHARACTER = true
         indentOptions.SMART_TABS = true
     }
 
-    private fun doTypeTest(ch: Char, beforeText: String, afterText: String, settingsModifier: (() -> Unit)? = null) {
+    private fun doTypeTest(ch: Char, beforeText: String, afterText: String, settingsModifier: ((CodeStyleSettings) -> Unit)? = null) {
         doTypeTest(ch.toString(), beforeText, afterText, settingsModifier)
     }
 
-    private fun doTypeTest(text: String, beforeText: String, afterText: String, settingsModifier: (() -> Unit)? = null) {
-        configureCodeStyleAndRun(project, configurator = { settingsModifier?.invoke() }) {
+    private fun doTypeTest(text: String, beforeText: String, afterText: String, settingsModifier: ((CodeStyleSettings) -> Unit)? = null) {
+        configureCodeStyleAndRun(project, configurator = { settingsModifier?.invoke(it) }) {
             myFixture.configureByText("a.kt", beforeText.trimMargin())
             for (ch in text) {
                 EditorTestUtil.performTypingAction(editor, ch)
@@ -1154,7 +1153,7 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
         doLtGtTest(initText, true)
     }
 
-    private val enableKotlinOfficialCodeStyle: () -> Unit = {
-        KotlinStyleGuideCodeStyle.apply(CodeStyle.getSettings(project))
+    private val enableKotlinOfficialCodeStyle: (CodeStyleSettings) -> Unit = {
+        KotlinStyleGuideCodeStyle.apply(it)
     }
 }
