@@ -16,6 +16,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.content.Content
+import com.intellij.util.IncorrectOperationException
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugSession
@@ -23,7 +24,6 @@ import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.XDebuggerManagerListener
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ManagerThreadExecutor
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParamsProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.coroutine.view.XCoroutineView
@@ -78,8 +78,10 @@ class DebuggerConnection(
     override fun processStarted(debugProcess: XDebugProcess) {
         DebuggerInvocationUtil.swingInvokeLater(project) {
             if (debugProcess is JavaDebugProcess) {
-                registerXCoroutinesPanel(debugProcess.session)?.let {
-                    Disposer.register(this, it)
+                if (!Disposer.isDisposed(this)) {
+                    registerXCoroutinesPanel(debugProcess.session)?.let {
+                        Disposer.register(this, it)
+                    }
                 }
             }
         }
