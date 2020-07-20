@@ -368,6 +368,7 @@ public final class DaemonListeners implements Disposable {
         stopDaemon(false, "Plugin will be uninstalled");
         removeHighlightersOnPluginUnload(pluginDescriptor);
         myDaemonCodeAnalyzer.clearProgressIndicator();
+        myDaemonCodeAnalyzer.cleanAllFileLevelHighlights();
         IntentionsUI.getInstance(project).invalidate();
       }
 

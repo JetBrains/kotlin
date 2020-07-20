@@ -40,6 +40,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
@@ -229,6 +230,19 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
         info.fileLevelComponent = component;
         info.setGroup(group);
         fileLevelInfos.add(info);
+      }
+    }
+  }
+
+  void cleanAllFileLevelHighlights() {
+    final FileEditorManager manager = FileEditorManager.getInstance(myProject);
+    for (FileEditor fileEditor : manager.getAllEditors()) {
+      final List<HighlightInfo> infos = fileEditor.getUserData(FILE_LEVEL_HIGHLIGHTS);
+      if (infos != null && !infos.isEmpty()) {
+        for (HighlightInfo info : infos) {
+          manager.removeTopComponent(fileEditor, info.fileLevelComponent);
+        }
+        infos.clear();
       }
     }
   }
