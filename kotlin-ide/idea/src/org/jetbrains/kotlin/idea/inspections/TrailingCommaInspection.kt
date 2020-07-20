@@ -17,6 +17,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.formatter.TrailingCommaVisitor
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
@@ -40,7 +41,7 @@ class TrailingCommaInspection(
 
         override fun process(trailingCommaContext: TrailingCommaContext) {
             val element = trailingCommaContext.ktElement
-            val kotlinCustomSettings = CodeStyle.getSettings(element.project).kotlinCustomSettings
+            val kotlinCustomSettings = CodeStyle.getSettings(element.containingKtFile).kotlinCustomSettings
             useTrailingComma = kotlinCustomSettings.addTrailingCommaIsAllowedFor(element)
             when (trailingCommaContext.state) {
                 TrailingCommaState.MISSING, TrailingCommaState.EXISTS -> {
@@ -158,7 +159,7 @@ class TrailingCommaInspection(
             override fun applyFix(project: Project, problemDescriptor: ProblemDescriptor) {
                 val element = commaOwnerPointer.element ?: return
                 val range = createFormatterTextRange(element)
-                val settings = CodeStyle.getSettings(project).clone()
+                val settings = CodeStyleSettingsManager.getInstance(project).cloneSettings(CodeStyle.getSettings(element.containingKtFile))
                 settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA = true
                 settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA_ON_CALL_SITE = true
                 CodeStyle.doWithTemporarySettings(project, settings, Runnable {
