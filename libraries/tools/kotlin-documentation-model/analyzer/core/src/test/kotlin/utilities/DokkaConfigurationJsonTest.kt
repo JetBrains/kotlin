@@ -38,12 +38,8 @@ class DokkaConfigurationJsonTest {
                     "moduleName": "customModuleName",
                     "sourceSetName": "customSourceSetName"
                   },
-                  "classpath": [],
-                  "sourceRoots": [
-                    {
-                      "path": "customSourceRoot"
-                    }
-                  ]
+                  "sourceRoots": [ "customSourceRoot" ], 
+                  "classpath": [ "classpath/custom1.jar", "classpath/custom2.jar" ]
                 }
               ]
             }
@@ -58,7 +54,8 @@ class DokkaConfigurationJsonTest {
                     DokkaSourceSetImpl(
                         moduleDisplayName = "customModuleDisplayName",
                         sourceRoots = listOf(SourceRootImpl("customSourceRoot")),
-                        sourceSetID = DokkaSourceSetID("customModuleName", "customSourceSetName")
+                        sourceSetID = DokkaSourceSetID("customModuleName", "customSourceSetName"),
+                        classpath = listOf("classpath/custom1.jar", "classpath/custom2.jar")
                     )
                 )
             ),
