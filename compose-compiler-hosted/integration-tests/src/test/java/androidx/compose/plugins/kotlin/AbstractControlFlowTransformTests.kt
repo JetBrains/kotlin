@@ -33,6 +33,8 @@ abstract class AbstractControlFlowTransformTests : ComposeIrTransformTest() {
         """
             import androidx.compose.Composable
 
+            inline class InlineClass(val value: Int)
+
             @Composable fun A() {}
             @Composable fun A(x: Int) { }
             @Composable fun B(): Boolean { return true }
