@@ -1,0 +1,17 @@
+FILE: simpleFunctionsContractDescription.kt
+    public? final? fun test1(s: MyClass?): R|kotlin/Unit|
+        [Contract description] <
+            returns#().implies#(!=(s#, Null(null))),
+            someContract#(s#),
+            returns#().implies#((s# is MySubClass))
+        >
+     {
+        test_1#()
+    }
+    public? final? fun test2(): R|kotlin/Unit|
+        [Contract description] <
+            returnsNotNull#()
+        >
+     {
+        test2#()
+    }

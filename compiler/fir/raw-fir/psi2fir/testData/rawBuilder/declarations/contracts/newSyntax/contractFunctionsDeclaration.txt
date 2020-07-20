@@ -1,0 +1,17 @@
+FILE: contractFunctionsDeclaration.kt
+    public? final? fun <T> notNullIfReturns(arg: T?): <implicit>
+        [Contract description] <
+            returns#().implies#(!=(arg#, Null(null)))
+        >
+
+    public? final? fun callsInPlaceOnce(block: ( () -> Unit )): <implicit>
+        [Contract description] <
+            callsInPlace#(block#, EXACTLY_ONCE#)
+        >
+
+    public? final? fun <T> complexContract(arg: T?, block: ( () -> Unit )): <implicit>
+        [Contract description] <
+            notNullIfReturns#(arg#),
+            callsInPlaceOnce#(block#),
+            returnsNotNull#()
+        >
