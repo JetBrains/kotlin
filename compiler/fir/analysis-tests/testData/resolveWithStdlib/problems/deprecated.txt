@@ -1,0 +1,10 @@
+FILE: deprecated.kt
+    public final fun create(): R|kotlin/String| {
+        ^create String(OK)
+    }
+    @R|kotlin/Deprecated|(String(Use create() instead()), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String(create()))) public final fun create(s: R|kotlin/String|): R|kotlin/String| {
+        ^create R|/create|()
+    }
+    @R|kotlin/Deprecated|(String(Use create() instead())) public final fun create(b: R|kotlin/Boolean|): R|kotlin/String| {
+        ^create R|/create|()
+    }
