@@ -15,7 +15,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.completion.LambdaSignatureTemplates
-import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
@@ -206,8 +206,9 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             return inputValueArguments || lambdaInfo != null
         }
 
-        private fun isInsertSpacesInOneLineFunctionEnabled(file: PsiFile) =
-            CodeStyle.getCustomSettings(file, KotlinCodeStyleSettings::class.java).INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
+        private fun isInsertSpacesInOneLineFunctionEnabled(file: PsiFile) = CodeStyle.getSettings(file)
+            .kotlinCustomSettings
+            .INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
     }
 
     object Infix : KotlinFunctionInsertHandler(CallType.INFIX) {
