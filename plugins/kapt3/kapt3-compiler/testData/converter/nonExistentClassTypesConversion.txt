@@ -49,8 +49,11 @@ import kotlin.reflect.KClass;
 @Anno(a = Blah.class, b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, kotlin.String.class}, d = {kotlin.Boolean.class, NoBar3.class})
 public final class Test<G extends java.lang.Object> {
     public ABC a;
+    @org.jetbrains.annotations.Nullable()
     private final ABC b = null;
+    @org.jetbrains.annotations.Nullable()
     private final java.util.List<ABC> c = null;
+    @org.jetbrains.annotations.Nullable()
     private final java.util.List<java.util.Map<BCD, ABC<java.util.List<BCD>>>> d = null;
     public java.util.List<java.util.Map<? extends ABC, BCD>> e;
     public ABC<?> f;
@@ -66,7 +69,9 @@ public final class Test<G extends java.lang.Object> {
     public ABC<java.lang.String, java.lang.String> coocoo3;
     public ABC<java.lang.String, ABC<ABC>> coocoo31;
     public ABC nested;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.Object m = null;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String n = "";
     public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> o11;
     public java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> o10;

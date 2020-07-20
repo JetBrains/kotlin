@@ -12,6 +12,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Bar {
+    @org.jetbrains.annotations.NotNull()
     @FieldAnno()
     private final java.lang.String a = "";
 
@@ -71,6 +72,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Foo {
+    @org.jetbrains.annotations.NotNull()
     @FieldAnno()
     private final java.lang.String a = null;
 

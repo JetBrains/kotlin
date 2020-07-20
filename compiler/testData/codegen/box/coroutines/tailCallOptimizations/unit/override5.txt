@@ -59,7 +59,7 @@ public final class Override5Kt$inlineMe$1 {
 
 @kotlin.Metadata
 public final class Override5Kt {
-    private static field c: kotlin.coroutines.Continuation
+    private static @org.jetbrains.annotations.Nullable field c: kotlin.coroutines.Continuation
     inner (anonymous) class Override5Kt$box$1
     inner (anonymous) class Override5Kt$inlineMe$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

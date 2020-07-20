@@ -99,6 +99,7 @@ import java.lang.System;
 @Anno2(i = 6, s = "BCD", ii = {4, 5, 6}, ss = {"Z", "X"}, a = @Anno1(), color = Colors.WHITE, colors = {Colors.WHITE}, clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
 @Anno3(value = "value")
 public final class TestAnno2 {
+    @org.jetbrains.annotations.NotNull()
     @Anno3(value = "field")
     private java.lang.String b = "property initializer";
 

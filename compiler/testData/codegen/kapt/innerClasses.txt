@@ -37,8 +37,8 @@ public final class test/TopLevel$NestedClass {
 @kotlin.Metadata
 public final class test/TopLevel {
     public final static @org.jetbrains.annotations.NotNull field Companion: test.TopLevel$Companion
-    private final static field q: java.lang.String
-    private final field x: java.lang.String
+    private final static @org.jetbrains.annotations.NotNull field q: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     private final field y: int
     inner class test/TopLevel$Companion
     inner class test/TopLevel$InnerInterface

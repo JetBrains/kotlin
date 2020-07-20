@@ -1,5 +1,6 @@
 public final class A {
     private static final int c;
+    @org.jetbrains.annotations.NotNull
     private static java.lang.String v;
     public static final int cc = 1;
     @org.jetbrains.annotations.NotNull

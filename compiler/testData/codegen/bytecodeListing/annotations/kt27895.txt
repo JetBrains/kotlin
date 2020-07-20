@@ -6,7 +6,7 @@ public annotation class Anno
 
 @kotlin.Metadata
 public final class C {
-    private final @Anno field json: java.lang.String
+    private final @Anno @org.jetbrains.annotations.NotNull field json: java.lang.String
     private final field x: int
     public method <init>(p0: int): void
     public final method component1(): int

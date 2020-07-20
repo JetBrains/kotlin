@@ -17,6 +17,7 @@ import java.lang.System;
 @kotlin.Metadata()
 public enum StrangeEnum {
     /*public static final*/ InvalidFieldName /* = new StrangeEnum() */;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String size = null;
 
     @org.jetbrains.annotations.NotNull()

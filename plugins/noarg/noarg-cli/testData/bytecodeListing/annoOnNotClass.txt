@@ -16,7 +16,7 @@ public interface Intf
 
 @kotlin.Metadata
 public final class MyClass {
-    private @NoArg field abc: java.lang.String
+    private @NoArg @org.jetbrains.annotations.NotNull field abc: java.lang.String
     public method <init>(p0: int): void
     public final @NoArg @org.jetbrains.annotations.NotNull method getAbc(): java.lang.String
     public final @NoArg method setAbc(@org.jetbrains.annotations.NotNull p0: java.lang.String): void

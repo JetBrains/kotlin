@@ -11,9 +11,9 @@ public final class Test1 {
 @AllOpen
 @kotlin.Metadata
 public class Test2 {
-    private final field prop1: java.lang.String
-    private final field prop2: java.lang.String
-    private field prop3: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field prop1: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field prop2: java.lang.String
+    private @org.jetbrains.annotations.NotNull field prop3: java.lang.String
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method getProp1(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getProp2(): java.lang.String

@@ -2,6 +2,7 @@ public final class Wrapper {
     public Wrapper() { /* compiled code */ }
 
     public static final class Equals {
+        @org.jetbrains.annotations.NotNull
         private final p.G code;
 
         public boolean equals(@org.jetbrains.annotations.Nullable java.lang.Object other) { /* compiled code */ }
@@ -24,6 +25,7 @@ public final class Wrapper {
     }
 
     public static final class HashCode {
+        @org.jetbrains.annotations.NotNull
         private final p.G code;
 
         public int hashCode() { /* compiled code */ }
@@ -46,6 +48,7 @@ public final class Wrapper {
     }
 
     public static final class ToString {
+        @org.jetbrains.annotations.NotNull
         private final p.G code;
 
         @org.jetbrains.annotations.NotNull

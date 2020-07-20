@@ -40,10 +40,10 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$aFoo$1 {
 
 @kotlin.Metadata
 public final class NoReceiverInCallableReferenceClassesKt {
-    private final static field A_bar: kotlin.reflect.KProperty1
-    private final static field A_foo: kotlin.reflect.KFunction
-    private final static field aBar: kotlin.reflect.KProperty0
-    private final static field aFoo: kotlin.reflect.KFunction
+    private final static @org.jetbrains.annotations.NotNull field A_bar: kotlin.reflect.KProperty1
+    private final static @org.jetbrains.annotations.NotNull field A_foo: kotlin.reflect.KFunction
+    private final static @org.jetbrains.annotations.NotNull field aBar: kotlin.reflect.KProperty0
+    private final static @org.jetbrains.annotations.NotNull field aFoo: kotlin.reflect.KFunction
     inner (anonymous) class NoReceiverInCallableReferenceClassesKt$A_foo$1
     inner (anonymous) class NoReceiverInCallableReferenceClassesKt$aFoo$1
     static method <clinit>(): void

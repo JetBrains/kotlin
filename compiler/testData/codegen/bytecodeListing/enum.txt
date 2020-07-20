@@ -31,7 +31,7 @@ public final enum class WithConstructor {
     public final enum static field A: WithConstructor
     public final enum static field B: WithConstructor
     public final enum static field C: WithConstructor
-    private final field x: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int, p2: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
