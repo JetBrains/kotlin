@@ -60,13 +60,9 @@ data class DokkaSourceSetID(
     }
 }
 
-fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl {
-    return parseJson(json)
-}
+fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl = parseJson(json)
 
-fun DokkaConfiguration.toJsonString(): String {
-    return toJsonString(this)
-}
+fun DokkaConfiguration.toJsonString(): String = toJsonString(this)
 
 interface DokkaConfiguration : Serializable {
     val outputDir: String
@@ -78,7 +74,7 @@ interface DokkaConfiguration : Serializable {
     val pluginsClasspath: List<File>
     val pluginsConfiguration: Map<String, String>
 
-    interface DokkaSourceSet: Serializable {
+    interface DokkaSourceSet : Serializable {
         val sourceSetID: DokkaSourceSetID
         val displayName: String
         val moduleDisplayName: String
@@ -104,11 +100,11 @@ interface DokkaConfiguration : Serializable {
         val analysisPlatform: Platform
     }
 
-    interface SourceRoot: Serializable {
+    interface SourceRoot : Serializable {
         val path: String
     }
 
-    interface SourceLinkDefinition: Serializable {
+    interface SourceLinkDefinition : Serializable {
         val path: String
         val url: String
         val lineSuffix: String?
@@ -120,7 +116,7 @@ interface DokkaConfiguration : Serializable {
         val docFile: String
     }
 
-    interface PackageOptions : Serializable{
+    interface PackageOptions : Serializable {
         val prefix: String
         val includeNonPublic: Boolean
         val reportUndocumented: Boolean?
