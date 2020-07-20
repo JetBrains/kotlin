@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.idea.formatter.lineIndent.KotlinLangLineIndentProvid
 import org.jetbrains.kotlin.lexer.KtTokens
 
 abstract class KotlinLangLineIndentProvider : JavaLikeLangLineIndentProvider() {
-    abstract fun indentionSettings(project: Project): KotlinIndentationAdjuster
+    abstract fun indentionSettings(editor: Editor): KotlinIndentationAdjuster
 
     override fun mapType(tokenType: IElementType): SemanticEditorPosition.SyntaxElement? = SYNTAX_MAP[tokenType]
 
@@ -37,7 +37,7 @@ abstract class KotlinLangLineIndentProvider : JavaLikeLangLineIndentProvider() {
 
     override fun getIndent(project: Project, editor: Editor, language: Language?, offset: Int): IndentCalculator? {
         val factory = IndentCalculatorFactory(project, editor)
-        val settings = indentionSettings(project)
+        val settings = indentionSettings(editor)
         val currentPosition = getPosition(editor, offset)
         if (!currentPosition.matchesRule { it.isAt(Whitespace) && it.isAtMultiline }) return null
 

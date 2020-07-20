@@ -20,8 +20,8 @@ class KotlinLineIndentProvider : KotlinLangLineIndentProvider() {
         else
             super.getLineIndent(project, editor, language, offset)
 
-    override fun indentionSettings(project: Project): KotlinIndentationAdjuster = object : KotlinIndentationAdjuster {
-        val settings = CodeStyle.getSettings(project)
+    override fun indentionSettings(editor: Editor): KotlinIndentationAdjuster = object : KotlinIndentationAdjuster {
+        val settings = CodeStyle.getSettings(editor)
 
         override val alignWhenMultilineFunctionParentheses: Boolean
             get() = settings.kotlinCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS
