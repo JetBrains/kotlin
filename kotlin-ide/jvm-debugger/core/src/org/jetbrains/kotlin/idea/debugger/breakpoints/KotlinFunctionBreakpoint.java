@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints;
 
-import com.intellij.debugger.DebuggerBundle;
+import com.intellij.debugger.JavaDebuggerBundle;
 import com.intellij.debugger.DebuggerManagerEx;
 import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.*;
@@ -396,7 +396,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
 
             if (!hasMethod) {
                 debugProcess.getRequestsManager().setInvalid(
-                        this, DebuggerBundle.message("error.invalid.breakpoint.method.not.found", classType.name())
+                        this, JavaDebuggerBundle.message("error.invalid.breakpoint.method.not.found", classType.name())
                 );
                 return;
             }
@@ -454,7 +454,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
         String locationQName = DebuggerUtilsEx.getLocationMethodQName(location);
         String locationFileName = DebuggerUtilsEx.getSourceName(location, e -> defaultFileName);
         int locationLine = location.lineNumber();
-        return DebuggerBundle.message(entry ? "status.method.entry.breakpoint.reached" : "status.method.exit.breakpoint.reached",
+        return JavaDebuggerBundle.message(entry ? "status.method.entry.breakpoint.reached" : "status.method.exit.breakpoint.reached",
                                       method.declaringType().name() + "." + method.name() + "()",
                                       locationQName,
                                       locationFileName,
@@ -503,7 +503,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
                 buffer.append(getMethodName());
             }
         } else {
-            buffer.append(DebuggerBundle.message("status.breakpoint.invalid"));
+            buffer.append(JavaDebuggerBundle.message("status.breakpoint.invalid"));
         }
         return buffer.toString();
     }
@@ -720,7 +720,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
         }
         progressIndicator.setIndeterminate(false);
         progressIndicator.start();
-        progressIndicator.setText(DebuggerBundle.message("label.method.breakpoints.processing.classes"));
+        progressIndicator.setText(JavaDebuggerBundle.message("label.method.breakpoints.processing.classes"));
         try {
             MultiMap<ReferenceType, ReferenceType> inheritance = new MultiMap<>();
             List<ReferenceType> allTypes = classType.virtualMachine().allClasses();
@@ -740,7 +740,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             }
             List<ReferenceType> types = StreamEx.ofTree(classType, t -> StreamEx.of(inheritance.get(t))).skip(1).toList();
 
-            progressIndicator.setText(DebuggerBundle.message("label.method.breakpoints.setting.breakpoints"));
+            progressIndicator.setText(JavaDebuggerBundle.message("label.method.breakpoints.setting.breakpoints"));
 
             ClassesByNameProvider classesByName = ClassesByNameProvider.createCache(allTypes);
 

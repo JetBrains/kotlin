@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
-import com.intellij.debugger.DebuggerBundle
+import com.intellij.debugger.JavaDebuggerBundle
 import com.intellij.debugger.ui.breakpoints.Breakpoint
 import com.intellij.debugger.ui.breakpoints.BreakpointManager
 import com.intellij.debugger.ui.breakpoints.BreakpointWithHighlighter
@@ -72,7 +72,7 @@ class KotlinFieldBreakpointType :
             override fun validateData(): Boolean {
                 val className = className
                 if (className.isEmpty()) {
-                    reportError(project, DebuggerBundle.message("error.field.breakpoint.class.name.not.specified"))
+                    reportError(project, JavaDebuggerBundle.message("error.field.breakpoint.class.name.not.specified"))
                     return false
                 }
 
@@ -84,7 +84,7 @@ class KotlinFieldBreakpointType :
 
                 val fieldName = fieldName
                 if (fieldName.isEmpty()) {
-                    reportError(project, DebuggerBundle.message("error.field.breakpoint.field.name.not.specified"))
+                    reportError(project, JavaDebuggerBundle.message("error.field.breakpoint.field.name.not.specified"))
                     return false
                 }
 
@@ -101,7 +101,10 @@ class KotlinFieldBreakpointType :
                 }
 
                 if (result == null) {
-                    reportError(project, DebuggerBundle.message("error.field.breakpoint.field.not.found", className, fieldName, fieldName))
+                    reportError(
+                        project,
+                        JavaDebuggerBundle.message("error.field.breakpoint.field.not.found", className, fieldName, fieldName)
+                    )
                 }
 
                 return result != null
@@ -134,7 +137,7 @@ class KotlinFieldBreakpointType :
     }
 
     private fun reportError(project: Project, message: String) {
-        Messages.showMessageDialog(project, message, DebuggerBundle.message("add.field.breakpoint.dialog.title"), Messages.getErrorIcon())
+        Messages.showMessageDialog(project, message, JavaDebuggerBundle.message("add.field.breakpoint.dialog.title"), Messages.getErrorIcon())
     }
 
     override fun isAddBreakpointButtonVisible() = true

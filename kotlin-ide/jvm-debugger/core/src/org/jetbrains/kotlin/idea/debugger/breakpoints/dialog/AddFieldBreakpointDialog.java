@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints.dialog;
 
-import com.intellij.debugger.DebuggerBundle;
+import com.intellij.debugger.JavaDebuggerBundle;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeClassChooserFactory;
@@ -45,7 +45,7 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
     public AddFieldBreakpointDialog(Project project) {
         super(project, true);
         myProject = project;
-        setTitle(DebuggerBundle.message("add.field.breakpoint.dialog.title"));
+        setTitle(JavaDebuggerBundle.message("add.field.breakpoint.dialog.title"));
         init();
     }
 
@@ -61,7 +61,7 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
         myClassChooser.addActionListener(e -> {
             PsiClass currentClass = getSelectedClass();
             TreeClassChooser chooser = TreeClassChooserFactory.getInstance(myProject).createAllProjectScopeChooser(
-                    DebuggerBundle.message("add.field.breakpoint.dialog.classchooser.title"));
+                    JavaDebuggerBundle.message("add.field.breakpoint.dialog.classchooser.title"));
             if (currentClass != null) {
                 PsiFile containingFile = currentClass.getContainingFile();
                 if (containingFile != null) {
@@ -83,7 +83,7 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
             if (selectedClass != null) {
                 DescriptorMemberChooserObject[] properties = FieldBreakpointDialogUtilKt.collectProperties(selectedClass);
                 MemberChooser<DescriptorMemberChooserObject> chooser = new MemberChooser<>(properties, false, false, myProject);
-                chooser.setTitle(DebuggerBundle.message("add.field.breakpoint.dialog.field.chooser.title", properties.length));
+                chooser.setTitle(JavaDebuggerBundle.message("add.field.breakpoint.dialog.field.chooser.title", properties.length));
                 chooser.setCopyJavadocVisible(false);
                 TransactionGuard.getInstance().submitTransactionAndWait(chooser::show);
                 List<DescriptorMemberChooserObject> selectedElements = chooser.getSelectedElements();

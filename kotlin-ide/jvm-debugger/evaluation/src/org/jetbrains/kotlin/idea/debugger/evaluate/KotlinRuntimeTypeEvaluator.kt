@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import com.intellij.debugger.DebuggerBundle
+import com.intellij.debugger.JavaDebuggerBundle
 import com.intellij.debugger.DebuggerInvocationUtil
 import com.intellij.debugger.engine.ContextUtil
 import com.intellij.debugger.engine.evaluation.EvaluateException
@@ -75,7 +75,7 @@ abstract class KotlinRuntimeTypeEvaluator(
             return runReadAction { getCastableRuntimeType(evaluationContext.debugProcess.searchScope, value) }
         }
 
-        throw EvaluateExceptionUtil.createEvaluateException(DebuggerBundle.message("evaluation.error.surrounded.expression.null"))
+        throw EvaluateExceptionUtil.createEvaluateException(JavaDebuggerBundle.message("evaluation.error.surrounded.expression.null"))
     }
 
     companion object {

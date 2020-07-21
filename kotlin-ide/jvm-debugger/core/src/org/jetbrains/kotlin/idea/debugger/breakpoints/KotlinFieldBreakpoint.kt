@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
-import com.intellij.debugger.DebuggerBundle
+import com.intellij.debugger.JavaDebuggerBundle
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcessImpl
@@ -266,7 +266,7 @@ class KotlinFieldBreakpoint(
         when (event) {
             is ModificationWatchpointEvent -> {
                 val field = event.field()
-                return DebuggerBundle.message(
+                return JavaDebuggerBundle.message(
                     "status.static.field.watchpoint.reached.access",
                     field.declaringType().name(),
                     field.name(),
@@ -277,7 +277,7 @@ class KotlinFieldBreakpoint(
             }
             is AccessWatchpointEvent -> {
                 val field = event.field()
-                return DebuggerBundle.message(
+                return JavaDebuggerBundle.message(
                     "status.static.field.watchpoint.reached.access",
                     field.declaringType().name(),
                     field.name(),
@@ -288,7 +288,7 @@ class KotlinFieldBreakpoint(
             }
             is MethodEntryEvent -> {
                 val method = event.method()
-                return DebuggerBundle.message(
+                return JavaDebuggerBundle.message(
                     "status.method.entry.breakpoint.reached",
                     method.declaringType().name() + "." + method.name() + "()",
                     locationQName,
@@ -298,7 +298,7 @@ class KotlinFieldBreakpoint(
             }
             is MethodExitEvent -> {
                 val method = event.method()
-                return DebuggerBundle.message(
+                return JavaDebuggerBundle.message(
                     "status.method.exit.breakpoint.reached",
                     method.declaringType().name() + "." + method.name() + "()",
                     locationQName,
@@ -307,7 +307,7 @@ class KotlinFieldBreakpoint(
                 )
             }
         }
-        return DebuggerBundle.message(
+        return JavaDebuggerBundle.message(
             "status.line.breakpoint.reached",
             locationQName,
             locationFileName,
@@ -364,7 +364,7 @@ class KotlinFieldBreakpoint(
 
     override fun getDisplayName(): String? {
         if (!isValid) {
-            return DebuggerBundle.message("status.breakpoint.invalid")
+            return JavaDebuggerBundle.message("status.breakpoint.invalid")
         }
         val className = className
         return if (className != null && className.isNotEmpty()) className + "." + getFieldName() else getFieldName()

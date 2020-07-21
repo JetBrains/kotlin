@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints;
 
-import com.intellij.debugger.DebuggerBundle;
+import com.intellij.debugger.JavaDebuggerBundle;
 import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcessImpl;
 import com.intellij.debugger.engine.requests.RequestManagerImpl;
@@ -108,13 +108,13 @@ public abstract class KotlinLineBreakpointBase extends LineBreakpoint<JavaLineBr
             } else if (DebuggerUtilsEx.allLineLocations(classType) == null) {
                 // there's no line info in this class
                 debugProcess.getRequestsManager()
-                        .setInvalid(this, DebuggerBundle.message("error.invalid.breakpoint.no.line.info", classType.name()));
+                        .setInvalid(this, JavaDebuggerBundle.message("error.invalid.breakpoint.no.line.info", classType.name()));
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("No line number info in " + classType.name());
                 }
             } else {
                 // there's no executable code in this class
-                debugProcess.getRequestsManager().setInvalid(this, DebuggerBundle.message(
+                debugProcess.getRequestsManager().setInvalid(this, JavaDebuggerBundle.message(
                         "error.invalid.breakpoint.no.executable.code", (getLineIndex() + 1), classType.name())
                 );
                 if (LOG.isDebugEnabled()) {

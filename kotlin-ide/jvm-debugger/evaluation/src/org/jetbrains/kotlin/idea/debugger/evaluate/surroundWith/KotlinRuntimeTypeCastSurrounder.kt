@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.debugger.surroundWith
 
 import com.intellij.codeInsight.CodeInsightBundle
-import com.intellij.debugger.DebuggerBundle
+import com.intellij.debugger.JavaDebuggerBundle
 import com.intellij.debugger.DebuggerInvocationUtil
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.impl.DebuggerContextImpl
@@ -50,7 +50,7 @@ class KotlinRuntimeTypeCastSurrounder : KotlinExpressionSurrounder() {
         if (debuggerSession != null) {
             val progressWindow = ProgressWindow(true, expression.project)
             val worker = SurroundWithCastWorker(editor, expression, debuggerContext, progressWindow)
-            progressWindow.title = DebuggerBundle.message("title.evaluating")
+            progressWindow.title = JavaDebuggerBundle.message("title.evaluating")
             debuggerContext.debugProcess?.managerThread?.startProgress(worker, progressWindow)
         }
         return null

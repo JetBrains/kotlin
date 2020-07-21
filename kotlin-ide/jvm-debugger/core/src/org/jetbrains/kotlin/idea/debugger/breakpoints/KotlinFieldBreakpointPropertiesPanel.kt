@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
-import com.intellij.debugger.DebuggerBundle
+import com.intellij.debugger.JavaDebuggerBundle
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.util.ui.DialogUtil
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
@@ -52,7 +52,7 @@ class KotlinFieldBreakpointPropertiesPanel : XBreakpointCustomPropertiesPanel<XL
         innerPanel.add(Box.createHorizontalStrut(3), BorderLayout.WEST)
         innerPanel.add(Box.createHorizontalStrut(3), BorderLayout.EAST)
         mainPanel.add(innerPanel, BorderLayout.NORTH)
-        mainPanel.border = IdeBorderFactory.createTitledBorder(DebuggerBundle.message("label.group.watch.events"), true)
+        mainPanel.border = IdeBorderFactory.createTitledBorder(JavaDebuggerBundle.message("label.group.watch.events"), true)
         return mainPanel
     }
 
