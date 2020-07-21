@@ -35,6 +35,16 @@ class ToolDriver(
         }
     }
 
+    fun cinterop(defFile:Path, output: Path, pkg: String, vararg args: String) {
+        val allArgs = listOf("-o", output.toString(), "-def", defFile.toString(), "-pkg", pkg, *args).toTypedArray()
+
+        //TODO: do we need in process cinterop?
+        subprocess(DistProperties.cinterop, *allArgs).thrownIfFailed()
+        check(Files.exists(output)) {
+            "Compiler has not produced an output at $output"
+        }
+    }
+
     fun runLldb(program: Path, commands: List<String>): String {
         val args = listOf("-b", "-o", "command script import \"${DistProperties.lldbPrettyPrinters}\"") +
                 commands.flatMap { listOf("-o", it) }
@@ -43,8 +53,8 @@ class ToolDriver(
                 .stdout
     }
 
-    fun runDwarfDump(program: Path, processor:List<DwarfTag>.()->Unit) {
-        val out = subprocess(DistProperties.dwarfDump, "${program}.dSYM/Contents/Resources/DWARF/${program.fileName}").takeIf { it.process.exitValue() == 0 }?.stdout ?: error("${program}.dSYM/Contents/Resources/DWARF/${program.fileName}")
+    fun runDwarfDump(program: Path, vararg args:String = emptyArray(), processor:List<DwarfTag>.()->Unit) {
+        val out = subprocess(DistProperties.dwarfDump, "${program}.dSYM/Contents/Resources/DWARF/${program.fileName}", *args).takeIf { it.process.exitValue() == 0 }?.stdout ?: error("${program}.dSYM/Contents/Resources/DWARF/${program.fileName}")
         DwarfUtilParser().parse(StringReader(out)).tags.toList().processor()
     }
 }

@@ -9,6 +9,7 @@ import org.intellij.lang.annotations.Language
 import org.junit.Assert.fail
 import java.io.IOException
 import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * An integration test for debug info.
@@ -109,7 +110,44 @@ fun dwarfDumpTest(@Language("kotlin") programText: String, flags: List<String>, 
         val driver = ToolDriver()
         Files.write(source, programText.trimIndent().toByteArray())
         driver.compile(source, output, "-g", *flags.toTypedArray())
-        driver.runDwarfDump(output, test)
+        driver.runDwarfDump(output, processor = test)
+    }
+}
+
+class ToolDriverHelper(private val driver: ToolDriver, private val root:Path) {
+    fun String.cinterop(pkg:String, output: String):Path {
+        val def = feedOutput("$output.def")
+        val lib = root.resolve("$output.klib")
+        driver.cinterop(def, lib, pkg)
+        return lib
+    }
+
+
+    fun String.library(output: String, vararg flags:String) = feedOutput("$output.kt").compile(root.resolve("$output.klib"), "-p", "library", *flags)
+
+    fun String.binary(output: String, vararg flags:String)= feedOutput("$output.kt").compile(root.resolve("$output.kexe"), *flags)
+
+    private fun Path.compile(output: Path, vararg flags:String) = output.also{ driver.compile(this, it, *flags) }
+
+    fun Path.dwarfDumpLookup(address: Long, parser:List<DwarfTag>.() -> Unit) = driver.runDwarfDump(this, "-lookup", address.toString(), processor = parser)
+
+
+    private fun String.feedOutput(output: String) = root.resolve(output).also {
+            Files.write(it, this.trimIndent().toByteArray())
+        }
+
+}
+
+fun dwarfDumpComplexTest(test:ToolDriverHelper.()->Unit) {
+    if (!haveDwarfDump) {
+        println("Skipping test: no dwarfdump")
+        return
+    }
+
+
+    with(Files.createTempDirectory("dwarfdump_test_complex")) {
+        toFile().deleteOnExit()
+        val driver = ToolDriverHelper(ToolDriver(), this).test()
     }
 }
 
