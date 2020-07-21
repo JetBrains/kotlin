@@ -4,7 +4,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.psi.util.parents
 import com.intellij.refactoring.suggested.*
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Parameter
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Signature
@@ -48,8 +47,8 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
         val oldDeclaration = state.restoredDeclarationCopy() as? KtCallableDeclaration ?: return state
         oldDeclaration.containingKtFile.forcedModuleInfo = newDeclaration.getModuleInfo()
 
-        val descriptorWithOldSignature = oldDeclaration.resolveToDescriptorIfAny() as CallableDescriptor
-        val descriptorWithNewSignature = newDeclaration.resolveToDescriptorIfAny() as CallableDescriptor
+        val descriptorWithOldSignature = oldDeclaration.resolveToDescriptorIfAny() as CallableDescriptor?
+        val descriptorWithNewSignature = newDeclaration.resolveToDescriptorIfAny() as CallableDescriptor?
 
         val oldSignature = state.oldSignature
         val newSignature = state.newSignature
@@ -57,8 +56,8 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
         val (oldReturnType, newReturnType) = refineType(
             oldSignature.type,
             newSignature.type,
-            descriptorWithOldSignature.returnType,
-            descriptorWithNewSignature.returnType
+            descriptorWithOldSignature?.returnType,
+            descriptorWithNewSignature?.returnType
         )
 
         val improvedOldParameterTypesById = mutableMapOf<Any, String>()
@@ -71,8 +70,8 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
             val (oldType, newType) = refineType(
                 oldParameter.type,
                 newParameter.type,
-                descriptorWithOldSignature.valueParameters[oldIndex].type,
-                descriptorWithNewSignature.valueParameters[newIndex].type
+                descriptorWithOldSignature?.valueParameters?.get(oldIndex)?.type,
+                descriptorWithNewSignature?.valueParameters?.get(newIndex)?.type
             )
             // oldType and newType may not be null because arguments of refineType call were all non-null
             improvedOldParameterTypesById[id] = oldType!!
@@ -86,8 +85,8 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
         val (oldReceiverType, newReceiverType) = refineType(
             oldAdditionalData?.receiverType,
             newAdditionalData?.receiverType,
-            descriptorWithOldSignature.extensionReceiverParameter?.type,
-            descriptorWithNewSignature.extensionReceiverParameter?.type
+            descriptorWithOldSignature?.extensionReceiverParameter?.type,
+            descriptorWithNewSignature?.extensionReceiverParameter?.type
         )
 
         return state
