@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 class Generic<T>
 
 class C {

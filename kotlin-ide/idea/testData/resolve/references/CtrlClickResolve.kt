@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 package ctrl_click
 
 fun IntArray(vararg content : Int) : IntArray = content

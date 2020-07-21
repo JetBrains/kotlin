@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 fun JavaClass.foo(javaClass: JavaClass) {
     print(javaClass.<caret>something)
     javaClass.<caret>something = 1

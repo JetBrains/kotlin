@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 @file:[<caret>D("message")]
 
 package foo
