@@ -189,12 +189,18 @@ class DocRenderer implements EditorCustomElementRenderer {
   }
 
   private int calcInlayStartX() {
+    Editor editor = myItem.editor;
     RangeHighlighter highlighter = myItem.highlighter;
-    if (!highlighter.isValid()) return 0;
-    Document document = myItem.editor.getDocument();
-    int lineStartOffset = document.getLineStartOffset(document.getLineNumber(highlighter.getEndOffset()) + 1);
-    int contentStartOffset = CharArrayUtil.shiftForward(document.getImmutableCharSequence(), lineStartOffset, " \t\n");
-    return myItem.editor.offsetToXY(contentStartOffset, false, true).x;
+    if (highlighter.isValid()) {
+      Document document = editor.getDocument();
+      int nextLineNumber = document.getLineNumber(highlighter.getEndOffset()) + 1;
+      if (nextLineNumber < document.getLineCount()) {
+        int lineStartOffset = document.getLineStartOffset(nextLineNumber);
+        int contentStartOffset = CharArrayUtil.shiftForward(document.getImmutableCharSequence(), lineStartOffset, " \t\n");
+        return editor.offsetToXY(contentStartOffset, false, true).x;
+      }
+    }
+    return editor.getInsets().left;
   }
 
   Rectangle getEditorPaneBoundsWithinInlay(Inlay inlay) {
