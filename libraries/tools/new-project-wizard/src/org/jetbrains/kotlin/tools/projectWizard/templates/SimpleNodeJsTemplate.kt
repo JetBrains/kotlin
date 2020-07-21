@@ -8,14 +8,9 @@ package org.jetbrains.kotlin.tools.projectWizard.templates
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
-import org.jetbrains.kotlin.tools.projectWizard.core.Reader
-import org.jetbrains.kotlin.tools.projectWizard.core.Writer
-import org.jetbrains.kotlin.tools.projectWizard.core.buildList
+import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.TemplateSetting
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ArtifactBasedLibraryDependencyIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeTargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.NodeJsSinglePlatformModuleConfigurator
@@ -23,6 +18,7 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository.Companion.JCENTER
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 
 
 class SimpleNodeJsTemplate : Template() {
@@ -67,4 +63,12 @@ class SimpleNodeJsTemplate : Template() {
             }
         }
     }
+
+    override fun Reader.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> =
+        withSettingsOf(module.originalModule) {
+            buildList {
+                +(FileTemplateDescriptor("$id/main.kt.vm") asSrcOf SourcesetType.main)
+                +(FileTemplateDescriptor("$id/GreetingTest.kt.vm") asSrcOf SourcesetType.test)
+            }
+        }
 }
