@@ -31,25 +31,25 @@ open class SpecifyExplicitLambdaSignatureIntention : SelfTargetingOffsetIndepend
         return functionDescriptor.valueParameters.none { it.type.isError }
     }
 
-    private fun ValueParameterDescriptor.render(psiName: String?): String = IdeDescriptorRenderers.SOURCE_CODE.let {
-        "${psiName ?: it.renderName(name, true)}: ${it.renderType(type)}"
-    }
-
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
-        val functionLiteral = element.functionLiteral
-        val functionDescriptor = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.FUNCTION, functionLiteral]!!
-
-        applyWithParameters(element, functionDescriptor.valueParameters
-            .asSequence()
-            .mapIndexed { index, parameterDescriptor ->
-                parameterDescriptor.render(psiName = functionLiteral.valueParameters.getOrNull(index)?.let {
-                    it.name ?: it.destructuringDeclaration?.text
-                })
-            }
-            .joinToString())
+        applyTo(element)
     }
 
     companion object {
+        fun applyTo(element: KtLambdaExpression) {
+            val functionLiteral = element.functionLiteral
+            val functionDescriptor = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.FUNCTION, functionLiteral]!!
+
+            applyWithParameters(element, functionDescriptor.valueParameters
+                .asSequence()
+                .mapIndexed { index, parameterDescriptor ->
+                    parameterDescriptor.render(psiName = functionLiteral.valueParameters.getOrNull(index)?.let {
+                        it.name ?: it.destructuringDeclaration?.text
+                    })
+                }
+                .joinToString())
+        }
+
         fun KtFunctionLiteral.setParameterListIfAny(psiFactory: KtPsiFactory, newParameterList: KtParameterList?) {
             val oldParameterList = valueParameterList
             if (oldParameterList != null && newParameterList != null) {
@@ -80,4 +80,8 @@ open class SpecifyExplicitLambdaSignatureIntention : SelfTargetingOffsetIndepend
             }
         }
     }
+}
+
+private fun ValueParameterDescriptor.render(psiName: String?): String = IdeDescriptorRenderers.SOURCE_CODE.let {
+    "${psiName ?: it.renderName(name, true)}: ${it.renderType(type)}"
 }
