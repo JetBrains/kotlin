@@ -84,14 +84,10 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
     }
 }
 
-enum class JsTarget {
-    BROWSER,
-    NODE;
-}
-
-abstract class JsSinglePlatformModuleConfigurator(
-    jsTarget: JsTarget
-) : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator,
+abstract class JsSinglePlatformModuleConfigurator :
+    JSConfigurator,
+    ModuleConfiguratorWithTests,
+    SinglePlatformModuleConfigurator,
     ModuleConfiguratorWithSettings {
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
         super<ModuleConfiguratorWithTests>.getConfiguratorSettings() +
@@ -101,9 +97,6 @@ abstract class JsSinglePlatformModuleConfigurator(
 
     @NonNls
     override val suggestedModuleName = "js"
-
-    @NonNls
-    override val id = "js${jsTarget.name.toLowerCase().capitalize()}SinglePlatform"
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 
@@ -130,9 +123,10 @@ abstract class JsSinglePlatformModuleConfigurator(
     protected abstract fun GradleIRListBuilder.subTarget(module: Module, reader: Reader)
 }
 
-object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator(
-    JsTarget.BROWSER
-) {
+object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator() {
+    @NonNls
+    override val id = "jsBrowserSinglePlatform"
+
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> {
         return super.getConfiguratorSettings() +
                 JSConfigurator.cssSupport
@@ -145,9 +139,10 @@ object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigu
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.simple.js.browser")
 }
 
-object NodeJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator(
-    JsTarget.NODE
-) {
+object NodeJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator() {
+    @NonNls
+    override val id = "jsNodeSinglePlatform"
+
     override fun GradleIRListBuilder.subTarget(module: Module, reader: Reader) {
         nodejsSubTarget(module, reader)
     }
