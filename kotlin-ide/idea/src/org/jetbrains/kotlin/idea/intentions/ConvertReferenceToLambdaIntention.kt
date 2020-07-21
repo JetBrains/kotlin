@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
@@ -62,6 +64,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
             val receiverType = receiverExpression?.let {
                 (context[DOUBLE_COLON_LHS, it] as? DoubleColonLHS.Type)?.type
             }
+
             val acceptsReceiverAsParameter = receiverType != null && !matchingParameterIsExtension &&
                     (targetDescriptor.dispatchReceiverParameter != null || targetDescriptor.extensionReceiverParameter != null)
 
@@ -73,6 +76,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
                     it
                 }
             }
+
             val receiverNameAndType = receiverType?.let {
                 KotlinNameSuggester.suggestNamesByType(it, validator = { name ->
                     name !in parameterNamesAndTypes.map { pair -> pair.first }
@@ -81,9 +85,10 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
 
             val factory = KtPsiFactory(element)
             val targetName = reference.text
-            val lambdaParameterNamesAndTypes =
-                if (acceptsReceiverAsParameter) listOf(receiverNameAndType!!) + parameterNamesAndTypes
-                else parameterNamesAndTypes
+            val lambdaParameterNamesAndTypes = if (acceptsReceiverAsParameter)
+                listOf(receiverNameAndType!!) + parameterNamesAndTypes
+            else
+                parameterNamesAndTypes
 
             val receiverPrefix = when {
                 acceptsReceiverAsParameter -> receiverNameAndType!!.first + "."
@@ -91,39 +96,41 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
                 else -> receiverExpression?.let { it.text + "." } ?: ""
             }
 
+            val isExtension = matchingParameterIsExtension && resolvedCall?.resultingDescriptor?.isExtension == true
             val lambdaExpression = if (valueArgumentParent != null &&
                 lambdaParameterNamesAndTypes.size == 1 &&
                 receiverExpression?.text != "it"
             ) {
-                factory.createLambdaExpression(
-                    parameters = "",
-                    body = when {
-                        acceptsReceiverAsParameter ->
-                            if (targetDescriptor is PropertyDescriptor) "it.$targetName"
-                            else "it.$targetName()"
-                        else ->
-                            "$receiverPrefix$targetName(it)"
-                    }
-                )
+                val body = if (acceptsReceiverAsParameter) {
+                    if (targetDescriptor is PropertyDescriptor) "it.$targetName"
+                    else "it.$targetName()"
+                } else {
+                    "$receiverPrefix$targetName(${if (isExtension) "this" else "it"})"
+                }
+
+                factory.createLambdaExpression(parameters = "", body = body)
             } else {
+                val (params, args) = if (isExtension) {
+                    val thisArgument = if (parameterNamesAndTypes.isNotEmpty()) listOf("this") else emptyList()
+                    lambdaParameterNamesAndTypes.drop(1) to (thisArgument + parameterNamesAndTypes.drop(1).map { it.first })
+                } else {
+                    lambdaParameterNamesAndTypes to parameterNamesAndTypes.map { it.first }
+                }
+
                 factory.createLambdaExpression(
-                    parameters = lambdaParameterNamesAndTypes.joinToString(separator = ", ") {
+                    parameters = params.joinToString(separator = ", ") {
                         if (valueArgumentParent != null) it.first
                         else it.first + ": " + SOURCE_RENDERER.renderType(it.second)
                     },
                     body = if (targetDescriptor is PropertyDescriptor) {
                         "$receiverPrefix$targetName"
                     } else {
-                        parameterNamesAndTypes.joinToString(
-                            prefix = "$receiverPrefix$targetName(",
-                            separator = ", ",
-                            postfix = ")"
-                        ) { it.first }
+                        args.joinToString(prefix = "$receiverPrefix$targetName(", separator = ", ", postfix = ")")
                     }
                 )
             }
 
-            val needParentheses = lambdaParameterNamesAndTypes.isEmpty() && when (element.parent.node.elementType) {
+            val needParentheses = lambdaParameterNamesAndTypes.isEmpty() && when (element.parent.elementType) {
                 KtNodeTypes.WHEN_ENTRY, KtNodeTypes.THEN, KtNodeTypes.ELSE -> true
                 else -> false
             }

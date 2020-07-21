@@ -6,7 +6,7 @@ class A {
         }
 
         "doo".apply {
-            println(it)
+            println(this)
         }
     }
 }

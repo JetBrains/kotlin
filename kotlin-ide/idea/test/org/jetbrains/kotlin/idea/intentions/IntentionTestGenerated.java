@@ -5959,6 +5959,26 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/convertReferenceToLambda/extensionProperty.kt");
         }
 
+        @TestMetadata("extensionWithoutQualifier.kt")
+        public void testExtensionWithoutQualifier() throws Exception {
+            runTest("testData/intentions/convertReferenceToLambda/extensionWithoutQualifier.kt");
+        }
+
+        @TestMetadata("extensionWithoutQualifier2.kt")
+        public void testExtensionWithoutQualifier2() throws Exception {
+            runTest("testData/intentions/convertReferenceToLambda/extensionWithoutQualifier2.kt");
+        }
+
+        @TestMetadata("extensionWithoutQualifier3.kt")
+        public void testExtensionWithoutQualifier3() throws Exception {
+            runTest("testData/intentions/convertReferenceToLambda/extensionWithoutQualifier3.kt");
+        }
+
+        @TestMetadata("extensionWithoutReferenceToThis.kt")
+        public void testExtensionWithoutReferenceToThis() throws Exception {
+            runTest("testData/intentions/convertReferenceToLambda/extensionWithoutReferenceToThis.kt");
+        }
+
         @TestMetadata("fqNameForReceiver.kt")
         public void testFqNameForReceiver() throws Exception {
             runTest("testData/intentions/convertReferenceToLambda/fqNameForReceiver.kt");
