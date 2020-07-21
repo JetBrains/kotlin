@@ -36,7 +36,7 @@ class ModulesEditorToolbarDecorator(
                 allowMultiplatform = isMultiplatformProject()
                         && isRootModule
                         && allModules.none { it.configurator == MppModuleConfigurator },
-                allowSinglepaltformJs = isMultiplatformProject()
+                allowSinglePlatformJs = isMultiplatformProject()
                         && isRootModule
                         && allModules.none { it.configurator == BrowserJsSinglePlatformModuleConfigurator },
                 allowAndroid = isRootModule
