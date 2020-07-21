@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,6 +36,10 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 interface UsageReplacementStrategy {
     fun createReplacer(usage: KtReferenceExpression): (() -> KtElement?)?
+
+    companion object {
+        val KEY = Key<Unit>("UsageReplacementStrategy.replaceUsages")
+    }
 }
 
 private val LOG = Logger.getInstance(UsageReplacementStrategy::class.java)
@@ -68,36 +72,37 @@ fun UsageReplacementStrategy.replaceUsages(
     commandName: String,
     postAction: () -> Unit = {}
 ) {
-    GuiUtils.invokeLaterIfNeeded({
-                                     project.executeWriteCommand(commandName) {
-                                         val targetDeclaration = targetPsiElement as? KtNamedDeclaration
+    GuiUtils.invokeLaterIfNeeded(
+        {
+            project.executeWriteCommand(commandName) {
+                val targetDeclaration = targetPsiElement as? KtNamedDeclaration
 
-                                         val usagesByFile = usages.groupBy { it.containingFile }
+                val usagesByFile = usages.groupBy { it.containingFile }
 
-                                         val KEY = Key<Unit>("UsageReplacementStrategy.replaceUsages")
+                for ((file, usagesInFile) in usagesByFile) {
+                    usagesInFile.forEach { it.putCopyableUserData(UsageReplacementStrategy.KEY, Unit) }
 
-                                         for ((file, usagesInFile) in usagesByFile) {
-                                             usagesInFile.forEach { it.putCopyableUserData(KEY, Unit) }
+                    // we should delete imports later to not affect other usages
+                    val importsToDelete = mutableListOf<KtImportDirective>()
 
-                                             // we should delete imports later to not affect other usages
-                                             val importsToDelete = mutableListOf<KtImportDirective>()
+                    var usagesToProcess = usagesInFile
+                    while (usagesToProcess.isNotEmpty()) {
+                        if (processUsages(usagesToProcess, targetDeclaration, importsToDelete)) break
 
-                                             var usagesToProcess = usagesInFile
-                                             while (usagesToProcess.isNotEmpty()) {
-                                                 if (processUsages(usagesToProcess, targetDeclaration, importsToDelete)) break
+                        // some usages may get invalidated we need to find them in the tree
+                        usagesToProcess = file.collectDescendantsOfType { it.getCopyableUserData(UsageReplacementStrategy.KEY) != null }
+                    }
 
-                                                 // some usages may get invalidated we need to find them in the tree
-                                                 usagesToProcess = file.collectDescendantsOfType { it.getCopyableUserData(KEY) != null }
-                                             }
+                    file.forEachDescendantOfType<KtSimpleNameExpression> { it.putCopyableUserData(UsageReplacementStrategy.KEY, null) }
 
-                                             file.forEachDescendantOfType<KtSimpleNameExpression> { it.putCopyableUserData(KEY, null) }
+                    importsToDelete.forEach { it.delete() }
+                }
 
-                                             importsToDelete.forEach { it.delete() }
-                                         }
-
-                                         postAction()
-                                     }
-                                 }, ModalityState.NON_MODAL)
+                postAction()
+            }
+        },
+        ModalityState.NON_MODAL
+    )
 }
 
 /**
