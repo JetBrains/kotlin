@@ -153,6 +153,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/jsNameClash/");
     }
 
+    @TestMetadata("jvmDefaultNonMpp")
+    public void testJvmDefaultNonMpp() throws Exception {
+        runTest("idea/testData/multiplatform/jvmDefaultNonMpp/");
+    }
+
     @TestMetadata("lambdas")
     public void testLambdas() throws Exception {
         runTest("idea/testData/multiplatform/lambdas/");
