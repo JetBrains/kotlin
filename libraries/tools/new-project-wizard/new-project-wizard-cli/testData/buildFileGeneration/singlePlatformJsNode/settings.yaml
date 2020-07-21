@@ -1,0 +1,5 @@
+kotlin:
+  projectKind: js
+  modules:
+    - type: jsNodeSinglePlatform
+      name: a

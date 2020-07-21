@@ -264,6 +264,7 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
             +AndroidSinglePlatformModuleConfigurator
             +IOSSinglePlatformModuleConfigurator
             +BrowserJsSinglePlatformModuleConfigurator
+            +NodeJsSinglePlatformModuleConfigurator
         }
 
         init {
