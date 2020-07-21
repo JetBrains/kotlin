@@ -93,8 +93,6 @@ abstract class JsSinglePlatformModuleConfigurator :
         super<ModuleConfiguratorWithTests>.getConfiguratorSettings() +
                 super<JSConfigurator>.getConfiguratorSettings()
 
-    override val moduleKind = ModuleKind.singleplatformJs
-
     @NonNls
     override val suggestedModuleName = "js"
 
@@ -127,6 +125,8 @@ object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigu
     @NonNls
     override val id = "jsBrowserSinglePlatform"
 
+    override val moduleKind = ModuleKind.singleplatformJsBrowser
+
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> {
         return super.getConfiguratorSettings() +
                 JSConfigurator.cssSupport
@@ -142,6 +142,8 @@ object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigu
 object NodeJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator() {
     @NonNls
     override val id = "jsNodeSinglePlatform"
+
+    override val moduleKind = ModuleKind.singleplatformJsNode
 
     override fun GradleIRListBuilder.subTarget(module: Module, reader: Reader) {
         nodejsSubTarget(module, reader)

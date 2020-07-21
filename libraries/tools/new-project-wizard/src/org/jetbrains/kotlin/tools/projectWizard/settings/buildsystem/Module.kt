@@ -22,7 +22,9 @@ enum class ModuleKind : DisplayableSettingItem {
     target,
     singleplatformJvm,
     singleplatformAndroid,
-    singleplatformJs, ;
+    singleplatformJsBrowser,
+    singleplatformJsNode,
+    ;
 
     override val text: String
         get() = name
@@ -67,8 +69,8 @@ class Module(
             configurator == MppModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.mpp.module")
             configurator == AndroidSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.android.module")
             configurator == IOSSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.ios.module")
-            configurator == BrowserJsSinglePlatformModuleConfigurator ||
-                    configurator == NodeJsSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.js.module")
+            configurator == BrowserJsSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.js.browser.module")
+            configurator == NodeJsSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.js.node.module")
             else -> KotlinNewProjectWizardBundle.message("module.kind.module")
         }
 
