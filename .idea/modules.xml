@@ -1052,6 +1052,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-common/tests/intellij.cidr.common.tests.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-common/tests/intellij.cidr.common.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-core/intellij.cidr.core.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-core/intellij.cidr.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-coverage/intellij.cidr.coverage.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-coverage/intellij.cidr.coverage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-ctest/intellij.cidr.ctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-ctest/intellij.cidr.ctest.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/intellij.cidr.debugger.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/intellij.cidr.debugger.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/commandInterpreterLang/intellij.cidr.debugger.commandInterpreterLang.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/commandInterpreterLang/intellij.cidr.debugger.commandInterpreterLang.iml" />
@@ -1087,6 +1088,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-build/intellij.clion.build.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-build/intellij.clion.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-cmake/intellij.clion.cmake.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-cmake/intellij.clion.cmake.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-compdb/intellij.clion.compdb.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-compdb/intellij.clion.compdb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-ctest/intellij.clion.ctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-ctest/intellij.clion.ctest.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/cpp-diagnostics/intellij.clion.diagnostics.iml" filepath="$PROJECT_DIR$/intellij/contrib/cpp-diagnostics/intellij.clion.diagnostics.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/clion-embedded/intellij.clion.embedded.iml" filepath="$PROJECT_DIR$/intellij/CIDR/clion-embedded/intellij.clion.embedded.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/platformio/intellij.clion.embedded.platformio.iml" filepath="$PROJECT_DIR$/intellij/contrib/platformio/intellij.clion.embedded.platformio.iml" />
