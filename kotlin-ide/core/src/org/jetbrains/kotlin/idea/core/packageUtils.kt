@@ -94,9 +94,12 @@ private fun findLongestExistingPackage(module: Module, packageName: String): Psi
 private val kotlinSourceRootTypes: Set<JpsModuleSourceRootType<JavaSourceRootProperties>> =
     setOf(SourceKotlinRootType, TestSourceKotlinRootType) + JavaModuleSourceRootTypes.SOURCES
 
+private val Module.pureKotlinSourceFolders: List<String>?
+    get() = KotlinFacet.get(this)?.configuration?.settings?.pureKotlinSourceFolders
+
 private fun Module.getNonGeneratedKotlinSourceRoots(): List<VirtualFile> {
     val result = mutableListOf<VirtualFile>()
-    val facetSettings = KotlinFacet.get(this)?.configuration?.settings
+    val pureKotlinSourceFolders = this.pureKotlinSourceFolders
 
     val rootManager = ModuleRootManager.getInstance(this)
     for (contentEntry in rootManager.contentEntries) {
@@ -105,7 +108,8 @@ private fun Module.getNonGeneratedKotlinSourceRoots(): List<VirtualFile> {
             if (sourceFolder.jpsElement.getProperties(kotlinSourceRootTypes)?.isForGeneratedSources == true) {
                 continue
             }
-            facetSettings?.pureKotlinSourceFolders?.also { pureKotlin ->
+
+            pureKotlinSourceFolders?.also { pureKotlin ->
                 sourceFolder.file?.also {
                     if (it.path in pureKotlin) {
                         result += it
