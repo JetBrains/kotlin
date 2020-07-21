@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper
-import com.intellij.codeInsight.daemon.impl.MarkerType
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.ide.util.PsiClassListCellRenderer
 import com.intellij.openapi.progress.ProgressManager
@@ -97,7 +96,7 @@ fun buildNavigateToPropertyOverriddenDeclarationsPopup(e: MouseEvent?, element: 
 
     if (!ProgressManager.getInstance().runProcessWithProgressSynchronously(
             /* runnable */ ktPsiMethodProcessor,
-                           MarkerType.SEARCHING_FOR_OVERRIDING_METHODS,
+                           KotlinBundle.message("searching.for.overriding.methods"),
             /* can be canceled */ true,
                            project,
                            e?.component as JComponent?
