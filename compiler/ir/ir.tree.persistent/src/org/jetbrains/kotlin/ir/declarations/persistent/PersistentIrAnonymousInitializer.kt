@@ -20,23 +20,37 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.AnonymousInitializerCarrier
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
+import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 
 internal class PersistentIrAnonymousInitializer(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrAnonymousInitializerSymbol,
     override val isStatic: Boolean = false
-) : PersistentIrDeclarationBase<AnonymousInitializerCarrier>(startOffset, endOffset, origin),
+) : PersistentIrDeclarationBase<AnonymousInitializerCarrier>,
     IrAnonymousInitializer,
     AnonymousInitializerCarrier {
 
     init {
         symbol.bind(this)
     }
+
+    override var lastModified: Int = stageController.currentStage
+    override var loweredUpTo: Int = stageController.currentStage
+    override var values: Array<Carrier>? = null
+    override val createdOn: Int = stageController.currentStage
+
+    override var parentField: IrDeclarationParent? = null
+    override var originField: IrDeclarationOrigin = origin
+    override var removedOn: Int = Int.MAX_VALUE
+    override var annotationsField: List<IrConstructorCall> = emptyList()
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor

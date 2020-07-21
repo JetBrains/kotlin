@@ -21,14 +21,16 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.PropertyCarrier
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.name.Name
 
 internal abstract class PersistentIrPropertyCommon(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     origin: IrDeclarationOrigin,
     override val name: Name,
     override var visibility: Visibility,
@@ -38,9 +40,19 @@ internal abstract class PersistentIrPropertyCommon(
     override val isDelegated: Boolean,
     override val isExternal: Boolean,
     override val isExpect: Boolean,
-) : PersistentIrDeclarationBase<PropertyCarrier>(startOffset, endOffset, origin),
+) : PersistentIrDeclarationBase<PropertyCarrier>,
     IrProperty,
     PropertyCarrier {
+
+    override var lastModified: Int = stageController.currentStage
+    override var loweredUpTo: Int = stageController.currentStage
+    override var values: Array<Carrier>? = null
+    override val createdOn: Int = stageController.currentStage
+
+    override var parentField: IrDeclarationParent? = null
+    override var originField: IrDeclarationOrigin = origin
+    override var removedOn: Int = Int.MAX_VALUE
+    override var annotationsField: List<IrConstructorCall> = emptyList()
 
     override var backingFieldField: IrField? = null
 

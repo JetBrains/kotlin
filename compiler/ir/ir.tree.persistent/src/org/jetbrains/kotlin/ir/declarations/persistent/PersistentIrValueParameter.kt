@@ -19,16 +19,20 @@ package org.jetbrains.kotlin.ir.declarations.persistent
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ValueParameterCarrier
+import org.jetbrains.kotlin.ir.declarations.stageController
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 internal class PersistentIrValueParameter(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrValueParameterSymbol,
     override val name: Name,
@@ -38,7 +42,7 @@ internal class PersistentIrValueParameter(
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean
 ) :
-    PersistentIrDeclarationBase<ValueParameterCarrier>(startOffset, endOffset, origin),
+    PersistentIrDeclarationBase<ValueParameterCarrier>,
     IrValueParameter,
     ValueParameterCarrier {
 
@@ -49,6 +53,16 @@ internal class PersistentIrValueParameter(
     init {
         symbol.bind(this)
     }
+
+    override var lastModified: Int = stageController.currentStage
+    override var loweredUpTo: Int = stageController.currentStage
+    override var values: Array<Carrier>? = null
+    override val createdOn: Int = stageController.currentStage
+
+    override var parentField: IrDeclarationParent? = null
+    override var originField: IrDeclarationOrigin = origin
+    override var removedOn: Int = Int.MAX_VALUE
+    override var annotationsField: List<IrConstructorCall> = emptyList()
 
     override var defaultValueField: IrExpressionBody? = null
 

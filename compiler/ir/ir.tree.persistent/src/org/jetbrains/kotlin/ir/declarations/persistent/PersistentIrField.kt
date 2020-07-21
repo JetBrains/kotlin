@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.ir.declarations.persistent
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.FieldCarrier
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 internal class PersistentIrField(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrFieldSymbol,
     override val name: Name,
@@ -40,13 +40,23 @@ internal class PersistentIrField(
     override val isFinal: Boolean,
     override val isExternal: Boolean,
     override val isStatic: Boolean
-) : PersistentIrDeclarationBase<FieldCarrier>(startOffset, endOffset, origin),
+) : PersistentIrDeclarationBase<FieldCarrier>,
     IrField,
     FieldCarrier {
 
     init {
         symbol.bind(this)
     }
+
+    override var lastModified: Int = stageController.currentStage
+    override var loweredUpTo: Int = stageController.currentStage
+    override var values: Array<Carrier>? = null
+    override val createdOn: Int = stageController.currentStage
+
+    override var parentField: IrDeclarationParent? = null
+    override var originField: IrDeclarationOrigin = origin
+    override var removedOn: Int = Int.MAX_VALUE
+    override var annotationsField: List<IrConstructorCall> = emptyList()
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor

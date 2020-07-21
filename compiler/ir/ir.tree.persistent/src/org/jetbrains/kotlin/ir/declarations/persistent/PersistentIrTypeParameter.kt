@@ -19,8 +19,12 @@ package org.jetbrains.kotlin.ir.declarations.persistent
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.TypeParameterCarrier
+import org.jetbrains.kotlin.ir.declarations.stageController
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
@@ -28,8 +32,8 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartList
 
 internal class PersistentIrTypeParameter(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrTypeParameterSymbol,
     override val name: Name,
@@ -37,13 +41,23 @@ internal class PersistentIrTypeParameter(
     override val isReified: Boolean,
     override val variance: Variance
 ) :
-    PersistentIrDeclarationBase<TypeParameterCarrier>(startOffset, endOffset, origin),
+    PersistentIrDeclarationBase<TypeParameterCarrier>,
     IrTypeParameter,
     TypeParameterCarrier {
 
     init {
         symbol.bind(this)
     }
+
+    override var lastModified: Int = stageController.currentStage
+    override var loweredUpTo: Int = stageController.currentStage
+    override var values: Array<Carrier>? = null
+    override val createdOn: Int = stageController.currentStage
+
+    override var parentField: IrDeclarationParent? = null
+    override var originField: IrDeclarationOrigin = origin
+    override var removedOn: Int = Int.MAX_VALUE
+    override var annotationsField: List<IrConstructorCall> = emptyList()
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: TypeParameterDescriptor

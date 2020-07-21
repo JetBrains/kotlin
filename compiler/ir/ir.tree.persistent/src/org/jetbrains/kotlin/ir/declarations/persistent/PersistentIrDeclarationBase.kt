@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.persistent
 
-import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.BodyCarrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
@@ -24,18 +24,11 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.DeclarationCarri
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-abstract class PersistentIrDeclarationBase<T : DeclarationCarrier>(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin
-) : PersistentIrElementBase<T>(startOffset, endOffset),
-    IrDeclaration,
-    DeclarationCarrier {
+interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElementBase<T>, IrDeclaration, DeclarationCarrier {
+    var removedOn: Int
 
     override val factory: IrFactory
         get() = PersistentIrFactory
-
-    override var parentField: IrDeclarationParent? = null
 
     // TODO reduce boilerplate
     override var parent: IrDeclarationParent
@@ -46,8 +39,6 @@ abstract class PersistentIrDeclarationBase<T : DeclarationCarrier>(
             }
         }
 
-    override var originField: IrDeclarationOrigin = origin
-
     override var origin: IrDeclarationOrigin
         get() = getCarrier().originField
         set(p) {
@@ -55,10 +46,6 @@ abstract class PersistentIrDeclarationBase<T : DeclarationCarrier>(
                 setCarrier().originField = p
             }
         }
-
-    var removedOn: Int = Int.MAX_VALUE
-
-    override var annotationsField: List<IrConstructorCall> = emptyList()
 
     override var annotations: List<IrConstructorCall>
         get() = getCarrier().annotationsField
@@ -75,26 +62,19 @@ abstract class PersistentIrDeclarationBase<T : DeclarationCarrier>(
     }
 }
 
-@Suppress("UNCHECKED_CAST")
-abstract class PersistentIrElementBase<T : Carrier>(
-    startOffset: Int,
-    endOffset: Int
-) : IrElementBase(startOffset, endOffset),
-    Carrier {
+interface PersistentIrElementBase<T : Carrier> : IrElement, Carrier {
+    override var lastModified: Int
 
-    override var lastModified: Int = stageController.currentStage
-
-    var loweredUpTo = stageController.currentStage
+    var loweredUpTo: Int
 
     // TODO Array<T>?
-    private var values: Array<Carrier>? = null
+    var values: Array<Carrier>?
 
-    val createdOn: Int = stageController.currentStage
-//        get() = values?.let { (it[0] as T).lastModified } ?: lastModified
+    val createdOn: Int
 
-    abstract fun ensureLowered()
+    fun ensureLowered()
 
-    protected fun getCarrier(): T {
+    fun getCarrier(): T {
         stageController.currentStage.let { stage ->
             ensureLowered()
 
@@ -124,7 +104,7 @@ abstract class PersistentIrElementBase<T : Carrier>(
     }
 
     // TODO naming? e.g. `mutableCarrier`
-    protected fun setCarrier(): T {
+    fun setCarrier(): T {
         val stage = stageController.currentStage
 
         ensureLowered()
@@ -150,12 +130,10 @@ abstract class PersistentIrElementBase<T : Carrier>(
     }
 }
 
-abstract class PersistentIrBodyBase<B : PersistentIrBodyBase<B>>(
-    startOffset: Int,
-    endOffset: Int,
-    private var initializer: (B.() -> Unit)?
-) : PersistentIrElementBase<BodyCarrier>(startOffset, endOffset), IrBody, BodyCarrier {
-    override var containerField: IrDeclaration? = null
+interface PersistentIrBodyBase<B : PersistentIrBodyBase<B>> : PersistentIrElementBase<BodyCarrier>, BodyCarrier {
+    var initializer: (B.() -> Unit)?
+
+    override var containerField: IrDeclaration?
 
     var container: IrDeclaration
         get() = getCarrier().containerField!!
@@ -165,7 +143,7 @@ abstract class PersistentIrBodyBase<B : PersistentIrBodyBase<B>>(
             }
         }
 
-    protected fun <T> checkEnabled(fn: () -> T): T {
+    fun <T> checkEnabled(fn: () -> T): T {
         if (!stageController.bodiesEnabled) error("Bodies disabled!")
         ensureLowered()
         return fn()
@@ -182,7 +160,7 @@ abstract class PersistentIrBodyBase<B : PersistentIrBodyBase<B>>(
             }
         }
         if (loweredUpTo + 1 < stageController.currentStage) {
-            stageController.lazyLower(this)
+            stageController.lazyLower(this as IrBody)
         }
     }
 }
