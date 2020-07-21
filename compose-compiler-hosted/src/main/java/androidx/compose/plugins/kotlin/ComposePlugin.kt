@@ -110,6 +110,10 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             )
             StorageComponentContainerContributor.registerExtension(
                 project,
+                ComposableDeclarationChecker()
+            )
+            StorageComponentContainerContributor.registerExtension(
+                project,
                 UnionAnnotationCheckerProvider()
             )
             StorageComponentContainerContributor.registerExtension(

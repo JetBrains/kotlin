@@ -137,7 +137,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         import androidx.compose.*
         @Composable fun C(): Int { return 123 }
         val ncProp: Int = <!COMPOSABLE_INVOCATION!>C<!>()
-        @Composable val cProp: Int = <!COMPOSABLE_INVOCATION!>C<!>()
+        @Composable val <!COMPOSABLE_PROPERTY_BACKING_FIELD!>cProp<!>: Int = <!COMPOSABLE_INVOCATION!>C<!>()
     """)
 
     fun testCTypeAlias() = check("""
@@ -766,7 +766,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         check("""
             import androidx.compose.*;
 
-            @Composable val foo: Int = 123
+            @Composable val foo: Int get() = 123
 
             fun <!COMPOSABLE_EXPECTED!>App<!>() {
                 <!COMPOSABLE_INVOCATION!>foo<!>
@@ -775,7 +775,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         check("""
             import androidx.compose.*;
 
-            @Composable val foo: Int = 123
+            @Composable val foo: Int get() = 123
 
             @Composable
             fun App() {
