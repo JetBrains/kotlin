@@ -36,7 +36,7 @@ class TrailingCommaPostFormatProcessor : PostFormatProcessor {
         TrailingCommaPostFormatVisitor(settings).processText(source, rangeToReformat)
 }
 
-private class TrailingCommaPostFormatVisitor(val settings: CodeStyleSettings) : TrailingCommaVisitor() {
+private class TrailingCommaPostFormatVisitor(private val settings: CodeStyleSettings) : TrailingCommaVisitor() {
     private val myPostProcessor = PostFormatProcessorHelper(settings.kotlinCommonSettings)
 
     override fun process(trailingCommaContext: TrailingCommaContext) = processIfInRange(trailingCommaContext.ktElement) {

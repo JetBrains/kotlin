@@ -63,7 +63,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     return Spacing.createKeepingFirstColumnSpacing(
                         minSpaces,
                         Int.MAX_VALUE,
-                        settings.KEEP_LINE_BREAKS,
+                        kotlinCommonSettings.KEEP_LINE_BREAKS,
                         kotlinCommonSettings.KEEP_BLANK_LINES_IN_CODE
                     )
                 }
@@ -71,7 +71,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     minSpaces,
                     Int.MAX_VALUE,
                     0,
-                    settings.KEEP_LINE_BREAKS,
+                    kotlinCommonSettings.KEEP_LINE_BREAKS,
                     kotlinCommonSettings.KEEP_BLANK_LINES_IN_CODE
                 )
             }
@@ -174,7 +174,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             val parameterWithDocCommentRule = { _: ASTBlock, _: ASTBlock, right: ASTBlock ->
                 if (right.requireNode().firstChildNode.elementType == DOC_COMMENT) {
-                    createSpacing(0, minLineFeeds = 1, keepLineBreaks = true, keepBlankLines = settings.KEEP_BLANK_LINES_IN_DECLARATIONS)
+                    createSpacing(0, minLineFeeds = 1, keepLineBreaks = true, keepBlankLines = kotlinCommonSettings.KEEP_BLANK_LINES_IN_DECLARATIONS)
                 } else {
                     null
                 }
@@ -533,7 +533,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 val leftEntry = left.requireNode().psi as KtWhenEntry
                 val rightEntry = right.requireNode().psi as KtWhenEntry
                 val blankLines = if (leftEntry.expression is KtBlockExpression || rightEntry.expression is KtBlockExpression)
-                    settings.kotlinCustomSettings.BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES
+                    kotlinCustomSettings.BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES
                 else
                     0
 

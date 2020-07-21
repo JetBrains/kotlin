@@ -25,8 +25,6 @@ import javax.swing.table.AbstractTableModel
 class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstractPanel(KotlinLanguage.INSTANCE, null, settings) {
     private val importsPanel = ImportSettingsPanel(settings)
 
-    private fun CodeStyleSettings.kotlinSettings(): KotlinCodeStyleSettings = kotlinCustomSettings
-
     override fun getRightMargin() = throw UnsupportedOperationException()
 
     override fun createHighlighter(scheme: EditorColorsScheme) = throw UnsupportedOperationException()
@@ -35,14 +33,14 @@ class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstrac
 
     override fun getPreviewText(): String? = null
 
-    override fun apply(settings: CodeStyleSettings) = importsPanel.apply(settings.kotlinSettings())
+    override fun apply(settings: CodeStyleSettings) = importsPanel.apply(settings.kotlinCustomSettings)
 
-    override fun isModified(settings: CodeStyleSettings) = importsPanel.isModified(settings.kotlinSettings())
+    override fun isModified(settings: CodeStyleSettings) = importsPanel.isModified(settings.kotlinCustomSettings)
 
     override fun getPanel() = importsPanel
 
     override fun resetImpl(settings: CodeStyleSettings) {
-        importsPanel.reset(settings.kotlinSettings())
+        importsPanel.reset(settings.kotlinCustomSettings)
     }
 
     override fun getTabTitle() = ApplicationBundle.message("title.imports")
@@ -132,7 +130,8 @@ class ImportSettingsPanel(commonSettings: CodeStyleSettings) : JPanel() {
             isModified = isModified || nameCountToUseStarImportSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT
             isModified = isModified || nameCountToUseStarImportForMembersSelector.value != NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
             isModified = isModified || isModified(cbImportNestedClasses, IMPORT_NESTED_CLASSES)
-            isModified = isModified || isModified(getCopyWithoutEmptyPackages(starImportLayoutPanel.packageTable), PACKAGES_TO_USE_STAR_IMPORTS)
+            isModified =
+                isModified || isModified(getCopyWithoutEmptyPackages(starImportLayoutPanel.packageTable), PACKAGES_TO_USE_STAR_IMPORTS)
             isModified = isModified || isModified(importOrderLayoutPanel.packageTable, PACKAGES_IMPORT_LAYOUT)
 
             isModified

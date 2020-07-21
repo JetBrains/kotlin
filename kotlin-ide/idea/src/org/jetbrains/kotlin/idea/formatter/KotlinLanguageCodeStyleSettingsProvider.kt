@@ -26,8 +26,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
     override fun getConfigurableDisplayName(): String = KotlinBundle.message("codestyle.name.kotlin")
     override fun createConfigurable(settings: CodeStyleSettings, modelSettings: CodeStyleSettings): CodeStyleConfigurable =
         object : CodeStyleAbstractConfigurable(settings, modelSettings, KotlinLanguage.NAME) {
-            override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel =
-                KotlinCodeStylePanel(currentSettings, settings)
+            override fun createPanel(settings: CodeStyleSettings): CodeStyleAbstractPanel = KotlinCodeStylePanel(currentSettings, settings)
 
             override fun getHelpTopic(): String = "reference.settingsdialog.codestyle.kotlin"
         }
