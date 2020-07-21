@@ -14,12 +14,13 @@ import react.dom.div
 import react.dom.input
 #end
 
-interface WelcomeProps : RProps {
+external interface WelcomeProps : RProps {
     var name: String
 }
 
 data class WelcomeState(val name: String) : RState
 
+@JsExport
 class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(props) {
 
     init {
