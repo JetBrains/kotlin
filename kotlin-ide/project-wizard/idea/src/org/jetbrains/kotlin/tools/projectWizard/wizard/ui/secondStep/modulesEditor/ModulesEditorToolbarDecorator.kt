@@ -65,7 +65,8 @@ class ModulesEditorToolbarDecorator(
                 val moduleKindTextToAdd = when (tree.selectedSettingItem?.safeAs<Module>()?.kind) {
                     ModuleKind.multiplatform -> KotlinNewProjectWizardBundle.message("module.kind.target")
                     ModuleKind.singleplatformJvm -> KotlinNewProjectWizardBundle.message("module.kind.module")
-                    ModuleKind.singleplatformJs -> KotlinNewProjectWizardBundle.message("module.kind.js.module")
+                    ModuleKind.singleplatformJsBrowser -> KotlinNewProjectWizardBundle.message("module.kind.js.browser.module")
+                    ModuleKind.singleplatformJsNode -> KotlinNewProjectWizardBundle.message("module.kind.js.node.module")
                     ModuleKind.singleplatformAndroid -> KotlinNewProjectWizardBundle.message("module.kind.android.module")
                     ModuleKind.target -> ""
                     null -> ""
@@ -138,7 +139,8 @@ private val Module.kindText
     get() = when (kind) {
         ModuleKind.multiplatform -> KotlinNewProjectWizardBundle.message("module.kind.module")
         ModuleKind.singleplatformJvm -> KotlinNewProjectWizardBundle.message("module.kind.module")
-        ModuleKind.singleplatformJs -> KotlinNewProjectWizardBundle.message("module.kind.module")
+        ModuleKind.singleplatformJsBrowser -> KotlinNewProjectWizardBundle.message("module.kind.module")
+        ModuleKind.singleplatformJsNode -> KotlinNewProjectWizardBundle.message("module.kind.module")
         ModuleKind.singleplatformAndroid -> KotlinNewProjectWizardBundle.message("module.kind.android.module")
         ModuleKind.target -> KotlinNewProjectWizardBundle.message("module.kind.target")
     }

@@ -63,7 +63,7 @@ class SimpleJsClientTemplate : Template() {
     override val settings: List<TemplateSetting<*, *>> = listOf(renderEngine)
 
     override fun Reader.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = buildList {
-        if (module.originalModule.kind == ModuleKind.singleplatformJs) {
+        if (module.originalModule.kind == ModuleKind.singleplatformJsBrowser) {
             +WizardGradleRunConfiguration(
                 KotlinNewProjectWizardBundle.message("module.template.js.simple.run.configuration.dev"),
                 "browserDevelopmentRun",
