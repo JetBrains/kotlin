@@ -74,6 +74,7 @@ benchmark {
             param("size", 1000)
 
             include("CommonCallsBenchmark")
+            include("ControlFlowAnalysisBenchmark")
             //include("InferenceBaselineCallsBenchmark")
         }
 

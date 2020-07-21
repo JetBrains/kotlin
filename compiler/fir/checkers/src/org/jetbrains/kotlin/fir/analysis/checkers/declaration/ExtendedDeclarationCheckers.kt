@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
 object ExtendedDeclarationCheckers : DeclarationCheckers() {
     override val declarationCheckers = listOf(
         RedundantVisibilityModifierChecker,
-        RedundantReturnUnitType
+        RedundantReturnUnitType,
+        VariableAssignmentChecker
     )
 
     override val memberDeclarationCheckers = listOf(
