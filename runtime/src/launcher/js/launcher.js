@@ -164,6 +164,9 @@ let konan_dependencies = {
             // TODO: There is no writeErr() in d8.
             // Approximate it with write() to stdout for now.
             runtime.write(utf8decode(toString(str)));
+        },
+        fflush: function(file) {
+            runtime.flush();
         }
     }
 };
