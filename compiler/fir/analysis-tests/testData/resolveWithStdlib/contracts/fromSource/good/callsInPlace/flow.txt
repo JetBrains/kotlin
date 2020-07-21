@@ -1,0 +1,56 @@
+FILE: flow.kt
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun bar(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(x, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        when () {
+            Boolean(true) ->  {
+                R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                ^bar Unit
+            }
+        }
+
+        R|/bar|(R|<local>/x|)
+    }
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun foo(x: R|() -> kotlin/Unit|, y: R|() -> kotlin/Unit|, z: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(x, UNKNOWN)
+            CallsInPlace(y, EXACTLY_ONCE)
+            CallsInPlace(z, AT_LEAST_ONCE)
+        >
+     {
+        [StubStatement]
+        when () {
+            Boolean(true) ->  {
+                lval <iterator>: R|kotlin/collections/IntIterator| = Int(0).R|kotlin/Int.rangeTo|(Int(0)).R|kotlin/ranges/IntProgression.iterator|()
+                while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+                    lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+                    R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                }
+
+                R|<local>/y|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            }
+            else ->  {
+                when () {
+                    Boolean(false) ->  {
+                        R|<local>/y|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                    }
+                    else ->  {
+                        R|<local>/y|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                        R|<local>/z|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                        ^foo Unit
+                    }
+                }
+
+            }
+        }
+
+        do {
+            R|/bar|(R|<local>/z|)
+        }
+        while(Boolean(true))
+    }

@@ -1,0 +1,42 @@
+FILE: contractsUsage.kt
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun bar(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(x, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun R|() -> kotlin/Unit|.baz(): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(this, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        when () {
+            Boolean(true) ->  {
+                this@R|/baz|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            }
+        }
+
+    }
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun foo(x: R|() -> kotlin/Unit|, y: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(x, AT_LEAST_ONCE)
+            CallsInPlace(y, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        when () {
+            Boolean(true) ->  {
+                R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                R|<local>/y|.R|/baz|()
+                ^foo Unit
+            }
+        }
+
+        R|/bar|(R|<local>/x|)
+    }
