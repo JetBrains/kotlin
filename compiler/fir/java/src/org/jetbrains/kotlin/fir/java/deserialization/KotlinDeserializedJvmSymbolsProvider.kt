@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.java.createConstant
 import org.jetbrains.kotlin.fir.java.topLevelName
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredCallableSymbols
@@ -283,6 +284,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                             }
                         }
                     }
+                    calleeReference = FirReferencePlaceholderForResolvedAnnotations
                 }
             }
 

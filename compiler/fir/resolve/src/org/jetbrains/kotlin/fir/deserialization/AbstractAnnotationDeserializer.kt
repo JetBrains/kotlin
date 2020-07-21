@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -201,6 +202,7 @@ abstract class AbstractAnnotationDeserializer(
             useSiteTarget?.let {
                 this.useSiteTarget = it
             }
+            calleeReference = FirReferencePlaceholderForResolvedAnnotations
         }
     }
 

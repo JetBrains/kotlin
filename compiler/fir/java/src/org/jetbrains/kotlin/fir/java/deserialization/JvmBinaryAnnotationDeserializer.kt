@@ -77,6 +77,7 @@ class JvmBinaryAnnotationDeserializer(
                 annotationTypeRef = it.annotationTypeRef
                 argumentList = it.argumentList
                 useSiteTarget = AnnotationUseSiteTarget.PROPERTY
+                calleeReference = it.calleeReference
             }
         }
     }
@@ -99,6 +100,7 @@ class JvmBinaryAnnotationDeserializer(
                 annotationTypeRef = it.annotationTypeRef
                 argumentList = it.argumentList
                 useSiteTarget = AnnotationUseSiteTarget.FIELD
+                calleeReference = it.calleeReference
             }
         }
     }
@@ -118,6 +120,7 @@ class JvmBinaryAnnotationDeserializer(
                 annotationTypeRef = it.annotationTypeRef
                 argumentList = it.argumentList
                 useSiteTarget = AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+                calleeReference = it.calleeReference
             }
         }
     }

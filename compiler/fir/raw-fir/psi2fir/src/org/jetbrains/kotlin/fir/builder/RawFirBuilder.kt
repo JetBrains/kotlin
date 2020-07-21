@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.*
+import org.jetbrains.kotlin.fir.references.impl.FirReferenceForUnresolvedAnnotations
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -1287,6 +1288,7 @@ class RawFirBuilder(
                 useSiteTarget = annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget()
                 annotationTypeRef = annotationEntry.typeReference.toFirOrErrorType()
                 annotationEntry.extractArgumentsTo(this)
+                calleeReference = FirReferenceForUnresolvedAnnotations
             }
         }
 
@@ -1936,6 +1938,10 @@ class RawFirBuilder(
                 emptyArray(),
                 isNullable = false
             )
+        }
+        // TODO: actually we know where to resolve, but we don't have any symbol providers at this point
+        calleeReference = buildSimpleNamedReference {
+            name = Name.identifier("ExtensionFunctionType")
         }
     }
 }

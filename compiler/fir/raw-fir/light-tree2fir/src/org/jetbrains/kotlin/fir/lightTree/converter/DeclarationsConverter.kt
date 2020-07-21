@@ -38,7 +38,8 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeProjectionModifier
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirReferenceForUnresolvedAnnotations
+import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -324,6 +325,7 @@ class DeclarationsConverter(
             source = unescapedAnnotation.toFirSourceElement()
             useSiteTarget = annotationUseSiteTarget ?: defaultAnnotationUseSiteTarget
             annotationTypeRef = constructorCalleePair.first
+            calleeReference = FirReferenceForUnresolvedAnnotations
             extractArgumentsFrom(constructorCalleePair.second, stubMode)
         }
     }
@@ -1744,5 +1746,6 @@ class DeclarationsConverter(
                 false
             )
         }
+        calleeReference = FirReferencePlaceholderForResolvedAnnotations
     }
 }
