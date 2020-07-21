@@ -1,7 +1,7 @@
-// "Change 1st parameter of method 'K' from 'String' to 'int'" "true"
+// "Change 1st parameter of constructor 'K' from 'String' to 'int'" "true"
 
 public class J {
     void foo() {
-        new K<caret>(1, 2);
+        new K(<caret>1, 2);
     }
 }
