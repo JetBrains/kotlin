@@ -60,12 +60,12 @@ private fun Task.getIsIncremental(): Boolean? {
     return null
 }
 
-private fun Task.getPureKotlinSourceRoots(sourceSet: String, classifier: String? = null): List<File>? {
+private fun Task.getPureKotlinSourceRoots(sourceSet: String, disambiguationClassifier: String? = null): List<File>? {
     try {
         val kotlinExtensionClass = project.extensions.findByType(javaClass.classLoader.loadClass(kotlinProjectExtensionClass))
         val getKotlinMethod = javaClass.classLoader.loadClass(kotlinSourceSetClass).getMethod("getKotlin")
         val kotlinSourceSet = (kotlinExtensionClass?.javaClass?.getMethod("getSourceSets")?.invoke(kotlinExtensionClass)
-                as? FactoryNamedDomainObjectContainer<Any>)?.asMap?.get(compilationFullName(sourceSet, classifier)) ?: return null
+                as? FactoryNamedDomainObjectContainer<Any>)?.asMap?.get(compilationFullName(sourceSet, disambiguationClassifier)) ?: return null
         val javaSourceSet =
             (project.convention.getPlugin(JavaPluginConvention::class.java) as JavaPluginConvention).sourceSets.asMap[sourceSet]
         val pureJava = javaSourceSet?.java?.srcDirs
