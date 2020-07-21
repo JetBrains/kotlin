@@ -159,7 +159,12 @@ fun findOrCreateDirectoryForPackage(module: Module, packageName: String): PsiDir
             if (subPackageName.isNotEmpty()) {
                 postfixToShow = File.separatorChar + postfixToShow
             }
+            val pureKotlinSourceFolders = module.pureKotlinSourceFolders
             val moduleDirectories = getPackageDirectoriesInModule(rootPackage, module)
+                .filter { directory ->
+                    pureKotlinSourceFolders?.any { directory.virtualFile.path.startsWith(it, true) } ?: true
+                }.toTypedArray()
+
             existingDirectoryByPackage =
                 DirectoryChooserUtil.selectDirectory(project, moduleDirectories, null, postfixToShow) ?: return null
             restOfName = subPackageName
