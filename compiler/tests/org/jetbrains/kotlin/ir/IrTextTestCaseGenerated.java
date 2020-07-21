@@ -1701,6 +1701,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");
         }
 
+        @TestMetadata("javaEnum.kt")
+        public void testJavaEnum() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/javaEnum.kt");
+        }
+
         @TestMetadata("jsHasMetadata.kt")
         public void testJsHasMetadata() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/jsHasMetadata.kt");

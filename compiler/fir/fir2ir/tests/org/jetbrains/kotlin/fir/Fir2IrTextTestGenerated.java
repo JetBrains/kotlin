@@ -1702,6 +1702,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");
         }
 
+        @TestMetadata("javaEnum.kt")
+        public void testJavaEnum() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/javaEnum.kt");
+        }
+
         @TestMetadata("jsHasMetadata.kt")
         public void testJsHasMetadata() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/jsHasMetadata.kt");
