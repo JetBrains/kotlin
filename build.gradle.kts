@@ -729,8 +729,6 @@ tasks {
     register("idea-plugin-additional-tests") {
         dependsOn("dist")
         dependsOn(
-            ":idea:idea-gradle:test",
-            ":idea:idea-gradle-native:test",
             ":idea:idea-maven:test",
             ":j2k:test",
             ":nj2k:test",
@@ -798,11 +796,29 @@ tasks {
 
     register("ideaPluginTest") {
         dependsOn(
+            "gradleIdeTest",
+            "androidIdeTest",
+            "miscIdeTests"
+        )
+    }
+
+    register("miscIdeTests") {
+        dependsOn(
             "idea-plugin-tests",
             "jps-tests",
             "plugins-tests",
-            "android-ide-tests",
             ":generators:test"
+        )
+    }
+
+    register("androidIdeTest") {
+        dependsOn("android-ide-tests")
+    }
+
+    register("gradleIdeTest") {
+        dependsOn(
+            ":idea:idea-gradle:test",
+            ":idea:idea-gradle-native:test"
         )
     }
 
