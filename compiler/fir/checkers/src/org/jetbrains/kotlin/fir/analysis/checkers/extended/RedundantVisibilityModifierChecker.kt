@@ -26,7 +26,7 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
         if (declaration.source is FirFakeSourceElement<*>) return
         if (
             declaration !is FirMemberDeclaration
-            && !(declaration is FirPropertyAccessor && declaration.visibility == context.lastInContainingDeclarationsVisibility)
+            && !(declaration is FirPropertyAccessor && declaration.visibility == context.containingPropertyVisibility)
         ) return
 
         val modifierList = (declaration.source.getModifierList() as? FirPsiModifierList)?.modifierList ?: return
@@ -122,6 +122,6 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
             else -> false
         }
 
-    private val CheckerContext.lastInContainingDeclarationsVisibility
-        get() = (this.containingDeclarations.last() as FirProperty).visibility
+    private val CheckerContext.containingPropertyVisibility
+        get() = (this.containingDeclarations.last() as? FirProperty)?.visibility
 }

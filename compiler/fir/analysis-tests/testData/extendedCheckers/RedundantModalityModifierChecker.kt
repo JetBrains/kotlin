@@ -1,12 +1,22 @@
+object O {
+    fun foo() {}
+}
+
 // Interface
 interface Interface {
-    // Redundant
+    // Questionable cuz compiler reports warning here in FE 1.0
     <!REDUNDANT_MODALITY_MODIFIER!>open<!> val gav: Int
         get() = 42
     // Redundant
     <!REDUNDANT_MODALITY_MODIFIER!>abstract<!> fun foo()
-    // Redundant
-    private <!REDUNDANT_MODALITY_MODIFIER!>final<!> fun bar() {}
+    // error
+    private final fun bar() {}
+
+    <!REDUNDANT_MODALITY_MODIFIER!>open<!> fun goo() {}
+    <!REDUNDANT_MODALITY_MODIFIER!>abstract<!> fun tar()
+
+    // error
+    abstract fun too() {}
 }
 interface B {
     <!REDUNDANT_MODALITY_MODIFIER!>abstract<!> var bar: Unit
@@ -51,8 +61,8 @@ open class OpenDerived : Base() {
 interface Derived : Interface {
     // Redundant
     override <!REDUNDANT_MODALITY_MODIFIER!>open<!> fun foo() {}
-    // Redundant
-    <!REDUNDANT_MODALITY_MODIFIER!>final<!> class Nested
+    // error
+    final class Nested
 }
 // Derived abstract class
 abstract class AbstractDerived1(override final val gav: Int) : Interface {
