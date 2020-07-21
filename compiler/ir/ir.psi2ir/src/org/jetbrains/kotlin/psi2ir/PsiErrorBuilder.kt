@@ -62,15 +62,15 @@ class PsiErrorBuilder(
             diagnosticSink.report(diagnosticFactory.on(psiElement))
         }
 
-        fun <A> report(diagnosticFactory: DiagnosticFactory1<E, A>, a: A) {
+        fun <A : Any> report(diagnosticFactory: DiagnosticFactory1<E, A>, a: A) {
             diagnosticSink.report(diagnosticFactory.on(psiElement, a))
         }
 
-        fun <A, B> report(diagnosticFactory: DiagnosticFactory2<E, A, B>, a: A, b: B) {
+        fun <A : Any, B : Any> report(diagnosticFactory: DiagnosticFactory2<E, A, B>, a: A, b: B) {
             diagnosticSink.report(diagnosticFactory.on(psiElement, a, b))
         }
 
-        fun <A, B, C> report(diagnosticFactory: DiagnosticFactory3<E, A, B, C>, a: A, b: B, c: C) {
+        fun <A : Any, B : Any, C : Any> report(diagnosticFactory: DiagnosticFactory3<E, A, B, C>, a: A, b: B, c: C) {
             diagnosticSink.report(diagnosticFactory.on(psiElement, a, b, c))
         }
     }
