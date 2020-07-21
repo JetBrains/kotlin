@@ -131,10 +131,8 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
 
                 fun invokeComposable(composer: Composer<*>?, fn: @Composable () -> Unit) {
                     if (composer == null) error("Composer was null")
-                    val composition = compositionFor(composer, Recomposer.current()) { a, b ->
-                        composer
-                    }
-                    composition.setContent(fn)
+                    val realFn = fn as Function3<Composer<*>, Int, Int, Unit>
+                    realFn(composer, 0, 1)
                 }
 
                 class Test {
