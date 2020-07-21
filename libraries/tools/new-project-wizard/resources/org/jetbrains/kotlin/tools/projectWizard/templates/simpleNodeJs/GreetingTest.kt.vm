@@ -6,4 +6,4 @@ class GreetingTest {
     fun testGreeting() {
         assertEquals(greeting("World"), "Hello, World")
     }
-} 
+}
