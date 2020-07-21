@@ -205,8 +205,13 @@ public class YamlNewWizardProjectImportTestGenerated extends AbstractYamlNewWiza
         }
 
         @TestMetadata("singlePlatformJsBrowser")
-        public void testSingleplatformJs() throws Exception {
+        public void testSingleplatformJsBrowser() throws Exception {
             runTest("../cli/testData/buildFileGeneration/singlePlatformJsBrowser/");
+        }
+
+        @TestMetadata("singlePlatformJsNode")
+        public void testSingleplatformJsNode() throws Exception {
+            runTest("../cli/testData/buildFileGeneration/singlePlatformJsNode/");
         }
     }
 }
