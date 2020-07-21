@@ -67,7 +67,7 @@ object DslMarkerUtils {
 
 
 private fun Annotations.extractDslMarkerFqNames() =
-    filter(AnnotationDescriptor::isDslMarker).map { it.fqName!! }
+    filter(AnnotationDescriptor::isDslMarker).mapNotNull { it.fqName }
 
 private fun AnnotationDescriptor.isDslMarker(): Boolean {
     val classDescriptor = annotationClass ?: return false
