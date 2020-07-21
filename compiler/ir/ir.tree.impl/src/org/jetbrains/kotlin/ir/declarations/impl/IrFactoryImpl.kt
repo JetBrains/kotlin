@@ -185,7 +185,7 @@ object IrFactoryImpl : IrFactory {
         isDelegated: Boolean,
         isExternal: Boolean,
         isExpect: Boolean,
-    ): IrFakeOverrideProperty =
+    ): IrProperty =
         IrFakeOverridePropertyImpl(
             startOffset, endOffset, origin, name, visibility, modality,
             isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,

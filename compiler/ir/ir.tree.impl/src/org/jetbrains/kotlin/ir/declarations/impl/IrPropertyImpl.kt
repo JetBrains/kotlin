@@ -103,10 +103,11 @@ class IrFakeOverridePropertyImpl(
         get() = _symbol?.descriptor ?: WrappedPropertyDescriptor()
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override fun acquireSymbol(symbol: IrPropertySymbol) {
+    override fun acquireSymbol(symbol: IrPropertySymbol): IrProperty {
         assert(_symbol == null) { "$this already has symbol _symbol" }
         _symbol = symbol
         symbol.bind(this)
         (symbol.descriptor as? WrappedPropertyDescriptor)?.bind(this)
+        return this
     }
 }

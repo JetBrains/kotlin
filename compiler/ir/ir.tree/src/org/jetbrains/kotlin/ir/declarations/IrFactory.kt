@@ -160,7 +160,7 @@ interface IrFactory {
         isDelegated: Boolean,
         isExternal: Boolean,
         isExpect: Boolean,
-    ): IrFakeOverrideProperty
+    ): IrProperty
 
     fun createTypeAlias(
         startOffset: Int,

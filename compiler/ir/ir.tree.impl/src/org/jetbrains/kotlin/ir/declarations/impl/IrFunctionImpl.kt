@@ -104,10 +104,11 @@ class IrFakeOverrideFunctionImpl(
         get() = _symbol?.descriptor ?: WrappedSimpleFunctionDescriptor()
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override fun acquireSymbol(symbol: IrSimpleFunctionSymbol) {
+    override fun acquireSymbol(symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
         assert(_symbol == null) { "$this already has symbol _symbol" }
         _symbol = symbol
         symbol.bind(this)
         (symbol.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(this)
+        return this
     }
 }

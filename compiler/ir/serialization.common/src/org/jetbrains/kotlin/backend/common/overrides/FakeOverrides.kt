@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
@@ -31,9 +30,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.types.Variance
 
 interface PlatformFakeOverrideClassFilter {
@@ -124,7 +120,6 @@ class FakeOverrideBuilder(
 
         symbolTable.declareSimpleFunctionFromLinker(WrappedSimpleFunctionDescriptor(), signature) {
             declaration.acquireSymbol(it)
-            declaration
         }
     }
 
@@ -136,7 +131,7 @@ class FakeOverrideBuilder(
         // To break this loop we use temp symbol in correspondingProperty.
 
         val tempSymbol = IrPropertySymbolImpl(WrappedPropertyDescriptor()).also {
-            it.bind(declaration)
+            it.bind(declaration as IrProperty)
         }
         declaration.getter?.let {
             it.correspondingPropertySymbol = tempSymbol
@@ -149,7 +144,6 @@ class FakeOverrideBuilder(
 
         symbolTable.declarePropertyFromLinker(WrappedPropertyDescriptor(), signature) {
             declaration.acquireSymbol(it)
-            declaration
         }
 
         declaration.getter?.let {
