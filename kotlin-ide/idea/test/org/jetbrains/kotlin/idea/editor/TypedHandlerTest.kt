@@ -1,23 +1,20 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.idea.editor
 
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.testFramework.EditorTestUtil
-import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle
 import org.jetbrains.kotlin.idea.formatter.kotlinCommonSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
-@Suppress("DEPRECATION")
 @RunWith(JUnit38ClassRunner::class)
 class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
     private val dollar = '$'
@@ -599,7 +596,28 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 |    Test()
                 |            .<caret>
                 |}
-                """
+                """,
+            enableKotlinObsoleteCodeStyle,
+        )
+    }
+
+    fun testChainCallContinueWithDotWithOfficialCodeStyle() {
+        doTypeTest(
+            '.',
+            """
+                |class Test{ fun test() = this }
+                |fun some() {
+                |    Test()
+                |    <caret>
+                |}
+                """,
+            """
+                |class Test{ fun test() = this }
+                |fun some() {
+                |    Test()
+                |        .<caret>
+                |}
+                """,
         )
     }
 
@@ -619,7 +637,29 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 |    Test()
                 |            ?.<caret>
                 |}
-                """
+                """,
+            enableKotlinObsoleteCodeStyle
+        )
+    }
+
+    fun testChainCallContinueWithSafeCallWithOfficialCodeStyle() {
+        doTypeTest(
+            '.',
+            """
+                |class Test{ fun test() = this }
+                |fun some() {
+                |    Test()
+                |    ?<caret>
+                |}
+                """,
+            """
+                |class Test{ fun test() = this }
+                |fun some() {
+                |    Test()
+                |            ?.<caret>
+                |}
+                """,
+            enableKotlinObsoleteCodeStyle
         )
     }
 
@@ -639,6 +679,27 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 |    test()
                 |            ?:<caret>
                 |}
+            """,
+            enableKotlinObsoleteCodeStyle
+        )
+    }
+
+    fun testContinueWithElvisWithOfficialCodeStyle() {
+        doTypeTest(
+            ':',
+            """
+                |fun test(): Any? = null
+                |fun some() {
+                |    test()
+                |    ?<caret>
+                |}
+            """,
+            """
+                |fun test(): Any? = null
+                |fun some() {
+                |    test()
+                |        ?:<caret>
+                |}
             """
         )
     }
@@ -656,6 +717,25 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 |fun some() {
                 |    if (true
                 |            ||<caret>)
+                |}
+            """,
+            enableKotlinObsoleteCodeStyle
+        )
+    }
+
+    fun testContinueWithOrWithOfficialCodeStyle() {
+        doTypeTest(
+            '|',
+            """
+                |fun some() {
+                |    if (true
+                |    |<caret>)
+                |}
+            """,
+            """
+                |fun some() {
+                |    if (true
+                |        ||<caret>)
                 |}
             """
         )
@@ -752,6 +832,26 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 |            <caret>
                 |    foo()
                 |}
+                """,
+            enableKotlinObsoleteCodeStyle
+        )
+    }
+
+    fun testIndentOnFinishedVariableEndAfterEqualsWithOfficialCodeStyle() {
+        doTypeTest(
+            '\n',
+            """
+                |fun test() {
+                |    val a =<caret>
+                |    foo()
+                |}
+                """,
+            """
+                |fun test() {
+                |    val a =
+                |        <caret>
+                |    foo()
+                |}
                 """
         )
     }
@@ -768,6 +868,24 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 |fun test() {
                 |    val a =
                 |            <caret>
+                |}
+                """,
+            enableKotlinObsoleteCodeStyle
+        )
+    }
+
+    fun testIndentNotFinishedVariableEndAfterEqualsWithOfficialCodeStyle() {
+        doTypeTest(
+            '\n',
+            """
+                |fun test() {
+                |    val a =<caret>
+                |}
+                """,
+            """
+                |fun test() {
+                |    val a =
+                |        <caret>
                 |}
                 """
         )
@@ -786,9 +904,11 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 |		a: Int,
                 |		<caret>
                 |)
-                """,
-            enableSmartEnterWithTabs()
-        )
+                """
+        ) {
+            enableSmartEnter(it)
+            enableTabs(it)
+        }
     }
 
     fun testSmartEnterWithTabsInMethodParameters() {
@@ -796,17 +916,19 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
             '\n',
             """
                 |fun method(
-                |         arg1: String,<caret>
+                |		arg1: String,<caret>
                 |) {}
                 """,
             """
                 |fun method(
-                |         arg1: String,
-                |         <caret>
+                |		arg1: String,
+                |		<caret>
                 |) {}
-                """,
-            enableSmartEnterWithTabs()
-        )
+                """
+        ) {
+            enableSmartEnter(it)
+            enableTabs(it)
+        }
     }
 
     fun testEnterWithoutLineBreakBeforeClosingBracketInMethodParameters() {
@@ -821,11 +943,11 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 |         arg1: String,
                 |<caret>) {}
                 """,
-            enableSmartEnterWithTabs()
+            enableSmartEnter
         )
     }
 
-    fun testEnterWithTrailingCommaAndWhitespaceBeforeLineBreak() {
+    fun testSmartEnterWithTrailingCommaAndWhitespaceBeforeLineBreak() {
         doTypeTest(
             '\n',
             """
@@ -839,7 +961,7 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 |         <caret>
                 |) {}
                 """,
-            enableSmartEnterWithTabs()
+            enableSmartEnter
         )
     }
 
@@ -851,19 +973,36 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 """,
             """
                 |fun method(
-                |		<caret>
+                |        <caret>
+                |) {}
+                """
+        ) {
+            enableKotlinObsoleteCodeStyle(it)
+            enableSmartEnter(it)
+        }
+    }
+
+    fun testSmartEnterBetweenOpeningAndClosingBracketsWithOfficialCodeStyle() {
+        doTypeTest(
+            '\n',
+            """
+                |fun method(<caret>) {}
+                """,
+            """
+                |fun method(
+                |    <caret>
                 |) {}
                 """,
-            enableSmartEnterWithTabs()
+            enableSmartEnter
         )
     }
 
-    private val settingsWithInvertedAlignWhenMultiline = { it: CodeStyleSettings ->
-        val settings = it.kotlinCommonSettings
-        settings.ALIGN_MULTILINE_PARAMETERS = !settings.ALIGN_MULTILINE_PARAMETERS
-        settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = !settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS
-        enableSmartEnterWithTabs()(it)
-    }
+    private val enableSettingsWithInvertedAlignWhenMultiline: (CodeStyleSettings) -> Unit
+        get() = {
+            val settings = it.kotlinCommonSettings
+            settings.ALIGN_MULTILINE_PARAMETERS = !settings.ALIGN_MULTILINE_PARAMETERS
+            settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = !settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS
+        }
 
     fun testSmartEnterWithTabsOnConstructorParametersWithInvertedAlignWhenMultiline() {
         doTypeTest(
@@ -878,9 +1017,34 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 |		a: Int,
                 |		<caret>
                 |)
+                """
+        ) {
+            enableKotlinObsoleteCodeStyle(it)
+            enableSettingsWithInvertedAlignWhenMultiline(it)
+            enableSmartEnter(it)
+            enableTabs(it)
+        }
+    }
+
+    fun testSmartEnterWithTabsOnConstructorParametersWithInvertedAlignWhenMultilineWithOfficialCodeStyle() {
+        doTypeTest(
+            '\n',
+            """
+                |class A(
+                |	a: Int,<caret>
+                |)
                 """,
-            settingsWithInvertedAlignWhenMultiline
-        )
+            """
+                |class A(
+                |	a: Int,
+                |	<caret>
+                |)
+                """
+        ) {
+            enableSettingsWithInvertedAlignWhenMultiline(it)
+            enableSmartEnter(it)
+            enableTabs(it)
+        }
     }
 
     fun testSmartEnterWithTabsInMethodParametersWithInvertedAlignWhenMultiline() {
@@ -888,17 +1052,21 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
             '\n',
             """
                 |fun method(
-                |         arg1: String,<caret>
+                |		arg1: String,<caret>
                 |) {}
                 """,
             """
                 |fun method(
-                |         arg1: String,
-                |         <caret>
+                |		arg1: String,
+                |		<caret>
                 |) {}
-                """,
-            settingsWithInvertedAlignWhenMultiline
-        )
+                """
+        ) {
+            enableKotlinObsoleteCodeStyle(it)
+            enableSettingsWithInvertedAlignWhenMultiline(it)
+            enableSmartEnter(it)
+            enableTabs(it)
+        }
     }
 
     fun testEnterWithoutLineBreakBeforeClosingBracketInMethodParametersWithInvertedAlignWhenMultiline() {
@@ -913,7 +1081,7 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                 |         arg1: String,
                 |<caret>) {}
                 """,
-            settingsWithInvertedAlignWhenMultiline
+            enableSettingsWithInvertedAlignWhenMultiline
         )
     }
 
@@ -922,16 +1090,16 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
             '\n',
             """
                 |fun method(
-                |         arg1: String, <caret>
+                |    arg1: String, <caret>
                 |) {}
                 """,
             """
                 |fun method(
-                |         arg1: String, 
-                |         <caret>
+                |    arg1: String, 
+                |    <caret>
                 |) {}
                 """,
-            settingsWithInvertedAlignWhenMultiline
+            enableSettingsWithInvertedAlignWhenMultiline
         )
     }
 
@@ -943,11 +1111,31 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
                        """,
             """
                        |fun method(
-                       |		<caret>
+                       |        <caret>
                        |) {}
+                       """
+        ) {
+            enableKotlinObsoleteCodeStyle(it)
+            enableSettingsWithInvertedAlignWhenMultiline(it)
+            enableSmartEnter(it)
+        }
+    }
+
+    fun testSmartEnterBetweenOpeningAndClosingBracketsWithInvertedAlignWhenMultilineWithOfficialCodeStyle() {
+        doTypeTest(
+            '\n',
+            """
+                       |fun method(<caret>) {}
                        """,
-            settingsWithInvertedAlignWhenMultiline
-        )
+            """
+                       |fun method(
+                       |    <caret>
+                       |) {}
+                       """
+        ) {
+            enableSettingsWithInvertedAlignWhenMultiline(it)
+            enableSmartEnter(it)
+        }
     }
 
     fun testAutoIndentInWhenClause() {
@@ -1049,8 +1237,7 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             |fun test() =
             |    <caret>
-            """,
-            enableKotlinOfficialCodeStyle
+            """
         )
     }
 
@@ -1067,8 +1254,7 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
             |    val (a, b) =
             |        <caret>
             |}
-            """,
-            enableKotlinOfficialCodeStyle
+            """
         )
     }
 
@@ -1081,8 +1267,7 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             |val test =
             |    <caret>
-            """,
-            enableKotlinOfficialCodeStyle
+            """
         )
     }
 
@@ -1097,21 +1282,27 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
         doTypeTest('\'', "val c = <caret>", "val c = ''")
     }
 
-    private fun enableSmartEnterWithTabs(): (CodeStyleSettings) -> Unit = {
-        val indentOptions = it.getIndentOptions(KotlinFileType.INSTANCE)
-        indentOptions.USE_TAB_CHARACTER = true
-        indentOptions.SMART_TABS = true
-    }
+    private val enableSmartEnter: (CodeStyleSettings) -> Unit
+        get() = {
+            val indentOptions = it.getLanguageIndentOptions(KotlinLanguage.INSTANCE)
+            indentOptions.SMART_TABS = true
+        }
 
-    private fun doTypeTest(ch: Char, beforeText: String, afterText: String, settingsModifier: ((CodeStyleSettings) -> Unit)? = null) {
+    private val enableTabs: (CodeStyleSettings) -> Unit
+        get() = {
+            val indentOptions = it.getLanguageIndentOptions(KotlinLanguage.INSTANCE)
+            indentOptions.USE_TAB_CHARACTER = true
+        }
+
+    private fun doTypeTest(ch: Char, beforeText: String, afterText: String, settingsModifier: ((CodeStyleSettings) -> Unit) = { }) {
         doTypeTest(ch.toString(), beforeText, afterText, settingsModifier)
     }
 
-    private fun doTypeTest(text: String, beforeText: String, afterText: String, settingsModifier: ((CodeStyleSettings) -> Unit)? = null) {
-        configureCodeStyleAndRun(project, configurator = { settingsModifier?.invoke(it) }) {
+    private fun doTypeTest(text: String, beforeText: String, afterText: String, settingsModifier: ((CodeStyleSettings) -> Unit) = { }) {
+        configureCodeStyleAndRun(project, configurator = { settingsModifier(it) }) {
             myFixture.configureByText("a.kt", beforeText.trimMargin())
             for (ch in text) {
-                EditorTestUtil.performTypingAction(editor, ch)
+                myFixture.type(ch)
             }
 
             myFixture.checkResult(afterText.trimMargin())
@@ -1128,7 +1319,6 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
             editorOptions.isAutoAddValKeywordToDataClassParameters = wasEnabled
         }
     }
-
 
     private fun doLtGtTestNoAutoClose(initText: String) {
         doLtGtTest(initText, false)
@@ -1153,7 +1343,7 @@ class TypedHandlerTest : KotlinLightCodeInsightFixtureTestCase() {
         doLtGtTest(initText, true)
     }
 
-    private val enableKotlinOfficialCodeStyle: (CodeStyleSettings) -> Unit = {
-        KotlinStyleGuideCodeStyle.apply(it)
+    private val enableKotlinObsoleteCodeStyle: (CodeStyleSettings) -> Unit = {
+        KotlinObsoleteCodeStyle.apply(it)
     }
 }
