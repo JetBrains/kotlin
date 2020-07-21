@@ -48,6 +48,11 @@ public class ExtendedFirDiagnosticsTestGenerated extends AbstractExtendedFirDiag
         runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantVisibilityModifierChecker.kt");
     }
 
+    @TestMetadata("VariableAssignmentChecker.kt")
+    public void testVariableAssignmentChecker() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/extendedCheckers/VariableAssignmentChecker.kt");
+    }
+
     @TestMetadata("compiler/fir/analysis-tests/testData/extendedCheckers/canBeReplacedWithOperatorAssignment")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

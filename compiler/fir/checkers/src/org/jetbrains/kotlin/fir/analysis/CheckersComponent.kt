@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
@@ -60,15 +61,19 @@ private class ComposedDeclarationCheckers : DeclarationCheckers() {
 
     override val constructorCheckers: List<FirConstructorChecker>
         get() = _constructorCheckers
+    override val controlFlowAnalyserCheckers: List<FirControlFlowChecker>
+        get() = _controlFlowAnalyserCheckers
 
     private val _declarationCheckers: MutableList<FirBasicDeclarationChecker> = mutableListOf()
     private val _memberDeclarationCheckers: MutableList<FirMemberDeclarationChecker> = mutableListOf()
     private val _constructorCheckers: MutableList<FirConstructorChecker> = mutableListOf()
+    private val _controlFlowAnalyserCheckers: MutableList<FirControlFlowChecker> = mutableListOf()
 
     fun register(checkers: DeclarationCheckers) {
         _declarationCheckers += checkers.declarationCheckers
         _memberDeclarationCheckers += checkers.allMemberDeclarationCheckers
         _constructorCheckers += checkers.allConstructorCheckers
+        _controlFlowAnalyserCheckers += checkers.controlFlowAnalyserCheckers
     }
 }
 
