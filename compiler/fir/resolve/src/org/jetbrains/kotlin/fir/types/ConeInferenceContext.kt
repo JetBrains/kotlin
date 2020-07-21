@@ -25,8 +25,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     val symbolProvider: FirSymbolProvider get() = session.firSymbolProvider
 
-    override val isErrorTypeAllowed: Boolean get() = false
-
     override fun nullableNothingType(): SimpleTypeMarker {
         return session.builtinTypes.nullableNothingType.type//StandardClassIds.Nothing(symbolProvider).constructType(emptyArray(), true)
     }

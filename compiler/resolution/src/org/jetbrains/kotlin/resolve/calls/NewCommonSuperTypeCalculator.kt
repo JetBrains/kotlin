@@ -191,7 +191,7 @@ object NewCommonSuperTypeCalculator {
 
         val explicitSupertypes = filterSupertypes(uniqueTypes, contextStubTypesNotEqual)
         if (explicitSupertypes.size == 1) return explicitSupertypes.single()
-        findErrorTypeInSupertypesIfItIsNeeded(explicitSupertypes, contextStubTypesEqualToAnything)?.let { return it }
+        findErrorTypeInSupertypes(explicitSupertypes, contextStubTypesEqualToAnything)?.let { return it }
 
         findCommonIntegerLiteralTypesSuperType(explicitSupertypes)?.let { return it }
 
@@ -208,11 +208,10 @@ object NewCommonSuperTypeCalculator {
         return projectedType.asSimpleType()?.isStubType() == true
     }
 
-    private fun TypeSystemCommonSuperTypesContext.findErrorTypeInSupertypesIfItIsNeeded(
+    private fun TypeSystemCommonSuperTypesContext.findErrorTypeInSupertypes(
         types: List<SimpleTypeMarker>,
         contextStubTypesEqualToAnything: AbstractTypeCheckerContext
     ): SimpleTypeMarker? {
-        if (isErrorTypeAllowed) return null
         for (type in types) {
             collectAllSupertypes(type, contextStubTypesEqualToAnything).firstOrNull { it.isError() }?.let { return it.toErrorType() }
         }
@@ -243,7 +242,7 @@ object NewCommonSuperTypeCalculator {
 
             result.retainAll(collectAllSupertypes(type, contextStubTypesEqualToAnything))
         }
-        // remove all constructors that have subtype(s) with constructors from the resulting set - they are less precise  
+        // remove all constructors that have subtype(s) with constructors from the resulting set - they are less precise
         return result.filterNot { target ->
             result.any { other ->
                 other != target && other.supertypes().any { it.typeConstructor() == target }
@@ -348,7 +347,7 @@ object NewCommonSuperTypeCalculator {
         typeArgumentsForSuperConstructorParameter: List<TypeArgumentMarker>,
         parameter: TypeParameterMarker,
     ): Boolean {
-        if (parameter.getVariance() == TypeVariance.IN) 
+        if (parameter.getVariance() == TypeVariance.IN)
             return false // arguments for contravariant parameters are intersected, recursion should not be possible
 
         val originalTypesSet = originalTypesForCst.toSet()

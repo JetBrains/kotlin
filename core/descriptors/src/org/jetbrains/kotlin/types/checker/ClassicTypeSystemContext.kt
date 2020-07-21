@@ -33,8 +33,6 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSystemCommonBackendContext {
-    override val isErrorTypeAllowed: Boolean get() = false
-
     override fun TypeConstructorMarker.isDenotable(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         return this.isDenotable

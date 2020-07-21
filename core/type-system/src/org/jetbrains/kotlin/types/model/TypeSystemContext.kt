@@ -78,10 +78,6 @@ interface TypeCheckerProviderContext {
 }
 
 interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeFactoryContext, TypeCheckerProviderContext {
-    /*
-     * If set in false then if there is an error supertype in input types list of `commonSuperType` it will be returned
-     */
-    val isErrorTypeAllowed: Boolean
 
     fun KotlinTypeMarker.anySuperTypeConstructor(predicate: (TypeConstructorMarker) -> Boolean) =
         newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
