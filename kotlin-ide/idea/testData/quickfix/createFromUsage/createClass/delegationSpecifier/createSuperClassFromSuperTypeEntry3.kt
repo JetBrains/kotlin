@@ -3,5 +3,5 @@
 // ACTION: Create type parameter 'Unknown' in class 'A'
 // DISABLE-ERRORS
 class A() : Unknown<caret> {
-    constructor(i: Int)
+    constructor(i: Int) : this()
 }
