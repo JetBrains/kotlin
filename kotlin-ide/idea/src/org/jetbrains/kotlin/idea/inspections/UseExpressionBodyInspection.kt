@@ -177,7 +177,9 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
         val commentSaver = CommentSaver(body)
 
         val factory = KtPsiFactory(declaration)
-        declaration.addBefore(factory.createEQ(), body)
+        val eq = declaration.addBefore(factory.createEQ(), body)
+        declaration.addAfter(factory.createWhiteSpace(), eq)
+
         val newBody = body.replaced(value)
 
         commentSaver.restore(newBody)
