@@ -9,31 +9,54 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFakeOverrideFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 abstract class IrFunctionCommonImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    name: Name,
-    visibility: Visibility,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
+    override val name: Name,
+    override var visibility: Visibility,
     returnType: IrType,
-    isInline: Boolean,
-    isExternal: Boolean,
+    override val isInline: Boolean,
+    override val isExternal: Boolean,
     override val isTailrec: Boolean,
     override val isSuspend: Boolean,
     override val isOperator: Boolean,
     override val isInfix: Boolean,
-    isExpect: Boolean,
-) : IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, returnType), IrSimpleFunction {
+    override val isExpect: Boolean,
+) : IrSimpleFunction {
+    override val factory: IrFactory
+        get() = IrFactoryImpl
+
+    override lateinit var parent: IrDeclarationParent
+    override var annotations: List<IrConstructorCall> = emptyList()
+
+    @Suppress("DEPRECATION")
+    override var returnType: IrType = returnType
+        get() = if (field === org.jetbrains.kotlin.ir.types.impl.IrUninitializedType) {
+            error("Return type is not initialized")
+        } else {
+            field
+        }
+
+    override var typeParameters: List<IrTypeParameter> = emptyList()
+
+    override var dispatchReceiverParameter: IrValueParameter? = null
+    override var extensionReceiverParameter: IrValueParameter? = null
+    override var valueParameters: List<IrValueParameter> = emptyList()
+
+    override var body: IrBody? = null
+
+    override var metadata: MetadataSource? = null
+
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
 
     @Suppress("LeakingThis")

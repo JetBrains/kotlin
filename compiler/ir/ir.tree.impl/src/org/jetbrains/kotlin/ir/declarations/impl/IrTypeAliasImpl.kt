@@ -8,26 +8,31 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrTypeAliasImpl(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     override val symbol: IrTypeAliasSymbol,
     override val name: Name,
     override var visibility: Visibility,
     override val expandedType: IrType,
     override val isActual: Boolean,
-    origin: IrDeclarationOrigin
-) : IrDeclarationBase(startOffset, endOffset, origin), IrTypeAlias {
+    override var origin: IrDeclarationOrigin
+) : IrTypeAlias {
     init {
         symbol.bind(this)
     }
+
+    override val factory: IrFactory
+        get() = IrFactoryImpl
+
+    override lateinit var parent: IrDeclarationParent
+    override var annotations: List<IrConstructorCall> = emptyList()
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: TypeAliasDescriptor

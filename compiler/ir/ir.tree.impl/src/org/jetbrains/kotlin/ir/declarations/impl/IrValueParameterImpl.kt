@@ -18,17 +18,20 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrValueParameterImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
     override val symbol: IrValueParameterSymbol,
     override val name: Name,
     override val index: Int,
@@ -36,7 +39,7 @@ class IrValueParameterImpl(
     override val varargElementType: IrType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean
-) : IrDeclarationBase(startOffset, endOffset, origin), IrValueParameter {
+) : IrValueParameter {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ParameterDescriptor
         get() = symbol.descriptor
@@ -44,6 +47,12 @@ class IrValueParameterImpl(
     init {
         symbol.bind(this)
     }
+
+    override val factory: IrFactory
+        get() = IrFactoryImpl
+
+    override lateinit var parent: IrDeclarationParent
+    override var annotations: List<IrConstructorCall> = emptyList()
 
     override var defaultValue: IrExpressionBody? = null
 }

@@ -19,22 +19,29 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrLocalDelegatedPropertyImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
     override val symbol: IrLocalDelegatedPropertySymbol,
     override val name: Name,
     override val type: IrType,
     override val isVar: Boolean
-) : IrDeclarationBase(startOffset, endOffset, origin), IrLocalDelegatedProperty {
+) : IrLocalDelegatedProperty {
     init {
         symbol.bind(this)
     }
+
+    override val factory: IrFactory
+        get() = IrFactoryImpl
+
+    override lateinit var parent: IrDeclarationParent
+    override var annotations: List<IrConstructorCall> = emptyList()
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: VariableDescriptorWithAccessors
