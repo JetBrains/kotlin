@@ -366,6 +366,7 @@ private val IrClass.flags: Int
 private val IrField.flags: Int
     get() = origin.flags or visibility.flags or
             this.specialDeprecationFlag or (correspondingPropertySymbol?.owner?.deprecationFlags ?: 0) or
+            (if (annotations.hasAnnotation(KOTLIN_DEPRECATED)) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
@@ -375,9 +376,12 @@ private val IrField.flags: Int
 private val IrField.specialDeprecationFlag: Int
     get() = if (shouldHaveSpecialDeprecationFlag()) Opcodes.ACC_DEPRECATED else 0
 
-private fun IrField.shouldHaveSpecialDeprecationFlag(): Boolean {
+private val JAVA_LANG_DEPRECATED = FqName("java.lang.Deprecated")
+private val KOTLIN_DEPRECATED = FqName("kotlin.Deprecated")
+
+fun IrField.shouldHaveSpecialDeprecationFlag(): Boolean {
     return origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
-            annotations.hasAnnotation(FqName("java.lang.Deprecated"))
+            annotations.hasAnnotation(JAVA_LANG_DEPRECATED)
 }
 
 private val IrDeclarationOrigin.flags: Int
