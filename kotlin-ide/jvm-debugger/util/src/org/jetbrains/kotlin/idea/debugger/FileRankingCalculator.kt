@@ -41,7 +41,7 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
 
     fun findMostAppropriateSource(files: Collection<KtFile>, location: Location): KtFile {
         val fileWithRankings: Map<KtFile, Int> = rankFiles(files, location)
-        val fileWithMaxScore = fileWithRankings.maxBy { it.value }!!
+        val fileWithMaxScore = fileWithRankings.maxByOrNull { it.value }!!
         return fileWithMaxScore.key
     }
 
@@ -334,7 +334,7 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
             return superClass.isLambdaClass()
         }
 
-        return declaringClass.superclass().isLambdaClass()
+        return declaringClass.superclass()?.isLambdaClass() ?: false
     }
 
     private fun makeTypeMapper(bindingContext: BindingContext): KotlinTypeMapper {

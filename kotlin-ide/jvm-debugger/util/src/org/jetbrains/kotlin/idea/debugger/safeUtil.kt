@@ -118,7 +118,7 @@ private inline fun <T> wrapEvaluateException(block: () -> T): T? {
     }
 }
 
-public inline fun <T> wrapIllegalArgumentException(block: () -> T): T? {
+inline fun <T> wrapIllegalArgumentException(block: () -> T): T? {
     return try {
         block()
     } catch (e: IllegalArgumentException) {

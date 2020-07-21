@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.idea.debugger.hopelessAware
 import org.jetbrains.org.objectweb.asm.Type
 
 class ExecutionContext(evaluationContext: EvaluationContextImpl, val frameProxy: StackFrameProxyImpl) :
-    BaseExecutionContext(evaluationContext) {
-}
+    BaseExecutionContext(evaluationContext)
 
 class DefaultExecutionContext(evaluationContext: EvaluationContextImpl) : BaseExecutionContext(evaluationContext) {
 
@@ -139,11 +138,8 @@ sealed class BaseExecutionContext(val evaluationContext: EvaluationContextImpl) 
         return hopelessAware { debugProcess.invokeMethod(evaluationContext, type, method, args) }
     }
 
-    fun invokeMethodAsString(instance: ObjectReference, methodName: String): String? =
-        (findAndInvoke(instance, instance.referenceType(), methodName, "()Ljava/lang/String;") as? StringReference)?.value() ?: null
-
     fun invokeMethodAsInt(instance: ObjectReference, methodName: String): Int? =
-        (findAndInvoke(instance, instance.referenceType(), methodName, "()I") as? IntegerValue)?.value() ?: null
+        (findAndInvoke(instance, instance.referenceType(), methodName, "()I") as? IntegerValue)?.value()
 
     fun invokeMethodAsObject(type: ClassType, methodName: String, vararg params: Value): ObjectReference? =
         invokeMethodAsObject(type, methodName, null, *params)

@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.io.InputStream
 
-class CompoundVirtualFileFinder(private val finders: List<VirtualFileFinder>): VirtualFileFinder() {
+class CompoundVirtualFileFinder(private val finders: List<VirtualFileFinder>) : VirtualFileFinder() {
     override fun findBuiltInsData(packageFqName: FqName): InputStream? {
         for (finder in finders) {
             finder.findBuiltInsData(packageFqName)?.let { return it }
