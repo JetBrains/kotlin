@@ -1,12 +1,10 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.navigation
 
-import com.intellij.codeInsight.actions.CodeInsightAction
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.util.TextRange
@@ -22,9 +20,7 @@ abstract class AbstractGotoActionTest : KotlinLightCodeInsightFixtureTestCase() 
         val parts = KotlinTestUtils.loadBeforeAfterText(testPath)
 
         myFixture.configureByText(KotlinFileType.INSTANCE, parts[0])
-
-        val gotoAction = ActionManager.getInstance().getAction(actionName) as CodeInsightAction
-        gotoAction.actionPerformedImpl(project, myFixture.editor)
+        myFixture.performEditorAction(actionName)
 
         val fileEditorManager = FileEditorManager.getInstance(myFixture.project) as FileEditorManagerEx
         val currentEditor = fileEditorManager.selectedTextEditor ?: editor
