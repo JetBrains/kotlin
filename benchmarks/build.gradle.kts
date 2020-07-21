@@ -110,3 +110,38 @@ tasks.named("classes") {
         }
     }
 }
+
+tasks.register<JavaExec>("runBenchmark") {
+    val jmhArgs: String by project // example: -PjmhArgs='CommonCalls -p size=500 -p isIR=true -p useNI=true -f 1'
+    val resultFilePath = "$buildDir/benchmarks/jmh-result.json"
+    val ideaHome = intellijRootDir().canonicalPath
+
+    val benchmarkJarPath = "$buildDir/benchmarks/main/jars/benchmarks.jar"
+    args = mutableListOf("-Didea.home.path=$ideaHome", benchmarkJarPath, "-rf", "json", "-rff", resultFilePath) + jmhArgs.split("\\s".toRegex())
+    main = "-jar"
+
+
+    doLast {
+        if (project.kotlinBuildProperties.isTeamcityBuild) {
+            val jsonArray = com.google.gson.JsonParser.parseString(File(resultFilePath).readText()).asJsonArray
+            jsonArray.forEach {
+                val benchmark = it.asJsonObject
+                // remove unnecessary name parts from string like this "org.jetbrains.kotlin.benchmarks.CommonCallsBenchmark.benchmark"
+                val name = benchmark["benchmark"].asString.removeSuffix(".benchmark").let {
+                    val indexOfLastDot = it.indexOfLast { it == '.' }
+                    it.removeRange(0..indexOfLastDot)
+                }
+                val params = benchmark["params"].asJsonObject
+                val isIR = if (params.has("isIR")) params["isIR"].asString else "false"
+                val useNI = if (params.has("useNI")) params["useNI"].asString else "false"
+                val size = params["size"].asString
+                val score = "%.3f".format(benchmark["primaryMetric"].asJsonObject["score"].asString.toFloat())
+
+                val irPostfix = if (isIR.toBoolean()) " isIR=true" else ""
+                val niPostfix = if (useNI.toBoolean() && !isIR.toBoolean()) " isNI=true" else ""
+
+                println("""##teamcity[buildStatisticValue key='$name size=$size${irPostfix}$niPostfix' value='$score']""")
+            }
+        }
+    }
+}
