@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/samWithReceiver.kt
               receiver: GET_VAR '<this>: <root>.CliOption declared in <root>.CliOption.<get-allowMultipleOccurrences>' type=<root>.CliOption origin=null
     PROPERTY name:name visibility:public modality:FINAL [val]
       annotations:
-        Deprecated(message = 'Use optionName instead.', replaceWith = ReplaceWith(expression = 'optionName', imports = <null>), level = <null>)
+        Deprecated(message = 'Use optionName instead.', replaceWith = ReplaceWith(expression = 'optionName', imports = []), level = <null>)
       FUN name:<get-name> visibility:public modality:FINAL <> ($this:<root>.CliOption) returnType:kotlin.String
         correspondingProperty: PROPERTY name:name visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.CliOption
