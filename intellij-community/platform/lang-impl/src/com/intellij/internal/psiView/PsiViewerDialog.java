@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.internal.psiView;
 
+import com.intellij.codeInsight.documentation.render.DocRenderManager;
 import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.internal.psiView.formattingblocks.BlockViewerPsiBasedTree;
 import com.intellij.internal.psiView.stubtree.StubViewerPsiBasedTree;
@@ -204,6 +205,7 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider {
       myEditor.getSelectionModel().setSelection(0, document.getTextLength());
     }
     myEditor.getSettings().setLineMarkerAreaShown(false);
+    DocRenderManager.setDocRenderingEnabled(myEditor, false);
     init();
     if (selectedEditor != null) {
       doOKAction();
