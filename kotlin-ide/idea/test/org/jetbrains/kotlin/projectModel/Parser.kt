@@ -70,6 +70,8 @@ open class ProjectStructureParser(private val projectRoot: File) {
         val root = attributes["root"] ?: builder.name!!
         builder.root = File(projectRoot, root)
 
+        builder.additionalCompilerArgs = attributes["additionalCompilerArgs"]
+
         val testRoot = attributes["testRoot"]
         if (testRoot != null) builder.testRoot = File(projectRoot, testRoot)
     }
@@ -116,7 +118,7 @@ open class ProjectStructureParser(private val projectRoot: File) {
 
         return attributesString
             .split(ATTRIBUTES_SEPARATOR)
-            .map { it.splitIntoExactlyTwoParts(ATTRIBUTE_VALUE_SEPARATOR) }
+            .map { it.splitIntoTwoParts(ATTRIBUTE_VALUE_SEPARATOR) }
             .toMap()
     }
 
@@ -202,8 +204,10 @@ private fun Reader.nextWord(): String? {
 
 private fun Char.isSeparator() = isWhitespace() || this == '\n'
 
-private fun String.splitIntoExactlyTwoParts(separator: String): Pair<String, String> {
+private fun String.splitIntoTwoParts(separator: String): Pair<String, String> {
     val result = split(separator)
-    require(result.size == 2) { "$this can not be split into exactly two parts with separator $separator" }
-    return result[0].trim() to result[1].trim()
+    val name = substringBefore(separator, "")
+    val value = substringAfter(separator, "")
+    require(name.isNotEmpty()) { "$this can not be split into two parts with separator $separator" }
+    return name.trim() to value.trim()
 }

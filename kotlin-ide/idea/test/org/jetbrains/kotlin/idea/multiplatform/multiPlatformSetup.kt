@@ -117,7 +117,7 @@ fun AbstractMultiModuleTest.doSetup(projectModel: ProjectResolveModel) {
             pureKotlinSourceFolders = pureKotlinSourceFolders
         )
         // New inference is enabled here as these tests are using type refinement feature that is working only along with NI
-        ideaModule.enableMultiPlatform(additionalCompilerArguments = "-Xnew-inference")
+        ideaModule.enableMultiPlatform(additionalCompilerArguments = "-Xnew-inference " + (resolveModule.additionalCompilerArgs ?: ""))
     }
 }
 
