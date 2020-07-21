@@ -38,6 +38,7 @@ object RedundantExplicitTypeChecker : FirMemberDeclarationChecker() {
         val type = declaration.returnTypeRef.coneType
 
         if (typeReference is FirTypeAlias) return
+        if (typeReference.annotations.isNotEmpty()) return
 
         when (initializer) {
             is FirConstExpression<*> -> {
@@ -76,10 +77,9 @@ object RedundantExplicitTypeChecker : FirMemberDeclarationChecker() {
             }
             is FirGetClassCall -> {
                 return
-                //if (!type.isSame(initializer.typeRef.coneType.type.classId)) return
             }
             is FirResolvedQualifier -> {
-                //return
+                if (!type.isSame(initializer.classId)) return
             }
             is FirStringConcatenationCall -> {
                 if (!type.isSame(StandardClassIds.String)) return

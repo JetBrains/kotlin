@@ -1,5 +1,17 @@
 import kotlin.reflect.KClass
 
+@Target(AnnotationTarget.TYPE)
+annotation class A
+
+fun annotated() {
+    val x: @A Int /* NOT redundant */ = 1
+}
+
+object SomeObj
+fun fer() {
+    val x: Any /* NOT redundant */ = SomeObj
+}
+
 fun f2(y: String?): String {
     val f: KClass<*> = (y ?: return "")::class
     return ""
