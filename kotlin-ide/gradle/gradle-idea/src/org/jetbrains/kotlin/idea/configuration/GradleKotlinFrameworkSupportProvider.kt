@@ -216,10 +216,19 @@ abstract class GradleKotlinJSFrameworkSupportProvider(
                     (
                             additionalSubTargetSettings()
                                 ?.lines()
-                                ?.joinToString("\n", "\n", "\n") { "            $it" } ?: ""
+                                ?.joinToString("\n", "\n", "\n") { line ->
+                                    if (line.isBlank()) {
+                                        line
+                                    } else {
+                                        line
+                                            .prependIndent()
+                                            .prependIndent()
+                                            .prependIndent()
+                                    }
+                                } ?: "\n"
                             ) +
                     """
-                           }
+                        }
                         binaries.executable()
                     }
                 }
