@@ -1,150 +1,310 @@
 # CocoaPods integration
 
-Starting with 1.3.30, an experimental integration with [CocoaPods](https://cocoapods.org/) is added
-to Kotlin/Native. This feature allows you to represent a Kotlin/Native Gradle-project as a
-CocoaPods dependency. Such a representation provides the following advantages:
+Kotlin/Native provides integration with the [CocoaPods dependency manager](https://cocoapods.org/). You can add
+dependencies on Pod libraries stored in the CocoaPods repository or locally as well as use a multiplatform project with 
+native targets as a CocoaPods dependency (Kotlin Pod).
 
- - Such a dependency can be included in a Podfile of an Xcode project and automatically built (and rebuilt)
- along with this project. As a result, importing to Xcode is simplified since there is no need to
- write corresponding Gradle tasks and Xcode build steps manually.
+You can manage Pod dependencies directly in IntelliJ IDEA and enjoy all the additional features such as code highlighting 
+and completion. You can build the whole Kotlin project with Gradle and not ever have to switch to Xcode.
+Use Xcode only when you need to write Swift/Objective-C code or run your application on a simulator or device.
  
- - When building from Xcode, you can use CocoaPods libraries without writing
- .def files manually and setting cinterop tool parameters. In this case, all required parameters can be
- obtained from the Xcode project configured by CocoaPods.
+Depending on your project and purposes, you can add dependencies between:
+* [A Kotlin project and a Pod library from the CocoaPods repository](#add-a-dependency-on-a-pod-library-from-the-cocoapods-repository)
+* [A Kotlin project and a Pod library stored locally](#add-a-dependency-on-a-pod-library-stored-locally)
+* [A Kotlin Pod and an Xcode project with one target](#add-a-dependency-between-a-kotlin-pod-and-xcode-project-with-one-target) 
+or [several targets](#add-a-dependency-between-a-kotlin-pod-with-an-xcode-project-with-several-targets)
 
-For an example of CocoaPods integration, refer to the
-[`cocoapods`](https://github.com/JetBrains/kotlin-native/tree/master/samples/cocoapods) sample.
+>You can also add dependencies between a Kotlin Pod and multiple Xcode projects. However, in this case you need to add a 
+>dependency by calling `pod install` manually for each Xcode project. In other cases, it's done automatically.
+{:.note}
 
-## CocoaPods Gradle plugin
+## Install the CocoaPods dependency manager and plugin
 
-The CocoaPods support is implemented in a separate Gradle plugin: `org.jetbrains.kotlin.native.cocoapods`.
+1. Install the [CocoaPods dependency manager](https://cocoapods.org/).
+    
+    <div class="sample" markdown="1" theme="idea" mode="ruby" data-highlight-only>
+    
+    ```ruby
+    $ sudo gem install cocoapods
+    ```
+    
+    </div>
 
-> __Note:__ The plugin is based on the multiplatform project model and requires applying the
-`org.jetbrains.kotlin.multiplatform` plugin. See details about the multiplatform plugin at
-the [corresponding page](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html).
+2. Install the [`cocoapods-generate`](https://github.com/square/cocoapods-generate) plugin.
+
+    <div class="sample" markdown="1" theme="idea" mode="ruby" data-highlight-only>
+    
+    ```ruby
+    $ sudo gem install cocoapods-generate
+    ```
+    
+    </div>
+    
+3. In `build.gradle.kts` (or `build.gradle`) of your IDEA project, apply the CocoaPods plugin as well as the Kotlin
+ Multiplatform plugin.
+
+    <div class="sample" markdown="1" theme="idea" data-highlight-only>
+    
+    ```kotlin
+    plugins {
+       kotlin("multiplatform") version "{{ site.data.releases.latest.version }}"
+       kotlin("native.cocoapods") version "{{ site.data.releases.latest.version }}"
+    }
+    ```
+    
+    </div> 
+
+4. Configure `summary`, `homepage`, and `frameworkName`of the `Podspec` file in the `cocoapods` block.  
+`version` is a version of the Gradle project.
+
+    <div class="sample" markdown="1" theme="idea" data-highlight-only>
+    
+    ```kotlin
+    plugins {
+        kotlin("multiplatform") version "{{ site.data.releases.latest.version }}"
+        kotlin("native.cocoapods") version "{{ site.data.releases.latest.version }}"
+    }
+    
+    // CocoaPods requires the podspec to have a version.
+    version = "1.0"
+    
+    kotlin {
+        cocoapods {
+            // Configure fields required by CocoaPods.
+            summary = "Some description for a Kotlin/Native module"
+            homepage = "Link to a Kotlin/Native module homepage"
+    
+            // You can change the name of the produced framework.
+            // By default, it is the name of the Gradle project.
+            frameworkName = "my_framework"
+        }
+    }
+    ```
+    
+    </div>
+    
+5. Re-import the project.
 
 When applied, the CocoaPods plugin does the following:
 
-1. Adds both `debug` and `release` frameworks as output binaries for all iOS and macOS targets.
-2. Creates a `podspec` task which generates a [podspec](https://guides.cocoapods.org/syntax/podspec.html)
-file for the given project.
+* Adds both `debug` and `release` frameworks as output binaries for all macOS, iOS, tvOS, and watchOS targets.
+* Creates a `podspec` task which generates a [Podspec](https://guides.cocoapods.org/syntax/podspec.html)
+file for the project.
 
-The podspec generated includes a path to an output framework and script phases which automate building
-this framework during a build process of an Xcode project. Some fields of the podspec file can be
-configured using the `kotlin.cocoapods { ... }` code block.
+The `Podspec` file includes a path to an output framework and script phases that automate building this framework during 
+the build process of an Xcode project.
 
-<div class="sample" markdown="1" theme="idea" mode="kotlin">
+## Add dependencies on Pod libraries
 
-```kotlin
-// Apply plugins.
-plugins {
-    id("org.jetbrains.kotlin.multiplatform") version "1.3.30"
-    id("org.jetbrains.kotlin.native.cocoapods") version "1.3.30"
-}
+You can add dependencies between a Kotlin project and Pod libraries [stored in the CocoaPods repository](#add-a-dependency-on-a-pod-library-from-the-cocoapods-repository) 
+and [stored locally](#add-a-dependency-on-a-pod-library-stored-locally).
 
-// CocoaPods requires the podspec to have a version.
-version = "1.0"
+[Complete the initial configuration](#install-the-cocoapods-dependency-manager-and-plugin), and when you add a new 
+dependency and re-import the project in IntelliJ IDEA; the new dependency will be added automatically. There are no 
+additional steps required.
 
-kotlin {
-    cocoapods {
-        // Configure fields required by CocoaPods.
-        summary = "Some description for a Kotlin/Native module"
-        homepage = "Link to a Kotlin/Native module homepage"
+### Add a dependency on a Pod library from the CocoaPods repository
 
-        // The name of the produced framework can be changed.
-        // The name of the Gradle project is used here by default.
-        frameworkName = "my_framework"
+1. Add dependencies on a Pod library that you want to use from the CocoaPods repository with `pod()`  to `build.gradle.kts` 
+(`build.gradle`) of your project.  
+    > You can also add dependencies on subspecs.
+    {:.note}                                                                                                                                                              >
+
+    <div class="sample" markdown="1" theme="idea" data-highlight-only>
+    
+    ```kotlin
+    kotlin {
+        ios()
+    
+        cocoapods {
+            summary = "CocoaPods test library"
+            homepage = "https://github.com/JetBrains/kotlin"
+            pod("AFNetworking", "~> 4.0.0")
+            
+            pod("SDWebImage/MapKit")
+        }
     }
-}
-```
-
-</div>
-
-The following podspec fields are required by CocoaPods:
-  - `version`
-  - `summary`
-  - `homepage`
-
-A version of the Gradle project is used as a value for the `version` field.
-Fields`summary` and `homepage` can be configured using the `cocoapods` code block.
-
-This podspec file can be referenced from a [Podfile](https://guides.cocoapods.org/using/the-podfile.html)
-of an Xcode project. After that the framework built from the Kotlin/Native module can be used from
-this Xcode project. If necessary, this framework is automatically rebuilt during Xcode build process.
-
-## Workflow
-
-To import a Kotlin/Native module in an existing Xcode project:
-
-0. Make sure that you have CocoaPods [installed](https://guides.cocoapods.org/using/getting-started.html#installation).
-We recommend using CocoaPods 1.6.1 or later.
-
-1. Configure a Gradle project: apply the `org.jetbrains.kotlin.native.cocoapods` plugin, add
-and configure the targets, and specify the required podspec fields.
-
-2. Run the `podspec` task. The podspec file described above will be generated.
-
-    > In order to avoid compatibility issues during an Xcode build, the plugin requires using
-    a [Gradle wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html). 
-    To generate the wrapper automatically during execution of the `podspec` task,
-    run it with the parameter `-Pkotlin.native.cocoapods.generate.wrapper=true`.
-
-3. Add a reference to the generated podspec in a Podfile of the Xcode project.
-
-    <div class="sample" markdown="1" theme="idea" mode="ruby">
-
-    ```ruby
-    target 'my-ios-app' do
-        pod 'my_kotlin_library', :path => 'path/to/my-kotlin-library'
-    end
     ```
-
+    
     </div>
 
-4. Run `pod install` for the Xcode project.
-    
-After completing these steps, you can
-open the generated workspace (see [CocoaPods documentation](https://guides.cocoapods.org/using/using-cocoapods.html#installation))
-and run an Xcode build.
+2. Re-import the project.
 
-## Interoperability
+To use these dependencies from the Kotlin code, import the packages `cocoapods.<library-name>`.
 
-The CocoaPods plugin also allows using CocoaPods libraries without manual configuring cinterop
-parameters (see the [corresponding section](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#cinterop-support)
-of the multiplatform plugin documentation). The `cocoapods { ... }` code block allows you to
-add dependencies on CocoaPods libraries.
-
-<div class="sample" markdown="1" theme="idea" mode="kotlin">
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
 
 ```kotlin
-kotlin {
-    cocoapods {
-        // Configure a dependency on AFNetworking.
-        // The CocoaPods version notation is supported.
-        // The dependency will be added to all macOS and iOS targets.
-        pod("AFNetworking", "~> 3.2.0")
-    }
-}
+import cocoapods.AFNetworking.*
+import cocoapods.SDWebImage.*
 ```
 
 </div>
 
-To use these dependencies from a Kotlin code, import a package `cocoapods.<library-name>`.
-In the example above, it's `cocoapods.AFNetworking`.
+You can find a sample project [here](https://github.com/Kotlin/kotlin-with-cocoapods-sample).
 
-The dependencies declared in this way are added in the podspec file and downloaded during
-the execution of `pod install`.
+### Add a dependency on a Pod library stored locally
 
-> __Important:__ To correctly import the dependencies into the Kotlin/Native module, the
-Podfile must contain either [`use_modular_headers!`](https://guides.cocoapods.org/syntax/podfile.html#use_modular_headers_bang)
+1. Add a dependency on a Pod library stored locally with `pod()` to `build.gradle.kts` (`build.gradle`) of your
+ project.  
+As the third parameter, specify the path to `Podspec` of the local Pod using `project.file(..)`.  
+    > You can add local dependencies on subspecs as well.  
+    > The `cocoapods` block can include dependencies to Pods stored locally and Pods from the CocoaPods repository at
+    > the same time.
+    {:.note}
+
+    <div class="sample" markdown="1" theme="idea" data-highlight-only>
+    
+    ```kotlin
+    kotlin {
+        ios()
+    
+        cocoapods {
+            summary = "CocoaPods test library"
+            homepage = "https://github.com/JetBrains/kotlin"
+            pod("pod_dependency", "1.0", project.file("../pod_dependency/pod_dependency.podspec"))
+            pod("subspec_dependency/Core", "1.0", project.file("../subspec_dependency/subspec_dependency.podspec"))
+            
+            pod("AFNetworking", "~> 4.0.0")
+            pod("SDWebImage/MapKit")
+        }
+    }
+    ```
+    
+    </div>
+
+2. Re-import the project.
+
+If you want to use dependencies on local pods from Kotlin code, import the corresponding packages.
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
+import cocoapods.pod_dependency.*
+import cocoapods.subspec_dependency.*
+```
+
+</div>
+
+You can find a sample project [here](https://github.com/Kotlin/kotlin-with-cocoapods-sample).
+ 
+## Use a Kotlin Gradle project as a CocoaPods dependency
+
+You can use a Kotlin Multiplatform project with native targets as a CocoaPods dependency (Kotlin Pod). You can include such a dependency
+in the Podfile of the Xcode project by its name and path to the project directory containing the generated Podspec.
+This dependency will be automatically built (and rebuilt) along with this project.
+Such an approach simplifies importing to Xcode by removing a need to write the corresponding Gradle tasks and Xcode build steps manually.
+
+ 
+You can add dependencies between:
+* [A Kotlin Pod and an Xcode project with one target](#add-a-dependency-between-a-kotlin-pod-and-xcode-project-with-one-target)
+* [A Kotlin Pod and an Xcode project with several targets](#add-a-dependency-between-a-kotlin-pod-with-an-xcode-project-with-several-targets)
+
+> To correctly import the dependencies into the Kotlin/Native module, the
+`Podfile` must contain either [`use_modular_headers!`](https://guides.cocoapods.org/syntax/podfile.html#use_modular_headers_bang)
 or [`use_frameworks!`](https://guides.cocoapods.org/syntax/podfile.html#use_frameworks_bang)
 directive.
+{:.note}
 
-Search paths for libraries added in the Kotlin/Native module in this way are obtained
-from properties of the Xcode projects configured by CocoaPods. Thus if the module uses
-CocoaPods libraries, it can be build __only__ __from__ __Xcode__.
+### Add a dependency between a Kotlin Pod and Xcode project with one target
 
-## Current Limitations
+1. Create an Xcode project with a `Podfile` if you haven’t done so yet.
+2. Add the path to your Xcode project `Podfile` with `podfile = project.file(..)` to `build.gradle.kts` (`build.gradle`) 
+of your Kotlin project.  
+    This step helps synchronize your Xcode project with Kotlin Pod dependencies by calling `pod install` for your `Podfile`.
+3. Specify the minimum target version for the Pod library.
+    > If you don't specify the minimum target version and a dependency Pod requires a higher deployment target, you may get an error.
+    {:.note}
 
- - If a Kotlin/Native module uses a CocoaPods library, you can build this module only from an Xcode project.
- Otherwise the CocoaPods library cannot be resolved by the Kotlin/Native infrastructure.
+    <div class="sample" markdown="1" theme="idea" data-highlight-only>
+        
+    ```kotlin
+    kotlin {
+        ios()
+    
+        cocoapods {
+            summary = "CocoaPods test library"
+            homepage = "https://github.com/JetBrains/kotlin"
+            ios.deploymentTarget = "13.5"
+            pod("AFNetworking", "~> 4.0.0")
+            podfile = project.file("../ios-app/Podfile")
+        }
+    }
+    ```
+    
+    </div>
+
+4. Add the name and path of the Kotlin Pod you want to include in the Xcode project to `Podfile`.
+
+    <div class="sample" markdown="1" theme="idea" mode="ruby" data-highlight-only>
+    
+    ```ruby
+    use_frameworks!
+    
+    platform :ios, '9.0'
+    
+    target 'ios-app' do
+            pod 'kotlin_library', :path => '../kotlin-library'
+    end
+    ```
+    
+    </div>
+
+5. Re-import the project.
+
+### Add a dependency between a Kotlin Pod with an Xcode project with several targets
+
+1. Create an Xcode project with a `Podfile` if you haven’t done so yet.
+2. Add the path to your Xcode project `Podfile` with `podfile = project.file(..)` to `build.gradle.kts` (`build.gradle`) of
+ your Kotlin project.  
+    This step helps synchronize your Xcode project with Kotlin Pod dependencies by calling `pod install` for your `Podfile`.
+3. Add dependencies to the Pod libraries that you want to use in your project with `pod()`.
+4. For each target, specify the minimum target version for the Pod library.
+
+    <div class="sample" markdown="1" theme="idea" data-highlight-only>
+    
+    ```kotlin
+    kotlin {
+        ios()
+        tvos()
+    
+        cocoapods {
+            summary = "CocoaPods test library"
+            homepage = "https://github.com/JetBrains/kotlin"
+            ios.deploymentTarget = "13.5"
+            tvos.deploymentTarget = "13.4"
+       
+            pod("AFNetworking", "~> 4.0.0")
+            podfile = project.file("../severalTargetsXcodeProject/Podfile") // specify the path to Podfile
+        }
+    }
+    ```
+    
+    </div>
+
+5. Add the name and path of the Kotlin Pod you want to include in the Xcode project to the `Podfile`.
+
+    <div class="sample" markdown="1" theme="idea" mode="ruby" data-highlight-only>
+    
+    ```ruby
+    target 'iosApp' do
+      use_frameworks!
+      platform :ios, '13.5'
+      # Pods for iosApp
+      pod 'kotlin_library', :path => '../kotlin-library'
+    end
+    
+    target 'TVosApp' do
+      use_frameworks!
+      platform :tvos, '13.4'
+      
+      # Pods for TVosApp
+      pod 'kotlin_library', :path => '../kotlin-library'
+    end
+    ```
+    
+    </div>
+    
+6. Re-import the project.
+
+You can find a sample project [here](https://github.com/Kotlin/multitarget-xcode-with-kotlin-cocoapods-sample).
