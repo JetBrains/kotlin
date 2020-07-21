@@ -27,7 +27,6 @@ abstract class IrFunctionCommonImpl(
     origin: IrDeclarationOrigin,
     name: Name,
     visibility: Visibility,
-    override val modality: Modality,
     returnType: IrType,
     isInline: Boolean,
     isExternal: Boolean,
@@ -36,7 +35,6 @@ abstract class IrFunctionCommonImpl(
     override val isOperator: Boolean,
     override val isInfix: Boolean,
     isExpect: Boolean,
-    override val isFakeOverride: Boolean
 ) :
     IrFunctionBase<FunctionCarrier>(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, returnType),
     IrSimpleFunction,
@@ -90,17 +88,19 @@ class IrFunctionImpl(
     returnType: IrType,
     isInline: Boolean,
     isExternal: Boolean,
-    override val isTailrec: Boolean,
-    override val isSuspend: Boolean,
-    override val isOperator: Boolean,
+    isTailrec: Boolean,
+    isSuspend: Boolean,
+    isOperator: Boolean,
     isInfix: Boolean,
     isExpect: Boolean,
-    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE
-) : IrFunctionCommonImpl(startOffset, endOffset, origin, name, visibility, modality, returnType, isInline,
-    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride) {
-
+    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+) : IrFunctionCommonImpl(
+    startOffset, endOffset, origin, name, visibility, returnType, isInline,
+    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
+) {
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor get() = symbol.descriptor
+    override val descriptor: FunctionDescriptor
+        get() = symbol.descriptor
 
     init {
         symbol.bind(this)
@@ -126,9 +126,12 @@ class IrFakeOverrideFunctionImpl(
     isInfix: Boolean,
     isExpect: Boolean,
 ) : IrFunctionCommonImpl(
-    startOffset, endOffset, origin, name, visibility, modality, returnType, isInline,
-    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride = true
+    startOffset, endOffset, origin, name, visibility, returnType, isInline,
+    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
 ), IrFakeOverrideFunction {
+    override val isFakeOverride: Boolean
+        get() = true
+
     private var _symbol: IrSimpleFunctionSymbol? = null
 
     override val symbol: IrSimpleFunctionSymbol
