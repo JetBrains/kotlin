@@ -8,7 +8,8 @@ plugins {
 
 val builtinsSrc = fileFrom(rootDir, "core", "builtins", "src")
 val builtinsNative = fileFrom(rootDir, "core", "builtins", "native")
-val kotlinReflect = fileFrom(rootDir, "libraries/stdlib/src/kotlin/reflect")
+val kotlinReflectCommon = fileFrom(rootDir, "libraries/stdlib/src/kotlin/reflect/")
+val kotlinReflectJvm = fileFrom(rootDir, "libraries/stdlib/jvm/src/kotlin/reflect")
 val builtinsCherryPicked = fileFrom(buildDir, "src")
 
 val runtimeElements by configurations.creating {
@@ -20,9 +21,15 @@ val runtimeElements by configurations.creating {
 }
 
 val prepareSources by tasks.registering(Sync::class) {
-    from(kotlinReflect) {
-        exclude("typeOf.kt")
-        exclude("KClasses.kt")
+    from(kotlinReflectJvm) {
+        exclude("TypesJVM.kt")
+        exclude("KClassesImpl.kt")
+    }
+    from(kotlinReflectCommon) {
+        include("KTypeProjection.kt")
+        include("KClassifier.kt")
+        include("KTypeParameter.kt")
+        include("KVariance.kt")
     }
     into(builtinsCherryPicked)
 }
