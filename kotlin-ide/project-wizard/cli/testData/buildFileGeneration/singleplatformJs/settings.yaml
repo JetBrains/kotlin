@@ -1,5 +1,5 @@
 kotlin:
   projectKind: js
   modules:
-    - type: jsSinglepaltform
+    - type: jsSinglePlatform
       name: a
