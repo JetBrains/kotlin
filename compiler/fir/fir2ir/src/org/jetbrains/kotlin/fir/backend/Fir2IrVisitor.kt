@@ -316,16 +316,20 @@ class Fir2IrVisitor(
             )
         } else convertToIrExpression(this)
 
+    private fun convertToIrCall(functionCall: FirFunctionCall, annotationMode: Boolean): IrExpression {
+        val explicitReceiverExpression = convertToIrReceiverExpression(
+            functionCall.explicitReceiver, functionCall.calleeReference
+        )
+        return callGenerator.convertToIrCall(functionCall, functionCall.typeRef, explicitReceiverExpression, annotationMode)
+    }
+
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Any?): IrExpression {
         val convertibleCall = if (functionCall.toResolvedCallableSymbol()?.fir is FirIntegerOperator) {
             functionCall.copy().transformSingle(integerApproximator, null)
         } else {
             functionCall
         }
-        val explicitReceiverExpression = convertToIrReceiverExpression(
-            functionCall.explicitReceiver, functionCall.calleeReference
-        )
-        return callGenerator.convertToIrCall(convertibleCall, convertibleCall.typeRef, explicitReceiverExpression)
+        return convertToIrCall(functionCall = convertibleCall, annotationMode = false)
     }
 
     override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: Any?): IrElement {
@@ -513,7 +517,7 @@ class Fir2IrVisitor(
         return accept(this@Fir2IrVisitor, null) as IrStatement
     }
 
-    internal fun convertToIrExpression(expression: FirExpression): IrExpression {
+    internal fun convertToIrExpression(expression: FirExpression, annotationMode: Boolean = false): IrExpression {
         return when (expression) {
             is FirBlock -> expression.convertToIrExpressionOrBlock()
             is FirUnitExpression -> expression.convertWithOffsets { startOffset, endOffset ->
@@ -522,7 +526,18 @@ class Fir2IrVisitor(
                     this.symbolTable.referenceClass(this.irBuiltIns.builtIns.unit)
                 )
             }
-            else -> expression.accept(this, null) as IrExpression
+            else -> {
+                val unwrappedExpression = if (expression is FirWrappedArgumentExpression) {
+                    expression.expression
+                } else {
+                    expression
+                }
+                if (annotationMode && unwrappedExpression is FirFunctionCall) {
+                    convertToIrCall(unwrappedExpression, annotationMode)
+                } else {
+                    expression.accept(this, null) as IrExpression
+                }
+            }
         }
     }
 

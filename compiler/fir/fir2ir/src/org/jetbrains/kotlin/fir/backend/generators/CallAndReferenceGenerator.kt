@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.toArrayOrPrimitiveArrayType
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
@@ -118,7 +119,8 @@ class CallAndReferenceGenerator(
     fun convertToIrCall(
         qualifiedAccess: FirQualifiedAccess,
         typeRef: FirTypeRef,
-        explicitReceiverExpression: IrExpression?
+        explicitReceiverExpression: IrExpression?,
+        annotationMode: Boolean = false
     ): IrExpression {
         val type = typeRef.toIrType()
         val samConstructorCall = qualifiedAccess.tryConvertToSamConstructorCall(type)
@@ -200,7 +202,7 @@ class CallAndReferenceGenerator(
                 is IrEnumEntrySymbol -> IrGetEnumValueImpl(startOffset, endOffset, type, symbol)
                 else -> generateErrorCallExpression(startOffset, endOffset, qualifiedAccess.calleeReference, type)
             }
-        }.applyCallArguments(qualifiedAccess as? FirCall)
+        }.applyCallArguments(qualifiedAccess as? FirCall, annotationMode)
             .applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, explicitReceiverExpression)
     }
 
@@ -285,7 +287,7 @@ class CallAndReferenceGenerator(
                     )
                 }
             }
-        }.applyCallArguments(annotationCall)
+        }.applyCallArguments(annotationCall, annotationMode = true)
     }
 
     fun convertToGetObject(qualifier: FirResolvedQualifier): IrExpression {
@@ -315,7 +317,7 @@ class CallAndReferenceGenerator(
         }
     }
 
-    internal fun IrExpression.applyCallArguments(call: FirCall?): IrExpression {
+    internal fun IrExpression.applyCallArguments(call: FirCall?, annotationMode: Boolean): IrExpression {
         if (call == null) return this
         return when (this) {
             is IrMemberAccessExpression<*> -> {
@@ -333,7 +335,7 @@ class CallAndReferenceGenerator(
                         val argumentMapping = call.argumentMapping
                         if (argumentMapping != null && argumentMapping.isNotEmpty()) {
                             if (valueParameters != null) {
-                                return applyArgumentsWithReorderingIfNeeded(call, argumentMapping, valueParameters)
+                                return applyArgumentsWithReorderingIfNeeded(call, argumentMapping, valueParameters, annotationMode)
                             }
                         }
                         for ((index, argument) in call.arguments.withIndex()) {
@@ -367,10 +369,11 @@ class CallAndReferenceGenerator(
         call: FirCall,
         argumentMapping: Map<FirExpression, FirValueParameter>,
         valueParameters: List<FirValueParameter>,
+        annotationMode: Boolean
     ): IrExpression {
         // Assuming compile-time constants only inside annotation, we don't need a block to reorder arguments to preserve semantics.
         // But, we still need to pick correct indices for named arguments.
-        if (call !is FirAnnotationCall &&
+        if (!annotationMode &&
             needArgumentReordering(argumentMapping.values, valueParameters)
         ) {
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
@@ -391,8 +394,20 @@ class CallAndReferenceGenerator(
             }
         } else {
             for ((argument, parameter) in argumentMapping) {
-                val argumentExpression = visitor.convertToIrExpression(argument).applySamConversionIfNeeded(argument, parameter)
+                val argumentExpression =
+                    visitor.convertToIrExpression(argument, annotationMode)
+                        .applySamConversionIfNeeded(argument, parameter)
                 putValueArgument(valueParameters.indexOf(parameter), argumentExpression)
+            }
+            if (annotationMode) {
+                for ((index, parameter) in valueParameters.withIndex()) {
+                    if (parameter.isVararg && !argumentMapping.containsValue(parameter)) {
+                        val elementType = parameter.returnTypeRef.toIrType()
+                        putValueArgument(
+                            index, IrVarargImpl(-1, -1, elementType, elementType.toArrayOrPrimitiveArrayType(irBuiltIns))
+                        )
+                    }
+                }
             }
             return this
         }

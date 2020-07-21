@@ -347,7 +347,7 @@ internal class ClassMemberGenerator(
                     it.dispatchReceiver = visitor.convertToIrExpression(firDispatchReceiver)
                 }
                 with(callGenerator) {
-                    it.applyCallArguments(this@toIrDelegatingConstructorCall)
+                    it.applyCallArguments(this@toIrDelegatingConstructorCall, annotationMode = false)
                 }
             }
         }
