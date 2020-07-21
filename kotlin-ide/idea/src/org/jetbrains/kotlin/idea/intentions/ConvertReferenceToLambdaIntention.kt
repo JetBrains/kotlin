@@ -34,91 +34,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
     KtCallableReferenceExpression::class.java, KotlinBundle.lazyMessage("convert.reference.to.lambda")
 ) {
     override fun applyTo(element: KtCallableReferenceExpression, editor: Editor?) {
-        val context = element.analyze(BodyResolveMode.PARTIAL)
-        val reference = element.callableReference
-        val targetDescriptor = context[REFERENCE_TARGET, reference] as? CallableMemberDescriptor ?: return
-        val valueArgumentParent = element.parent as? KtValueArgument
-        val callGrandParent = valueArgumentParent?.parent?.parent as? KtCallExpression
-        val resolvedCall = callGrandParent?.getResolvedCall(context)
-        val matchingParameterType = resolvedCall?.getParameterForArgument(valueArgumentParent)?.type
-        val matchingParameterIsExtension = matchingParameterType?.isExtensionFunctionType ?: false
-
-        val receiverExpression = element.receiverExpression
-        val receiverType = receiverExpression?.let {
-            (context[DOUBLE_COLON_LHS, it] as? DoubleColonLHS.Type)?.type
-        }
-        val acceptsReceiverAsParameter = receiverType != null && !matchingParameterIsExtension &&
-                (targetDescriptor.dispatchReceiverParameter != null || targetDescriptor.extensionReceiverParameter != null)
-
-        val parameterNamesAndTypes = targetDescriptor.valueParameters.map { it.name.asString() to it.type }.let {
-            if (matchingParameterType != null) {
-                val parameterSize = matchingParameterType.arguments.size - (if (acceptsReceiverAsParameter) 2 else 1)
-                if (parameterSize >= 0) it.take(parameterSize) else it
-            } else {
-                it
-            }
-        }
-        val receiverNameAndType = receiverType?.let {
-            KotlinNameSuggester.suggestNamesByType(it, validator = { name ->
-                name !in parameterNamesAndTypes.map { pair -> pair.first }
-            }, defaultName = "receiver").first() to it
-        }
-
-        val factory = KtPsiFactory(element)
-        val targetName = reference.text
-        val lambdaParameterNamesAndTypes =
-            if (acceptsReceiverAsParameter) listOf(receiverNameAndType!!) + parameterNamesAndTypes
-            else parameterNamesAndTypes
-
-        val receiverPrefix = when {
-            acceptsReceiverAsParameter -> receiverNameAndType!!.first + "."
-            matchingParameterIsExtension -> ""
-            else -> receiverExpression?.let { it.text + "." } ?: ""
-        }
-
-        val lambdaExpression = if (valueArgumentParent != null &&
-            lambdaParameterNamesAndTypes.size == 1 &&
-            receiverExpression?.text != "it"
-        ) {
-            factory.createLambdaExpression(
-                parameters = "",
-                body = when {
-                    acceptsReceiverAsParameter ->
-                        if (targetDescriptor is PropertyDescriptor) "it.$targetName"
-                        else "it.$targetName()"
-                    else ->
-                        "$receiverPrefix$targetName(it)"
-                }
-            )
-        } else {
-            factory.createLambdaExpression(
-                parameters = lambdaParameterNamesAndTypes.joinToString(separator = ", ") {
-                    if (valueArgumentParent != null) it.first
-                    else it.first + ": " + SOURCE_RENDERER.renderType(it.second)
-                },
-                body = if (targetDescriptor is PropertyDescriptor) {
-                    "$receiverPrefix$targetName"
-                } else {
-                    parameterNamesAndTypes.joinToString(
-                        prefix = "$receiverPrefix$targetName(",
-                        separator = ", ",
-                        postfix = ")"
-                    ) { it.first }
-                }
-            )
-        }
-
-        val needParentheses = lambdaParameterNamesAndTypes.isEmpty() && when (element.parent.node.elementType) {
-            KtNodeTypes.WHEN_ENTRY, KtNodeTypes.THEN, KtNodeTypes.ELSE -> true
-            else -> false
-        }
-        val wrappedExpression =
-            if (needParentheses) factory.createExpressionByPattern("($0)", lambdaExpression) else lambdaExpression
-        ShortenReferences.DEFAULT.process(element.replaced(wrappedExpression))
-
-        if (valueArgumentParent != null && callGrandParent != null) {
-            callGrandParent.getLastLambdaExpression()?.moveFunctionLiteralOutsideParenthesesIfPossible()
-        }
+        applyTo(element)
     }
 
     override fun isApplicableTo(element: KtCallableReferenceExpression): Boolean {
@@ -131,5 +47,93 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
 
     companion object {
         private val SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE
+
+        fun applyTo(element: KtCallableReferenceExpression) {
+            val context = element.analyze(BodyResolveMode.PARTIAL)
+            val reference = element.callableReference
+            val targetDescriptor = context[REFERENCE_TARGET, reference] as? CallableMemberDescriptor ?: return
+            val valueArgumentParent = element.parent as? KtValueArgument
+            val callGrandParent = valueArgumentParent?.parent?.parent as? KtCallExpression
+            val resolvedCall = callGrandParent?.getResolvedCall(context)
+            val matchingParameterType = resolvedCall?.getParameterForArgument(valueArgumentParent)?.type
+            val matchingParameterIsExtension = matchingParameterType?.isExtensionFunctionType ?: false
+
+            val receiverExpression = element.receiverExpression
+            val receiverType = receiverExpression?.let {
+                (context[DOUBLE_COLON_LHS, it] as? DoubleColonLHS.Type)?.type
+            }
+            val acceptsReceiverAsParameter = receiverType != null && !matchingParameterIsExtension &&
+                    (targetDescriptor.dispatchReceiverParameter != null || targetDescriptor.extensionReceiverParameter != null)
+
+            val parameterNamesAndTypes = targetDescriptor.valueParameters.map { it.name.asString() to it.type }.let {
+                if (matchingParameterType != null) {
+                    val parameterSize = matchingParameterType.arguments.size - (if (acceptsReceiverAsParameter) 2 else 1)
+                    if (parameterSize >= 0) it.take(parameterSize) else it
+                } else {
+                    it
+                }
+            }
+            val receiverNameAndType = receiverType?.let {
+                KotlinNameSuggester.suggestNamesByType(it, validator = { name ->
+                    name !in parameterNamesAndTypes.map { pair -> pair.first }
+                }, defaultName = "receiver").first() to it
+            }
+
+            val factory = KtPsiFactory(element)
+            val targetName = reference.text
+            val lambdaParameterNamesAndTypes =
+                if (acceptsReceiverAsParameter) listOf(receiverNameAndType!!) + parameterNamesAndTypes
+                else parameterNamesAndTypes
+
+            val receiverPrefix = when {
+                acceptsReceiverAsParameter -> receiverNameAndType!!.first + "."
+                matchingParameterIsExtension -> ""
+                else -> receiverExpression?.let { it.text + "." } ?: ""
+            }
+
+            val lambdaExpression = if (valueArgumentParent != null &&
+                lambdaParameterNamesAndTypes.size == 1 &&
+                receiverExpression?.text != "it"
+            ) {
+                factory.createLambdaExpression(
+                    parameters = "",
+                    body = when {
+                        acceptsReceiverAsParameter ->
+                            if (targetDescriptor is PropertyDescriptor) "it.$targetName"
+                            else "it.$targetName()"
+                        else ->
+                            "$receiverPrefix$targetName(it)"
+                    }
+                )
+            } else {
+                factory.createLambdaExpression(
+                    parameters = lambdaParameterNamesAndTypes.joinToString(separator = ", ") {
+                        if (valueArgumentParent != null) it.first
+                        else it.first + ": " + SOURCE_RENDERER.renderType(it.second)
+                    },
+                    body = if (targetDescriptor is PropertyDescriptor) {
+                        "$receiverPrefix$targetName"
+                    } else {
+                        parameterNamesAndTypes.joinToString(
+                            prefix = "$receiverPrefix$targetName(",
+                            separator = ", ",
+                            postfix = ")"
+                        ) { it.first }
+                    }
+                )
+            }
+
+            val needParentheses = lambdaParameterNamesAndTypes.isEmpty() && when (element.parent.node.elementType) {
+                KtNodeTypes.WHEN_ENTRY, KtNodeTypes.THEN, KtNodeTypes.ELSE -> true
+                else -> false
+            }
+            val wrappedExpression =
+                if (needParentheses) factory.createExpressionByPattern("($0)", lambdaExpression) else lambdaExpression
+            ShortenReferences.DEFAULT.process(element.replaced(wrappedExpression))
+
+            if (valueArgumentParent != null && callGrandParent != null) {
+                callGrandParent.getLastLambdaExpression()?.moveFunctionLiteralOutsideParenthesesIfPossible()
+            }
+        }
     }
 }
