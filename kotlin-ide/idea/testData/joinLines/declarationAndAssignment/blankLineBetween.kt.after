@@ -1,4 +1,4 @@
 fun foo() {
-    val v: Int<caret> 
+    val v: Int<caret>
     v = 10
 }
