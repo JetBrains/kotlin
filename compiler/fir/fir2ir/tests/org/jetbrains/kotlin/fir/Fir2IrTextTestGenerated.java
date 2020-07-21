@@ -289,6 +289,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/declarations/delegatedProperties.kt");
         }
 
+        @TestMetadata("deprecatedProperty.kt")
+        public void testDeprecatedProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/deprecatedProperty.kt");
+        }
+
         @TestMetadata("extensionProperties.kt")
         public void testExtensionProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/extensionProperties.kt");

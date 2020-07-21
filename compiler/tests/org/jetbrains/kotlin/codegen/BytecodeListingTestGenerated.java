@@ -59,6 +59,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/deprecatedLateinitVar.kt");
     }
 
+    @TestMetadata("deprecatedProperty.kt")
+    public void testDeprecatedProperty() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/deprecatedProperty.kt");
+    }
+
     @TestMetadata("emptyMultifileFacade.kt")
     public void testEmptyMultifileFacade() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/emptyMultifileFacade.kt");
