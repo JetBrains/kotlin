@@ -233,8 +233,8 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType implements 
     public XSourcePosition getSourcePosition(@NotNull XBreakpoint<JavaLineBreakpointProperties> breakpoint) {
         JavaBreakpointProperties javaBreakpointProperties = breakpoint.getProperties();
         if (javaBreakpointProperties != null) {
-            Integer ordinal = ((JavaLineBreakpointProperties)javaBreakpointProperties).getLambdaOrdinal();
-            SourcePosition sourcePosition = createLineSourcePosition((XLineBreakpointImpl)breakpoint);
+            Integer ordinal = ((JavaLineBreakpointProperties) javaBreakpointProperties).getLambdaOrdinal();
+            SourcePosition sourcePosition = createLineSourcePosition((XLineBreakpointImpl) breakpoint);
             if (sourcePosition != null) {
                 KtFunction function = getLambdaByOrdinal(sourcePosition, ordinal);
                 if (function != null) {

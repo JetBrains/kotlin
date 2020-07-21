@@ -58,7 +58,7 @@ public class DebuggerSteppingHelper {
 
                 if (location != null) {
                     KotlinStepAction action = KotlinSteppingCommandProviderKt
-                                .getStepOverAction(location, sourcePosition, suspendContext, frameProxy);
+                            .getStepOverAction(location, sourcePosition, suspendContext, frameProxy);
 
                     createStepRequest(
                             suspendContext, getContextThread(),
@@ -77,19 +77,21 @@ public class DebuggerSteppingHelper {
     public static DebugProcessImpl.ResumeCommand createStepOverCommandForSuspendSwitch(SuspendContextImpl suspendContext) {
         DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
         return debugProcess.new StepOverCommand(suspendContext, false, null, StepRequest.STEP_MIN) {
-            @NotNull @Override
+            @NotNull
+            @Override
             protected RequestHint getHint(SuspendContextImpl suspendContext, ThreadReferenceProxyImpl stepThread) {
-                RequestHint hint = new RequestHint(stepThread, suspendContext, StepRequest.STEP_MIN, StepRequest.STEP_OVER, myMethodFilter) {
-                    @Override
-                    public int getNextStepDepth(SuspendContextImpl context) {
-                        StackFrameProxyImpl frameProxy = context.getFrameProxy();
-                        if (frameProxy != null && DebuggerUtilKt.isOnSuspensionPoint(frameProxy)) {
-                            return StepRequest.STEP_OVER;
-                        }
+                RequestHint hint =
+                        new RequestHint(stepThread, suspendContext, StepRequest.STEP_MIN, StepRequest.STEP_OVER, myMethodFilter) {
+                            @Override
+                            public int getNextStepDepth(SuspendContextImpl context) {
+                                StackFrameProxyImpl frameProxy = context.getFrameProxy();
+                                if (frameProxy != null && DebuggerUtilKt.isOnSuspensionPoint(frameProxy)) {
+                                    return StepRequest.STEP_OVER;
+                                }
 
-                        return super.getNextStepDepth(context);
-                    }
-                };
+                                return super.getNextStepDepth(context);
+                            }
+                        };
                 hint.setIgnoreFilters(suspendContext.getDebugProcess().getSession().shouldIgnoreSteppingFilters());
                 return hint;
             }
@@ -159,8 +161,7 @@ public class DebuggerSteppingHelper {
                                          : EventRequest.SUSPEND_ALL);
 
             stepRequest.enable();
-        }
-        catch (ObjectCollectedException ignored) {
+        } catch (ObjectCollectedException ignored) {
 
         }
     }
@@ -192,8 +193,7 @@ public class DebuggerSteppingHelper {
                     }
                 }
             }
-        }
-        catch (EvaluateException ignored) {
+        } catch (EvaluateException ignored) {
         }
         return null;
     }

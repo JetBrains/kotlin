@@ -225,7 +225,7 @@ open class KotlinStackFrame(stackFrameDescriptorImpl: StackFrameDescriptorImpl) 
         return name().startsWith(AsmUtil.LABELED_THIS_PARAMETER)
     }
 
-    override fun equals(other: Any?) : Boolean {
+    override fun equals(other: Any?): Boolean {
         val eq = super.equals(other)
         return other is KotlinStackFrame && eq
     }

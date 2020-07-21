@@ -113,8 +113,10 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 SourcePosition sourcePosition = KotlinFunctionBreakpoint.this.getSourcePosition();
-                MethodDescriptor descriptor = sourcePosition == null
-                        ? null : DumbService.getInstance(project).runReadActionInSmartMode(() -> getMethodDescriptor(project, sourcePosition));
+                MethodDescriptor descriptor =
+                        sourcePosition == null
+                        ? null
+                        : DumbService.getInstance(project).runReadActionInSmartMode(() -> getMethodDescriptor(project, sourcePosition));
 
                 ProgressIndicatorProvider.checkCanceled();
 
@@ -164,9 +166,11 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
 
     // MODIFICATION: End Kotlin implementation
 
-    private static void createRequestForSubClasses(@NotNull MethodBreakpointBase breakpoint,
+    private static void createRequestForSubClasses(
+            @NotNull MethodBreakpointBase breakpoint,
             @NotNull DebugProcessImpl debugProcess,
-            @NotNull ReferenceType baseType) {
+            @NotNull ReferenceType baseType
+    ) {
         DebuggerManagerThreadImpl.assertIsManagerThread();
         RequestManagerImpl requestsManager = debugProcess.getRequestsManager();
         ClassPrepareRequest request = requestsManager.createClassPrepareRequest((debuggerProcess, referenceType) -> {
@@ -214,10 +218,11 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
 
         BreakpointListenerConnector.subscribe(debugProcess, indicator, listener);
         ProgressManager.getInstance().executeProcessUnderProgress(
-                () -> processPreparedSubTypes(baseType,
-                                              (subType, classesByName) ->
-                                                      createRequestForPreparedClassEmulated(breakpoint, debugProcess, subType, classesByName, false),
-                                              indicator),
+                () -> processPreparedSubTypes(
+                        baseType,
+                        (subType, classesByName) ->
+                                createRequestForPreparedClassEmulated(breakpoint, debugProcess, subType, classesByName, false),
+                        indicator),
                 indicator);
         if (indicator.isCanceled() && !changed.get()) {
             breakpoint.disableEmulation();
@@ -235,7 +240,9 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             @NotNull ReferenceType classType,
             boolean base
     ) {
-        createRequestForPreparedClassEmulated(breakpoint, debugProcess, classType, debugProcess.getVirtualMachineProxy().getClassesByNameProvider(), base);
+        createRequestForPreparedClassEmulated(
+                breakpoint, debugProcess, classType,
+                debugProcess.getVirtualMachineProxy().getClassesByNameProvider(), base);
     }
 
     private static boolean shouldCreateRequest(
@@ -248,7 +255,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             JavaDebugProcess process = debugProcess.getXdebugProcess();
             return process != null
                    && debugProcess.isAttached()
-                   && (xBreakpoint == null || ((XDebugSessionImpl)process.getSession()).isBreakpointActive(xBreakpoint))
+                   && (xBreakpoint == null || ((XDebugSessionImpl) process.getSession()).isBreakpointActive(xBreakpoint))
                    && (forPreparedClass || debugProcess.getRequestsManager().findRequests(requestor).isEmpty());
         });
     }
@@ -270,13 +277,15 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
         Method lambdaMethod = MethodBytecodeUtil.getLambdaMethod(classType, classesByName);
         if (lambdaMethod != null &&
             !breakpoint
-                    .matchingMethods(StreamEx.of(((ClassType)classType).interfaces()).flatCollection(ReferenceType::allMethods), debugProcess)
+                    .matchingMethods(StreamEx.of(((ClassType) classType).interfaces()).flatCollection(ReferenceType::allMethods),
+                                     debugProcess)
                     .findFirst().isPresent()) {
             return;
         }
         StreamEx<Method> methods = lambdaMethod != null
                                    ? StreamEx.of(lambdaMethod)
-                                   : breakpoint.matchingMethods(StreamEx.of(classType.methods()).filter(m -> base || !m.isAbstract()), debugProcess);
+                                   : breakpoint.matchingMethods(StreamEx.of(classType.methods()).filter(m -> base || !m.isAbstract()),
+                                                                debugProcess);
         boolean found = false;
         for (Method method : methods) {
             found = true;
@@ -301,6 +310,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
                 if (breakpoint.isWatchExit()) {
                     MethodBytecodeUtil.visit(method, new MethodVisitor(Opcodes.API_VERSION) {
                         int myLastLine = 0;
+
                         @Override
                         public void visitLineNumber(int line, Label start) {
                             myLastLine = line;
@@ -318,7 +328,8 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
                                     //case Opcodes.ATHROW:
                                     allLineLocations.stream()
                                             .filter(l -> l.lineNumber() == myLastLine)
-                                            .findFirst().ifPresent(location -> createLocationBreakpointRequest(breakpoint, location, debugProcess, false));
+                                            .findFirst().ifPresent(
+                                            location -> createLocationBreakpointRequest(breakpoint, location, debugProcess, false));
                             }
                         }
                     }, true);
@@ -331,10 +342,12 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
         }
     }
 
-    private static void createLocationBreakpointRequest(@NotNull FilteredRequestor requestor,
+    private static void createLocationBreakpointRequest(
+            @NotNull FilteredRequestor requestor,
             @Nullable Location location,
             @NotNull DebugProcessImpl debugProcess,
-            boolean methodEntry) {
+            boolean methodEntry
+    ) {
         BreakpointRequest request = createLocationBreakpointRequest(requestor, location, debugProcess);
         if (request != null) {
             request.putProperty(METHOD_ENTRY_KEY, methodEntry);
@@ -360,8 +373,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
     protected void createRequestForPreparedClass(@NotNull DebugProcessImpl debugProcess, @NotNull ReferenceType classType) {
         if (isEmulated()) {
             createRequestForPreparedClassEmulated(this, debugProcess, classType, true);
-        }
-        else {
+        } else {
             createRequestForPreparedClassOriginal(debugProcess, classType);
         }
     }
@@ -382,7 +394,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
                 }
             }
 
-            if(!hasMethod) {
+            if (!hasMethod) {
                 debugProcess.getRequestsManager().setInvalid(
                         this, DebuggerBundle.message("error.invalid.breakpoint.method.not.found", classType.name())
                 );
@@ -394,8 +406,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
                 MethodEntryRequest entryRequest = findRequest(debugProcess, MethodEntryRequest.class, this);
                 if (entryRequest == null) {
                     entryRequest = requestManager.createMethodEntryRequest(this);
-                }
-                else {
+                } else {
                     entryRequest.disable();
                 }
                 //entryRequest.addClassFilter(myClassQualifiedName);
@@ -407,16 +418,14 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
                 MethodExitRequest exitRequest = findRequest(debugProcess, MethodExitRequest.class, this);
                 if (exitRequest == null) {
                     exitRequest = requestManager.createMethodExitRequest(this);
-                }
-                else {
+                } else {
                     exitRequest.disable();
                 }
                 //exitRequest.addClassFilter(myClassQualifiedName);
                 exitRequest.addClassFilter(classType);
                 debugProcess.getRequestsManager().enableRequest(exitRequest);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOG.debug(e);
         }
     }
@@ -429,14 +438,14 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
     private static String getEventMessage(@NotNull LocatableEvent event, @NotNull String defaultFileName) {
         Location location = event.location();
         if (event instanceof MethodEntryEvent) {
-            return getEventMessage(true, ((MethodEntryEvent)event).method(), location, defaultFileName);
+            return getEventMessage(true, ((MethodEntryEvent) event).method(), location, defaultFileName);
         }
         if (event instanceof MethodExitEvent) {
-            return getEventMessage(false, ((MethodExitEvent)event).method(), location, defaultFileName);
+            return getEventMessage(false, ((MethodExitEvent) event).method(), location, defaultFileName);
         }
         Object entryProperty = event.request().getProperty(METHOD_ENTRY_KEY);
         if (entryProperty instanceof Boolean) {
-            return getEventMessage((Boolean)entryProperty, location.method(), location, defaultFileName);
+            return getEventMessage((Boolean) entryProperty, location.method(), location, defaultFileName);
         }
         return "";
     }
@@ -481,20 +490,19 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
     @Override
     public String getDisplayName() {
         StringBuilder buffer = new StringBuilder();
-        if(isValid()) {
+        if (isValid()) {
             String className = getClassName();
             boolean classNameExists = className != null && className.length() > 0;
             if (classNameExists) {
                 buffer.append(className);
             }
-            if(getMethodName() != null) {
+            if (getMethodName() != null) {
                 if (classNameExists) {
                     buffer.append(".");
                 }
                 buffer.append(getMethodName());
             }
-        }
-        else {
+        } else {
             buffer.append(DebuggerBundle.message("status.breakpoint.invalid"));
         }
         return buffer.toString();
@@ -522,7 +530,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
     @Nullable
     public static KotlinFunctionBreakpoint create(@NotNull Project project, XBreakpoint xBreakpoint) {
         KotlinFunctionBreakpoint breakpoint = new KotlinFunctionBreakpoint(project, xBreakpoint);
-        return (KotlinFunctionBreakpoint)breakpoint.init();
+        return (KotlinFunctionBreakpoint) breakpoint.init();
     }
 
     //public boolean canMoveTo(final SourcePosition position) {
@@ -563,8 +571,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             try {
                 res.methodSignature = JVMNameUtil.getJVMSignature(method);
                 res.isStatic = method.hasModifierProperty(PsiModifier.STATIC);
-            }
-            catch (IndexNotReadyException ignored) {
+            } catch (IndexNotReadyException ignored) {
                 return null;
             }
 
@@ -681,8 +688,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             String methodName = getMethodName();
             String signature = mySignature != null ? mySignature.getName(debugProcess) : null;
             return methods.filter(m -> Comparing.equal(methodName, m.name()) && Comparing.equal(signature, m.signature())).limit(1);
-        }
-        catch (EvaluateException e) {
+        } catch (EvaluateException e) {
             LOG.warn(e);
         }
         return StreamEx.empty();
@@ -703,9 +709,11 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
         boolean isStatic;
     }
 
-    private static void processPreparedSubTypes(ReferenceType classType,
+    private static void processPreparedSubTypes(
+            ReferenceType classType,
             BiConsumer<ReferenceType, ClassesByNameProvider> consumer,
-            ProgressIndicator progressIndicator) {
+            ProgressIndicator progressIndicator
+    ) {
         long start = 0;
         if (LOG.isDebugEnabled()) {
             start = System.currentTimeMillis();
@@ -724,12 +732,11 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
                 if (type.isPrepared()) {
                     try {
                         supertypes(type).forEach(st -> inheritance.putValue(st, type));
-                    }
-                    catch (ObjectCollectedException ignored) {
+                    } catch (ObjectCollectedException ignored) {
                     }
                 }
                 progressIndicator.setText2(i + "/" + allTypes.size());
-                progressIndicator.setFraction((double)i / allTypes.size());
+                progressIndicator.setFraction((double) i / allTypes.size());
             }
             List<ReferenceType> types = StreamEx.ofTree(classType, t -> StreamEx.of(inheritance.get(t))).skip(1).toList();
 
@@ -744,14 +751,13 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
                 consumer.accept(types.get(i), classesByName);
 
                 progressIndicator.setText2(i + "/" + types.size());
-                progressIndicator.setFraction((double)i / types.size());
+                progressIndicator.setFraction((double) i / types.size());
             }
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Processed " + types.size() + " classes in " + (System.currentTimeMillis() - start) + "ms");
             }
-        }
-        finally {
+        } finally {
             progressIndicator.stop();
         }
     }
@@ -769,9 +775,9 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
 
     private static Stream<? extends ReferenceType> supertypes(ReferenceType type) {
         if (type instanceof InterfaceType) {
-            return ((InterfaceType)type).superinterfaces().stream();
+            return ((InterfaceType) type).superinterfaces().stream();
         } else if (type instanceof ClassType) {
-            return StreamEx.<ReferenceType>ofNullable(((ClassType)type).superclass()).prepend(((ClassType)type).interfaces());
+            return StreamEx.<ReferenceType>ofNullable(((ClassType) type).superclass()).prepend(((ClassType) type).interfaces());
         }
         return StreamEx.empty();
     }

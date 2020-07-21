@@ -51,12 +51,12 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
 
     @Override
     protected JComponent createCenterPanel() {
-    myClassChooser.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-        @Override
-        public void textChanged(@NotNull DocumentEvent event) {
-            updateUI();
-        }
-    });
+        myClassChooser.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            public void textChanged(@NotNull DocumentEvent event) {
+                updateUI();
+            }
+        });
 
         myClassChooser.addActionListener(e -> {
             PsiClass currentClass = getSelectedClass();
@@ -103,9 +103,9 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
     }
 
     private PsiClass getSelectedClass() {
-    PsiManager psiManager = PsiManager.getInstance(myProject);
-    String classQName = myClassChooser.getText();
-    if (StringUtil.isEmpty(classQName)) {
+        PsiManager psiManager = PsiManager.getInstance(myProject);
+        String classQName = myClassChooser.getText();
+        if (StringUtil.isEmpty(classQName)) {
             return null;
         }
         return JavaPsiFacade.getInstance(psiManager.getProject()).findClass(classQName, GlobalSearchScope.allScope(myProject));

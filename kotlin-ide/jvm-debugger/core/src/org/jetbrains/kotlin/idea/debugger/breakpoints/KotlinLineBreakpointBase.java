@@ -52,9 +52,11 @@ public abstract class KotlinLineBreakpointBase extends LineBreakpoint<JavaLineBr
     }
 
     @Nullable
-    private static BreakpointRequest createLocationBreakpointRequest(@NotNull FilteredRequestor requestor,
+    private static BreakpointRequest createLocationBreakpointRequest(
+            @NotNull FilteredRequestor requestor,
             @Nullable Location location,
-            @NotNull DebugProcessImpl debugProcess) {
+            @NotNull DebugProcessImpl debugProcess
+    ) {
         if (location != null) {
             RequestManagerImpl requestsManager = debugProcess.getRequestsManager();
             BreakpointRequest request = requestsManager.createBreakpointRequest(requestor, location);
@@ -68,7 +70,9 @@ public abstract class KotlinLineBreakpointBase extends LineBreakpoint<JavaLineBr
     protected void createRequestForPreparedClass(final DebugProcessImpl debugProcess, final ReferenceType classType) {
         if (!ReadAction.compute(() -> isInScopeOf(debugProcess, classType.name()))) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(classType.name() + " is out of debug-process scope, breakpoint request won't be created for line " + getLineIndex());
+                LOG.debug(classType.name() +
+                          " is out of debug-process scope, breakpoint request won't be created for line " +
+                          getLineIndex());
             }
             return;
         }
@@ -77,10 +81,14 @@ public abstract class KotlinLineBreakpointBase extends LineBreakpoint<JavaLineBr
             if (!locations.isEmpty()) {
                 locations = StreamEx.of(locations).peek(loc -> {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Found location [codeIndex=" + loc.codeIndex() +
-                                  "] for reference type " + classType.name() +
-                                  " at line " + getLineIndex() +
-                                  "; isObsolete: " + (debugProcess.getVirtualMachineProxy().versionHigher("1.4") && loc.method().isObsolete()));
+                        LOG.debug("Found location [codeIndex=" +
+                                  loc.codeIndex() +
+                                  "] for reference type " +
+                                  classType.name() +
+                                  " at line " +
+                                  getLineIndex() +
+                                  "; isObsolete: " +
+                                  (debugProcess.getVirtualMachineProxy().versionHigher("1.4") && loc.method().isObsolete()));
                     }
                 }).filter(l -> acceptLocation(debugProcess, classType, l)).toList();
                 // MODIFICATION: Start Kotlin implementation
@@ -89,19 +97,22 @@ public abstract class KotlinLineBreakpointBase extends LineBreakpoint<JavaLineBr
                 for (Location loc : locations) {
                     createLocationBreakpointRequest(this, loc, debugProcess);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Created breakpoint request for reference type " + classType.name() + " at line " + getLineIndex() + "; codeIndex=" + loc.codeIndex());
+                        LOG.debug("Created breakpoint request for reference type " +
+                                  classType.name() +
+                                  " at line " +
+                                  getLineIndex() +
+                                  "; codeIndex=" +
+                                  loc.codeIndex());
                     }
                 }
-            }
-            else if (DebuggerUtilsEx.allLineLocations(classType) == null) {
+            } else if (DebuggerUtilsEx.allLineLocations(classType) == null) {
                 // there's no line info in this class
                 debugProcess.getRequestsManager()
                         .setInvalid(this, DebuggerBundle.message("error.invalid.breakpoint.no.line.info", classType.name()));
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("No line number info in " + classType.name());
                 }
-            }
-            else {
+            } else {
                 // there's no executable code in this class
                 debugProcess.getRequestsManager().setInvalid(this, DebuggerBundle.message(
                         "error.invalid.breakpoint.no.executable.code", (getLineIndex() + 1), classType.name())
@@ -110,20 +121,17 @@ public abstract class KotlinLineBreakpointBase extends LineBreakpoint<JavaLineBr
                     LOG.debug("No locations of type " + classType.name() + " found at line " + getLineIndex());
                 }
             }
-        }
-        catch (ClassNotPreparedException ex) {
+        } catch (ClassNotPreparedException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("ClassNotPreparedException: " + ex.getMessage());
             }
             // there's a chance to add a breakpoint when the class is prepared
-        }
-        catch (ObjectCollectedException ex) {
+        } catch (ObjectCollectedException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("ObjectCollectedException: " + ex.getMessage());
             }
             // there's a chance to add a breakpoint when the class is prepared
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             LOG.info(ex);
         }
         updateUI();
@@ -139,9 +147,13 @@ public abstract class KotlinLineBreakpointBase extends LineBreakpoint<JavaLineBr
                     return true;
                 }
                 // apply filtering to breakpoints from content sources only, not for sources attached to libraries
-                final Collection<VirtualFile> candidates = findClassCandidatesInSourceContent(className, debugProcess.getSearchScope(), fileIndex);
+                final Collection<VirtualFile> candidates =
+                        findClassCandidatesInSourceContent(className, debugProcess.getSearchScope(), fileIndex);
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found "+ (candidates == null? "null" : candidates.size()) + " candidate containing files for class " + className);
+                    LOG.debug("Found " +
+                              (candidates == null ? "null" : candidates.size()) +
+                              " candidate containing files for class " +
+                              className);
                 }
                 if (candidates == null) {
                     // If no candidates are found in scope then assume that class is loaded dynamically and allow breakpoint
@@ -174,7 +186,7 @@ public abstract class KotlinLineBreakpointBase extends LineBreakpoint<JavaLineBr
                               "; contains=" + contains +
                               "; contentRoot=" + contentRoot +
                               "; module = " + module +
-                              "; all files in index are: " + files+
+                              "; all files in index are: " + files +
                               "; all possible files are: " + allFiles
                     );
                 }
@@ -186,13 +198,17 @@ public abstract class KotlinLineBreakpointBase extends LineBreakpoint<JavaLineBr
     }
 
     @Nullable
-    private Collection<VirtualFile> findClassCandidatesInSourceContent(final String className, final GlobalSearchScope scope, final ProjectFileIndex fileIndex) {
+    private Collection<VirtualFile> findClassCandidatesInSourceContent(
+            final String className,
+            final GlobalSearchScope scope,
+            final ProjectFileIndex fileIndex
+    ) {
         final int dollarIndex = className.indexOf("$");
-        final String topLevelClassName = dollarIndex >= 0? className.substring(0, dollarIndex) : className;
+        final String topLevelClassName = dollarIndex >= 0 ? className.substring(0, dollarIndex) : className;
         return ReadAction.compute(() -> {
             final PsiClass[] classes = JavaPsiFacade.getInstance(myProject).findClasses(topLevelClassName, scope);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found "+ classes.length + " classes " + topLevelClassName + " in scope "+scope);
+                LOG.debug("Found " + classes.length + " classes " + topLevelClassName + " in scope " + scope);
             }
             if (classes.length == 0) {
                 return null;
@@ -209,7 +225,8 @@ public abstract class KotlinLineBreakpointBase extends LineBreakpoint<JavaLineBr
                         final VirtualFile vFile = psiFile.getVirtualFile();
                         msg.append("\n\t").append("VirtualFile=").append(vFile);
                         if (vFile != null) {
-                            msg.append("\n\t").append("isInSourceContent=").append(fileIndex.isUnderSourceRootOfType(vFile, JavaModuleSourceRootTypes.SOURCES));
+                            msg.append("\n\t").append("isInSourceContent=")
+                                    .append(fileIndex.isUnderSourceRootOfType(vFile, JavaModuleSourceRootTypes.SOURCES));
                         }
                     }
                     LOG.debug(msg.toString());
