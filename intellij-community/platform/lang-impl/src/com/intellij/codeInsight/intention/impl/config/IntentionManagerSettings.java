@@ -22,7 +22,6 @@ import com.intellij.util.containers.WeakInterner;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
@@ -41,19 +40,25 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
 
   private final Set<String> myIgnoredActions = Collections.synchronizedSet(new LinkedHashSet<>());
 
-  private final Map<MetaDataKey, IntentionActionMetaData> myMetaData = new LinkedHashMap<>(); // guarded by this
-  private final Map<IntentionActionBean, MetaDataKey> myExtensionMapping = new HashMap<>(); // guarded by this
+  private final Map<MetaDataKey, IntentionActionMetaData> myMetaData; // guarded by this
+  private final Map<IntentionActionBean, MetaDataKey> myExtensionMapping; // guarded by this
 
   @NonNls private static final String IGNORE_ACTION_TAG = "ignoreAction";
   @NonNls private static final String NAME_ATT = "name";
   private static final Pattern HTML_PATTERN = Pattern.compile("<[^<>]*>");
 
   public IntentionManagerSettings() {
+    int size = IntentionManagerImpl.EP_INTENTION_ACTIONS.getPoint().size();
+    myMetaData = new LinkedHashMap<>(size);
+    myExtensionMapping = new HashMap<>(size);
+
+    IntentionManagerImpl.EP_INTENTION_ACTIONS.forEachExtensionSafe(extension -> registerMetaDataForEp(extension));
+
     IntentionManagerImpl.EP_INTENTION_ACTIONS.getPoint().addExtensionPointListener(new ExtensionPointListener<IntentionActionBean>() {
       @Override
       public void extensionAdded(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
-        // on each plugin load/unload SearchableOptionsRegistrarImpl drops the cache, so, it will be recomputed later on demand - no need to pass processor here
-        registerMetaDataForEp(extension, null);
+        // on each plugin load/unload SearchableOptionsRegistrarImpl drops the cache, so, it will be recomputed later on demand
+        registerMetaDataForEp(extension);
         TopHitCache topHitCache = ApplicationManager.getApplication().getServiceIfCreated(TopHitCache.class);
         if (topHitCache != null) {
           topHitCache.invalidateCachedOptions(IntentionsOptionsTopHitProvider.class);
@@ -73,7 +78,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
     }, false, ApplicationManager.getApplication());
   }
 
-  private void registerMetaDataForEp(@NotNull IntentionActionBean extension, @Nullable SearchableOptionProcessor processor) {
+  private void registerMetaDataForEp(@NotNull IntentionActionBean extension) {
     String[] categories = extension.getCategories();
     if (categories == null) {
       return;
@@ -88,9 +93,6 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
     try {
       IntentionActionMetaData metaData = new IntentionActionMetaData(instance, extension.getLoaderForClass(), categories, descriptionDirectoryName);
       MetaDataKey key = new MetaDataKey(metaData.myCategory, metaData.getFamily());
-      if (processor != null) {
-        processMetaData(metaData, processor);
-      }
       //noinspection SynchronizeOnThis
       synchronized (this) {
         myMetaData.put(key, metaData);
@@ -217,8 +219,9 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
   private static final class IntentionSearchableOptionContributor extends SearchableOptionContributor {
     @Override
     public void processOptions(@NotNull SearchableOptionProcessor processor) {
-      IntentionManagerSettings settings = getInstance();
-      IntentionManagerImpl.EP_INTENTION_ACTIONS.forEachExtensionSafe(extension -> settings.registerMetaDataForEp(extension, processor));
+      for (IntentionActionMetaData metaData : getInstance().getMetaData()) {
+        processMetaData(metaData, processor);
+      }
     }
   }
 }
