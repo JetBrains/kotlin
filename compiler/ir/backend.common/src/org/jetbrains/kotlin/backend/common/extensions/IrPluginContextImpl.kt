@@ -85,6 +85,16 @@ open class IrPluginContextImpl(
         }
     }
 
+    override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol? {
+        assert(!fqName.isRoot)
+        return resolveSymbol(fqName.parent()) { scope ->
+            val aliasDescriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND) as? TypeAliasDescriptor?
+            aliasDescriptor?.let {
+                st.referenceTypeAlias(it)
+            }
+        }
+    }
+
     override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
         val classSymbol = referenceClass(classFqn) ?: error("Cannot find class $classFqn")
         return classSymbol.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol }
