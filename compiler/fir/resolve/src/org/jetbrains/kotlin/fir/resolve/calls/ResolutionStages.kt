@@ -11,18 +11,17 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.*
-import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.ClassId
@@ -93,7 +92,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
 
         override fun Candidate.getReceiverType(): ConeKotlinType? {
             val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
-            val callable = callableSymbol.fir
+            val callable = with(bodyResolveComponents) { callableSymbol.phasedFir }
             val receiverType = callable.receiverTypeRef?.coneType
             if (receiverType != null) return receiverType
             val returnTypeRef = callable.returnTypeRef as? FirResolvedTypeRef ?: return null
@@ -156,7 +155,7 @@ private fun FirExpression.isSuperReferenceExpression(): Boolean {
 internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
-        val function = symbol.fir
+        val function = with(candidate.bodyResolveComponents) { symbol.phasedFir }
 
         val mapping = mapArguments(callInfo.arguments, function)
         candidate.argumentMapping = mapping.toArgumentToParameterMapping()
