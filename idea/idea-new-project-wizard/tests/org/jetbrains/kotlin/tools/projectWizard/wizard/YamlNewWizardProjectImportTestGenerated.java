@@ -216,9 +216,9 @@ public class YamlNewWizardProjectImportTestGenerated extends AbstractYamlNewWiza
             runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/simpleNativeTarget/");
         }
 
-        @TestMetadata("singleplatformJs")
+        @TestMetadata("singlePlatformJsBrowser")
         public void testSingleplatformJs() throws Exception {
-            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/singleplatformJs/");
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/singlePlatformJsBrowser/");
         }
     }
 }
