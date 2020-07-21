@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -77,7 +78,12 @@ open class IrPluginContextImpl(
     override fun referenceClass(fqName: FqName): IrClassSymbol? {
         assert(!fqName.isRoot)
         return resolveSymbol(fqName.parent()) { scope ->
-            val classDescriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND) as? ClassDescriptor?
+            val classifierDescriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND)
+            val classDescriptor = when (classifierDescriptor) {
+                is ClassDescriptor -> classifierDescriptor
+                is TypeAliasDescriptor -> classifierDescriptor.classDescriptor
+                else -> error("Unexpected classifier $classifierDescriptor")
+            }
             classDescriptor?.let {
                 st.referenceClass(it)
             }
