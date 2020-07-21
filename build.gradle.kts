@@ -522,7 +522,7 @@ gradle.taskGraph.whenReady {
                 val profileMessage = "$profile build profile is active ($proguardMessage, $jarCompressionMessage). " +
             "Use -Pteamcity=<true|false> to reproduce CI/local build"
 
-    logger.warn("\n${"☠".repeat(profileMessage.length)}\n$profileMessage\n${"☠".repeat(profileMessage.length)}\n")
+    logger.warn("\n\n$profileMessage")
 
     allTasks.filterIsInstance<org.gradle.jvm.tasks.Jar>().forEach { task ->
         task.entryCompression = if (kotlinBuildProperties.jarCompression)
