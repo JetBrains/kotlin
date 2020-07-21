@@ -89,7 +89,7 @@ enum class JsTarget {
     NODE;
 }
 
-open class JsSinglePlatformModuleConfigurator(
+abstract class JsSinglePlatformModuleConfigurator(
     private val jsTarget: JsTarget
 ) : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator,
     ModuleConfiguratorWithSettings {
@@ -103,8 +103,7 @@ open class JsSinglePlatformModuleConfigurator(
     override val suggestedModuleName = "js"
 
     @NonNls
-    override val id = "jsSinglePlatform"
-    override val text = KotlinNewProjectWizardBundle.message("module.configurator.js")
+    override val id = "js${jsTarget.name.toLowerCase().capitalize()}SinglePlatform"
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 
@@ -123,13 +122,12 @@ open class JsSinglePlatformModuleConfigurator(
     ): List<BuildSystemIR> = irsList {
         "kotlin" {
             "js" {
-                when (jsTarget) {
-                    JsTarget.BROWSER -> browserSubTarget(module, reader)
-                    JsTarget.NODE -> nodejsSubTarget(module, reader)
-                }
+                subTarget(module, reader)
             }
         }
     }
+
+    protected abstract fun GradleIRListBuilder.subTarget(module: Module, reader: Reader)
 }
 
 object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator(
@@ -139,11 +137,23 @@ object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigu
         return super.getConfiguratorSettings() +
                 JSConfigurator.cssSupport
     }
+
+    override fun GradleIRListBuilder.subTarget(module: Module, reader: Reader) {
+        browserSubTarget(module, reader)
+    }
+
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.simple.js.browser")
 }
 
 object NodeJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator(
     JsTarget.NODE
-)
+) {
+    override fun GradleIRListBuilder.subTarget(module: Module, reader: Reader) {
+        nodejsSubTarget(module, reader)
+    }
+
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.simple.js.node")
+}
 
 fun GradleIRListBuilder.applicationSupport() {
     +"binaries.executable()"
