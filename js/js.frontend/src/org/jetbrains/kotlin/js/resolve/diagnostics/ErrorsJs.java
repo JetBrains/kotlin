@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -107,7 +107,7 @@ public interface ErrorsJs {
 
     DiagnosticFactory0<PsiElement> NESTED_JS_EXPORT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtExpression, String> WRONG_EXPORTED_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
-    DiagnosticFactory2<PsiElement, String, KotlinType> NON_EXPORTABLE_TYPE = DiagnosticFactory2.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory2<PsiElement, String, KotlinType> NON_EXPORTABLE_TYPE = DiagnosticFactory2.create(WARNING, DECLARATION_SIGNATURE_OR_DEFAULT);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
