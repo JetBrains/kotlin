@@ -16,7 +16,6 @@
 
 package androidx.compose.plugins.kotlin
 
-import androidx.compose.plugins.kotlin.analysis.ComposeErrors
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance

@@ -21,21 +21,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers
-import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -69,55 +61,10 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinedArgument
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.lowerIfFlexible
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-object ComposeErrorMessages : DefaultErrorMessages.Extension {
-    private val MAP = DiagnosticFactoryToRendererMap("Compose")
-    override fun getMap() = MAP
-
-    init {
-        Errors.Initializer.initializeFactoryNames(ComposeErrors::class.java)
-        MAP.put(
-            ComposeErrors.COMPOSABLE_INVOCATION,
-            "@Composable invocations can only happen from the context of a @Composable function"
-        )
-
-        MAP.put(
-            ComposeErrors.COMPOSABLE_EXPECTED,
-            "Functions which invoke @Composable functions must be marked with the @Composable " +
-                    "annotation"
-        )
-
-        MAP.put(
-            ComposeErrors.CAPTURED_COMPOSABLE_INVOCATION,
-            "Composable calls are not allowed inside the {0} parameter of {1}",
-            Renderers.NAME,
-            Renderers.COMPACT
-        )
-    }
-}
-
-object ComposeErrors {
-    // error goes on the composable call in a non-composable function
-    @JvmField
-    val COMPOSABLE_INVOCATION =
-        DiagnosticFactory0.create<PsiElement>(Severity.ERROR)
-
-    // error goes on the non-composable function with composable calls
-    @JvmField
-    val COMPOSABLE_EXPECTED =
-        DiagnosticFactory0.create<PsiElement>(Severity.ERROR)
-
-    @JvmField
-    val CAPTURED_COMPOSABLE_INVOCATION =
-        DiagnosticFactory2.create<PsiElement, DeclarationDescriptor, DeclarationDescriptor>(
-            Severity.ERROR
-        )
-}
-
-@Suppress("DEPRECATION_ERROR") // reportFromPlugin is deprecated.
 open class ComposableCallChecker : CallChecker, AdditionalTypeChecker,
     StorageComponentContainerContributor {
     override fun registerModuleComponents(
@@ -158,13 +105,12 @@ open class ComposableCallChecker : CallChecker, AdditionalTypeChecker,
                             descriptor,
                             false
                         )
-                        context.trace.reportFromPlugin(
+                        context.trace.report(
                             ComposeErrors.CAPTURED_COMPOSABLE_INVOCATION.on(
                                 reportOn,
                                 arg,
                                 arg.containingDeclaration
-                            ),
-                            ComposeErrorMessages
+                            )
                         )
                         return
                     }
@@ -239,15 +185,9 @@ open class ComposableCallChecker : CallChecker, AdditionalTypeChecker,
         callEl: PsiElement,
         functionEl: PsiElement? = null
     ) {
-        context.trace.reportFromPlugin(
-            ComposeErrors.COMPOSABLE_INVOCATION.on(callEl),
-            ComposeErrorMessages
-        )
+        context.trace.report(ComposeErrors.COMPOSABLE_INVOCATION.on(callEl))
         if (functionEl != null) {
-            context.trace.reportFromPlugin(
-                ComposeErrors.COMPOSABLE_EXPECTED.on(functionEl),
-                ComposeErrorMessages
-            )
+            context.trace.report(ComposeErrors.COMPOSABLE_EXPECTED.on(functionEl))
         }
     }
 
