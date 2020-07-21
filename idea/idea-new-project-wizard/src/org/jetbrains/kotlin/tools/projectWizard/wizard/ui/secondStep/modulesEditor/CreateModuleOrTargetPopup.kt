@@ -18,7 +18,8 @@ import javax.swing.Icon
 class CreateModuleOrTargetPopup private constructor(
     private val target: Module?,
     private val allowMultiplatform: Boolean,
-    private val allowSinglePlatformJs: Boolean,
+    private val allowSinglePlatformJsBrowser: Boolean,
+    private val allowSinglePlatformJsNode: Boolean,
     private val allowAndroid: Boolean,
     private val allowIos: Boolean,
     private val createTarget: (TargetConfigurator) -> Unit,
@@ -42,10 +43,8 @@ class CreateModuleOrTargetPopup private constructor(
             if (allowMultiplatform) +MppModuleConfigurator
             +JvmSinglePlatformModuleConfigurator
             if (allowAndroid) +AndroidSinglePlatformModuleConfigurator
-            if (allowSinglePlatformJs) {
-                +BrowserJsSinglePlatformModuleConfigurator
-                +NodeJsSinglePlatformModuleConfigurator
-            }
+            if (allowSinglePlatformJsBrowser) +BrowserJsSinglePlatformModuleConfigurator
+            if (allowSinglePlatformJsNode) +NodeJsSinglePlatformModuleConfigurator
             if (allowIos) +IOSSinglePlatformModuleConfigurator
         }
     ) {
@@ -108,7 +107,8 @@ class CreateModuleOrTargetPopup private constructor(
         fun create(
             target: Module?,
             allowMultiplatform: Boolean,
-            allowSinglePlatformJs: Boolean,
+            allowSinglePlatformJsBrowser: Boolean,
+            allowSinglePlatformJsNode: Boolean,
             allowAndroid: Boolean,
             allowIos: Boolean,
             createTarget: (TargetConfigurator) -> Unit,
@@ -116,7 +116,8 @@ class CreateModuleOrTargetPopup private constructor(
         ) = CreateModuleOrTargetPopup(
             target = target,
             allowMultiplatform = allowMultiplatform,
-            allowSinglePlatformJs = allowSinglePlatformJs,
+            allowSinglePlatformJsBrowser = allowSinglePlatformJsBrowser,
+            allowSinglePlatformJsNode = allowSinglePlatformJsNode,
             allowAndroid = allowAndroid,
             allowIos = allowIos,
             createTarget = createTarget,

@@ -5,10 +5,7 @@ import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.ToolbarDecorator
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.IOSSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.BrowserJsSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
@@ -36,9 +33,16 @@ class ModulesEditorToolbarDecorator(
                 allowMultiplatform = isMultiplatformProject()
                         && isRootModule
                         && allModules.none { it.configurator == MppModuleConfigurator },
-                allowSinglePlatformJs = isMultiplatformProject()
-                        && isRootModule
-                        && allModules.none { it.configurator == BrowserJsSinglePlatformModuleConfigurator },
+                allowSinglePlatformJsBrowser = allowSinglePlatformJs(
+                    configurator = BrowserJsSinglePlatformModuleConfigurator,
+                    allModules = allModules,
+                    isRootModule = isRootModule
+                ),
+                allowSinglePlatformJsNode = allowSinglePlatformJs(
+                    configurator = NodeJsSinglePlatformModuleConfigurator,
+                    allModules = allModules,
+                    isRootModule = isRootModule
+                ),
                 allowAndroid = isRootModule
                         && isMultiplatformProject()
                         && allModules.none { it.configurator == AndroidSinglePlatformModuleConfigurator },
@@ -107,6 +111,15 @@ class ModulesEditorToolbarDecorator(
         setMoveDownAction(null)
         setMoveUpAction(null)
     }
+
+    private fun allowSinglePlatformJs(
+        configurator: JsSinglePlatformModuleConfigurator,
+        allModules: List<Module>,
+        isRootModule: Boolean
+    ) =
+        isMultiplatformProject()
+                && isRootModule
+                && allModules.none { it.configurator == configurator }
 
     private val selectedModule
         get() = tree.selectedSettingItem.safeAs<Module>()
