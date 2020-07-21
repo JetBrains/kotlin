@@ -37,7 +37,7 @@ class CreateModuleOrTargetPopup private constructor(
     }
 
     private inner class ChooseModuleOrMppModuleStep : BaseListPopupStep<ModuleConfigurator>(
-        "Module Type",
+        KotlinNewProjectWizardBundle.message("module.type"),
         buildList {
             if (allowMultiplatform) +MppModuleConfigurator
             +JvmSinglePlatformModuleConfigurator
