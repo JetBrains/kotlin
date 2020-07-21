@@ -344,8 +344,8 @@ open class JDIEval(
         return obj.invokeMethod(thread, method, args, policy)
     }
 
-    override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
-        if (invokespecial && methodDesc.name == "<init>") {
+    override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokeSpecial: Boolean): Value {
+        if (invokeSpecial && methodDesc.name == "<init>") {
             // Constructor call
             val ctor = findMethod(methodDesc)
             val clazz = (instance as NewObjectValue).asmType.asReferenceType() as ClassType
@@ -371,7 +371,7 @@ open class JDIEval(
         }
 
         val obj = instance.jdiObj.checkNull()
-        return if (invokespecial) {
+        return if (invokeSpecial) {
             val method = findMethod(methodDesc)
             doInvokeMethod(obj, method, invokePolicy or ObjectReference.INVOKE_NONVIRTUAL)
         } else {

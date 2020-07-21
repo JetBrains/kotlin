@@ -32,7 +32,7 @@ interface Eval {
 
     fun getField(instance: Value, fieldDesc: FieldDescription): Value
     fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value)
-    fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean = false): Value
+    fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokeSpecial: Boolean = false): Value
 }
 
 class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(API_VERSION) {

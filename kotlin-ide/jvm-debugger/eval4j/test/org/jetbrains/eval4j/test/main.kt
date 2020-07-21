@@ -252,8 +252,8 @@ object REFLECTION_EVAL : Eval {
         return field!!
     }
 
-    override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
-        if (invokespecial) {
+    override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokeSpecial: Boolean): Value {
+        if (invokeSpecial) {
             if (methodDesc.name == "<init>") {
                 // Constructor call
                 @Suppress("UNCHECKED_CAST")

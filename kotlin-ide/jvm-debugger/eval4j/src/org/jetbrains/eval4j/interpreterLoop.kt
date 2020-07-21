@@ -122,14 +122,14 @@ fun interpreterLoop(
         return exceptionCaught(exceptionValue) { exceptionType ->
             try {
                 val exceptionClass = exception::class.java
-                val _class = Class.forName(
+                val clazz = Class.forName(
                     exceptionType.internalName.replace('/', '.'),
                     true,
                     exceptionClass.classLoader
                 )
-                _class.isAssignableFrom(exceptionClass)
+                clazz.isAssignableFrom(exceptionClass)
             } catch (e: ClassNotFoundException) {
-                // If the class is not available in this VM, it can not be a superclass of an exception trown in it
+                // If the class is not available in this VM, it can not be a superclass of an exception thrown in it
                 false
             }
         }
@@ -138,9 +138,8 @@ fun interpreterLoop(
     try {
         loop@ while (true) {
             val insnOpcode = currentInsn.opcode
-            val insnType = currentInsn.type
 
-            when (insnType) {
+            when (currentInsn.type) {
                 AbstractInsnNode.LABEL,
                 AbstractInsnNode.FRAME,
                 AbstractInsnNode.LINE -> {
@@ -257,11 +256,11 @@ private fun <T : Value> Frame<T>.getStackTop(i: Int = 0) = this.getStack(this.st
 
 // Copied from org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer.analyze()
 fun computeHandlers(m: MethodNode): Array<out List<TryCatchBlockNode>?> {
-    val insns = m.instructions
-    val handlers = Array<MutableList<TryCatchBlockNode>?>(insns.size()) { null }
+    val instructions = m.instructions
+    val handlers = Array<MutableList<TryCatchBlockNode>?>(instructions.size()) { null }
     for (tcb in m.tryCatchBlocks) {
-        val begin = insns.indexOf(tcb.start)
-        val end = insns.indexOf(tcb.end)
+        val begin = instructions.indexOf(tcb.start)
+        val end = instructions.indexOf(tcb.end)
         for (i in begin until end) {
             val insnHandlers = handlers[i] ?: ArrayList()
             handlers[i] = insnHandlers

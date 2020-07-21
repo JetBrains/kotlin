@@ -29,7 +29,7 @@ interface Value : org.jetbrains.org.objectweb.asm.tree.analysis.Value {
 
 @Suppress("ClassName")
 object NOT_A_VALUE : Value {
-    override val asmType = Type.getObjectType("<invalid>")
+    override val asmType: Type = Type.getObjectType("<invalid>")
     override val valid = false
     override fun getSize(): Int = 1
 
@@ -85,7 +85,7 @@ open class ObjectValue(value: Any?, asmType: Type) : AbstractValue<Any?>(value, 
 class NewObjectValue(asmType: Type) : ObjectValue(null, asmType) {
     override var value: Any? = null
         get(): Any? {
-            return field ?: throw IllegalStateException("Trying to access an unitialized object: $this")
+            return field ?: throw IllegalStateException("Trying to access an uninitialized object: $this")
         }
 }
 
