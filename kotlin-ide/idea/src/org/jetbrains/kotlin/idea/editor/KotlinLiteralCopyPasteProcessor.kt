@@ -76,7 +76,7 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
             while (givenTextOffset < fileRange.endOffset) {
                 val element: PsiElement? = file.findElementAt(givenTextOffset)
                 if (element == null) {
-                    buffer.append(fileText.substring(givenTextOffset, fileRange.endOffset))
+                    buffer.append(fileText.substring(givenTextOffset, fileRange.endOffset - 1))
                     break
                 }
                 val elTp = element.node.elementType
