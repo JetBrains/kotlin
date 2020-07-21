@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -76,7 +77,7 @@ class FakeOverrideBuilder(
         val classifier = superType.classifier
         require(classifier is IrClassSymbol) { "superType classifier is not IrClassSymbol: $classifier" }
 
-        val typeParameters = classifier.owner.typeParameters.map { it.symbol }
+        val typeParameters = extractTypeParameters(classifier.owner).map { it.symbol }
         val typeArguments = superType.arguments.map {
             require(it is IrTypeProjection) { "Unexpected super type argument: $it" }
             assert(it.variance == Variance.INVARIANT) { "Unexpected variance in super type argument: ${it.variance}" }
