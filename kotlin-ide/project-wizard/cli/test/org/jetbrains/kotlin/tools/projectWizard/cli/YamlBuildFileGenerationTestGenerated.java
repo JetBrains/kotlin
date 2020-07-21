@@ -76,8 +76,8 @@ public class YamlBuildFileGenerationTestGenerated extends AbstractYamlBuildFileG
         runTest("testData/buildFileGeneration/simpleNativeTarget/");
     }
 
-    @TestMetadata("singleplatformJs")
+    @TestMetadata("singlePlatformJsBrowser")
     public void testSingleplatformJs() throws Exception {
-        runTest("testData/buildFileGeneration/singleplatformJs/");
+        runTest("testData/buildFileGeneration/singlePlatformJsBrowser/");
     }
 }
