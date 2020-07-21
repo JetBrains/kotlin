@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolveStatus
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -22,6 +23,7 @@ internal class FirAnnotationCallImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override var argumentList: FirArgumentList,
+    override var calleeReference: FirReference,
     override val useSiteTarget: AnnotationUseSiteTarget?,
     override var annotationTypeRef: FirTypeRef,
     override var resolveStatus: FirAnnotationResolveStatus,
@@ -31,18 +33,25 @@ internal class FirAnnotationCallImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         argumentList.accept(visitor, data)
+        calleeReference.accept(visitor, data)
         annotationTypeRef.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
         transformAnnotations(transformer, data)
         argumentList = argumentList.transformSingle(transformer, data)
+        transformCalleeReference(transformer, data)
         transformAnnotationTypeRef(transformer, data)
         return this
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirAnnotationCallImpl {
+        calleeReference = calleeReference.transformSingle(transformer, data)
         return this
     }
 
@@ -55,6 +64,10 @@ internal class FirAnnotationCallImpl(
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {
         argumentList = newArgumentList
+    }
+
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        calleeReference = newCalleeReference
     }
 
     override fun replaceResolveStatus(newResolveStatus: FirAnnotationResolveStatus) {
