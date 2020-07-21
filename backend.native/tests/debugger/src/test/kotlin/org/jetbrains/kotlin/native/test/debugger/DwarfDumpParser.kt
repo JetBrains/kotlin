@@ -337,7 +337,7 @@ class DwarfUtilParser() {
     fun attribute(attribute: DwarfAttribute.Attribute, payload: String) {
         appendCurrentAttribute()
         currentAttribute = attribute
-        currentAttributePayload.appendln(payload)
+        currentAttributePayload.appendLine(payload)
     }
 
     fun parse(reader: Reader): DwarfUtilParser {
