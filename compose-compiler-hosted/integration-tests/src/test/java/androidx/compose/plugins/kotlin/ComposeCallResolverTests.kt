@@ -159,7 +159,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
             import androidx.compose.*
 
-            class TextSpanScope internal constructor(val composer: ViewComposer)
+            class TextSpanScope
 
             @Composable fun Foo(
                 scope: TextSpanScope, 
