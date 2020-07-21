@@ -78,7 +78,7 @@ internal fun browserConfiguration(): String {
             useKarma {
                 useChromeHeadless()
                 webpackConfig.cssSupport.enabled = true
-           }
+            }
         }
     """.trimIndent()
 }
