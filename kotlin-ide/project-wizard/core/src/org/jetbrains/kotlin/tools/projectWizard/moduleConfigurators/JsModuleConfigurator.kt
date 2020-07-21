@@ -90,7 +90,7 @@ enum class JsTarget {
 }
 
 abstract class JsSinglePlatformModuleConfigurator(
-    private val jsTarget: JsTarget
+    jsTarget: JsTarget
 ) : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator,
     ModuleConfiguratorWithSettings {
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =

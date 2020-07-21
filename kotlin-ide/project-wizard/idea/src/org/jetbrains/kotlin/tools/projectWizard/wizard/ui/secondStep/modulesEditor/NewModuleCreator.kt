@@ -35,7 +35,8 @@ class NewModuleCreator {
     fun create(
         target: Module?,
         allowMultiplatform: Boolean,
-        allowSinglePlatformJs: Boolean,
+        allowSinglePlatformJsBrowser: Boolean,
+        allowSinglePlatformJsNode: Boolean,
         allowAndroid: Boolean,
         allowIos: Boolean,
         allModules: List<Module>,
@@ -43,7 +44,8 @@ class NewModuleCreator {
     ) = CreateModuleOrTargetPopup.create(
         target = target,
         allowMultiplatform = allowMultiplatform,
-        allowSinglePlatformJs = allowSinglePlatformJs,
+        allowSinglePlatformJsBrowser = allowSinglePlatformJsBrowser,
+        allowSinglePlatformJsNode = allowSinglePlatformJsNode,
         allowAndroid = allowAndroid,
         allowIos = allowIos,
         createTarget = { targetConfigurator ->
