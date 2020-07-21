@@ -14,18 +14,17 @@ import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.execution.TrivialRunParameters
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriverConfiguration
-import com.jetbrains.konan.debugger.KonanRemoteDebugProcess
+import com.jetbrains.mpp.BinaryExecutable
 import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 
 class KonanExternalSystemState(
-    val configuration: BinaryRunConfiguration,
+    private val configuration: BinaryRunConfiguration,
     private val project: Project,
+    private val lldbConfiguration: LLDBDriverConfiguration,
     environment: ExecutionEnvironment,
-    gradleConfiguration: GradleRunConfiguration,
-    val lldbConfiguration: LLDBDriverConfiguration
-) :
-    ExternalSystemRunnableState(gradleConfiguration.settings, project, true, gradleConfiguration, environment) {
+    gradleConfiguration: GradleRunConfiguration
+) : ExternalSystemRunnableState(gradleConfiguration.settings, project, true, gradleConfiguration, environment) {
 
     override fun startDebugProcess(
         session: XDebugSession,
@@ -33,18 +32,24 @@ class KonanExternalSystemState(
     ): XDebugProcess {
         execute(env.executor, env.runner)
 
-        val executableFile = configuration.executable!!.executionTargets.first { it.isDebug }.productFile
-        val installer = KonanLLDBInstaller(executableFile, configuration)
+        val debugVariant = configuration.executable?.variants
+            ?.firstOrNull { it is BinaryExecutable.Variant.Debug }
+            ?: error("There is no debug variant!")
 
+        val attachmentStrategy = configuration.attachmentStrategy
+            ?: error("There is no attachment strategy!")
+
+        val installer = KonanLLDBInstaller(debugVariant.file, configuration)
+        val runParams = TrivialRunParameters(lldbConfiguration, installer)
         val searchScope = GlobalSearchScopes.executionScope(project, env.runProfile)
         val consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project, searchScope)
 
         val result = KonanRemoteDebugProcess(
-            TrivialRunParameters(lldbConfiguration, installer),
+            runParams,
             session,
             consoleBuilder,
-            executableFile,
-            configuration.attachmentStrategy!!
+            debugVariant.file,
+            attachmentStrategy
         )
         result.start()
         return result

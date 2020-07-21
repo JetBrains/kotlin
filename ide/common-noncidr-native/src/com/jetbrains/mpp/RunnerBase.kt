@@ -20,6 +20,7 @@ import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.impl.XDebugProcessConfiguratorStarter
 import com.intellij.xdebugger.impl.ui.XDebugSessionData
 import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
+import com.jetbrains.mpp.workspace.WorkspaceBase
 
 abstract class RunnerBase : DefaultProgramRunner() {
     protected abstract fun getWorkspace(project: Project): WorkspaceBase
@@ -60,7 +61,7 @@ abstract class RunnerBase : DefaultProgramRunner() {
 
         return when (executorId) {
             DefaultRunExecutor.EXECUTOR_ID -> true
-            DefaultDebugExecutor.EXECUTOR_ID -> workspace.isDebugPossible && profile.selectedTarget?.isDebug ?: false
+            DefaultDebugExecutor.EXECUTOR_ID -> workspace.isDebugPossible && profile.variant is BinaryExecutable.Variant.Debug
             else -> false
         }
     }

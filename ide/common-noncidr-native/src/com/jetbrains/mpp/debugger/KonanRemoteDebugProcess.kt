@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.konan.debugger
+package com.jetbrains.mpp.debugger
 
 import com.intellij.execution.filters.DefaultConsoleFiltersProvider
 import com.intellij.execution.filters.TextConsoleBuilder
@@ -12,6 +12,7 @@ import com.jetbrains.cidr.execution.RunParameters
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriver
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriver
 import com.jetbrains.konan.KonanLog
+import com.jetbrains.konan.debugger.KonanLocalDebugProcess
 import com.jetbrains.mpp.runconfig.AttachmentStrategy
 import java.io.BufferedReader
 import java.io.File

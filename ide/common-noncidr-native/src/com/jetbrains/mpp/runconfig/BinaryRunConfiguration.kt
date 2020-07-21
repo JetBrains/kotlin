@@ -6,10 +6,7 @@
 package com.jetbrains.mpp.runconfig
 
 import com.intellij.execution.CommonProgramRunConfigurationParameters
-import com.intellij.execution.DefaultExecutionTarget
-import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.Executor
-import com.intellij.execution.configuration.EnvironmentVariablesComponent
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.LocatableConfigurationBase
 import com.intellij.execution.configurations.RunConfiguration
@@ -20,13 +17,16 @@ import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.debugger.CidrDebugProfile
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriverConfiguration
-import com.jetbrains.konan.WorkspaceXML
-import com.jetbrains.mpp.*
+import com.jetbrains.mpp.BinaryExecutable
+import com.jetbrains.mpp.KonanCommandLineState
 import com.jetbrains.mpp.debugger.KonanExternalSystemState
+import com.jetbrains.mpp.workspace.State.readFromXml
+import com.jetbrains.mpp.workspace.State.writeToXml
+import com.jetbrains.mpp.workspace.WorkspaceBase
 import org.jdom.Element
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
+import java.io.File
 import javax.swing.Icon
 
 class BinaryRunConfiguration(
@@ -37,8 +37,8 @@ class BinaryRunConfiguration(
     CommonProgramRunConfigurationParameters,
     CidrDebugProfile {
 
-    var executable: KonanExecutable? = workspace.executables.firstOrNull()
-    var selectedTarget: BinaryExecutionTarget? = null  //auto setup via BinaryTargetListener
+    var executable: BinaryExecutable? = workspace.allAvailableExecutables.firstOrNull()
+    var variant: BinaryExecutable.Variant? = executable?.variants?.firstOrNull()
     var attachmentStrategy: AttachmentStrategy? = null // affects getState
 
     private var directory: String? = null
@@ -68,20 +68,7 @@ class BinaryRunConfiguration(
     override fun getIcon(): Icon? = factory?.icon
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
-        BinaryRunConfigurationSettingsEditor(workspace.executables)
-
-    override fun canRunOn(target: ExecutionTarget): Boolean {
-        val exec = executable ?: return false
-        if (!hostSupportsExecutable(HostManager.host, exec.base.targetType)) return false
-
-        return when (target) {
-            is DefaultExecutionTarget -> // being called during Gradle task debug run
-                attachmentStrategy != null && exec.executionTargets.any { it.isDebug }
-            is BinaryExecutionTarget -> // straightforward execution
-                exec.executionTargets.contains(target)
-            else -> false
-        }
-    }
+        BinaryRunConfigurationSettingsEditor(workspace.allAvailableExecutables)
 
     private fun hostSupportsExecutable(host: KonanTarget, executable: KonanTarget) = when (host) {
         KonanTarget.MACOS_X64 -> executable == KonanTarget.IOS_X64 || executable == KonanTarget.MACOS_X64
@@ -108,14 +95,14 @@ class BinaryRunConfiguration(
         return KonanExternalSystemState(
             this,
             project,
+            lldbConfiguration,
             env,
-            dummyConfiguration,
-            lldbConfiguration
+            dummyConfiguration
         )
     }
 
     private fun commandLineState(env: ExecutionEnvironment, lldbConfiguration: LLDBDriverConfiguration?): RunProfileState? {
-        val execFile = selectedTarget?.productFile ?: return null
+        val execFile = variant?.file ?: return null
         return KonanCommandLineState(
             env,
             this,
@@ -126,25 +113,11 @@ class BinaryRunConfiguration(
 
     override fun readExternal(element: Element) {
         super.readExternal(element)
-
-        val base = KonanExecutableBase.readFromXml(element) ?: return
-        executable = workspace.executables.firstOrNull { it.base == base }
-        selectedTarget = executable?.executionTargets?.firstOrNull()
-
-        parameters = element.getAttributeValue(WorkspaceXML.RunConfiguration.attributeParameters)
-        directory = element.getAttributeValue(WorkspaceXML.RunConfiguration.attributeDirectory)
-        element.getAttributeValue(WorkspaceXML.RunConfiguration.attributePassParent)?.let { passPaternalEnvs = it.toBoolean() }
-        environmentVariables = LinkedHashMap()
-        EnvironmentVariablesComponent.readExternal(element, environmentVariables)
+        readFromXml(element, File(project.basePath!!))
     }
 
     override fun writeExternal(element: Element) {
         super.writeExternal(element)
-
-        executable?.base?.writeToXml(element)
-        parameters?.let { element.setAttribute(WorkspaceXML.RunConfiguration.attributeParameters, it) }
-        directory?.let { element.setAttribute(WorkspaceXML.RunConfiguration.attributeDirectory, it) }
-        element.setAttribute(WorkspaceXML.RunConfiguration.attributePassParent, passPaternalEnvs.toString())
-        EnvironmentVariablesComponent.writeExternal(element, environmentVariables)
+        writeToXml(element, File(project.basePath!!))
     }
 }

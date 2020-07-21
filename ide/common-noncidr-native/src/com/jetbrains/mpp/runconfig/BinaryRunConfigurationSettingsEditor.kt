@@ -14,21 +14,26 @@ import com.intellij.util.ui.GridBag
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.konan.KonanBundle
-import com.jetbrains.mpp.KonanExecutable
+import com.jetbrains.mpp.BinaryExecutable
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
+import java.awt.event.ItemEvent
 import javax.swing.JComponent
 import javax.swing.JPanel
 
 class BinaryRunConfigurationSettingsEditor(
-    availableExecutables: Set<KonanExecutable>
+    availableExecutables: Set<BinaryExecutable>
 ) : SettingsEditor<BinaryRunConfiguration>(),
     PanelWithAnchor {
-    private val availableExecutableItems = availableExecutables.map { KonanExecutableItem(it) }
+    private val availableExecutableItems = availableExecutables.map { BinaryExecutableItem(it) }
 
     private val commonProgramParameters = CommonProgramParametersPanel()
+
     private val executableLabel: JBLabel = JBLabel(KonanBundle.message("label.executable.text") + ":")
-    private val executableCombo = ComboBox<KonanExecutableItem>()
+    private val executableCombo = ComboBox<BinaryExecutableItem>()
+
+    private val variantLabel: JBLabel = JBLabel("Variant:")
+    private val variantCombo = ComboBox<BinaryExecutableVariantItem>()
 
     private var anchor: JComponent? = null
     override fun getAnchor(): JComponent? = anchor
@@ -47,11 +52,31 @@ class BinaryRunConfigurationSettingsEditor(
             .setDefaultInsets(0, JBUI.insets(0, 0, UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP))
             .setDefaultInsets(1, JBUI.insetsBottom(UIUtil.DEFAULT_VGAP))
 
+        if (availableExecutableItems.isNotEmpty()) {
+            availableExecutableItems.forEach { executableCombo.addItem(it) }
+            executableCombo.selectedIndex = 0
+            val variants = availableExecutableItems.first().exec.variants
+            if (variants.isNotEmpty()) {
+                variants.forEach { variantCombo.addItem(BinaryExecutableVariantItem(it)) }
+                variantCombo.selectedIndex = 0
+            }
+        }
 
-        availableExecutableItems.forEach { executableCombo.addItem(it) }
+        executableCombo.addItemListener { event ->
+            if (event.stateChange == ItemEvent.SELECTED) {
+                variantCombo.removeAllItems()
+                (event.item as BinaryExecutableItem).exec.variants
+                    .forEach { variantCombo.addItem(BinaryExecutableVariantItem(it)) }
+            }
+        }
+
         panel.add(executableLabel, gridBag.nextLine().next())
         panel.add(executableCombo, gridBag.next().coverLine())
         executableLabel.labelFor = executableCombo
+
+        panel.add(variantLabel, gridBag.nextLine().next())
+        panel.add(variantCombo, gridBag.next().coverLine())
+        variantLabel.labelFor = variantCombo
 
         panel.add(
             commonProgramParameters,
@@ -65,21 +90,31 @@ class BinaryRunConfigurationSettingsEditor(
     }
 
     override fun applyEditorTo(runConfiguration: BinaryRunConfiguration) {
-        runConfiguration.executable = (executableCombo.selectedItem as? KonanExecutableItem)?.exec
+        runConfiguration.apply {
+            executable = (executableCombo.selectedItem as? BinaryExecutableItem)?.exec
+            variant = (variantCombo.selectedItem as? BinaryExecutableVariantItem)?.variant
+        }
         commonProgramParameters.applyTo(runConfiguration)
     }
 
     override fun resetEditorFrom(runConfiguration: BinaryRunConfiguration) {
         commonProgramParameters.reset(runConfiguration)
-        executableCombo.selectedItem =
-            runConfiguration.executable?.base?.let { base ->
-                availableExecutableItems.firstOrNull { it.exec.base == base }
-            } ?: availableExecutableItems.firstOrNull()
+        runConfiguration.executable?.let { executable ->
+            executableCombo.selectedItem = BinaryExecutableItem(executable)
+            variantCombo.selectedItem = runConfiguration.variant?.let { BinaryExecutableVariantItem(it) }
+                ?: executable.variants.firstOrNull()?.let { BinaryExecutableVariantItem(it) }
+        }
     }
 
-    private class KonanExecutableItem(
-        val exec: KonanExecutable
+    private data class BinaryExecutableItem(
+        val exec: BinaryExecutable
     ) {
-        override fun toString() = exec.base.name
+        override fun toString() = exec.projectPrefix + exec.name
+    }
+
+    private data class BinaryExecutableVariantItem(
+        val variant: BinaryExecutable.Variant
+    ) {
+        override fun toString() = variant.name
     }
 }

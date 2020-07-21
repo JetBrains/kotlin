@@ -7,6 +7,7 @@ package com.jetbrains.mpp.gradle
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.mpp.MPPWorkspace
+import com.jetbrains.mpp.workspace.ProjectDataServiceBase
 
 class MPPProjectDataService : ProjectDataServiceBase() {
     override fun getWorkspace(project: Project) = MPPWorkspace.getInstance(project)

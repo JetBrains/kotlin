@@ -15,7 +15,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="com.jetbrains.mpp.MPPBinaryRunConfigurationType"/>
-    <executionTargetProvider implementation="com.jetbrains.mpp.BinaryExecutionTargetProvider"/>
     <programRunner implementation="com.jetbrains.mpp.MPPBinaryRunner"/>
     <projectTaskRunner implementation="com.jetbrains.mpp.MPPProjectTaskRunner"/>
 

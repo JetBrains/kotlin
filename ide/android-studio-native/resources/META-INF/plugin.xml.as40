@@ -22,7 +22,6 @@
                         serviceImplementation="com.jetbrains.kmm.ios.PathManagerCustomization" overrides="true"/>
 
     <projectService serviceImplementation="com.jetbrains.mobile.execution.DeviceService"/>
-    <executionTargetProvider implementation="com.jetbrains.mpp.BinaryExecutionTargetProvider"/>
     <externalProjectDataService implementation="com.jetbrains.kmm.ios.ProjectDataService"/>
     <configurationType implementation="com.jetbrains.kmm.ios.AppleRunConfigurationType"/>
     <programRunner implementation="com.jetbrains.kmm.ios.execution.AppleRunner"/>

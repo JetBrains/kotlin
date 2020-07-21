@@ -38,16 +38,15 @@ class BinaryBuildBeforeRunTaskProvider : BeforeRunTaskProvider<BinaryBuildBefore
         task: BinaryBuildBeforeRunTask
     ): Boolean {
         if (configuration !is BinaryRunConfiguration) return false
+        val variant = configuration.variant ?: return false
         val projectPath = configuration.project.basePath ?: return false
 
-        with(configuration.selectedTarget!!) {
-            return runBuildTasks(
-                configuration.project,
-                KonanBundle.message("execution.buildConfiguration.name", name),
-                listOf(gradleTask),
-                projectPath,
-                false
-            )
-        }
+        return runBuildTasks(
+            configuration.project,
+            KonanBundle.message("execution.buildConfiguration.name", name),
+            listOf(variant.gradleTask),
+            projectPath,
+            false
+        )
     }
 }

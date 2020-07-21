@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.kmm.ios.execution.BinaryRunConfigurationType
 import com.jetbrains.konan.WorkspaceXML
-import com.jetbrains.mpp.WorkspaceBase
+import com.jetbrains.mpp.workspace.WorkspaceBase
 import org.jdom.Element
 import java.io.File
 

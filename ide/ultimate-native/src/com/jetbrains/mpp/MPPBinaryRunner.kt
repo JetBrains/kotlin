@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mpp.debugger.KonanExternalSystemState
 import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
+import com.jetbrains.mpp.workspace.WorkspaceBase
 
 class MPPBinaryRunner : RunnerBase() {
 

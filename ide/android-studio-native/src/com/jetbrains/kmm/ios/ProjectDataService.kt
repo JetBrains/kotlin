@@ -11,7 +11,7 @@ import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider
 import com.intellij.openapi.project.Project
 import com.jetbrains.konan.KonanBundle
-import com.jetbrains.mpp.gradle.ProjectDataServiceBase
+import com.jetbrains.mpp.workspace.ProjectDataServiceBase
 import org.jetbrains.kotlin.idea.configuration.KotlinTargetData
 import org.jetbrains.kotlin.idea.configuration.readGradleProperty
 

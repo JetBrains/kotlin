@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriverConfiguration
 import com.jetbrains.konan.WorkspaceXML
 import com.jetbrains.mpp.debugger.GradleLLDBDriverConfiguration
+import com.jetbrains.mpp.workspace.WorkspaceBase
 
 @State(name = WorkspaceXML.projectComponentName, storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
 class MPPWorkspace(project: Project) : WorkspaceBase(project) {

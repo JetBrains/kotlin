@@ -11,10 +11,9 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.externalSystem.debugger.DebuggerBackendExtension
 import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper
 import com.intellij.openapi.project.Project
-import com.jetbrains.mpp.KonanExecutable
-import com.jetbrains.mpp.WorkspaceBase
 import com.jetbrains.mpp.runconfig.AttachmentStrategy
 import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
+import com.jetbrains.mpp.workspace.WorkspaceBase
 
 abstract class LLDBBackendBase : DebuggerBackendExtension {
     override fun id() = "Gradle LLDB"
@@ -76,17 +75,19 @@ abstract class LLDBBackendBase : DebuggerBackendExtension {
         processName: String,
         processParameters: String
     ): RunnerAndConfigurationSettings {
-        val runManager = RunManager.getInstance(project)
         val isTest = processName.endsWith("Test")
-        val executableForProcess = findExecutable(project, processName)
-        val runConfigForProcess = runManager.findRunConfiguration(executableForProcess)
         val params = splitParameters(processParameters)
+        val runConfigForProcess = findRunConfiguration(project, processName)
 
-        val settings = runManager.createConfiguration(processName, getWorkspace(project).binaryRunConfigurationType)
+        val settings = RunManager.getInstance(project).createConfiguration(
+            processName,
+            getWorkspace(project).binaryRunConfigurationType
+        )
+
         with(settings.configuration as BinaryRunConfiguration) {
             //setup
             executable = runConfigForProcess.executable
-            selectedTarget = runConfigForProcess.selectedTarget
+            variant = runConfigForProcess.variant
             workingDirectory = runConfigForProcess.workingDirectory
             programParameters = runConfigForProcess.programParameters
             envs = runConfigForProcess.envs
@@ -107,37 +108,34 @@ abstract class LLDBBackendBase : DebuggerBackendExtension {
         return settings
     }
 
-    private fun findExecutable(project: Project, processName: String): KonanExecutable {
-        val workspace = getWorkspace(project)
+    private fun findRunConfiguration(project: Project, processName: String): BinaryRunConfiguration {
+        val allAvailableExecutables = getWorkspace(project).allAvailableExecutables
         val taskName = processName.substring(processName.lastIndexOf(':') + 1)
         val projectPrefix = processName.substring(0, processName.lastIndexOf(':') + 1)
 
-        val result = when {
+        val executable = when {
             taskName.startsWith("run") -> {
                 val executableId = taskName.removePrefix("run")
-                workspace.executables.find {
-                    it.base.projectPrefix == projectPrefix &&
-                            it.executionTargets.any { t -> t.gradleTask.contains(executableId) }
+                allAvailableExecutables.find { exec ->
+                    exec.projectPrefix == projectPrefix &&
+                            exec.variants.any { variant -> variant.gradleTask.contains(executableId) }
                 }
             }
             taskName.endsWith("Test") -> {
                 val targetId = taskName.removeSuffix("Test")
-                workspace.executables.find {
-                    it.base.projectPrefix.endsWith(projectPrefix) &&
-                            it.base.name.contains(targetId) && it.base.name.contains("test")
+                allAvailableExecutables.find { exec ->
+                    exec.projectPrefix.endsWith(projectPrefix) &&
+                            exec.targetName.contains(targetId) &&
+                            exec.name.contains("test")
                 }
             }
             else -> null
-        }
+        } ?: throw ExecutionException("No executable for processName=$processName")
 
-        return result ?: throw ExecutionException("No executable for processName=$processName")
-    }
-
-    private fun RunManager.findRunConfiguration(konanExecutable: KonanExecutable): BinaryRunConfiguration {
-        val result = allSettings.firstOrNull {
-            (it.configuration as? BinaryRunConfiguration)?.executable == konanExecutable
-        } ?: throw ExecutionException("No configuration for executable=${konanExecutable.base}")
-        return result.configuration as BinaryRunConfiguration
+        return RunManager.getInstance(project).allSettings
+            .firstOrNull { (it.configuration as? BinaryRunConfiguration)?.executable == executable }
+            ?.configuration as? BinaryRunConfiguration
+            ?: throw ExecutionException("No configuration for executable=$executable")
     }
 
     companion object {
