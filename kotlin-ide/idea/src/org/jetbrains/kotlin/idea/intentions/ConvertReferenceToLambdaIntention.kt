@@ -48,10 +48,10 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
     companion object {
         private val SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE
 
-        fun applyTo(element: KtCallableReferenceExpression) {
+        fun applyTo(element: KtCallableReferenceExpression): KtExpression? {
             val context = element.analyze(BodyResolveMode.PARTIAL)
             val reference = element.callableReference
-            val targetDescriptor = context[REFERENCE_TARGET, reference] as? CallableMemberDescriptor ?: return
+            val targetDescriptor = context[REFERENCE_TARGET, reference] as? CallableMemberDescriptor ?: return null
             val valueArgumentParent = element.parent as? KtValueArgument
             val callGrandParent = valueArgumentParent?.parent?.parent as? KtCallExpression
             val resolvedCall = callGrandParent?.getResolvedCall(context)
@@ -127,12 +127,18 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
                 KtNodeTypes.WHEN_ENTRY, KtNodeTypes.THEN, KtNodeTypes.ELSE -> true
                 else -> false
             }
-            val wrappedExpression =
-                if (needParentheses) factory.createExpressionByPattern("($0)", lambdaExpression) else lambdaExpression
-            ShortenReferences.DEFAULT.process(element.replaced(wrappedExpression))
 
-            if (valueArgumentParent != null && callGrandParent != null) {
+            val wrappedExpression = if (needParentheses)
+                factory.createExpressionByPattern("($0)", lambdaExpression)
+            else
+                lambdaExpression
+
+            val result = ShortenReferences.DEFAULT.process(element.replaced(wrappedExpression)) as KtExpression
+            return if (valueArgumentParent != null && callGrandParent != null) {
                 callGrandParent.getLastLambdaExpression()?.moveFunctionLiteralOutsideParenthesesIfPossible()
+                callGrandParent.lambdaArguments.lastOrNull()?.getArgumentExpression()
+            } else {
+                result
             }
         }
     }

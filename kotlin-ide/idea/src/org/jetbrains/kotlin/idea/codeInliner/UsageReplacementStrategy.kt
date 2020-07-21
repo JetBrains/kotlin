@@ -148,11 +148,10 @@ private fun UsageReplacementStrategy.specialUsageProcessing(
     when (val usageParent = usage.parent) {
         is KtCallableReferenceExpression -> {
             if (usageParent.callableReference != usage) return false
-            val grandParent = usageParent.parent
-            ConvertReferenceToLambdaIntention().applyTo(usageParent, null)
-            (grandParent as? KtElement)?.let {
+            ConvertReferenceToLambdaIntention.applyTo(usageParent)?.let {
                 doRefactoringInside(it, targetDeclaration?.name, targetDeclaration?.descriptor)
             }
+
             return true
         }
 
@@ -160,18 +159,18 @@ private fun UsageReplacementStrategy.specialUsageProcessing(
             val lambdaArguments = usageParent.lambdaArguments
             if (lambdaArguments.isNotEmpty()) {
                 val grandParent = usageParent.parent
-                val specifySignature = SpecifyExplicitLambdaSignatureIntention()
                 for (lambdaArgument in lambdaArguments) {
                     val lambdaExpression = lambdaArgument.getLambdaExpression() ?: continue
-                    val functionDescriptor =
-                        lambdaExpression.functionLiteral.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
+                    val functionDescriptor = lambdaExpression.functionLiteral.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
                     if (functionDescriptor.valueParameters.isNotEmpty()) {
-                        specifySignature.applyTo(lambdaExpression, null)
+                        SpecifyExplicitLambdaSignatureIntention.applyTo(lambdaExpression)
                     }
                 }
+
                 (grandParent as? KtElement)?.let {
                     doRefactoringInside(it, targetDeclaration?.name, targetDeclaration?.descriptor)
                 }
+
                 return true
             }
         }

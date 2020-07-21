@@ -74,6 +74,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/LocalSimple.kt");
         }
 
+        @TestMetadata("MethodReferenceAsParameter.kt")
+        public void testMethodReferenceAsParameter() throws Exception {
+            runTest("testData/refactoring/inline/function/MethodReferenceAsParameter.kt");
+        }
+
+        @TestMetadata("MethodReferenceAsParameterWithThis.kt")
+        public void testMethodReferenceAsParameterWithThis() throws Exception {
+            runTest("testData/refactoring/inline/function/MethodReferenceAsParameterWithThis.kt");
+        }
+
         @TestMetadata("MultipleReturns.kt")
         public void testMultipleReturns() throws Exception {
             runTest("testData/refactoring/inline/function/MultipleReturns.kt");
@@ -707,6 +717,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("Parameter.kt")
         public void testParameter() throws Exception {
             runTest("testData/refactoring/inline/inlineVariableOrProperty/Parameter.kt");
+        }
+
+        @TestMetadata("PropertyReference.kt")
+        public void testPropertyReference() throws Exception {
+            runTest("testData/refactoring/inline/inlineVariableOrProperty/PropertyReference.kt");
         }
 
         @TestMetadata("semicolon.kt")

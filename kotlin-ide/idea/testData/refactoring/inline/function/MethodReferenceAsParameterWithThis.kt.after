@@ -1,0 +1,12 @@
+class A {
+
+    fun main() {
+        "foo".let {
+            println(it)
+        }
+
+        "doo".apply {
+            println(it)
+        }
+    }
+}
