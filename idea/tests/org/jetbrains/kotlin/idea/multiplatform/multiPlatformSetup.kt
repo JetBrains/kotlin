@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.idea.stubs.createMultiplatformFacetM3
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
+import org.jetbrains.kotlin.idea.util.sourceRoots
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
@@ -106,14 +108,18 @@ fun AbstractMultiModuleTest.doSetup(projectModel: ProjectResolveModel) {
 
     for ((resolveModule, ideaModule) in resolveModulesToIdeaModules.entries) {
         val platform = resolveModule.platform
+        val pureKotlinSourceFolders = ideaModule.collectSourceFolders()
         ideaModule.createMultiplatformFacetM3(
             platform,
-            dependsOnModuleNames = resolveModule.dependencies.filter { it.kind == ResolveDependency.Kind.DEPENDS_ON }.map { it.to.name }
+            dependsOnModuleNames = resolveModule.dependencies.filter { it.kind == ResolveDependency.Kind.DEPENDS_ON }.map { it.to.name },
+            pureKotlinSourceFolders = pureKotlinSourceFolders
         )
         // New inference is enabled here as these tests are using type refinement feature that is working only along with NI
         ideaModule.enableMultiPlatform(additionalCompilerArguments = "-Xnew-inference")
     }
 }
+
+private fun Module.collectSourceFolders(): List<String> = sourceRoots.map { it.path }
 
 private fun AbstractMultiModuleTest.doSetupProject(rootInfos: List<RootInfo>) {
     val infosByModuleId = rootInfos.groupBy { it.moduleId }
@@ -153,15 +159,25 @@ private fun AbstractMultiModuleTest.doSetupProject(rootInfos: List<RootInfo>) {
 
     modulesById.forEach { (nameAndPlatform, module) ->
         val (name, platform) = nameAndPlatform
+        val pureKotlinSourceFolders = module.collectSourceFolders()
         when {
             platform.isCommon() -> {
-                module.createMultiplatformFacetM1(platform, useProjectSettings = false, implementedModuleNames = emptyList())
+                module.createMultiplatformFacetM1(
+                    platform,
+                    useProjectSettings = false,
+                    implementedModuleNames = emptyList(),
+                    pureKotlinSourceFolders = pureKotlinSourceFolders
+                )
             }
 
             else -> {
                 val commonModuleId = ModuleId(name, CommonPlatforms.defaultCommonPlatform)
 
-                module.createMultiplatformFacetM1(platform, implementedModuleNames = listOf(commonModuleId.ideaModuleName()))
+                module.createMultiplatformFacetM1(
+                    platform,
+                    implementedModuleNames = listOf(commonModuleId.ideaModuleName()),
+                    pureKotlinSourceFolders = pureKotlinSourceFolders
+                )
                 module.enableMultiPlatform()
 
                 modulesById[commonModuleId]?.let { commonModule ->
