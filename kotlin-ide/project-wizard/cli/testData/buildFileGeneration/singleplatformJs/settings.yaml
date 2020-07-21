@@ -1,5 +1,5 @@
 kotlin:
   projectKind: js
   modules:
-    - type: jsSinglePlatform
+    - type: jsBrowserSinglePlatform
       name: a
