@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.kotlin.idea.debugger.KotlinDelegatedPropertyRendererConfigurableUi">
-  <grid id="27dc6" binding="myPanel" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="myPanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="681" height="400"/>
@@ -8,18 +8,9 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="99d36" class="javax.swing.JCheckBox" binding="renderDelegatedProperties">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <selected value="false"/>
-          <text resource-bundle="messages/KotlinDebuggerCoreBundle" key="variables.calculate.delegated.property.values"/>
-        </properties>
-      </component>
       <component id="5af15" class="javax.swing.JCheckBox" binding="disableCoroutineAgent">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text resource-bundle="messages/KotlinDebuggerCoreBundle" key="variables.disable.coroutine.agent.values"/>
@@ -28,7 +19,7 @@
       </component>
       <vspacer id="c37da">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
     </children>
