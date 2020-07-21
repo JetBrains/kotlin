@@ -79,12 +79,11 @@ object KotlinSequenceTypes : Types {
         listOf(
             BOOLEAN, BYTE, INT, SHORT,
             CHAR, LONG, FLOAT, DOUBLE
-        )
-            .associate { it.genericTypeName to it }
+        ).associateBy { it.genericTypeName }
 
     private val primitiveArraysIndex: Map<String, ArrayType> = primitiveTypesIndex.asSequence()
         .map { array(it.value) }
-        .associate { it.genericTypeName to it }
+        .associateBy { it.genericTypeName }
 
     fun primitiveTypeByName(typeName: String): GenericType? = primitiveTypesIndex[typeName]
 

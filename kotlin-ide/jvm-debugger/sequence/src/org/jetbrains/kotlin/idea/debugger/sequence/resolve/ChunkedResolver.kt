@@ -21,7 +21,7 @@ class ChunkedResolver : ValuesOrderResolver {
         var beforeIx = 0
         for (afterTime in afterTimes) {
             while (beforeIx < beforeTimes.size && beforeTimes[beforeIx] < afterTime) {
-                invertedOrder.computeIfAbsent(afterTime, { _ -> mutableListOf() }).add(beforeTimes[beforeIx])
+                invertedOrder.computeIfAbsent(afterTime) { mutableListOf() }.add(beforeTimes[beforeIx])
                 beforeIx += 1
             }
         }

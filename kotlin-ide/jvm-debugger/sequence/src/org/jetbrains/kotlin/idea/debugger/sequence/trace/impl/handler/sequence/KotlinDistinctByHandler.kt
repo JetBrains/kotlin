@@ -35,7 +35,7 @@ class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStr
 
     init {
         val arguments = call.arguments
-        assert(arguments.isNotEmpty(), { "Key extractor is not specified" })
+        assert(arguments.isNotEmpty()) { "Key extractor is not specified" }
         keyExtractor = arguments.first()
         extractorVariable = dsl.variable(ClassTypeImpl(keyExtractor.type), KEY_EXTRACTOR_VARIABLE_PREFIX + callNumber)
     }

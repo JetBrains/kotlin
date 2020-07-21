@@ -27,8 +27,9 @@ object InterpreterUtil {
         return MapRepresentation(keys, values)
     }
 
-    fun createIndexByTime(elements: List<TraceElement>): Map<Int, TraceElement> =
-        elements.associate { elem -> elem.time to elem }
+    fun createIndexByTime(elements: List<TraceElement>): Map<Int, TraceElement> {
+        return elements.associateBy { elem -> elem.time }
+    }
 
     data class MapRepresentation(val keys: ArrayReference, val values: ArrayReference)
 }

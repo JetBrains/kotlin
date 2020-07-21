@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.sequence.psi
 
-import org.jetbrains.kotlin.idea.debugger.sequence.psi.sequence.SequenceCallCheckerWithNameHeuristics
 import org.jetbrains.kotlin.psi.KtCallExpression
 
 abstract class CallCheckerWithNameHeuristics(private val nestedChecker: StreamCallChecker) : StreamCallChecker {

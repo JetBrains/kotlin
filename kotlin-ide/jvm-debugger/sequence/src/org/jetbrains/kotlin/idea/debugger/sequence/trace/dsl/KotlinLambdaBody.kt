@@ -9,5 +9,5 @@ import com.intellij.debugger.streams.trace.dsl.Expression
 import com.intellij.debugger.streams.trace.dsl.LambdaBody
 import com.intellij.debugger.streams.trace.dsl.StatementFactory
 
-class KotlinLambdaBody(override val lambdaArg: Expression, statementFactory: StatementFactory) : KotlinCodeBlock(statementFactory),
-    LambdaBody
+class KotlinLambdaBody(override val lambdaArg: Expression, statementFactory: StatementFactory) :
+    KotlinCodeBlock(statementFactory), LambdaBody

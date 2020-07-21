@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFact
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.KotlinTraceExpressionBuilder
 
 class StreamExLibrarySupportProvider : LibrarySupportProvider {
+    @Suppress("SpellCheckingInspection")
     private val streamChainBuilder =
         TerminatedChainBuilder(
             KotlinChainTransformerImpl(JavaStreamChainTypeExtractor()),

@@ -37,8 +37,11 @@ class WindowedResolver : ValuesOrderResolver {
             val window = (windowStartIndex until windowEndIndex).asSequence()
                 .map { indexBefore[timesBefore[it]]!! }
                 .toList()
+
             val mappedElement = indexAfter[timeAfter]!!
-            window.forEach { direct.computeIfAbsent(it, { mutableListOf() }).add(mappedElement) }
+            for (item in window) {
+                direct.computeIfAbsent(item) { mutableListOf() }.add(mappedElement)
+            }
             reverse[mappedElement] = window
         }
 
