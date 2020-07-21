@@ -1,4 +1,13 @@
 FILE: RedundantModalityModifierChecker.kt
+    public final object O : R|kotlin/Any| {
+        private constructor(): R|O| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
     public abstract interface Interface : R|kotlin/Any| {
         public open val gav: R|kotlin/Int|
             public get(): R|kotlin/Int| {
@@ -8,6 +17,14 @@ FILE: RedundantModalityModifierChecker.kt
         public abstract fun foo(): R|kotlin/Unit|
 
         private final fun bar(): R|kotlin/Unit| {
+        }
+
+        public open fun goo(): R|kotlin/Unit| {
+        }
+
+        public abstract fun tar(): R|kotlin/Unit|
+
+        public abstract fun too(): R|kotlin/Unit| {
         }
 
     }
