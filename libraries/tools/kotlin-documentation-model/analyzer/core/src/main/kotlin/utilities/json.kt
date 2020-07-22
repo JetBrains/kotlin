@@ -1,26 +1,18 @@
 package org.jetbrains.dokka.utilities
 
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
-import org.jetbrains.dokka.DokkaConfiguration.SourceRoot
-import org.jetbrains.dokka.SourceRootImpl
 import java.io.File
 import com.fasterxml.jackson.core.type.TypeReference as JacksonTypeReference
 
 private val objectMapper = run {
     val module = SimpleModule().apply {
         addSerializer(FileSerializer)
-        addSerializer(SourceRoot::class.java, SourceRootSerializer)
-        addDeserializer(SourceRootImpl::class.java, SourceRootImplDeserializer)
-        addDeserializer(SourceRoot::class.java, SourceRootImplDeserializer)
     }
     jacksonObjectMapper()
         .registerModule(module)
@@ -52,14 +44,4 @@ private object FileSerializer : StdScalarSerializer<File>(File::class.java) {
     override fun serialize(value: File, g: JsonGenerator, provider: SerializerProvider) {
         g.writeString(value.path)
     }
-}
-
-private object SourceRootSerializer : StdScalarSerializer<SourceRoot>(SourceRoot::class.java) {
-    override fun serialize(value: SourceRoot, g: JsonGenerator, provider: SerializerProvider) {
-        g.writeString(value.directory.path)
-    }
-}
-
-private object SourceRootImplDeserializer : StdScalarDeserializer<SourceRootImpl>(SourceRootImpl::class.java) {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SourceRootImpl = SourceRootImpl(File(p.text))
 }
