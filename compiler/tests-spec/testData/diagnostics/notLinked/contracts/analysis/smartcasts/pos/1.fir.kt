@@ -62,9 +62,9 @@ fun case_9(value_1: String?) {
     if (funWithReturnsTrueAndInvertCondition(value_1 == null)) println(value_1.length)
     if (!funWithReturnsFalse(value_1 != null)) println(value_1.length)
     if (!funWithReturnsFalseAndInvertCondition(value_1 == null)) println(value_1.length)
-    if (funWithReturnsNotNull(value_1 != null) != null) <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
-    if (!(funWithReturnsNotNull(value_1 != null) == null)) <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
-    if (!(funWithReturnsNotNullAndInvertCondition(value_1 == null) == null)) <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    if (funWithReturnsNotNull(value_1 != null) != null) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    if (!(funWithReturnsNotNull(value_1 != null) == null)) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    if (!(funWithReturnsNotNullAndInvertCondition(value_1 == null) == null)) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
 }
 
 // TESTCASE NUMBER: 10
@@ -82,7 +82,7 @@ fun case_11(value_1: Number?, value_2: Int?) {
     if (!funWithReturnsFalseAndNotNullCheck(value_2)) value_2.inc()
     if (!funWithReturnsFalseAndNotNullCheck(value_1)) println(value_1.toByte())
     if (!funWithReturnsFalseAndNullCheck(value_1)) println(value_1)
-    if (!(funWithReturnsNotNullAndNotNullCheck(value_1) == null)) <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
-    if (funWithReturnsNotNullAndNotNullCheck(value_1) != null) <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+    if (!(funWithReturnsNotNullAndNotNullCheck(value_1) == null)) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+    if (funWithReturnsNotNullAndNotNullCheck(value_1) != null) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
     if (funWithReturnsNotNullAndNullCheck(value_1) != null) println(value_1)
 }

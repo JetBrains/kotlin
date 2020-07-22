@@ -338,9 +338,9 @@ fun case_8(value_1: Any?) {
     }
     if (!case_8_4(value_1)) {
         value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
-        if (<!UNRESOLVED_REFERENCE!>!<!><!INAPPLICABLE_CANDIDATE!>case_8_5<!>(value_1)) {
+        if (!<!INAPPLICABLE_CANDIDATE!>case_8_5<!>(value_1)) {
             value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (<!UNRESOLVED_REFERENCE!>!<!><!INAPPLICABLE_CANDIDATE!>case_8_6<!>(value_1)) value_1.inv()
+            if (!<!INAPPLICABLE_CANDIDATE!>case_8_6<!>(value_1)) value_1.inv()
         }
     }
     if (case_8_7(value_1) == null) {

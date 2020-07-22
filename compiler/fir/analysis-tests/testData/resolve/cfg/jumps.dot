@@ -127,7 +127,7 @@ digraph jumps_kt {
             }
             51 [label="Variable declaration: lval y: R|kotlin/Int?|"];
             52 [label="Access variable R|<local>/y|"];
-            53 [label="Function call: R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
+            53 [label="Function call: R|<local>/y|.<Inapplicable(WRONG_RECEIVER): kotlin/Int.inc>#()"];
             54 [label="Exit block"];
         }
         55 [label="Exit function test_2" style="filled" fillcolor=red];

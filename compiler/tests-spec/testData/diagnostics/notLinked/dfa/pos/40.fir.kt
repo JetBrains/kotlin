@@ -161,7 +161,7 @@ fun case_15(x: Any?) {
  */
 fun case_16(x: Nothing?) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>?.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x!!<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>?.<!NONE_APPLICABLE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x!!<!>.<!NONE_APPLICABLE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>.<!NONE_APPLICABLE!>equals<!>(10)
 }

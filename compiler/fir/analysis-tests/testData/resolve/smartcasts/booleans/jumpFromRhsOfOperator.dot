@@ -267,7 +267,7 @@ digraph jumpFromRhsOfOperator_kt {
                 101 [label="Exit ||"];
             }
             102 [label="Access variable R|<local>/a|"];
-            103 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+            103 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
             104 [label="Exit block"];
         }
         105 [label="Exit function test_5" style="filled" fillcolor=red];
@@ -309,7 +309,7 @@ digraph jumpFromRhsOfOperator_kt {
                 117 [label="Exit &&"];
             }
             118 [label="Access variable R|<local>/a|"];
-            119 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+            119 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
             120 [label="Exit block"];
         }
         121 [label="Exit function teat_6" style="filled" fillcolor=red];
@@ -364,14 +364,14 @@ digraph jumpFromRhsOfOperator_kt {
                     color=blue
                     139 [label="Enter block"];
                     140 [label="Access variable R|<local>/a|"];
-                    141 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+                    141 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
                     142 [label="Exit block"];
                 }
                 143 [label="Exit when branch result"];
                 144 [label="Exit when"];
             }
             145 [label="Access variable R|<local>/a|"];
-            146 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+            146 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
             147 [label="Exit block"];
         }
         148 [label="Exit function test_7" style="filled" fillcolor=red];
@@ -437,14 +437,14 @@ digraph jumpFromRhsOfOperator_kt {
                     color=blue
                     166 [label="Enter block"];
                     167 [label="Access variable R|<local>/a|"];
-                    168 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+                    168 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
                     169 [label="Exit block"];
                 }
                 170 [label="Exit when branch result"];
                 171 [label="Exit when"];
             }
             172 [label="Access variable R|<local>/a|"];
-            173 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+            173 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
             174 [label="Exit block"];
         }
         175 [label="Exit function test_8" style="filled" fillcolor=red];

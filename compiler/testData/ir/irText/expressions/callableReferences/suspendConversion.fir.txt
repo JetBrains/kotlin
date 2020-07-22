@@ -82,8 +82,8 @@ FILE fqName:<root> fileName:/suspendConversion.kt
               CALL 'public final fun foo2 (vararg xs: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
   FUN name:testWithVarargMapped visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendInt]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun foo2 (vararg xs: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Unit> origin=null reflectionTarget=<same>
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendInt>#' type=kotlin.Unit
+        ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: foo2>#' type=IrErrorType
   FUN name:testWithCoercionToUnit visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null

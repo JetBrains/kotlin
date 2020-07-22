@@ -4,7 +4,7 @@ open class A {
 
     fun bar(x: B) {
         x.foo() // OK, foo declared in A
-        x.<!INAPPLICABLE_CANDIDATE!>baz<!>() // Declared in B
+        x.<!HIDDEN!>baz<!>() // Declared in B
         x.foobaz() // Declared in B
     }
 }

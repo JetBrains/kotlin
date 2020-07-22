@@ -68,22 +68,21 @@ FILE fqName:<root> fileName:/withAdaptedArguments.kt
       RETURN type=kotlin.Nothing from='public final fun testDefault (): kotlin.String declared in <root>'
         CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
           fn: FUNCTION_REFERENCE 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.String> origin=null reflectionTarget=<same>
-  FUN name:testVararg visibility:public modality:FINAL <> () returnType:IrErrorType
+  FUN name:testVararg visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testVararg (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public final fun fnWithVarargs (vararg xs: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
+      RETURN type=kotlin.Nothing from='public final fun testVararg (): kotlin.String declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.String
+          ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: fnWithVarargs>#' type=IrErrorType
   FUN name:testCoercionToUnit visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testCoercionToUnit (): kotlin.Unit declared in <root>'
         CALL 'public final fun coerceToUnit (fn: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
           fn: FUNCTION_REFERENCE 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
-  FUN name:testImportedObjectMember visibility:public modality:FINAL <> () returnType:IrErrorType
+  FUN name:testImportedObjectMember visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testImportedObjectMember (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public final fun importedObjectMemberWithVarargs (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
-            $this: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
+      RETURN type=kotlin.Nothing from='public final fun testImportedObjectMember (): kotlin.String declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.String
+          ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: importedObjectMemberWithVarargs>#' type=IrErrorType
   FUN name:testDefault0 visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testDefault0 (): kotlin.String declared in <root>'

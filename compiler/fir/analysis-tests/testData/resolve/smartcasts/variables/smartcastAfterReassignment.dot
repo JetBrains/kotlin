@@ -103,7 +103,7 @@ digraph smartcastAfterReassignment_kt {
             40 [label="Const: Null(null)"];
             41 [label="Assignment: R|<local>/x|"];
             42 [label="Access variable R|<local>/x|"];
-            43 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+            43 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
             44 [label="Exit block"];
         }
         45 [label="Exit function test_3" style="filled" fillcolor=red];

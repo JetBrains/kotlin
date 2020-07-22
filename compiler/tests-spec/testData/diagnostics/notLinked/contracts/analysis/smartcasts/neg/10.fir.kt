@@ -250,8 +250,8 @@ fun case_8(value_1: Any?) {
 
 // TESTCASE NUMBER: 9
 fun case_9(value_1: Number?) {
-    if (!funWithReturnsTrueAndNullCheck(value_1)) <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
-    if (funWithReturnsFalseAndNullCheck(value_1)) <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+    if (!funWithReturnsTrueAndNullCheck(value_1)) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+    if (funWithReturnsFalseAndNullCheck(value_1)) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
     if (funWithReturnsFalseAndNotNullCheck(value_1)) println(value_1)
     if (!(funWithReturnsNotNullAndNullCheck(value_1) != null)) println(value_1)
     if (!(funWithReturnsNullAndNullCheck(value_1) == null)) println(value_1)
@@ -458,9 +458,9 @@ fun case_19(value_1: Number) {
 // TESTCASE NUMBER: 20
 fun case_20(value_1: String?, value_2: String?, value_3: String?, value_4: String?) {
     if (!value_1.case_20_1()) println(value_1)
-    if (!value_2.case_20_2()) <!AMBIGUITY!>println<!>(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    if (!value_2.case_20_2()) println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
     when (value_3.case_20_3()) {
-        true -> <!AMBIGUITY!>println<!>(value_4.<!INAPPLICABLE_CANDIDATE!>length<!>)
+        true -> println(value_4.<!INAPPLICABLE_CANDIDATE!>length<!>)
         false -> println(value_3)
     }
 }
@@ -468,13 +468,13 @@ fun case_20(value_1: String?, value_2: String?, value_3: String?, value_4: Strin
 // TESTCASE NUMBER: 21
 fun case_21(value_1: String?) {
     when { !value_1.case_21_1() -> println(value_1) }
-    when { !value_1.case_21_2() -> <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>) }
+    when { !value_1.case_21_2() -> println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>) }
     when {
         value_1.case_21_5() == null ->  println(value_1.length)
         value_1.case_21_5() != null ->  println(value_1)
     }
     when {
-        value_1.case_21_7() != null ->  <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+        value_1.case_21_7() != null ->  println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
         value_1.case_21_7() == null ->  println(value_1)
     }
 }

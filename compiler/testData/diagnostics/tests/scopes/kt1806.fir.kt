@@ -8,7 +8,7 @@ object MyObject {
 
 fun test1() {
 
-    doSmth(MyObject.<!INAPPLICABLE_CANDIDATE!>message<!>)
+    doSmth(MyObject.<!HIDDEN!>message<!>)
 }
 
 class Test {
@@ -17,7 +17,7 @@ class Test {
   }
 
   fun test2() {
-      doSmth(MyObject1.<!INAPPLICABLE_CANDIDATE!>message<!>)
+      doSmth(MyObject1.<!HIDDEN!>message<!>)
   }
 }
 

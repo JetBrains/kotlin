@@ -54,7 +54,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     21 [label="Enter block"];
                     22 [label="Access variable R|<local>/s|"];
-                    23 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    23 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
                     24 [label="Exit block"];
                 }
                 25 [label="Exit when branch result"];
@@ -131,7 +131,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     49 [label="Enter block"];
                     50 [label="Access variable R|<local>/s|"];
-                    51 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    51 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
                     52 [label="Exit block"];
                 }
                 53 [label="Exit when branch result"];
@@ -217,7 +217,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     83 [label="Enter block"];
                     84 [label="Access variable R|<local>/s|"];
-                    85 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    85 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
                     86 [label="Exit block"];
                 }
                 87 [label="Exit when branch result"];
@@ -294,7 +294,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     111 [label="Enter block"];
                     112 [label="Access variable R|<local>/s|"];
-                    113 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    113 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
                     114 [label="Exit block"];
                 }
                 115 [label="Exit when branch result"];

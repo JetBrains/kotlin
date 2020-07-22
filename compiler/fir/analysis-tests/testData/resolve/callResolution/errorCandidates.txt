@@ -12,7 +12,7 @@ FILE: errorCandidates.kt
     public final fun bar(x: R|B|): R|kotlin/Unit| {
     }
     public final fun test(c: R|C|): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): [/foo]>#(String())
+        <Inapplicable(INAPPLICABLE): /foo>#(String())
         <Ambiguity: bar, [/bar, /bar]>#(R|<local>/c|)
         <Unresolved name: baz>#()
     }

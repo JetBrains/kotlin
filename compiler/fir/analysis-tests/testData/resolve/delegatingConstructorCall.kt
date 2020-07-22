@@ -13,7 +13,7 @@ open class A3(x: String, y: String = "") {
 class B3_1 : <!AMBIGUITY!>A3<!>("")
 class B3_2 : A3("", "asas")
 class B3_3 : A3("", true)
-class B3_4 : <!INAPPLICABLE_CANDIDATE!>A3<!>("", Unit)
+class B3_4 : <!NONE_APPLICABLE!>A3<!>("", Unit)
 
 open class A4(val x: Byte)
 class B4 : A4( 1 + 1)

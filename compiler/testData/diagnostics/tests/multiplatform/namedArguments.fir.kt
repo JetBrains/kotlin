@@ -4,7 +4,7 @@
 // FILE: common.kt
 
 expect class Foo(zzz: Int) {
-    <!INAPPLICABLE_CANDIDATE!>constructor(aaa: Boolean)<!>
+    <!NONE_APPLICABLE!>constructor(aaa: Boolean)<!>
 
     fun f1(xxx: String): String
 }

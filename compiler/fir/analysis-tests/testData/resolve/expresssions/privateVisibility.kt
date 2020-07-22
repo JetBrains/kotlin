@@ -9,21 +9,21 @@ private class Private {
         bar()
         Nested()
         fromCompanion()
-        NotCompanion.<!INAPPLICABLE_CANDIDATE!>foo<!>() // hidden
+        NotCompanion.<!HIDDEN!>foo<!>() // hidden
     }
 
     inner class Inner {
         fun foo() {
             bar()
             fromCompanion()
-            NotCompanion.<!INAPPLICABLE_CANDIDATE!>foo<!>() // hidden
+            NotCompanion.<!HIDDEN!>foo<!>() // hidden
         }
     }
 
     private class Nested {
         fun foo() {
             fromCompanion()
-            NotCompanion.<!INAPPLICABLE_CANDIDATE!>foo<!>() // hidden
+            NotCompanion.<!HIDDEN!>foo<!>() // hidden
         }
     }
 
@@ -54,7 +54,7 @@ fun withLocals() {
 
     Local().baz()
 
-    Local().<!INAPPLICABLE_CANDIDATE!>bar<!>() // hidden
+    Local().<!HIDDEN!>bar<!>() // hidden
 }
 
 fun test() {
@@ -62,14 +62,14 @@ fun test() {
     Private().baz()
     Private().Inner()
 
-    Private().<!INAPPLICABLE_CANDIDATE!>bar<!>() // hidden
-    Private.<!INAPPLICABLE_CANDIDATE!>Nested<!>() // hidden
-    Private.<!INAPPLICABLE_CANDIDATE!>fromCompanion<!>() // hidden
+    Private().<!HIDDEN!>bar<!>() // hidden
+    Private.<!HIDDEN!>Nested<!>() // hidden
+    Private.<!HIDDEN!>fromCompanion<!>() // hidden
 }
 
 // FILE: second.kt
 
 fun secondTest() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>() // hidden
-    <!INAPPLICABLE_CANDIDATE!>Private<!>() // hidden
+    <!HIDDEN!>foo<!>() // hidden
+    <!HIDDEN!>Private<!>() // hidden
 }

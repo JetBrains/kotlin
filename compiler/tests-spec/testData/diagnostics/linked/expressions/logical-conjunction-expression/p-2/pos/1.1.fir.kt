@@ -42,5 +42,5 @@ fun case1() {
     val x3 = a1 && a2 && a3 && a4 && a5 as Boolean
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x3<!>
 
-    x3 <!AMBIGUITY!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>check<!><Boolean>()}
+    x3 <!AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>()}
 }

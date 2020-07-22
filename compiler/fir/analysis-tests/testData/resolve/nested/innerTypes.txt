@@ -29,9 +29,9 @@ FILE: innerTypes.kt
     public final val rrq: R|Outer.Inner<kotlin/Int, kotlin/String>| = R|/Boxed.Boxed|<R|kotlin/String|>().R|FakeOverride</Boxed.substitute: R|Outer.Inner<kotlin/Int, kotlin/String>|>|()
         public get(): R|Outer.Inner<kotlin/Int, kotlin/String>|
     public final fun check(): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): [/accept]>#(R|/Outer.Outer|<R|kotlin/Int|>().R|/Outer.Inner.Inner|<R|kotlin/Int|>())
-        <Inapplicable(INAPPLICABLE): [/accept]>#(R|/Outer.Outer|<R|kotlin/String|>().R|/Outer.Inner.Inner|<R|kotlin/String|>())
+        <Inapplicable(INAPPLICABLE): /accept>#(R|/Outer.Outer|<R|kotlin/Int|>().R|/Outer.Inner.Inner|<R|kotlin/Int|>())
+        <Inapplicable(INAPPLICABLE): /accept>#(R|/Outer.Outer|<R|kotlin/String|>().R|/Outer.Inner.Inner|<R|kotlin/String|>())
         R|/accept|(R|/Outer.Outer|<R|kotlin/String|>().R|/Outer.Inner.Inner|<R|kotlin/Int|>())
-        <Inapplicable(INAPPLICABLE): [/accept]>#(R|/Boxed.Boxed|<R|kotlin/Int|>().R|FakeOverride</Boxed.substitute: R|Outer.Inner<kotlin/Int, kotlin/Int>|>|())
+        <Inapplicable(INAPPLICABLE): /accept>#(R|/Boxed.Boxed|<R|kotlin/Int|>().R|FakeOverride</Boxed.substitute: R|Outer.Inner<kotlin/Int, kotlin/Int>|>|())
         R|/accept|(R|/Boxed.Boxed|<R|kotlin/String|>().R|FakeOverride</Boxed.substitute: R|Outer.Inner<kotlin/Int, kotlin/String>|>|())
     }

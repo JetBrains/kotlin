@@ -6,7 +6,7 @@ class A {
 }
 
 fun test(a: A) {
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>(3)
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    a.<!NONE_APPLICABLE!>foo<!>(3)
+    a.<!NONE_APPLICABLE!>foo<!>()
 }
 

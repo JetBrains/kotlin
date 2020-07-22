@@ -68,7 +68,7 @@ fun test_5(q: Q?) {
     if (q?.data?.s?.inc() != null) {
         q.data // good
         q.data.<!INAPPLICABLE_CANDIDATE!>s<!> // should be bad
-        q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.<!UNRESOLVED_REFERENCE!>inc<!>() // should be bad
+        q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.inc() // should be bad
     }
 }
 
@@ -77,14 +77,14 @@ fun test_6(q: Q?) {
     q?.data?.s?.inc() ?: return
     q.data // good
     q.data.<!INAPPLICABLE_CANDIDATE!>s<!> // should be bad
-    q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.<!UNRESOLVED_REFERENCE!>inc<!>() // should be bad
+    q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.inc() // should be bad
 }
 
 fun test_7(q: Q?) {
     if (q?.fdata()?.fs()?.inc() != null) {
         q.fdata() // good
         q.fdata().<!INAPPLICABLE_CANDIDATE!>fs<!>() // bad
-        q.fdata().<!INAPPLICABLE_CANDIDATE!>fs<!>().<!UNRESOLVED_REFERENCE!>inc<!>() // bad
+        q.fdata().<!INAPPLICABLE_CANDIDATE!>fs<!>().inc() // bad
     }
 }
 
@@ -149,7 +149,7 @@ fun test_11(q: QImpl?, q2: QImpl) {
         // Issue: Smartcasting of QImpl.data affects all instances
         q2.data
         q2.data.<!INAPPLICABLE_CANDIDATE!>s<!> // should be bad
-        q2.data.<!INAPPLICABLE_CANDIDATE!>s<!>.<!UNRESOLVED_REFERENCE!>inc<!>() // should be bad
+        q2.data.<!INAPPLICABLE_CANDIDATE!>s<!>.inc() // should be bad
 
         if (q2.data != null) {
             q2.data.s
@@ -163,7 +163,7 @@ fun test_12(q: QImplWithCustomGetter?) {
     if (q?.data?.s?.inc() != null) {
         q.data // good
         q.data.<!INAPPLICABLE_CANDIDATE!>s<!> // should be bad
-        q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.<!UNRESOLVED_REFERENCE!>inc<!>() // should be bad
+        q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.inc() // should be bad
     }
 }
 
@@ -172,6 +172,6 @@ fun test_13(q: QImplMutable?) {
     if (q?.data?.s?.inc() != null) {
         q.data // good
         q.data.<!INAPPLICABLE_CANDIDATE!>s<!> // should be bad
-        q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.<!UNRESOLVED_REFERENCE!>inc<!>() // should be bad
+        q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.inc() // should be bad
     }
 }

@@ -12,5 +12,5 @@ class C: A() {
 }
 
 class D {
-    fun qux() { B().<!INAPPLICABLE_CANDIDATE!>foo<!>() }
+    fun qux() { B().<!HIDDEN!>foo<!>() }
 }

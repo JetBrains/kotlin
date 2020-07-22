@@ -14,13 +14,13 @@ FILE: CallBasedInExpressionGenerator.kt
             private get(): R|kotlin/Boolean|
 
         public final override fun generate(argument: R|ERROR CLASS: Symbol not found, for `StackValue`|): R|ERROR CLASS: Symbol not found, for `BranchedValue`| {
-            ^generate this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.gen|(R|<local>/argument|).<Inapplicable(WRONG_RECEIVER): [kotlin/let]>#(<L> = let@fun <anonymous>(): <ERROR TYPE REF: Can't resolve when expression> {
+            ^generate this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.gen|(R|<local>/argument|).<Inapplicable(WRONG_RECEIVER): kotlin/let>#<R|kotlin/Any?|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/Any?|): <ERROR TYPE REF: Can't resolve when expression> <kind=EXACTLY_ONCE>  {
                 ^ when () {
                     this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.isInverted| ->  {
-                        <Unresolved name: Invert>#(<Unresolved name: it>#)
+                        <Unresolved name: Invert>#(R|<local>/it|)
                     }
                     else ->  {
-                        <Unresolved name: it>#
+                        R|<local>/it|
                     }
                 }
 

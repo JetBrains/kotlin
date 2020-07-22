@@ -28,7 +28,7 @@ interface A2 : List<String> {
     override fun stream(): java.util.stream.Stream<String> = null!!
 }
 
-class B : <!INAPPLICABLE_CANDIDATE!>Throwable<!>("", null, false, false)
+class B : <!NONE_APPLICABLE!>Throwable<!>("", null, false, false)
 
 class B1 : RuntimeException() {
     override fun fillInStackTrace(): Throwable { // 'override' keyword must be prohibited, as it was in 1.0.x

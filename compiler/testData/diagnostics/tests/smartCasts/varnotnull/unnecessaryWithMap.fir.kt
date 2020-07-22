@@ -14,8 +14,8 @@ class MyClass {
         var res = 0
         m = create()
         // See KT-7428
-        <!INAPPLICABLE_CANDIDATE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for ((k, v) in m)
-            <!UNRESOLVED_REFERENCE!>res += (k.<!UNRESOLVED_REFERENCE!>length<!> + v.<!UNRESOLVED_REFERENCE!>length<!>)<!><!>
+        <!INAPPLICABLE_CANDIDATE!>for ((k, v) in m)
+            res += (k.length + v.length)<!>
         return res
     }
 }

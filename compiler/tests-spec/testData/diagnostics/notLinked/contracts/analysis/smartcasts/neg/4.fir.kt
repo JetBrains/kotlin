@@ -152,7 +152,7 @@ fun case_2(value_1: Number) {
 // TESTCASE NUMBER: 3
 fun case_3(value_1: String?, value_2: String?) {
     value_1.case_3_1()
-    <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
     value_2.case_3_2()
     println(value_2)
 }
@@ -160,7 +160,7 @@ fun case_3(value_1: String?, value_2: String?) {
 // TESTCASE NUMBER: 4
 fun case_4(value_1: String?, value_2: String?) {
     value_1.case_4_1()
-    <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
     value_2.case_4_2()
     println(value_2)
 }
@@ -183,7 +183,7 @@ fun case_6(value_1: Number) {
 
 // TESTCASE NUMBER: 7
 fun case_7(value_1: String?, value_2: String?) {
-    if (value_1.case_7_1()) <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    if (value_1.case_7_1()) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
     if (value_2.case_7_2()) println(value_2)
     if (!(value_2.case_7_3() == null)) println(value_2)
     if (value_2.case_7_3() == null) println(value_2)
@@ -191,7 +191,7 @@ fun case_7(value_1: String?, value_2: String?) {
 
 // TESTCASE NUMBER: 8
 fun case_8(value_1: String?, value_2: String?) {
-    when { value_1.case_8_1() -> <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>) }
+    when { value_1.case_8_1() -> println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>) }
     when { value_2.case_8_2() -> println(value_2) }
     when { !(value_2.case_8_3() == null) -> println(value_2) }
     when { value_2.case_8_3() == null -> println(value_2) }
@@ -199,13 +199,13 @@ fun case_8(value_1: String?, value_2: String?) {
 
 // TESTCASE NUMBER: 9
 fun case_9(value_1: Number?) {
-    if (value_1?.case_9() == null) <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+    if (value_1?.case_9() == null) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
 }
 
 // TESTCASE NUMBER: 10
 fun case_10(value_1: Number?) {
     if (value_1?.case_10() == null) {
-        <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+        println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
     } else {
         println(value_1.toByte())
     }
@@ -217,13 +217,13 @@ fun case_10(value_1: Number?) {
  */
 fun case_11(value_1: Number?, value_2: Number?) {
     if (value_1?.case_11_1() == null) {
-        <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+        println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
     } else {
         println(value_1.toByte())
     }
     if (value_2?.case_11_2() != null) {
         println(value_2.toByte())
     } else {
-        <!AMBIGUITY!>println<!>(value_2.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+        println(value_2.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
     }
 }

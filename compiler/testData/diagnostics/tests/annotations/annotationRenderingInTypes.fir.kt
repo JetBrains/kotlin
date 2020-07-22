@@ -4,7 +4,7 @@
 
 fun f1(x: String) {}
 fun f2(f: () -> Unit) {}
-fun test1() = <!INAPPLICABLE_CANDIDATE!>f2<!>(::f1)
+fun test1() = <!INAPPLICABLE_CANDIDATE!>f2<!>(<!UNRESOLVED_REFERENCE!>::f1<!>)
 
 
 @Target(AnnotationTarget.TYPE_PARAMETER,  AnnotationTarget.TYPE)

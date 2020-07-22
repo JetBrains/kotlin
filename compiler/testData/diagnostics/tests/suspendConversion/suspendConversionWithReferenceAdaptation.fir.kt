@@ -16,6 +16,6 @@ fun all(s: String = ""): Int = 0
 fun test() {
     unitCoercion(::foo)
     defaults(::bar)
-    <!INAPPLICABLE_CANDIDATE!>varargs<!>(::baz)
+    <!INAPPLICABLE_CANDIDATE!>varargs<!>(<!UNRESOLVED_REFERENCE!>::baz<!>)
     unitCoercionAndDefaults(::all)
 }

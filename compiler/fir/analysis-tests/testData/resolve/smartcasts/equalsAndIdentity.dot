@@ -136,9 +136,9 @@ digraph equalsAndIdentity_kt {
                     color=blue
                     50 [label="Enter block"];
                     51 [label="Access variable R|<local>/x|"];
-                    52 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+                    52 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
                     53 [label="Access variable R|<local>/y|"];
-                    54 [label="Function call: R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+                    54 [label="Function call: R|<local>/y|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
                     55 [label="Exit block"];
                 }
                 56 [label="Exit when branch result"];
@@ -161,9 +161,9 @@ digraph equalsAndIdentity_kt {
                     color=blue
                     66 [label="Enter block"];
                     67 [label="Access variable R|<local>/x|"];
-                    68 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+                    68 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
                     69 [label="Access variable R|<local>/y|"];
-                    70 [label="Function call: R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+                    70 [label="Function call: R|<local>/y|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
                     71 [label="Exit block"];
                 }
                 72 [label="Exit when branch result"];

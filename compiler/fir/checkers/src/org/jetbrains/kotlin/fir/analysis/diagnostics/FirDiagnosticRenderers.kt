@@ -14,13 +14,17 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 object FirDiagnosticRenderers {
     val NULLABLE_STRING = Renderer<String?> { it ?: "null" }
 
+    val SYMBOL = Renderer { symbol: AbstractFirBasedSymbol<*> ->
+        when (symbol) {
+            is FirClassLikeSymbol<*> -> symbol.classId.asString()
+            is FirCallableSymbol<*> -> symbol.callableId.toString()
+            else -> "???"
+        }
+    }
+
     val SYMBOLS = Renderer { symbols: Collection<AbstractFirBasedSymbol<*>> ->
         symbols.joinToString(prefix = "[", postfix = "]", separator = ",", limit = 3, truncated = "...") { symbol ->
-            when (symbol) {
-                is FirClassLikeSymbol<*> -> symbol.classId.asString()
-                is FirCallableSymbol<*> -> symbol.callableId.toString()
-                else -> "???"
-            }
+            SYMBOL.render(symbol)
         }
     }
 

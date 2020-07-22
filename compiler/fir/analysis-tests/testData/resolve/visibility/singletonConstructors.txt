@@ -12,7 +12,7 @@ FILE: singletonConstructors.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            <Inapplicable(HIDDEN): [/A.Comp.Comp]>#()
+            <HIDDEN: /A.Comp.Comp is invisible>#()
         }
 
     }
@@ -21,8 +21,8 @@ FILE: singletonConstructors.kt
             super<R|kotlin/Any|>()
         }
 
-        private final val x: <ERROR TYPE REF: Inapplicable(HIDDEN): [/B.B]> = <Inapplicable(HIDDEN): [/B.B]>#()
-            private get(): <ERROR TYPE REF: Inapplicable(HIDDEN): [/B.B]>
+        private final val x: R|B| = <HIDDEN: /B.B is invisible>#()
+            private get(): R|B|
 
     }
     public final class D : R|kotlin/Any| {

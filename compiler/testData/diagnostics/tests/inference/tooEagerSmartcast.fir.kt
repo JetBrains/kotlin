@@ -36,7 +36,7 @@ fun Number.num() {}
 fun main(b: Base<out Number>) {
     b.foo().num()
     if (b is Derived<*>) {
-        b.<!INAPPLICABLE_CANDIDATE!>foo<!>().num()
-        b.<!INAPPLICABLE_CANDIDATE!>baz<!>().<!UNRESOLVED_REFERENCE!>length<!>
+        b.<!INAPPLICABLE_CANDIDATE!>foo<!>().<!INAPPLICABLE_CANDIDATE!>num<!>()
+        b.<!INAPPLICABLE_CANDIDATE!>baz<!>().length
     }
 }

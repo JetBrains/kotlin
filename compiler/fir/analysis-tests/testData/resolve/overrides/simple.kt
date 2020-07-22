@@ -14,7 +14,7 @@ class B : A() {
     fun test() {
         foo()
         bar()
-        <!INAPPLICABLE_CANDIDATE!>buz<!>()
+        <!NONE_APPLICABLE!>buz<!>()
     }
 }
 

@@ -32,7 +32,7 @@ FILE: bangbang.kt
             }
         }
 
-        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
     }
     public final fun test_4(a: R|A?|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
@@ -46,11 +46,11 @@ FILE: bangbang.kt
     public final fun test_5(a: R|A?|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
         when () {
             R|<local>/b| || R|<local>/a|!!.R|/A.foo|() ->  {
-                R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+                R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
             }
         }
 
-        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
     }
     public final fun <X : R|A?|> test_6(x: R|X|): R|kotlin/Unit| {
         R|<local>/x|!!.R|/A.foo|()

@@ -59,16 +59,14 @@ FILE fqName:<root> fileName:/unboundMemberReferenceWithAdaptedArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:testUnbound visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use1]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A' type=kotlin.reflect.KFunction2<<root>.A, kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use1>#' type=kotlin.Unit
+        ERROR_CALL 'Unsupported callable reference: Q|A|::<Unresolved reference: foo>#' type=IrErrorType
   FUN name:testBound visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use2]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
-          $this: GET_VAR 'a: <root>.A declared in <root>.testBound' type=<root>.A origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use2>#' type=kotlin.Unit
+        ERROR_CALL 'Unsupported callable reference: R|<local>/a|::<Unresolved reference: foo>#' type=IrErrorType
   FUN name:testObject visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use2]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.Obj' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
-          $this: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.Obj
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use2>#' type=kotlin.Unit
+        ERROR_CALL 'Unsupported callable reference: Q|Obj|::<Unresolved reference: foo>#' type=IrErrorType

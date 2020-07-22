@@ -12,7 +12,7 @@ FILE: equalsToBoolean.kt
                 R|<local>/b|.R|kotlin/Boolean.not|()
             }
             else ->  {
-                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): kotlin/Boolean.not>#()
             }
         }
 
@@ -20,7 +20,7 @@ FILE: equalsToBoolean.kt
     public final fun test_2(b: R|kotlin/Boolean?|): R|kotlin/Unit| {
         when () {
             !=(==(R|<local>/b|, Boolean(true)), Boolean(true)) ->  {
-                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): kotlin/Boolean.not>#()
             }
             else ->  {
                 R|<local>/b|.R|kotlin/Boolean.not|()
@@ -31,7 +31,7 @@ FILE: equalsToBoolean.kt
     public final fun test_3(b: R|kotlin/Boolean?|): R|kotlin/Unit| {
         when () {
             ==(==(R|<local>/b|, Boolean(true)), Boolean(false)) ->  {
-                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): kotlin/Boolean.not>#()
             }
             else ->  {
                 R|<local>/b|.R|kotlin/Boolean.not|()
@@ -45,7 +45,7 @@ FILE: equalsToBoolean.kt
                 R|<local>/b|.R|kotlin/Boolean.not|()
             }
             else ->  {
-                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): kotlin/Boolean.not>#()
             }
         }
 
@@ -53,7 +53,7 @@ FILE: equalsToBoolean.kt
     public final fun test_5(b: R|kotlin/Boolean?|): R|kotlin/Unit| {
         when () {
             ==(!=(R|<local>/b|, Boolean(true)), Boolean(true)) ->  {
-                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): kotlin/Boolean.not>#()
             }
             else ->  {
                 R|<local>/b|.R|kotlin/Boolean.not|()
@@ -67,7 +67,7 @@ FILE: equalsToBoolean.kt
                 R|<local>/b|.R|kotlin/Boolean.not|()
             }
             else ->  {
-                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): kotlin/Boolean.not>#()
             }
         }
 
@@ -78,7 +78,7 @@ FILE: equalsToBoolean.kt
                 R|<local>/b|.R|kotlin/Boolean.not|()
             }
             else ->  {
-                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): kotlin/Boolean.not>#()
             }
         }
 
@@ -86,7 +86,7 @@ FILE: equalsToBoolean.kt
     public final fun test_8(b: R|kotlin/Boolean?|): R|kotlin/Unit| {
         when () {
             !=(!=(R|<local>/b|, Boolean(true)), Boolean(false)) ->  {
-                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): [kotlin/Boolean.not]>#()
+                R|<local>/b|.<Inapplicable(WRONG_RECEIVER): kotlin/Boolean.not>#()
             }
             else ->  {
                 R|<local>/b|.R|kotlin/Boolean.not|()

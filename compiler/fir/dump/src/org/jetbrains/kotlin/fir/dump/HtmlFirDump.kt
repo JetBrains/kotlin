@@ -1229,29 +1229,27 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(diagnostic: ConeDiagnostic) {
         when (diagnostic) {
             is ConeInapplicableCandidateError -> {
-                for (candidate in diagnostic.candidates) {
-                    describeVerbose(candidate.symbol)
-                    br
-                    candidate.diagnostics.forEach { callDiagnostic ->
-                        when (callDiagnostic) {
-                            is NewConstraintError -> {
-                                ident()
+                describeVerbose(diagnostic.candidateSymbol)
+                br
+                diagnostic.diagnostics.forEach { callDiagnostic ->
+                    when (callDiagnostic) {
+                        is NewConstraintError -> {
+                            ident()
 
-                                generate(callDiagnostic.lowerType as ConeKotlinType)
+                            generate(callDiagnostic.lowerType as ConeKotlinType)
 
-                                ws
-                                span(classes = "subtype-error") { +"<:" }
-                                ws
-                                generate(callDiagnostic.upperType as ConeKotlinType)
-                            }
-                            else -> {
-                                ident()
-                                callDiagnostic::class.qualifiedName?.let { +it }
-                                Unit
-                            }
+                            ws
+                            span(classes = "subtype-error") { +"<:" }
+                            ws
+                            generate(callDiagnostic.upperType as ConeKotlinType)
                         }
-                        br
+                        else -> {
+                            ident()
+                            callDiagnostic::class.qualifiedName?.let { +it }
+                            Unit
+                        }
                     }
+                    br
                 }
             }
             is ConeAmbiguityError -> {

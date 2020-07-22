@@ -21,15 +21,15 @@ import p.*
 
 class K: J.C() {
     fun dynamic.test() {
-        <!INAPPLICABLE_CANDIDATE!>sam<!>(null)
-        <!INAPPLICABLE_CANDIDATE!>sam<!>(
+        <!HIDDEN!>sam<!>(null)
+        <!HIDDEN!>sam<!>(
             name = null,
             name = null
         )
     }
 
     fun test() {
-        <!INAPPLICABLE_CANDIDATE!>sam<!>(null)
+        <!HIDDEN!>sam<!>(null)
     }
 
 }

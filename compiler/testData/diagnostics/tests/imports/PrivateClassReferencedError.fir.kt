@@ -11,4 +11,4 @@ package a
 
 import pack1.SomeClass.*
 
-private class X : <!INAPPLICABLE_CANDIDATE!>N<!>()
+private class X : <!HIDDEN!>N<!>()

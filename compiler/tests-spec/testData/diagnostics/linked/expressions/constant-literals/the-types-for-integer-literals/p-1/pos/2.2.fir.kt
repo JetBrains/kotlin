@@ -68,7 +68,7 @@ fun case_4() {
     checkSubtype<Int>(-2147483648)
     checkSubtype<Long>(-2147483648)
 
-    -2147483649 checkType { <!INAPPLICABLE_CANDIDATE!>check<!><Long>() }
+    -2147483649 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
     checkSubtype<Long>(-2147483649)
 }
 
@@ -77,6 +77,6 @@ fun case_5() {
     9223372036854775807 checkType { check<Long>() }
     checkSubtype<Long>(9223372036854775807)
 
-    -9223372036854775807 checkType { <!INAPPLICABLE_CANDIDATE!>check<!><Long>() }
+    -9223372036854775807 checkType { <!NONE_APPLICABLE!>check<!><Long>() }
     checkSubtype<Long>(-9223372036854775807)
 }

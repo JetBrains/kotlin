@@ -11,7 +11,7 @@ suspend fun String.id(): String = this
 fun box() {
     val x = "f"
     builder {
-        <!INAPPLICABLE_CANDIDATE!>go1<!>(x::id)
-        <!INAPPLICABLE_CANDIDATE!>go2<!>(x::id)
+        <!INAPPLICABLE_CANDIDATE!>go1<!>(<!UNRESOLVED_REFERENCE!>x::id<!>)
+        <!INAPPLICABLE_CANDIDATE!>go2<!>(<!UNRESOLVED_REFERENCE!>x::id<!>)
     }
 }

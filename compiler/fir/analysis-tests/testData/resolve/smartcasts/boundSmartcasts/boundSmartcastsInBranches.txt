@@ -132,23 +132,23 @@ FILE: boundSmartcastsInBranches.kt
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/x|.R|kotlin/String.length|
-                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): kotlin/String.length>#
                 R|<local>/z|.R|kotlin/String.length|
             }
         }
 
         when () {
             !=(R|<local>/y|, Null(null)) ->  {
-                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): kotlin/String.length>#
                 R|<local>/y|.R|kotlin/String.length|
-                R|<local>/z|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/z|.<Inapplicable(WRONG_RECEIVER): kotlin/String.length>#
             }
         }
 
         when () {
             !=(R|<local>/z|, Null(null)) ->  {
                 R|<local>/x|.R|kotlin/String.length|
-                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): kotlin/String.length>#
                 R|<local>/z|.R|kotlin/String.length|
             }
         }

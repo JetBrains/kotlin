@@ -23,7 +23,7 @@ fun test() {
     builder {
         noParams()
         yieldString("abc") checkType { _<Unit>() }
-        <!INAPPLICABLE_CANDIDATE!>yieldString<!>(1) <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Unit>() }
+        <!INAPPLICABLE_CANDIDATE!>yieldString<!>(1) checkType { _<Unit>() }
 
         await<String> { "123" } checkType { _<String>() }
 
@@ -38,7 +38,7 @@ fun test() {
         severalParams("", 89) checkType { _<Double>() }
 
         // TODO: should we allow somehow to call with passing continuation explicitly?
-        <!INAPPLICABLE_CANDIDATE!>severalParams<!>("", 89, 6.9) <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Unit>() }
-        <!INAPPLICABLE_CANDIDATE!>severalParams<!>("", 89, this as Continuation<Double>) <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Unit>() }
+        <!INAPPLICABLE_CANDIDATE!>severalParams<!>("", 89, 6.9) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Unit>() }
+        <!INAPPLICABLE_CANDIDATE!>severalParams<!>("", 89, this as Continuation<Double>) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Unit>() }
     }
 }

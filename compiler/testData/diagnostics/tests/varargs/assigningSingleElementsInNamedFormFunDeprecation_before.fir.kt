@@ -49,12 +49,12 @@ fun manyFoo(vararg v: Int) {}
 fun manyFoo(vararg s: String) {}
 
 fun testMany(a: Any) {
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(v = 1)
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(s = "")
+    <!NONE_APPLICABLE!>manyFoo<!>(v = 1)
+    <!NONE_APPLICABLE!>manyFoo<!>(s = "")
 
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(a)
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(v = a)
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(s = a)
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(v = a as Int)
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(s = a as String)
+    <!NONE_APPLICABLE!>manyFoo<!>(a)
+    <!NONE_APPLICABLE!>manyFoo<!>(v = a)
+    <!NONE_APPLICABLE!>manyFoo<!>(s = a)
+    <!NONE_APPLICABLE!>manyFoo<!>(v = a as Int)
+    <!NONE_APPLICABLE!>manyFoo<!>(s = a as String)
 }

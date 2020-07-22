@@ -28,10 +28,10 @@ class Case2() {
     }
 
     fun case() {
-        <!INAPPLICABLE_CANDIDATE!>foo<!>(<!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown"), UNRESOLVED_REFERENCE!>::invoke<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown"), UNRESOLVED_REFERENCE!>::invoke<!>)
-        <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>::invoke<!>, <!UNRESOLVED_REFERENCE!>::invoke<!>)
-        <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>::invoke<!>, <!UNRESOLVED_REFERENCE!>::invoke<!>)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(INAPPLICABLE): [/Case2.foo, /Case2.foo]")!><!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>::invoke<!>, <!UNRESOLVED_REFERENCE!>::invoke<!>)<!>
+        <!NONE_APPLICABLE!>foo<!>(<!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown"), UNRESOLVED_REFERENCE!>::invoke<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown"), UNRESOLVED_REFERENCE!>::invoke<!>)
+        <!NONE_APPLICABLE!>foo<!>(<!UNRESOLVED_REFERENCE!>::invoke<!>, <!UNRESOLVED_REFERENCE!>::invoke<!>)
+        <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!NONE_APPLICABLE!>foo<!>(<!UNRESOLVED_REFERENCE!>::invoke<!>, <!UNRESOLVED_REFERENCE!>::invoke<!>)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: foo, [/Case2.foo, /Case2.foo]")!><!NONE_APPLICABLE!>foo<!>(<!UNRESOLVED_REFERENCE!>::invoke<!>, <!UNRESOLVED_REFERENCE!>::invoke<!>)<!>
     }
 
     fun foo(vararg x: (Int)->Any): String = TODO() // (1.1)

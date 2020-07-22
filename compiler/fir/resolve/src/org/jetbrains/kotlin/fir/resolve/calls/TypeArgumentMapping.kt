@@ -36,8 +36,8 @@ internal object MapTypeArguments : ResolutionStage() {
         if (typeArguments.size == owner.typeParameters.size || callInfo.callKind == CallKind.DelegatingConstructorCall) {
             candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
         } else {
-            sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
             candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(emptyList())
+            sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
         }
     }
 }

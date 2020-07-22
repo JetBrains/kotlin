@@ -24,7 +24,7 @@ FILE: receiverWithCapturedType.kt
         R|<local>/resolvedCall|.R|/getParameterForArgument|<R|CallableDescriptor|>()
     }
     public final fun test_2_1(resolvedCall: R|ResolvedCall<out CallableDescriptor>|, d: R|CallableDescriptor|): R|kotlin/Unit| {
-        lval x: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/updateD]> = R|<local>/resolvedCall|.<Inapplicable(INAPPLICABLE): [/updateD]>#(R|<local>/d|)
+        lval x: R|CallableDescriptor| = R|<local>/resolvedCall|.<Inapplicable(INAPPLICABLE): /updateD>#<R|CapturedType(out CallableDescriptor)|>(R|<local>/d|)
     }
     public final fun test_2_2(resolvedCall: R|ResolvedCall<in CallableDescriptor>|, d: R|CallableDescriptor|): R|kotlin/Unit| {
         lval x: R|CallableDescriptor| = R|<local>/resolvedCall|.R|/updateD|<R|CapturedType(in CallableDescriptor)|>(R|<local>/d|)

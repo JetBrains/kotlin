@@ -40,12 +40,12 @@ class Case1 : AbstractClassCase1(){
 
 fun case1(){
     val a = Case1()
-    a.<!INAPPLICABLE_CANDIDATE!>priv<!>()
+    a.<!HIDDEN!>priv<!>()
     a.prot()
     a.int()
     a.pub()
 
-    a.<!INAPPLICABLE_CANDIDATE!>priv1<!>
+    a.<!HIDDEN!>priv1<!>
     a.prot1
     a.int1
     a.pub1
@@ -59,12 +59,12 @@ import base.*
 // TESTCASE NUMBER: 2
 fun case2() {
     val a = Case1()
-    a.<!INAPPLICABLE_CANDIDATE!>priv<!>()
+    a.<!HIDDEN!>priv<!>()
     a.prot()
     a.int()
     a.pub()
 
-    a.<!INAPPLICABLE_CANDIDATE!>priv1<!>
+    a.<!HIDDEN!>priv1<!>
     a.prot1
     a.int1
     a.pub1

@@ -60,8 +60,8 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
     BLOCK_BODY
   FUN name:testPlainArgs visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/usePlainArgs]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /usePlainArgs>#' type=kotlin.Unit
+        ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: sum>#' type=IrErrorType
   FUN name:testPrimitiveArrayAsVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun usePrimitiveArray (fn: kotlin.Function1<kotlin.IntArray, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null

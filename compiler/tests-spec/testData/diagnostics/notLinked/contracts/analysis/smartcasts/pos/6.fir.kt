@@ -124,7 +124,7 @@ fun case_2(value_1: Number?, value_2: Any?) {
 fun case_3(value_1: Any?, value_2: String?) {
     value_1.case_3(value_2)
     <!AMBIGUITY!>println<!>(value_1.inv())
-    <!AMBIGUITY!>println<!>(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
 }
 
 // TESTCASE NUMBER: 4
@@ -132,7 +132,7 @@ fun case_4(value_1: Any?, value_2: Number, value_3: Any?, value_4: String?) {
     value_1.case_4(value_2, value_3, value_4)
     <!AMBIGUITY!>println<!>(value_2.inv())
     <!AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>toByte<!>())
-    <!AMBIGUITY!>println<!>(value_4.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    println(value_4.<!INAPPLICABLE_CANDIDATE!>length<!>)
 }
 
 // TESTCASE NUMBER: 5
@@ -187,19 +187,19 @@ fun case_6(value_1: Number?, value_2: Any?, value_3: Number?, value_4: Any?, val
 fun case_7(value_1: Any?, value_2: String?, value_3: Any?, value_4: String?, value_5: Any?, value_6: String?) {
     if (value_1.case_7_1(value_2)) {
         <!AMBIGUITY!>println<!>(value_1.inv())
-        <!AMBIGUITY!>println<!>(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
+        println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
     }
     if (value_3.case_7_2(value_4)) {
         <!AMBIGUITY!>println<!>(value_3.inv())
-        <!AMBIGUITY!>println<!>(value_4.<!INAPPLICABLE_CANDIDATE!>length<!>)
+        println(value_4.<!INAPPLICABLE_CANDIDATE!>length<!>)
     }
     if (value_5.case_7_3(value_6) != null) {
         <!AMBIGUITY!>println<!>(value_5.inv())
-        <!AMBIGUITY!>println<!>(value_6.<!INAPPLICABLE_CANDIDATE!>length<!>)
+        println(value_6.<!INAPPLICABLE_CANDIDATE!>length<!>)
     }
     if (value_5.case_7_4(value_6) == null) {
         <!AMBIGUITY!>println<!>(value_5.inv())
-        <!AMBIGUITY!>println<!>(value_6.<!INAPPLICABLE_CANDIDATE!>length<!>)
+        println(value_6.<!INAPPLICABLE_CANDIDATE!>length<!>)
     }
 }
 
@@ -207,14 +207,14 @@ fun case_7(value_1: Any?, value_2: String?, value_3: Any?, value_4: String?, val
 fun case_8(value_1: Any?, value_2: Number, value_3: Any?, value_4: String?, value_5: Any?, value_6: Number, value_7: Any?, value_8: String?) {
     when { value_1.case_8_1(value_2, value_3, value_4) -> <!AMBIGUITY!>println<!>(value_2.inv()) }
     when { value_1.case_8_1(value_2, value_3, value_4) -> <!AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>toByte<!>()) }
-    when { value_1.case_8_1(value_2, value_3, value_4) -> <!AMBIGUITY!>println<!>(value_4.<!INAPPLICABLE_CANDIDATE!>length<!>) }
+    when { value_1.case_8_1(value_2, value_3, value_4) -> println(value_4.<!INAPPLICABLE_CANDIDATE!>length<!>) }
     when { !value_5.case_8_2(value_6, value_7, value_8) -> <!AMBIGUITY!>println<!>(value_6.inv()) }
     when { !value_5.case_8_2(value_6, value_7, value_8) -> <!AMBIGUITY!>println<!>(value_7.<!UNRESOLVED_REFERENCE!>toByte<!>()) }
-    when { !value_5.case_8_2(value_6, value_7, value_8) -> <!AMBIGUITY!>println<!>(value_8.<!INAPPLICABLE_CANDIDATE!>length<!>) }
+    when { !value_5.case_8_2(value_6, value_7, value_8) -> println(value_8.<!INAPPLICABLE_CANDIDATE!>length<!>) }
     when { value_5.case_8_3(value_6, value_7, value_8) != null -> <!AMBIGUITY!>println<!>(value_6.inv()) }
     when { value_5.case_8_3(value_6, value_7, value_8) != null -> <!AMBIGUITY!>println<!>(value_7.<!UNRESOLVED_REFERENCE!>toByte<!>()) }
-    when { value_5.case_8_3(value_6, value_7, value_8) != null -> <!AMBIGUITY!>println<!>(value_8.<!INAPPLICABLE_CANDIDATE!>length<!>) }
+    when { value_5.case_8_3(value_6, value_7, value_8) != null -> println(value_8.<!INAPPLICABLE_CANDIDATE!>length<!>) }
     when { value_5.case_8_4(value_6, value_7, value_8) == null -> <!AMBIGUITY!>println<!>(value_6.inv()) }
     when { value_5.case_8_4(value_6, value_7, value_8) == null -> <!AMBIGUITY!>println<!>(value_7.<!UNRESOLVED_REFERENCE!>toByte<!>()) }
-    when { value_5.case_8_4(value_6, value_7, value_8) == null -> <!AMBIGUITY!>println<!>(value_8.<!INAPPLICABLE_CANDIDATE!>length<!>) }
+    when { value_5.case_8_4(value_6, value_7, value_8) == null -> println(value_8.<!INAPPLICABLE_CANDIDATE!>length<!>) }
 }

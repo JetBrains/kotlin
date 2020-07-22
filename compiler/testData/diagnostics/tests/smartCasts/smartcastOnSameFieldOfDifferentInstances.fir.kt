@@ -5,7 +5,7 @@ class A(val x: String?) {
     fun foo(other: A) {
         when {
             x == null && other.x == null -> "1"
-            x.<!INAPPLICABLE_CANDIDATE!>length<!> <!UNRESOLVED_REFERENCE!>><!> 0 -> "2"
+            x.<!INAPPLICABLE_CANDIDATE!>length<!> > 0 -> "2"
         }
     }
 }

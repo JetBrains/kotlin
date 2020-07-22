@@ -35,12 +35,12 @@ fun main(x2: Runnable) {
     Test.<!INAPPLICABLE_CANDIDATE!>foo1<!>(x2, arrayOf(""))
     Test.foo1(x2, *arrayOf(""))
 
-    val i1 = <!INAPPLICABLE_CANDIDATE!>Test<!>({}, arrayOf())
+    val i1 = <!NONE_APPLICABLE!>Test<!>({}, arrayOf())
     val i2 = Test({}, *arrayOf())
-    val i3 = <!INAPPLICABLE_CANDIDATE!>Test<!>({}, x3)
-    val i4 = <!INAPPLICABLE_CANDIDATE!>Test<!>({}, arrayOf(""))
+    val i3 = <!NONE_APPLICABLE!>Test<!>({}, x3)
+    val i4 = <!NONE_APPLICABLE!>Test<!>({}, arrayOf(""))
     val i5 = Test({}, {}, *arrayOf(""))
-    val i6 = <!INAPPLICABLE_CANDIDATE!>Test<!>({}, {}, arrayOf())
+    val i6 = <!NONE_APPLICABLE!>Test<!>({}, {}, arrayOf())
 
     i1.<!UNRESOLVED_REFERENCE!>foo2<!>({}, {}, arrayOf())
     i1.<!UNRESOLVED_REFERENCE!>foo2<!>({}, {}, *arrayOf())

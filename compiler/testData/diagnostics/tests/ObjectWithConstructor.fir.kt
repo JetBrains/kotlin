@@ -1,11 +1,11 @@
 object A1<!CONSTRUCTOR_IN_OBJECT!>()<!> {
-    <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int = "", y: Int)<!> : <!INAPPLICABLE_CANDIDATE!>this<!>() {
+    <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int = "", y: Int)<!> : <!NONE_APPLICABLE!>this<!>() {
         x + y
     }
 }
 
 object A2 public <!CONSTRUCTOR_IN_OBJECT!>constructor(private val prop: Int)<!> {
-    <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int = "", y: Int)<!> : <!INAPPLICABLE_CANDIDATE!>this<!>(x * y) {
+    <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int = "", y: Int)<!> : <!NONE_APPLICABLE!>this<!>(x * y) {
         x + y
     }
 }
@@ -19,6 +19,6 @@ val x = object <!CONSTRUCTOR_IN_OBJECT!>(val prop: Int)<!> {
 
 class A3 {
     companion object B<!CONSTRUCTOR_IN_OBJECT!>(val prop: Int)<!> {
-        public <!CONSTRUCTOR_IN_OBJECT!>constructor()<!> : <!INAPPLICABLE_CANDIDATE!>this<!>(2)
+        public <!CONSTRUCTOR_IN_OBJECT!>constructor()<!> : <!NONE_APPLICABLE!>this<!>(2)
     }
 }

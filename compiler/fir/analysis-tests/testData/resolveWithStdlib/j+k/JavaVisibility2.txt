@@ -4,18 +4,18 @@ FILE: k.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val p1: <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]> = Q|j/JavaPackageLocal|.<Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]>#
-            public get(): <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]>
+        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.<HIDDEN: j/JavaPackageLocal.javaPPackage is invisible>#
+            public get(): R|kotlin/Int|
 
-        public final val p2: <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedStatic]> = Q|j/JavaProtected|.<Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedStatic]>#
-            public get(): <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedStatic]>
+        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.<HIDDEN: j/JavaProtected.javaPProtectedStatic is invisible>#
+            public get(): R|kotlin/Int|
 
-        public final val p3: <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedPackage]> = R|j/JavaProtected.JavaProtected|().<Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedPackage]>#
-            public get(): <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaProtected.javaPProtectedPackage]>
+        public final val p3: R|kotlin/Int| = R|j/JavaProtected.JavaProtected|().<HIDDEN: j/JavaProtected.javaPProtectedPackage is invisible>#
+            public get(): R|kotlin/Int|
 
         public final fun test(): R|kotlin/Unit| {
-            Q|j/JavaProtected|.<Inapplicable(HIDDEN): [j/JavaProtected.javaMProtectedStatic]>#()
-            Q|j/JavaPackageLocal|.<Inapplicable(HIDDEN): [j/JavaPackageLocal.javaMPackage]>#()
+            Q|j/JavaProtected|.<HIDDEN: j/JavaProtected.javaMProtectedStatic is invisible>#()
+            Q|j/JavaPackageLocal|.<HIDDEN: j/JavaPackageLocal.javaMPackage is invisible>#()
         }
 
     }
@@ -24,8 +24,8 @@ FILE: k.kt
             super<R|j/JavaProtected|>()
         }
 
-        public final val p1: <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]> = Q|j/JavaPackageLocal|.<Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]>#
-            public get(): <ERROR TYPE REF: Inapplicable(HIDDEN): [j/JavaPackageLocal.javaPPackage]>
+        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.<HIDDEN: j/JavaPackageLocal.javaPPackage is invisible>#
+            public get(): R|kotlin/Int|
 
         public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic|
             public get(): R|kotlin/Int|
@@ -35,7 +35,7 @@ FILE: k.kt
 
         public final fun test(): R|kotlin/Unit| {
             Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic|()
-            Q|j/JavaPackageLocal|.<Inapplicable(HIDDEN): [j/JavaPackageLocal.javaMPackage]>#()
+            Q|j/JavaPackageLocal|.<HIDDEN: j/JavaPackageLocal.javaMPackage is invisible>#()
         }
 
     }

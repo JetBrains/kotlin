@@ -66,21 +66,19 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:testConstructor visibility:public modality:FINAL <> () returnType:IrErrorType
+  FUN name:testConstructor visibility:public modality:FINAL <> () returnType:kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testConstructor (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.C' type=kotlin.reflect.KFunction1<kotlin.IntArray, <root>.C> origin=null reflectionTarget=<same>
-  FUN name:testInnerClassConstructor visibility:public modality:FINAL <> (outer:<root>.Outer) returnType:IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun testConstructor (): kotlin.Any declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.Any
+          ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: C>#' type=IrErrorType
+  FUN name:testInnerClassConstructor visibility:public modality:FINAL <> (outer:<root>.Outer) returnType:kotlin.Any
     VALUE_PARAMETER name:outer index:0 type:<root>.Outer
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructor (outer: <root>.Outer): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.Outer.Inner' type=kotlin.reflect.KFunction1<kotlin.IntArray, <root>.Outer.Inner> origin=null reflectionTarget=<same>
-            $this: GET_VAR 'outer: <root>.Outer declared in <root>.testInnerClassConstructor' type=<root>.Outer origin=null
-  FUN name:testInnerClassConstructorCapturingOuter visibility:public modality:FINAL <> () returnType:IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructor (outer: <root>.Outer): kotlin.Any declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.Any
+          ERROR_CALL 'Unsupported callable reference: R|<local>/outer|::<Unresolved reference: Inner>#' type=IrErrorType
+  FUN name:testInnerClassConstructorCapturingOuter visibility:public modality:FINAL <> () returnType:kotlin.Any
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructorCapturingOuter (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.Outer.Inner' type=kotlin.reflect.KFunction1<kotlin.IntArray, <root>.Outer.Inner> origin=null reflectionTarget=<same>
-            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer' type=<root>.Outer origin=null
+      RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructorCapturingOuter (): kotlin.Any declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.Any
+          ERROR_CALL 'Unsupported callable reference: R|/Outer.Outer|()::<Unresolved reference: Inner>#' type=IrErrorType

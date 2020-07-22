@@ -30,20 +30,20 @@ FILE: operatorsOverLiterals.kt
     }
     public final fun test_4(): R|kotlin/Unit| {
         R|/takeByte|(Byte(1).R|kotlin/Byte.plus|(Byte(1)))
-        <Inapplicable(INAPPLICABLE): [/takeByte]>#(Int(1).R|kotlin/Int.plus|(Int(127)))
+        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(1).R|kotlin/Int.plus|(Int(127)))
         R|/takeByte|(Byte(1).R|kotlin/Byte.minus|(Byte(1)))
-        <Inapplicable(INAPPLICABLE): [/takeByte]>#(Int(100).R|kotlin/Int.unaryMinus|().R|kotlin/Int.minus|(Int(100)))
+        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(100).R|kotlin/Int.unaryMinus|().R|kotlin/Int.minus|(Int(100)))
         R|/takeByte|(Byte(10).R|kotlin/Byte.times|(Byte(10)))
-        <Inapplicable(INAPPLICABLE): [/takeByte]>#(Int(100).R|kotlin/Int.times|(Int(100)))
+        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(100).R|kotlin/Int.times|(Int(100)))
         <Unresolved name: taleByte>#(Int(10).R|kotlin/Int.div|(Int(10)))
         R|/takeByte|(Byte(100).R|kotlin/Byte.rem|(Byte(10)))
         R|/takeByte|(Int(1000).R|kotlin/Int.rem|(Byte(10)))
         R|/takeByte|(Int(1000).R|<local>/and|(Byte(100)))
-        <Inapplicable(INAPPLICABLE): [/takeByte]>#(Int(128).R|kotlin/Int.and|(Int(511)))
+        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(128).R|kotlin/Int.and|(Int(511)))
         R|/takeByte|(Byte(100).R|<local>/or|(Byte(100)))
-        <Inapplicable(INAPPLICABLE): [/takeByte]>#(Int(1000).R|kotlin/Int.or|(Int(0)))
+        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(1000).R|kotlin/Int.or|(Int(0)))
         R|/takeByte|(Int(511).R|kotlin/Int.xor|(Int(511)))
-        <Inapplicable(INAPPLICABLE): [/takeByte]>#(Int(512).R|kotlin/Int.xor|(Int(511)))
+        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(512).R|kotlin/Int.xor|(Int(511)))
     }
     public final fun test_5(): R|kotlin/Unit| {
         R|/takeByte|(Byte(1).R|kotlin/Byte.unaryMinus|())
@@ -51,11 +51,11 @@ FILE: operatorsOverLiterals.kt
         R|/takeByte|(Byte(1).R|<local>/inv|())
     }
     public final fun test_6(): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): [/takeByte]>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        <Inapplicable(INAPPLICABLE): /takeByte>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             ^ Int(127).R|kotlin/Int.plus|(Int(1))
         }
         ))
-        <Inapplicable(INAPPLICABLE): [/takeByte]>#(Int(1).R|<local>/plus|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(1).R|<local>/plus|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             ^ Int(1)
         }
         )))

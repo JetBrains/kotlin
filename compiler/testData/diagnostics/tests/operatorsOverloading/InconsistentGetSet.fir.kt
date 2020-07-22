@@ -20,7 +20,7 @@ object MismatchingTypes {
 fun testMismatchingTypes() {
     <!INAPPLICABLE_CANDIDATE!>++MismatchingTypes[0]<!>
     <!INAPPLICABLE_CANDIDATE!>MismatchingTypes[0]++<!>
-    <!UNRESOLVED_REFERENCE!>MismatchingTypes[0] += 1<!>
+    MismatchingTypes[0] += 1
 }
 
 object MismatchingArities1 {
@@ -36,10 +36,10 @@ object MismatchingArities2 {
 fun testMismatchingArities() {
     <!INAPPLICABLE_CANDIDATE!>++MismatchingArities1[0]<!>
     <!INAPPLICABLE_CANDIDATE!>MismatchingArities1[0]++<!>
-    <!UNRESOLVED_REFERENCE!>MismatchingArities1[0] += 1<!>
+    MismatchingArities1[0] += 1
 
-    <!UNRESOLVED_REFERENCE!>++<!><!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!>
-    <!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!><!UNRESOLVED_REFERENCE!>++<!>
-    <!UNRESOLVED_REFERENCE!><!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!> += 1<!>
+    ++<!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!>
+    <!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!>++
+    MismatchingArities2[0] += 1
 }
 

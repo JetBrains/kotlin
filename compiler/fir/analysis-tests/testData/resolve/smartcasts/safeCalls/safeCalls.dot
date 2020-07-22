@@ -53,7 +53,7 @@ digraph safeCalls_kt {
             19 [label="Function call: $subj$.R|/foo|(...)"];
             20 [label="Exit safe call"];
             21 [label="Access variable R|<local>/x|"];
-            22 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+            22 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
             23 [label="Exit block"];
         }
         24 [label="Exit function test" style="filled" fillcolor=red];
@@ -207,7 +207,7 @@ digraph safeCalls_kt {
             78 [label="Function call: $subj$.R|/A.bool|()"];
             79 [label="Exit safe call"];
             80 [label="Access variable R|<local>/x|"];
-            81 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
+            81 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): /A.id>#()"];
             82 [label="Exit block"];
         }
         83 [label="Exit function test_4" style="filled" fillcolor=red];
@@ -271,7 +271,7 @@ digraph safeCalls_kt {
             101 [label="Function call: $subj$.R|/boo|(...)"];
             102 [label="Exit safe call"];
             103 [label="Access variable R|<local>/x|"];
-            104 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
+            104 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): /A.id>#()"];
             105 [label="Exit block"];
         }
         106 [label="Exit function test_5" style="filled" fillcolor=red];

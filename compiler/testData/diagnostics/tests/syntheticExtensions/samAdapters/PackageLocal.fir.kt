@@ -4,7 +4,7 @@ package k
 import JavaClass
 
 fun foo(javaClass: JavaClass) {
-    javaClass.<!INAPPLICABLE_CANDIDATE!>doSomething<!> { }
+    javaClass.<!HIDDEN!>doSomething<!> { }
 }
 
 // FILE: KotlinFile2.kt

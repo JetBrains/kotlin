@@ -12,8 +12,8 @@ fun case_1(x: Class?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
     }
 }
 
@@ -28,7 +28,7 @@ fun case_2(x: Class?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
     }
 }
 
@@ -57,8 +57,8 @@ fun case_4(x: Class?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
     }
 }
 
@@ -73,7 +73,7 @@ fun case_5(x: Class?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
     }
 }
 
@@ -102,8 +102,8 @@ fun case_7(x: Class) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
     }
 }
 
@@ -117,8 +117,8 @@ fun case_8(x: Class) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>prop_8<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
     }
 }
 // TESTCASE NUMBER: 9
@@ -136,8 +136,8 @@ fun <T> case_9(x: T) {
  */
 fun <T>case_10(x: Inv<T>?) {
     if (x!!.prop_1?.prop_1?.prop_1?.prop_2 != null) {
-        x.prop_1.<!INAPPLICABLE_CANDIDATE!>prop_1<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>.<!UNRESOLVED_REFERENCE!>prop_2<!>
-        x.prop_1.<!INAPPLICABLE_CANDIDATE!>prop_1<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>.<!UNRESOLVED_REFERENCE!>prop_2<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+        x.prop_1.<!INAPPLICABLE_CANDIDATE!>prop_1<!>.<!INAPPLICABLE_CANDIDATE!>prop_1<!>.<!INAPPLICABLE_CANDIDATE!>prop_2<!>
+        x.prop_1.<!INAPPLICABLE_CANDIDATE!>prop_1<!>.<!INAPPLICABLE_CANDIDATE!>prop_1<!>.<!INAPPLICABLE_CANDIDATE!>prop_2<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
     }
 }
 
@@ -148,8 +148,8 @@ fun <T>case_10(x: Inv<T>?) {
  */
 inline fun <reified T>case_11(x: Inv<T>?) {
     if (x?.prop_1!!.prop_1?.prop_1?.prop_2 == null) else {
-        x.prop_1.prop_1.<!INAPPLICABLE_CANDIDATE!>prop_1<!>.<!UNRESOLVED_REFERENCE!>prop_2<!>
-        x.prop_1.prop_1.<!INAPPLICABLE_CANDIDATE!>prop_1<!>.<!UNRESOLVED_REFERENCE!>prop_2<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+        x.prop_1.prop_1.<!INAPPLICABLE_CANDIDATE!>prop_1<!>.<!INAPPLICABLE_CANDIDATE!>prop_2<!>
+        x.prop_1.prop_1.<!INAPPLICABLE_CANDIDATE!>prop_1<!>.<!INAPPLICABLE_CANDIDATE!>prop_2<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
     }
 }
 

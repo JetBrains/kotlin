@@ -20,38 +20,33 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
     FUN name:testImplicitThis visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
-            $this: GET_VAR '<this>: <root>.Host declared in <root>.Host.testImplicitThis' type=<root>.Host origin=null
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.Unit
+          ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: withVararg>#' type=IrErrorType
     FUN name:testBoundReceiverLocalVal visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       BLOCK_BODY
         VAR name:h type:<root>.Host [val]
           CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
-            $this: GET_VAR 'val h: <root>.Host [val] declared in <root>.Host.testBoundReceiverLocalVal' type=<root>.Host origin=null
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.Unit
+          ERROR_CALL 'Unsupported callable reference: R|<local>/h|::<Unresolved reference: withVararg>#' type=IrErrorType
     FUN name:testBoundReceiverLocalVar visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       BLOCK_BODY
         VAR name:h type:<root>.Host [var]
           CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
-            $this: GET_VAR 'var h: <root>.Host [var] declared in <root>.Host.testBoundReceiverLocalVar' type=<root>.Host origin=null
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.Unit
+          ERROR_CALL 'Unsupported callable reference: R|<local>/h|::<Unresolved reference: withVararg>#' type=IrErrorType
     FUN name:testBoundReceiverParameter visibility:public modality:FINAL <> ($this:<root>.Host, h:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       VALUE_PARAMETER name:h index:0 type:<root>.Host
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
-            $this: GET_VAR 'h: <root>.Host declared in <root>.Host.testBoundReceiverParameter' type=<root>.Host origin=null
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.Unit
+          ERROR_CALL 'Unsupported callable reference: R|<local>/h|::<Unresolved reference: withVararg>#' type=IrErrorType
     FUN name:testBoundReceiverExpression visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-          FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
-            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.Unit
+          ERROR_CALL 'Unsupported callable reference: R|/Host.Host|()::<Unresolved reference: withVararg>#' type=IrErrorType
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
