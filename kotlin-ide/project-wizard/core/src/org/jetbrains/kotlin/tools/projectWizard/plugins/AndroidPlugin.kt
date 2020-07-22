@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.Property
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.Property
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidModuleConfigurator

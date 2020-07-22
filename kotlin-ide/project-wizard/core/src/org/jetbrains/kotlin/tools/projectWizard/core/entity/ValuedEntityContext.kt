@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.entity
 
 abstract class ValuedEntityContext<E : Entity> {
-    private val values = mutableMapOf<String, Any>()
+    protected val values = mutableMapOf<String, Any>()
 
     @Suppress("UNCHECKED_CAST")
     operator fun <V : Any> get(entity: E) =

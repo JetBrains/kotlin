@@ -83,7 +83,7 @@ sealed class ModuleDependencyType(
             to: Module,
             toModulePath: Path,
             data: ModulesToIrConversionData
-        ): TaskResult<Unit> = withSettingsOf(from) {
+        ): TaskResult<Unit> = inContextOfModuleConfigurator(from) {
             IOSSinglePlatformModuleConfigurator.dependentModule.reference
                 .setValue(IOSSinglePlatformModuleConfigurator.DependentModuleReference(to))
             val dummyFilePath = Defaults.SRC_DIR / "${to.iosTargetSafe()!!.name}Main" / to.configurator.kotlinDirectoryName / "dummyFile.kt"

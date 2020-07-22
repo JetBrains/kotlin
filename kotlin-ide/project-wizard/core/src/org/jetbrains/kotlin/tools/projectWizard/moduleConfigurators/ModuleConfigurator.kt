@@ -2,8 +2,10 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
+import org.jetbrains.kotlin.tools.projectWizard.PropertiesOwner
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
@@ -21,41 +23,49 @@ import java.nio.file.Path
 import kotlin.properties.ReadOnlyProperty
 
 
-interface ModuleConfiguratorSettingsEnvironment {
+interface ModuleConfiguratorContext {
     val <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.reference: ModuleConfiguratorSettingReference<V, T>
+
+    val <T : Any> ModuleConfiguratorProperty<T>.reference: PropertyReference<T>
 }
 
-class ModuleBasedConfiguratorSettingsEnvironment(
+class ModuleBasedConfiguratorContext(
     private val configurator: ModuleConfigurator,
     private val module: Module
-) : ModuleConfiguratorSettingsEnvironment {
+) : ModuleConfiguratorContext {
     override val <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.reference: ModuleConfiguratorSettingReference<V, T>
         get() = ModuleBasedConfiguratorSettingReference(configurator, module, this)
+
+    override val <T : Any> ModuleConfiguratorProperty<T>.reference: PropertyReference<T>
+        get() = ModuleConfiguratorPropertyReference<T>(configurator, module, this)
 }
 
-class IdBasedConfiguratorSettingsEnvironment(
+class IdBasedConfiguratorContext(
     private val configurator: ModuleConfigurator,
     private val moduleId: Identificator
-) : ModuleConfiguratorSettingsEnvironment {
+) : ModuleConfiguratorContext {
     override val <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.reference: ModuleConfiguratorSettingReference<V, T>
         get() = IdBasedConfiguratorSettingReference(configurator, moduleId, this)
+
+    override val <T : Any> ModuleConfiguratorProperty<T>.reference: PropertyReference<T>
+        get() = error("Should not be called as IdBasedConfiguratorContext used only for parsing settings")
 }
 
-fun <T> withSettingsOf(
+fun <T> inContextOfModuleConfigurator(
     moduleId: Identificator,
     configurator: ModuleConfigurator,
-    function: ModuleConfiguratorSettingsEnvironment.() -> T
-): T = function(IdBasedConfiguratorSettingsEnvironment(configurator, moduleId))
+    function: ModuleConfiguratorContext.() -> T
+): T = function(IdBasedConfiguratorContext(configurator, moduleId))
 
-fun <T> withSettingsOf(
+fun <T> inContextOfModuleConfigurator(
     module: Module,
     configurator: ModuleConfigurator = module.configurator,
-    function: ModuleConfiguratorSettingsEnvironment.() -> T
-): T = function(ModuleBasedConfiguratorSettingsEnvironment(configurator, module))
+    function: ModuleConfiguratorContext.() -> T
+): T = function(ModuleBasedConfiguratorContext(configurator, module))
 
 
 fun <V : Any, T : SettingType<V>> Reader.settingValue(module: Module, setting: ModuleConfiguratorSetting<V, T>): V? =
-    withSettingsOf(module) {
+    inContextOfModuleConfigurator(module) {
         setting.reference.notRequiredSettingValue
     }
 
@@ -166,13 +176,47 @@ abstract class ModuleConfiguratorSettings : SettingsOwner {
         enumSettingImpl(title, neededAtPhase, init) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<E, DropDownSettingType<E>>>
 }
 
+interface ModuleConfiguratorWithProperties : ModuleConfigurator {
+    fun getConfiguratorProperties(): List<ModuleConfiguratorProperty<*>>
+
+    fun SettingsWriter.initDefaultValuesForProperties(module: Module) {
+        inContextOfModuleConfigurator(module) {
+            getConfiguratorProperties().forEach { property ->
+                property.reference.initDefaultValue(module)
+            }
+        }
+    }
+}
+
+interface ModuleConfiguratorProperties : PropertiesOwner {
+    override fun <T : Any> propertyDelegate(
+        create: (path: String) -> PropertyBuilder<T>,
+    ): ReadOnlyProperty<Any, ModuleConfiguratorProperty<T>> =
+        cached { name -> ModuleConfiguratorProperty(create(name).build()) }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> property(
+        defaultValue: T,
+        init: PropertyBuilder<T>.() -> Unit,
+    ): ReadOnlyProperty<Any, ModuleConfiguratorProperty<T>> =
+        super.property(defaultValue, init) as ReadOnlyProperty<Any, ModuleConfiguratorProperty<T>>
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> listProperty(
+        vararg defaultValues: T,
+        init: PropertyBuilder<List<T>>.() -> Unit
+    ): ReadOnlyProperty<Any, ModuleConfiguratorProperty<List<T>>> =
+        super.listProperty(defaultValues = defaultValues, init) as ReadOnlyProperty<Any, ModuleConfiguratorProperty<List<T>>>
+}
+
+
 interface ModuleConfiguratorWithSettings : ModuleConfigurator {
     fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> = emptyList()
     fun getPluginSettings(): List<PluginSettingReference<Any, SettingType<Any>>> = emptyList()
 
 
     fun SettingsWriter.initDefaultValuesFor(module: Module) {
-        withSettingsOf(module) {
+        inContextOfModuleConfigurator(module) {
             getConfiguratorSettings().forEach { setting ->
                 setting.reference.setSettingValueToItsDefaultIfItIsNotSetValue()
             }
@@ -180,7 +224,7 @@ interface ModuleConfiguratorWithSettings : ModuleConfigurator {
     }
 
     fun <V : Any, T : SettingType<V>> Reader.settingsValue(module: Module, setting: ModuleConfiguratorSetting<V, T>): V =
-        withSettingsOf(module) { setting.reference.settingValue }
+        inContextOfModuleConfigurator(module) { setting.reference.settingValue }
 }
 
 val ModuleConfigurator.settings
@@ -285,7 +329,7 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
                     path,
                     map,
                     configurator.settings.map { setting ->
-                        val reference = withSettingsOf(moduleIdentificator, configurator) { setting.reference }
+                        val reference = inContextOfModuleConfigurator(moduleIdentificator, configurator) { setting.reference }
                         reference to setting
                     }
                 )

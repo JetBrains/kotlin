@@ -45,7 +45,7 @@ class SimpleJsClientTemplate : Template() {
         JsBrowserTargetConfigurator -> true
         BrowserJsSinglePlatformModuleConfigurator -> {
             with(reader) {
-                withSettingsOf(module, module.configurator) {
+                inContextOfModuleConfigurator(module, module.configurator) {
                     JSConfigurator.kind.reference.notRequiredSettingValue == JsTargetKind.APPLICATION
                 }
             }

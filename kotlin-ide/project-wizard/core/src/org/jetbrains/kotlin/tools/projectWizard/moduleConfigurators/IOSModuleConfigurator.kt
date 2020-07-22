@@ -70,7 +70,7 @@ object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, M
     }
 
     private fun Reader.createTemplatesSettingValues(module: Module): Map<String, Any?> {
-        val dependentModule = withSettingsOf(module) {
+        val dependentModule = inContextOfModuleConfigurator(module) {
             dependentModule.reference.notRequiredSettingValue?.module
         }
 
