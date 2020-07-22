@@ -34,7 +34,11 @@ abstract class FloatTensor(val raw: CPointer<THFloatTensor>) : Disposable {
     fun sum() = THFloatTensor_sumall(raw)
     fun flatten() = (0 until elements.size).map { data[it] }.toTypedArray()
 
+    private var disposed = false
     override fun dispose() {
+        if (disposed) return
+        disposed = true
+
         THFloatTensor_free(raw)
     }
 
