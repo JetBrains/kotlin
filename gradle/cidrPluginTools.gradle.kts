@@ -678,6 +678,7 @@ fun pluginJar(
 // See KT-30178
 fun patchFileTemplates(project: Project, originalPluginJar: Configuration): Copy = with(project) {
     task<Copy>("patchFileTemplates") {
+        dependsOn(originalPluginJar)
         val filteredItems = listOf("#parse(\"File Header.java\")")
 
         from(zipTree(originalPluginJar.singleFile).matching { include("fileTemplates/**/*.ft") })
@@ -699,6 +700,7 @@ fun patchFileTemplates(project: Project, originalPluginJar: Configuration): Copy
 // Disable `KotlinMPPGradleProjectTaskRunner` in CIDR plugins
 fun patchGradleXml(project: Project, originalPluginJar: Configuration): Copy = with(project) {
     task<Copy>("patchGradleXml") {
+        dependsOn(originalPluginJar)
         val gradleXmlPath = "META-INF/gradle.xml"
         val filteredItems = listOf(
                 "implementation=\"org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner\"",
