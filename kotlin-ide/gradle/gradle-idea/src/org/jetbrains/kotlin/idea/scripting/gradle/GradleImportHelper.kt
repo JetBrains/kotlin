@@ -55,9 +55,10 @@ fun runPartialGradleImport(project: Project, root: GradleBuildRoot) {
     )
 }
 
-fun getMissingConfigurationsDescription() = KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.text")
-fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.text.load.script.configurations")
-fun getMissingConfigurationsHelp(): String? = KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.help")
+fun configurationsAreMissingRequestNeeded() = KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.text")
+fun getConfigurationsActionText() = KotlinIdeaGradleBundle.message("action.text.load.script.configurations")
+fun configurationsAreMissingRequestNeededHelp(): String? = KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.help")
+fun configurationsAreMissingAfterRequest(): String = KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.text")
 
 fun autoReloadScriptConfigurations(project: Project, file: VirtualFile): Boolean {
     val definition = file.findScriptDefinition(project) ?: return false

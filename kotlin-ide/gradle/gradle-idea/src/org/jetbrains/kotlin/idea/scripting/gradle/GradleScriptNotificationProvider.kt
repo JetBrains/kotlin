@@ -46,7 +46,7 @@ class GradleScriptNotificationProvider(private val project: Project) :
             val build: Imported = scriptUnderRoot.nearest as? Imported ?: return
             val importTs = build.data.importTs
             if (!build.areRelatedFilesChangedBefore(file, importTs)) {
-                createActionLabel(getMissingConfigurationActionText()) {
+                createActionLabel(getConfigurationsActionText()) {
                     rootsManager.updateStandaloneScripts {
                         runPartialGradleImport(project, build)
                     }
@@ -107,20 +107,20 @@ class GradleScriptNotificationProvider(private val project: Project) :
                 }
             }
             wasNotImportedAfterCreation -> EditorNotificationPanel().apply {
-                text(getMissingConfigurationsDescription())
-                createActionLabel(getMissingConfigurationActionText()) {
+                text(configurationsAreMissingRequestNeeded())
+                createActionLabel(getConfigurationsActionText()) {
                     val root = scriptUnderRoot.nearest
                     if (root != null) {
                         runPartialGradleImport(project, root)
                     }
                 }
-                val help = getMissingConfigurationsHelp()
+                val help = configurationsAreMissingRequestNeededHelp()
                 if (help != null) {
                     contextHelp(help)
                 }
             }
             notEvaluatedInLastImport -> EditorNotificationPanel().apply {
-                text(KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.text"))
+                text(configurationsAreMissingAfterRequest())
 
                 // todo: this actions will be usefull only when gradle fix https://github.com/gradle/gradle/issues/12640
                 // showActionsToFixNotEvaluated()
