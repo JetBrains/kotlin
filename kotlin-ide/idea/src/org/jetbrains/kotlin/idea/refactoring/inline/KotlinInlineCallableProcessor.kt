@@ -16,16 +16,23 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
+import com.intellij.lang.Language
 import com.intellij.lang.findUsages.DescriptiveNameUtil
+import com.intellij.lang.refactoring.InlineHandler
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Ref
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.refactoring.inline.GenericInlineHandler
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.replaceUsages
 import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
@@ -33,6 +40,8 @@ import org.jetbrains.kotlin.idea.refactoring.pullUp.deleteWithCompanion
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
+
+private val LOG = Logger.getInstance(KotlinInlineCallableProcessor::class.java)
 
 class KotlinInlineCallableProcessor(
     project: Project,
@@ -44,6 +53,7 @@ class KotlinInlineCallableProcessor(
     private val statementToDelete: KtBinaryExpression? = null,
     private val postAction: (KtCallableDeclaration) -> Unit = {}
 ) : BaseRefactoringProcessor(project) {
+    private lateinit var inliners: Map<Language, InlineHandler.Inliner>
 
     private val kind = when (declaration) {
         is KtNamedFunction -> KotlinBundle.message("text.function")
@@ -60,41 +70,52 @@ class KotlinInlineCallableProcessor(
         DescriptiveNameUtil.getDescriptiveName(declaration)
     )
 
+    override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
+        val usagesInfo = refUsages.get()
+        val conflicts = MultiMap<PsiElement, String>()
+        inliners = GenericInlineHandler.initInliners(
+            declaration,
+            usagesInfo,
+            InlineHandler.Settings { inlineThisOnly },
+            conflicts,
+            KotlinLanguage.INSTANCE
+        )
+
+        return showConflicts(conflicts, usagesInfo)
+    }
+
     override fun findUsages(): Array<UsageInfo> {
         if (inlineThisOnly && reference != null) return arrayOf(UsageInfo(reference))
         val usages = runReadAction {
             val searchScope = GlobalSearchScope.projectScope(myProject)
             ReferencesSearchScopeHelper.search(declaration, searchScope)
         }
+
         return usages.map(::UsageInfo).toTypedArray()
     }
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
-        val referenceUsages = usages.mapNotNull { it.element as? KtReferenceExpression }
+        val (kotlinUsages, nonKotlinUsages) = usages.partition { it.element is KtReferenceExpression }
+        for (usage in nonKotlinUsages) {
+            val element = usage.element ?: continue
+            if (element.language == KotlinLanguage.INSTANCE) {
+                LOG.error("Found non KtReferenceExpression Kotlin usage $usage")
+            }
+
+            GenericInlineHandler.inlineReference(usage, element, inliners)
+        }
+
         replacementStrategy.replaceUsages(
-            referenceUsages,
+            kotlinUsages.mapNotNull { it.element as? KtReferenceExpression },
             declaration,
             myProject,
             commandName,
             postAction = {
                 if (deleteAfter) {
-                    if (usages.size == referenceUsages.size) {
-                        declaration.deleteWithCompanion()
-                        statementToDelete?.delete()
-                    } else {
-                        CommonRefactoringUtil.showErrorHint(
-                            declaration.project,
-                            null,
-                            KotlinBundle.message(
-                                "text.cannot.inline.0.1.usages",
-                                usages.size - referenceUsages.size,
-                                usages.size
-                            ),
-                            KotlinBundle.message("text.inline.0", kind),
-                            null
-                        )
-                    }
+                    declaration.deleteWithCompanion()
+                    statementToDelete?.delete()
                 }
+
                 postAction(declaration)
             }
         )

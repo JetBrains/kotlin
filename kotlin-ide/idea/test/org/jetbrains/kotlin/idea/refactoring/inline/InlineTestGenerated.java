@@ -416,6 +416,24 @@ public class InlineTestGenerated extends AbstractInlineTest {
         }
 
         @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/refactoring/inline/function/javaUsages")
+        public static class JavaUsages extends AbstractInlineTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("usage.kt")
+            public void testUsage() throws Exception {
+                runTest("testData/refactoring/inline/function/javaUsages/usage.kt");
+            }
+
+            @TestMetadata("usageInImport.kt")
+            public void testUsageInImport() throws Exception {
+                runTest("testData/refactoring/inline/function/javaUsages/usageInImport.kt");
+            }
+        }
+
+        @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/inline/function/returnAtEnd")
         public static class ReturnAtEnd extends AbstractInlineTest {
             private void runTest(String testDataFilePath) throws Exception {
@@ -1040,6 +1058,19 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("TrivialDontExplicate.kt")
             public void testTrivialDontExplicate() throws Exception {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/explicateTypeArgument/TrivialDontExplicate.kt");
+            }
+        }
+
+        @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/refactoring/inline/inlineVariableOrProperty/javaUsages")
+        public static class JavaUsages extends AbstractInlineTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("topLevelProperty.kt")
+            public void testTopLevelProperty() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/javaUsages/topLevelProperty.kt");
             }
         }
 
