@@ -1,0 +1,6 @@
+FILE: simpleAssign.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lvar y: R|kotlin/Int| = Int(0)
+        lval x: R|kotlin/Int| = Int(0)
+        R|<local>/y| = R|<local>/y|.R|kotlin/Int.plus|(R|<local>/x|)
+    }
