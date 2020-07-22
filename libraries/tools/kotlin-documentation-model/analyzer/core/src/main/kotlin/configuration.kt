@@ -18,7 +18,7 @@ object DokkaDefaults {
     const val includeNonPublic: Boolean = false
     const val includeRootPackage: Boolean = false
     const val reportUndocumented: Boolean = false
-    const val skipEmptyPackages: Boolean = false
+    const val skipEmptyPackages: Boolean = true
     const val skipDeprecated: Boolean = false
     const val jdkVersion: Int = 8
     const val noStdlibLink: Boolean = false
