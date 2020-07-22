@@ -10,11 +10,11 @@ class DokkaConfigurationJsonTest {
     fun `simple configuration toJsonString then parseJson`() {
         val configuration = DokkaConfigurationImpl(
             outputDir = File("customOutputDir"),
-            pluginsClasspath = listOf(File("plugins/customPlugin.jar")),
+            pluginsClasspath = setOf(File("plugins/customPlugin.jar")),
             sourceSets = listOf(
                 DokkaSourceSetImpl(
                     moduleDisplayName = "customModuleDisplayName",
-                    sourceRoots = listOf(SourceRootImpl(File("customSourceRoot"))),
+                    sourceRoots = setOf(File("customSourceRoot")),
                     sourceSetID = DokkaSourceSetID("customModuleName", "customSourceSetName")
                 )
             )
@@ -49,13 +49,13 @@ class DokkaConfigurationJsonTest {
         assertEquals(
             DokkaConfigurationImpl(
                 outputDir = File("customOutputDir"),
-                pluginsClasspath = listOf(File("plugins/customPlugin.jar")),
+                pluginsClasspath = setOf(File("plugins/customPlugin.jar")),
                 sourceSets = listOf(
                     DokkaSourceSetImpl(
                         moduleDisplayName = "customModuleDisplayName",
-                        sourceRoots = listOf(SourceRootImpl(File("customSourceRoot"))),
+                        sourceRoots = setOf(File("customSourceRoot")),
                         sourceSetID = DokkaSourceSetID("customModuleName", "customSourceSetName"),
-                        classpath = listOf(File("classpath/custom1.jar"), File("classpath/custom2.jar"))
+                        classpath = setOf(File("classpath/custom1.jar"), File("classpath/custom2.jar"))
                     )
                 )
             ),

@@ -79,37 +79,33 @@ interface DokkaConfiguration : Serializable {
     val failOnWarning: Boolean
     val sourceSets: List<DokkaSourceSet>
     val modules: List<DokkaModuleDescription>
-    val pluginsClasspath: List<File>
+    val pluginsClasspath: Set<File>
     val pluginsConfiguration: Map<String, String>
 
     interface DokkaSourceSet : Serializable {
         val sourceSetID: DokkaSourceSetID
         val displayName: String
         val moduleDisplayName: String
-        val classpath: List<File>
-        val sourceRoots: List<SourceRoot>
+        val classpath: Set<File>
+        val sourceRoots: Set<File>
         val dependentSourceSets: Set<DokkaSourceSetID>
-        val samples: List<File>
-        val includes: List<File>
+        val samples: Set<File>
+        val includes: Set<File>
         val includeNonPublic: Boolean
         val includeRootPackage: Boolean
         val reportUndocumented: Boolean
         val skipEmptyPackages: Boolean
         val skipDeprecated: Boolean
         val jdkVersion: Int
-        val sourceLinks: List<SourceLinkDefinition>
+        val sourceLinks: Set<SourceLinkDefinition>
         val perPackageOptions: List<PackageOptions>
-        val externalDocumentationLinks: List<ExternalDocumentationLink>
+        val externalDocumentationLinks: Set<ExternalDocumentationLink>
         val languageVersion: String?
         val apiVersion: String?
         val noStdlibLink: Boolean
         val noJdkLink: Boolean
-        val suppressedFiles: List<File>
+        val suppressedFiles: Set<File>
         val analysisPlatform: Platform
-    }
-
-    interface SourceRoot : Serializable {
-        val directory: File
     }
 
     interface SourceLinkDefinition : Serializable {
