@@ -50,7 +50,7 @@ sealed class ModuleDependencyType(
         }.asSingletonList()
     }
 
-    open fun SettingsWriter.runArbitraryTask(
+    open fun Writer.runArbitraryTask(
         from: Module,
         to: Module,
         toModulePath: Path,
@@ -78,14 +78,15 @@ sealed class ModuleDependencyType(
         override fun createDependencyIrs(from: Module, to: Module, data: ModulesToIrConversionData): List<BuildSystemIR> =
             emptyList()
 
-        override fun SettingsWriter.runArbitraryTask(
+        override fun Writer.runArbitraryTask(
             from: Module,
             to: Module,
             toModulePath: Path,
             data: ModulesToIrConversionData
         ): TaskResult<Unit> = inContextOfModuleConfigurator(from) {
-            IOSSinglePlatformModuleConfigurator.dependentModule.reference
-                .setValue(IOSSinglePlatformModuleConfigurator.DependentModuleReference(to))
+            IOSSinglePlatformModuleConfigurator.dependentModule.reference.update {
+                IOSSinglePlatformModuleConfigurator.DependentModuleReference(to).asSuccess()
+            }
             val dummyFilePath = Defaults.SRC_DIR / "${to.iosTargetSafe()!!.name}Main" / to.configurator.kotlinDirectoryName / "dummyFile.kt"
             TemplatesPlugin.addFileTemplate.execute(
                 FileTemplate(
