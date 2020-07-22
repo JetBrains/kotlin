@@ -1,9 +1,5 @@
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
-
 plugins {
     base
-    id("com.github.jk1.tcdeps") version "1.2"
 }
 
 rootProject.apply {
@@ -11,8 +7,12 @@ rootProject.apply {
 }
 
 repositories {
-    teamcityServer {
-        setUrl("https://buildserver.labs.intellij.net")
+    ivy {
+        url = uri("https://buildserver.labs.intellij.net/guestAuth/repository/download")
+        patternLayout {
+            ivy("[module]/[revision]/teamcity-ivy.xml")
+            artifact("[module]/[revision]/[artifact](.[ext])")
+        }
     }
 }
 
@@ -26,9 +26,23 @@ val clionUnscrambledJar: Configuration by configurations.creating
 val appcodeUnscrambledJar: Configuration by configurations.creating
 
 dependencies {
-    clionUnscrambledJar(tc(clionUnscrambledJarArtifact))
+    clionUnscrambledJar(clionUnscrambledJarArtifact.substringBeforeLast(':')) {
+        val jar = clionUnscrambledJarArtifact.substringAfterLast(':')
+        artifact {
+            name = jar.substringBeforeLast(".")
+            type = "jar"
+            extension = "jar"
+        }
+    }
 
-    appcodeUnscrambledJar(tc(appcodeUnscrambledJarArtifact))
+    appcodeUnscrambledJar(appcodeUnscrambledJarArtifact.substringBeforeLast(':')) {
+        val jar = appcodeUnscrambledJarArtifact.substringAfterLast(':')
+        artifact {
+            name = jar.substringBeforeLast(".")
+            type = "jar"
+            extension = "jar"
+        }
+    }
 }
 
 val downloadCLionUnscrambledJar: Task by downloading(clionUnscrambledJar, clionUnscrambledJarDir)

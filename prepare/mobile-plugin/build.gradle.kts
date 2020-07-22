@@ -1,10 +1,7 @@
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import org.gradle.jvm.tasks.Jar
 
 plugins {
     kotlin("jvm")
-    id("com.github.jk1.tcdeps") version "1.2"
 }
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
@@ -24,8 +21,12 @@ repositories {
     if (isStandaloneBuild) {
         maven("https://dl.bintray.com/kotlin/kotlin-dev/")
     }
-    teamcityServer {
-        setUrl("https://buildserver.labs.intellij.net")
+    ivy {
+        url = uri("https://buildserver.labs.intellij.net/guestAuth/repository/download")
+        patternLayout {
+            ivy("[module]/[revision]/teamcity-ivy.xml")
+            artifact("[module]/[revision]/[artifact](.[ext])")
+        }
     }
 }
 
@@ -47,7 +48,13 @@ dependencies {
         exclude("com.google.guava", "guava")
     }
     runtime(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api")) { isTransitive = false }
-    runtime(tc("$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}:backend.native.jar"))
+    runtime("org:$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}") {
+        artifact {
+            name = "backend.native"
+            type = "jar"
+            extension = "jar"
+        }
+    }
 }
 
 val pluginJarTask: Task by tasks.named<Jar>("jar") {

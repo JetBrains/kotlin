@@ -1,17 +1,18 @@
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import org.gradle.jvm.tasks.Jar
 import java.net.URL
 import java.util.*
 
 plugins {
     kotlin("jvm")
-    id("com.github.jk1.tcdeps") version "1.2"
 }
 
 repositories {
-    teamcityServer {
-        setUrl("https://buildserver.labs.intellij.net")
+    ivy {
+        url = uri("https://buildserver.labs.intellij.net/guestAuth/repository/download")
+        patternLayout {
+            ivy("[module]/[revision]/teamcity-ivy.xml")
+            artifact("[module]/[revision]/[artifact](.[ext])")
+        }
     }
 }
 
@@ -46,7 +47,13 @@ dependencies {
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:appcode-native")) { isTransitive = false }
-    runtime(tc("$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}:backend.native.jar"))
+    runtime("org:$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}") {
+        artifact {
+            name = "backend.native"
+            type = "jar"
+            extension = "jar"
+        }
+    }
 }
 
 val copyRuntimeDeps: Task by tasks.creating(Copy::class) {

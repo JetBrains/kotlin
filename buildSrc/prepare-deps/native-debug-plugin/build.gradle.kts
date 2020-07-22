@@ -1,9 +1,6 @@
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 
 plugins {
     base
-    id("com.github.jk1.tcdeps") version "1.2"
 }
 
 rootProject.apply {
@@ -11,8 +8,12 @@ rootProject.apply {
 }
 
 repositories {
-    teamcityServer {
-        setUrl("https://buildserver.labs.intellij.net")
+    ivy {
+        url = uri("https://buildserver.labs.intellij.net/guestAuth/repository/download")
+        patternLayout {
+            ivy("[module]/[revision]/teamcity-ivy.xml")
+            artifact("[module]/[revision]/[artifact](.[ext])")
+        }
     }
 }
 
@@ -25,15 +26,21 @@ if (rootProject.extra.has("nativeDebugRepo")) {
 
 
     dependencies {
-        var urlPath = "IU-plugins/auto-uploading/nativeDebug-plugin.zip"
+        var urlPath = "IU-plugins/auto-uploading/nativeDebug-plugin"
 
         for (version in listOf("183", "191", "192")) {
             if (nativeDebugVersion.startsWith(version)) {
-                urlPath = "IU-plugins/nativeDebug-plugin.zip"
+                urlPath = "IU-plugins/nativeDebug-plugin"
             }
         }
 
-        nativeDebugPluginZip(tc("$nativeDebugRepo:$nativeDebugVersion:$urlPath"))
+        nativeDebugPluginZip("org:$nativeDebugRepo:$nativeDebugVersion") {
+            artifact {
+                name = urlPath
+                extension = "zip"
+                type = "zip"
+            }
+        }
     }
 
     val downloadNativeDebugPlugin: Task by downloading(

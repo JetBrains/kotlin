@@ -1,10 +1,8 @@
 
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
-    id("com.github.jk1.tcdeps") version "1.2"
     `java-test-fixtures`
 }
 
@@ -19,8 +17,12 @@ val ijProductBranch: (String) -> Int by ultimateTools
 proprietaryRepositories()
 
 repositories {
-    teamcityServer {
-        setUrl("https://buildserver.labs.intellij.net")
+    ivy {
+        url = uri("https://buildserver.labs.intellij.net/guestAuth/repository/download")
+        patternLayout {
+            ivy("[module]/[revision]/teamcity-ivy.xml")
+            artifact("[module]/[revision]/[artifact](.[ext])")
+        }
     }
     if (!isStandaloneBuild) {
         maven("https://jetbrains.bintray.com/markdown")

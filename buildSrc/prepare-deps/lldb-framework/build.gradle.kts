@@ -1,9 +1,6 @@
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 
 plugins {
     base
-    id("com.github.jk1.tcdeps") version "1.2"
 }
 
 rootProject.apply {
@@ -11,8 +8,12 @@ rootProject.apply {
 }
 
 repositories {
-    teamcityServer {
-        setUrl("https://buildserver.labs.intellij.net")
+    ivy {
+        url = uri("https://buildserver.labs.intellij.net/guestAuth/repository/download")
+        patternLayout {
+            ivy("[module]/[revision]/teamcity-ivy.xml")
+            artifact("[module]/[revision]/[artifact](.[ext])")
+        }
     }
 }
 
@@ -24,7 +25,13 @@ if (rootProject.extra.has("lldbFrameworkRepo")) {
     val lldbFrameworkZip: Configuration by configurations.creating
 
     dependencies {
-        lldbFrameworkZip(tc("$lldbFrameworkRepo:$lldbFrameworkVersion:LLDB.framework.tar.gz"))
+        lldbFrameworkZip("org:$lldbFrameworkRepo:$lldbFrameworkVersion") {
+            artifact {
+                name = "LLDB.framework.tar"
+                type = "gz"
+                extension = "gz"
+            }
+        }
     }
 
     val downloadLldbFramework: Task by downloading(

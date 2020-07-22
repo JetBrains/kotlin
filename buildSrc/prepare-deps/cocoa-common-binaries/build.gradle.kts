@@ -1,9 +1,6 @@
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 
 plugins {
     base
-    id("com.github.jk1.tcdeps") version "1.2"
 }
 
 rootProject.apply {
@@ -12,12 +9,17 @@ rootProject.apply {
 }
 
 repositories {
-    teamcityServer {
-        setUrl("https://buildserver.labs.intellij.net")
+    ivy {
+        url = uri("https://buildserver.labs.intellij.net/guestAuth/repository/download")
+        patternLayout {
+            ivy("[module]/[revision]/teamcity-ivy.xml")
+            artifact("[module]/[revision]/[artifact](.[ext])")
+        }
     }
 }
 
 val clionVersion: String by rootProject.extra
+val clionCocoaCommonModule: String by rootProject.extra
 val clionCocoaCommonArtifacts: List<String> by rootProject.extra
 val clionCocoaCommonBinariesDir: File by rootProject.extra
 val clionCocoaCommonBinaries: Configuration by configurations.creating
@@ -26,7 +28,15 @@ val ultimateTools: Map<String, Any> by rootProject.extensions
 val handleSymlink: (FileCopyDetails, File) -> Boolean by ultimateTools
 
 dependencies {
-    clionCocoaCommonArtifacts.forEach { clionCocoaCommonBinaries(tc(it)) }
+    clionCocoaCommonArtifacts.forEach {
+        clionCocoaCommonBinaries(clionCocoaCommonModule) {
+            artifact {
+                name = it.substringBeforeLast('.')
+                extension = it.substringAfterLast('.')
+                type = it.substringAfterLast('.')
+            }
+        }
+    }
 }
 
 val downloadCLionCocoaCommonBinaries: Task by downloading(
