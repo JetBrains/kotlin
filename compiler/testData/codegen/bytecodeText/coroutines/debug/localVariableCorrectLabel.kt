@@ -17,10 +17,9 @@ suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 // label numbers differ in BEs
 
 // JVM_TEMPLATES
-// 1 LOCALVARIABLE a I L[0-9]+ L20
-// 1 LINENUMBER 9 L20
+// 1 LOCALVARIABLE a I L[0-9]+ L18
+// 1 LINENUMBER 9 L19
 
 /* TODO: JVM_IR does not generate LINENUMBER at the end of the lambda */
 // JVM_IR_TEMPLATES
-// 1 LOCALVARIABLE a I L[0-9]+ L5
-// 1 LINENUMBER 8 L14
+// 1 LOCALVARIABLE a I L[0-9]+ L16

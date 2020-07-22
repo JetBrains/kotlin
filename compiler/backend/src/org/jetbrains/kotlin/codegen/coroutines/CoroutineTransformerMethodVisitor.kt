@@ -132,6 +132,8 @@ class CoroutineTransformerMethodVisitor(
 
         UninitializedStoresProcessor(methodNode, shouldPreserveClassInitialization).run()
 
+        updateLvtAccordingToLiveness(methodNode)
+
         val spilledToVariableMapping = spillVariables(suspensionPoints, methodNode)
 
         val suspendMarkerVarIndex = methodNode.maxLocals++
@@ -182,14 +184,6 @@ class CoroutineTransformerMethodVisitor(
 
         dropSuspensionMarkers(methodNode)
         methodNode.removeEmptyCatchBlocks()
-
-        // The parameters (and 'this') shall live throughout the method, otherwise, d8 emits warning about invalid debug info
-        val startLabel = LabelNode()
-        val endLabel = LabelNode()
-        methodNode.instructions.insertBefore(methodNode.instructions.first, startLabel)
-        methodNode.instructions.insert(methodNode.instructions.last, endLabel)
-
-        fixLvtForParameters(methodNode, startLabel, endLabel)
 
         if (languageVersionSettings.isReleaseCoroutines()) {
             writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
@@ -311,31 +305,10 @@ class CoroutineTransformerMethodVisitor(
         }
     }
 
-    private fun fixLvtForParameters(methodNode: MethodNode, startLabel: LabelNode, endLabel: LabelNode) {
-        val paramsNum =
-                /* this */ (if (isStatic(methodNode.access)) 0 else 1) +
-                /* real params */ Type.getArgumentTypes(methodNode.desc).fold(0) { a, b -> a + b.size }
-
-        for (i in 0 until paramsNum) {
-            fixRangeOfLvtRecord(methodNode, i, startLabel, endLabel)
-        }
-    }
-
-    private fun fixRangeOfLvtRecord(methodNode: MethodNode, index: Int, startLabel: LabelNode, endLabel: LabelNode) {
-        val vars = methodNode.localVariables.filter { it.index == index }
-        assert(vars.size <= 1) {
-            "Someone else occupies parameter's slot at $index"
-        }
-        vars.firstOrNull()?.let {
-            it.start = startLabel
-            it.end = endLabel
-        }
-    }
-
     private fun writeDebugMetadata(
         methodNode: MethodNode,
         suspensionPointLineNumbers: List<LineNumberNode?>,
-        spilledToLocalMapping: List<List<SpilledVariableDescriptor>>
+        spilledToLocalMapping: List<List<SpilledVariableAndField>>
     ) {
         val lines = suspensionPointLineNumbers.map { it?.line ?: -1 }
         val metadata = classBuilderForCoroutineState.newAnnotation(DEBUG_METADATA_ANNOTATION_ASM_TYPE.descriptor, true)
@@ -590,7 +563,7 @@ class CoroutineTransformerMethodVisitor(
         }
     }
 
-    private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableDescriptor>> {
+    private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableAndField>> {
         val instructions = methodNode.instructions
         val frames =
             if (useOldSpilledVarTypeAnalysis) performRefinedTypeAnalysis(methodNode, containingClassInternalName)
@@ -602,7 +575,7 @@ class CoroutineTransformerMethodVisitor(
         val postponedActions = mutableListOf<() -> Unit>()
         val maxVarsCountByType = mutableMapOf<Type, Int>()
         val livenessFrames = analyzeLiveness(methodNode)
-        val spilledToVariableMapping = arrayListOf<List<SpilledVariableDescriptor>>()
+        val spilledToVariableMapping = arrayListOf<List<SpilledVariableAndField>>()
 
         for (suspension in suspensionPoints) {
             val suspensionCallBegin = suspension.suspensionCallBegin
@@ -629,7 +602,7 @@ class CoroutineTransformerMethodVisitor(
             // NB: it's also rather useful for sake of optimization
             val livenessFrame = livenessFrames[suspensionCallBegin.index()]
 
-            val spilledToVariable = arrayListOf<SpilledVariableDescriptor>()
+            val spilledToVariable = arrayListOf<SpilledVariableAndField>()
 
             // 0 - this
             // 1 - parameter
@@ -667,7 +640,7 @@ class CoroutineTransformerMethodVisitor(
 
                 val fieldName = normalizedType.fieldNameForVar(indexBySort)
                 localVariableName(methodNode, index, suspension.suspensionCallEnd.next.index())
-                    ?.let { spilledToVariable.add(SpilledVariableDescriptor(fieldName, it)) }
+                    ?.let { spilledToVariable.add(SpilledVariableAndField(fieldName, it)) }
 
                 postponedActions.add {
                     with(instructions) {
@@ -888,7 +861,7 @@ class CoroutineTransformerMethodVisitor(
         return
     }
 
-    private data class SpilledVariableDescriptor(val fieldName: String, val variableName: String)
+    private data class SpilledVariableAndField(val fieldName: String, val variableName: String)
 }
 
 internal fun InstructionAdapter.generateContinuationConstructorCall(
