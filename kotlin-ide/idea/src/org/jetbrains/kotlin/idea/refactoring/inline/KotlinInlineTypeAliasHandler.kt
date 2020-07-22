@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
-import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
@@ -44,9 +43,9 @@ class KotlinInlineTypeAliasHandler : KotlinInlineActionHandler() {
         CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, null)
     }
 
-    override fun canInlineElement(element: PsiElement?) = element is KtTypeAlias
+    override fun canInlineKotlinElement(element: KtElement): Boolean = element is KtTypeAlias
 
-    override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {
+    override fun inlineKotlinElement(project: Project, editor: Editor?, element: KtElement) {
         val typeAlias = element as? KtTypeAlias ?: return
         val name = typeAlias.name ?: return
         val aliasBody = typeAlias.getTypeReference() ?: return

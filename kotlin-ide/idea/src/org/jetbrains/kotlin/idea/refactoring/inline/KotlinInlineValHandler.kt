@@ -46,11 +46,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActionHandler() {
     constructor() : this(withPrompt = true)
 
-    override fun canInlineElement(element: PsiElement): Boolean {
-        return element is KtProperty && element.name != null
-    }
+    override fun canInlineKotlinElement(element: KtElement): Boolean = element is KtProperty && element.name != null
 
-    override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {
+    override fun inlineKotlinElement(project: Project, editor: Editor?, element: KtElement) {
         val declaration = element as KtProperty
         val name = declaration.name!!
 
