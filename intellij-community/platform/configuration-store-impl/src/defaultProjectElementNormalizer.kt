@@ -105,7 +105,7 @@ internal fun moveComponentConfiguration(defaultProject: Project,
 
     when (storagePath) {
       StoragePathMacros.WORKSPACE_FILE -> workspaceComponentNames.add(stateAnnotation.name)
-      StoragePathMacros.PRODUCT_WORKSPACE_FILE -> {
+      StoragePathMacros.PRODUCT_WORKSPACE_FILE, StoragePathMacros.CACHE_FILE -> {
         // ignore - this data should be not copied
         ignoredComponentNames.add(stateAnnotation.name)
       }
