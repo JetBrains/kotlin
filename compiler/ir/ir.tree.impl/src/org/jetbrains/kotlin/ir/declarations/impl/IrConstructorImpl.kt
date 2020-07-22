@@ -38,7 +38,7 @@ class IrConstructorImpl(
     override val isExternal: Boolean,
     override val isPrimary: Boolean,
     override val isExpect: Boolean,
-) : IrConstructor {
+) : IrConstructor() {
     init {
         symbol.bind(this)
     }

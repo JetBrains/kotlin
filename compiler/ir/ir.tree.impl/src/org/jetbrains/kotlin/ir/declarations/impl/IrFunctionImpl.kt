@@ -32,7 +32,7 @@ abstract class IrFunctionCommonImpl(
     override val isOperator: Boolean,
     override val isInfix: Boolean,
     override val isExpect: Boolean,
-) : IrSimpleFunction {
+) : IrSimpleFunction() {
     override val factory: IrFactory
         get() = IrFactoryImpl
 

@@ -38,7 +38,7 @@ class IrFieldImpl(
     override val isFinal: Boolean,
     override val isExternal: Boolean,
     override val isStatic: Boolean,
-) : IrField {
+) : IrField() {
     init {
         symbol.bind(this)
     }

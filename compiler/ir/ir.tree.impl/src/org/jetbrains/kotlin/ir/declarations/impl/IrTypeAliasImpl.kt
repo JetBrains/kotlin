@@ -23,7 +23,7 @@ class IrTypeAliasImpl(
     override val expandedType: IrType,
     override val isActual: Boolean,
     override var origin: IrDeclarationOrigin
-) : IrTypeAlias {
+) : IrTypeAlias() {
     init {
         symbol.bind(this)
     }

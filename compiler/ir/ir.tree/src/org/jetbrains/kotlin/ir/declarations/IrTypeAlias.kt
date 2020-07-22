@@ -13,17 +13,17 @@ import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrTypeAlias :
+abstract class IrTypeAlias :
     IrSymbolDeclaration<IrTypeAliasSymbol>,
     IrDeclarationWithName,
     IrDeclarationWithVisibility,
     IrTypeParametersContainer {
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: TypeAliasDescriptor
+    abstract override val descriptor: TypeAliasDescriptor
 
-    val isActual: Boolean
-    val expandedType: IrType
+    abstract val isActual: Boolean
+    abstract val expandedType: IrType
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeAlias(this, data)

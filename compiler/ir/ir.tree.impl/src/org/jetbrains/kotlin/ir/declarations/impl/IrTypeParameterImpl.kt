@@ -38,7 +38,7 @@ class IrTypeParameterImpl(
     override val index: Int,
     override val isReified: Boolean,
     override val variance: Variance
-) : IrTypeParameter {
+) : IrTypeParameter() {
     init {
         symbol.bind(this)
     }

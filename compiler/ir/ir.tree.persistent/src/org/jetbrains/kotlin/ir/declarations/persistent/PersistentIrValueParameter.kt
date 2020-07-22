@@ -41,9 +41,8 @@ internal class PersistentIrValueParameter(
     override val varargElementType: IrType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean
-) :
+) : IrValueParameter(),
     PersistentIrDeclarationBase<ValueParameterCarrier>,
-    IrValueParameter,
     ValueParameterCarrier {
 
     @ObsoleteDescriptorBasedAPI

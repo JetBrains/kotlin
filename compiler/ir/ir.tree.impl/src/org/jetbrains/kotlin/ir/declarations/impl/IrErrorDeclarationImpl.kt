@@ -29,7 +29,7 @@ class IrErrorDeclarationImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override val descriptor: DeclarationDescriptor
-) : IrErrorDeclaration {
+) : IrErrorDeclaration() {
     override var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
 
     override val factory: IrFactory

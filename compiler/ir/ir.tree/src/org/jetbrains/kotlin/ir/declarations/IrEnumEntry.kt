@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrEnumEntry : IrSymbolDeclaration<IrEnumEntrySymbol>, IrDeclarationWithName {
+abstract class IrEnumEntry : IrSymbolDeclaration<IrEnumEntrySymbol>, IrDeclarationWithName {
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor
+    abstract override val descriptor: ClassDescriptor
 
-    var correspondingClass: IrClass?
-    var initializerExpression: IrExpressionBody?
+    abstract var correspondingClass: IrClass?
+    abstract var initializerExpression: IrExpressionBody?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitEnumEntry(this, data)

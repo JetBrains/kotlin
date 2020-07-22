@@ -38,7 +38,7 @@ class IrLazyClass(
     override val isFun: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator
-) : IrClass, IrLazyDeclarationBase {
+) : IrClass(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }

@@ -36,7 +36,7 @@ class IrLazyField(
     override val isStatic: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrField, IrLazyDeclarationBase {
+) : IrField(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }

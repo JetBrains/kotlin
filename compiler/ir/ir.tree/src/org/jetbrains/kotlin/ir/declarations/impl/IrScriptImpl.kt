@@ -23,7 +23,7 @@ private val SCRIPT_ORIGIN = object : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_I
 class IrScriptImpl(
     override val symbol: IrScriptSymbol,
     override val name: Name
-) : IrScript, IrDeclaration {
+) : IrScript() {
     override val startOffset: Int get() = UNDEFINED_OFFSET
     override val endOffset: Int get() = UNDEFINED_OFFSET
     override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN
@@ -44,7 +44,8 @@ class IrScriptImpl(
     override lateinit var thisReceiver: IrValueParameter
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: ScriptDescriptor = symbol.descriptor
+    override val descriptor: ScriptDescriptor
+        get() = symbol.descriptor
 
     override val factory: IrFactory
         get() = error("Create IrScriptImpl directly")

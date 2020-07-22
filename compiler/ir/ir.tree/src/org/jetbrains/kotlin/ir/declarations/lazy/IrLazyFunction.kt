@@ -41,7 +41,7 @@ class IrLazyFunction(
     override val isInfix: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrSimpleFunction, IrLazyFunctionBase {
+) : IrSimpleFunction(), IrLazyFunctionBase {
     override var parent: IrDeclarationParent by createLazyParent()
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

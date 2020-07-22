@@ -32,7 +32,7 @@ class IrAnonymousInitializerImpl(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrAnonymousInitializerSymbol,
     override val isStatic: Boolean = false
-) : IrAnonymousInitializer {
+) : IrAnonymousInitializer() {
     init {
         symbol.bind(this)
     }

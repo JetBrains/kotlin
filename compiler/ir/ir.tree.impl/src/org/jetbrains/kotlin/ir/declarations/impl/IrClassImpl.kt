@@ -41,7 +41,7 @@ class IrClassImpl(
     override val isExpect: Boolean = false,
     override val isFun: Boolean = false,
     override val source: SourceElement = SourceElement.NO_SOURCE
-) : IrClass {
+) : IrClass() {
     init {
         symbol.bind(this)
     }

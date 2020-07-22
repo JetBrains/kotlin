@@ -40,9 +40,8 @@ internal class PersistentIrConstructor(
     override val isExternal: Boolean,
     override val isPrimary: Boolean,
     override val isExpect: Boolean
-) :
+) : IrConstructor(),
     PersistentIrDeclarationBase<ConstructorCarrier>,
-    IrConstructor,
     ConstructorCarrier {
 
     init {

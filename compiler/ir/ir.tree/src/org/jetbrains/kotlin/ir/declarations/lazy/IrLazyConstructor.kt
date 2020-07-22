@@ -33,7 +33,7 @@ class IrLazyConstructor(
     override val isExpect: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrConstructor, IrLazyFunctionBase {
+) : IrConstructor(), IrLazyFunctionBase {
     override var parent: IrDeclarationParent by createLazyParent()
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

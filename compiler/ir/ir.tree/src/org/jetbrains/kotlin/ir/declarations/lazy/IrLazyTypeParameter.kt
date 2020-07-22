@@ -29,7 +29,7 @@ class IrLazyTypeParameter(
     override val variance: Variance,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrTypeParameter, IrLazyDeclarationBase {
+) : IrTypeParameter(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }

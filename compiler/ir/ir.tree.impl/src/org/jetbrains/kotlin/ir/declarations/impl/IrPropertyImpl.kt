@@ -38,7 +38,7 @@ abstract class IrPropertyCommonImpl(
     override val isDelegated: Boolean,
     override val isExternal: Boolean,
     override val isExpect: Boolean,
-) : IrProperty {
+) : IrProperty() {
     override val factory: IrFactory
         get() = IrFactoryImpl
 

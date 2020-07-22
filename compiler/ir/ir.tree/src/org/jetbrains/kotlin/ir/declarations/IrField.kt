@@ -14,21 +14,21 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrField :
+abstract class IrField :
     IrSymbolDeclaration<IrFieldSymbol>,
     IrDeclarationWithName, IrDeclarationWithVisibility, IrDeclarationParent, IrMetadataSourceOwner {
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor
+    abstract override val descriptor: PropertyDescriptor
 
-    val type: IrType
-    val isFinal: Boolean
-    val isExternal: Boolean
-    val isStatic: Boolean
+    abstract val type: IrType
+    abstract val isFinal: Boolean
+    abstract val isExternal: Boolean
+    abstract val isStatic: Boolean
 
-    var initializer: IrExpressionBody?
+    abstract var initializer: IrExpressionBody?
 
-    var correspondingPropertySymbol: IrPropertySymbol?
+    abstract var correspondingPropertySymbol: IrPropertySymbol?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitField(this, data)

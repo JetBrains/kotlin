@@ -28,7 +28,7 @@ class IrLazyTypeAlias(
     override val isActual: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrTypeAlias, IrLazyDeclarationBase {
+) : IrTypeAlias(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }

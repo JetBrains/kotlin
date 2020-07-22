@@ -34,9 +34,8 @@ internal abstract class PersistentIrFunctionCommon(
     override val isOperator: Boolean,
     override val isInfix: Boolean,
     override val isExpect: Boolean,
-) :
+) : IrSimpleFunction(),
     PersistentIrDeclarationBase<FunctionCarrier>,
-    IrSimpleFunction,
     FunctionCarrier {
 
     override var lastModified: Int = stageController.currentStage

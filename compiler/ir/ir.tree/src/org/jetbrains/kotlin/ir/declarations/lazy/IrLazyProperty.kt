@@ -38,7 +38,7 @@ class IrLazyProperty(
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
     bindingContext: BindingContext? = null
-) : IrProperty, IrLazyDeclarationBase {
+) : IrProperty(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }

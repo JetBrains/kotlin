@@ -24,16 +24,16 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrValueParameter : IrValueDeclaration, IrSymbolDeclaration<IrValueParameterSymbol> {
+abstract class IrValueParameter : IrValueDeclaration(), IrSymbolDeclaration<IrValueParameterSymbol> {
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: ParameterDescriptor
+    abstract override val descriptor: ParameterDescriptor
 
-    val index: Int
-    val varargElementType: IrType?
-    val isCrossinline: Boolean
-    val isNoinline: Boolean
+    abstract val index: Int
+    abstract val varargElementType: IrType?
+    abstract val isCrossinline: Boolean
+    abstract val isNoinline: Boolean
 
-    var defaultValue: IrExpressionBody?
+    abstract var defaultValue: IrExpressionBody?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitValueParameter(this, data)

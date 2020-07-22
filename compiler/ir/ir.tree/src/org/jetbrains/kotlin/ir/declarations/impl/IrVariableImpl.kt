@@ -40,8 +40,7 @@ class IrVariableImpl(
     override val isVar: Boolean,
     override val isConst: Boolean,
     override val isLateinit: Boolean
-) : IrVariable {
-
+) : IrVariable() {
     private var _parent: IrDeclarationParent? = null
     override var parent: IrDeclarationParent
         get() = _parent
@@ -57,7 +56,8 @@ class IrVariableImpl(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: VariableDescriptor get() = symbol.descriptor
+    override val descriptor: VariableDescriptor
+        get() = symbol.descriptor
 
     override var initializer: IrExpression? = null
 

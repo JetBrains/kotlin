@@ -32,7 +32,7 @@ class Fir2IrLazyProperty(
     override val fir: FirProperty,
     override val symbol: Fir2IrPropertySymbol,
     override val isFakeOverride: Boolean
-) : IrProperty, AbstractFir2IrLazyDeclaration<FirProperty, IrProperty>, Fir2IrComponents by components {
+) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty, IrProperty>, Fir2IrComponents by components {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)

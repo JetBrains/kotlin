@@ -32,7 +32,7 @@ class IrLocalDelegatedPropertyImpl(
     override val name: Name,
     override val type: IrType,
     override val isVar: Boolean
-) : IrLocalDelegatedProperty {
+) : IrLocalDelegatedProperty() {
     init {
         symbol.bind(this)
     }

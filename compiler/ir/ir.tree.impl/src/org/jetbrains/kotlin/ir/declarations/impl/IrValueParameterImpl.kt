@@ -39,7 +39,7 @@ class IrValueParameterImpl(
     override val varargElementType: IrType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean
-) : IrValueParameter {
+) : IrValueParameter() {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ParameterDescriptor
         get() = symbol.descriptor

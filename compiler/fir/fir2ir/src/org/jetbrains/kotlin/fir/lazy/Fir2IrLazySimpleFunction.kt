@@ -33,7 +33,7 @@ class Fir2IrLazySimpleFunction(
     firParent: FirRegularClass,
     override val symbol: Fir2IrSimpleFunctionSymbol,
     override val isFakeOverride: Boolean
-) : IrSimpleFunction, AbstractFir2IrLazyDeclaration<FirSimpleFunction, IrSimpleFunction>, Fir2IrComponents by components {
+) : IrSimpleFunction(), AbstractFir2IrLazyDeclaration<FirSimpleFunction, IrSimpleFunction>, Fir2IrComponents by components {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)

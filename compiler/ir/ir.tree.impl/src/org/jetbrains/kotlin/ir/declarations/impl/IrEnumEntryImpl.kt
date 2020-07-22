@@ -30,7 +30,7 @@ class IrEnumEntryImpl(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrEnumEntrySymbol,
     override val name: Name
-) : IrEnumEntry {
+) : IrEnumEntry() {
     init {
         symbol.bind(this)
     }

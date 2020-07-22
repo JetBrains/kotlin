@@ -23,21 +23,21 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrLocalDelegatedProperty :
+abstract class IrLocalDelegatedProperty :
     IrDeclarationWithName,
     IrSymbolOwner,
     IrMetadataSourceOwner {
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: VariableDescriptorWithAccessors
-    override val symbol: IrLocalDelegatedPropertySymbol
+    abstract override val descriptor: VariableDescriptorWithAccessors
+    abstract override val symbol: IrLocalDelegatedPropertySymbol
 
-    val type: IrType
-    val isVar: Boolean
+    abstract val type: IrType
+    abstract val isVar: Boolean
 
-    var delegate: IrVariable
-    var getter: IrFunction
-    var setter: IrFunction?
+    abstract var delegate: IrVariable
+    abstract var getter: IrFunction
+    abstract var setter: IrFunction?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedProperty(this, data)
