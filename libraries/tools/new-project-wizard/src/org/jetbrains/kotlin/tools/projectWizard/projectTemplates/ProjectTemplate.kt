@@ -103,7 +103,7 @@ class TemplateSettingsBuilder<Q : Template>(
 class ConfiguratorSettingsBuilder<C : ModuleConfigurator>(
     val module: Module,
     val configurator: C
-) : ModuleConfiguratorSettingsEnvironment by ModuleBasedConfiguratorSettingsEnvironment(configurator, module) {
+) : ModuleConfiguratorContext by ModuleBasedConfiguratorContext(configurator, module) {
     init {
         assert(module.configurator === configurator)
     }

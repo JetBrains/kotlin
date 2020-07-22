@@ -6,18 +6,15 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
-import com.intellij.ide.impl.NewProjectUtil
 import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.jarRepository.JarRepositoryManager
 import com.intellij.jarRepository.RemoteRepositoryDescription
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.module.ModuleTypeId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.libraries.ui.OrderRoot
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.idea.maven.utils.library.RepositoryLibraryProperties
@@ -41,7 +38,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBui
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JvmModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.withSettingsOf
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.inContextOfModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import java.nio.file.Path
 import java.util.*
@@ -116,7 +113,7 @@ private class JpsModuleConfigurationUpdater(
     }
 
     private fun ModuleIR.jvmTarget() = reader {
-        withSettingsOf(originalModule) {
+        inContextOfModuleConfigurator(originalModule) {
             JvmModuleConfigurator.targetJvmVersion.reference.settingValue
         }
     }

@@ -140,7 +140,7 @@ object AndroidTargetConfigurator : TargetConfigurator,
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.android")
 
     override fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin =
-        withSettingsOf(module) { androidPlugin.reference.settingValue }
+        inContextOfModuleConfigurator(module) { androidPlugin.reference.settingValue }
 
     override fun getConfiguratorSettings() = buildList<ModuleConfiguratorSetting<*, *>> {
         +super.getConfiguratorSettings()

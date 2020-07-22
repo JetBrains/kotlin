@@ -3,6 +3,9 @@ package org.jetbrains.kotlin.tools.projectWizard.core
 import org.jetbrains.kotlin.tools.projectWizard.PropertiesOwner
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PluginProperty
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.Property
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PropertyBuilder
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase

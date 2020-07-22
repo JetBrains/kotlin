@@ -76,6 +76,7 @@ class Module(
 
     fun SettingsWriter.initDefaultValuesForSettings() {
         configurator.safeAs<ModuleConfiguratorWithSettings>()?.apply { initDefaultValuesFor(this@Module) }
+        configurator.safeAs<ModuleConfiguratorWithProperties>()?.apply { initDefaultValuesForProperties(this@Module) }
         template?.apply { initDefaultValuesFor(this@Module) }
     }
 
@@ -114,7 +115,7 @@ class Module(
         }
 
         val moduleConfiguratorValidator = settingValidator<Module> { module ->
-            withSettingsOf(module) {
+            inContextOfModuleConfigurator(module) {
                 allSettingsOfModuleConfigurator(module.configurator).map { setting ->
                     val reference = when (setting) {
                         is PluginSetting<Any, SettingType<Any>> -> setting.reference

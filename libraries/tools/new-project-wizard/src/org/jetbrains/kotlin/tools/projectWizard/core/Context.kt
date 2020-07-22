@@ -1,6 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PluginProperty
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PluginPropertyReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PropertyContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PropertyReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.core.service.SettingSavingWizardService
@@ -109,7 +113,14 @@ class Context private constructor(
         fun <S : WizardService> serviceByClass(klass: KClass<S>, filter: (S) -> Boolean = { true }): S =
             servicesManager.serviceByClass(klass, filter) ?: error("Service ${klass.simpleName} was not found")
 
+
+        val <T : Any> PluginProperty<T>.reference: PluginPropertyReference<T>
+            get() = PluginPropertyReference(this)
+
         val <T : Any> PluginProperty<T>.propertyValue: T
+            get() = propertyContext[this] ?: error("No value is present for property `$this`")
+
+        val <T : Any> PropertyReference<T>.propertyValue: T
             get() = propertyContext[this] ?: error("No value is present for property `$this`")
 
         val <V : Any, T : SettingType<V>> SettingReference<V, T>.settingValue: V
@@ -171,6 +182,10 @@ class Context private constructor(
 
         fun <T : Any> PluginProperty<T>.update(
             updater: suspend ComputeContext<*>.(T) -> TaskResult<T>
+        ): TaskResult<Unit> = reference.update(updater)
+
+        fun <T : Any> PropertyReference<T>.update(
+            updater: suspend ComputeContext<*>.(T) -> TaskResult<T>
         ): TaskResult<Unit> = compute {
             val (newValue) = updater(propertyValue)
             propertyContext[this@update] = newValue
@@ -182,6 +197,10 @@ class Context private constructor(
 
         fun <T : Any> PluginProperty<List<T>>.addValues(
             values: List<T>
+        ): TaskResult<Unit> = reference.addValues(values)
+
+        fun <T : Any> PropertyReference<List<T>>.addValues(
+            values: List<T>
         ): TaskResult<Unit> = update { oldValues -> success(oldValues + values) }
 
         @JvmName("write")
@@ -191,6 +210,10 @@ class Context private constructor(
     open inner class SettingsWriter : Writer() {
         fun <V : Any, T : SettingType<V>> SettingReference<V, T>.setValue(newValue: V) {
             settingContext[this] = newValue
+        }
+
+        fun <V : Any> PropertyReference<V>.initDefaultValue(newValue: V) {
+            propertyContext[this] = property.defaultValue
         }
 
         fun <V : Any, T : SettingType<V>> SettingReference<V, T>.setSettingValueToItsDefaultIfItIsNotSetValue() {
