@@ -197,6 +197,8 @@ public class DefaultErrorMessages {
             switch (target) {
                 case NON_KOTLIN_FUNCTION:
                     return "non-Kotlin functions";
+                case INTEROP_FUNCTION:
+                    return "interop functions with ambiguous parameter names";
                 case INVOKE_ON_FUNCTION_TYPE:
                     return "function types";
                 case EXPECTED_CLASS_MEMBER:

@@ -714,7 +714,8 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, BadNamedArgumentsTarget> NAMED_ARGUMENTS_NOT_ALLOWED = DiagnosticFactory1.create(ERROR);
 
     enum BadNamedArgumentsTarget {
-        NON_KOTLIN_FUNCTION,
+        NON_KOTLIN_FUNCTION, // a function provided by non-Kotlin artifact, ex: Java function
+        INTEROP_FUNCTION, // deserialized Kotlin function that serves as a bridge to a function written in another language, ex: Obj-C
         INVOKE_ON_FUNCTION_TYPE,
         EXPECTED_CLASS_MEMBER,
     }

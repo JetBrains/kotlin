@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.components.ArgumentsUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 
 import java.util.*;
 
@@ -185,10 +186,16 @@ public class ValueArgumentsToParametersMapper {
                         report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference, EXPECTED_CLASS_MEMBER));
                     }
                     else if (!candidate.hasStableParameterNames()) {
-                        report(NAMED_ARGUMENTS_NOT_ALLOWED.on(
-                                nameReference,
-                                candidate instanceof FunctionInvokeDescriptor ? INVOKE_ON_FUNCTION_TYPE : NON_KOTLIN_FUNCTION
-                        ));
+                        BadNamedArgumentsTarget badNamedArgumentsTarget;
+                        if (candidate instanceof FunctionInvokeDescriptor) {
+                            badNamedArgumentsTarget = INVOKE_ON_FUNCTION_TYPE;
+                        } else if (candidate instanceof DeserializedCallableMemberDescriptor) {
+                            badNamedArgumentsTarget = INTEROP_FUNCTION;
+                        } else {
+                            badNamedArgumentsTarget = NON_KOTLIN_FUNCTION;
+                        }
+
+                        report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference, badNamedArgumentsTarget));
                     }
                 }
 

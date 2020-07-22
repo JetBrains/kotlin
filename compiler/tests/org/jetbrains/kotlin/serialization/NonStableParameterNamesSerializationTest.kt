@@ -51,7 +51,7 @@ class NonStableParameterNamesSerializationTest : TestCaseWithTmpdir() {
     companion object {
         private const val SOURCE_FILE = "compiler/testData/serialization/nonStableParameterNames/test.kt"
 
-        private fun collectCallablesForPatch(module: ModuleDescriptorImpl): List<FunctionDescriptorImpl> {
+        fun collectCallablesForPatch(module: ModuleDescriptorImpl): List<FunctionDescriptorImpl> {
             fun DeclarationDescriptor.castToFunctionImpl(): FunctionDescriptorImpl =
                 assertedCast { "Not an instance of ${FunctionDescriptorImpl::class.java}: ${this::class.java}, $this" }
 
