@@ -4,7 +4,7 @@ import kotlin.properties.Delegates
 
 fun withAnnotation(p: List<Any>) {
     @Suppress("UNCHECKED_CAST")
-    <!CAN_BE_VAL!>var<!> v = p as <!REDUNDANT_EXPLICIT_TYPE!>List<String><!>
+    <!CAN_BE_VAL!>var<!> v = p as List<String>
     print(v)
 }
 

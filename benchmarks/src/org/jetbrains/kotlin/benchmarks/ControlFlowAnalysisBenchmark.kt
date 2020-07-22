@@ -12,9 +12,8 @@ import java.util.concurrent.TimeUnit
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-open class ControlFlowAnalysisBenchmark : AbstractSimpleFileBenchmark(){
-
-    @Param("1")
+open class ControlFlowAnalysisBenchmark : AbstractSimpleFileBenchmark() {
+    @Param("1000")
     private var size: Int = 0
 
     @Benchmark
@@ -25,14 +24,12 @@ open class ControlFlowAnalysisBenchmark : AbstractSimpleFileBenchmark(){
     override fun buildText() =
         buildString {
             appendLine("fun test() {")
-            for (i in 0..size) {
+            for (i in 0..100) {
                 appendLine("for (i$i in 0..10) { ")
             }
-            for (i in 0..size) {
+            for (i in 0..100) {
                 appendLine("}")
             }
             appendLine("}")
         }
-
-
 }
