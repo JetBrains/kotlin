@@ -403,7 +403,7 @@ object NodeJsApplicationProjectTemplate : ProjectTemplate() {
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
-            KotlinPlugin::modules withValue listOf(
+            KotlinPlugin.modules.reference withValue listOf(
                 Module(
                     "nodejsApp",
                     NodeJsSinglePlatformModuleConfigurator,

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.checker
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.Property
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
+import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.allIRModules
@@ -58,7 +59,7 @@ class AndroidPlugin(context: Context) : Plugin(context) {
                 if (allIRModules.none { it.originalModule.configurator is AndroidModuleConfigurator }) return@withAction UNIT_SUCCESS
                 val path = androidSdkPath.settingValue
                 val fileSystemService = service<FileSystemWizardService>()
-            GradlePlugin.localProperties.addValues(
+                GradlePlugin.localProperties.addValues(
                     "sdk.dir" to fileSystemService.renderPath(path)
                 )
             }
