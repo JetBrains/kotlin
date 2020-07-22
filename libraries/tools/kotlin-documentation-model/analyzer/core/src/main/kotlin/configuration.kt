@@ -16,7 +16,6 @@ object DokkaDefaults {
     const val failOnWarning: Boolean = false
 
     const val includeNonPublic: Boolean = false
-    const val includeRootPackage: Boolean = false
     const val reportUndocumented: Boolean = false
     const val skipEmptyPackages: Boolean = true
     const val skipDeprecated: Boolean = false
@@ -92,7 +91,6 @@ interface DokkaConfiguration : Serializable {
         val samples: Set<File>
         val includes: Set<File>
         val includeNonPublic: Boolean
-        val includeRootPackage: Boolean
         val reportUndocumented: Boolean
         val skipEmptyPackages: Boolean
         val skipDeprecated: Boolean
