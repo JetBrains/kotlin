@@ -28,7 +28,6 @@ interface IrExpression : IrStatement, IrVarargElement, IrAttributeContainer {
         accept(transformer, data) as IrExpression
 }
 
-interface IrExpressionWithCopy : IrExpression {
-    fun copy(): IrExpressionWithCopy
+interface IrExpressionWithCopy {
+    fun copy(): IrExpression
 }
-

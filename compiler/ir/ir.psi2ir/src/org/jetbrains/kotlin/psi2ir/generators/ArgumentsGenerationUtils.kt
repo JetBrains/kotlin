@@ -113,7 +113,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
         }
 
         if (receiverExpression is IrExpressionWithCopy)
-            RematerializableValue(receiverExpression)
+            RematerializableValue(receiverExpression.type, receiverExpression)
         else
             OnceExpressionValue(receiverExpression)
     }
