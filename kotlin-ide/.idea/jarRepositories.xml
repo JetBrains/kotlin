@@ -71,10 +71,5 @@
       <option name="name" value="caeb020e-2153-45d1-b752-f56d66968d08" />
       <option name="url" value="https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-ide-plugin-dependencies" />
     </remote-repository>
-    <remote-repository>
-      <option name="id" value="550d8dde-346b-4007-864a-5305c03fcf0d" />
-      <option name="name" value="550d8dde-346b-4007-864a-5305c03fcf0d" />
-      <option name="url" value="https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-bootstrap" />
-    </remote-repository>
   </component>
 </project>
