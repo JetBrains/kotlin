@@ -21,3 +21,8 @@ fun Appendable.appendConfigsFromDir(confDir: File) {
             appendln()
         }
 }
+
+
+const val JS = "js"
+const val JS_MAP = "js.map"
+const val META_JS = "meta.js"
