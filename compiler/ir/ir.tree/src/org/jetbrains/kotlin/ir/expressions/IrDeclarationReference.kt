@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
-
 interface IrDeclarationReference : IrExpression {
     val symbol: IrSymbol
 }

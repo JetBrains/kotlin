@@ -27,7 +27,7 @@ class IrConstImpl<T>(
     override val type: IrType,
     override val kind: IrConstKind<T>,
     override val value: T
-) : IrTerminalExpressionBase(), IrConst<T> {
+) : IrExpressionBase(), IrConst<T> {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConst(this, data)
 

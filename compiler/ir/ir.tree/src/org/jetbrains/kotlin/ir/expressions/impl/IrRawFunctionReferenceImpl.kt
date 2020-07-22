@@ -26,7 +26,7 @@ class IrRawFunctionReferenceImpl(
     override val endOffset: Int,
     override val type: IrType,
     override val symbol: IrFunctionSymbol,
-) : IrTerminalDeclarationReferenceBase<IrFunctionSymbol>(), IrRawFunctionReference {
+) : IrExpressionBase(), IrRawFunctionReference {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitRawFunctionReference(this, data)
     }

@@ -26,7 +26,7 @@ class IrInstanceInitializerCallImpl(
     override val endOffset: Int,
     override val classSymbol: IrClassSymbol,
     override val type: IrType,
-) : IrTerminalExpressionBase(), IrInstanceInitializerCall {
+) : IrExpressionBase(), IrInstanceInitializerCall {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitInstanceInitializerCall(this, data)
     }

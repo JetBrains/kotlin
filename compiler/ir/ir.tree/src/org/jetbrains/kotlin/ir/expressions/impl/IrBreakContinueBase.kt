@@ -18,6 +18,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
 
-abstract class IrBreakContinueBase : IrTerminalExpressionBase(), IrBreakContinue {
+abstract class IrBreakContinueBase : IrExpressionBase(), IrBreakContinue {
     override var label: String? = null
 }
