@@ -15,7 +15,7 @@
           <element id="archive" name="kotlin-jps-plugin.jar">
             <element id="module-output" name="kotlin.jps-plugin" />
             <element id="module-output" name="kotlin.jps-common" />
-            <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/compiler-components-for-jps/1.4.20-dev-1959/compiler-components-for-jps-1.4.20-dev-1959.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/compiler-components-for-jps/1.4.20-dev-2590/compiler-components-for-jps-1.4.20-dev-2590.jar" path-in-jar="/" />
           </element>
         </element>
         <element id="archive" name="kotlin-compiler-plugins-allopen.jar">
@@ -145,19 +145,19 @@
         <element id="library" level="project" name="javax-inject" />
         <element id="library" level="module" name="completion-ranking-kotlin" module-name="kotlin.idea" />
         <element id="archive" name="kotlin-stdlib.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.4.20-dev-1959/kotlin-stdlib-1.4.20-dev-1959.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.4.20-dev-2590/kotlin-stdlib-1.4.20-dev-2590.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-stdlib-jdk7.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.4.20-dev-1959/kotlin-stdlib-jdk7-1.4.20-dev-1959.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.4.20-dev-2590/kotlin-stdlib-jdk7-1.4.20-dev-2590.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-stdlib-jdk8.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.4.20-dev-1959/kotlin-stdlib-jdk8-1.4.20-dev-1959.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.4.20-dev-2590/kotlin-stdlib-jdk8-1.4.20-dev-2590.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-reflect.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.4.20-dev-1959/kotlin-reflect-1.4.20-dev-1959.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.4.20-dev-2590/kotlin-reflect-1.4.20-dev-2590.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-plugin.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4.20-dev-1959/kotlin-compiler-for-ide-1.4.20-dev-1959.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4.20-dev-2590/kotlin-compiler-for-ide-1.4.20-dev-2590.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-frontend-independent.jar">
           <element id="module-output" name="kotlin.fir.frontend-independent" />
@@ -172,7 +172,7 @@
         <element id="library" level="project" name="kotlinx-coroutines-jdk8" />
       </element>
       <element id="directory" name="kotlinc">
-        <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.20-dev-1959/kotlin-dist-for-ide-1.4.20-dev-1959.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.20-dev-2590/kotlin-dist-for-ide-1.4.20-dev-2590.jar" path-in-jar="/" />
       </element>
     </root>
   </artifact>
