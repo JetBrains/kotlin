@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.declarations.withInitialIr
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -20,24 +18,25 @@ import org.jetbrains.kotlin.types.Variance
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyTypeParameter(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
     override val symbol: IrTypeParameterSymbol,
     override val descriptor: TypeParameterDescriptor,
     override val name: Name,
     override val index: Int,
     override val isReified: Boolean,
     override val variance: Variance,
-    stubGenerator: DeclarationStubGenerator,
-    typeTranslator: TypeTranslator
-) :
-    IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
-    IrTypeParameter {
-
+    override val stubGenerator: DeclarationStubGenerator,
+    override val typeTranslator: TypeTranslator,
+) : IrTypeParameter, IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }
+
+    override var parent: IrDeclarationParent by createLazyParent()
+
+    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     override val superTypes: MutableList<IrType> by lazy {
         withInitialIr {

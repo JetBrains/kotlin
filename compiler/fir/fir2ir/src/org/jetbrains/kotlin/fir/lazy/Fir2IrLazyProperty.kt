@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.Fir2IrPropertySymbol
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -25,27 +26,25 @@ import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyProperty(
     components: Fir2IrComponents,
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    fir: FirProperty,
-    symbol: Fir2IrPropertySymbol,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
+    override val fir: FirProperty,
+    override val symbol: Fir2IrPropertySymbol,
     override val isFakeOverride: Boolean
-) : AbstractFir2IrLazyDeclaration<FirProperty, IrProperty>(
-    components, startOffset, endOffset, origin, fir, symbol
-), IrProperty {
+) : IrProperty, AbstractFir2IrLazyDeclaration<FirProperty, IrProperty>, Fir2IrComponents by components {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
-        typeParameters = emptyList()
     }
+
+    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
+    override var typeParameters: List<IrTypeParameter> = emptyList()
+    override lateinit var parent: IrDeclarationParent
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor
-        get() = super.descriptor as PropertyDescriptor
-
-    override val symbol: Fir2IrPropertySymbol
-        get() = super.symbol as Fir2IrPropertySymbol
+        get() = symbol.descriptor
 
     override val isVar: Boolean
         get() = fir.isVar

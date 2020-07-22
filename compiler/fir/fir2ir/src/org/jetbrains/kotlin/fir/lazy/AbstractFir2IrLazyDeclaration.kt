@@ -5,30 +5,28 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.symbols.Fir2IrBindableSymbol
-import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import kotlin.properties.ReadWriteProperty
 
-abstract class AbstractFir2IrLazyDeclaration<F : FirMemberDeclaration, D : IrSymbolOwner>(
-    private val components: Fir2IrComponents,
-    startOffset: Int,
-    endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    val fir: F,
-    open val symbol: Fir2IrBindableSymbol<*, D>
-) : IrElementBase(startOffset, endOffset), IrDeclaration, IrDeclarationParent, Fir2IrComponents by components {
+interface AbstractFir2IrLazyDeclaration<F : FirMemberDeclaration, D : IrSymbolOwner> :
+    IrDeclaration, IrDeclarationParent, Fir2IrComponents {
+
+    val fir: F
+    val symbol: Fir2IrBindableSymbol<*, D>
+
     override val factory: IrFactory
-        get() = components.irFactory
+        get() = irFactory
 
-    internal fun prepareTypeParameters() {
+    var typeParameters: List<IrTypeParameter>
+
+    fun prepareTypeParameters() {
         typeParameters = fir.typeParameters.mapIndexedNotNull { index, typeParameter ->
             if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
             classifierStorage.getIrTypeParameter(typeParameter, index).apply {
@@ -40,15 +38,7 @@ abstract class AbstractFir2IrLazyDeclaration<F : FirMemberDeclaration, D : IrSym
         }
     }
 
-    lateinit var typeParameters: List<IrTypeParameter>
-
-    override lateinit var parent: IrDeclarationParent
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: DeclarationDescriptor
-        get() = symbol.descriptor
-
-    override var annotations: List<IrConstructorCall> by lazyVar {
+    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar {
         fir.annotations.mapNotNull {
             callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
         }

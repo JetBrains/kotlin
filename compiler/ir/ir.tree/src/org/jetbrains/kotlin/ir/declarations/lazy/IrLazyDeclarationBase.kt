@@ -6,64 +6,57 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
+import kotlin.properties.ReadWriteProperty
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class IrLazyDeclarationBase(
-    startOffset: Int,
-    endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    private val stubGenerator: DeclarationStubGenerator,
-    protected val typeTranslator: TypeTranslator
-) : IrElementBase(startOffset, endOffset), IrDeclaration {
+interface IrLazyDeclarationBase : IrDeclaration {
+    val stubGenerator: DeclarationStubGenerator
+    val typeTranslator: TypeTranslator
+
     override val factory: IrFactory
         get() = stubGenerator.symbolTable.irFactory
 
-    protected fun KotlinType.toIrType() = typeTranslator.translateType(this)
+    fun KotlinType.toIrType(): IrType =
+        typeTranslator.translateType(this)
 
-    protected fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
+    fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
         factory.createValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrValueParameterSymbolImpl(this),
             name, -1, type.toIrType(), null, isCrossinline = false, isNoinline = false
         )
 
-    protected fun generateMemberStubs(memberScope: MemberScope, container: MutableList<IrDeclaration>) {
+    fun generateMemberStubs(memberScope: MemberScope, container: MutableList<IrDeclaration>) {
         generateChildStubs(memberScope.getContributedDescriptors(), container)
     }
 
-    protected fun generateChildStubs(descriptors: Collection<DeclarationDescriptor>, declarations: MutableList<IrDeclaration>) {
-        descriptors.mapNotNullTo(declarations) { generateMemberStub(it) }
+    fun generateChildStubs(descriptors: Collection<DeclarationDescriptor>, declarations: MutableList<IrDeclaration>) {
+        descriptors.mapNotNullTo(declarations) { descriptor ->
+            if (descriptor is DeclarationDescriptorWithVisibility && Visibilities.isPrivate(descriptor.visibility)) null
+            else stubGenerator.generateMemberStub(descriptor)
+        }
     }
 
-    private fun generateMemberStub(descriptor: DeclarationDescriptor): IrDeclaration? {
-        if (descriptor is DeclarationDescriptorWithVisibility && Visibilities.isPrivate(descriptor.visibility)) return null
-        return stubGenerator.generateMemberStub(descriptor)
-    }
-
-    override var parent: IrDeclarationParent by lazyVar {
-        createLazyParent()!!
-    }
-
-    override var annotations: List<IrConstructorCall> by lazyVar {
+    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar {
         descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationConstructorCall).toMutableList()
     }
 
-    private fun createLazyParent(): IrDeclarationParent? {
+    fun createLazyParent(): ReadWriteProperty<Any?, IrDeclarationParent> = lazyVar {
         val currentDescriptor = descriptor
 
         val containingDeclaration =
             ((currentDescriptor as? PropertyAccessorDescriptor)?.correspondingProperty ?: currentDescriptor).containingDeclaration
 
-        return when (containingDeclaration) {
+        when (containingDeclaration) {
             is PackageFragmentDescriptor -> run {
                 val parent = this.takeUnless { it is IrClass }?.let {
                     stubGenerator.generateOrGetFacadeClass(descriptor)
