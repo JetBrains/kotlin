@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrMemberAccessExpression<S : IrSymbol>(
     val typeArgumentsCount: Int
-) : IrExpressionBase(), IrDeclarationReference {
+) : IrDeclarationReference() {
     var dispatchReceiver: IrExpression? = null
     var extensionReceiver: IrExpression? = null
 

@@ -31,7 +31,7 @@ class IrSetVariableImpl(
     override val symbol: IrVariableSymbol,
     override var value: IrExpression,
     override val origin: IrStatementOrigin?
-) : IrExpressionBase(), IrSetVariable {
+) : IrSetVariable() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitSetVariable(this, data)
     }

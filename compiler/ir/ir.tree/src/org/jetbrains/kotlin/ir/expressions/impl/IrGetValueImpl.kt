@@ -17,7 +17,7 @@ class IrGetValueImpl(
     override val type: IrType,
     override val symbol: IrValueSymbol,
     override val origin: IrStatementOrigin? = null
-) : IrExpressionBase(), IrGetValue {
+) : IrGetValue() {
     constructor(
         startOffset: Int,
         endOffset: Int,

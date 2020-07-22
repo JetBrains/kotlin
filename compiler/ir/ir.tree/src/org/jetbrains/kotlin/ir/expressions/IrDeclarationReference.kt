@@ -16,23 +16,24 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBase
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
-interface IrDeclarationReference : IrExpression {
-    val symbol: IrSymbol
+abstract class IrDeclarationReference : IrExpressionBase() {
+    abstract val symbol: IrSymbol
 }
 
-interface IrGetSingletonValue : IrDeclarationReference
+abstract class IrGetSingletonValue : IrDeclarationReference()
 
-interface IrGetObjectValue : IrGetSingletonValue {
-    override val symbol: IrClassSymbol
+abstract class IrGetObjectValue : IrGetSingletonValue() {
+    abstract override val symbol: IrClassSymbol
 }
 
-interface IrGetEnumValue : IrGetSingletonValue {
-    override val symbol: IrEnumEntrySymbol
+abstract class IrGetEnumValue : IrGetSingletonValue() {
+    abstract override val symbol: IrEnumEntrySymbol
 }
 
 /**
@@ -40,6 +41,6 @@ interface IrGetEnumValue : IrGetSingletonValue {
  *
  * On JS platform represent a plain reference to JavaScript function.
  */
-interface IrRawFunctionReference : IrDeclarationReference {
-    override val symbol: IrFunctionSymbol
+abstract class IrRawFunctionReference : IrDeclarationReference() {
+    abstract override val symbol: IrFunctionSymbol
 }

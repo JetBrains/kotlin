@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
-
-interface IrClassReference : IrDeclarationReference {
-    override val symbol: IrClassifierSymbol
-    val classType: IrType
+abstract class IrClassReference : IrDeclarationReference() {
+    abstract override val symbol: IrClassifierSymbol
+    abstract val classType: IrType
 }
-

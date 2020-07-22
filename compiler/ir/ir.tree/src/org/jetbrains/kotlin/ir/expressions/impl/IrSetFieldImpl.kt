@@ -32,7 +32,7 @@ class IrSetFieldImpl(
     override val type: IrType,
     override val origin: IrStatementOrigin? = null,
     override val superQualifierSymbol: IrClassSymbol? = null,
-) : IrFieldExpressionBase(), IrSetField {
+) : IrSetField() {
     constructor(
         startOffset: Int, endOffset: Int,
         symbol: IrFieldSymbol,
