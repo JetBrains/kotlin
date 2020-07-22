@@ -7,11 +7,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.android.tools.r8.*;
 import com.android.tools.r8.origin.PathOrigin;
-import com.android.tools.r8.utils.AndroidApiLevel;
-import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory;
 import kotlin.Pair;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.junit.Assert;
 
