@@ -570,12 +570,18 @@ class LocalDeclarationsLowering(
         private fun generateNameForLiftedDeclaration(
             declaration: IrDeclaration,
             newOwner: IrDeclarationParent
-        ): Name =
-            Name.identifier(
-                declaration.parentsWithSelf
-                    .takeWhile { it != newOwner }
-                    .toList().reversed().joinToString(separator = "$") { suggestLocalName(it as IrDeclarationWithName) }
-            )
+        ): Name {
+            val parents = declaration.parentsWithSelf.takeWhile { it != newOwner }.toList().reversed()
+            val nameFromParents = parents.joinToString(separator = "$") { suggestLocalName(it as IrDeclarationWithName) }
+            // Local functions declared in anonymous initializers have classes as their parents.
+            // Such anonymous initializers, however, are inlined into the constructors delegating to super class constructor.
+            // There can be local functions declared in local function in init blocks (and further),
+            // but such functions would have proper "safe" names (outerLocalFun1$outerLocalFun2$...$localFun).
+            return if (parents.size == 1 && declaration.parent is IrClass)
+                Name.identifier("_init_\$$nameFromParents")
+            else
+                Name.identifier(nameFromParents)
+        }
 
         private fun createLiftedDeclaration(localFunctionContext: LocalFunctionContext) {
             val oldDeclaration = localFunctionContext.declaration

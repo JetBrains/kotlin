@@ -4358,6 +4358,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/closures/localFunctionInFunction.kt");
         }
 
+        @TestMetadata("localFunctionInInitBlock.kt")
+        public void testLocalFunctionInInitBlock() throws Exception {
+            runTest("compiler/testData/codegen/box/closures/localFunctionInInitBlock.kt");
+        }
+
         @TestMetadata("localFunctionInInitializer.kt")
         public void testLocalFunctionInInitializer() throws Exception {
             runTest("compiler/testData/codegen/box/closures/localFunctionInInitializer.kt");

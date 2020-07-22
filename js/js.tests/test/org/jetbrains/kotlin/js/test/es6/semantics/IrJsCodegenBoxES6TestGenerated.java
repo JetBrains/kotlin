@@ -3608,6 +3608,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/closures/localFunctionInFunction.kt");
         }
 
+        @TestMetadata("localFunctionInInitBlock.kt")
+        public void testLocalFunctionInInitBlock() throws Exception {
+            runTest("compiler/testData/codegen/box/closures/localFunctionInInitBlock.kt");
+        }
+
         @TestMetadata("localFunctionInInitializer.kt")
         public void testLocalFunctionInInitializer() throws Exception {
             runTest("compiler/testData/codegen/box/closures/localFunctionInInitializer.kt");

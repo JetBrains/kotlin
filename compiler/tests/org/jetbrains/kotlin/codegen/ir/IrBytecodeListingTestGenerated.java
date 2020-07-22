@@ -99,6 +99,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/lateInitNotNull.kt");
     }
 
+    @TestMetadata("localFunctionInInitBlock.kt")
+    public void testLocalFunctionInInitBlock() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/localFunctionInInitBlock.kt");
+    }
+
     @TestMetadata("noCollectionStubMethodsInInterface.kt")
     public void testNoCollectionStubMethodsInInterface() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/noCollectionStubMethodsInInterface.kt");
