@@ -10,7 +10,7 @@ UFile (package = )
                         UThisExpression (label = null)
                         USimpleNameReferenceExpression (identifier = length)
         UMethod (name = getRx)
-            UParameter (name = $this$rx)
+            UParameter (name = $this$getRx)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression
                 UReturnExpression
