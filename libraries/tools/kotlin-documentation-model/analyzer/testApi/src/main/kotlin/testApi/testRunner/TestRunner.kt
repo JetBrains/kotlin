@@ -229,7 +229,6 @@ abstract class AbstractCoreTest(
             samples = samples.map(::File).toSet(),
             includes = includes.map(::File).toSet(),
             includeNonPublic = includeNonPublic,
-            includeRootPackage = includeRootPackage,
             reportUndocumented = reportUndocumented,
             skipEmptyPackages = skipEmptyPackages,
             skipDeprecated = skipDeprecated,
