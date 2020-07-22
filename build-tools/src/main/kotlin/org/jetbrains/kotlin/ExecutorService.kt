@@ -399,6 +399,8 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
                         process = exe_ctx.GetProcess()
                         state = process.GetState()
                         if state == lldb.eStateStopped:
+                            # Call flush method, otherwise some output isn't shown in the debugger
+                            debugger.HandleCommand("expression -- (int) fflush(NULL)")
                             debugger.HandleCommand("bt all")
                             process.Kill()
                         code = process.GetExitStatus()
