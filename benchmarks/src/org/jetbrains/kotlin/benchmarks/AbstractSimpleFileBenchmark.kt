@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.createSession
+import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
@@ -162,6 +163,9 @@ abstract class AbstractSimpleFileBenchmark {
         totalTransformer.process(listOf(firFile))
 
         bh.consume(firFile.hashCode())
+        Extensions.getArea(env.project)
+            .getExtensionPoint(PsiElementFinder.EP_NAME)
+            .unregisterExtension(FirJavaElementFinder::class.java)
     }
 
     protected abstract fun buildText(): String
