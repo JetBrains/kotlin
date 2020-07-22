@@ -10,6 +10,7 @@ import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModulePackageIndex
 import com.intellij.openapi.roots.ModuleRootManager
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.idea.util.sourceRoot
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.net.URI
 import java.nio.file.Paths
@@ -81,7 +81,12 @@ private fun findLongestExistingPackage(module: Module, packageName: String): Psi
     while (true) {
         val vFiles = ModulePackageIndex.getInstance(module).getDirsByPackageName(nameToMatch, false)
         val directory = getWritableModuleDirectory(vFiles, module, manager)
-        if (directory != null) return directory.getPackage()
+        if (directory != null
+            && module.pureKotlinSourceFolders?.any {
+                directory.virtualFile.path.startsWith(it, true)
+            } == true
+        )
+            return directory.getPackage()
 
         val lastDotIndex = nameToMatch.lastIndexOf('.')
         if (lastDotIndex < 0) {
@@ -99,7 +104,7 @@ private val Module.pureKotlinSourceFolders: List<String>?
 
 private fun Module.getNonGeneratedKotlinSourceRoots(): List<VirtualFile> {
     val result = mutableListOf<VirtualFile>()
-    val pureKotlinSourceFolders = this.pureKotlinSourceFolders
+    val modulesToPureKotlinSourceFolders = mutableMapOf(this to pureKotlinSourceFolders)
 
     val rootManager = ModuleRootManager.getInstance(this)
     for (contentEntry in rootManager.contentEntries) {
@@ -109,13 +114,16 @@ private fun Module.getNonGeneratedKotlinSourceRoots(): List<VirtualFile> {
                 continue
             }
 
-            pureKotlinSourceFolders?.also { pureKotlin ->
-                sourceFolder.file?.also {
-                    if (it.path in pureKotlin) {
-                        result += it
-                    }
+            sourceFolder.file?.let {
+                val moduleForFile = ModuleUtilCore.findModuleForFile(it, project)
+                if (moduleForFile == null) return@let
+
+                val modulePureKotlinSourceFolders =
+                    modulesToPureKotlinSourceFolders.getOrPut(moduleForFile, moduleForFile::pureKotlinSourceFolders)
+                if (modulePureKotlinSourceFolders?.any { pure -> it.path.startsWith(pure, true) } == true) {
+                    result += it
                 }
-            } ?: result.addIfNotNull(sourceFolder.file)
+            }
         }
     }
     return result
@@ -159,14 +167,23 @@ fun findOrCreateDirectoryForPackage(module: Module, packageName: String): PsiDir
             if (subPackageName.isNotEmpty()) {
                 postfixToShow = File.separatorChar + postfixToShow
             }
-            val pureKotlinSourceFolders = module.pureKotlinSourceFolders
+            val modulesToPureKotlinSourceFolders = mutableMapOf(module to module.pureKotlinSourceFolders)
             val moduleDirectories = getPackageDirectoriesInModule(rootPackage, module)
-                .filter { directory ->
-                    pureKotlinSourceFolders?.any { directory.virtualFile.path.startsWith(it, true) } ?: true
-                }.toTypedArray()
+            val result = mutableListOf<PsiDirectory>()
 
+            moduleDirectories.forEach { directory ->
+                val directoryModule = ModuleUtilCore.findModuleForFile(directory.virtualFile, module.project)
+                if (directoryModule != null) {
+                    val modulePureKotlinSourceFolders =
+                        modulesToPureKotlinSourceFolders.getOrPut(directoryModule, directoryModule::pureKotlinSourceFolders)
+
+                    if (modulePureKotlinSourceFolders?.any { directory.virtualFile.path.startsWith(it, true) } == true) {
+                        result += directory
+                    }
+                }
+            }
             existingDirectoryByPackage =
-                DirectoryChooserUtil.selectDirectory(project, moduleDirectories, null, postfixToShow) ?: return null
+                DirectoryChooserUtil.selectDirectory(project, result.toTypedArray(), null, postfixToShow) ?: return null
             restOfName = subPackageName
         }
     }

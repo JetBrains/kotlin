@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder.Companion.ko
 import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder.Companion.kotlinSourceSetClass
 import java.io.File
 import java.io.Serializable
-import java.lang.Exception
 
 interface KotlinTaskProperties : Serializable {
     val incremental: Boolean?
@@ -64,8 +63,9 @@ private fun Task.getPureKotlinSourceRoots(sourceSet: String, disambiguationClass
     try {
         val kotlinExtensionClass = project.extensions.findByType(javaClass.classLoader.loadClass(kotlinProjectExtensionClass))
         val getKotlinMethod = javaClass.classLoader.loadClass(kotlinSourceSetClass).getMethod("getKotlin")
+        val classifier = if (disambiguationClassifier == "metadata") "common" else disambiguationClassifier
         val kotlinSourceSet = (kotlinExtensionClass?.javaClass?.getMethod("getSourceSets")?.invoke(kotlinExtensionClass)
-                as? FactoryNamedDomainObjectContainer<Any>)?.asMap?.get(compilationFullName(sourceSet, disambiguationClassifier)) ?: return null
+                as? FactoryNamedDomainObjectContainer<Any>)?.asMap?.get(compilationFullName(sourceSet, classifier)) ?: return null
         val javaSourceSet =
             (project.convention.getPlugin(JavaPluginConvention::class.java) as JavaPluginConvention).sourceSets.asMap[sourceSet]
         val pureJava = javaSourceSet?.java?.srcDirs
