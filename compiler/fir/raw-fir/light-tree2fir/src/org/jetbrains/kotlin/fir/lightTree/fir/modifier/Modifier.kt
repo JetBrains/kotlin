@@ -124,6 +124,10 @@ class Modifier(
         return functionModifiers.contains(FunctionModifier.SUSPEND)
     }
 
+    fun hasContract(): Boolean {
+        return functionModifiers.contains(FunctionModifier.CONTRACT)
+    }
+
     fun isConst(): Boolean {
         return propertyModifier == PropertyModifier.CONST
     }

@@ -34,7 +34,8 @@ enum class FunctionModifier {
     INFIX,
     INLINE,
     EXTERNAL,
-    SUSPEND
+    SUSPEND,
+    CONTRACT
 }
 
 enum class PropertyModifier {

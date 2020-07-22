@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.extractContractDescriptionIfPossible
 import org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -1087,6 +1088,7 @@ class DeclarationsConverter(
         }
         var block: LighterASTNode? = null
         var expression: LighterASTNode? = null
+        var outerContractDescription: FirContractDescription? = null
         getterOrSetter.forEachChildren {
             if (it.asText == "set") isGetter = false
             when (it.tokenType) {
@@ -1094,6 +1096,7 @@ class DeclarationsConverter(
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
                 TYPE_REFERENCE -> returnType = convertType(it)
                 VALUE_PARAMETER_LIST -> firValueParameters = convertSetterParameter(it, propertyTypeRef)
+                CONTRACT_EFFECT_LIST -> outerContractDescription = obtainContractDescription(it)
                 BLOCK -> block = it
                 else -> if (it.isExpression()) expression = it
             }
@@ -1141,14 +1144,41 @@ class DeclarationsConverter(
                 valueParameters += firValueParameters
             }
 
-            val (body, contractDescription) = convertFunctionBody(block, expression)
-            this.body = body
+            val hasContractEffectList = outerContractDescription != null
+            val bodyWithContractDescription = convertFunctionBody(block, expression, hasContractEffectList)
+            this.body = bodyWithContractDescription.first
+            val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
             contractDescription?.let {
-                this.contractDescription = contractDescription
+                this.contractDescription = it
             }
             context.firFunctionTargets.removeLast()
         }.also {
             target.bind(it)
+        }
+    }
+
+    private fun obtainContractDescription(rawContractDescription: LighterASTNode): FirContractDescription? =
+        buildRawContractDescription {
+            source = rawContractDescription.toFirSourceElement()
+            extractRawEffects(rawContractDescription, rawEffects)
+        }
+
+    private fun extractRawEffects(rawContractDescription: LighterASTNode, destination: MutableList<FirExpression>) {
+        rawContractDescription.forEachChildren {
+            val errorReason = "The contract effect is not an expression"
+            when (it.tokenType) {
+                CONTRACT_EFFECT -> {
+                    val effect = it.getFirstChild()
+                    if (effect == null) {
+                        val errorExpression = buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionRequired))
+                        destination.add(errorExpression)
+                    } else {
+                        val expression = expressionConverter.convertExpression(effect, errorReason)
+                        destination.add(expression as FirExpression)
+                    }
+                }
+                else -> Unit
+            }
         }
     }
 
@@ -1199,6 +1229,7 @@ class DeclarationsConverter(
         var expression: LighterASTNode? = null
         var hasEqToken = false
         var typeParameterList: LighterASTNode? = null
+        var outerContractDescription: FirContractDescription? = null
         functionDeclaration.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
@@ -1208,6 +1239,7 @@ class DeclarationsConverter(
                 COLON -> isReturnType = true
                 TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
                 TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
+                CONTRACT_EFFECT_LIST -> outerContractDescription = obtainContractDescription(it)
                 BLOCK -> block = it
                 EQ -> hasEqToken = true
                 else -> if (it.isExpression()) expression = it
@@ -1253,6 +1285,7 @@ class DeclarationsConverter(
                     isTailRec = modifiers.hasTailrec()
                     isExternal = modifiers.hasExternal()
                     isSuspend = modifiers.hasSuspend()
+                    isContract = modifiers.hasContract()
                 }
 
                 symbol = FirNamedFunctionSymbol(callableIdForName(functionName, isLocal))
@@ -1273,12 +1306,23 @@ class DeclarationsConverter(
                     addCapturedTypeParameters(typeParameters)
                 }
                 valueParametersList?.let { list -> valueParameters += convertValueParameters(list).map { it.firValueParameter } }
-                val (body, contractDescription) = convertFunctionBody(block, expression)
-                this.body = body
-                contractDescription?.let {
-                    // TODO: add error reporting for contracts on lambdas
-                    if (this is FirSimpleFunctionBuilder) {
-                        this.contractDescription = it
+
+                if (modifiers.hasContract()) { // if the function is a contract function
+                    outerContractDescription?.let {
+                        if (this is FirSimpleFunctionBuilder) {
+                            contractDescription = it
+                        }
+                    }
+                } else {
+                    val hasContractEffectList = outerContractDescription != null
+                    val bodyWithContractDescription = convertFunctionBody(block, expression, hasContractEffectList)
+                    this.body = bodyWithContractDescription.first
+                    val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
+                    contractDescription?.let {
+                        // TODO: add error reporting for contracts on lambdas
+                        if (this is FirSimpleFunctionBuilder) {
+                            this.contractDescription = it
+                        }
                     }
                 }
             }
@@ -1292,9 +1336,20 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunctionBody
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.buildFirBody
      */
-    private fun convertFunctionBody(blockNode: LighterASTNode?, expression: LighterASTNode?): Pair<FirBlock?, FirContractDescription?> {
+    private fun convertFunctionBody(
+        blockNode: LighterASTNode?,
+        expression: LighterASTNode?,
+        hasContractEffectList: Boolean = false
+    ): Pair<FirBlock?, FirContractDescription?> {
         return when {
-            blockNode != null -> convertBlock(blockNode).extractContractDescriptionIfPossible()
+            blockNode != null -> {
+                val block = convertBlock(blockNode)
+                if (hasContractEffectList) {
+                    block to null
+                } else {
+                    block.extractContractDescriptionIfPossible()
+                }
+            }
             expression != null -> FirSingleExpressionBlock(
                 expressionConverter.getAsFirExpression<FirExpression>(expression, "Function has no body (but should)").toReturn()
             ) to null

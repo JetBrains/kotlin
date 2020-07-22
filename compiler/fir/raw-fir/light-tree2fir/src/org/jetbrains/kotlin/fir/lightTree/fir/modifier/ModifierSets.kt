@@ -29,7 +29,8 @@ object ModifierSets {
         OPERATOR_KEYWORD,
         INFIX_KEYWORD,
         EXTERNAL_KEYWORD,
-        SUSPEND_KEYWORD
+        SUSPEND_KEYWORD,
+        CONTRACT_KEYWORD
     )
     val PROPERTY_MODIFIER = TokenSet.create(CONST_KEYWORD)
     val INHERITANCE_MODIFIER = TokenSet.create(
