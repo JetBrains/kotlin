@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.util.isInUnitTest
 
 class CoroutineStackFrameInterceptor(val project: Project) : StackFrameInterceptor {
     override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? {
-        val stackFrame = if (debugProcess.xdebugProcess?.session is XDebugSessionImpl
+        return if (debugProcess.xdebugProcess?.session is XDebugSessionImpl
             && frame !is SkipCoroutineStackFrameProxyImpl
             && AsyncStacksToggleAction.isAsyncStacksEnabled(debugProcess.xdebugProcess?.session as XDebugSessionImpl)
         ) {
@@ -32,6 +32,5 @@ class CoroutineStackFrameInterceptor(val project: Project) : StackFrameIntercept
             }
         } else
             null
-        return stackFrame
     }
 }

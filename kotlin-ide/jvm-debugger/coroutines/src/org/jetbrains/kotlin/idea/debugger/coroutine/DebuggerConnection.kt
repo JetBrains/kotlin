@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.debugger.coroutine
 import com.intellij.debugger.DebuggerInvocationUtil
 import com.intellij.debugger.engine.JavaDebugProcess
 import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.execution.configurations.DebuggingRunnerData
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.configurations.RunConfigurationBase
 import com.intellij.execution.ui.RunnerLayoutUi
@@ -33,7 +32,6 @@ class DebuggerConnection(
     val project: Project,
     val configuration: RunConfigurationBase<*>,
     val params: JavaParameters?,
-    val runnerSettings: DebuggingRunnerData?,
     modifyArgs: Boolean = true
 ) : XDebuggerManagerListener {
     var disposable: Disposable? = null

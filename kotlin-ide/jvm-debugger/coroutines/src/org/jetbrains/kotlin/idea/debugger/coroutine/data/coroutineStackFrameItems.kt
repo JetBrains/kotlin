@@ -126,7 +126,7 @@ class CoroutinePreflightFrame(
     val frame: StackFrameProxyImpl,
     val threadPreCoroutineFrames: List<StackFrameProxyImpl>,
     val mode: SuspendExitMode,
-    private val firstFrameVariables: List<XNamedValue> = coroutineInfoData.topFrameVariables()
+    firstFrameVariables: List<XNamedValue> = coroutineInfoData.topFrameVariables()
 ) : CoroutineStackFrame(frame, null, firstFrameVariables) {
 
     override fun isInLibraryContent() = false
@@ -150,7 +150,7 @@ class CreationCoroutineStackFrame(
 
 open class CoroutineStackFrame(
     frame: StackFrameProxyImpl,
-    val position: XSourcePosition?,
+    private val position: XSourcePosition?,
     private val spilledVariables: List<XNamedValue>? = null,
     private val includeFrameVariables: Boolean = true,
 ) : KotlinStackFrame(frame) {

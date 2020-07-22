@@ -9,7 +9,6 @@ import com.intellij.debugger.DebuggerContext
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl
-import com.intellij.openapi.project.Project
 import com.sun.jdi.ObjectReference
 import com.sun.jdi.Value
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext

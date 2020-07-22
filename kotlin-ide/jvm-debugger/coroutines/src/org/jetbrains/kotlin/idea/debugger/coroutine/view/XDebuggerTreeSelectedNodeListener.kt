@@ -25,7 +25,7 @@ import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
 
 class XDebuggerTreeSelectedNodeListener(val session: XDebugSession, val tree: XDebuggerTree) {
-    val javaDebugProcess = session.debugProcess as JavaDebugProcess
+    private val javaDebugProcess = session.debugProcess as JavaDebugProcess
     val debugProcess: DebugProcessImpl = javaDebugProcess.debuggerSession.process
 
     fun installOn() {

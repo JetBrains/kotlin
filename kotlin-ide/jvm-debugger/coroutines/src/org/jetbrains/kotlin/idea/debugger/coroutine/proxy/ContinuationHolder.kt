@@ -112,7 +112,7 @@ class ContinuationHolder private constructor(val context: DefaultExecutionContex
 }
 
 fun MirrorOfBaseContinuationImpl.spilledValues(context: DefaultExecutionContext): List<JavaValue> {
-    return fieldVariables.mapNotNull {
+    return fieldVariables.map {
         it.toJavaValue(that, context)
     }
 }

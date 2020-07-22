@@ -19,7 +19,6 @@ import com.intellij.xdebugger.XSourcePosition
 import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.SuspendExitMode
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.invokeLater
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 
@@ -36,9 +35,6 @@ fun Method.isSuspendLambda() =
 
 fun Method.hasContinuationParameter() =
     signature().contains("Lkotlin/coroutines/Continuation;)")
-
-fun Method.isResumeWith() =
-    name() == "resumeWith" && signature() == "(Ljava/lang/Object;)V" && (declaringType().isSuspendLambda() || declaringType().isContinuation())
 
 fun Location.isPreFlight(): SuspendExitMode {
     val method = safeMethod() ?: return SuspendExitMode.NONE
@@ -106,9 +102,6 @@ fun hasGetCoroutineSuspended(frames: List<StackFrameProxyImpl>) =
 
 fun StackTraceElement.isCreationSeparatorFrame() =
     className.startsWith(CREATION_STACK_TRACE_SEPARATOR)
-
-fun StackTraceElement.findPosition(project: Project): XSourcePosition? =
-    getPosition(project, className, lineNumber)
 
 fun Location.findPosition(project: Project) =
     readAction {

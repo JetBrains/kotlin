@@ -18,15 +18,14 @@ public class CoroutineDebugConfigurationExtension extends RunConfigurationExtens
 
     @Override
     public <T extends RunConfigurationBase> void updateJavaParameters(
-            T configuration, @NotNull JavaParameters params, RunnerSettings runnerSettings
+            @NotNull T configuration, @NotNull JavaParameters params, RunnerSettings runnerSettings
     ) {
-        if (configuration != null) {
-            Project project = configuration.getProject();
-            DebuggerListener listener = ServiceManager.getService(project, DebuggerListener.class);
-            if (listener != null)
-                listener.registerDebuggerConnection(configuration, params, runnerSettings);
-            else
-                log.error("DebuggerListener service is not found in project " + project.getName());
+        Project project = configuration.getProject();
+        DebuggerListener listener = ServiceManager.getService(project, DebuggerListener.class);
+        if (listener != null) {
+            listener.registerDebuggerConnection(configuration, params, runnerSettings);
+        } else {
+            log.error("DebuggerListener service is not found in project " + project.getName());
         }
     }
 

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.view
 import com.intellij.codeInsight.highlighting.HighlightManager
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.icons.AllIcons
-import com.intellij.icons.AllIcons.Debugger.ThreadStates.Daemon_sign
 import com.intellij.ide.DataManager
 import com.intellij.ide.ExporterToTextFile
 import com.intellij.ide.ui.UISettings
@@ -31,10 +30,8 @@ import com.intellij.ui.*
 import com.intellij.ui.components.JBList
 import com.intellij.unscramble.AnalyzeStacktraceUtil
 import com.intellij.util.PlatformIcons
-import com.intellij.util.ui.EmptyIcon
 import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.State
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.datatransfer.StringSelection

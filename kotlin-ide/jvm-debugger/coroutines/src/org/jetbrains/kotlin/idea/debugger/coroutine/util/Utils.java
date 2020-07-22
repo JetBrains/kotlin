@@ -12,14 +12,16 @@ public class Utils {
     public static Object callPrivate(
             Object instance,
             String methodName,
-            Object... args) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+            Object... args
+    ) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         @SuppressWarnings("rawtypes")
         Class[] classes = new Class[args.length];
         for (int i = 0; i < args.length; i++) {
-            if(args[i] instanceof ReflectionSpecificType)
+            if (args[i] instanceof ReflectionSpecificType) {
                 classes[i] = ((ReflectionSpecificType) args[i]).specificClass();
-            else
+            } else {
                 classes[i] = args[i].getClass();
+            }
         }
         Method method = instance.getClass().getDeclaredMethod(methodName, classes);
         method.setAccessible(true);

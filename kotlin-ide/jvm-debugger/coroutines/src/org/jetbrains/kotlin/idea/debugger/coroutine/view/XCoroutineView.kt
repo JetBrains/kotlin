@@ -132,6 +132,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
             panel.tree
         )
 
+    @Suppress("RedundantInnerClassModifier")
     inner class EmptyNode : XValueContainerNode<XValueContainer>(panel.tree, null, true, object : XValueContainer() {})
 
     inner class XCoroutinesRootNode(suspendContext: SuspendContextImpl) :
@@ -206,7 +207,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
                 val children = XValueChildrenList()
                 val doubleFrameList = CoroutineFrameBuilder.build(infoData, suspendContext)
                 doubleFrameList?.frames?.forEach {
-                    children.add(CoroutineFrameValue(infoData, it))
+                    children.add(CoroutineFrameValue(it))
                 }
                 doubleFrameList?.creationFrames?.let {
                     children.add(CreationFramesContainer(infoData, it))
@@ -225,16 +226,13 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
             val children = XValueChildrenList()
 
             creationFrames.forEach {
-                children.add(CoroutineFrameValue(infoData, it))
+                children.add(CoroutineFrameValue(it))
             }
             node.addChildren(children, true)
         }
     }
 
-    inner class CoroutineFrameValue(
-        val infoData: CoroutineInfoData,
-        val frameItem: CoroutineStackFrameItem
-    ) : XNamedValue(frameItem.uniqueId()) {
+    inner class CoroutineFrameValue(val frameItem: CoroutineStackFrameItem) : XNamedValue(frameItem.uniqueId()) {
         override fun computePresentation(node: XValueNode, place: XValuePlace) =
             applyRenderer(node, renderer.render(frameItem.location))
     }

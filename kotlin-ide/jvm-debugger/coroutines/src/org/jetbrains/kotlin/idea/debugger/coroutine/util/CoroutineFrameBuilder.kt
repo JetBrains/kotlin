@@ -74,7 +74,7 @@ class CoroutineFrameBuilder {
             return CoroutineFrameItemLists(stackFrames, preflightFrame.coroutineInfoData.creationStackTrace)
         }
 
-        fun restoredStackTrace(preflightFrame: CoroutinePreflightFrame): Pair<List<CoroutineStackFrameItem>, List<XNamedValue>> {
+        private fun restoredStackTrace(preflightFrame: CoroutinePreflightFrame): Pair<List<CoroutineStackFrameItem>, List<XNamedValue>> {
             val preflightFrameLocation = preflightFrame.stackFrameProxy.location()
             val coroutineStackFrame = preflightFrame.coroutineInfoData.stackTrace
             val preCoroutineTopFrameLocation = preflightFrame.threadPreCoroutineFrames.firstOrNull()?.location()

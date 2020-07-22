@@ -31,7 +31,7 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
 
     private fun mapToCoroutineInfoData(mirror: MirrorOfCoroutineInfo): CoroutineInfoData? {
         val coroutineNameIdState = CoroutineNameIdState.instance(mirror)
-        val stackTrace = mirror.enhancedStackTrace?.mapNotNull { it.stackTraceElement() } ?: emptyList()
+        val stackTrace = mirror.enhancedStackTrace?.map { it.stackTraceElement() } ?: emptyList()
         val variables: List<XNamedValue> = mirror.lastObservedFrame?.let {
             val spilledVariables = debugMetadata?.baseContinuationImpl?.mirror(it, executionContext)
             spilledVariables?.spilledValues(executionContext)
