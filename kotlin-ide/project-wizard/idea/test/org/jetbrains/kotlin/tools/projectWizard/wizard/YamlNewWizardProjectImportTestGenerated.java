@@ -78,9 +78,14 @@ public class YamlNewWizardProjectImportTestGenerated extends AbstractYamlNewWiza
             runTest("../cli/testData/buildFileGeneration/simpleNativeTarget/");
         }
 
-        @TestMetadata("singleplatformJs")
-        public void testSingleplatformJs() throws Exception {
-            runTest("../cli/testData/buildFileGeneration/singleplatformJs/");
+        @TestMetadata("singlePlatformJsBrowser")
+        public void testSinglePlatformJsBrowser() throws Exception {
+            runTest("../cli/testData/buildFileGeneration/singlePlatformJsBrowser/");
+        }
+
+        @TestMetadata("singlePlatformJsNode")
+        public void testSinglePlatformJsNode() throws Exception {
+            runTest("../cli/testData/buildFileGeneration/singlePlatformJsNode/");
         }
     }
 
@@ -141,9 +146,14 @@ public class YamlNewWizardProjectImportTestGenerated extends AbstractYamlNewWiza
             runTest("../cli/testData/buildFileGeneration/simpleNativeTarget/");
         }
 
-        @TestMetadata("singleplatformJs")
-        public void testSingleplatformJs() throws Exception {
-            runTest("../cli/testData/buildFileGeneration/singleplatformJs/");
+        @TestMetadata("singlePlatformJsBrowser")
+        public void testSinglePlatformJsBrowser() throws Exception {
+            runTest("../cli/testData/buildFileGeneration/singlePlatformJsBrowser/");
+        }
+
+        @TestMetadata("singlePlatformJsNode")
+        public void testSinglePlatformJsNode() throws Exception {
+            runTest("../cli/testData/buildFileGeneration/singlePlatformJsNode/");
         }
     }
 
