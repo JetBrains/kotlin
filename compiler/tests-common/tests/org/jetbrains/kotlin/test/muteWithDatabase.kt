@@ -61,7 +61,7 @@ internal fun wrapWithMuteInDatabase(testCase: TestCase, f: () -> Unit): (() -> U
     }
 }
 
-private fun mutedMessage(klass: Class<*>, methodKey: String) = "MUTED TeST: ${testKey(klass, methodKey)}"
+private fun mutedMessage(klass: Class<*>, methodKey: String) = "MUTED TEST: ${testKey(klass, methodKey)}"
 
 private fun testKey(klass: Class<*>, methodKey: String) = "${klass.canonicalName}.$methodKey"
 
