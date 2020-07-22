@@ -35,7 +35,7 @@ class IrFunctionReferenceImpl(
     override val valueArgumentsCount: Int,
     override val reflectionTarget: IrFunctionSymbol? = symbol,
     override val origin: IrStatementOrigin? = null,
-) : IrMemberAccessExpressionBase<IrFunctionSymbol>(typeArgumentsCount), IrFunctionReference {
+) : IrFunctionReference(typeArgumentsCount) {
     @ObsoleteDescriptorBasedAPI
     constructor(
         startOffset: Int,

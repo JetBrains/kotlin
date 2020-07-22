@@ -36,7 +36,7 @@ class IrCallImpl(
     valueArgumentsCount: Int,
     override val origin: IrStatementOrigin? = null,
     override val superQualifierSymbol: IrClassSymbol? = null
-) : IrCallWithIndexedArgumentsBase(typeArgumentsCount, valueArgumentsCount), IrCall {
+) : IrCall(typeArgumentsCount, valueArgumentsCount) {
     init {
         if (symbol is IrConstructorSymbol) {
             throw AssertionError("Should be IrConstructorCall: ${this.render()}")

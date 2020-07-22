@@ -31,7 +31,7 @@ class IrDelegatingConstructorCallImpl(
     override val symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int
-) : IrCallWithIndexedArgumentsBase(typeArgumentsCount, valueArgumentsCount), IrDelegatingConstructorCall {
+) : IrDelegatingConstructorCall(typeArgumentsCount, valueArgumentsCount) {
     override val origin: IrStatementOrigin?
         get() = null
 

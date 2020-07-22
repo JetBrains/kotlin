@@ -35,7 +35,7 @@ class IrLocalDelegatedPropertyReferenceImpl(
     override val getter: IrSimpleFunctionSymbol,
     override val setter: IrSimpleFunctionSymbol?,
     override val origin: IrStatementOrigin? = null,
-) : IrMemberAccessExpressionBase<IrLocalDelegatedPropertySymbol>(0), IrLocalDelegatedPropertyReference {
+) : IrLocalDelegatedPropertyReference() {
     override val valueArgumentsCount: Int
         get() = 0
 

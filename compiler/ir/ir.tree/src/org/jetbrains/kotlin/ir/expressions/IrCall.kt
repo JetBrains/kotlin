@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 
-interface IrCall : IrFunctionAccessExpression {
-    val superQualifierSymbol: IrClassSymbol?
+abstract class IrCall(
+    typeArgumentsCount: Int,
+    valueArgumentsCount: Int,
+) : IrFunctionAccessExpression(typeArgumentsCount, valueArgumentsCount) {
+    abstract val superQualifierSymbol: IrClassSymbol?
 }

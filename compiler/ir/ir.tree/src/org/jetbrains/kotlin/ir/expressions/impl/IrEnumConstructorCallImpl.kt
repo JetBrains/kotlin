@@ -30,7 +30,7 @@ class IrEnumConstructorCallImpl(
     override val symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int
-) : IrCallWithIndexedArgumentsBase(typeArgumentsCount, valueArgumentsCount), IrEnumConstructorCall {
+) : IrEnumConstructorCall(typeArgumentsCount, valueArgumentsCount) {
     override val origin: IrStatementOrigin?
         get() = null
 

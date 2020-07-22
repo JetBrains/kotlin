@@ -36,7 +36,7 @@ class IrPropertyReferenceImpl(
     override val getter: IrSimpleFunctionSymbol?,
     override val setter: IrSimpleFunctionSymbol?,
     override val origin: IrStatementOrigin? = null,
-) : IrMemberAccessExpressionBase<IrPropertySymbol>(typeArgumentsCount), IrPropertyReference {
+) : IrPropertyReference(typeArgumentsCount) {
     override val valueArgumentsCount: Int
         get() = 0
 

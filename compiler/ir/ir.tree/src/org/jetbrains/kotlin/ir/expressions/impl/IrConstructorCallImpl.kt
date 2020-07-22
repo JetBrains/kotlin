@@ -23,7 +23,7 @@ class IrConstructorCallImpl(
     override val constructorTypeArgumentsCount: Int,
     valueArgumentsCount: Int,
     override val origin: IrStatementOrigin? = null,
-) : IrCallWithIndexedArgumentsBase(typeArgumentsCount, valueArgumentsCount), IrConstructorCall {
+) : IrConstructorCall(typeArgumentsCount, valueArgumentsCount) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructorCall(this, data)
 
