@@ -156,7 +156,7 @@
         <element id="archive" name="kotlin-reflect.jar">
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.4.20-dev-1959/kotlin-reflect-1.4.20-dev-1959.jar" path-in-jar="/" />
         </element>
-        <element id="archive" name="kotlin-compiler-for-ide.jar">
+        <element id="archive" name="kotlin-plugin.jar">
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4.20-dev-1959/kotlin-compiler-for-ide-1.4.20-dev-1959.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-frontend-independent.jar">
