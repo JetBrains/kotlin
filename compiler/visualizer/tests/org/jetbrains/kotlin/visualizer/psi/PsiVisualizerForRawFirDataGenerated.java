@@ -65,6 +65,11 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizer {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contractDescription.kt");
         }
 
+        @TestMetadata("contractFunctionDeclaration.kt")
+        public void testContractFunctionDeclaration() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contractFunctionDeclaration.kt");
+        }
+
         @TestMetadata("derivedClass.kt")
         public void testDerivedClass() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/derivedClass.kt");

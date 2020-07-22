@@ -1,0 +1,13 @@
+FILE: contractFunctionDeclaration.kt
+    public? final? fun bar(s: String?): <implicit>
+        [Contract description] <
+            returnsNotNull#(),
+            returns#().implies#(!=(s#, Null(null)))
+        >
+
+    public? final? fun myContractFunction(str: String?, arg: MyClass, block: ( () -> Int )): <implicit>
+        [Contract description] <
+            returns#().implies#(!=(str#, Null(null))),
+            returns#().implies#((arg# is MySubClass)),
+            callsInPlace#(block#, EXACTLY_ONCE#)
+        >
