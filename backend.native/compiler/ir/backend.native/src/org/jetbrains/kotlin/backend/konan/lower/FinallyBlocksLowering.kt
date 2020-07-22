@@ -267,12 +267,11 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
                     type              = context.irBuiltIns.nothingType,
                     tryResult         = transformedTry,
                     catches           = listOf(
-                            irCatch(catchParameter).apply {
-                                result = irBlock {
-                                    +copy(finallyExpression)
-                                    +irThrow(irGet(catchParameter))
-                                }
-                            }),
+                            irCatch(catchParameter, irBlock {
+                                +copy(finallyExpression)
+                                +irThrow(irGet(catchParameter))
+                            })
+                    ),
                     finallyExpression = null
             )
             using(TryScope(syntheticTry, transformedFinallyExpression, this)) {

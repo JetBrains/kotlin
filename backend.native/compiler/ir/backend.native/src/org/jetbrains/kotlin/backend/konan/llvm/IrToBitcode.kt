@@ -1098,7 +1098,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     }
                 }
 
-                if (catch.parameter.type == context.builtIns.throwable.defaultType) {
+                if (catch.catchParameter.descriptor.type == context.builtIns.throwable.defaultType) {
                     genCatchBlock()
                     return      // Remaining catch clauses are unreachable.
                 } else {
