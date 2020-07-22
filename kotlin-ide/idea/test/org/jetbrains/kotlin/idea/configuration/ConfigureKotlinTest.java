@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.common.arguments.InternalArgument;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifactNames;
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder;
 import org.jetbrains.kotlin.idea.facet.FacetUtilsKt;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms;
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms;
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleKt;
 import org.junit.internal.runners.JUnit38ClassRunner;
-import org.jetbrains.kotlin.utils.PathUtil;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -61,11 +61,11 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         ModuleRootManager.getInstance(getModule()).orderEntries().forEachLibrary(library -> {
             assertSameElements(
                     Arrays.stream(library.getRootProvider().getFiles(OrderRootType.CLASSES)).map(VirtualFile::getName).toArray(),
-                    PathUtil.KOTLIN_JAVA_STDLIB_JAR, PathUtil.KOTLIN_JAVA_REFLECT_JAR, PathUtil.KOTLIN_TEST_JAR);
+                    KotlinArtifactNames.KOTLIN_STDLIB, KotlinArtifactNames.KOTLIN_REFLECT, KotlinArtifactNames.KOTLIN_TEST);
 
             assertSameElements(
                     Arrays.stream(library.getRootProvider().getFiles(OrderRootType.SOURCES)).map(VirtualFile::getName).toArray(),
-                    PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR, PathUtil.KOTLIN_REFLECT_SRC_JAR, PathUtil.KOTLIN_TEST_SRC_JAR);
+                    KotlinArtifactNames.KOTLIN_STDLIB, KotlinArtifactNames.KOTLIN_REFLECT, KotlinArtifactNames.KOTLIN_TEST);
 
             return true;
         });
@@ -112,8 +112,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
 
         // Move fake runtime jar to default library path to pretend library is already configured
         FileUtil.copy(
-                new File(getProject().getBasePath() + "/lib/" + PathUtil.KOTLIN_JAVA_STDLIB_JAR),
-                new File(Companion.getJAVA_CONFIGURATOR().getDefaultPathToJarFile(getProject()) + "/" + PathUtil.KOTLIN_JAVA_STDLIB_JAR));
+                new File(getProject().getBasePath() + "/lib/" + KotlinArtifactNames.KOTLIN_STDLIB),
+                new File(Companion.getJAVA_CONFIGURATOR().getDefaultPathToJarFile(getProject()) + "/" + KotlinArtifactNames.KOTLIN_STDLIB));
 
         Companion.assertNotConfigured(module, Companion.getJAVA_CONFIGURATOR());
         Companion.getJAVA_CONFIGURATOR().configure(myProject, Collections.<Module>emptyList());

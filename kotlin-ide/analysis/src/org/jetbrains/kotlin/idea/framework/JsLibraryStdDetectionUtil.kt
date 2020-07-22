@@ -14,6 +14,7 @@ import com.intellij.openapi.util.io.JarUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifactNames
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -42,9 +43,10 @@ object JsLibraryStdDetectionUtil {
             if (root.fileSystem.protocol !== StandardFileSystems.JAR_PROTOCOL) continue
 
             val name = root.url.substringBefore("!/").substringAfterLast('/')
-            if (name == PathUtil.JS_LIB_JAR_NAME || name == PathUtil.JS_LIB_10_JAR_NAME ||
-                PathUtil.KOTLIN_STDLIB_JS_JAR_PATTERN.matcher(name).matches() ||
-                PathUtil.KOTLIN_JS_LIBRARY_JAR_PATTERN.matcher(name).matches()
+            if (name == KotlinArtifactNames.KOTLIN_STDLIB_JS
+                || name == "kotlin-jslib.jar" // Outdated JS stdlib name
+                || PathUtil.KOTLIN_STDLIB_JS_JAR_PATTERN.matcher(name).matches()
+                || PathUtil.KOTLIN_JS_LIBRARY_JAR_PATTERN.matcher(name).matches()
             ) {
 
                 val jar = VfsUtilCore.getVirtualFileForJar(root) ?: continue

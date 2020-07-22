@@ -24,4 +24,7 @@ object KotlinArtifactNames {
     const val KOTLIN_SCRIPTING_COMPILER = "kotlin-scripting-compiler.jar"
     const val KOTLIN_SCRIPTING_COMPILER_IMPL = "kotlin-scripting-compiler-impl.jar"
     const val KOTLIN_COROUTINES_EXPERIMENTAL_COMPAT = "kotlin-coroutines-experimental-compat.jar"
+    const val ALLOPEN_COMPILER_PLUGIN = "allopen-compiler-plugin.jar"
+    const val NOARG_COMPILER_PLUGIN = "noarg-compiler-plugin.jar"
+    const val SAM_WITH_RECEIVER_COMPILER_PLUGIN = "sam-with-receiver-compiler-plugin.jar"
 }

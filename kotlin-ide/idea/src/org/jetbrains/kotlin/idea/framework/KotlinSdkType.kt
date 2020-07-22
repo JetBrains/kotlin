@@ -14,6 +14,7 @@ import com.intellij.util.Consumer
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.utils.PathUtil
@@ -25,7 +26,7 @@ class KotlinSdkType : SdkType("KotlinSDK") {
         val INSTANCE = KotlinSdkType()
 
         val defaultHomePath: String
-            get() = PathUtil.kotlinPathsForIdeaPlugin.homePath.absolutePath
+            get() = KotlinArtifacts.instance.kotlincDirectory.absolutePath
 
         @JvmOverloads
         fun setUpIfNeeded(disposable: Disposable? = null, checkIfNeeded: () -> Boolean = { true }) {

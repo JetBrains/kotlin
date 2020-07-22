@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.jps.incremental.createTestingCompilerEnvironment
 import org.jetbrains.kotlin.jps.incremental.runJSCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.JsMetadataVersion
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.*
 import java.util.*
 

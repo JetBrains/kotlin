@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.util.ActionRunner
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfiguration
 import org.jetbrains.kotlin.idea.search.allScope
@@ -21,7 +22,6 @@ import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.runner.RunWith
-import java.io.File
 import kotlin.test.assertNotEquals
 
 @RunWith(JUnit38ClassRunner::class)
@@ -39,7 +39,7 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
         val programParametersList = javaParameters.programParametersList.list
 
         programParametersList.checkParameter("-script") { it.contains("simpleScript.kts") }
-        programParametersList.checkParameter("-kotlin-home") { it == PathUtil.kotlinPathsForIdeaPlugin.homePath.path }
+        programParametersList.checkParameter("-kotlin-home") { it == KotlinArtifacts.instance.kotlincDirectory.absolutePath }
 
         Assert.assertTrue(!programParametersList.contains("-cp"))
 

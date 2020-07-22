@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.KotlinCliCompilerFacade
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
-import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Ignore
 import java.io.File
 

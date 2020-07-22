@@ -66,6 +66,9 @@ abstract class KotlinArtifacts {
     val kotlinScriptingCompiler: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMPILER) }
     val kotlinScriptingCompilerImpl: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_SCRIPTING_COMPILER_IMPL) }
     val kotlinCoroutinesExperimentalCompat: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.KOTLIN_COROUTINES_EXPERIMENTAL_COMPAT) }
+    val allopenCompilerPlugin: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.ALLOPEN_COMPILER_PLUGIN) }
+    val noargCompilerPlugin: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.NOARG_COMPILER_PLUGIN) }
+    val samWithReceiverCompilerPlugin: File by lazy { findFile(kotlincLibDirectory, KotlinArtifactNames.SAM_WITH_RECEIVER_COMPILER_PLUGIN) }
 
     private fun findFile(parent: File, path: String): File {
         val result = File(parent, path)

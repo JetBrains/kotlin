@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.script
 
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.utils.PathUtil
-import java.io.File
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 
 fun loadScriptingPlugin(configuration: CompilerConfiguration) {
-    val libPath = PathUtil.kotlinPathsForCompiler.libPath
-    val pluginClasspath = with (PathUtil) {
-        listOf(
-            KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR,
-            KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
-            KOTLIN_SCRIPTING_COMMON_JAR,
-            KOTLIN_SCRIPTING_JVM_JAR
-        ).map { File(libPath, it).path }
-    }
+    val artifacts = KotlinArtifacts.instance
+    val pluginClasspath = listOf(
+        artifacts.kotlinScriptingCompiler,
+        artifacts.kotlinScriptingCompilerImpl,
+        artifacts.kotlinScriptingCommon,
+        artifacts.kotlinScriptingJvm
+    ).map { it.absolutePath }
+
     PluginCliParser.loadPluginsSafe(pluginClasspath, null, configuration)
 }

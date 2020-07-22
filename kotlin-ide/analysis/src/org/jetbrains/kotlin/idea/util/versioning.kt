@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import java.io.File
 
 fun isEap(version: String): Boolean {
@@ -21,6 +21,6 @@ fun isSnapshot(version: String): Boolean {
 }
 
 val buildNumber: String by lazy {
-    val file = File(PathUtil.kotlinPathsForIdeaPlugin.homePath, "build.txt")
-    if (file.exists()) file.readText().trim() else "unknown"
+    val versionFile = File(KotlinArtifacts.instance.kotlincDirectory, "build.txt")
+    if (versionFile.exists()) versionFile.readText().trim() else "unknown"
 }
