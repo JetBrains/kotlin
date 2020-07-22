@@ -109,7 +109,7 @@ class Context private constructor(
         fun <S : WizardService> serviceByClass(klass: KClass<S>, filter: (S) -> Boolean = { true }): S =
             servicesManager.serviceByClass(klass, filter) ?: error("Service ${klass.simpleName} was not found")
 
-        val <T : Any> Property<T>.propertyValue: T
+        val <T : Any> PluginProperty<T>.propertyValue: T
             get() = propertyContext[this] ?: error("No value is present for property `$this`")
 
         val <V : Any, T : SettingType<V>> SettingReference<V, T>.settingValue: V
@@ -169,18 +169,18 @@ class Context private constructor(
             return action(this@Writer, value)
         }
 
-        fun <T : Any> Property<T>.update(
+        fun <T : Any> PluginProperty<T>.update(
             updater: suspend ComputeContext<*>.(T) -> TaskResult<T>
         ): TaskResult<Unit> = compute {
             val (newValue) = updater(propertyValue)
             propertyContext[this@update] = newValue
         }
 
-        fun <T : Any> Property<List<T>>.addValues(
+        fun <T : Any> PluginProperty<List<T>>.addValues(
             vararg values: T
         ): TaskResult<Unit> = update { oldValues -> success(oldValues + values) }
 
-        fun <T : Any> Property<List<T>>.addValues(
+        fun <T : Any> PluginProperty<List<T>>.addValues(
             values: List<T>
         ): TaskResult<Unit> = update { oldValues -> success(oldValues + values) }
 

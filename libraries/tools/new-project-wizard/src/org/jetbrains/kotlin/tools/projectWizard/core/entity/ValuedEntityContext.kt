@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.entity
 
-abstract class ValuedEntityContext<E : EntityWithValue<Any>> {
+abstract class ValuedEntityContext<E : Entity> {
     private val values = mutableMapOf<String, Any>()
 
     @Suppress("UNCHECKED_CAST")
