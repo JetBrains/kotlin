@@ -162,6 +162,12 @@
         <element id="archive" name="kotlin-frontend-independent.jar">
           <element id="module-output" name="kotlin.fir.frontend-independent" />
         </element>
+        <element id="archive" name="kotlin-line-indent-provider.jar">
+          <element id="module-output" name="kotlin.line-indent-provider" />
+        </element>
+        <element id="archive" name="kotlin-scripting-ide-services.jar">
+          <element id="module-output" name="kotlin.compiler-plugins.scripting-ide-services" />
+        </element>
       </element>
       <element id="directory" name="kotlinc">
         <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.20-dev-1959/kotlin-dist-for-ide-1.4.20-dev-1959.jar" path-in-jar="/" />
