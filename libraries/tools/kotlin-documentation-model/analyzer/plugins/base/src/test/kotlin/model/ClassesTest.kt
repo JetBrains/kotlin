@@ -332,7 +332,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 name equals "C"
                 constructors counts 2
 
-                constructors.map { it.name } allEquals "<init>"
+                constructors.map { it.name } allEquals "C"
 
                 with(constructors.find { it.parameters.isNullOrEmpty() } notNull "C()") {
                     parameters counts 0
