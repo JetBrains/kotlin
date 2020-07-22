@@ -169,6 +169,7 @@
           <element id="module-output" name="kotlin.compiler-plugins.scripting-ide-services" />
         </element>
         <element id="library" level="module" name="intellij-markdown" module-name="intellij.markdown" />
+        <element id="library" level="project" name="kotlinx-coroutines-jdk8" />
       </element>
       <element id="directory" name="kotlinc">
         <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.20-dev-1959/kotlin-dist-for-ide-1.4.20-dev-1959.jar" path-in-jar="/" />
