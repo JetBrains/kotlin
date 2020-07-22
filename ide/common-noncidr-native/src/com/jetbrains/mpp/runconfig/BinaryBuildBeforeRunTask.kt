@@ -9,6 +9,7 @@ import com.intellij.execution.BeforeRunTask
 import com.intellij.execution.BeforeRunTaskProvider
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.util.Key
 import com.jetbrains.konan.KonanBundle
@@ -27,6 +28,8 @@ class BinaryBuildBeforeRunTaskProvider : BeforeRunTaskProvider<BinaryBuildBefore
     override fun getName() = "Build Konan artifacts"
 
     override fun getId() = BUILD_BEFORE_RUN_TASK_ID
+
+    override fun getIcon() = AllIcons.RunConfigurations.Application
 
     override fun createTask(runConfiguration: RunConfiguration): BinaryBuildBeforeRunTask? =
         if (runConfiguration is BinaryRunConfiguration) BinaryBuildBeforeRunTask() else null

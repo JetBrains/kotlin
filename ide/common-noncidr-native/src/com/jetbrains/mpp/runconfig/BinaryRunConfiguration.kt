@@ -7,10 +7,7 @@ package com.jetbrains.mpp.runconfig
 
 import com.intellij.execution.CommonProgramRunConfigurationParameters
 import com.intellij.execution.Executor
-import com.intellij.execution.configurations.ConfigurationFactory
-import com.intellij.execution.configurations.LocatableConfigurationBase
-import com.intellij.execution.configurations.RunConfiguration
-import com.intellij.execution.configurations.RunProfileState
+import com.intellij.execution.configurations.*
 import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
@@ -24,10 +21,8 @@ import com.jetbrains.mpp.workspace.State.readFromXml
 import com.jetbrains.mpp.workspace.State.writeToXml
 import com.jetbrains.mpp.workspace.WorkspaceBase
 import org.jdom.Element
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 import java.io.File
-import javax.swing.Icon
 
 class BinaryRunConfiguration(
     private val workspace: WorkspaceBase,
@@ -65,14 +60,26 @@ class BinaryRunConfiguration(
         parameters = newParameters
     }
 
-    override fun getIcon(): Icon? = factory?.icon
-
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         BinaryRunConfigurationSettingsEditor(workspace.allAvailableExecutables)
 
-    private fun hostSupportsExecutable(host: KonanTarget, executable: KonanTarget) = when (host) {
-        KonanTarget.MACOS_X64 -> executable == KonanTarget.IOS_X64 || executable == KonanTarget.MACOS_X64
-        else -> host == executable
+    override fun checkConfiguration() {
+        val selectedExecutable = executable
+        val selectedVariant = variant
+        when {
+            selectedExecutable == null -> {
+                throw RuntimeConfigurationError("There is no executable!")
+            }
+            !workspace.allAvailableExecutables.contains(selectedExecutable) -> {
+                throw RuntimeConfigurationError("${selectedExecutable.name} was not found in project!")
+            }
+            selectedVariant == null -> {
+                throw RuntimeConfigurationError("There is no variant for launch!")
+            }
+            !selectedExecutable.variants.contains(selectedVariant) -> {
+                throw RuntimeConfigurationError("Selected variant ${selectedVariant.name} is incompatible with executable!")
+            }
+        }
     }
 
     override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState? {

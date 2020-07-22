@@ -13,7 +13,6 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.GridBag
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mpp.BinaryExecutable
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -29,7 +28,7 @@ class BinaryRunConfigurationSettingsEditor(
 
     private val commonProgramParameters = CommonProgramParametersPanel()
 
-    private val executableLabel: JBLabel = JBLabel(KonanBundle.message("label.executable.text") + ":")
+    private val executableLabel: JBLabel = JBLabel("Executable:")
     private val executableCombo = ComboBox<BinaryExecutableItem>()
 
     private val variantLabel: JBLabel = JBLabel("Variant:")
@@ -40,6 +39,7 @@ class BinaryRunConfigurationSettingsEditor(
     override fun setAnchor(component: JComponent?) {
         anchor = component
         executableLabel.anchor = component
+        variantLabel.anchor = component
         commonProgramParameters.anchor = component
     }
 
@@ -99,10 +99,26 @@ class BinaryRunConfigurationSettingsEditor(
 
     override fun resetEditorFrom(runConfiguration: BinaryRunConfiguration) {
         commonProgramParameters.reset(runConfiguration)
-        runConfiguration.executable?.let { executable ->
-            executableCombo.selectedItem = BinaryExecutableItem(executable)
-            variantCombo.selectedItem = runConfiguration.variant?.let { BinaryExecutableVariantItem(it) }
-                ?: executable.variants.firstOrNull()?.let { BinaryExecutableVariantItem(it) }
+
+        val executable = runConfiguration.executable
+        val variant = runConfiguration.variant
+        if (executable != null) {
+            val item = BinaryExecutableItem(executable)
+            if (availableExecutableItems.contains(item)) {
+                executableCombo.selectedItem = item
+
+                if (variant != null && executable.variants.contains(variant)) {
+                    variantCombo.selectedItem = BinaryExecutableVariantItem(variant)
+                } else {
+                    variantCombo.selectedIndex = -1
+                }
+            } else {
+                executableCombo.selectedIndex = -1
+                variantCombo.removeAllItems()
+            }
+        } else {
+            executableCombo.selectedIndex = -1
+            variantCombo.removeAllItems()
         }
     }
 
