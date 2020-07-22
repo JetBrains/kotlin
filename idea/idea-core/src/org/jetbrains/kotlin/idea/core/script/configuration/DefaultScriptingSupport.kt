@@ -263,7 +263,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
         forceSkipNotification: Boolean
     ) {
         saveLock.withLock {
-            debug(file) { "configuration received = $newResult" }
+            scriptingDebugLog(file) { "configuration received = $newResult" }
 
             setLoadedConfiguration(file, newResult)
 
@@ -290,7 +290,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
                         saveReports(file, newResult.reports)
                         setAppliedConfiguration(file, newResult, syncUpdate = true)
                     } else {
-                        debug(file) {
+                        scriptingDebugLog(file) {
                             "configuration changed, notification is shown: old = $oldConfiguration, new = $newConfiguration"
                         }
 
@@ -321,7 +321,7 @@ class DefaultScriptingSupport(manager: CompositeScriptConfigurationManager) : De
     ) {
         val oldReports = IdeScriptReportSink.getReports(file)
         if (oldReports != newReports) {
-            debug(file) { "new script reports = $newReports" }
+            scriptingDebugLog(file) { "new script reports = $newReports" }
 
             ServiceManager.getService(project, ScriptReportSink::class.java).attachReports(file, newReports)
 
@@ -502,7 +502,7 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
     ) {
         manager.updater.checkInTransaction()
         val newConfiguration = newConfigurationSnapshot?.configuration
-        debug(file) { "configuration changed = $newConfiguration" }
+        scriptingDebugLog(file) { "configuration changed = $newConfiguration" }
 
         if (newConfiguration != null) {
             cache.setApplied(file, newConfigurationSnapshot)

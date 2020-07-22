@@ -77,19 +77,3 @@ fun kotlinDslScriptsModelImportSupported(currentGradleVersion: String): Boolean 
 
 fun getGradleProjectSettings(project: Project): Collection<GradleProjectSettings> =
     (ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID) as GradleSettings).linkedProjectsSettings
-
-private val logger = Logger.getInstance("#org.jetbrains.kotlin.idea.scripting.gradle")
-
-fun scriptingDebugLog(message: () -> String) {
-    if (logger.isDebugEnabled) {
-        logger.debug("[KOTLIN_GRADLE_DSL] ${message()}")
-    }
-}
-
-fun scriptingInfoLog(message: String) {
-    logger.info("[KOTLIN_GRADLE_DSL] $message")
-}
-
-fun scriptingErrorLog(message: String, throwable: Throwable?) {
-    logger.error("[KOTLIN_GRADLE_DSL] $message", throwable)
-}

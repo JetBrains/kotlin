@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
-import org.jetbrains.kotlin.idea.core.script.debug
+import org.jetbrains.kotlin.idea.core.script.scriptingDebugLog
 import org.jetbrains.kotlin.idea.core.util.cachedFileAttribute
 import org.jetbrains.kotlin.idea.core.util.readObject
 import org.jetbrains.kotlin.idea.core.util.writeObject
@@ -55,7 +55,7 @@ internal class ScriptConfigurationFileAttributeCache(
         virtualFile: VirtualFile
     ): ScriptConfigurationSnapshotForFS? {
         val configurationSnapshot = virtualFile.scriptConfigurationSnapshot ?: return null
-        debug(virtualFile) { "configuration from fileAttributes = $configurationSnapshot" }
+        scriptingDebugLog(virtualFile) { "configuration from fileAttributes = $configurationSnapshot" }
 
         val configuration = configurationSnapshot.configuration ?: return null
 
@@ -73,7 +73,7 @@ internal class ScriptConfigurationFileAttributeCache(
             if (it.exists()) {
                 true
             } else {
-                debug(file) {
+                scriptingDebugLog(file) {
                     "classpath root saved to file attribute doesn't exist: ${it.path}"
                 }
                 false
