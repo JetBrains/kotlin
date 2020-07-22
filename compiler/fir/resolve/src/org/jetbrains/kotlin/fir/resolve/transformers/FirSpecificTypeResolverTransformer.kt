@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -41,11 +44,18 @@ class FirSpecificTypeResolverTransformer(
     }
 
     private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType): CompositeTransformResult<FirTypeRef> {
-        return buildResolvedTypeRef {
-            source = typeRef.source
-            type = resolvedType.takeIfAcceptable() ?: return typeRef.compose()
-            annotations += typeRef.annotations
-            delegatedTypeRef = typeRef
+        return if (resolvedType !is ConeClassErrorType) {
+            buildResolvedTypeRef {
+                source = typeRef.source
+                type = resolvedType.takeIfAcceptable() ?: return typeRef.compose()
+                annotations += typeRef.annotations
+                delegatedTypeRef = typeRef
+            }
+        } else {
+            buildErrorTypeRef {
+                source = resolvedType.source as FirSourceElement
+                diagnostic = ConeUnexpectedTypeArgumentsError(resolvedType.reason, resolvedType.source)
+            }
         }.compose()
     }
 

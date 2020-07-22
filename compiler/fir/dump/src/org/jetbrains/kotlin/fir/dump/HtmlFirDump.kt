@@ -901,7 +901,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 unresolved++
                 generateList(typeRef.qualifier, separator = ".") {
                     simpleName(it.name)
-                    generateTypeProjections(it.typeArguments)
+                    generateTypeProjections(it.typeArgumentList.typeArguments)
                 }
                 if (typeRef.isMarkedNullable) {
                     +"?"

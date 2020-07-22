@@ -14,7 +14,7 @@ fun test() {
     val b1 = B<<!UPPER_BOUND_VIOLATED!>Int<!>>()
     val b2 = B<C>()
     val b3 = B<<!UPPER_BOUND_VIOLATED!>Any?<!>>()
-    val b4 = B<UnexistingType>()
+    val b4 = B<<!UPPER_BOUND_VIOLATED!>UnexistingType<!>>()
     val b5 = B<<!UPPER_BOUND_VIOLATED!>B<UnexistingType><!>>()
     fest<<!UPPER_BOUND_VIOLATED!>Boolean<!>>()
     fest<C>()

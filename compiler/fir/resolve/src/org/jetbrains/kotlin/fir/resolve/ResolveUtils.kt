@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.FirResolvedReifiedParameterReferenceBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -174,7 +173,14 @@ fun FirClassifierSymbol<*>.constructType(
             ConeTypeParameterTypeImpl(this.toLookupTag(), isNullable, attributes)
         }
         is FirClassSymbol -> {
-            ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
+            val errorTypeRef = typeArguments.find {
+                it is ConeClassErrorType
+            }
+            if (errorTypeRef is ConeClassErrorType) {
+                ConeClassErrorType(errorTypeRef.reason, errorTypeRef.source)
+            } else {
+                ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
+            }
         }
         is FirTypeAliasSymbol -> {
             ConeClassLikeTypeImpl(
@@ -199,15 +205,12 @@ fun FirClassifierSymbol<*>.constructType(
 ): ConeKotlinType {
     if (this is FirTypeParameterSymbol) {
         for (part in parts) {
-            if (part.typeArguments.isNotEmpty()) {
-                // 1. To report this on the whole argument list we should introduce FirTypeArgumentList
-                // and add it to FirQualifierPart
-                // 2. Probably it's much better to use outer FirErrorTypeRef to store diagnostic
-                // and its source. See FirSpecificTypeResolverTransformer.transformType
-                return ConeClassErrorType("Type arguments not allowed", source = part.typeArguments.first().source)
+            if (part.typeArgumentList.typeArguments.isNotEmpty()) {
+                return ConeClassErrorType("Type arguments not allowed", source = part.typeArgumentList.source)
             }
         }
     }
+
     return constructType(parts.toTypeProjections(), isNullable, attributes)
         .also {
             val lookupTag = it.lookupTag
@@ -218,7 +221,7 @@ fun FirClassifierSymbol<*>.constructType(
 }
 
 private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
-    asReversed().flatMap { it.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
+    asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
 
 fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResolvedTypeRef {
     val receiverTypeRef = when (this) {

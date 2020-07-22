@@ -60,8 +60,8 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
                 val renderedQualifier = qualifier.joinToString(separator = ".") { part ->
                     buildString {
                         append(part.name)
-                        if (part.typeArguments.isNotEmpty()) {
-                            part.typeArguments.joinTo(this, prefix = "<", postfix = ">") { it.renderTypeAsKotlinType() }
+                        if (part.typeArgumentList.typeArguments.isNotEmpty()) {
+                            part.typeArgumentList.typeArguments.joinTo(this, prefix = "<", postfix = ">") { it.renderTypeAsKotlinType() }
                         }
                     }
                 }
