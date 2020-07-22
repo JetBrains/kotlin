@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import java.util.*
 
 class IrWhenImpl(
     override val startOffset: Int,
@@ -47,7 +45,7 @@ open class IrBranchImpl(
     override val endOffset: Int,
     override var condition: IrExpression,
     override var result: IrExpression
-) : IrElementBase(), IrBranch {
+) : IrBranch() {
     constructor(condition: IrExpression, result: IrExpression) :
             this(condition.startOffset, condition.endOffset, condition, result)
 
@@ -56,28 +54,16 @@ open class IrBranchImpl(
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBranch =
         transformer.visitBranch(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        condition.accept(visitor, data)
-        result.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        condition = condition.transform(transformer, data)
-        result = result.transform(transformer, data)
-    }
 }
 
 class IrElseBranchImpl(
-    startOffset: Int,
-    endOffset: Int,
-    condition: IrExpression,
-    result: IrExpression
-) :
-    IrBranchImpl(startOffset, endOffset, condition, result),
-    IrElseBranch {
-
-    constructor(condition: IrExpression, result: IrExpression) : this(condition.startOffset, condition.endOffset, condition, result)
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var condition: IrExpression,
+    override var result: IrExpression
+) : IrElseBranch() {
+    constructor(condition: IrExpression, result: IrExpression) :
+            this(condition.startOffset, condition.endOffset, condition, result)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitElseBranch(this, data)

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
@@ -28,9 +28,9 @@ abstract class IrTry : IrExpression() {
     abstract var finallyExpression: IrExpression?
 }
 
-interface IrCatch : IrElement {
-    var catchParameter: IrVariable
-    var result: IrExpression
+abstract class IrCatch : IrElementBase() {
+    abstract var catchParameter: IrVariable
+    abstract var result: IrExpression
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrCatch =
         super.transform(transformer, data) as IrCatch
