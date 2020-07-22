@@ -11,10 +11,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.constructType
@@ -29,8 +32,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.types.Variance.INVARIANT
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class JavaSymbolProvider(
@@ -45,6 +48,9 @@ class JavaSymbolProvider(
     val project: Project,
     private val searchScope: GlobalSearchScope,
 ) : AbstractFirSymbolProvider<FirRegularClassSymbol>() {
+    companion object {
+        private val VALUE_METHOD_NAME = Name.identifier("value")
+    }
 
     private val scopeProvider = JavaScopeProvider(::wrapScopeWithJvmMapped, this)
 
@@ -241,6 +247,10 @@ class JavaSymbolProvider(
                         }
                         declarations += firJavaDeclaration
                     }
+                    val valueParametersForAnnotationConstructor = mutableListOf<FirJavaValueParameter>()
+                    var valueParameterForValueInAnnotationConstructor: FirJavaValueParameter? = null
+                    val classIsAnnotation = classKind == ClassKind.ANNOTATION_CLASS
+
                     for (javaMethod in javaClass.methods) {
                         val methodName = javaMethod.name
                         val methodId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
@@ -280,10 +290,33 @@ class JavaSymbolProvider(
                                 isSuspend = false
                             }
                         }
+                        if (classIsAnnotation) {
+                            val parameterForAnnotationConstructor = buildJavaValueParameter {
+                                session = this@JavaSymbolProvider.session
+                                returnTypeRef = firJavaMethod.returnTypeRef
+                                name = firJavaMethod.name
+                                if (javaMethod.hasAnnotationParameterDefaultValue) {
+                                    defaultValue = buildExpressionStub()
+                                }
+                                isVararg = javaMethod.returnType is JavaArrayType
+                            }
+                            if (firJavaMethod.name == VALUE_METHOD_NAME) {
+                                valueParameterForValueInAnnotationConstructor = parameterForAnnotationConstructor
+                            } else {
+                                valueParametersForAnnotationConstructor += parameterForAnnotationConstructor
+                            }
+                        }
                         declarations += firJavaMethod
                     }
                     val javaClassDeclaredConstructors = javaClass.constructors
                     val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
+
+                    fun buildSelfTypeRef() = firSymbol.constructType(
+                        this@buildJavaClass.typeParameters.map {
+                            ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+                        }.toTypedArray(),
+                        false,
+                    )
 
                     fun prepareJavaConstructor(
                         visibility: Visibility = this.visibility,
@@ -309,10 +342,7 @@ class JavaSymbolProvider(
                             this.visibility = visibility
                             this.isPrimary = isPrimary
                             returnTypeRef = buildResolvedTypeRef {
-                                type = firSymbol.constructType(
-                                    this@buildJavaClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
-                                    false,
-                                )
+                                type = buildSelfTypeRef()
                             }
                             typeParameters += classTypeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
                         }
@@ -341,6 +371,20 @@ class JavaSymbolProvider(
                     if (classKind == ClassKind.ENUM_CLASS) {
                         generateValuesFunction(session, classId.packageFqName, classId.relativeClassName)
                         generateValueOfFunction(session, classId.packageFqName, classId.relativeClassName)
+                    }
+                    if (classIsAnnotation) {
+                        declarations += buildJavaConstructor {
+                            session = this@JavaSymbolProvider.session
+                            symbol = FirConstructorSymbol(constructorId)
+                            returnTypeRef = buildResolvedTypeRef {
+                                type = buildSelfTypeRef()
+                            }
+                            valueParameters.addIfNotNull(valueParameterForValueInAnnotationConstructor)
+                            valueParameters += valueParametersForAnnotationConstructor
+                            visibility = Visibilities.PUBLIC
+                            isInner = false
+                            isPrimary = true
+                        }
                     }
                     parentClassTypeParameterStackCache.remove(firSymbol)
                 }

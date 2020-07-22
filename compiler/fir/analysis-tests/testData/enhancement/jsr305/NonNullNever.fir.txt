@@ -1,4 +1,6 @@
 @R|java/lang/annotation/Documented|() @R|javax/annotation/meta/TypeQualifierNickname|() @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.NEVER|()) @R|java/lang/annotation/Retention|(R|java/lang/annotation/RetentionPolicy.RUNTIME|()) public abstract annotation class MyNullable : R|kotlin/Annotation| {
+    public constructor(): R|MyNullable|
+
 }
 public open class NonNullNever : R|kotlin/Any| {
     @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.NEVER|()) public open field field: R|kotlin/String?|

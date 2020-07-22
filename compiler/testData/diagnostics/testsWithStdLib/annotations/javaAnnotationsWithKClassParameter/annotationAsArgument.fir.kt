@@ -12,8 +12,8 @@ public @interface B {
 }
 
 // FILE: c.kt
-@A(arg = String::class, b = <!UNRESOLVED_REFERENCE!>B<!>(y = 1)) class MyClass1
+@A(arg = String::class, b = B(y = 1)) class MyClass1
 
-@A(b = <!UNRESOLVED_REFERENCE!>B<!>(y = 3)) class MyClass2
+@A(b = B(y = 3)) class MyClass2
 
-@A(arg = String::class, b = <!UNRESOLVED_REFERENCE!>B<!>(arg = Boolean::class)) class MyClass3
+@A(arg = String::class, b = <!INAPPLICABLE_CANDIDATE!>B<!>(arg = Boolean::class)) class MyClass3

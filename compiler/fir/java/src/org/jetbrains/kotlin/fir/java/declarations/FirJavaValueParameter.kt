@@ -60,7 +60,7 @@ class FirJavaValueParameterBuilder : FirValueParameterBuilder() {
             name,
             symbol = FirVariableSymbol(name),
             annotations,
-            defaultValue = null,
+            defaultValue,
             isCrossinline = false,
             isNoinline = false,
             isVararg,
@@ -76,13 +76,6 @@ class FirJavaValueParameterBuilder : FirValueParameterBuilder() {
 
     @Deprecated("Modification of '' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
     override var symbol: FirVariableSymbol<FirValueParameter>
-        get() = throw IllegalStateException()
-        set(value) {
-            throw IllegalStateException()
-        }
-
-    @Deprecated("Modification of 'defaultValue' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
-    override var defaultValue: FirExpression?
         get() = throw IllegalStateException()
         set(value) {
             throw IllegalStateException()
