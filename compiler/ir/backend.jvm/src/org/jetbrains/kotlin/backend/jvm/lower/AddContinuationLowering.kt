@@ -722,7 +722,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
         }
         if (caller != null) {
             // At this point the only LOCAL_FUNCTION_FOR_LAMBDAs are inline and crossinline lambdas.
-            val continuation = if (caller.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA)
+            val continuation = if (caller.origin is IrDeclarationLocalFunctionForLambda)
                 context.fakeContinuation
             else
                 IrGetValueImpl(

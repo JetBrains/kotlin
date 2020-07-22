@@ -40,7 +40,7 @@ interface IrDeclarationOrigin {
     object SYNTHETIC_FILE_CLASS : IrDeclarationOriginImpl("SYNTHETIC_FILE_CLASS", isSynthetic = true)
     object GENERATED_DATA_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_DATA_CLASS_MEMBER")
     object GENERATED_INLINE_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_INLINE_CLASS_MEMBER")
-    object LOCAL_FUNCTION_FOR_LAMBDA : IrDeclarationOriginImpl("LOCAL_FUNCTION_FOR_LAMBDA")
+    object LOCAL_FUNCTION_FOR_LAMBDA: IrDeclarationLocalFunctionForLambda()
     object CATCH_PARAMETER : IrDeclarationOriginImpl("CATCH_PARAMETER")
     object INSTANCE_RECEIVER : IrDeclarationOriginImpl("INSTANCE_RECEIVER")
     object PRIMARY_CONSTRUCTOR_PARAMETER : IrDeclarationOriginImpl("PRIMARY_CONSTRUCTOR_PARAMETER")
@@ -64,6 +64,8 @@ interface IrDeclarationOrigin {
 
     val isSynthetic: Boolean get() = false
 }
+
+open class IrDeclarationLocalFunctionForLambda(val copiedFrom:IrDeclarationParent? = null) : IrDeclarationOriginImpl("LOCAL_FUNCTION_FOR_LAMBDA")
 
 abstract class IrDeclarationOriginImpl(
     val name: String,

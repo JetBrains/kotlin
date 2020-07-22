@@ -64,7 +64,8 @@ open class DeepCopyIrTreeWithSymbols(
         }
     }
 
-    protected fun mapDeclarationOrigin(origin: IrDeclarationOrigin) = origin
+    open protected fun mapDeclarationOrigin(declaration: IrDeclaration) = declaration.origin
+
     protected fun mapStatementOrigin(origin: IrStatementOrigin?) = origin
 
     protected inline fun <reified T : IrElement> T.transform() =
@@ -127,7 +128,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitClass(declaration: IrClass): IrClass =
         IrClassImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration),
             symbolRemapper.getDeclaredClass(declaration.symbol),
             symbolRenamer.getClassName(declaration.symbol),
             declaration.kind,
@@ -153,7 +154,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
         IrFunctionImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration),
             symbolRemapper.getDeclaredFunction(declaration.symbol),
             symbolRenamer.getFunctionName(declaration.symbol),
             declaration.visibility,
@@ -177,7 +178,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitConstructor(declaration: IrConstructor): IrConstructor =
         IrConstructorImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration),
             symbolRemapper.getDeclaredConstructor(declaration.symbol),
             declaration.name,
             declaration.visibility,
@@ -210,7 +211,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitProperty(declaration: IrProperty): IrProperty =
         IrPropertyImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration),
             symbolRemapper.getDeclaredProperty(declaration.symbol),
             declaration.name,
             declaration.visibility,
@@ -237,7 +238,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitField(declaration: IrField): IrField =
         IrFieldImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration),
             symbolRemapper.getDeclaredField(declaration.symbol),
             symbolRenamer.getFieldName(declaration.symbol),
             declaration.type.remapType(),
@@ -253,7 +254,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrLocalDelegatedProperty =
         IrLocalDelegatedPropertyImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration),
             symbolRemapper.getDeclaredLocalDelegatedProperty(declaration.symbol),
             declaration.name,
             declaration.type.remapType(),
@@ -268,7 +269,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitEnumEntry(declaration: IrEnumEntry): IrEnumEntry =
         IrEnumEntryImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration),
             symbolRemapper.getDeclaredEnumEntry(declaration.symbol),
             symbolRenamer.getEnumEntryName(declaration.symbol)
         ).apply {
@@ -280,7 +281,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrAnonymousInitializer =
         IrAnonymousInitializerImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration),
             IrAnonymousInitializerSymbolImpl(declaration.descriptor)
         ).apply {
             body = declaration.body.transform()
@@ -289,7 +290,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitVariable(declaration: IrVariable): IrVariable =
         IrVariableImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration),
             symbolRemapper.getDeclaredVariable(declaration.symbol),
             symbolRenamer.getVariableName(declaration.symbol),
             declaration.type.remapType(),
@@ -310,7 +311,7 @@ open class DeepCopyIrTreeWithSymbols(
     private fun copyTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
         IrTypeParameterImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration),
             symbolRemapper.getDeclaredTypeParameter(declaration.symbol),
             symbolRenamer.getTypeParameterName(declaration.symbol),
             declaration.index,
@@ -337,7 +338,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
         IrValueParameterImpl(
             declaration.startOffset, declaration.endOffset,
-            mapDeclarationOrigin(declaration.origin),
+            mapDeclarationOrigin(declaration),
             symbolRemapper.getDeclaredValueParameter(declaration.symbol),
             symbolRenamer.getValueParameterName(declaration.symbol),
             declaration.index,
@@ -358,7 +359,7 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.visibility,
             declaration.expandedType.remapType(),
             declaration.isActual,
-            mapDeclarationOrigin(declaration.origin)
+            mapDeclarationOrigin(declaration)
         ).apply {
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)

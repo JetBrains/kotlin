@@ -44,7 +44,7 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean) {
         storageManager.createMemoizedFunctionWithNullableValues {
             when {
                 // Don't mangle anonymous or synthetic functions
-                it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
+                it.origin is IrDeclarationLocalFunctionForLambda ||
                         (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == Visibilities.LOCAL) ||
                         it.isStaticInlineClassReplacement ||
                         it.origin.isSynthetic -> null

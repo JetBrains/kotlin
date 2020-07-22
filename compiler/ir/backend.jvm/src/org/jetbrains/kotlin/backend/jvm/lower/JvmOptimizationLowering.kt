@@ -81,7 +81,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             override fun visitFunction(declaration: IrFunction, currentClass: IrClass?): IrStatement {
                 val codeMightBeGeneratedInDifferentClass = declaration.isSuspend ||
                         declaration.isInline ||
-                        declaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+                        declaration.origin is IrDeclarationLocalFunctionForLambda
                 declaration.transformChildren(this, currentClass.takeUnless { codeMightBeGeneratedInDifferentClass })
                 return declaration
             }

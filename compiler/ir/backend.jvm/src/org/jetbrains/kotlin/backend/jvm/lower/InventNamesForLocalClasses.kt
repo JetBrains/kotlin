@@ -159,7 +159,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
                 declaration.acceptChildren(this, data.makeLocal())
                 return
             }
-            if (declaration.isSuspend && declaration.body != null && declaration.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) {
+            if (declaration.isSuspend && declaration.body != null && declaration.origin !is IrDeclarationLocalFunctionForLambda) {
                 // Suspend functions have a continuation, which is essentially a local class
                 val newData = data.withName(inventName(declaration.name, data))
                 val internalName = inventName(null, newData)

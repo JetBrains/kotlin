@@ -68,7 +68,7 @@ abstract class AnnotationCodegen(
         for (annotation in annotations) {
             val applicableTargets = annotation.applicableTargetSet()
             if (annotated is IrSimpleFunction &&
-                annotated.origin === IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
+                annotated.origin is IrDeclarationLocalFunctionForLambda &&
                 KotlinTarget.FUNCTION !in applicableTargets &&
                 KotlinTarget.PROPERTY_GETTER !in applicableTargets &&
                 KotlinTarget.PROPERTY_SETTER !in applicableTargets

@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DescriptorsToIrRemapper
 import org.jetbrains.kotlin.backend.common.WrappedDescriptorPatcher
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -118,5 +117,15 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
 
     private val symbolRemapper = SymbolRemapperImpl(DescriptorsToIrRemapper)
     private val copier =
-        DeepCopyIrTreeWithSymbols(symbolRemapper, InlinerTypeRemapper(symbolRemapper, typeArguments), InlinerSymbolRenamer())
+        object: DeepCopyIrTreeWithSymbols(symbolRemapper, InlinerTypeRemapper(symbolRemapper, typeArguments), InlinerSymbolRenamer()) {
+            override fun mapDeclarationOrigin(declaration: IrDeclaration): IrDeclarationOrigin {
+                return when {
+                    declaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> {
+                        assert((declaration is IrFunction) && !declaration.isInline)
+                        IrDeclarationLocalFunctionForLambda(declaration.parent)
+                    }
+                    else -> super.mapDeclarationOrigin(declaration)
+                }
+            }
+        }
 }
