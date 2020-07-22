@@ -26,14 +26,14 @@ class ModulesEditorComponent(
     needBorder: Boolean,
     private val editable: Boolean,
     oneEntrySelected: (data: DisplayableSettingItem?) -> Unit
-) : SettingComponent<List<Module>, ListSettingType<Module>>(KotlinPlugin::modules.reference, context) {
+) : SettingComponent<List<Module>, ListSettingType<Module>>(KotlinPlugin.modules.reference, context) {
     private val tree: ModulesEditorTree =
         ModulesEditorTree(
             onSelected = { oneEntrySelected(it) },
             context = context,
             isTreeEditable = editable,
             addModule = { component ->
-                val isMppProject = KotlinPlugin::projectKind.value == ProjectKind.Singleplatform
+                val isMppProject = KotlinPlugin.projectKind.reference.value == ProjectKind.Singleplatform
                 moduleCreator.create(
                     target = null, // The empty tree case
                     allowMultiplatform = isMppProject,
@@ -77,7 +77,7 @@ class ModulesEditorComponent(
         moduleCreator = moduleCreator,
         model = model,
         getModules = { value ?: emptyList() },
-        isMultiplatformProject = { KotlinPlugin::projectKind.value != ProjectKind.Singleplatform }
+        isMultiplatformProject = { KotlinPlugin.projectKind.reference.value != ProjectKind.Singleplatform }
     ) else null
 
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {

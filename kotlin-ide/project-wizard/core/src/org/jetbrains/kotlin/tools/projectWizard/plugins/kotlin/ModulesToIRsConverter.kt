@@ -253,9 +253,9 @@ class ModulesToIRsConverter(
         compute {
             rootBuildFileIrs += createRootBuildFileIrs(data)
             runArbitraryTask(data, module, modulePath).ensure()
-            TemplatesPlugin::addFileTemplates.execute(createTemplates(data, module, modulePath)).ensure()
+            TemplatesPlugin.addFileTemplates.execute(createTemplates(data, module, modulePath)).ensure()
             if (this@with is GradleModuleConfigurator) {
-                GradlePlugin::settingsGradleFileIRs.addValues(createSettingsGradleIRs(module)).ensure()
+                GradlePlugin.settingsGradleFileIRs.addValues(createSettingsGradleIRs(module)).ensure()
             }
         }
     }

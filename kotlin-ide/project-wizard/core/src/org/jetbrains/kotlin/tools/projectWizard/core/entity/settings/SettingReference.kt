@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
-import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.path
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
 
 
 sealed class SettingReference<out V : Any, out T : SettingType<V>> {
@@ -34,9 +31,6 @@ data class PluginSettingReference<out V : Any, out T : SettingType<V>>(
     override val path: String,
     override val type: KClass<@UnsafeVariance T>
 ) : SettingReference<V, T>() {
-
-    constructor(kProperty: KProperty1<out Plugin, PluginSetting<V, T>>, type: KClass<T>) :
-            this(kProperty.path, type)
 
     @Suppress("UNCHECKED_CAST")
     constructor(setting: PluginSetting<V, T>) :
@@ -112,8 +106,8 @@ data class IdBasedTemplateSettingReference<V : Any, T : SettingType<V>>(
     override val module: Module? = null
 }
 
-inline val <V : Any, reified T : SettingType<V>> PluginSettingPropertyReference<V, T>.reference: PluginSettingReference<V, T>
+/*inline val <V : Any, reified T : SettingType<V>> PluginSettingPropertyReference<V, T>.reference: PluginSettingReference<V, T>
     get() = PluginSettingReference(this, T::class)
 
-typealias PluginSettingPropertyReference<V, T> = KProperty1<out Plugin, PluginSetting<V, T>>
+typealias PluginSettingPropertyReference<V, T> = KProperty1<out Plugin, PluginSetting<V, T>>*/
 

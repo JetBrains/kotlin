@@ -44,7 +44,7 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         get() = ModuleType.android
 
     override fun getPluginSettings(): List<PluginSettingReference<Any, SettingType<Any>>> =
-        listOf(AndroidPlugin::androidSdkPath.reference)
+        listOf(AndroidPlugin.androidSdkPath.reference)
 
     override fun createBuildFileIRs(
         reader: Reader,
@@ -66,7 +66,7 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
     fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin
 
     override fun Reader.createSettingsGradleIRs(module: Module) = buildList<BuildSystemIR> {
-        +createRepositories(KotlinPlugin::version.propertyValue).map { PluginManagementRepositoryIR(RepositoryIR(it)) }
+        +createRepositories(KotlinPlugin.version.propertyValue).map { PluginManagementRepositoryIR(RepositoryIR(it)) }
         +AndroidResolutionStrategyIR(Versions.GRADLE_PLUGINS.ANDROID)
     }
 
@@ -154,7 +154,7 @@ object AndroidTargetConfigurator : TargetConfigurator,
     ): TaskResult<Unit> = computeM {
         val javaPackage = module.javaPackage(configurationData.pomIr)
         val settings = mapOf("package" to javaPackage.asCodePackage())
-        TemplatesPlugin::addFileTemplates.execute(
+        TemplatesPlugin.addFileTemplates.execute(
             listOf(
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.androidManifestForLibraryXml, modulePath, settings)
             )

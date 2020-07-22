@@ -199,12 +199,12 @@ class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, Generatio
         val suggestedProjectParentLocation = suggestProjectLocation()
         val suggestedProjectName = ProjectWizardUtil.findNonExistingFileName(suggestedProjectParentLocation, "untitled", "")
         wizard.context.writeSettings {
-            StructurePlugin::name.reference.setValue(suggestedProjectName)
-            StructurePlugin::projectPath.reference.setValue(suggestedProjectParentLocation / suggestedProjectName)
-            StructurePlugin::artifactId.reference.setValue(suggestedProjectName)
+            StructurePlugin.name.reference.setValue(suggestedProjectName)
+            StructurePlugin.projectPath.reference.setValue(suggestedProjectParentLocation / suggestedProjectName)
+            StructurePlugin.artifactId.reference.setValue(suggestedProjectName)
 
-            if (StructurePlugin::groupId.reference.notRequiredSettingValue == null) {
-                StructurePlugin::groupId.reference.setValue(suggestGroupId())
+            if (StructurePlugin.groupId.notRequiredSettingValue == null) {
+                StructurePlugin.groupId.reference.setValue(suggestGroupId())
             }
         }
     }

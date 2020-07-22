@@ -91,7 +91,7 @@ private class ModuleNameComponent(context: Context, private val module: Module) 
 
     override fun onInit() {
         super.onInit()
-        val isSingleRootMode = read { KotlinPlugin::modules.settingValue }.size == 1
+        val isSingleRootMode = read { KotlinPlugin.modules.settingValue }.size == 1
         when {
             isSingleRootMode && module.isRootModule -> {
                 textField.disable(KotlinNewProjectWizardUIBundle.message("module.settings.name.same.as.project"))
@@ -169,7 +169,7 @@ private object NoneTemplate : Template() {
 }
 
 fun Reader.availableTemplatesFor(module: Module) =
-    TemplatesPlugin::templates.propertyValue.values.filter { template ->
+    TemplatesPlugin.templates.propertyValue.values.filter { template ->
         module.configurator.moduleType in template.moduleTypes
     }
 

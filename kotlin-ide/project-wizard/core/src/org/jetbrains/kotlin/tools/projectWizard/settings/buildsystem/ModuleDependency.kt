@@ -87,7 +87,7 @@ sealed class ModuleDependencyType(
             IOSSinglePlatformModuleConfigurator.dependentModule.reference
                 .setValue(IOSSinglePlatformModuleConfigurator.DependentModuleReference(to))
             val dummyFilePath = Defaults.SRC_DIR / "${to.iosTargetSafe()!!.name}Main" / to.configurator.kotlinDirectoryName / "dummyFile.kt"
-            TemplatesPlugin::addFileTemplate.execute(
+            TemplatesPlugin.addFileTemplate.execute(
                 FileTemplate(
                     FileTemplateDescriptor("ios/dummyFile.kt", dummyFilePath),
                     projectPath / toModulePath
