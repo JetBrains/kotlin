@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 @State(Scope.Benchmark)
 open class ControlFlowAnalysisBenchmark : AbstractSimpleFileBenchmark(){
 
-    @Param("1", "100", "1000", "3000", "5000", "7000", "10000")
+    @Param("1")
     private var size: Int = 0
 
     @Benchmark
