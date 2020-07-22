@@ -6,24 +6,24 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.PluginSettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.templates.KtorServerTemplate
-import org.jetbrains.kotlin.tools.projectWizard.templates.SimpleJsClientTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.SimpleNodeJsTemplate
 
 class SimpleNodeJsTemplatesPlugin(context: Context) : TemplatePlugin(context) {
-    override val path = PATH
+    override val path = pluginPath
 
     override val pipelineTasks: List<PipelineTask> = super.pipelineTasks +
             listOf(
                 KtorTemplatesPlugin.addTemplate,
             )
 
-    val addTemplate by addTemplateTask(PATH, SimpleNodeJsTemplate())
+    val addTemplate by addTemplateTask(SimpleNodeJsTemplate())
 
-    companion object {
-        private const val PATH = "template.simpleNodeJs"
+    companion object : PluginSettingsOwner() {
+        override val pluginPath = "template.simpleNodeJs"
 
-        val addTemplate by addTemplateTask(PATH, KtorServerTemplate())
+        val addTemplate by addTemplateTask(KtorServerTemplate())
     }
 }

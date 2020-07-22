@@ -62,7 +62,6 @@ fun <V : Any, T : SettingType<V>> Reader.settingValue(module: Module, setting: M
 
 abstract class ModuleConfiguratorSettings : SettingsOwner {
     final override fun <V : Any, T : SettingType<V>> settingDelegate(
-        prefix: String,
         create: (path: String) -> SettingBuilder<V, T>
     ): ReadOnlyProperty<Any?, ModuleConfiguratorSetting<V, T>> = cached { name ->
         ModuleConfiguratorSetting(create(name).buildInternal())
@@ -73,14 +72,12 @@ abstract class ModuleConfiguratorSettings : SettingsOwner {
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
-        prefix: String,
         init: DropDownSettingType.Builder<V>.() -> Unit
     ): ReadOnlyProperty<Any, ModuleConfiguratorSetting<V, DropDownSettingType<V>>> =
         super.dropDownSetting(
             title,
             neededAtPhase,
             parser,
-            prefix,
             init
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<V, DropDownSettingType<V>>>
 
@@ -88,13 +85,11 @@ abstract class ModuleConfiguratorSettings : SettingsOwner {
     final override fun stringSetting(
         title: String,
         neededAtPhase: GenerationPhase,
-        prefix: String,
         init: StringSettingType.Builder.() -> Unit
     ): ReadOnlyProperty<Any, ModuleConfiguratorSetting<String, StringSettingType>> =
         super.stringSetting(
             title,
             neededAtPhase,
-            prefix,
             init
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<String, StringSettingType>>
 
@@ -102,13 +97,11 @@ abstract class ModuleConfiguratorSettings : SettingsOwner {
     final override fun booleanSetting(
         title: String,
         neededAtPhase: GenerationPhase,
-        prefix: String,
         init: BooleanSettingType.Builder.() -> Unit
     ): ReadOnlyProperty<Any, ModuleConfiguratorSetting<Boolean, BooleanSettingType>> =
         super.booleanSetting(
             title,
             neededAtPhase,
-            prefix,
             init
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<Boolean, BooleanSettingType>>
 
@@ -117,14 +110,12 @@ abstract class ModuleConfiguratorSettings : SettingsOwner {
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
-        prefix: String,
         init: ValueSettingType.Builder<V>.() -> Unit
     ): ReadOnlyProperty<Any, ModuleConfiguratorSetting<V, ValueSettingType<V>>> =
         super.valueSetting(
             title,
             neededAtPhase,
             parser,
-            prefix,
             init
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<V, ValueSettingType<V>>>
 
@@ -132,13 +123,11 @@ abstract class ModuleConfiguratorSettings : SettingsOwner {
     final override fun versionSetting(
         title: String,
         neededAtPhase: GenerationPhase,
-        prefix: String,
         init: VersionSettingType.Builder.() -> Unit
     ): ReadOnlyProperty<Any, ModuleConfiguratorSetting<Version, VersionSettingType>> =
         super.versionSetting(
             title,
             neededAtPhase,
-            prefix,
             init
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<Version, VersionSettingType>>
 
@@ -147,14 +136,12 @@ abstract class ModuleConfiguratorSettings : SettingsOwner {
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
-        prefix: String,
         init: ListSettingType.Builder<V>.() -> Unit
     ): ReadOnlyProperty<Any, ModuleConfiguratorSetting<List<V>, ListSettingType<V>>> =
         super.listSetting(
             title,
             neededAtPhase,
             parser,
-            prefix,
             init
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<List<V>, ListSettingType<V>>>
 
@@ -162,13 +149,11 @@ abstract class ModuleConfiguratorSettings : SettingsOwner {
     final override fun pathSetting(
         title: String,
         neededAtPhase: GenerationPhase,
-        prefix: String,
         init: PathSettingType.Builder.() -> Unit
     ): ReadOnlyProperty<Any, ModuleConfiguratorSetting<Path, PathSettingType>> =
         super.pathSetting(
             title,
             neededAtPhase,
-            prefix,
             init
         ) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<Path, PathSettingType>>
 
@@ -176,10 +161,9 @@ abstract class ModuleConfiguratorSettings : SettingsOwner {
     inline fun <reified E> enumSetting(
         title: String,
         neededAtPhase: GenerationPhase,
-        prefix: String = "",
         crossinline init: DropDownSettingType.Builder<E>.() -> Unit = {}
     ): ReadOnlyProperty<Any, ModuleConfiguratorSetting<E, DropDownSettingType<E>>> where E : Enum<E>, E : DisplayableSettingItem =
-        enumSettingImpl(title, neededAtPhase, prefix, init) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<E, DropDownSettingType<E>>>
+        enumSettingImpl(title, neededAtPhase, init) as ReadOnlyProperty<Any, ModuleConfiguratorSetting<E, DropDownSettingType<E>>>
 }
 
 interface ModuleConfiguratorWithSettings : ModuleConfigurator {

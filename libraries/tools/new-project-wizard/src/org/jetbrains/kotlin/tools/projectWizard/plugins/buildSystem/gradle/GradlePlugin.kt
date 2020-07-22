@@ -21,25 +21,24 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.printBuildFile
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
-import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 
 
 abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
-    override val path = PATH
+    override val path = pluginPath
 
-    companion object {
-        private const val PATH = "buildSystem.gradle"
+    companion object : PluginSettingsOwner() {
+        override val pluginPath = "buildSystem.gradle"
 
         val gradleProperties by listProperty(
-            PATH,
+
             "kotlin.code.style" to "official"
         )
 
-        val settingsGradleFileIRs by listProperty<BuildSystemIR>(PATH)
+        val settingsGradleFileIRs by listProperty<BuildSystemIR>()
 
-        val createGradlePropertiesFile by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val createGradlePropertiesFile by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runAfter(KotlinPlugin.createModules)
             runBefore(TemplatesPlugin.renderFileTemplates)
             isAvailable = isGradle
@@ -61,9 +60,9 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
             }
         }
 
-        val localProperties by listProperty<Pair<String, String>>(PATH)
+        val localProperties by listProperty<Pair<String, String>>()
 
-        val createLocalPropertiesFile by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val createLocalPropertiesFile by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runAfter(KotlinPlugin.createModules)
             runBefore(TemplatesPlugin.renderFileTemplates)
             isAvailable = isGradle
@@ -85,7 +84,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
 
         private val isGradle = checker { buildSystemType.isGradle }
 
-        val initGradleWrapperTask by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val initGradleWrapperTask by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runBefore(TemplatesPlugin.renderFileTemplates)
             isAvailable = isGradle
             withAction {
@@ -105,7 +104,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
         }
 
 
-        val createSettingsFileTask by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val createSettingsFileTask by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runAfter(KotlinPlugin.createModules)
             runAfter(KotlinPlugin.createPluginRepositories)
             isAvailable = isGradle
