@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
@@ -228,12 +229,17 @@ fun KtLightMethod.checkIsMangled(): Boolean {
 
 fun fastCheckIsNullabilityApplied(lightElement: KtLightElement<*, PsiModifierListOwner>): Boolean {
 
+    val elementIsApplicable =
+        (lightElement is KtLightMember<*> && lightElement !is KtLightFieldImpl.KtLightEnumConstant) || lightElement is LightParameter
+    if (!elementIsApplicable) return false
+
     val annotatedElement = lightElement.kotlinOrigin ?: return true
 
     // all data-class generated members are not-null
     if (annotatedElement is KtClass && annotatedElement.isData()) return true
 
-    if (lightElement is PsiField && lightElement.hasModifierProperty(PsiModifier.PRIVATE)) return false
+    // backing fields for lateinit props are skipped
+    if (lightElement is KtLightField && annotatedElement is KtProperty && annotatedElement.hasModifier(KtTokens.LATEINIT_KEYWORD)) return false
 
     if (annotatedElement is KtParameter) {
         val containingClassOrObject = annotatedElement.containingClassOrObject

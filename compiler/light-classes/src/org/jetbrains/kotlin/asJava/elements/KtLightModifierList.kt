@@ -74,20 +74,17 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
 
             return annotationsForEntries + filteredNonSourceAnnotations
         }
-        if ((modifierListOwner is KtLightMember<*> && modifierListOwner !is KtLightFieldImpl.KtLightEnumConstant)
-            || modifierListOwner is LightParameter
-        ) {
 
-            if (fastCheckIsNullabilityApplied(modifierListOwner)) {
+        if (fastCheckIsNullabilityApplied(modifierListOwner)) {
 
-                val nullabilityAnnotation = when (modifierListOwner) {
-                    is KtUltraLightElementWithNullabilityAnnotation<*, *> -> KtUltraLightNullabilityAnnotation(modifierListOwner, this)
-                    else -> KtLightNullabilityAnnotation(modifierListOwner as KtLightElement<*, PsiModifierListOwner>, this)
-                }
-
-                return annotationsForEntries + listOf(nullabilityAnnotation)
+            val nullabilityAnnotation = when (modifierListOwner) {
+                is KtUltraLightElementWithNullabilityAnnotation<*, *> -> KtUltraLightNullabilityAnnotation(modifierListOwner, this)
+                else -> KtLightNullabilityAnnotation(modifierListOwner as KtLightElement<*, PsiModifierListOwner>, this)
             }
+
+            return annotationsForEntries + listOf(nullabilityAnnotation)
         }
+
         return annotationsForEntries
     }
 }
