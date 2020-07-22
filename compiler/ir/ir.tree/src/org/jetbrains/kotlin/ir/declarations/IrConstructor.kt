@@ -19,10 +19,14 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrConstructor : IrFunction, IrSymbolDeclaration<IrConstructorSymbol> {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassConstructorDescriptor
 
     val isPrimary: Boolean
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitConstructor(this, data)
 }

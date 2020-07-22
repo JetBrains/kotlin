@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.AnonymousInitializerCarrier
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrAnonymousInitializerImpl(
     startOffset: Int,
@@ -41,7 +39,8 @@ class IrAnonymousInitializerImpl(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor get() = symbol.descriptor
+    override val descriptor: ClassDescriptor
+        get() = symbol.descriptor
 
     override var bodyField: IrBlockBody? = null
 
@@ -55,16 +54,4 @@ class IrAnonymousInitializerImpl(
                 setCarrier().bodyField = v
             }
         }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitAnonymousInitializer(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        body.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        body = body.transform(transformer, data) as IrBlockBody
-    }
 }

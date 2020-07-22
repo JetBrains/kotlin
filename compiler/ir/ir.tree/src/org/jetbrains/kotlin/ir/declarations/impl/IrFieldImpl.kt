@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 class IrFieldImpl(
@@ -51,7 +49,8 @@ class IrFieldImpl(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor = symbol.descriptor
+    override val descriptor: PropertyDescriptor
+        get() = symbol.descriptor
 
     override var initializerField: IrExpressionBody? = null
 
@@ -85,16 +84,4 @@ class IrFieldImpl(
                 setCarrier().metadataField = v
             }
         }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitField(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        initializer?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        initializer = initializer?.transform(transformer, data)
-    }
 }

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 abstract class IrFunctionCommonImpl(
@@ -53,6 +52,7 @@ abstract class IrFunctionCommonImpl(
             }
         }
 
+    @Suppress("LeakingThis")
     override var attributeOwnerIdField: IrAttributeContainer = this
 
     override var attributeOwnerId: IrAttributeContainer
@@ -72,9 +72,6 @@ abstract class IrFunctionCommonImpl(
                 setCarrier().correspondingPropertySymbolField = v
             }
         }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitSimpleFunction(this, data)
 }
 
 class IrFunctionImpl(
@@ -105,9 +102,6 @@ class IrFunctionImpl(
     init {
         symbol.bind(this)
     }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitSimpleFunction(this, data)
 }
 
 class IrFakeOverrideFunctionImpl(

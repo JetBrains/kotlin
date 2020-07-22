@@ -22,10 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.ClassCarrier
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.transform
-import org.jetbrains.kotlin.ir.util.transformIfNeeded
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 import kotlin.collections.ArrayList
@@ -57,7 +53,8 @@ class IrClassImpl(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor get() = symbol.descriptor
+    override val descriptor: ClassDescriptor
+        get() = symbol.descriptor
 
     override var visibilityField: Visibility = visibility
 
@@ -144,19 +141,4 @@ class IrClassImpl(
                 setCarrier().attributeOwnerIdField = v
             }
         }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitClass(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        thisReceiver?.accept(visitor, data)
-        typeParameters.forEach { it.accept(visitor, data) }
-        declarations.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        thisReceiver = thisReceiver?.transform(transformer, data)
-        typeParameters = typeParameters.transformIfNeeded(transformer, data)
-        declarations.transform { it.transform(transformer, data) }
-    }
 }

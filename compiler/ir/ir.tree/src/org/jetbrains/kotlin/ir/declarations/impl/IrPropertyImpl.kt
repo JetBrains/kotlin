@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.PropertyCarrier
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 abstract class IrPropertyCommonImpl(
@@ -77,17 +75,6 @@ abstract class IrPropertyCommonImpl(
             }
         }
 
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitProperty(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        backingField?.accept(visitor, data)
-        getter?.accept(visitor, data)
-        setter?.accept(visitor, data)
-    }
-
     override var metadataField: MetadataSource? = null
 
     override var metadata: MetadataSource?
@@ -97,12 +84,6 @@ abstract class IrPropertyCommonImpl(
                 setCarrier().metadataField = v
             }
         }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        backingField = backingField?.transform(transformer, data) as? IrField
-        getter = getter?.run { transform(transformer, data) as IrSimpleFunction }
-        setter = setter?.run { transform(transformer, data) as IrSimpleFunction }
-    }
 }
 
 class IrPropertyImpl(
@@ -128,7 +109,8 @@ class IrPropertyImpl(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor = symbol.descriptor
+    override val descriptor: PropertyDescriptor
+        get() = symbol.descriptor
 }
 
 class IrFakeOverridePropertyImpl(

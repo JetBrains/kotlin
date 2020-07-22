@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.ConstructorCarrier
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 class IrConstructorImpl(
@@ -54,8 +53,6 @@ class IrConstructorImpl(
     }
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitConstructor(this, data)
+    override val descriptor: ClassConstructorDescriptor
+        get() = symbol.descriptor
 }

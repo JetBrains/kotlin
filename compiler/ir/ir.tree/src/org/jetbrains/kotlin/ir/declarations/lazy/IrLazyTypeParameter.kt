@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -48,19 +46,5 @@ class IrLazyTypeParameter(
                 descriptor.upperBounds.mapTo(arrayListOf()) { it.toIrType() }
             }
         }
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitTypeParameter(this, data)
-
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrTypeParameter =
-        transformer.visitTypeParameter(this, data) as IrTypeParameter
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        // no children
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        // no children
     }
 }
