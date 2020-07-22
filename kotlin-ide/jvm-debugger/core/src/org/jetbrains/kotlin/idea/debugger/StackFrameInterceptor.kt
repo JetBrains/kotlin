@@ -3,13 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.debugger;
+package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.engine.DebugProcessImpl;
-import com.intellij.debugger.jdi.StackFrameProxyImpl;
+import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.xdebugger.frame.XStackFrame
-import com.sun.jdi.Location;
-import org.jetbrains.kotlin.idea.debugger.stackFrame.KotlinStackFrame;
+import com.sun.jdi.Location
 
 interface StackFrameInterceptor {
     fun createStackFrame(

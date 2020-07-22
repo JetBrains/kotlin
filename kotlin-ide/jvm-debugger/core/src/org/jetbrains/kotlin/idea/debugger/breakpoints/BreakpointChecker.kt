@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
 import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType
-import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.xdebugger.breakpoints.XBreakpointType
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
 import org.jetbrains.debugger.SourceInfo
@@ -35,7 +35,7 @@ class BreakpointChecker {
 
     @Suppress("SimplifiableCall")
     private val breakpointTypes: List<XLineBreakpointType<*>> = run {
-        val extensionPoint = Extensions.getArea(null)
+        val extensionPoint = ApplicationManager.getApplication().extensionArea
             .getExtensionPoint<XBreakpointType<*, *>>(XBreakpointType.EXTENSION_POINT_NAME.name)
 
         extensionPoint.extensions

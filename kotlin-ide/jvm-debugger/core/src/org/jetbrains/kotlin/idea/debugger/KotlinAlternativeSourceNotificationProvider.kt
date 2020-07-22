@@ -106,7 +106,7 @@ class KotlinAlternativeSourceNotificationProvider(private val myProject: Project
         }
 
         init {
-            setText(KotlinDebuggerCoreBundle.message("alternative.sources.notification.title", file.name))
+            text = KotlinDebuggerCoreBundle.message("alternative.sources.notification.title", file.name)
 
             val items = alternatives.map { ComboBoxFileElement(it) }
             myLinksPanel.add(

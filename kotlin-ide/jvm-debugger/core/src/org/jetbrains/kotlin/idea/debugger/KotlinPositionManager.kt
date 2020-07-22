@@ -145,7 +145,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
 
         if (sameLineLocations != null) {
-            // There're several locations for same source line. If same source position would be created for all of them,
+            // There are several locations for same source line. If same source position would be created for all of them,
             // breakpoints at this line will stop on every location.
             // Each location is probably some code in arguments between inlined invocations (otherwise same line locations would
             // have been merged into one), but it's impossible to correctly map locations to actual source expressions now.
@@ -308,7 +308,10 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         }
     }
 
-    @Deprecated("Since Idea 14.0.3 use createPrepareRequests fun")
+    @Deprecated(
+        "Since Idea 14.0.3 use createPrepareRequests fun",
+        ReplaceWith("createPrepareRequests(classPrepareRequestor, sourcePosition).firstOrNull()")
+    )
     override fun createPrepareRequest(classPrepareRequestor: ClassPrepareRequestor, sourcePosition: SourcePosition): ClassPrepareRequest? {
         return createPrepareRequests(classPrepareRequestor, sourcePosition).firstOrNull()
     }

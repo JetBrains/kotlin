@@ -29,7 +29,6 @@ import com.intellij.openapi.progress.util.ProgressWindow;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.Key;
@@ -67,6 +66,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
@@ -245,18 +245,12 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
                 debugProcess.getVirtualMachineProxy().getClassesByNameProvider(), base);
     }
 
-    private static boolean shouldCreateRequest(
-            Requestor requestor,
-            XBreakpoint xBreakpoint,
-            DebugProcessImpl debugProcess,
-            boolean forPreparedClass
-    ) {
+    private static boolean shouldCreateRequest(XBreakpoint xBreakpoint, DebugProcessImpl debugProcess) {
         return DumbService.getInstance(debugProcess.getProject()).runReadActionInSmartMode(() -> {
             JavaDebugProcess process = debugProcess.getXdebugProcess();
             return process != null
                    && debugProcess.isAttached()
-                   && (xBreakpoint == null || ((XDebugSessionImpl) process.getSession()).isBreakpointActive(xBreakpoint))
-                   && (forPreparedClass || debugProcess.getRequestsManager().findRequests(requestor).isEmpty());
+                   && (xBreakpoint == null || ((XDebugSessionImpl) process.getSession()).isBreakpointActive(xBreakpoint));
         });
     }
 
@@ -271,7 +265,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             breakpoint.disableEmulation();
             return;
         }
-        if (!base && !shouldCreateRequest(breakpoint, breakpoint.getXBreakpoint(), debugProcess, true)) {
+        if (!base && !shouldCreateRequest(breakpoint.getXBreakpoint(), debugProcess)) {
             return;
         }
         Method lambdaMethod = MethodBytecodeUtil.getLambdaMethod(classType, classesByName);
@@ -683,11 +677,11 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
     }
 
     @Override
-    public StreamEx matchingMethods(StreamEx<Method> methods, DebugProcessImpl debugProcess) {
+    public StreamEx<Method> matchingMethods(StreamEx<Method> methods, DebugProcessImpl debugProcess) {
         try {
             String methodName = getMethodName();
             String signature = mySignature != null ? mySignature.getName(debugProcess) : null;
-            return methods.filter(m -> Comparing.equal(methodName, m.name()) && Comparing.equal(signature, m.signature())).limit(1);
+            return methods.filter(m -> Objects.equals(methodName, m.name()) && Objects.equals(signature, m.signature())).limit(1);
         } catch (EvaluateException e) {
             LOG.warn(e);
         }

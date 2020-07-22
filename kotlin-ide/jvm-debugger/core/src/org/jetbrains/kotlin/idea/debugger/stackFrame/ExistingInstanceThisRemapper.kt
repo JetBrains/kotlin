@@ -86,10 +86,8 @@ class ExistingInstanceThisRemapper(
             }
         }
 
-        LOG.error(
-            "Can't find name/value lists, existing fields: "
-                    + XValueChildrenList::class.java.declaredFields?.contentToString()
-        )
+        @Suppress("UNNECESSARY_SAFE_CALL")
+        LOG.error("Can't find name/value lists, existing fields: " + XValueChildrenList::class.java.declaredFields?.contentToString())
 
         return null
     }

@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.psi.KtProperty
 fun PsiClass.collectProperties(): Array<DescriptorMemberChooserObject> {
     if (this is KtLightClassForFacade) {
         val result = arrayListOf<DescriptorMemberChooserObject>()
-        this.files.forEach {
-            it.declarations.filterIsInstance<KtProperty>().forEach {
-                result.add(DescriptorMemberChooserObject(it, it.unsafeResolveToDescriptor()))
+        for (file in this.files) {
+            for (declaration in file.declarations.filterIsInstance<KtProperty>()) {
+                result.add(DescriptorMemberChooserObject(declaration, declaration.unsafeResolveToDescriptor()))
             }
         }
         return result.toTypedArray()

@@ -126,7 +126,6 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType implements 
 
     @Nullable
     public static PsiElement getContainingMethod(@Nullable PsiElement elem) {
-        //noinspection unchecked
         return PsiTreeUtil.getParentOfType(elem, KtFunction.class, KtClassInitializer.class);
     }
 

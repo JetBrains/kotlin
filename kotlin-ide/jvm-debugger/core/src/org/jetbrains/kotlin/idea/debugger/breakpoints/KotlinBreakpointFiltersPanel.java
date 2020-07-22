@@ -214,7 +214,7 @@ public class KotlinBreakpointFiltersPanel<T extends KotlinPropertyBreakpointProp
     }
 
     private void updateInstanceFilterEditor(boolean updateText) {
-        List<String> filters = new ArrayList<String>();
+        List<String> filters = new ArrayList<>();
         for (InstanceFilter instanceFilter : myInstanceFilters) {
             if (instanceFilter.isEnabled()) {
                 filters.add(Long.toString(instanceFilter.getId()));
@@ -229,8 +229,7 @@ public class KotlinBreakpointFiltersPanel<T extends KotlinPropertyBreakpointProp
     }
 
     private class MyTextField extends JTextField {
-        public MyTextField() {
-        }
+        private MyTextField() {}
 
         @Override
         public String getToolTipText(MouseEvent event) {
@@ -255,8 +254,8 @@ public class KotlinBreakpointFiltersPanel<T extends KotlinPropertyBreakpointProp
     private void reloadClassFilters() {
         String filtersText = myClassFiltersField.getText();
 
-        ArrayList<ClassFilter> classFilters = new ArrayList<ClassFilter>();
-        ArrayList<ClassFilter> exclusionFilters = new ArrayList<ClassFilter>();
+        ArrayList<ClassFilter> classFilters = new ArrayList<>();
+        ArrayList<ClassFilter> exclusionFilters = new ArrayList<>();
         int startFilter = -1;
         for (int i = 0; i <= filtersText.length(); i++) {
             if (i < filtersText.length() && !Character.isWhitespace(filtersText.charAt(i))) {
@@ -291,7 +290,7 @@ public class KotlinBreakpointFiltersPanel<T extends KotlinPropertyBreakpointProp
     private void reloadInstanceFilters() {
         String filtersText = myInstanceFiltersField.getText();
 
-        ArrayList<InstanceFilter> idxs = new ArrayList<InstanceFilter>();
+        ArrayList<InstanceFilter> idxs = new ArrayList<>();
         int startNumber = -1;
         for (int i = 0; i <= filtersText.length(); i++) {
             if (i < filtersText.length() && Character.isDigit(filtersText.charAt(i))) {
@@ -314,13 +313,13 @@ public class KotlinBreakpointFiltersPanel<T extends KotlinPropertyBreakpointProp
     }
 
     private void updateClassFilterEditor(boolean updateText) {
-        List<String> filters = new ArrayList<String>();
+        List<String> filters = new ArrayList<>();
         for (ClassFilter classFilter : myClassFilters) {
             if (classFilter.isEnabled()) {
                 filters.add(classFilter.getPattern());
             }
         }
-        List<String> excludeFilters = new ArrayList<String>();
+        List<String> excludeFilters = new ArrayList<>();
         for (ClassFilter classFilter : myClassExclusionFilters) {
             if (classFilter.isEnabled()) {
                 excludeFilters.add("-" + classFilter.getPattern());
@@ -344,21 +343,21 @@ public class KotlinBreakpointFiltersPanel<T extends KotlinPropertyBreakpointProp
         myClassFiltersField.getTextField().setToolTipText(tipText);
     }
 
-    private static String concatWithEx(List<String> s, String concator, int N, String NthConcator) {
-        String result = "";
+    private static String concatWithEx(List<String> s, String glue, int N, String nthGlue) {
+        StringBuilder result = new StringBuilder();
         int i = 1;
-        for (Iterator iterator = s.iterator(); iterator.hasNext(); i++) {
-            String str = (String) iterator.next();
-            result += str;
+        for (Iterator<String> iterator = s.iterator(); iterator.hasNext(); i++) {
+            String str = iterator.next();
+            result.append(str);
             if (iterator.hasNext()) {
                 if (i % N == 0) {
-                    result += NthConcator;
+                    result.append(nthGlue);
                 } else {
-                    result += concator;
+                    result.append(glue);
                 }
             }
         }
-        return result;
+        return result.toString();
     }
 
     protected com.intellij.ide.util.ClassFilter createClassConditionFilter() {
