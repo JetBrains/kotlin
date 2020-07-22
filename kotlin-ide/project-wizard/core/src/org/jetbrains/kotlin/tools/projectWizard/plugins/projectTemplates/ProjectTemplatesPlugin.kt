@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 
 class ProjectTemplatesPlugin(context: Context) : Plugin(context) {
-    override val path = PATH
+    override val path = pluginPath
 
-    companion object {
-        const val PATH = "projectTemplates"
+    companion object : PluginSettingsOwner() {
+        override val pluginPath = "projectTemplates"
 
         val template by dropDownSetting<ProjectTemplate>(
             KotlinNewProjectWizardBundle.message("plugin.templates.setting.template"),
@@ -23,7 +23,6 @@ class ProjectTemplatesPlugin(context: Context) : Plugin(context) {
             parser = valueParserM { _, _ ->
                 Failure(ParseError("Project templates is not supported in yaml for now"))
             },
-            PATH
         ) {
             values = ProjectTemplate.ALL
             isRequired = false

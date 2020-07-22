@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins
 
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
-import org.jetbrains.kotlin.tools.projectWizard.core.Context
-import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
-import org.jetbrains.kotlin.tools.projectWizard.core.UNIT_SUCCESS
-import org.jetbrains.kotlin.tools.projectWizard.core.checker
+import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.Property
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
@@ -22,7 +19,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 
 class AndroidPlugin(context: Context) : Plugin(context) {
-    override val path = PATH
+    override val path = pluginPath
 
     override val settings: List<PluginSetting<*, *>> = listOf(
         androidSdkPath
@@ -32,13 +29,12 @@ class AndroidPlugin(context: Context) : Plugin(context) {
     )
     override val properties: List<Property<*>> = listOf()
 
-    companion object {
-        private const val PATH = "android"
+    companion object : PluginSettingsOwner() {
+        override val pluginPath: String = "android"
 
         val androidSdkPath by pathSetting(
             KotlinNewProjectWizardBundle.message("plugin.android.setting.sdk"),
             neededAtPhase = GenerationPhase.PROJECT_GENERATION,
-            PATH
         ) {
             isSavable = true
             isAvailable = isAndroidContainingProject
@@ -51,7 +47,7 @@ class AndroidPlugin(context: Context) : Plugin(context) {
                 .any { it.configurator is AndroidModuleConfigurator }
         }
 
-        val addAndroidSdkToLocalProperties by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val addAndroidSdkToLocalProperties by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runBefore(GradlePlugin.createLocalPropertiesFile)
             runAfter(KotlinPlugin.createModules)
             isAvailable = isAndroidContainingProject

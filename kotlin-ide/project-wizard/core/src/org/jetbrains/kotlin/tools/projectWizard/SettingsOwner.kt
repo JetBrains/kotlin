@@ -10,7 +10,6 @@ import kotlin.properties.ReadOnlyProperty
 
 interface SettingsOwner {
     fun <V : Any, T : SettingType<V>> settingDelegate(
-        prefix: String,
         create: (path: String) -> SettingBuilder<V, T>
     ): ReadOnlyProperty<Any, Setting<V, T>>
 
@@ -22,27 +21,24 @@ interface SettingsOwner {
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
-        prefix: String = "",
         init: DropDownSettingType.Builder<V>.() -> Unit = {}
-    ): ReadOnlyProperty<Any, Setting<V, DropDownSettingType<V>>> = settingDelegate(prefix) { path ->
+    ): ReadOnlyProperty<Any, Setting<V, DropDownSettingType<V>>> = settingDelegate { path ->
         DropDownSettingType.Builder(path, title, neededAtPhase, parser).apply(init)
     }
 
     fun stringSetting(
         title: String,
         neededAtPhase: GenerationPhase,
-        prefix: String = "",
         init: StringSettingType.Builder.() -> Unit = {}
-    ) = settingDelegate(prefix) { path ->
+    ) = settingDelegate { path ->
         StringSettingType.Builder(path, title, neededAtPhase).apply(init)
     }
 
     fun booleanSetting(
         title: String,
         neededAtPhase: GenerationPhase,
-        prefix: String = "",
         init: BooleanSettingType.Builder.() -> Unit = {}
-    ) = settingDelegate(prefix) { path ->
+    ) = settingDelegate { path ->
         BooleanSettingType.Builder(path, title, neededAtPhase).apply(init)
     }
 
@@ -50,18 +46,16 @@ interface SettingsOwner {
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
-        prefix: String = "",
         init: ValueSettingType.Builder<V>.() -> Unit = {}
-    ) = settingDelegate(prefix) { path ->
+    ) = settingDelegate { path ->
         ValueSettingType.Builder(path, title, neededAtPhase, parser).apply(init)
     }
 
     fun versionSetting(
         title: String,
         neededAtPhase: GenerationPhase,
-        prefix: String = "",
         init: VersionSettingType.Builder.() -> Unit = {}
-    ) = settingDelegate(prefix) { path ->
+    ) = settingDelegate { path ->
         VersionSettingType.Builder(path, title, neededAtPhase).apply(init)
     }
 
@@ -69,18 +63,16 @@ interface SettingsOwner {
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
-        prefix: String = "",
         init: ListSettingType.Builder<V>.() -> Unit = {}
-    ) = settingDelegate(prefix) { path ->
+    ) = settingDelegate { path ->
         ListSettingType.Builder(path, title, neededAtPhase, parser).apply(init)
     }
 
     fun pathSetting(
         title: String,
         neededAtPhase: GenerationPhase,
-        prefix: String = "",
         init: PathSettingType.Builder.() -> Unit = {}
-    ) = settingDelegate(prefix) { path ->
+    ) = settingDelegate { path ->
         PathSettingType.Builder(path, title, neededAtPhase).apply(init)
     }
 }
@@ -89,10 +81,8 @@ interface SettingsOwner {
 inline fun <reified E> SettingsOwner.enumSettingImpl(
     title: String,
     neededAtPhase: GenerationPhase,
-    prefix: String = "",
     crossinline init: DropDownSettingType.Builder<E>.() -> Unit = {}
-) where E : Enum<E>, E : DisplayableSettingItem = dropDownSetting<E>(title, neededAtPhase, enumParser(), prefix) {
+) where E : Enum<E>, E : DisplayableSettingItem = dropDownSetting<E>(title, neededAtPhase, enumParser()) {
     values = enumValues<E>().asList()
-    //
     init()
 }

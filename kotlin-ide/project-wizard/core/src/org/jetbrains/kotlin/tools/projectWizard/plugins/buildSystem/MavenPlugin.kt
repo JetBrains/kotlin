@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem
 
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.PluginSettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.asSuccess
 import org.jetbrains.kotlin.tools.projectWizard.core.checker
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
@@ -14,16 +15,16 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 
 class MavenPlugin(context: Context) : BuildSystemPlugin(context) {
-    override val path = PATH
+    override val path = pluginPath
 
-    companion object {
-        private const val PATH = "buildSystem.maven"
+    companion object : PluginSettingsOwner() {
+        override val pluginPath = "buildSystem.maven"
 
         private val isMaven = checker {
             type.settingValue == BuildSystemType.Maven
         }
 
-        val createSettingsFileTask by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val createSettingsFileTask by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runAfter(KotlinPlugin.createModules)
             runBefore(createModules)
             isAvailable = isMaven
@@ -45,7 +46,7 @@ class MavenPlugin(context: Context) : BuildSystemPlugin(context) {
             }
         }
 
-        val addBuildSystemPluginRepositories by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val addBuildSystemPluginRepositories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runAfter(KotlinPlugin.createPluginRepositories)
             runBefore(createModules)
             isAvailable = isMaven
@@ -59,7 +60,6 @@ class MavenPlugin(context: Context) : BuildSystemPlugin(context) {
         }
 
         val addBuildSystemData by addBuildSystemData(
-            PATH,
             BuildSystemData(
                 type = BuildSystemType.Maven,
                 buildFileData = BuildFileData(

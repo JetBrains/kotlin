@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import java.nio.file.Path
 
 class KotlinPlugin(context: Context) : Plugin(context) {
-    override val path = PATH
+    override val path = pluginPath
 
-    companion object {
-        private const val PATH = "kotlin"
+    companion object : PluginSettingsOwner() {
+        override val pluginPath = "kotlin"
 
         private val moduleDependenciesValidator = settingValidator<List<Module>> { modules ->
             val allModules = modules.withAllSubModules(includeSourcesets = true).toSet()
@@ -47,12 +47,11 @@ class KotlinPlugin(context: Context) : Plugin(context) {
         }
 
         val version by property(
-            PATH,
             // todo do not hardcode kind & repository
             WizardKotlinVersion(Versions.KOTLIN, KotlinVersionKind.M, Repositories.KOTLIN_EAP_BINTRAY)
         )
 
-        val initKotlinVersions by pipelineTask(PATH, GenerationPhase.PREPARE_GENERATION) {
+        val initKotlinVersions by pipelineTask(GenerationPhase.PREPARE_GENERATION) {
             title = KotlinNewProjectWizardBundle.message("plugin.kotlin.downloading.kotlin.versions")
 
             withAction {
@@ -64,7 +63,6 @@ class KotlinPlugin(context: Context) : Plugin(context) {
         val projectKind by enumSetting<ProjectKind>(
             KotlinNewProjectWizardBundle.message("plugin.kotlin.setting.project.kind"),
             GenerationPhase.FIRST_STEP,
-            PATH
         )
 
         private fun List<Module>.findDuplicatesByName() =
@@ -74,7 +72,6 @@ class KotlinPlugin(context: Context) : Plugin(context) {
             KotlinNewProjectWizardBundle.message("plugin.kotlin.setting.modules"),
             GenerationPhase.SECOND_STEP,
             Module.parser,
-            PATH
         ) {
             validate { value ->
                 val allModules = value.withAllSubModules()
@@ -106,7 +103,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
             validate(moduleDependenciesValidator)
         }
 
-        val createModules by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val createModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runBefore(BuildSystemPlugin.createModules)
             runAfter(StructurePlugin.createProjectDir)
             withAction {
@@ -118,7 +115,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
             }
         }
 
-        val createPluginRepositories by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val createPluginRepositories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runBefore(BuildSystemPlugin.createModules)
             withAction {
                 val version = version.propertyValue
@@ -131,7 +128,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
             }
         }
 
-        val createSourcesetDirectories by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val createSourcesetDirectories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runAfter(KotlinPlugin.createModules)
             withAction {
                 fun Path.createKotlinAndResourceDirectories(moduleConfigurator: ModuleConfigurator) =

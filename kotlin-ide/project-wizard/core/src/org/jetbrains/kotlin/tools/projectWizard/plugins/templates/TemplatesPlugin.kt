@@ -24,37 +24,34 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.settingValue
 import java.nio.file.Path
 
 class TemplatesPlugin(context: Context) : Plugin(context) {
-    override val path = PATH
+    override val path = pluginPath
 
-    companion object {
-        private const val PATH = "templates"
+    companion object : PluginSettingsOwner() {
+        override val pluginPath = "templates"
 
-        val templates by property<Map<String, Template>>(
-            PATH,
-            emptyMap()
-        )
+        val templates by property<Map<String, Template>>(emptyMap())
 
-        val addTemplate by task1<Template, Unit>(PATH) {
+        val addTemplate by task1<Template, Unit> {
             withAction { template ->
                 templates.update { success(it + (template.id to template)) }
             }
         }
 
-        val fileTemplatesToRender by property<List<FileTemplate>>(PATH, emptyList())
+        val fileTemplatesToRender by property<List<FileTemplate>>(emptyList())
 
-        val addFileTemplate by task1<FileTemplate, Unit>(PATH) {
+        val addFileTemplate by task1<FileTemplate, Unit> {
             withAction { template ->
                 fileTemplatesToRender.update { success(it + template) }
             }
         }
 
-        val addFileTemplates by task1<List<FileTemplate>, Unit>(PATH) {
+        val addFileTemplates by task1<List<FileTemplate>, Unit> {
             withAction { templates ->
                 fileTemplatesToRender.addValues(templates)
             }
         }
 
-        val renderFileTemplates by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val renderFileTemplates by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runAfter(KotlinPlugin.createModules)
             withAction {
                 val templateEngine = service<TemplateEngineService>()
@@ -64,7 +61,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
             }
         }
 
-        val addTemplatesToModules by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val addTemplatesToModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runBefore(BuildSystemPlugin.createModules)
             runAfter(KotlinPlugin.createModules)
 
@@ -92,7 +89,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
             }
         }
 
-        val postApplyTemplatesToModules by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val postApplyTemplatesToModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runBefore(BuildSystemPlugin.createModules)
             runAfter(KotlinPlugin.createModules)
             runAfter(TemplatesPlugin.addTemplatesToModules)

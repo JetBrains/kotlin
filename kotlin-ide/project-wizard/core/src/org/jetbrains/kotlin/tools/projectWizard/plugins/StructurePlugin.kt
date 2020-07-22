@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.Property
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.PomIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
@@ -18,10 +17,10 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 class StructurePlugin(context: Context) : Plugin(context) {
-    override val path = PATH
+    override val path = pluginPath
 
-    companion object {
-        private const val PATH = "structure"
+    companion object : PluginSettingsOwner() {
+        override val pluginPath = "structure"
 
         private val ALLOWED_SPECIAL_CHARS_IN_GROUP_ID = Module.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES + '.'
         private val ALLOWED_SPECIAL_CHARS_IN_ARTIFACT_ID = Module.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
@@ -30,7 +29,6 @@ class StructurePlugin(context: Context) : Plugin(context) {
         val projectPath by pathSetting(
             KotlinNewProjectWizardBundle.message("plugin.structure.setting.location"),
             GenerationPhase.FIRST_STEP,
-            PATH
         ) {
             defaultValue = value(Paths.get("."))
 
@@ -46,7 +44,6 @@ class StructurePlugin(context: Context) : Plugin(context) {
         val name by stringSetting(
             KotlinNewProjectWizardBundle.message("plugin.structure.setting.name"),
             GenerationPhase.FIRST_STEP,
-            PATH
         ) {
             shouldNotBeBlank()
             validate(StringValidators.shouldBeValidIdentifier(title, Module.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES))
@@ -55,7 +52,6 @@ class StructurePlugin(context: Context) : Plugin(context) {
         val groupId by stringSetting(
             KotlinNewProjectWizardBundle.message("plugin.structure.setting.group.id"),
             GenerationPhase.FIRST_STEP,
-            PATH
         ) {
             isSavable = true
             shouldNotBeBlank()
@@ -64,7 +60,6 @@ class StructurePlugin(context: Context) : Plugin(context) {
         val artifactId by stringSetting(
             KotlinNewProjectWizardBundle.message("plugin.structure.setting.artifact.id"),
             GenerationPhase.FIRST_STEP,
-            PATH
         ) {
             shouldNotBeBlank()
             validate(StringValidators.shouldBeValidIdentifier(title, ALLOWED_SPECIAL_CHARS_IN_ARTIFACT_ID))
@@ -72,13 +67,12 @@ class StructurePlugin(context: Context) : Plugin(context) {
         val version by stringSetting(
             KotlinNewProjectWizardBundle.message("plugin.structure.setting.version"),
             GenerationPhase.FIRST_STEP,
-            PATH
         ) {
             shouldNotBeBlank()
             validate(StringValidators.shouldBeValidIdentifier(title, ALLOWED_SPECIAL_CHARS_IN_VERSION))
             defaultValue = value("1.0-SNAPSHOT")
         }
-        val createProjectDir by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val createProjectDir by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             withAction {
                 service<FileSystemWizardService>().createDirectory(StructurePlugin.projectPath.settingValue)
             }

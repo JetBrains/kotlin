@@ -27,15 +27,14 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 
 abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
-    override val path = PATH
+    override val path = pluginPath
 
-    companion object {
-        private const val PATH = "buildSystem"
+    companion object : PluginSettingsOwner() {
+        override val pluginPath = "buildSystem"
 
         val type by enumSetting<BuildSystemType>(
             KotlinNewProjectWizardBundle.message("plugin.buildsystem.setting.type"),
             GenerationPhase.FIRST_STEP,
-            PATH
         ) {
             isSavable = true
             filter = { _, type ->
@@ -60,13 +59,13 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
             }
         }
 
-        val buildSystemData by property<List<BuildSystemData>>(PATH, emptyList())
+        val buildSystemData by property<List<BuildSystemData>>(emptyList())
 
-        val buildFiles by listProperty<BuildFileIR>(PATH)
+        val buildFiles by listProperty<BuildFileIR>()
 
-        val pluginRepositoreis by listProperty<Repository>(PATH)
+        val pluginRepositoreis by listProperty<Repository>()
 
-        val takeRepositoriesFromDependencies by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val takeRepositoriesFromDependencies by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runBefore(createModules)
             runAfter(TemplatesPlugin.postApplyTemplatesToModules)
 
@@ -88,7 +87,7 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
             }
         }
 
-        val createModules by pipelineTask(PATH, GenerationPhase.PROJECT_GENERATION) {
+        val createModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runAfter(StructurePlugin.createProjectDir)
             withAction {
                 val fileSystem = service<FileSystemWizardService>()
@@ -103,19 +102,12 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
             }
         }
 
-        val importProject by pipelineTask(PATH, GenerationPhase.PROJECT_IMPORT) {
+        val importProject by pipelineTask(GenerationPhase.PROJECT_IMPORT) {
             runAfter(createModules)
             withAction {
                 val data = buildSystemData.propertyValue.first { it.type == buildSystemType }
                 service<ProjectImportingWizardService> { service -> service.isSuitableFor(data.type) }
                     .importProject(this, StructurePlugin.projectPath.settingValue, allIRModules, buildSystemType)
-            }
-        }
-
-        fun addBuildSystemData(prefix: String, data: BuildSystemData) = pipelineTask(prefix, GenerationPhase.PREPARE) {
-            runBefore(createModules)
-            withAction {
-                buildSystemData.addValues(data)
             }
         }
     }
@@ -133,6 +125,13 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
         buildFiles,
         pluginRepositoreis
     )
+}
+
+fun PluginSettingsOwner.addBuildSystemData(data: BuildSystemData) = pipelineTask(GenerationPhase.PREPARE) {
+    runBefore(BuildSystemPlugin.createModules)
+    withAction {
+        BuildSystemPlugin.buildSystemData.addValues(data)
+    }
 }
 
 data class BuildSystemData(
