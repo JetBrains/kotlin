@@ -48,8 +48,8 @@
           <option name="linkRegexp" value="https://upsource.jetbrains.com/intellij/review/$0" />
         </IssueNavigationLink>
         <IssueNavigationLink>
-          <option name="issueRegexp" value="cr-IDEA-(\d+)" />
-          <option name="linkRegexp" value="https://jetbrains.team/p/idea/review/$1/timeline" />
+          <option name="issueRegexp" value="IJ-(CR|MR)-(\d+)" />
+          <option name="linkRegexp" value="https://jetbrains.team/p/ij/review/$2/timeline" />
         </IssueNavigationLink>
         <IssueNavigationLink>
           <option name="issueRegexp" value="IDEA-COMMUNITY-CR-\d+" />
