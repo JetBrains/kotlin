@@ -22,6 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.AstLoadingFilter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
@@ -138,6 +139,11 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
     }
 
     @Override
+    public KtContractEffectList getContractDescription() {
+        return findChildByType(KtNodeTypes.CONTRACT_EFFECT_LIST);
+    }
+
+    @Override
     public boolean hasDeclaredReturnType() {
         return true;
     }
@@ -153,7 +159,7 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
         if (get != null) {
             return get;
         }
-        return findChildByType(KtTokens.SET_KEYWORD);
+        return findChildByType(KtTokens.SET_KEYWORD); // TODO: the warning says it can return null but the method is @NotNull
     }
 
     @Nullable

@@ -10,6 +10,12 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtContractEffectList : KtElementImplStub<KotlinPlaceHolderStub<KtContractEffectList>> { // TODO: check constructors
-    public constructor(node: ASTNode): super(node)
-    public constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>): super(stub, KtStubElementTypes.CONTRACT_EFFECT_LIST)
+    constructor(node: ASTNode) : super(node)
+    constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>) : super(stub, KtStubElementTypes.CONTRACT_EFFECT_LIST)
 }
+
+fun KtContractEffectList.getExpressions(): List<KtExpression> =
+    getStubOrPsiChildrenAsList(KtStubElementTypes.CONTRACT_EFFECT)
+        .map {
+            it.getExpression()
+        }
