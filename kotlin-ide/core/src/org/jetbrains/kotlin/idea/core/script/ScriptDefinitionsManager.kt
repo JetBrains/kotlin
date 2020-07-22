@@ -238,7 +238,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         } catch (t: Throwable) {
             if (t is ControlFlowException) throw t
             // reporting failed loading only once
-            LOG.error("[kts] cannot load script definitions using $this", t)
+            scriptingErrorLog("[kts] cannot load script definitions using $this", t)
             failedContributorsHashes.add(this@safeGetDefinitions.hashCode())
         }
         return emptyList()
@@ -263,7 +263,7 @@ fun loadDefinitionsFromTemplates(
     additionalResolverClasspath: List<File> = emptyList()
 ): List<ScriptDefinition> {
     val classpath = templateClasspath + additionalResolverClasspath
-    LOG.info("[kts] loading script definitions $templateClassNames using classpath: ${classpath.joinToString(File.pathSeparator)}")
+    scriptingInfoLog("Loading script definitions $templateClassNames using classpath: ${classpath.joinToString(File.pathSeparator)}")
     val baseLoader = ScriptDefinitionContributor::class.java.classLoader
     val loader = if (classpath.isEmpty()) baseLoader else URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseLoader)
 
@@ -283,24 +283,24 @@ fun loadDefinitionsFromTemplates(
                     ScriptDefinition.FromTemplate(hostConfiguration, template, ScriptDefinition::class)
                 }
                 else -> {
-                    LOG.warn("[kts] cannot find a valid script definition annotation on the class $template")
+                    scriptingWarnLog("Cannot find a valid script definition annotation on the class $template")
                     null
                 }
             }
         } catch (e: ClassNotFoundException) {
             // Assuming that direct ClassNotFoundException is the result of versions mismatch and missing subsystems, e.g. gradle
             // so, it only results in warning, while other errors are severe misconfigurations, resulting it user-visible error
-            LOG.warn("[kts] cannot load script definition class $templateClassName")
+            scriptingWarnLog("Cannot load script definition class $templateClassName")
             null
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
 
-            val message = "[kts] cannot load script definition class $templateClassName"
+            val message = "Cannot load script definition class $templateClassName"
             val thirdPartyPlugin = PluginManagerCore.getPluginByClassName(templateClassName)
             if (thirdPartyPlugin != null) {
-                LOG.error(PluginException(message, e, thirdPartyPlugin))
+                scriptingErrorLog(message, PluginException(message, e, thirdPartyPlugin))
             } else {
-                LOG.error(message, e)
+                scriptingErrorLog(message, e)
             }
             null
         }

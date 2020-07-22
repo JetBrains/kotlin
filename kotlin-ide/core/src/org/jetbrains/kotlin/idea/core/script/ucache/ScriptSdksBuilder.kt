@@ -11,8 +11,8 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
-import org.jetbrains.kotlin.idea.core.script.LOG
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsStorage
+import org.jetbrains.kotlin.idea.core.script.scriptingWarnLog
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import java.io.File
 
@@ -77,7 +77,7 @@ class ScriptSdksBuilder(
             return anyJavaSdk
         }
 
-        LOG.warn(
+        scriptingWarnLog(
             "Default Script SDK is null: " +
                     "projectSdk = ${ProjectRootManager.getInstance(project).projectSdk}, " +
                     "all sdks = ${getAllProjectSdks().joinToString("\n")}"
