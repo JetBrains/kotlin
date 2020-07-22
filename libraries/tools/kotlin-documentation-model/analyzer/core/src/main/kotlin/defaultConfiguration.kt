@@ -26,7 +26,6 @@ data class DokkaSourceSetImpl(
     override val samples: Set<File> = emptySet(),
     override val includes: Set<File> = emptySet(),
     override val includeNonPublic: Boolean = DokkaDefaults.includeNonPublic,
-    override val includeRootPackage: Boolean = DokkaDefaults.includeRootPackage,
     override val reportUndocumented: Boolean = DokkaDefaults.reportUndocumented,
     override val skipEmptyPackages: Boolean = DokkaDefaults.skipEmptyPackages,
     override val skipDeprecated: Boolean = DokkaDefaults.skipDeprecated,
