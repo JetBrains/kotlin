@@ -18,17 +18,18 @@ import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-/** Builds a [HeaderInfo] for Iterables not handled by more specialized handlers. */
-internal class DefaultIterableHandler(private val context: CommonBackendContext) : ExpressionHandler {
+/** Builds a [HeaderInfo] for Sequences not handled by more specialized handlers. */
+internal class DefaultSequenceHandler(private val context: CommonBackendContext) : ExpressionHandler {
 
-    private val iterableClassSymbol = context.ir.symbols.iterable
+    private val sequenceClassSymbol = context.ir.symbols.sequence
 
-    override fun matchIterable(expression: IrExpression) = expression.type.isSubtypeOfClass(iterableClassSymbol)
+    override fun matchIterable(expression: IrExpression) =
+        sequenceClassSymbol != null && expression.type.isSubtypeOfClass(sequenceClassSymbol)
 
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             val iteratorFun =
-                iterableClassSymbol.getSimpleFunction(OperatorNameConventions.ITERATOR.asString())!!.owner
+                sequenceClassSymbol!!.getSimpleFunction(OperatorNameConventions.ITERATOR.asString())!!.owner
             IterableHeaderInfo(
                 scope.createTmpVariable(irCall(iteratorFun).apply { dispatchReceiver = expression }, nameHint = "iterator")
             )
