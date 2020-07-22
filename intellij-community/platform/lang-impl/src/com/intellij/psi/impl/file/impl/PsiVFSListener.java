@@ -211,7 +211,7 @@ public final class PsiVFSListener implements BulkFileListener {
       final PsiFile psiFile = myFileManager.getCachedPsiFileInner(vFile);
       PsiElement element;
       if (psiFile != null) {
-        clearViewProvider(vFile, "PSI fileDeleted");
+        myFileManager.setViewProvider(vFile, null);
         element = psiFile;
       }
       else {
@@ -732,7 +732,7 @@ public final class PsiVFSListener implements BulkFileListener {
   private void fireForGrouped(@NotNull List<? extends VFileEvent> subList) {
     VFileEvent event = subList.get(0);
     if (event instanceof VFileDeleteEvent) {
-      filesDeleted(subList);
+      DebugUtil.performPsiModification(null, () -> filesDeleted(subList));
     }
     else if (event instanceof VFileMoveEvent) {
       filesMoved(subList);
