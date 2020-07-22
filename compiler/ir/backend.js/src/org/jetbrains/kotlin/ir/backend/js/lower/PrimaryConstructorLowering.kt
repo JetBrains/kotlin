@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.declarations.*
@@ -67,7 +68,7 @@ class DelegateToSyntheticPrimaryConstructor(context: JsCommonBackendContext) : B
         if (container is IrConstructor && !container.isPrimary) {
             container.parentAsClass.syntheticPrimaryConstructor?.let { primary ->
                 val initializeTransformer = object : IrElementTransformerVoid() {
-                    override fun visitDeclaration(declaration: IrDeclaration) = declaration // optimize visiting
+                    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement = declaration // optimize visiting
 
                     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression.run {
                         IrDelegatingConstructorCallImpl(

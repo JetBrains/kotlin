@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
-abstract class IrValueDeclaration : IrDeclarationWithName, IrSymbolOwner {
+abstract class IrValueDeclaration : IrDeclarationBase(), IrDeclarationWithName, IrSymbolOwner {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ValueDescriptor
 

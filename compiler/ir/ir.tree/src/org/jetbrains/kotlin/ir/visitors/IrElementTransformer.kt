@@ -34,7 +34,7 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: D): IrExternalPackageFragment =
         declaration.also { it.transformChildren(this, data) }
 
-    override fun visitDeclaration(declaration: IrDeclaration, data: D): IrStatement =
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: D): IrStatement =
         declaration.also { it.transformChildren(this, data) }
 
     override fun visitScript(declaration: IrScript, data: D) = visitDeclaration(declaration, data)

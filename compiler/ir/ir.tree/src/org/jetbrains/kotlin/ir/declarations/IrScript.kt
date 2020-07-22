@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 
 //TODO: make IrScript as IrPackageFragment, because script is used as a file, not as a class
 //NOTE: declarations and statements stored separately
-abstract class IrScript : IrSymbolDeclaration<IrScriptSymbol>, IrDeclarationContainer, IrDeclarationWithName, IrDeclarationParent {
+abstract class IrScript :
+    IrDeclarationBase(), IrSymbolDeclaration<IrScriptSymbol>, IrDeclarationContainer, IrDeclarationWithName, IrDeclarationParent {
     abstract val statements: MutableList<IrStatement>
 
     // NOTE: is the result of the FE conversion, because there script interpreted as a class and has receiver

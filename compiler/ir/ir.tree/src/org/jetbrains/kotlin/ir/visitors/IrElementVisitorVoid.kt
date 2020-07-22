@@ -37,8 +37,8 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitFile(declaration: IrFile) = visitPackageFragment(declaration)
     override fun visitFile(declaration: IrFile, data: Nothing?) = visitFile(declaration)
 
-    fun visitDeclaration(declaration: IrDeclaration) = visitElement(declaration)
-    override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?) = visitDeclaration(declaration)
+    fun visitDeclaration(declaration: IrDeclarationBase) = visitElement(declaration)
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?) = visitDeclaration(declaration)
 
     fun visitClass(declaration: IrClass) = visitDeclaration(declaration)
     override fun visitClass(declaration: IrClass, data: Nothing?) = visitClass(declaration)

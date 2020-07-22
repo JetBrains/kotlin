@@ -442,7 +442,7 @@ class LocalDeclarationsLowering(
                 return super.visitDeclarationReference(expression)
             }
 
-            override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+            override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
                 if (declaration is IrSymbolOwner && declaration in transformedDeclarations) {
                     TODO()
                 }

@@ -312,7 +312,7 @@ class CheckIrElementVisitor(
         expression.symbol.ensureBound(expression)
     }
 
-    override fun visitDeclaration(declaration: IrDeclaration) {
+    override fun visitDeclaration(declaration: IrDeclarationBase) {
         super.visitDeclaration(declaration)
 
         if (declaration is IrOverridableDeclaration<*>) {

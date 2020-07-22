@@ -86,7 +86,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
             declaration.acceptChildren(this, data.makeLocal())
         }
 
-        override fun visitDeclaration(declaration: IrDeclaration, data: Data) {
+        override fun visitDeclaration(declaration: IrDeclarationBase, data: Data) {
             if (declaration !is IrDeclarationWithName) {
                 declaration.acceptChildren(this, data)
                 return

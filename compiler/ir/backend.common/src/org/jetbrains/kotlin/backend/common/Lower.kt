@@ -127,7 +127,7 @@ fun BodyLoweringPass.runOnFilePostfix(irFile: IrFile, withLocalDeclarations: Boo
                 element.acceptChildren(this, data)
             }
 
-            override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclaration?) {
+            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?) {
                 declaration.acceptChildren(this, declaration)
             }
 

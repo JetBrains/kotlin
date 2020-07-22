@@ -372,7 +372,7 @@ class NameTables(
             element.acceptChildrenVoid(this)
         }
 
-        override fun visitDeclaration(declaration: IrDeclaration) {
+        override fun visitDeclaration(declaration: IrDeclarationBase) {
             if (declaration is IrDeclarationWithName && declaration is IrSymbolOwner) {
                 table.declareFreshName(declaration, declaration.name.asString())
             }

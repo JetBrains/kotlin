@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-abstract class IrEnumEntry : IrSymbolDeclaration<IrEnumEntrySymbol>, IrDeclarationWithName {
+abstract class IrEnumEntry : IrDeclarationBase(), IrSymbolDeclaration<IrEnumEntrySymbol>, IrDeclarationWithName {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassDescriptor
 

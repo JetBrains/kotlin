@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-abstract class IrAnonymousInitializer : IrSymbolDeclaration<IrAnonymousInitializerSymbol> {
+abstract class IrAnonymousInitializer : IrDeclarationBase(), IrSymbolDeclaration<IrAnonymousInitializerSymbol> {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassDescriptor // TODO special descriptor for anonymous initializer blocks
 
