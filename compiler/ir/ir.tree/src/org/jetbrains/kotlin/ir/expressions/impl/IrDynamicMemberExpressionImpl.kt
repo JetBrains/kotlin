@@ -17,7 +17,7 @@ class IrDynamicMemberExpressionImpl(
     override val type: IrType,
     override val memberName: String,
     override var receiver: IrExpression
-) : IrExpressionBase(), IrDynamicMemberExpression {
+) : IrDynamicMemberExpression() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitDynamicMemberExpression(this, data)
 

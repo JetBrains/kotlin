@@ -27,7 +27,7 @@ class IrGetClassImpl(
     override val endOffset: Int,
     override val type: IrType,
     override var argument: IrExpression,
-) : IrExpressionBase(), IrGetClass {
+) : IrGetClass() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitGetClass(this, data)
     }

@@ -20,7 +20,7 @@ class IrSuspensionPointImpl(
     override var suspensionPointIdParameter: IrVariable,
     override var result: IrExpression,
     override var resumeResult: IrExpression
-) : IrExpressionBase(), IrSuspensionPoint {
+) : IrSuspensionPoint() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSuspensionPoint(this, data)
 
@@ -43,8 +43,7 @@ class IrSuspendableExpressionImpl(
     override val type: IrType,
     override var suspensionPointId: IrExpression,
     override var result: IrExpression
-) : IrExpressionBase(), IrSuspendableExpression {
-
+) : IrSuspendableExpression() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSuspendableExpression(this, data)
 

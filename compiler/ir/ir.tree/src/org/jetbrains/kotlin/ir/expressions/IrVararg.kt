@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 interface IrVarargElement : IrElement
 
-interface IrVararg : IrExpression {
-    val varargElementType: IrType
+abstract class IrVararg : IrExpression() {
+    abstract val varargElementType: IrType
 
-    val elements: List<IrVarargElement>
+    abstract val elements: List<IrVarargElement>
 
-    fun putElement(i: Int, element: IrVarargElement)
+    abstract fun putElement(i: Int, element: IrVarargElement)
 }
 
 interface IrSpreadElement : IrVarargElement {
@@ -36,4 +36,3 @@ interface IrSpreadElement : IrVarargElement {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
         accept(transformer, data) as IrSpreadElement
 }
-

@@ -18,11 +18,25 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrWhen : IrExpression {
-    val origin: IrStatementOrigin?
+abstract class IrWhen : IrExpression() {
+    abstract val origin: IrStatementOrigin?
 
-    val branches: MutableList<IrBranch>
+    abstract val branches: MutableList<IrBranch>
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitWhen(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        branches.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        branches.forEachIndexed { i, irBranch ->
+            branches[i] = irBranch.transform(transformer, data)
+        }
+    }
 }
 
 interface IrBranch : IrElement {

@@ -30,7 +30,7 @@ class IrTryImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override val type: IrType,
-) : IrExpressionBase(), IrTry {
+) : IrTry() {
     constructor(
         startOffset: Int,
         endOffset: Int,

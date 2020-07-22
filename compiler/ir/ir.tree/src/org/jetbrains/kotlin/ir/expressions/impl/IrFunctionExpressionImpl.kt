@@ -18,7 +18,7 @@ class IrFunctionExpressionImpl(
     override val type: IrType,
     override var function: IrSimpleFunction,
     override val origin: IrStatementOrigin
-) : IrExpressionBase(), IrFunctionExpression {
+) : IrFunctionExpression() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitFunctionExpression(this, data)
     }

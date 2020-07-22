@@ -27,7 +27,7 @@ class IrThrowImpl(
     override val endOffset: Int,
     override val type: IrType,
     override var value: IrExpression,
-) : IrExpressionBase(), IrThrow {
+) : IrThrow() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitThrow(this, data)
 

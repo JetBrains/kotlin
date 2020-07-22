@@ -29,7 +29,7 @@ class IrReturnImpl(
     override val type: IrType,
     override val returnTargetSymbol: IrReturnTargetSymbol,
     override var value: IrExpression
-) : IrExpressionBase(), IrReturn {
+) : IrReturn() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitReturn(this, data)
 

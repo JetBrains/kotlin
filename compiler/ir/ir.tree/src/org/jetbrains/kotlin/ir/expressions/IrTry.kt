@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-interface IrTry : IrExpression {
-    var tryResult: IrExpression
+abstract class IrTry : IrExpression() {
+    abstract var tryResult: IrExpression
 
-    val catches: List<IrCatch>
+    abstract val catches: List<IrCatch>
 
-    var finallyExpression: IrExpression?
+    abstract var finallyExpression: IrExpression?
 }
 
 interface IrCatch : IrElement {

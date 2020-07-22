@@ -32,7 +32,7 @@ class IrTypeOperatorCallImpl(
     override val operator: IrTypeOperator,
     override val typeOperand: IrType,
     override var argument: IrExpression,
-) : IrExpressionBase(), IrTypeOperatorCall {
+) : IrTypeOperatorCall() {
     override val typeOperandClassifier: IrClassifierSymbol
         get() = typeOperand.classifierOrFail
 

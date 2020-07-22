@@ -33,7 +33,7 @@ class IrBlockImpl(
     override val endOffset: Int,
     override val type: IrType,
     override val origin: IrStatementOrigin? = null,
-) : IrContainerExpressionBase(), IrBlock {
+) : IrBlock() {
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -67,7 +67,7 @@ class IrReturnableBlockImpl(
     override val symbol: IrReturnableBlockSymbol,
     override val origin: IrStatementOrigin? = null,
     override val inlineFunctionSymbol: IrFunctionSymbol? = null
-) : IrContainerExpressionBase(), IrReturnableBlock {
+) : IrReturnableBlock() {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
         get() = symbol.descriptor

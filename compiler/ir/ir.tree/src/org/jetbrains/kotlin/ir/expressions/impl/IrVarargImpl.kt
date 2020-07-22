@@ -28,7 +28,7 @@ class IrVarargImpl(
     override val endOffset: Int,
     override val type: IrType,
     override val varargElementType: IrType
-) : IrExpressionBase(), IrVararg {
+) : IrVararg() {
     constructor(
         startOffset: Int,
         endOffset: Int,

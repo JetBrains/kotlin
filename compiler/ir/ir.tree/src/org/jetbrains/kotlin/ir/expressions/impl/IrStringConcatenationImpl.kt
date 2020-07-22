@@ -27,7 +27,7 @@ class IrStringConcatenationImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override val type: IrType
-) : IrExpressionBase(), IrStringConcatenation {
+) : IrStringConcatenation() {
     constructor(
         startOffset: Int,
         endOffset: Int,

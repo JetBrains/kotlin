@@ -18,7 +18,7 @@ class IrDynamicOperatorExpressionImpl(
     override val endOffset: Int,
     override val type: IrType,
     override val operator: IrDynamicOperator
-) : IrExpressionBase(), IrDynamicOperatorExpression {
+) : IrDynamicOperatorExpression() {
     override lateinit var receiver: IrExpression
 
     override val arguments: MutableList<IrExpression> = SmartList()

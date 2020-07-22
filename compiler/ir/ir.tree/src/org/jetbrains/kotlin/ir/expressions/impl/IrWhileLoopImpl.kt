@@ -27,7 +27,7 @@ class IrWhileLoopImpl(
     override val endOffset: Int,
     override val type: IrType,
     override val origin: IrStatementOrigin?,
-) : IrLoopBase(), IrWhileLoop {
+) : IrWhileLoop() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitWhileLoop(this, data)
     }
