@@ -170,6 +170,7 @@
         </element>
         <element id="library" level="module" name="intellij-markdown" module-name="intellij.markdown" />
         <element id="library" level="project" name="kotlinx-coroutines-jdk8" />
+        <element id="library" level="project" name="kotlinc.kotlin-coroutines-experimental-compat" />
       </element>
       <element id="directory" name="kotlinc">
         <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.20-dev-2590/kotlin-dist-for-ide-1.4.20-dev-2590.jar" path-in-jar="/" />
