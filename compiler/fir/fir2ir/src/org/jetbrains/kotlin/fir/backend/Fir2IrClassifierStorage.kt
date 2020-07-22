@@ -232,7 +232,7 @@ class Fir2IrClassifierStorage(
         } else {
             regularClass.modality ?: Modality.FINAL
         }
-        val signature = signatureComposer.composeSignature(regularClass)
+        val signature = if (regularClass.isLocal) null else signatureComposer.composeSignature(regularClass)
         val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
             declareIrClass(signature) { symbol ->
                 IrClassImpl(
@@ -275,7 +275,7 @@ class Fir2IrClassifierStorage(
     ): IrClass {
         val origin = IrDeclarationOrigin.DEFINED
         val modality = Modality.FINAL
-        val signature = signatureComposer.composeSignature(anonymousObject)
+        val signature = null
         val result = anonymousObject.convertWithOffsets { startOffset, endOffset ->
             declareIrClass(signature) { symbol ->
                 IrClassImpl(

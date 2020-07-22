@@ -85,7 +85,9 @@ class Fir2IrConverter(
         irClass: IrClass = classifierStorage.getCachedIrClass(anonymousObject)!!
     ): IrClass {
         anonymousObject.getPrimaryConstructorIfAny()?.let {
-            irClass.declarations += declarationStorage.createIrConstructor(it, irClass)
+            irClass.declarations += declarationStorage.createIrConstructor(
+                it, irClass, isLocal = true
+            )
         }
         for (declaration in sortBySynthetic(anonymousObject.declarations)) {
             if (declaration is FirRegularClass) {
@@ -110,7 +112,9 @@ class Fir2IrConverter(
         irClass: IrClass = classifierStorage.getCachedIrClass(regularClass)!!
     ): IrClass {
         regularClass.getPrimaryConstructorIfAny()?.let {
-            irClass.declarations += declarationStorage.createIrConstructor(it, irClass)
+            irClass.declarations += declarationStorage.createIrConstructor(
+                it, irClass, isLocal = regularClass.isLocal
+            )
         }
         for (declaration in sortBySynthetic(regularClass.declarations)) {
             val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
@@ -143,15 +147,21 @@ class Fir2IrConverter(
         containingClass: FirClass<*>?,
         parent: IrDeclarationParent
     ): IrDeclaration? {
+        val isLocal = containingClass != null &&
+                (containingClass !is FirRegularClass || containingClass.isLocal)
         return when (declaration) {
             is FirRegularClass -> {
                 processClassMembers(declaration)
             }
             is FirSimpleFunction -> {
-                declarationStorage.createIrFunction(declaration, parent)
+                declarationStorage.createIrFunction(
+                    declaration, parent, isLocal = isLocal
+                )
             }
             is FirProperty -> {
-                declarationStorage.createIrProperty(declaration, parent)
+                declarationStorage.createIrProperty(
+                    declaration, parent, isLocal = isLocal
+                )
             }
             is FirField -> {
                 if (declaration.isSynthetic) {
@@ -161,7 +171,9 @@ class Fir2IrConverter(
                 }
             }
             is FirConstructor -> if (!declaration.isPrimary) {
-                declarationStorage.createIrConstructor(declaration, parent as IrClass)
+                declarationStorage.createIrConstructor(
+                    declaration, parent as IrClass, isLocal = isLocal
+                )
             } else {
                 null
             }

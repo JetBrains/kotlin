@@ -222,7 +222,7 @@ class Fir2IrVisitor(
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement {
         val irFunction = if (simpleFunction.visibility == Visibilities.LOCAL) {
             declarationStorage.createIrFunction(
-                simpleFunction, irParent = conversionScope.parent()
+                simpleFunction, irParent = conversionScope.parent(), isLocal = true
             )
         } else {
             declarationStorage.getCachedIrFunction(simpleFunction)!!
@@ -237,7 +237,7 @@ class Fir2IrVisitor(
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): IrElement {
         return anonymousFunction.convertWithOffsets { startOffset, endOffset ->
             val irFunction = declarationStorage.createIrFunction(
-                anonymousFunction, irParent = conversionScope.parent()
+                anonymousFunction, irParent = conversionScope.parent(), isLocal = true
             )
             conversionScope.withFunction(irFunction) {
                 memberGenerator.convertFunctionContent(irFunction, anonymousFunction, containingClass = null)

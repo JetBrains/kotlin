@@ -367,7 +367,8 @@ class Fir2IrDeclarationStorage(
         function: FirFunction<*>,
         irParent: IrDeclarationParent?,
         thisReceiverOwner: IrClass? = irParent as? IrClass,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
+        isLocal: Boolean = false
     ): IrSimpleFunction {
         val simpleFunction = function as? FirSimpleFunction
         val isLambda = function.source?.elementType == KtNodeTypes.FUNCTION_LITERAL
@@ -384,7 +385,7 @@ class Fir2IrDeclarationStorage(
         val isSuspend =
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.isSuspend == true
             else simpleFunction?.isSuspend == true
-        val signature = signatureComposer.composeSignature(function)
+        val signature = if (isLocal) null else signatureComposer.composeSignature(function)
         val created = function.convertWithOffsets { startOffset, endOffset ->
             val result = declareIrSimpleFunction(signature, simpleFunction?.containerSource) { symbol ->
                 IrFunctionImpl(
@@ -455,11 +456,12 @@ class Fir2IrDeclarationStorage(
     fun createIrConstructor(
         constructor: FirConstructor,
         irParent: IrClass,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
+        isLocal: Boolean = false
     ): IrConstructor {
         val isPrimary = constructor.isPrimary
         classifierStorage.preCacheTypeParameters(constructor)
-        val signature = signatureComposer.composeSignature(constructor)
+        val signature = if (isLocal) null else signatureComposer.composeSignature(constructor)
         val created = constructor.convertWithOffsets { startOffset, endOffset ->
             declareIrConstructor(signature) { symbol ->
                 IrConstructorImpl(
@@ -504,10 +506,11 @@ class Fir2IrDeclarationStorage(
         isSetter: Boolean,
         origin: IrDeclarationOrigin,
         startOffset: Int,
-        endOffset: Int
+        endOffset: Int,
+        isLocal: Boolean = false
     ): IrSimpleFunction {
         val prefix = if (isSetter) "set" else "get"
-        val signature = signatureComposer.composeAccessorSignature(property, isSetter)
+        val signature = if (isLocal) null else signatureComposer.composeAccessorSignature(property, isSetter)
         return declareIrAccessor(
             signature,
             (correspondingProperty.descriptor as? WrappedPropertyDescriptorWithContainerSource)?.containerSource,
@@ -617,10 +620,11 @@ class Fir2IrDeclarationStorage(
         property: FirProperty,
         irParent: IrDeclarationParent?,
         thisReceiverOwner: IrClass? = irParent as? IrClass,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
+        isLocal: Boolean = false
     ): IrProperty {
         classifierStorage.preCacheTypeParameters(property)
-        val signature = signatureComposer.composeSignature(property)
+        val signature = if (isLocal) null else signatureComposer.composeSignature(property)
         return property.convertWithOffsets { startOffset, endOffset ->
             val result = declareIrProperty(signature, property.containerSource) { symbol ->
                 IrPropertyImpl(
@@ -680,7 +684,7 @@ class Fir2IrDeclarationStorage(
                             getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             else -> origin
                         },
-                        startOffset, endOffset
+                        startOffset, endOffset, isLocal
                     )
                     if (property.isVar) {
                         this.setter = createIrPropertyAccessor(
@@ -690,7 +694,7 @@ class Fir2IrDeclarationStorage(
                                 setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                 else -> origin
                             },
-                            startOffset, endOffset
+                            startOffset, endOffset, isLocal
                         )
                     }
                     leaveScope(this)

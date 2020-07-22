@@ -243,7 +243,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                     )
                 }
             }
-            val signature = components.signatureComposer.composeSignature(firFunction)
+            val signature = if (classId.isLocal) null else components.signatureComposer.composeSignature(firFunction)
             return components.declarationStorage.declareIrSimpleFunction(signature, null) { symbol ->
                 IrFunctionImpl(
                     UNDEFINED_OFFSET,
