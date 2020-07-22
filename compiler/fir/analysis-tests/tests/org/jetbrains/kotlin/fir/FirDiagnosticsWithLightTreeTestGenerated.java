@@ -941,6 +941,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superclassNotAccessibleFromInterface.kt");
         }
 
+        @TestMetadata("typeArgumentsNotAllowed.kt")
+        public void testTypeArgumentsNotAllowed() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeArgumentsNotAllowed.kt");
+        }
+
         @TestMetadata("typeOfAnnotationMember.kt")
         public void testTypeOfAnnotationMember() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeOfAnnotationMember.kt");

@@ -196,14 +196,26 @@ fun FirClassifierSymbol<*>.constructType(
     isNullable: Boolean,
     symbolOriginSession: FirSession,
     attributes: ConeAttributes = ConeAttributes.Empty
-): ConeKotlinType =
-    constructType(parts.toTypeProjections(), isNullable, attributes)
+): ConeKotlinType {
+    if (this is FirTypeParameterSymbol) {
+        for (part in parts) {
+            if (part.typeArguments.isNotEmpty()) {
+                // 1. To report this on the whole argument list we should introduce FirTypeArgumentList
+                // and add it to FirQualifierPart
+                // 2. Probably it's much better to use outer FirErrorTypeRef to store diagnostic
+                // and its source. See FirSpecificTypeResolverTransformer.transformType
+                return ConeClassErrorType("Type arguments not allowed", source = part.typeArguments.first().source)
+            }
+        }
+    }
+    return constructType(parts.toTypeProjections(), isNullable, attributes)
         .also {
             val lookupTag = it.lookupTag
             if (lookupTag is ConeClassLikeLookupTagImpl && this is FirClassLikeSymbol<*>) {
                 lookupTag.bindSymbolToLookupTag(symbolOriginSession.firSymbolProvider, this)
             }
         }
+}
 
 private fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()

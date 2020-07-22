@@ -1,0 +1,12 @@
+FILE: typeArgumentsNotAllowed.kt
+    public abstract class Foo<T> : R|kotlin/Any| {
+        public constructor<T>(): R|rest/Foo<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val x: R|ERROR CLASS: Type arguments not allowed|
+            public get(): R|ERROR CLASS: Type arguments not allowed|
+
+        public abstract fun foo(): R|ERROR CLASS: Type arguments not allowed|
+
+    }
