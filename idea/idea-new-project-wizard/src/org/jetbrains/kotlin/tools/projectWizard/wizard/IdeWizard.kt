@@ -4,7 +4,6 @@ import com.intellij.facet.impl.ui.libraries.LibraryOptionsPanel
 import com.intellij.framework.library.FrameworkLibraryVersionFilter
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainer
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainerFactory
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
@@ -43,14 +42,14 @@ class IdeWizard(
     )
     var jdk: Sdk? = null
 
-    var projectPath by setting(StructurePlugin::projectPath.reference)
-    var projectName by setting(StructurePlugin::name.reference)
+    var projectPath by setting(StructurePlugin.projectPath.reference)
+    var projectName by setting(StructurePlugin.name.reference)
 
-    var groupId by setting(StructurePlugin::groupId.reference)
-    var artifactId by setting(StructurePlugin::artifactId.reference)
-    var buildSystemType by setting(BuildSystemPlugin::type.reference)
+    var groupId by setting(StructurePlugin.groupId.reference)
+    var artifactId by setting(StructurePlugin.artifactId.reference)
+    var buildSystemType by setting(BuildSystemPlugin.type.reference)
 
-    var projectTemplate by setting(ProjectTemplatesPlugin::template.reference)
+    var projectTemplate by setting(ProjectTemplatesPlugin.template.reference)
 
     private fun <V : Any, T : SettingType<V>> setting(reference: SettingReference<V, T>) =
         object : ReadWriteProperty<Any?, V?> {

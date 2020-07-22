@@ -29,7 +29,7 @@ import javax.swing.JComponent
 class BuildSystemTypeSettingComponent(
     context: Context
 ) : SettingComponent<BuildSystemType, DropDownSettingType<BuildSystemType>>(
-    BuildSystemPlugin::type.reference,
+    BuildSystemPlugin.type.reference,
     context
 ) {
 

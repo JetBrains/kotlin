@@ -12,7 +12,6 @@ import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.path
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
@@ -53,8 +52,8 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
 
     private val nameAndLocationComponent = TitledComponentsList(
         listOf(
-            StructurePlugin::name.reference.createSettingComponent(context),
-            StructurePlugin::projectPath.reference.createSettingComponent(context),
+            StructurePlugin.name.reference.createSettingComponent(context),
+            StructurePlugin.projectPath.reference.createSettingComponent(context),
             projectTemplateComponent,
             buildSystemSetting,
             jdkComponent
@@ -84,17 +83,17 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
         super.onValueUpdated(reference)
         when (reference?.path) {
-            StructurePlugin::name.path -> {
-                val isNameValid = read { StructurePlugin::name.reference.validate().isOk }
+            StructurePlugin.name.path -> {
+                val isNameValid = read { StructurePlugin.name.reference.validate().isOk }
                 if (isNameValid) {
                     tryUpdateLocationByProjectName()
                     tryArtifactIdByProjectName()
                 }
             }
-            StructurePlugin::artifactId.path -> {
+            StructurePlugin.artifactId.path -> {
                 artifactIdWasUpdatedByHand = true
             }
-            StructurePlugin::projectPath.path -> {
+            StructurePlugin.projectPath.path -> {
                 locationWasUpdatedByHand = true
             }
         }
@@ -102,9 +101,9 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
 
     private fun tryUpdateLocationByProjectName() {
         if (!locationWasUpdatedByHand) {
-            val location = read { StructurePlugin::projectPath.settingValue }
+            val location = read { StructurePlugin.projectPath.settingValue }
             if (location.parent != null) modify {
-                StructurePlugin::projectPath.reference.setValue(location.parent.resolve(StructurePlugin::name.settingValue))
+                StructurePlugin.projectPath.reference.setValue(location.parent.resolve(StructurePlugin.name.settingValue))
                 locationWasUpdatedByHand = false
             }
         }
@@ -112,7 +111,7 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
 
     private fun tryArtifactIdByProjectName() {
         if (!artifactIdWasUpdatedByHand) modify {
-            StructurePlugin::artifactId.reference.setValue(StructurePlugin::name.settingValue)
+            StructurePlugin.artifactId.reference.setValue(StructurePlugin.name.settingValue)
             artifactIdWasUpdatedByHand = false
         }
     }
@@ -124,7 +123,7 @@ class BuildSystemAdditionalSettingsComponent(ideWizard: IdeWizard) : DynamicComp
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
         super.onValueUpdated(reference)
-        if (reference == BuildSystemPlugin::type.reference) {
+        if (reference == BuildSystemPlugin.type.reference) {
             updateBuildSystemComponent()
         }
     }
@@ -135,7 +134,7 @@ class BuildSystemAdditionalSettingsComponent(ideWizard: IdeWizard) : DynamicComp
     }
 
     private fun updateBuildSystemComponent() {
-        val buildSystemType = read { BuildSystemPlugin::type.settingValue() }
+        val buildSystemType = read { BuildSystemPlugin.type.settingValue }
         val state = buildSystemType.state()
         section.updateTitleAndComponent(state.sectionTitle, state.component)
     }
@@ -162,9 +161,9 @@ class BuildSystemAdditionalSettingsComponent(ideWizard: IdeWizard) : DynamicComp
 
 private class PomSettingsComponent(context: Context) : TitledComponentsList(
     listOf(
-        StructurePlugin::groupId.reference.createSettingComponent(context),
-        StructurePlugin::artifactId.reference.createSettingComponent(context),
-        StructurePlugin::version.reference.createSettingComponent(context)
+        StructurePlugin.groupId.reference.createSettingComponent(context),
+        StructurePlugin.artifactId.reference.createSettingComponent(context),
+        StructurePlugin.version.reference.createSettingComponent(context)
     ),
     context,
     stretchY = true
@@ -257,7 +256,7 @@ class ProjectPreviewComponent(context: Context) : DynamicComponent(context) {
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
         super.onValueUpdated(reference)
-        if (reference == ProjectTemplatesPlugin::template.reference) {
+        if (reference == ProjectTemplatesPlugin.template.reference) {
             modulesEditorComponent.updateModel()
         }
     }

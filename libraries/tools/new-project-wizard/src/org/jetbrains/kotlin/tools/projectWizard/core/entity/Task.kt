@@ -6,12 +6,6 @@ import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import kotlin.reflect.KProperty1
 
-typealias TaskReference = KProperty1<out Plugin, Task>
-typealias Task1Reference<A, B> = KProperty1<out Plugin, Task1<A, B>>
-typealias PipelineTaskReference = KProperty1<out Plugin, PipelineTask>
-
-class TaskContext : EntityContext<Task, TaskReference>()
-
 sealed class Task : EntityBase()
 
 data class Task1<A, B : Any>(
@@ -32,8 +26,8 @@ data class Task1<A, B : Any>(
 data class PipelineTask(
     override val path: String,
     val action: Writer.() -> TaskResult<Unit>,
-    val before: List<PipelineTaskReference>,
-    val after: List<PipelineTaskReference>,
+    val before: List<PipelineTask>,
+    val after: List<PipelineTask>,
     val phase: GenerationPhase,
     val isAvailable: Checker,
     val title: String?
@@ -43,8 +37,8 @@ data class PipelineTask(
         private val phase: GenerationPhase
     ) {
         private var action: Writer.() -> TaskResult<Unit> = { UNIT_SUCCESS }
-        private val before = mutableListOf<PipelineTaskReference>()
-        private val after = mutableListOf<PipelineTaskReference>()
+        private val before = mutableListOf<PipelineTask>()
+        private val after = mutableListOf<PipelineTask>()
 
         var isAvailable: Checker = ALWAYS_AVAILABLE_CHECKER
 
@@ -55,11 +49,11 @@ data class PipelineTask(
             this.action = action
         }
 
-        fun runBefore(vararg before: PipelineTaskReference) {
+        fun runBefore(vararg before: PipelineTask) {
             this.before.addAll(before)
         }
 
-        fun runAfter(vararg after: PipelineTaskReference) {
+        fun runAfter(vararg after: PipelineTask) {
             this.after.addAll(after)
         }
 

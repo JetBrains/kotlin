@@ -61,7 +61,7 @@ class ModuleDependenciesComponent(
         }
 
     private fun possibleDependencies(): List<Module> =
-        read { KotlinPlugin::modules.settingValue }.withAllSubModules().toMutableList().apply {
+        read { KotlinPlugin.modules.settingValue }.withAllSubModules().toMutableList().apply {
             module?.let(::remove)
             removeAll(
                 module

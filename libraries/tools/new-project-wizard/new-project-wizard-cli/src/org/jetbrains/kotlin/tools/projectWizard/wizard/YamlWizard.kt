@@ -32,7 +32,7 @@ class YamlWizard(
 
         context.writeSettings {
             settingsValuesFromYaml.forEach { (reference, value) -> reference.setValue(value) }
-            StructurePlugin::projectPath.reference.setValue(projectPath)
+            StructurePlugin.projectPath.reference.setValue(projectPath)
         }
 
         super.apply(services, phases, onTaskExecuting)
@@ -49,7 +49,7 @@ fun Reader.parseYaml(
     yaml: String,
     pluginSettings: List<PluginSetting<*, *>>
 ): TaskResult<Map<SettingReference<*, *>, Any>> {
-    val parsingData = ParsingState(TemplatesPlugin::templates.propertyValue, emptyMap())
+    val parsingData = ParsingState(TemplatesPlugin.templates.propertyValue, emptyMap())
     val yamlParser = YamlSettingsParser(pluginSettings, parsingData)
     return yamlParser.parseYamlText(yaml)
 }

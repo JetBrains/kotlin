@@ -59,7 +59,7 @@ class GradleProjectImportingTestWizardService(private val project: Project) : Pr
         return importingErrorMessage?.let { message ->
             Failure(
                 ProjectImportingError(
-                    reader { KotlinPlugin::version.propertyValue.version.toString() },
+                    reader { KotlinPlugin.version.propertyValue.version.toString() },
                     message,
                 )
             )

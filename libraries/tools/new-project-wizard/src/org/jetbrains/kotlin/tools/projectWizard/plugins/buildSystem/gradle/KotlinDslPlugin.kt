@@ -8,17 +8,23 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemT
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 
 class KotlinDslPlugin(context: Context) : GradlePlugin(context) {
-    override val path = "buildSystem.gradle.kotlinDsl"
+    override val path = PATH
 
-    val addBuildSystemData by addBuildSystemData(
-        BuildSystemData(
-            type = BuildSystemType.GradleKotlinDsl,
-            buildFileData = BuildFileData(
-                createPrinter = { GradlePrinter(GradlePrinter.GradleDsl.KOTLIN) },
-                buildFileName = "build.gradle.kts"
+    companion object {
+        private const val PATH = "buildSystem.gradle.kotlinDsl"
+
+        val addBuildSystemData by addBuildSystemData(
+            PATH,
+            BuildSystemData(
+                type = BuildSystemType.GradleKotlinDsl,
+                buildFileData = BuildFileData(
+                    createPrinter = { GradlePrinter(GradlePrinter.GradleDsl.KOTLIN) },
+                    buildFileName = "build.gradle.kts"
+                )
             )
         )
-    )
+    }
+
     override val pipelineTasks: List<PipelineTask> = super.pipelineTasks +
             listOf(
                 addBuildSystemData,

@@ -36,7 +36,7 @@ object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, M
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> =
-        GradlePlugin::gradleProperties.addValues("xcodeproj" to "./${module.name}")
+        GradlePlugin.gradleProperties.addValues("xcodeproj" to "./${module.name}")
 
     override fun Reader.createTemplates(
         configurationData: ModulesToIrConversionData,

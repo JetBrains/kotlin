@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.actions.NewProjectAction
 import com.intellij.ide.impl.NewProjectUtil
-import com.intellij.ide.projectWizard.NewProjectWizard
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.ide.wizard.AbstractWizard
 import com.intellij.openapi.Disposable
@@ -14,11 +13,9 @@ import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.SystemProperties
-import org.jetbrains.kotlin.idea.configuration.ExperimentalFeatures
 import org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory
 import org.jetbrains.kotlin.idea.projectWizard.ProjectCreationStats
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
@@ -201,12 +198,12 @@ class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, Generatio
         val suggestedProjectParentLocation = suggestProjectLocation()
         val suggestedProjectName = ProjectWizardUtil.findNonExistingFileName(suggestedProjectParentLocation, "untitled", "")
         wizard.context.writeSettings {
-            StructurePlugin::name.reference.setValue(suggestedProjectName)
-            StructurePlugin::projectPath.reference.setValue(suggestedProjectParentLocation / suggestedProjectName)
-            StructurePlugin::artifactId.reference.setValue(suggestedProjectName)
+            StructurePlugin.name.reference.setValue(suggestedProjectName)
+            StructurePlugin.projectPath.reference.setValue(suggestedProjectParentLocation / suggestedProjectName)
+            StructurePlugin.artifactId.reference.setValue(suggestedProjectName)
 
-            if (StructurePlugin::groupId.reference.notRequiredSettingValue == null) {
-                StructurePlugin::groupId.reference.setValue(suggestGroupId())
+            if (StructurePlugin.groupId.notRequiredSettingValue == null) {
+                StructurePlugin.groupId.reference.setValue(suggestGroupId())
             }
         }
     }

@@ -23,7 +23,7 @@ abstract class Wizard(createPlugins: PluginsCreator, servicesManager: ServicesMa
 
     private fun initNonPluginDefaultValues() {
         context.writeSettings {
-            KotlinPlugin::modules.reference.notRequiredSettingValue
+            KotlinPlugin.modules.notRequiredSettingValue
                 ?.withAllSubModules(includeSourcesets = true)
                 ?.forEach { module ->
                     with(module) { initDefaultValuesForSettings() }
@@ -41,7 +41,7 @@ abstract class Wizard(createPlugins: PluginsCreator, servicesManager: ServicesMa
 
     fun validate(phases: Set<GenerationPhase>): ValidationResult = context.read {
         pluginSettings.map { setting ->
-            val value = setting.reference.notRequiredSettingValue ?: return@map ValidationResult.OK
+            val value = setting.notRequiredSettingValue ?: return@map ValidationResult.OK
             if (setting.validateOnProjectCreation && setting.neededAtPhase in phases && setting.isActive(this))
                 (setting.validator as SettingValidator<Any>).validate(this, value)
             else ValidationResult.OK
@@ -56,7 +56,7 @@ abstract class Wizard(createPlugins: PluginsCreator, servicesManager: ServicesMa
             val serializer = setting.type.serializer as? SettingSerializer.Serializer<Any> ?: continue
             service<SettingSavingWizardService>().saveSettingValue(
                 setting.path,
-                serializer.toString(setting.reference.settingValue)
+                serializer.toString(setting.settingValue)
             )
         }
     }

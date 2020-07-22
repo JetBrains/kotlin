@@ -41,13 +41,13 @@ class KtorServerTemplate : Template() {
 
     override fun Writer.getRequiredLibraries(module: ModuleIR): List<DependencyIR> =
         withSettingsOf(module.originalModule) {
-            val kotlinVersion = KotlinPlugin::version.propertyValue.version
+            val kotlinVersion = KotlinPlugin.version.propertyValue.version
             buildList {
                 +ktorArtifactDependency(serverEngine.reference.settingValue.dependencyName, kotlinVersion)
                 +ktorArtifactDependency("ktor-html-builder", kotlinVersion)
                 +ArtifactBasedLibraryDependencyIR(
                     MavenArtifact(Repositories.KOTLINX, "org.jetbrains.kotlinx", "kotlinx-html-jvm"),
-                    Versions.KOTLINX.KOTLINX_HTML(KotlinPlugin::version.propertyValue.version),
+                    Versions.KOTLINX.KOTLINX_HTML(KotlinPlugin.version.propertyValue.version),
                     DependencyType.MAIN
                 )
             }

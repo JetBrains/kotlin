@@ -96,7 +96,7 @@ object AndroidSinglePlatformModuleConfigurator :
     ): TaskResult<Unit> = computeM {
         val javaPackage = module.javaPackage(configurationData.pomIr)
         val settings = mapOf("package" to javaPackage.asCodePackage())
-        TemplatesPlugin::addFileTemplates.execute(
+        TemplatesPlugin.addFileTemplates.execute(
             listOf(
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.activityMainXml, modulePath, settings),
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.androidManifestXml, modulePath, settings),
