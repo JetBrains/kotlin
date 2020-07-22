@@ -925,7 +925,8 @@ tasks {
                 ":kotlin-reflect:publish",
                 ":kotlin-main-kts:publish",
                 ":kotlin-stdlib-js:publish",
-                ":kotlin-test:kotlin-test-js:publish"
+                ":kotlin-test:kotlin-test-js:publish",
+                ":kotlin-coroutines-experimental-compat:publish"
             )
         }
     }
