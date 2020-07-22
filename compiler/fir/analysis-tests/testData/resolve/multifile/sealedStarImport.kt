@@ -15,7 +15,7 @@ package other
 import test.Test.*
 
 abstract class Factory {
-    abstract fun createTest(): Test
+    abstract fun createTest(): <!OTHER_ERROR!>Test<!>
 
     abstract fun createObj(): O
 

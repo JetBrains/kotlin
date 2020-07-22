@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
@@ -75,7 +74,9 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
         is FirJavaTypeRef -> {
             type.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
         }
-        else -> ConeKotlinErrorType("Unexpected type reference in JavaClassUseSiteMemberScope: ${this::class.java}")
+        else -> ConeKotlinErrorType(
+            ConeSimpleDiagnostic("Unexpected type reference in JavaClassUseSiteMemberScope: ${this::class.java}")
+        )
     }
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, javaTypeParameterStack: JavaTypeParameterStack): FirJavaTypeRef {
@@ -217,7 +218,9 @@ private fun FirTypeParameter.getErasedUpperBound(
     // E.g. `class A<T extends A, F extends A>`
     // To prevent recursive calls return defaultValue() instead
     potentiallyRecursiveTypeParameter: FirTypeParameter? = null,
-    defaultValue: (() -> ConeKotlinType) = { ConeKotlinErrorType("Can't compute erased upper bound of type parameter `$this`") }
+    defaultValue: (() -> ConeKotlinType) = {
+        ConeKotlinErrorType(ConeIntermediateDiagnostic("Can't compute erased upper bound of type parameter `$this`"))
+    }
 ): ConeKotlinType {
     if (this === potentiallyRecursiveTypeParameter) return defaultValue()
 
@@ -318,7 +321,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             val symbol = javaTypeParameterStack[classifier]
             ConeTypeParameterTypeImpl(symbol.toLookupTag(), isNullable = !isLowerBound)
         }
-        else -> ConeKotlinErrorType("Unexpected classifier: $classifier")
+        else -> ConeKotlinErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier"))
     }
 }
 
@@ -393,7 +396,7 @@ private fun JavaType?.toConeProjectionWithoutEnhancement(
         }
         is JavaClassifierType -> toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
         is JavaArrayType -> toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
-        else -> ConeClassErrorType("Unexpected type argument: $this")
+        else -> ConeClassErrorType(ConeSimpleDiagnostic("Unexpected type argument: $this"))
     }
 }
 
@@ -498,7 +501,7 @@ private fun JavaType.toFirResolvedTypeRef(
         forTypeParameterBounds = false
     )
     return buildResolvedTypeRef {
-        type = ConeClassErrorType("Unexpected JavaType: $this")
+        type = ConeClassErrorType(ConeSimpleDiagnostic("Unexpected JavaType: $this"))
     }
 }
 

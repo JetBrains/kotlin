@@ -10,7 +10,7 @@ import d
 import d.Test
 import b.d
 
-class Some: Test()
+class Some: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Test<!>()
 
 //FILE:b.kt
 

@@ -21,7 +21,7 @@ interface Interface {
         get() = 222
 }
 
-class ClassDerivedFromUnresolved : Base(), Interface, Unresolved {
+class ClassDerivedFromUnresolved : Base(), Interface, <!OTHER_ERROR!>Unresolved<!> {
     override fun foo() {}
     override fun bar() {}
 

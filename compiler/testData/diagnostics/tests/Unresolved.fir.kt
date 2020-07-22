@@ -3,8 +3,8 @@ package unresolved
 class Pair<A, B>(val a: A, val b: B)
 
 fun testGenericArgumentsCount() {
-    val p1: Pair<Int> = Pair(2, 2)
-    val p2: Pair = Pair(2, 2)
+    val p1: <!OTHER_ERROR!>Pair<Int><!> = Pair(2, 2)
+    val p2: <!OTHER_ERROR!>Pair<!> = Pair(2, 2)
 }
 
 fun testUnresolved() {

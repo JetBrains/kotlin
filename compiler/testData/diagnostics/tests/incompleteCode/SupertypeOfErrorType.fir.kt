@@ -15,7 +15,7 @@ fun foo() {
     }
 }
 
-fun bar(i: Int, a: U) {
+fun bar(i: Int, a: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>U<!>) {
     val r = if (true) i else a
     val b: Any = r
 }

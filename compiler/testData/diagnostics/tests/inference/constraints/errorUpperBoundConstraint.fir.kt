@@ -19,7 +19,7 @@ public class Foo {
 
 // FILE: test.kt
 
-fun test(e: ErrorType) {
+fun test(e: <!OTHER_ERROR, OTHER_ERROR!>ErrorType<!>) {
     Foo.foo {
         Sam.Result.<!INAPPLICABLE_CANDIDATE!>create<!>(e)
     }

@@ -7,7 +7,7 @@ FILE: localAnnotationClass.kt
 
         }
 
-        @R|ERROR CLASS: Symbol not found, for `Anno`|() local final class Local : R|kotlin/Any| {
+        @R|Ann|() local final class Local : R|kotlin/Any| {
             public constructor(): R|Local| {
                 super<R|kotlin/Any|>()
             }

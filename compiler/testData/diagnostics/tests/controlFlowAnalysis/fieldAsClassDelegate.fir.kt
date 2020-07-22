@@ -23,7 +23,7 @@ object DefaultHttpClientWithFun : HttpClient by fClient() {
 
 private fun fClient() = HttpClientImpl()
 
-private fun <T> lazy(init: () -> T): kotlin.Lazy<T> {
+private fun <T> lazy(init: () -> T): <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>kotlin.Lazy<T><!> {
     init()
     null!!
 }

@@ -2,7 +2,7 @@
 
 interface I<F, G, H>
 
-class A(impl: Interface) : Nested(), Interface by impl, Inner, I<Nested, Interface, Inner> {
+class A(impl: Interface) : <!OTHER_ERROR!>Nested<!>(), <!OTHER_ERROR!>Interface<!> by impl, <!OTHER_ERROR!>Inner<!>, <!OTHER_ERROR!>I<Nested, Interface, Inner><!> {
 
     class Nested
 

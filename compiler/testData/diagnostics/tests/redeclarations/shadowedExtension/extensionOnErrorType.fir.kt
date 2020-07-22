@@ -3,5 +3,5 @@ interface G<T> {
     val bar: Int
 }
 
-fun G.foo() {}
-val G.bar: Int get() = 42
+fun <!OTHER_ERROR!>G<!>.foo() {}
+val <!OTHER_ERROR!>G<!>.bar: Int get() = 42

@@ -11,11 +11,11 @@
 typealias EachSegmentComparator<SegmentType> = (currentSegment: SegmentType, otherSegment: SegmentType, relationship: Int) -> Boolean
 
 interface ComputablePath<NumberType, PointType, out SegmentType>
-    : Path<NumberType, PointType, SegmentType>
+    : <!OTHER_ERROR!>Path<NumberType, PointType, SegmentType><!>
 where
     NumberType: Number,
-    PointType: ComputablePoint<NumberType>,
-    SegmentType: ComputableLineSegment<NumberType, PointType>
+    PointType: <!OTHER_ERROR!>ComputablePoint<NumberType><!>,
+    SegmentType: <!OTHER_ERROR!>ComputableLineSegment<NumberType, PointType><!>
 {
-    fun anyTwoSegments(comparator: EachSegmentComparator<ComputableSegment<NumberType, PointType>>): Boolean
+    fun anyTwoSegments(comparator: EachSegmentComparator<<!OTHER_ERROR!>ComputableSegment<NumberType, PointType><!>>): Boolean
 }

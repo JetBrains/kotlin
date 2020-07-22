@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
@@ -61,7 +62,7 @@ class FirJvmClassCodegen(
 
     private val approximator = object : AbstractTypeApproximator(session.typeContext) {
         override fun createErrorType(message: String): SimpleTypeMarker {
-            return ConeKotlinErrorType(message)
+            return ConeKotlinErrorType(ConeIntermediateDiagnostic(message))
         }
     }
 

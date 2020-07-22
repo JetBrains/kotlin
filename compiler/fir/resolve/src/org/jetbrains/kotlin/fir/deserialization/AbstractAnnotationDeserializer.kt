@@ -192,7 +192,7 @@ abstract class AbstractAnnotationDeserializer(
         return buildAnnotationCall {
             annotationTypeRef = symbol?.let {
                 buildResolvedTypeRef {
-                    type = it.constructType(emptyList(), isNullable = false)
+                    type = it.constructType(emptyArray(), isNullable = false)
                 }
             } ?: buildErrorTypeRef { diagnostic = ConeUnresolvedSymbolError(classId) }
             argumentList = buildArgumentList {

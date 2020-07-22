@@ -12,12 +12,12 @@ class Outer<T> {
                     fun a() = A<T, F, E, X, Y, Z>()
                 }
 
-                typealias LocalAlias<W> = A<T, F, E, X, Y, W>
+                typealias LocalAlias<W> = <!OTHER_ERROR!>A<T, F, E, X, Y, W><!>
             }
 
             class Derived : LocalOuter<Double, Short>() {
                 fun foo(): LocalInner<Long> = null!!
-                fun bar(): LocalAlias<Char> = null!!
+                fun bar(): <!OTHER_ERROR, OTHER_ERROR!>LocalAlias<Char><!> = null!!
             }
 
             Derived()
@@ -29,12 +29,12 @@ class Outer<T> {
                     fun a() = A<T, F, Any, X, Y, Z>()
                 }
 
-                typealias LocalAlias2<W> = A<T, F, Any, X, Y, W>
+                typealias LocalAlias2<W> = <!OTHER_ERROR!>A<T, F, Any, X, Y, W><!>
             }
 
             class Derived2 : LocalOuter2<Double, Short>() {
                 fun foo(): LocalInner2<Long> = null!!
-                fun bar(): LocalAlias2<Char> = null!!
+                fun bar(): <!OTHER_ERROR, OTHER_ERROR!>LocalAlias2<Char><!> = null!!
             }
             Derived2()
         }

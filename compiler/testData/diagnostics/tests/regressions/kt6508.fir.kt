@@ -18,7 +18,7 @@ import foo.View
 //import foo.TextView
 
 fun String.gah(view:View ?) {
-    if (view is TextView)
+    if (view is <!OTHER_ERROR!>TextView<!>)
         view
     else <!UNRESOLVED_REFERENCE!>TextView<!>() as foo.TextView
 }

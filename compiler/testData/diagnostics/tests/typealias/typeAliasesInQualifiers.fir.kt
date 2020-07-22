@@ -38,13 +38,13 @@ enum class EnumSample {
 
 fun foo(
     a0: test.ClassSample.Nested,
-    a1: test.ClassAlias.Nested,
+    a1: <!OTHER_ERROR!>test.ClassAlias.Nested<!>,
 
     b0: test.ObjectSample.Nested,
-    b1: test.ObjectAlias.Nested,
+    b1: <!OTHER_ERROR!>test.ObjectAlias.Nested<!>,
 
     c0: test.EnumSample.Nested,
-    c1: test.EnumAlias.Nested
+    c1: <!OTHER_ERROR!>test.EnumAlias.Nested<!>
 ) {
     test.ClassSample::Nested
     test.ClassAlias::Nested

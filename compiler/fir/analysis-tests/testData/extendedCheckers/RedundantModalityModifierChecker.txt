@@ -36,7 +36,9 @@ FILE: RedundantModalityModifierChecker.kt
         public abstract fun foo(): R|kotlin/Unit|
 
     }
-    public abstract expect class AbstractClass : R|ERROR CLASS: Symbol not found, for `Foo`| {
+    public abstract interface Foo : R|kotlin/Any| {
+    }
+    public abstract expect class AbstractClass : R|Foo| {
         public expect constructor(): R|AbstractClass| {
             super<R|kotlin/Any|>()
         }

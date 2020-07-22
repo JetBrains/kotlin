@@ -33,10 +33,10 @@ interface Test<in I, out O, P> {
     fun neOk10(): Inv<in O>
     fun neOk11(): Inv<out I>
 
-    fun neOk30(): Pair<I, >
-    fun neOk31(): Pair<I, Inv>
-    fun neOk32(): Inv
+    fun neOk30(): <!OTHER_ERROR!>Pair<I, ><!>
+    fun neOk31(): <!OTHER_ERROR!>Pair<I, Inv><!>
+    fun neOk32(): <!OTHER_ERROR!>Inv<!>
     fun neOk33(): Inv<<!SYNTAX!><!>>
-    fun neOk34(): Inv<C>
-    fun neOk35(): Inv<P, P>
+    fun neOk34(): <!OTHER_ERROR!>Inv<C><!>
+    fun neOk35(): <!OTHER_ERROR!>Inv<P, P><!>
 }

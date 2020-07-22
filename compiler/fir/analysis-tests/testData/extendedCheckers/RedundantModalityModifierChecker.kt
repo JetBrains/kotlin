@@ -22,6 +22,7 @@ interface B {
     <!REDUNDANT_MODALITY_MODIFIER!>abstract<!> var bar: Unit
     <!REDUNDANT_MODALITY_MODIFIER!>abstract<!> fun foo()
 }
+interface Foo
 
 expect abstract class AbstractClass : Foo {
     abstract override fun foo()

@@ -6,14 +6,14 @@ package foobar.a
     import java.*
 
     val a : java.util.List<Int>? = null
-    val a2 : util.List<Int>? = null
-    val a3 : LinkedList<Int>? = null
+    val a2 : <!OTHER_ERROR, OTHER_ERROR!>util.List<Int>?<!> = null
+    val a3 : <!OTHER_ERROR, OTHER_ERROR!>LinkedList<Int>?<!> = null
 
 // FILE: b.kt
 package foobar
 
 abstract class Foo<T>() {
-    abstract val x : T<Int>
+    abstract val x : <!TYPE_ARGUMENTS_NOT_ALLOWED, TYPE_ARGUMENTS_NOT_ALLOWED!>T<Int><!>
 }
 
 // FILE: b.kt
@@ -21,7 +21,7 @@ package foobar.a
     import java.util.*
 
     val b : List<Int>? = a
-    val b1 : util.List<Int>? = a
+    val b1 : <!OTHER_ERROR, OTHER_ERROR!>util.List<Int>?<!> = a
 
 // FILE: b.kt
 package foobar

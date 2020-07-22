@@ -7,7 +7,7 @@ FILE: initBlockAndInPlaceLambda.kt
 
     }
     public final class C : R|kotlin/Any| {
-        public constructor(a: R|A|, b: R|ERROR CLASS: Symbol not found, for `b`|): R|C| {
+        public constructor(a: R|A|, b: R|B|): R|C| {
             super<R|kotlin/Any|>()
         }
 

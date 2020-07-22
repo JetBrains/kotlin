@@ -23,7 +23,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     )
 
     override val constructorCheckers: List<FirConstructorChecker> = listOf(
-        FirConstructorAllowedChecker
+        FirConstructorAllowedChecker,
     )
 
     override val controlFlowAnalyserCheckers: List<FirControlFlowChecker> = listOf(

@@ -7,14 +7,14 @@ open class Outer<X, Y> {
 
 class Derived : Outer<String, Int>() {
     fun foo(): Inner<Char> = null!!
-    fun baz(): Alias<Char> = null!!
+    fun baz(): <!OTHER_ERROR, OTHER_ERROR!>Alias<Char><!> = null!!
 }
 
 
 class A : Outer<Double, Short>() {
     class B : Outer<Float, Long>() {
         fun bar(): Inner<String> = null!!
-        fun x(): Alias<String> = null!!
+        fun x(): <!OTHER_ERROR, OTHER_ERROR!>Alias<String><!> = null!!
     }
 }
 

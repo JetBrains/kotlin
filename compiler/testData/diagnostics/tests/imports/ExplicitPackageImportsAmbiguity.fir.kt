@@ -14,4 +14,4 @@ package c
 import a.x
 import b.x
 
-class Y : x.X
+class Y : <!OTHER_ERROR!>x.X<!>

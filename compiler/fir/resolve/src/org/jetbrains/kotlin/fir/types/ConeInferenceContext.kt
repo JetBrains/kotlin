@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.NoSubstitutor
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -327,7 +328,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker {
-        return ConeKotlinErrorType("$debugName c: $constructor")
+        return ConeKotlinErrorType(ConeIntermediateDiagnostic("$debugName c: $constructor"))
     }
 
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus {
@@ -346,7 +347,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
         require(this is ErrorTypeConstructor)
-        return ConeClassErrorType(reason)
+        return ConeClassErrorType(ConeIntermediateDiagnostic(reason))
     }
 
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {

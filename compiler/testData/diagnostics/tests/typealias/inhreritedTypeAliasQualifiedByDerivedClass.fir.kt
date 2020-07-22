@@ -6,8 +6,8 @@ open class Base {
 
 class Derived : Base()
 
-fun test(x: Derived.Nested) = x
+fun test(x: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Derived.Nested<!>) = x
 
-fun Base.testWithImplicitReceiver(x: Nested) {
-    val y: Nested = x
+fun Base.testWithImplicitReceiver(x: <!OTHER_ERROR, OTHER_ERROR!>Nested<!>) {
+    val y: <!OTHER_ERROR!>Nested<!> = x
 }

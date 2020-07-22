@@ -10,7 +10,7 @@ fun test1() {
     }
 }
 
-fun bar(f: (A)->Unit) {}
+fun bar(f: (<!OTHER_ERROR!>A<!>)->Unit) {}
 
 fun test2() {
     bar { a -> } // here we don't have 'cannot infer parameter type' error

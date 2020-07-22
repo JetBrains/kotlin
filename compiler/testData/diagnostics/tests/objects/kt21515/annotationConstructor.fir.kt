@@ -8,6 +8,6 @@ open class Base {
 
 class Derived : Base() {
 
-    @Foo
+    @<!OTHER_ERROR!>Foo<!>
     fun foo() = 42
 }

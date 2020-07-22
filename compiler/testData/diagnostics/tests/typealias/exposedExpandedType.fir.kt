@@ -19,7 +19,7 @@ class Outer {
     internal typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TestProtected3<!> = Protected
     private typealias TestProtected4 = Protected
     typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TestProtected5<!> = L<Protected>
-    typealias TestProtected6 = L<TestProtected1>
+    typealias TestProtected6 = L<<!OTHER_ERROR!>TestProtected1<!>>
 
     typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TestInternal1<!> = Internal
     protected typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TestInternal2<!> = Internal

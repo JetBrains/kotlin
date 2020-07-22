@@ -838,7 +838,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(type: ConeKotlinType) {
         when (type) {
-            is ConeClassErrorType -> error { +type.reason }
+            is ConeClassErrorType -> error { +type.diagnostic.reason }
             is ConeClassLikeType -> return generate(type)
             is ConeTypeParameterType -> resolved {
                 symbolRef(type.lookupTag.toSymbol()) {
@@ -901,7 +901,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 unresolved++
                 generateList(typeRef.qualifier, separator = ".") {
                     simpleName(it.name)
-                    generateTypeProjections(it.typeArguments)
+                    generateTypeProjections(it.typeArgumentList.typeArguments)
                 }
                 if (typeRef.isMarkedNullable) {
                     +"?"

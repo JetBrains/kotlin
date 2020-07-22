@@ -2,4 +2,4 @@ enum class E {
     ENTRY
 }
 
-class A : E.ENTRY
+class A : <!OTHER_ERROR!>E.ENTRY<!>

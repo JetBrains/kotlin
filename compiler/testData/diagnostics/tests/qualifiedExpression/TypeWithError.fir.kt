@@ -15,18 +15,18 @@ fun test1(a: A.B.<!SYNTAX!><!>): A.B.<!SYNTAX!><!> {
     val aa: A.B. <!SYNTAX!>=<!><!SYNTAX!><!> null!!
 }
 
-fun test2(a: A.e.C): A.e.C {
-    val aa: A.e.C = null!!
+fun test2(a: <!OTHER_ERROR!>A.e.C<!>): <!OTHER_ERROR!>A.e.C<!> {
+    val aa: <!OTHER_ERROR!>A.e.C<!> = null!!
 }
 
-fun test3(a: a.A.C): a.A.C {
-    val aa: a.A.C = null!!
+fun test3(a: <!OTHER_ERROR!>a.A.C<!>): <!OTHER_ERROR!>a.A.C<!> {
+    val aa: <!OTHER_ERROR!>a.A.C<!> = null!!
 }
 
-fun test4(a: A.B.ee): A.B.ee {
-    val aa: A.B.ee = null!!
+fun test4(a: <!OTHER_ERROR!>A.B.ee<!>): <!OTHER_ERROR!>A.B.ee<!> {
+    val aa: <!OTHER_ERROR!>A.B.ee<!> = null!!
 }
 
-fun test5(a: A.ee): A.ee {
-    val aa: A.ee = null!!
+fun test5(a: <!OTHER_ERROR!>A.ee<!>): <!OTHER_ERROR!>A.ee<!> {
+    val aa: <!OTHER_ERROR!>A.ee<!> = null!!
 }

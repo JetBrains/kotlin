@@ -18,11 +18,11 @@ fun <E> foo(x: Any, y: Any) : Any {
     }
 
     // bare type
-    if (y is Outer.Inner) {
+    if (y is <!OTHER_ERROR!>Outer.Inner<!>) {
         return y
     }
 
-    y as Outer<*>.Inner
+    y as <!OTHER_ERROR, OTHER_ERROR!>Outer<*>.Inner<!>
 
     return C()
 }

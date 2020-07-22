@@ -17,4 +17,4 @@ class Outer<E> {
 
 class E
 
-fun bar(x: Inner) {}
+fun bar(x: <!OTHER_ERROR!>Inner<!>) {}

@@ -3,4 +3,4 @@ enum class MyEnum {
     SECOND
 }
 
-fun foo(me: MyEnum): Boolean = if (me is MyEnum.FIRST) true else false
+fun foo(me: MyEnum): Boolean = if (me is <!OTHER_ERROR!>MyEnum.FIRST<!>) true else false

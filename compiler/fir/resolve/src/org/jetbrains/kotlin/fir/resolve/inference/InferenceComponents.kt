@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
@@ -28,7 +29,7 @@ class InferenceComponents(
 ) {
     val approximator: AbstractTypeApproximator = object : AbstractTypeApproximator(ctx) {
         override fun createErrorType(message: String): SimpleTypeMarker {
-            return ConeClassErrorType(message)
+            return ConeClassErrorType(ConeIntermediateDiagnostic(message))
         }
     }
     val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)

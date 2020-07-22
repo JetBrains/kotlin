@@ -14,7 +14,7 @@ fun ConeKotlinType.render(): String {
     return when (this) {
         is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
         is ConeDefinitelyNotNullType -> "${original.render()}!!"
-        is ConeClassErrorType -> "ERROR CLASS: $reason"
+        is ConeClassErrorType -> "ERROR CLASS: ${diagnostic.reason}"
         is ConeCapturedType -> "CapturedType(${constructor.projection.render()})"
         is ConeClassLikeType -> {
             buildString {

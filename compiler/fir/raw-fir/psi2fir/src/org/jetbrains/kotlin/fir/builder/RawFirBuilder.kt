@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
+import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
@@ -1225,14 +1227,19 @@ class RawFirBuilder(
                             this.source = source
                             isMarkedNullable = isNullable
                             var ktQualifier: KtUserType? = unwrappedElement
+
                             do {
-                                val firQualifier = FirQualifierPartImpl(referenceExpression!!.getReferencedNameAsName())
-                                for (typeArgument in ktQualifier!!.typeArguments) {
-                                    firQualifier.typeArguments += typeArgument.convert<FirTypeProjection>()
-                                }
+                                val firQualifier = FirQualifierPartImpl(
+                                    referenceExpression!!.getReferencedNameAsName(),
+                                    FirTypeArgumentListImpl(source).apply {
+                                        for (typeArgument in ktQualifier!!.typeArguments) {
+                                            typeArguments += typeArgument.convert<FirTypeProjection>()
+                                        }
+                                    }
+                                )
                                 qualifier.add(firQualifier)
 
-                                ktQualifier = ktQualifier.qualifier
+                                ktQualifier = ktQualifier!!.qualifier
                                 referenceExpression = ktQualifier?.referenceExpression
                             } while (referenceExpression != null)
 

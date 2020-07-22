@@ -9,7 +9,7 @@ package foo
 
 fun f() {
     class Local1 {
-        fun g() : bar.X? = null
+        fun g() : <!OTHER_ERROR!>bar.X?<!> = null
     }
     class Local2 {
         fun g() : foo.bar.X? = null

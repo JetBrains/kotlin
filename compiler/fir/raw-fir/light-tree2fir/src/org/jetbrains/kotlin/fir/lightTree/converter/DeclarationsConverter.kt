@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
+import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
@@ -1601,10 +1602,16 @@ class DeclarationsConverter(
         if (identifier == null)
             return buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Incomplete user type", DiagnosticKind.Syntax) }
 
-        val qualifierPart = FirQualifierPartImpl(identifier.nameAsSafeName()).apply { typeArguments += firTypeArguments }
+        val theSource = userType.toFirSourceElement()
+        val qualifierPart = FirQualifierPartImpl(
+            identifier.nameAsSafeName(),
+            FirTypeArgumentListImpl(theSource).apply {
+                typeArguments += firTypeArguments
+            }
+        )
 
         return buildUserTypeRef {
-            source = userType.toFirSourceElement()
+            source = theSource
             isMarkedNullable = isNullable
             qualifier.add(qualifierPart)
             simpleFirUserType?.qualifier?.let { this.qualifier.addAll(0, it) }

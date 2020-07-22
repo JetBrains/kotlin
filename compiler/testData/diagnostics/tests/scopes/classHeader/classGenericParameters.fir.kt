@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-class A<T : Nested, F: Inner, G: Interface> {
+class A<T : <!OTHER_ERROR!>Nested<!>, F: <!OTHER_ERROR!>Inner<!>, G: <!OTHER_ERROR!>Interface<!>> {
 
     class Nested
 
@@ -9,7 +9,7 @@ class A<T : Nested, F: Inner, G: Interface> {
     interface Interface
 }
 
-class B<T, F, G> where T : Nested, F: Inner, G: Interface {
+class B<T, F, G> where T : <!OTHER_ERROR!>Nested<!>, F: <!OTHER_ERROR!>Inner<!>, G: <!OTHER_ERROR!>Interface<!> {
 
     class Nested
 

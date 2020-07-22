@@ -1,1 +1,1 @@
-val <T : KClass<T>.something> abc
+val <T : <!OTHER_ERROR!>KClass<T>.something<!>> abc

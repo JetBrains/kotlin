@@ -1,5 +1,5 @@
 import incorrect.directory.Your
 
-typealias My = incorrect.directory.My
+typealias My = <!OTHER_ERROR!>incorrect.directory.My<!>
 
 typealias Your = <!OTHER_ERROR!>Your<!>

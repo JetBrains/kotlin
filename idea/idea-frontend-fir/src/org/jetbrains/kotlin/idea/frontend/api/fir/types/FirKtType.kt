@@ -79,7 +79,7 @@ internal class KtFirErrorType(
     override val coneType by weakRef(coneType)
     override val typeCheckerContext by weakRef(typeCheckerContext)
 
-    override val error: String get() = withValidityAssertion { coneType.reason }
+    override val error: String get() = withValidityAssertion { coneType.diagnostic.reason }
 }
 
 internal class KtFirTypeParameterType(

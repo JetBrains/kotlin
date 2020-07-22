@@ -15,9 +15,9 @@ class A<T> {
         val y: B<String>.C<String>? = null
         val z: B<String>.D? = null
 
-        val c: C<Int>? = null
-        val d: D? = null
+        val c: <!OTHER_ERROR, OTHER_ERROR!>C<Int>?<!> = null
+        val d: <!OTHER_ERROR, OTHER_ERROR!>D?<!> = null
 
-        val innerMost: Innermost<String>? = null
+        val innerMost: <!OTHER_ERROR, OTHER_ERROR!>Innermost<String>?<!> = null
     }
 }

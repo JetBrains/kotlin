@@ -29,8 +29,8 @@ fun test() {
     a<Foo.Bar<Int>.Baz>()
 }
 
-fun <T: Foo<String.Bar>> x() {}
+fun <T: <!OTHER_ERROR!>Foo<String.Bar><!>> x() {}
 fun Foo<String>.Bar.ext() {}
 
-fun ex1(a: Foo<String>.Bar<String>): Foo<String>.Bar<String> {
+fun ex1(a: <!OTHER_ERROR!>Foo<String>.Bar<String><!>): <!OTHER_ERROR!>Foo<String>.Bar<String><!> {
 }

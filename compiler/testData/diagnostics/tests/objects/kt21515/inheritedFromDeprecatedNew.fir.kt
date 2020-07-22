@@ -73,28 +73,28 @@ open class C : O.B() {
     open class n : FromCompanionC()
 
     // INVISIBLE: direct superclasses themselves.
-    open class a : A()
-    open class b : B()
+    open class a : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>A<!>()
+    open class b : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>B<!>()
 
     // DEPRECATED: Classifiers from companions of direct superclasses
-    open class e : FromCompanionA()
-    open class f : FromCompanionB()
+    open class e : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>FromCompanionA<!>()
+    open class f : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>FromCompanionB<!>()
 
     // INVISIBLE: "cousin" supertypes themselves
-    open class g : Alpha()
-    open class h : Beta()
-    open class i : Gamma()
+    open class g : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Alpha<!>()
+    open class h : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Beta<!>()
+    open class i : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Gamma<!>()
 
     // DEPRECATED: classifiers from "cousin" superclasses
-    open class k : FromAlpha()
-    open class l : FromBeta()
-    open class m : FromGamma()
+    open class k : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>FromAlpha<!>()
+    open class l : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>FromBeta<!>()
+    open class m : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>FromGamma<!>()
 
     // INVISIBLE: We don't see classifiers from companions of "cousin" superclasses
-    open class o : FromCompanionAlpha()
-    open class p : FromCompanionBeta()
-    open class q : FromCompanionGamma()
+    open class o : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>FromCompanionAlpha<!>()
+    open class p : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>FromCompanionBeta<!>()
+    open class q : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>FromCompanionGamma<!>()
 
     // DEPRECATED: Classifiers from supertypes of our own companion
-    open class r : FromDelta()
+    open class r : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>FromDelta<!>()
 }

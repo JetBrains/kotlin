@@ -6,4 +6,4 @@ package foo
 
 // FILE: b.kt
 
-@foo fun bar(p: foo): foo = null!!
+@<!OTHER_ERROR!>foo<!> fun bar(p: <!OTHER_ERROR!>foo<!>): <!OTHER_ERROR!>foo<!> = null!!

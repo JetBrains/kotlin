@@ -1,4 +1,4 @@
-@<!SYNTAX!><!>myAnnotation public
+@<!OTHER_ERROR!><!SYNTAX!><!>myAnnotation<!> public
 package illegal_modifiers
 
 abstract class A() {

@@ -50,13 +50,13 @@ class CG : G<Int> {
     fun test() {
         super<G>.foo() // OK
         super<G<Int>>.foo() // Warning
-        super<G<E>>.foo() // Error
+        super<G<E>>.<!UNRESOLVED_REFERENCE!>foo<!>() // Error
         super<G<String>>.foo() // Error
     }
 }
 
 // The case when no supertype is resolved
-class ERROR<E>() : UR {
+class ERROR<E>() : <!OTHER_ERROR!>UR<!> {
 
     fun test() {
         super.<!UNRESOLVED_REFERENCE!>foo<!>()

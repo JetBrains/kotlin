@@ -31,14 +31,14 @@ fun test() {
     val ic: I.NC = I.NC()
     val ii: I.NI? = null
 
-    val bc: B.NC = B.<!UNRESOLVED_REFERENCE!>NC<!>()
-    val bic: B.IC = B().IC()
-    val bi: B.NI? = null
+    val bc: <!OTHER_ERROR!>B.NC<!> = B.<!UNRESOLVED_REFERENCE!>NC<!>()
+    val bic: <!OTHER_ERROR!>B.IC<!> = B().IC()
+    val bi: <!OTHER_ERROR!>B.NI?<!> = null
 
-    val cc: C.NC = C.<!UNRESOLVED_REFERENCE!>NC<!>()
-    val ci: C.NI? = null
+    val cc: <!OTHER_ERROR!>C.NC<!> = C.<!UNRESOLVED_REFERENCE!>NC<!>()
+    val ci: <!OTHER_ERROR!>C.NI?<!> = null
 
-    val dc: D.NC = D.<!UNRESOLVED_REFERENCE!>NC<!>()
-    val dic: D.IC = D().IC()
-    val di: D.NI? = null
+    val dc: <!OTHER_ERROR!>D.NC<!> = D.<!UNRESOLVED_REFERENCE!>NC<!>()
+    val dic: <!OTHER_ERROR!>D.IC<!> = D().IC()
+    val di: <!OTHER_ERROR!>D.NI?<!> = null
 }

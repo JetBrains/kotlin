@@ -4,7 +4,7 @@ package test
 import other.prop
 
 // Note: "prop" is expected to be unresolved and replaced to Any
-class PropType: prop
+class PropType: <!OTHER_ERROR!>prop<!>
 
 // Note: this time "prop" should be resolved and type should be inferred for "checkTypeProp"
 val checkTypeProp = prop

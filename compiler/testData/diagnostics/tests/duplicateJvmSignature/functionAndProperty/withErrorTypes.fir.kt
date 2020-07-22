@@ -1,4 +1,4 @@
 interface T {
-    val x: ErrorType
-    fun getX(): ErrorType1
+    val x: <!OTHER_ERROR, OTHER_ERROR!>ErrorType<!>
+    fun getX(): <!OTHER_ERROR!>ErrorType1<!>
 }

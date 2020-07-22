@@ -38,10 +38,10 @@ interface Test<in I, out O, P> {
     var neOk22: Inv<out O>
     var neOk23: Inv<out I>
 
-    var neOk30: Pair<I, >
-    var neOk31: Pair<I, Inv>
-    var neOk32: Inv
+    var neOk30: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Pair<I, ><!>
+    var neOk31: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Pair<I, Inv><!>
+    var neOk32: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Inv<!>
     var neOk33: Inv<<!SYNTAX!><!>>
-    var neOk34: Inv<C>
-    var neOk35: Inv<P, P>
+    var neOk34: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Inv<C><!>
+    var neOk35: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Inv<P, P><!>
 }

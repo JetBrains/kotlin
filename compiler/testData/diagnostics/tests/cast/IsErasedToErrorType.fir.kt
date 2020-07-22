@@ -1,1 +1,1 @@
-fun testing(a: Any) = a is UnresolvedType<Int>
+fun testing(a: Any) = a is <!OTHER_ERROR!>UnresolvedType<Int><!>
