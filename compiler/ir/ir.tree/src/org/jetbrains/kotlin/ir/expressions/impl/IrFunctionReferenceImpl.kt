@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
@@ -30,10 +32,10 @@ class IrFunctionReferenceImpl(
     override val type: IrType,
     override val symbol: IrFunctionSymbol,
     typeArgumentsCount: Int,
-    valueArgumentsCount: Int,
+    override val valueArgumentsCount: Int,
     override val reflectionTarget: IrFunctionSymbol? = symbol,
     override val origin: IrStatementOrigin? = null,
-) : IrCallWithIndexedArgumentsBase(typeArgumentsCount, valueArgumentsCount), IrFunctionReference {
+) : IrMemberAccessExpressionBase<IrFunctionSymbol>(typeArgumentsCount), IrFunctionReference {
     @ObsoleteDescriptorBasedAPI
     constructor(
         startOffset: Int,
@@ -56,6 +58,38 @@ class IrFunctionReferenceImpl(
     override val referencedName: Name
         get() = symbol.owner.name
 
+    private val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
+
+    override fun getValueArgument(index: Int): IrExpression? {
+        if (index >= valueArgumentsCount) {
+            throw AssertionError("$this: No such value argument slot: $index")
+        }
+        return argumentsByParameterIndex[index]
+    }
+
+    override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
+        if (index >= valueArgumentsCount) {
+            throw AssertionError("$this: No such value argument slot: $index")
+        }
+        argumentsByParameterIndex[index] = valueArgument
+    }
+
+    override fun removeValueArgument(index: Int) {
+        argumentsByParameterIndex[index] = null
+    }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFunctionReference(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        super.acceptChildren(visitor, data)
+        argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        super.transformChildren(transformer, data)
+        argumentsByParameterIndex.forEachIndexed { i, irExpression ->
+            argumentsByParameterIndex[i] = irExpression?.transform(transformer, data)
+        }
+    }
 }
