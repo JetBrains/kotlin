@@ -57,14 +57,12 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
         )
     }
 
-    private fun areDefinitionsForGradleKts(allApplicableDefinitions: List<ScriptDefinition>): Boolean =
-        if (allApplicableDefinitions.size == 2) {
-            (allApplicableDefinitions[0].asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern
-                ?.pattern == "^(settings|.+\\.settings)\\.gradle\\.kts\$" &&
-                    allApplicableDefinitions[1].asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern
-                        ?.pattern == ".*\\.gradle\\.kts")
-        } else
-            false
+    private fun areDefinitionsForGradleKts(allApplicableDefinitions: List<ScriptDefinition>): Boolean {
+        return allApplicableDefinitions.all {
+            val pattern = it.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern?.pattern
+            pattern == ".*\\.gradle\\.kts" || pattern == "^(settings|.+\\.settings)\\.gradle\\.kts\$" || pattern == ".+\\.init\\.gradle\\.kts"
+        }
+    }
 
     companion object {
         private val KEY = Key.create<EditorNotificationPanel>("MultipleScriptDefinitionsChecker")
