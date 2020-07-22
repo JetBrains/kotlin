@@ -6,6 +6,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentIterator
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.IndexingBundle
 
@@ -31,9 +33,15 @@ class LibraryIndexableFilesProvider(val library: Library) : IndexableFilesProvid
   override fun iterateFiles(project: Project, fileIterator: ContentIterator, visitedFileSet: ConcurrentBitSet): Boolean {
     @Suppress("DuplicatedCode")
     val roots = runReadAction {
-      val rootProvider = library.rootProvider
-      rootProvider.getFiles(OrderRootType.SOURCES).toList() + rootProvider.getFiles(OrderRootType.CLASSES)
+      if (Disposer.isDisposed(library)) {
+        listOf<VirtualFile>()
+      }
+      else {
+        val rootProvider = library.rootProvider
+        rootProvider.getFiles(OrderRootType.SOURCES).toList() + rootProvider.getFiles(OrderRootType.CLASSES)
+      }
     }
+
     return IndexableFilesIterationMethods.iterateNonExcludedRoots(project, roots, fileIterator, visitedFileSet)
   }
 }
