@@ -94,7 +94,7 @@ class DwarfTests {
          * on other platforms with corresponding tools (objdump)
          */
         binary.dwarfDumpLookup(0x000000010005403c) {
-            val subprogram = filter { it.tag == DwarfTag.Tag.DW_TAG_subprogram }.single() as DwarfTagSubprogram
+            val subprogram = single { it.tag == DwarfTag.Tag.DW_TAG_subprogram } as DwarfTagSubprogram
             assertEquals(subprogram.file!!.name, "poison.kt")
         }
     }
