@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -31,18 +30,6 @@ class IrDoWhileLoopImpl(
 ) :
     IrLoopBase(startOffset, endOffset, type, origin),
     IrDoWhileLoop {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        origin: IrStatementOrigin?,
-        body: IrExpression,
-        condition: IrExpression
-    ) : this(startOffset, endOffset, type, origin) {
-        this.condition = condition
-        this.body = body
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitDoWhileLoop(this, data)

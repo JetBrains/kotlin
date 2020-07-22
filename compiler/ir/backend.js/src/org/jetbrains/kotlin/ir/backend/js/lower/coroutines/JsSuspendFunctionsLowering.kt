@@ -92,9 +92,9 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             body.endOffset,
             unit,
             COROUTINE_ROOT_LOOP,
-            rootTry,
-            JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
         ).also {
+            it.condition = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
+            it.body = rootTry
             it.label = "\$sm"
         }
 

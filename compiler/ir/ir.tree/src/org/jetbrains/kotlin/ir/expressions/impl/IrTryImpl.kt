@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCatch
@@ -76,18 +74,11 @@ class IrTryImpl(
 
 class IrCatchImpl(
     startOffset: Int,
-    endOffset: Int
+    endOffset: Int,
+    override var catchParameter: IrVariable,
 ) :
     IrElementBase(startOffset, endOffset),
     IrCatch {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        catchParameter: IrVariable
-    ) : this(startOffset, endOffset) {
-        this.catchParameter = catchParameter
-    }
 
     constructor(
         startOffset: Int,
@@ -98,11 +89,7 @@ class IrCatchImpl(
         this.result = result
     }
 
-    override lateinit var catchParameter: IrVariable
     override lateinit var result: IrExpression
-
-    @ObsoleteDescriptorBasedAPI
-    override val parameter: VariableDescriptor get() = catchParameter.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitCatch(this, data)

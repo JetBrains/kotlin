@@ -673,9 +673,7 @@ abstract class IrFileDeserializer(
         val operator = deserializeTypeOperator(proto.operator)
         val operand = deserializeIrType(proto.operand)//.brokenIr
         val argument = deserializeExpression(proto.argument)
-        return IrTypeOperatorCallImpl(start, end, type, operator, operand).apply {
-            this.argument = argument
-        }
+        return IrTypeOperatorCallImpl(start, end, type, operator, operand, argument)
     }
 
     private fun deserializeVararg(proto: ProtoVararg, start: Int, end: Int, type: IrType): IrVararg {

@@ -847,9 +847,7 @@ class Fir2IrVisitor(
     override fun visitCatch(catch: FirCatch, data: Any?): IrElement {
         return catch.convertWithOffsets { startOffset, endOffset ->
             val catchParameter = declarationStorage.createIrVariable(catch.parameter, conversionScope.parentFromStack())
-            IrCatchImpl(startOffset, endOffset, catchParameter).apply {
-                result = catch.block.convertToIrExpressionOrBlock()
-            }
+            IrCatchImpl(startOffset, endOffset, catchParameter, catch.block.convertToIrExpressionOrBlock())
         }
     }
 

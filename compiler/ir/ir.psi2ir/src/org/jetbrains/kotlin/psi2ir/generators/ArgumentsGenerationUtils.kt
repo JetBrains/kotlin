@@ -167,14 +167,7 @@ private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverVal
 fun IrExpression.implicitCastTo(expectedType: IrType?): IrExpression {
     if (expectedType == null) return this
 
-    return IrTypeOperatorCallImpl(
-        startOffset, endOffset,
-        expectedType,
-        IrTypeOperator.IMPLICIT_CAST,
-        expectedType
-    ).also {
-        it.argument = this
-    }
+    return IrTypeOperatorCallImpl(startOffset, endOffset, expectedType, IrTypeOperator.IMPLICIT_CAST, expectedType, this)
 }
 
 fun StatementGenerator.generateBackingFieldReceiver(

@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
@@ -34,9 +32,6 @@ class IrReturnImpl(
 ) :
     IrExpressionBase(startOffset, endOffset, type),
     IrReturn {
-
-    @ObsoleteDescriptorBasedAPI
-    override val returnTarget: FunctionDescriptor get() = returnTargetSymbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitReturn(this, data)

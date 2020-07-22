@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -31,9 +29,6 @@ class IrInstanceInitializerCallImpl(
 ) :
     IrTerminalExpressionBase(startOffset, endOffset, type),
     IrInstanceInitializerCall {
-
-    @ObsoleteDescriptorBasedAPI
-    override val classDescriptor: ClassDescriptor get() = classSymbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitInstanceInitializerCall(this, data)

@@ -111,11 +111,8 @@ fun IrBuilderWithScope.irNot(arg: IrExpression) =
 fun IrBuilderWithScope.irThrow(arg: IrExpression) =
     IrThrowImpl(startOffset, endOffset, context.irBuiltIns.nothingType, arg)
 
-fun IrBuilderWithScope.irCatch(catchParameter: IrVariable) =
-    IrCatchImpl(
-        startOffset, endOffset,
-        catchParameter
-    )
+fun IrBuilderWithScope.irCatch(catchParameter: IrVariable, result: IrExpression): IrCatch =
+    IrCatchImpl(startOffset, endOffset, catchParameter, result)
 
 fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
     IrTypeOperatorCallImpl(

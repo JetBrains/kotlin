@@ -273,9 +273,9 @@ class CallAndReferenceGenerator(
         val fir = calleeReference.resolvedSymbol.fir
         if (this is FirFunctionCall && fir is FirSimpleFunction && fir.origin == FirDeclarationOrigin.SamConstructor) {
             return convertWithOffsets { startOffset, endOffset ->
-                IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.SAM_CONVERSION, type).apply {
-                    argument = visitor.convertToIrExpression(this@tryConvertToSamConstructorCall.argument)
-                }
+                IrTypeOperatorCallImpl(
+                    startOffset, endOffset, type, IrTypeOperator.SAM_CONVERSION, type, visitor.convertToIrExpression(argument)
+                )
             }
         }
         return null

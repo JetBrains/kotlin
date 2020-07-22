@@ -30,39 +30,14 @@ class IrTypeOperatorCallImpl(
     endOffset: Int,
     type: IrType,
     override val operator: IrTypeOperator,
-    override val typeOperand: IrType
+    override val typeOperand: IrType,
+    override var argument: IrExpression,
 ) :
     IrExpressionBase(startOffset, endOffset, type),
     IrTypeOperatorCall {
 
-    override lateinit var argument: IrExpression
-
     override val typeOperandClassifier: IrClassifierSymbol
         get() = typeOperand.classifierOrFail
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        operator: IrTypeOperator,
-        typeOperand: IrType,
-        argument: IrExpression
-    ) : this(startOffset, endOffset, type, operator, typeOperand) {
-        this.argument = argument
-    }
-
-    @Deprecated("Doesn't require typeOperandClassifier")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        operator: IrTypeOperator,
-        typeOperand: IrType,
-        typeOperandClassifier: IrClassifierSymbol,
-        argument: IrExpression
-    ) : this(startOffset, endOffset, type, operator, typeOperand) {
-        this.argument = argument
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeOperator(this, data)

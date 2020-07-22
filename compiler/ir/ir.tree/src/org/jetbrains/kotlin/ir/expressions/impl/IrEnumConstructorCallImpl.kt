@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
-import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -39,14 +38,6 @@ class IrEnumConstructorCallImpl(
         valueArgumentsCount = valueArgumentsCount
     ),
     IrEnumConstructorCall {
-
-    @ObsoleteDescriptorBasedAPI
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        symbol: IrConstructorSymbol
-    ) : this(startOffset, endOffset, type, symbol, symbol.descriptor.typeParametersCount, symbol.descriptor.valueParameters.size)
 
     @ObsoleteDescriptorBasedAPI
     constructor(
