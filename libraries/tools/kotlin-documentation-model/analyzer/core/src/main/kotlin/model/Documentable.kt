@@ -298,10 +298,10 @@ data class DParameter(
     override val name: String?,
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
-    val type: Bound,
+    override val type: Bound,
     override val sourceSets: Set<DokkaSourceSet>,
     override val extra: PropertyContainer<DParameter> = PropertyContainer.empty()
-) : Documentable(), WithExtraProperties<DParameter> {
+) : Documentable(), WithExtraProperties<DParameter>, WithType {
     override val children: List<Nothing>
         get() = emptyList()
 
