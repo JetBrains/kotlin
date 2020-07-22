@@ -29,10 +29,7 @@ internal class PersistentIrBlockBody(
     override val startOffset: Int,
     override val endOffset: Int,
     override var initializer: (PersistentIrBlockBody.() -> Unit)? = null
-) :
-    PersistentIrBodyBase<PersistentIrBlockBody>,
-    IrBlockBody {
-
+) : IrBlockBody(), PersistentIrBodyBase<PersistentIrBlockBody> {
     override var lastModified: Int = stageController.currentStage
     override var loweredUpTo: Int = stageController.currentStage
     override var values: Array<Carrier>? = null

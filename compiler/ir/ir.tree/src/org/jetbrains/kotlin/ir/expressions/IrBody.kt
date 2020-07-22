@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrBody : IrElement {
+abstract class IrBody : IrElementBase() {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBody =
         accept(transformer, data) as IrBody
 }
 
-interface IrExpressionBody : IrBody {
-    val factory: IrFactory
+abstract class IrExpressionBody : IrBody() {
+    abstract val factory: IrFactory
 
-    var expression: IrExpression
+    abstract var expression: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitExpressionBody(this, data)
@@ -46,8 +46,8 @@ interface IrExpressionBody : IrBody {
     }
 }
 
-interface IrBlockBody : IrBody, IrStatementContainer {
-    val factory: IrFactory
+abstract class IrBlockBody : IrBody(), IrStatementContainer {
+    abstract val factory: IrFactory
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitBlockBody(this, data)
@@ -63,8 +63,8 @@ interface IrBlockBody : IrBody, IrStatementContainer {
     }
 }
 
-interface IrSyntheticBody : IrBody {
-    val kind: IrSyntheticBodyKind
+abstract class IrSyntheticBody : IrBody() {
+    abstract val kind: IrSyntheticBodyKind
 }
 
 enum class IrSyntheticBodyKind {
