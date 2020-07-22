@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightField
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
@@ -240,6 +241,10 @@ fun fastCheckIsNullabilityApplied(lightElement: KtLightElement<*, PsiModifierLis
 
     // backing fields for lateinit props are skipped
     if (lightElement is KtLightField && annotatedElement is KtProperty && annotatedElement.hasModifier(KtTokens.LATEINIT_KEYWORD)) return false
+
+    if (lightElement is KtLightField && (annotatedElement as? KtModifierListOwner)?.isPrivate() == true) {
+        return false
+    }
 
     if (annotatedElement is KtParameter) {
         val containingClassOrObject = annotatedElement.containingClassOrObject
