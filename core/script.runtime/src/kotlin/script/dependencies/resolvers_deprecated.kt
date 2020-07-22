@@ -26,7 +26,7 @@ typealias Environment = Map<String, Any?>
 
 interface ScriptDependenciesResolver {
 
-    enum class ReportSeverity { FATAL, ERROR, WARNING, INFO, DEBUG }
+    enum class ReportSeverity { DEBUG, INFO, WARNING, ERROR, FATAL }
 
     fun resolve(script: ScriptContents,
                 environment: Environment?,
