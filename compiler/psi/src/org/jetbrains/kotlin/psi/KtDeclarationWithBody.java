@@ -38,6 +38,10 @@ public interface KtDeclarationWithBody extends KtDeclaration {
         return null;
     }
 
+    default boolean hasContractEffectList() {
+        return getContractDescription() != null;
+    }
+
     boolean hasBlockBody();
 
     boolean hasBody();

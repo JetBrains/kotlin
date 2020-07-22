@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -232,7 +233,11 @@ class RawFirBuilder(
                     null to null
                 hasBlockBody() -> if (!stubMode) {
                     val block = bodyBlockExpression?.accept(this@Visitor, Unit) as? FirBlock
-                    block.extractContractDescriptionIfPossible()
+                    if (hasContractEffectList()) {
+                        block to null
+                    } else {
+                        block.extractContractDescriptionIfPossible()
+                    }
                 } else {
                     FirSingleExpressionBlock(buildExpressionStub { source = this@buildFirBody.toFirSourceElement() }.toReturn()) to null
                 }
@@ -338,8 +343,10 @@ class RawFirBuilder(
                     }
                 }
                 symbol = FirPropertyAccessorSymbol()
-                val (body, contractDescription) = this@toFirPropertyAccessor.buildFirBody()
-                this.body = body
+                val outerContractDescription = this@toFirPropertyAccessor.obtainContractDescription()
+                val bodyWithContractDescription = this@toFirPropertyAccessor.buildFirBody()
+                this.body = bodyWithContractDescription.first
+                val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
                 contractDescription?.let {
                     this.contractDescription = it
                 }
@@ -910,6 +917,7 @@ class RawFirBuilder(
 
             val labelName: String?
             val functionIsAnonymousFunction = function.name == null && !function.parent.let { it is KtFile || it is KtClassBody }
+            val hasModifierContractKeyword = function.hasModifier(CONTRACT_KEYWORD)
             val functionBuilder = if (functionIsAnonymousFunction) {
                 FirAnonymousFunctionBuilder().apply {
                     receiverTypeRef = receiverType
@@ -936,6 +944,7 @@ class RawFirBuilder(
                         isTailRec = function.hasModifier(TAILREC_KEYWORD)
                         isExternal = function.hasModifier(EXTERNAL_KEYWORD)
                         isSuspend = function.hasModifier(SUSPEND_KEYWORD)
+                        isContract = hasModifierContractKeyword
                     }
                 }
             }
@@ -957,12 +966,22 @@ class RawFirBuilder(
                 }
                 withCapturedTypeParameters {
                     if (this is FirSimpleFunctionBuilder) addCapturedTypeParameters(this.typeParameters)
-                    val (body, contractDescription) = function.buildFirBody()
-                    this.body = body
-                    contractDescription?.let {
-                        // TODO: add error reporting for contracts on lambdas
-                        if (this is FirSimpleFunctionBuilder) {
-                            this.contractDescription = it
+                    if (hasModifierContractKeyword) {
+                        function.obtainContractDescription()?.let {
+                            if (this is FirSimpleFunctionBuilder) {
+                                this.contractDescription = it
+                            }
+                        }
+                    } else { // if the function is a contract function then it isn't allowed to have a contract
+                        val outerContractDescription = function.obtainContractDescription()
+                        val bodyWithContractDescription = function.buildFirBody()
+                        this.body = bodyWithContractDescription.first
+                        val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
+                        contractDescription?.let {
+                            // TODO: add error reporting for contracts on lambdas
+                            if (this is FirSimpleFunctionBuilder) {
+                                this.contractDescription = it
+                            }
                         }
                     }
                 }
@@ -970,6 +989,21 @@ class RawFirBuilder(
             }.build().also {
                 target.bind(it)
             }
+        }
+
+        private fun KtDeclarationWithBody.obtainContractDescription(): FirContractDescription? {
+            return when(val description = contractDescription) {
+                null -> null
+                else -> buildRawContractDescription {
+                    source = description.toFirSourceElement()
+                    description.extractRawEffects(rawEffects)
+                }
+            }
+        }
+
+        private fun KtContractEffectList.extractRawEffects(destination: MutableList<FirExpression>) {
+            getExpressions()
+                .mapTo(destination) { it.accept(this@Visitor, Unit) as FirExpression }
         }
 
         override fun visitLambdaExpression(expression: KtLambdaExpression, data: Unit): FirElement {
