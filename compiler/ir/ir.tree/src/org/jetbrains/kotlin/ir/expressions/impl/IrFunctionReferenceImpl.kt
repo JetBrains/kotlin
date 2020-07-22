@@ -25,25 +25,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 class IrFunctionReferenceImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val symbol: IrFunctionSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     override val reflectionTarget: IrFunctionSymbol? = symbol,
-    origin: IrStatementOrigin? = null
-) :
-    IrCallWithIndexedArgumentsBase(
-        startOffset,
-        endOffset,
-        type,
-        typeArgumentsCount,
-        valueArgumentsCount,
-        origin
-    ),
-    IrFunctionReference {
-
+    override val origin: IrStatementOrigin? = null,
+) : IrCallWithIndexedArgumentsBase(typeArgumentsCount, valueArgumentsCount), IrFunctionReference {
     @ObsoleteDescriptorBasedAPI
     constructor(
         startOffset: Int,

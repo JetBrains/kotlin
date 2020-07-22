@@ -16,16 +16,10 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-abstract class IrTerminalExpressionBase(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType
-) : IrExpressionBase(startOffset, endOffset, type) {
-
+abstract class IrTerminalExpressionBase : IrExpressionBase() {
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         // No children
     }

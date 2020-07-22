@@ -23,13 +23,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrSpreadElementImpl(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     override var expression: IrExpression,
-) :
-    IrElementBase(startOffset, endOffset),
-    IrSpreadElement {
-
+) : IrElementBase(), IrSpreadElement {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitSpreadElement(this, data)
     }

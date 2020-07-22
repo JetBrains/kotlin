@@ -27,13 +27,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrTryImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrTry {
-
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
+) : IrExpressionBase(), IrTry {
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -73,13 +70,10 @@ class IrTryImpl(
 }
 
 class IrCatchImpl(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     override var catchParameter: IrVariable,
-) :
-    IrElementBase(startOffset, endOffset),
-    IrCatch {
-
+) : IrElementBase(), IrCatch {
     constructor(
         startOffset: Int,
         endOffset: Int,

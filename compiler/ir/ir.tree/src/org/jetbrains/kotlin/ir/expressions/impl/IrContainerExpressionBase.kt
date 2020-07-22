@@ -18,22 +18,12 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
-abstract class IrContainerExpressionBase(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    override val origin: IrStatementOrigin? = null
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrContainerExpression {
-
+abstract class IrContainerExpressionBase : IrExpressionBase(), IrContainerExpression {
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {

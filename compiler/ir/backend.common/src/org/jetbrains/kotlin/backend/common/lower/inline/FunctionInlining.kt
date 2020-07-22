@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
@@ -509,13 +509,14 @@ class FunctionInlining(
     }
 
     private class IrGetValueWithoutLocation(
-        symbol: IrValueSymbol,
+        override val symbol: IrValueSymbol,
         override val origin: IrStatementOrigin? = null
-    ) : IrTerminalDeclarationReferenceBase<IrValueSymbol>(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-        symbol.owner.type,
-        symbol
-    ), IrGetValue {
+    ) : IrTerminalDeclarationReferenceBase<IrValueSymbol>(), IrGetValue {
+        override val startOffset: Int get() = UNDEFINED_OFFSET
+        override val endOffset: Int get() = UNDEFINED_OFFSET
+
+        override val type: IrType get() = symbol.owner.type
+
         override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) =
             visitor.visitGetValue(this, data)
 

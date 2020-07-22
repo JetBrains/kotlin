@@ -17,16 +17,7 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
-import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.types.IrType
 
-abstract class IrBreakContinueBase(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    override var loop: IrLoop
-) : IrTerminalExpressionBase(startOffset, endOffset, type),
-    IrBreakContinue {
-
+abstract class IrBreakContinueBase : IrTerminalExpressionBase(), IrBreakContinue {
     override var label: String? = null
 }

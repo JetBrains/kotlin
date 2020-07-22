@@ -23,15 +23,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
-abstract class IrWhenBase(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    override val origin: IrStatementOrigin? = null
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrWhen {
-
+abstract class IrWhenBase : IrExpressionBase(), IrWhen {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitWhen(this, data)
 
@@ -47,13 +39,11 @@ abstract class IrWhenBase(
 }
 
 class IrWhenImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val origin: IrStatementOrigin? = null
-) :
-    IrWhenBase(startOffset, endOffset, type) {
-
+) : IrWhenBase() {
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -68,14 +58,11 @@ class IrWhenImpl(
 }
 
 open class IrBranchImpl(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     override var condition: IrExpression,
     override var result: IrExpression
-) :
-    IrElementBase(startOffset, endOffset),
-    IrBranch {
-
+) : IrElementBase(), IrBranch {
     constructor(condition: IrExpression, result: IrExpression) :
             this(condition.startOffset, condition.endOffset, condition, result)
 

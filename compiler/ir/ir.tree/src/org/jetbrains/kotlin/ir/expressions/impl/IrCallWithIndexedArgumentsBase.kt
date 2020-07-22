@@ -17,29 +17,14 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrCallWithIndexedArgumentsBase(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
     typeArgumentsCount: Int,
-    valueArgumentsCount: Int,
-    origin: IrStatementOrigin? = null
-) :
-    IrMemberAccessExpressionBase<IrFunctionSymbol>(
-        startOffset,
-        endOffset,
-        type,
-        typeArgumentsCount,
-        valueArgumentsCount,
-        origin
-    ) {
-
+    final override val valueArgumentsCount: Int,
+) : IrMemberAccessExpressionBase<IrFunctionSymbol>(typeArgumentsCount) {
     private val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
 
     override fun getValueArgument(index: Int): IrExpression? {

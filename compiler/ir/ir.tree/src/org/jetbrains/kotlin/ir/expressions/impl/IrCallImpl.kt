@@ -28,23 +28,15 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrCallImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val symbol: IrFunctionSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
-    origin: IrStatementOrigin? = null,
+    override val origin: IrStatementOrigin? = null,
     override val superQualifierSymbol: IrClassSymbol? = null
-) :
-    IrCallWithIndexedArgumentsBase(
-        startOffset, endOffset, type,
-        typeArgumentsCount,
-        valueArgumentsCount,
-        origin
-    ),
-    IrCall {
-
+) : IrCallWithIndexedArgumentsBase(typeArgumentsCount, valueArgumentsCount), IrCall {
     init {
         if (symbol is IrConstructorSymbol) {
             throw AssertionError("Should be IrConstructorCall: ${this.render()}")

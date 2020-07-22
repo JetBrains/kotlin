@@ -23,12 +23,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrSyntheticBodyImpl(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     override val kind: IrSyntheticBodyKind
-) :
-    IrElementBase(startOffset, endOffset),
-    IrSyntheticBody {
+) : IrElementBase(), IrSyntheticBody {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitSyntheticBody(this, data)
     }

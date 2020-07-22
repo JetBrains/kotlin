@@ -18,13 +18,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 
-abstract class IrDeclarationReferenceBase<out S : IrSymbol>(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    override val symbol: S
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrDeclarationReference
+abstract class IrDeclarationReferenceBase<out S : IrSymbol> : IrExpressionBase(), IrDeclarationReference {
+    abstract override val symbol: S
+}

@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
 class IrExpressionBodyImpl(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     initializer: (IrExpressionBody.() -> Unit)? = null
-) : IrElementBase(startOffset, endOffset), IrExpressionBody {
+) : IrElementBase(), IrExpressionBody {
     init {
         initializer?.invoke(this)
     }
