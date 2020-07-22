@@ -130,16 +130,6 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/Constructors.kt");
         }
 
-        @TestMetadata("ContractFunctionDeclaration.kt")
-        public void testContractFunctionDeclaration() throws Exception {
-            runTest("compiler/testData/psi/ContractFunctionDeclaration.kt");
-        }
-
-        @TestMetadata("ContractFunctionMultilineDeclaration.kt")
-        public void testContractFunctionMultilineDeclaration() throws Exception {
-            runTest("compiler/testData/psi/ContractFunctionMultilineDeclaration.kt");
-        }
-
         @TestMetadata("ControlStructures.kt")
         public void testControlStructures() throws Exception {
             runTest("compiler/testData/psi/ControlStructures.kt");
@@ -390,19 +380,9 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/FunctionTypes.kt");
         }
 
-        @TestMetadata("FunctionWithMultilineContract.kt")
-        public void testFunctionWithMultilineContract() throws Exception {
-            runTest("compiler/testData/psi/FunctionWithMultilineContract.kt");
-        }
-
         @TestMetadata("Functions.kt")
         public void testFunctions() throws Exception {
             runTest("compiler/testData/psi/Functions.kt");
-        }
-
-        @TestMetadata("FunctionsWithTypeConstraintsAndContract.kt")
-        public void testFunctionsWithTypeConstraintsAndContract() throws Exception {
-            runTest("compiler/testData/psi/FunctionsWithTypeConstraintsAndContract.kt");
         }
 
         @TestMetadata("FunctionsWithoutName.kt")
@@ -638,11 +618,6 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         @TestMetadata("SimpleExpressions.kt")
         public void testSimpleExpressions() throws Exception {
             runTest("compiler/testData/psi/SimpleExpressions.kt");
-        }
-
-        @TestMetadata("SimpleFunctionWithContract.kt")
-        public void testSimpleFunctionWithContract() throws Exception {
-            runTest("compiler/testData/psi/SimpleFunctionWithContract.kt");
         }
 
         @TestMetadata("SimpleModifiers.kt")
@@ -1284,6 +1259,49 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                         runTest("compiler/testData/psi/annotation/targeted/onParam/targetExpected.kt");
                     }
                 }
+            }
+        }
+
+        @TestMetadata("compiler/testData/psi/contracts")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Contracts extends AbstractParsingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInContracts() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+            }
+
+            @TestMetadata("ContractFunctionDeclaration.kt")
+            public void testContractFunctionDeclaration() throws Exception {
+                runTest("compiler/testData/psi/contracts/ContractFunctionDeclaration.kt");
+            }
+
+            @TestMetadata("ContractFunctionMultilineDeclaration.kt")
+            public void testContractFunctionMultilineDeclaration() throws Exception {
+                runTest("compiler/testData/psi/contracts/ContractFunctionMultilineDeclaration.kt");
+            }
+
+            @TestMetadata("FunctionWithMultilineContract.kt")
+            public void testFunctionWithMultilineContract() throws Exception {
+                runTest("compiler/testData/psi/contracts/FunctionWithMultilineContract.kt");
+            }
+
+            @TestMetadata("FunctionsWithTypeConstraintsAndContract.kt")
+            public void testFunctionsWithTypeConstraintsAndContract() throws Exception {
+                runTest("compiler/testData/psi/contracts/FunctionsWithTypeConstraintsAndContract.kt");
+            }
+
+            @TestMetadata("PropertyAccessorsContracts.kt")
+            public void testPropertyAccessorsContracts() throws Exception {
+                runTest("compiler/testData/psi/contracts/PropertyAccessorsContracts.kt");
+            }
+
+            @TestMetadata("SimpleFunctionWithContract.kt")
+            public void testSimpleFunctionWithContract() throws Exception {
+                runTest("compiler/testData/psi/contracts/SimpleFunctionWithContract.kt");
             }
         }
 
