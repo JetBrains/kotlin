@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
+import org.jetbrains.kotlin.tools.projectWizard.PropertiesOwner
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
@@ -28,8 +29,29 @@ abstract class Plugin(override val context: Context) : EntityBase(),
     abstract val pipelineTasks: List<PipelineTask>
 }
 
-abstract class PluginSettingsOwner : SettingsOwner {
+abstract class PluginSettingsOwner : SettingsOwner, PropertiesOwner {
     abstract val pluginPath: String
+
+    // properties
+    override fun <T : Any> propertyDelegate(
+        create: (path: String) -> PropertyBuilder<T>
+    ): ReadOnlyProperty<Any, Property<T>> =
+        cached { name -> PluginProperty(create(withPluginPath(name)).build()) }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> property(
+        defaultValue: T,
+        init: PropertyBuilder<T>.() -> Unit,
+    ): ReadOnlyProperty<Any, PluginProperty<T>> =
+        super.property(defaultValue, init) as ReadOnlyProperty<Any, PluginProperty<T>>
+
+    override fun <T : Any> listProperty(
+        vararg defaultValues: T,
+        init: PropertyBuilder<List<T>>.() -> Unit,
+    ): ReadOnlyProperty<Any, PluginProperty<List<T>>> =
+        property(defaultValues.toList(), init)
+
+    // pippeline tasks
 
     fun pipelineTask(
         phase: GenerationPhase,
@@ -37,20 +59,13 @@ abstract class PluginSettingsOwner : SettingsOwner {
     ): ReadOnlyProperty<Any, PipelineTask> =
         cached { name -> PipelineTask.Builder(withPluginPath(name), phase).apply(init).build() }
 
+    // task1
+
     fun <A, B : Any> task1(
         init: Task1.Builder<A, B>.() -> Unit
     ): ReadOnlyProperty<Any, Task1<A, B>> = cached { name -> Task1.Builder<A, B>(withPluginPath(name)).apply(init).build() }
 
-    fun <T : Any> property(
-        defaultValue: T,
-        init: Property.Builder<T>.() -> Unit = {}
-    ): ReadOnlyProperty<Any, Property<T>> =
-        cached { name -> Property.Builder(withPluginPath(name), defaultValue).apply(init).build() }
-
-    fun <T : Any> listProperty(vararg defaultValues: T, init: Property.Builder<List<T>>.() -> Unit = {}) =
-        property(defaultValues.toList(), init)
-
-    private fun withPluginPath(name: String): String = "$pluginPath.$name"
+    // settings
 
     override fun <V : Any, T : SettingType<V>> settingDelegate(
         create: (path: String) -> SettingBuilder<V, T>
@@ -151,5 +166,9 @@ abstract class PluginSettingsOwner : SettingsOwner {
         crossinline init: DropDownSettingType.Builder<E>.() -> Unit = {}
     ): ReadOnlyProperty<Any, PluginSetting<E, DropDownSettingType<E>>> where E : Enum<E>, E : DisplayableSettingItem =
         enumSettingImpl(title, neededAtPhase, init) as ReadOnlyProperty<Any, PluginSetting<E, DropDownSettingType<E>>>
+
+    // utils
+
+    private fun withPluginPath(name: String): String = "$pluginPath.$name"
 }
 
