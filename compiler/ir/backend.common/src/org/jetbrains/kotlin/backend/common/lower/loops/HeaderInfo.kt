@@ -320,7 +320,7 @@ internal class DefaultHeaderInfoBuilder(context: CommonBackendContext, scopeOwne
 // DefaultHeaderInfoBuilder. The differences between the two are that NestedHeaderInfoBuilderForWithIndex:
 //
 //   - Has NO WithIndexHandler. We do not attempt to optimize `*.withIndex().withIndex()`.
-//   - Has DefaultIterableHandler. This allows us to optimize `Iterable<*>.withIndex()` and `Sequence<*>.withIndex()`.
+//   - Has Default(Iterable|Sequence)Handler. This allows us to optimize `Iterable<*>.withIndex()` and `Sequence<*>.withIndex()`.
 internal class NestedHeaderInfoBuilderForWithIndex(context: CommonBackendContext, scopeOwnerSymbol: () -> IrSymbol) :
     HeaderInfoBuilder(context, scopeOwnerSymbol) {
     // NOTE: No WithIndexHandler; we cannot lower `iterable.withIndex().withIndex()`.
@@ -330,12 +330,13 @@ internal class NestedHeaderInfoBuilderForWithIndex(context: CommonBackendContext
 
     // NOTE: StringIterationHandler MUST come before CharSequenceIterationHandler.
     // String is subtype of CharSequence and therefore its handler is more specialized.
-    // DefaultIterableHandler must come last as it is handles iterables not handled by more specialized handlers.
+    // Default(Iterable|Sequence)Handler must come last as they handle iterables not handled by more specialized handlers.
     override val expressionHandlers = listOf(
         ArrayIterationHandler(context),
         DefaultProgressionHandler(context),
         StringIterationHandler(context),
         CharSequenceIterationHandler(context),
-        DefaultIterableHandler(context)
+        DefaultIterableHandler(context),
+        DefaultSequenceHandler(context),
     )
 }
