@@ -1,0 +1,5 @@
+FILE: OperatorAssignment.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int| = Int(0)
+        R|<local>/a| = R|<local>/a|.R|kotlin/Int.plus|(Int(10).R|kotlin/Int.plus|(R|<local>/a|))
+    }
