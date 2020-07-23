@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 
 class ControlFlowAnalysisDiagnosticComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
-    private val controlFlowAnalyzer = FirControlFlowAnalyzer()
+    private val controlFlowAnalyzer = FirControlFlowAnalyzer(session)
 
     // ------------------------------- Class initializer -------------------------------
 

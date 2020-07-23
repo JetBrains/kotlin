@@ -5,18 +5,22 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
 
 object ExtendedDeclarationCheckers : DeclarationCheckers() {
     override val declarationCheckers = listOf(
         RedundantVisibilityModifierChecker,
-        RedundantReturnUnitType,
-        VariableAssignmentChecker
+        RedundantReturnUnitType
     )
 
     override val memberDeclarationCheckers = listOf(
         RedundantModalityModifierChecker,
         RedundantExplicitTypeChecker
+    )
+
+    override val controlFlowAnalyserCheckers: List<FirPropertyInitializationChecker> = listOf(
+        VariableAssignmentChecker
     )
 
 }
