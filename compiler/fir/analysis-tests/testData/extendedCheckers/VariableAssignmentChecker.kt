@@ -2,6 +2,23 @@
 
 import kotlin.properties.Delegates
 
+fun stackOverflowBug() {
+    <!CAN_BE_VAL!>var<!> a: Int
+    a = 1
+    for (i in 1..10)
+        print(i)
+}
+
+fun smth(flag: Boolean) {
+    var a = 1
+
+    if (flag) {
+        while (a > 0) {
+            a--
+        }
+    }
+}
+
 fun withAnnotation(p: List<Any>) {
     @Suppress("UNCHECKED_CAST")
     <!CAN_BE_VAL!>var<!> v = p as List<String>
@@ -23,13 +40,6 @@ fun destructuringDeclaration() {
 }
 
 fun getPair(): Pair<Int, String> = Pair(1, "1")
-
-fun stackOverflowBug() {
-    <!CAN_BE_VAL!>var<!> a: Int
-    a = 1
-    for (i in 1..10)
-        print(i)
-}
 
 fun listReceiver(p: List<String>) {}
 

@@ -1,4 +1,28 @@
 FILE: VariableAssignmentChecker.kt
+    public final fun stackOverflowBug(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int|
+        R|<local>/a| = Int(1)
+        lval <iterator>: R|kotlin/collections/IntIterator| = Int(1).R|kotlin/Int.rangeTo|(Int(10)).R|kotlin/ranges/IntProgression.iterator|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+            R|kotlin/io/print|(R|<local>/i|)
+        }
+
+    }
+    public final fun smth(flag: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int| = Int(1)
+        when () {
+            R|<local>/flag| ->  {
+                while(CMP(>, R|<local>/a|.R|kotlin/Int.compareTo|(Int(0)))) {
+                    lval <unary>: R|kotlin/Int| = R|<local>/a|
+                    R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.dec|()
+                    R|<local>/<unary>|
+                }
+
+            }
+        }
+
+    }
     public final fun withAnnotation(p: R|kotlin/collections/List<kotlin/Any>|): R|kotlin/Unit| {
         @R|kotlin/Suppress|(vararg(String(UNCHECKED_CAST))) lvar v: R|kotlin/collections/List<kotlin/String>| = (R|<local>/p| as R|kotlin/collections/List<kotlin/String>|)
         R|kotlin/io/print|(R|<local>/v|)
@@ -23,16 +47,6 @@ FILE: VariableAssignmentChecker.kt
     }
     public final fun getPair(): R|kotlin/Pair<kotlin/Int, kotlin/String>| {
         ^getPair R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/String|>(Int(1), String(1))
-    }
-    public final fun stackOverflowBug(): R|kotlin/Unit| {
-        lvar a: R|kotlin/Int|
-        R|<local>/a| = Int(1)
-        lval <iterator>: R|kotlin/collections/IntIterator| = Int(1).R|kotlin/Int.rangeTo|(Int(10)).R|kotlin/ranges/IntProgression.iterator|()
-        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
-            lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
-            R|kotlin/io/print|(R|<local>/i|)
-        }
-
     }
     public final fun listReceiver(p: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
     }

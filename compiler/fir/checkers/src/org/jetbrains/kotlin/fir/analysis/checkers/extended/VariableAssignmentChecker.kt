@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.psi.KtProperty
 
+
 object VariableAssignmentChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirFunction<*>) return
@@ -51,10 +52,7 @@ object VariableAssignmentChecker : FirBasicDeclarationChecker() {
                         reporter.report(source, FirErrors.CAN_BE_VAL)
                     }
                 }
-                AssignmentsCount.MANY -> {
-                    if (symbol.fir.isVal) {
-                        // here u can report val reassignment error
-                    }
+                else -> {
                 }
             }
         }
@@ -106,7 +104,7 @@ class ControlFlowGraphDeclarationVisitor(
                 EventOccurrencesRange.EXACTLY_ONCE -> {
                     propertiesCharacteristics[symbol] = maxOf(currentCharacteristic, VariableAssignmentChecker.AssignmentsCount.ONE)
                 }
-                EventOccurrencesRange.AT_LEAST_ONCE -> {
+                EventOccurrencesRange.AT_LEAST_ONCE, EventOccurrencesRange.MORE_THAN_ONCE -> {
                     propertiesCharacteristics[symbol] = VariableAssignmentChecker.AssignmentsCount.MANY
                 }
                 else -> {
