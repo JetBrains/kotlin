@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -62,34 +63,10 @@ class JsIrBackendContext(
     val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
     val externalDeclarations = hashSetOf<IrDeclaration>()
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    val bodilessBuiltInsPackageFragment: IrPackageFragment = run {
-
-        class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSymbol {
-            override val descriptor: PackageFragmentDescriptor
-                get() = error("Operation is unsupported")
-
-            private var _owner: IrExternalPackageFragment? = null
-            override val owner get() = _owner!!
-
-            override val isPublicApi: Boolean
-                get() = TODO("Not yet implemented")
-
-            override val signature: IdSignature
-                get() = TODO("Not yet implemented")
-
-            override val isBound get() = _owner != null
-
-            override fun bind(owner: IrExternalPackageFragment) {
-                _owner = owner
-            }
-        }
-
-        IrExternalPackageFragmentImpl(
-            DescriptorlessExternalPackageFragmentSymbol(),
-            FqName("kotlin")
-        )
-    }
+    val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
+        DescriptorlessExternalPackageFragmentSymbol(),
+        FqName("kotlin")
+    )
 
     val packageLevelJsModules = mutableSetOf<IrFile>()
     val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
