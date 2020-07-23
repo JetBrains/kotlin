@@ -42,6 +42,10 @@
     <taskManager implementation="com.jetbrains.kmm.ios.execution.BinaryGradleTaskManager"/>
   </extensions>
 
+  <extensions defaultExtensionNs="com.android">
+    <moduleDescriptionProvider implementation="com.jetbrains.kmm.wizard.ModuleTemplate"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.android.tools.idea.wizard.template">
     <wizardTemplateProvider implementation="com.jetbrains.kmm.wizard.KmmTemplateProvider" />
   </extensions>

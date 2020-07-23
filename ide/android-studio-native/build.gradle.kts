@@ -21,19 +21,26 @@ dependencies {
         "extensions",
         "idea",
         "jdom",
+        "libstudio.proto",
         "platform-api",
         "platform-impl",
         "platform-util-ex",
         "platform-core-ui",
         "platform-util-ui",
         "platform-ide-util-io",
+        "protobuf-java-3.5.1",
         "util"
     ) }
     compileOnly(intellijPluginDep("android")) { includeJars(
+        "adt-ui",
+        "android",
+        "android-common",
+        "sdklib",
         "sdk-tools",
         "wizard-template"
     ) }
     compileOnly(intellijPluginDep("gradle"))
+    compileOnly(intellijPluginDep("properties"))
     compileOnly(intellijPluginDep("java")) { includeJars(
         "java-api",
         "java-impl"
