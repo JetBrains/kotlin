@@ -55,7 +55,7 @@ object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator,
             +fileTemplate("$DEFAULT_APP_NAME.xcodeproj" / "project.pbxproj")
 
             +fileTemplate(DEFAULT_APP_NAME / "AppDelegate.swift")
-            +fileTemplate(DEFAULT_APP_NAME / "ContentView.swift")
+            +fileTemplate(DEFAULT_APP_NAME / "ContentView.swift.vm")
             +fileTemplate(DEFAULT_APP_NAME / "SceneDelegate.swift")
             +fileTemplate(DEFAULT_APP_NAME / "Info.plist")
 

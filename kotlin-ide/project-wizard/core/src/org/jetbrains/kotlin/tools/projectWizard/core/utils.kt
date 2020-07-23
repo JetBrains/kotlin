@@ -33,6 +33,10 @@ operator fun Path.div(@NonNls other: String): Path =
 operator fun Path.div(other: Path): Path =
     resolve(other.toString())
 
+@JvmName("divNullable")
+operator fun Path.div(other: Path?): Path =
+    other?.let { resolve(other.toString()) } ?: this
+
 operator fun @receiver:NonNls String.div(other: Path): Path =
     Paths.get(this).resolve(other)
 
