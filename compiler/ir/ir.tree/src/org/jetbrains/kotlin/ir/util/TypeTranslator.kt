@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
@@ -127,6 +129,15 @@ class TypeTranslator(
                 else ->
                     throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
             }
+            if (flexibleApproximatedType.isNullabilityFlexible())
+                extensions.flexibleNullabilityAnnotationConstructor?.let { flexibleTypeAnnotationConstructor ->
+                    annotations += IrConstructorCallImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        flexibleTypeAnnotationConstructor.constructedClassType,
+                        flexibleTypeAnnotationConstructor.symbol,
+                        0, 0, 0
+                    )
+                }
         }.buildTypeProjection()
     }
 

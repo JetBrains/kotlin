@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -39,7 +40,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Type
@@ -158,7 +158,7 @@ abstract class AnnotationCodegen(
         }
 
         // A flexible type whose lower bound in not-null and upper bound is nullable, should not be annotated
-        if (type.toKotlinType().isNullabilityFlexible()) {
+        if (type.isNullabilityFlexible()) {
             return
         }
 
@@ -184,6 +184,9 @@ abstract class AnnotationCodegen(
         val annotationClass = annotation.annotationClass
         val retentionPolicy = getRetentionPolicy(annotationClass)
         if (retentionPolicy == RetentionPolicy.SOURCE) return null
+
+        // FlexibleNullability is an internal annotation, used only inside the compiler
+        if (annotationClass.fqNameWhenAvailable == JvmGeneratorExtensions.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME) return null
 
         // We do not generate annotations whose classes are optional (annotated with `@OptionalExpectation`) because if an annotation entry
         // is resolved to the expected declaration, this means that annotation has no actual class, and thus should not be generated.
@@ -375,6 +378,9 @@ private fun IrClass.getAnnotationRetention(): KotlinRetention? {
     val retentionArgumentValue = retentionArgument.symbol.owner
     return KotlinRetention.valueOf(retentionArgumentValue.name.asString())
 }
+
+private fun IrType.isNullabilityFlexible(): Boolean =
+    hasAnnotation(JvmGeneratorExtensions.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME)
 
 // To be generalized to IrMemberAccessExpression as soon as properties get symbols.
 private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
