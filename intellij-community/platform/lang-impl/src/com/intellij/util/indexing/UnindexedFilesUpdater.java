@@ -56,12 +56,14 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
   private final FileBasedIndexImpl myIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
   private final Project myProject;
   private final boolean myStartSuspended;
+  private final boolean myRunExtensionsForFilesMarkedAsIndexed;
   private final PushedFilePropertiesUpdater myPusher;
 
-  public UnindexedFilesUpdater(@NotNull Project project, boolean startSuspended) {
+  public UnindexedFilesUpdater(@NotNull Project project, boolean startSuspended, boolean runExtensionsForFilesMarkedAsIndexed) {
     super(project);
     myProject = project;
     myStartSuspended = startSuspended;
+    myRunExtensionsForFilesMarkedAsIndexed = runExtensionsForFilesMarkedAsIndexed;
     myPusher = PushedFilePropertiesUpdater.getInstance(myProject);
     project.getMessageBus().connect(this).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
@@ -72,7 +74,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
   }
 
   public UnindexedFilesUpdater(@NotNull Project project) {
-    this(project, false);
+    this(project, false, false);
   }
 
   private void updateUnindexedFiles(ProgressIndicator indicator) {
@@ -220,7 +222,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     if (providers.isEmpty()) {
       return Collections.emptyMap();
     }
-    VirtualFileFilter unindexedFileFilter = new UnindexedFilesFinder(project, myIndex);
+    VirtualFileFilter unindexedFileFilter = new UnindexedFilesFinder(project, myIndex, myRunExtensionsForFilesMarkedAsIndexed);
     Map<IndexableFilesProvider, List<VirtualFile>> providerToFiles = new IdentityHashMap<>();
     ConcurrentBitSet visitedFileSet = new ConcurrentBitSet();
 

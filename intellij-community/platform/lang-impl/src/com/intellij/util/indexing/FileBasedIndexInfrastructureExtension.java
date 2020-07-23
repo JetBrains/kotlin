@@ -31,7 +31,13 @@ public interface FileBasedIndexInfrastructureExtension {
 
   interface FileIndexingStatusProcessor {
     /**
-     * Processes up to date file while "scanning files to index" in progress.
+     * Serves as an optimization when time-consuming {@link FileIndexingStatusProcessor#processUpToDateFile(VirtualFile, int, ID)}
+     * should not be called because takes no effect.
+     */
+    boolean shouldProcessUpToDateFiles();
+
+    /**
+     * Processes up to date file for given content-dependent index while "scanning files to index" in progress.
      */
     void processUpToDateFile(@NotNull VirtualFile file, int inputId, @NotNull ID<?, ?> indexId);
 

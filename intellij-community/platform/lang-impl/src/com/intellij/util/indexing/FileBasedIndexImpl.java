@@ -1465,7 +1465,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     }
   }
 
-  boolean needsFileContentLoading(@NotNull ID<?, ?> indexId) {
+  public boolean needsFileContentLoading(@NotNull ID<?, ?> indexId) {
     return !myRegisteredIndexes.isNotRequiringContentIndex(indexId);
   }
 
