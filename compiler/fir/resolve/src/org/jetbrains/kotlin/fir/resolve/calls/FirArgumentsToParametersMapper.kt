@@ -96,7 +96,6 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
                 if (state == State.VARARG_POSITION) {
                     completeVarargPositionArguments()
                 }
-                state = State.NAMED_ONLY_ARGUMENTS
 
                 processNamedArgument(argument, argumentName)
             }
@@ -137,6 +136,8 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
             addDiagnostic(NamedArgumentNotAllowed(argument, function))
         }
 
+        val stateAllowsMixedNamedAndPositionArguments = state != State.NAMED_ONLY_ARGUMENTS
+        state = State.NAMED_ONLY_ARGUMENTS
         val parameter = findParameterByName(argument, name) ?: return
 
         result[parameter]?.let {
@@ -146,7 +147,7 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
 
         result[parameter] = ResolvedCallArgument.SimpleArgument(argument)
 
-        if (parameters.getOrNull(currentPositionedParameterIndex) == parameter) {
+        if (stateAllowsMixedNamedAndPositionArguments && parameters.getOrNull(currentPositionedParameterIndex) == parameter) {
             state = State.POSITION_ARGUMENTS
             currentPositionedParameterIndex++
         }

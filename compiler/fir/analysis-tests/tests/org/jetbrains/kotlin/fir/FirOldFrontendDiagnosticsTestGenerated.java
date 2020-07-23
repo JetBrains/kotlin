@@ -15514,6 +15514,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/namedArguments/mixedNamedPosition/oldInference.kt");
             }
 
+            @TestMetadata("secondNamed.kt")
+            public void testSecondNamed() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/namedArguments/mixedNamedPosition/secondNamed.kt");
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/namedArguments/mixedNamedPosition/simple.kt");
