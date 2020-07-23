@@ -1,1 +1,0 @@
-fun ((kotlin.String) -> kotlin.Int?).foo(other: kotlin.String.() -> kotlin.Unit?): kotlin.Function2<kotlin.Int, kotlin.String, kotlin.Unit> { TODO() }
