@@ -51,7 +51,7 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     override fun isSuitable(module: Module): Boolean = module.isMobileAppTest
 
     override fun createAppleState(environment: ExecutionEnvironment, executor: Executor, device: AppleDevice): CommandLineState =
-        getTestData().createState(environment, executor, null)
+        getTestData().createState(environment, executor, null)!!
 
     override fun createOtherState(environment: ExecutionEnvironment): CommandLineState = AndroidTestCommandLineState(this, environment)
 
