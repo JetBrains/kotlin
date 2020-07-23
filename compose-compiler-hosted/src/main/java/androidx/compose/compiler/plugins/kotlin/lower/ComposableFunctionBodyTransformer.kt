@@ -2122,26 +2122,43 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    private fun encounteredComposableCall(withGroups: Boolean, call: IrElement?) {
-        var sourceElement: IrElement? = call
-        var location: Scope.SourceLocation? = null
+    private fun encounteredComposableCall(withGroups: Boolean) {
         var scope: Scope? = currentScope
         loop@ while (scope != null) {
             when (scope) {
                 is Scope.FunctionScope -> {
-                    location = scope.recordComposableCall(withGroups, sourceElement, location)
+                    scope.recordComposableCall(withGroups)
                     if (!scope.isInlinedLambda) {
                         break@loop
                     }
                 }
                 is Scope.BlockScope -> {
-                    location = scope.recordComposableCall(withGroups, sourceElement, location)
-                    // Only give the call location to the first scope encountered
-                    sourceElement = null
+                    scope.recordComposableCall(withGroups)
                 }
                 is Scope.ClassScope -> {
                     break@loop
                 }
+            }
+            scope = scope.parent
+        }
+    }
+
+    private fun recordCallInSource(call: IrElement) {
+        var scope: Scope? = currentScope
+        var location: Scope.SourceLocation? = null
+        loop@ while (scope != null) {
+            when (scope) {
+                is Scope.FunctionScope -> {
+                    location = scope.recordSourceLocation(call, location)
+                    if (!scope.isInlinedLambda)
+                        break@loop
+                }
+                is Scope.BlockScope -> {
+                    scope.recordSourceLocation(call, location)
+                    break@loop
+                }
+                is Scope.ClassScope ->
+                    break@loop
             }
             scope = scope.parent
         }
@@ -2424,8 +2441,7 @@ class ComposableFunctionBodyTransformer(
 
     private fun visitNormalComposableCall(expression: IrCall): IrExpression {
         encounteredComposableCall(
-            withGroups = !expression.symbol.owner.shouldElideGroups(),
-            call = expression
+            withGroups = !expression.symbol.owner.shouldElideGroups()
         )
         // it's important that we transform all of the parameters here since this will cause the
         // IrGetValue's of remapped default parameters to point to the right variable.
@@ -2522,6 +2538,8 @@ class ComposableFunctionBodyTransformer(
             expression.putValueArgument(changedArgIndex + i, param)
         }
 
+        recordCallInSource(call = expression)
+
         return expression
     }
 
@@ -2586,17 +2604,18 @@ class ComposableFunctionBodyTransformer(
         }
 
         if (calculationArg == null) {
-            encounteredComposableCall(withGroups = true, call = expression)
+            encounteredComposableCall(withGroups = true)
+            recordCallInSource(call = expression)
             return expression
         }
         if (hasSpreadArgs || !canElideRememberGroup()) {
-            encounteredComposableCall(withGroups = true, call = expression)
+            encounteredComposableCall(withGroups = true)
+            recordCallInSource(call = expression)
             calculationArg.transform(this, null)
             return expression
         }
 
-        // TODO: should i pass in null here?
-        encounteredComposableCall(withGroups = false, call = null)
+        encounteredComposableCall(withGroups = false)
 
         val invalidExpr = if (inputArgs.isEmpty())
             irConst(false)
@@ -2658,7 +2677,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun visitKeyCall(expression: IrCall): IrExpression {
-        encounteredComposableCall(withGroups = true, call = null)
+        encounteredComposableCall(withGroups = true)
         val keyArgs = mutableListOf<IrExpression>()
         var blockArg: IrExpression? = null
         for (i in 0 until expression.valueArgumentsCount) {
@@ -3430,11 +3449,7 @@ class ComposableFunctionBodyTransformer(
                 realizeEndCalls(makeEnd)
             }
 
-            fun recordComposableCall(
-                withGroups: Boolean,
-                call: IrElement?,
-                location: SourceLocation?
-            ): SourceLocation? {
+            fun recordComposableCall(withGroups: Boolean) {
                 hasComposableCalls = true
                 if (withGroups) {
                     hasComposableCallsWithGroups = true
@@ -3444,9 +3459,10 @@ class ComposableFunctionBodyTransformer(
                     // realize the group of the coalescable child
                     shouldRealizeCoalescableChild = true
                 }
-                return if (call != null) {
-                    (location ?: sourceLocationOf(call)).also { sourceLocations.add(it) }
-                } else null
+            }
+
+            fun recordSourceLocation(call: IrElement, location: SourceLocation?): SourceLocation? {
+                return location ?: sourceLocationOf(call).also { sourceLocations.add(it) }
             }
 
             fun markReturn(extraEndLocation: (IrExpression) -> Unit) {
@@ -3478,7 +3494,6 @@ class ComposableFunctionBodyTransformer(
                     val locations = sourceLocations
                         .filter { !it.used }
                         .distinct()
-                        .sortedBy { it.element.startOffset }
                     var markedRepeatable = false
                     val fileEntry = fileScope?.declaration?.fileEntry
                     locations.joinToString(",") {
