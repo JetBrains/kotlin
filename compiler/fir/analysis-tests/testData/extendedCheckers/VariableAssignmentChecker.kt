@@ -2,6 +2,26 @@
 
 import kotlin.properties.Delegates
 
+fun destructuringDeclaration() {
+    <!CAN_BE_VAL!>var<!> (v1, v2) = getPair()
+    print(v1)
+
+    var (v3, v4) = getPair()
+    print(v3)
+    v4 = ""
+
+    var (v5, v6) = getPair()
+    v5 = 1
+
+    var (v7, v8) = getPair()
+    v7 = 2
+    v8 = "42"
+
+    val (a, b, c) = Triple(1, 1, 1)
+
+    <!CAN_BE_VAL!>var<!> (x, y, z) = Triple(1, 1, 1)
+}
+
 fun stackOverflowBug() {
     <!CAN_BE_VAL!>var<!> a: Int
     a = 1
@@ -30,15 +50,6 @@ fun withReadonlyDeligate() {
     s.hashCode()
 }
 
-fun destructuringDeclaration() {
-    var (<!CAN_BE_VAL!>v1<!>, <!CAN_BE_VAL!>v2<!>) = getPair()
-    print(v1)
-
-    var (<!CAN_BE_VAL!>v3<!>, v4) = getPair()
-    print(v3)
-    v4 = ""
-}
-
 fun getPair(): Pair<Int, String> = Pair(1, "1")
 
 fun listReceiver(p: List<String>) {}
@@ -62,7 +73,7 @@ fun test() {
 fun foo() {
     <!CAN_BE_VAL!>var<!> a: Int
     val bool = true
-    <!UNINITIALIZED_VARIABLE_EXTENDED!>val<!> b: String
+    val b: String
 
     if (bool) a = 4 else a = 42
 

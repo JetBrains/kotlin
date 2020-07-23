@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirFakeSourceElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.cfa.TraverseDirection
 import org.jetbrains.kotlin.fir.analysis.cfa.traverse
@@ -39,22 +40,36 @@ object VariableAssignmentChecker : FirPropertyInitializationChecker() {
             propertiesCharacteristics[property] = AssignmentsCount.ZERO
         }
 
+        var lastDestructuringSource: FirSourceElement? = null
+        var destructuringCanBeVal = false
+        var lastDestructuredVariables = 0
+
         for ((symbol, value) in propertiesCharacteristics) {
-            val source = symbol.valOrVarOrJustKeywordSource
-            when (value) {
-                AssignmentsCount.ZERO -> {
-                    reporter.report(source, FirErrors.UNINITIALIZED_VARIABLE_EXTENDED)
+            val source = symbol.getValOrVarSource
+            if (symbol.callableId.callableName.asString() == "<destruct>") {
+                lastDestructuringSource = symbol.getValOrVarSource
+                val childrenCount = symbol.fir.psi?.children?.size ?: continue
+                lastDestructuredVariables = childrenCount - 1 // -1 cuz we don't need all after equals operator
+                destructuringCanBeVal = true
+                continue
+            }
+
+            if (lastDestructuringSource != null) {
+                // is this is tha last variable in destructuring declaration and destructuringCanBeVal == true and this can be val
+                if (lastDestructuredVariables == 1 && destructuringCanBeVal && canBeVal(symbol, value)) {
+                    reporter.report(lastDestructuringSource, FirErrors.CAN_BE_VAL)
+                    lastDestructuringSource = null
+                } else if (!canBeVal(symbol, value)) {
+                    destructuringCanBeVal = false
                 }
-                AssignmentsCount.ONE -> {
-                    if (symbol.fir.isVar) {
-                        reporter.report(source, FirErrors.CAN_BE_VAL)
-                    }
-                }
-                else -> {
-                }
+                lastDestructuredVariables--
+            } else if (canBeVal(symbol, value)) {
+                reporter.report(source, FirErrors.CAN_BE_VAL)
             }
         }
     }
+
+    private fun canBeVal(symbol: FirPropertySymbol, value: AssignmentsCount) = value == AssignmentsCount.ONE && symbol.fir.isVar
 
     private class UninitializedPropertyReporter(
         val data: Map<CFGNode<*>, PropertyInitializationInfo>,
@@ -97,8 +112,10 @@ object VariableAssignmentChecker : FirPropertyInitializationChecker() {
         }
     }
 
-    private val FirPropertySymbol.valOrVarOrJustKeywordSource
-        get() = (fir.psi as? KtProperty)?.valOrVarKeyword?.toFirPsiSourceElement() ?: fir.source
+    private val FirPropertySymbol.getValOrVarSource
+        get() = (fir.psi as? KtProperty)?.valOrVarKeyword?.toFirPsiSourceElement()
+            ?: fir.psi?.firstChild?.toFirPsiSourceElement()
+            ?: fir.source
 
     enum class AssignmentsCount {
         ZERO,

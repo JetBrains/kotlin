@@ -88,8 +88,4 @@ object FirErrors {
     val REDUNDANT_RETURN_UNIT_TYPE by warning0<FirSourceElement, PsiTypeElement>()
     val REDUNDANT_EXPLICIT_TYPE by warning0<FirSourceElement, PsiElement>()
     val CAN_BE_VAL by warning0<FirSourceElement, PsiElement>()
-    val UNINITIALIZED_VARIABLE_EXTENDED by warning0<FirSourceElement, PsiElement>()
-    val UNUSED_VARIABLE by warning0<FirSourceElement, PsiElement>() // we need it?
 }
-
-
