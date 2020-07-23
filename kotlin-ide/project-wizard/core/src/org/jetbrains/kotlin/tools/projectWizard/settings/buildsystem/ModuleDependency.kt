@@ -147,11 +147,23 @@ sealed class ModuleDependencyType(
                         "?:",
                         const("DEBUG")
                     )
-                    "framework" createValue raw {
-                        +"kotlin.targets."
+                    "sdkName" createValue GradleBinaryExpressionIR(
+                        raw { +"System.getenv("; +"SDK_NAME".quotified; +")" },
+                        "?:",
+                        const("iphonesimulator")
+                    )
+                    "targetName" createValue raw {
+                        +iosTargetName.quotified
                         when (dsl) {
-                            GradlePrinter.GradleDsl.KOTLIN -> +"""getByName<KotlinNativeTarget>("$iosTargetName")"""
-                            GradlePrinter.GradleDsl.GROOVY -> +iosTargetName
+                            GradlePrinter.GradleDsl.KOTLIN -> +""" + if (sdkName.startsWith("iphoneos")) "Arm64" else "X64""""
+                            GradlePrinter.GradleDsl.GROOVY -> +""" + (sdkName.startsWith('iphoneos') ? 'Arm64' : 'X64')"""
+                        }
+                    }
+                    "framework" createValue raw {
+                        +"kotlin.targets"
+                        when (dsl) {
+                            GradlePrinter.GradleDsl.KOTLIN -> +""".getByName<KotlinNativeTarget>(targetName)"""
+                            GradlePrinter.GradleDsl.GROOVY -> +"""[targetName]"""
                         }
                         +".binaries.getFramework(mode)"
                     };
