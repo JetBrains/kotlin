@@ -21,6 +21,8 @@ import java.io.File
 import java.util.regex.Pattern
 import kotlin.test.*
 
+import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
+
 val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
 
 abstract class BaseGradleIT {
