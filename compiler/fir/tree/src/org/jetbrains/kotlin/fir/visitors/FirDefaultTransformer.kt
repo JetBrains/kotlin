@@ -99,5 +99,12 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
     override fun transformErrorFunction(errorFunction: FirErrorFunction, data: D): CompositeTransformResult<FirStatement> {
         return transformFunction(errorFunction, data)
     }
+
+    override fun transformErrorResolvedQualifier(
+        errorResolvedQualifier: FirErrorResolvedQualifier,
+        data: D
+    ): CompositeTransformResult<FirStatement> {
+        return transformResolvedQualifier(errorResolvedQualifier, data)
+    }
 }
 

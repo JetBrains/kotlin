@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.tree.generator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.*
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object FirTreeBuilder : AbstractFirTreeBuilder() {
     val annotationContainer = element("AnnotationContainer", Other)
     val typeRef = element("TypeRef", TypeRef, annotationContainer)
@@ -118,6 +119,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val varargArgumentsExpression = element("VarargArgumentsExpression", Expression, expression)
 
     val resolvedQualifier = element("ResolvedQualifier", Expression, expression)
+    val errorResolvedQualifier = element("ErrorResolvedQualifier", Expression, resolvedQualifier, diagnosticHolder)
     val resolvedReifiedParameterReference = element("ResolvedReifiedParameterReference", Expression, expression)
     val returnExpression = element("ReturnExpression", Expression, jump)
     val stringConcatenationCall = element("StringConcatenationCall", Expression, call, expression)

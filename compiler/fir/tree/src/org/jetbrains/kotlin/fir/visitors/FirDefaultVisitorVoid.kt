@@ -95,4 +95,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     override fun visitErrorFunction(errorFunction: FirErrorFunction) {
         return visitFunction(errorFunction)
     }
+
+    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier) {
+        return visitResolvedQualifier(errorResolvedQualifier)
+    }
 }

@@ -2,7 +2,7 @@ package foo
 
 fun test() {
   A.d
-  A.Companion.f
+  A.Companion.<!HIDDEN!>f<!>
   B.D
   CCC
   CCC.classObjectVar

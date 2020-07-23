@@ -37,7 +37,7 @@ fun test() {
     val z = <!HIDDEN!>x<!>
     <!HIDDEN!>x<!> = 30
 
-    val po = PO
+    val po = <!HIDDEN!>PO<!>
 
     val v = xx
     xx = 40

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind.*
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
+import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.CandidateApplicability
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
@@ -60,6 +61,11 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     override fun visitErrorFunction(errorFunction: FirErrorFunction, data: CheckerContext) {
         val source = errorFunction.source ?: return
         runCheck { reportFirDiagnostic(errorFunction.diagnostic, source, it) }
+    }
+
+    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: CheckerContext) {
+        val source = errorResolvedQualifier.source ?: return
+        runCheck { reportFirDiagnostic(errorResolvedQualifier.diagnostic, source, it) }
     }
 
     private fun reportFirDiagnostic(diagnostic: ConeDiagnostic, source: FirSourceElement, reporter: DiagnosticReporter) {

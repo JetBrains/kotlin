@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.FirResolvedReifiedParameterReferenceBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -255,16 +255,24 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     regularClass: FirClassLikeSymbol<*>,
     sourceElement: FirSourceElement? = null,
     // TODO: Clarify if we actually need type arguments for qualifier?
-    typeArgumentsForQualifier: List<FirTypeProjection> = emptyList()
+    typeArgumentsForQualifier: List<FirTypeProjection> = emptyList(),
+    diagnostic: ConeDiagnostic? = null
 ): FirResolvedQualifier {
     val classId = regularClass.classId
-    return buildResolvedQualifier {
+
+    val builder: FirAbstractResolvedQualifierBuilder = if (diagnostic == null) {
+        FirResolvedQualifierBuilder()
+    } else {
+        FirErrorResolvedQualifierBuilder().apply { this.diagnostic = diagnostic }
+    }
+
+    return builder.apply {
         source = sourceElement
         packageFqName = classId.packageFqName
         relativeClassFqName = classId.relativeClassName
         typeArguments.addAll(typeArgumentsForQualifier)
         symbol = regularClass
-    }.apply {
+    }.build().apply {
         resultType = if (classId.isLocal) {
             typeForQualifierByDeclaration(regularClass.fir, resultType, session)
                 ?: session.builtinTypes.unitType

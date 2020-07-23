@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -211,9 +208,15 @@ class FirCallResolver(
             else -> null
         }
 
+        val diagnostic = when (nameReference) {
+            is FirErrorReferenceWithCandidate -> nameReference.diagnostic
+            is FirErrorNamedReference -> nameReference.diagnostic
+            else -> null
+        }
+
         when {
             referencedSymbol is FirClassLikeSymbol<*> -> {
-                return buildResolvedQualifierForClass(referencedSymbol, nameReference.source, qualifiedAccess.typeArguments)
+                return buildResolvedQualifierForClass(referencedSymbol, nameReference.source, qualifiedAccess.typeArguments, diagnostic)
             }
             referencedSymbol is FirTypeParameterSymbol && referencedSymbol.fir.isReified -> {
                 return buildResolvedReifiedParameterReference {

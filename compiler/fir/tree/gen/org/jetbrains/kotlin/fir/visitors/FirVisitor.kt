@@ -101,6 +101,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
@@ -328,6 +329,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: D): R  = visitElement(varargArgumentsExpression, data)
 
     open fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): R  = visitElement(resolvedQualifier, data)
+
+    open fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: D): R  = visitElement(errorResolvedQualifier, data)
 
     open fun visitResolvedReifiedParameterReference(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference, data: D): R  = visitElement(resolvedReifiedParameterReference, data)
 

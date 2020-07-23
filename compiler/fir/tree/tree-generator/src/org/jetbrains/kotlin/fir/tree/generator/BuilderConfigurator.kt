@@ -292,7 +292,17 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             default("symbol", "FirAnonymousInitializerSymbol()")
         }
 
+        val abstractResolvedQualifierBuilder by builder {
+            fields from resolvedQualifier
+        }
+
         builder(resolvedQualifier) {
+            parents += abstractResolvedQualifierBuilder
+            defaultFalse("isNullableLHSForCallableReference")
+        }
+
+        builder(errorResolvedQualifier) {
+            parents += abstractResolvedQualifierBuilder
             defaultFalse("isNullableLHSForCallableReference")
         }
 
