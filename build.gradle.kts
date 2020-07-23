@@ -721,11 +721,6 @@ tasks {
         dependsOn(":jps-plugin:test")
     }
 
-    register("idea-plugin-main-tests") {
-        dependsOn("dist")
-        dependsOn(":idea:test")
-    }
-
     register("idea-plugin-additional-tests") {
         dependsOn("dist")
         dependsOn(
@@ -748,17 +743,6 @@ tasks {
                 ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
                 ":idea:idea-new-project-wizard:test"
             )
-        }
-    }
-
-    register("idea-plugin-tests") {
-        dependsOn("dist")
-        dependsOn(
-            "idea-plugin-main-tests",
-            "idea-plugin-additional-tests"
-        )
-        if (Ide.IJ()) {
-            dependsOn("idea-new-project-wizard-tests")
         }
     }
 
@@ -796,19 +780,27 @@ tasks {
 
     register("ideaPluginTest") {
         dependsOn(
+            "mainIdeTests",
             "gradleIdeTest",
             "androidIdeTest",
             "miscIdeTests"
         )
     }
 
+    register("mainIdeTests") {
+        dependsOn(":idea:test")
+    }
+
     register("miscIdeTests") {
         dependsOn(
-            "idea-plugin-tests",
+            "idea-plugin-additional-tests",
             "jps-tests",
             "plugins-tests",
             ":generators:test"
         )
+        if (Ide.IJ()) {
+            dependsOn("idea-new-project-wizard-tests")
+        }
     }
 
     register("androidIdeTest") {
@@ -820,6 +812,39 @@ tasks {
             ":idea:idea-gradle:test",
             ":idea:idea-gradle-native:test"
         )
+    }
+
+    register("kmmTest", AggregateTest::class) {
+        dependsOn(
+            ":idea:idea-gradle:test",
+            ":idea:test",
+            ":compiler:test",
+            ":js:js.tests:test"
+        )
+        if (Ide.IJ193.orHigher())
+            dependsOn(":kotlin-gradle-plugin-integration-tests:test")
+        if (Ide.AS40.orHigher())
+            dependsOn(":kotlin-ultimate:ide:android-studio-native:test")
+
+        testPatternFile = file("tests/mpp/kmm-patterns.csv")
+    }
+
+    register("test") {
+        doLast {
+            throw GradleException("Don't use directly, use aggregate tasks *-check instead")
+        }
+    }
+
+    named("check") {
+        dependsOn("test")
+    }
+
+    named("checkBuild") {
+        if (kotlinBuildProperties.isTeamcityBuild) {
+            doFirst {
+                println("##teamcity[setParameter name='bootstrap.kotlin.version' value='$bootstrapKotlinVersion']")
+            }
+        }
     }
 
     register("publishIdeArtifacts") {
@@ -853,39 +878,6 @@ tasks {
                 ":kotlin-stdlib-js:publish",
                 ":kotlin-test:kotlin-test-js:publish"
             )
-        }
-    }
-
-    register("kmmTest", AggregateTest::class) {
-        dependsOn(
-            ":idea:idea-gradle:test",
-            ":idea:test",
-            ":compiler:test",
-            ":js:js.tests:test"
-        )
-        if (Ide.IJ193.orHigher())
-            dependsOn(":kotlin-gradle-plugin-integration-tests:test")
-        if (Ide.AS40.orHigher())
-            dependsOn(":kotlin-ultimate:ide:android-studio-native:test")
-
-        testPatternFile = file("tests/mpp/kmm-patterns.csv")
-    }
-
-    register("test") {
-        doLast {
-            throw GradleException("Don't use directly, use aggregate tasks *-check instead")
-        }
-    }
-
-    named("check") {
-        dependsOn("test")
-    }
-
-    named("checkBuild") {
-        if (kotlinBuildProperties.isTeamcityBuild) {
-            doFirst {
-                println("##teamcity[setParameter name='bootstrap.kotlin.version' value='$bootstrapKotlinVersion']")
-            }
         }
     }
 }
