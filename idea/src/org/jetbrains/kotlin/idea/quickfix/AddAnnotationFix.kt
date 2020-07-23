@@ -5,20 +5,23 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.KtTypeReference
 
 open class AddAnnotationFix(
-    element: KtDeclaration,
+    element: KtModifierListOwner,
     private val annotationFqName: FqName,
     private val kind: Kind = Kind.Self,
     private val argumentClassFqName: FqName? = null
-) : KotlinQuickFixAction<KtDeclaration>(element) {
+) : KotlinQuickFixAction<KtModifierListOwner>(element) {
     override fun getText(): String {
         val annotationArguments = (argumentClassFqName?.shortName()?.let { "($it::class)" } ?: "")
         val annotationCall = annotationFqName.shortName().asString() + annotationArguments
@@ -39,5 +42,12 @@ open class AddAnnotationFix(
         object Self : Kind()
         class Declaration(val name: String?) : Kind()
         class ContainingClass(val name: String?) : Kind()
+    }
+
+    object TypeVarianceConflictFactory : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val typeReference = diagnostic.psiElement.parent as? KtTypeReference ?: return null
+            return AddAnnotationFix(typeReference, FqName("kotlin.UnsafeVariance"), Kind.Self)
+        }
     }
 }
