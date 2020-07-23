@@ -6,10 +6,10 @@ frameInlineFunCallInsideInlineFunKotlinVariables.kt:7
 frameInlineFunCallInsideInlineFunKotlinVariables.kt:8
 Compile bytecode for element
 Compile bytecode for this.prop
- frame    = bar:8, C {frameInlineFunCallInsideInlineFunKotlinVariables}
-   local    = this: frameInlineFunCallInsideInlineFunKotlinVariables.A = {frameInlineFunCallInsideInlineFunKotlinVariables.A@uniqueID} (sp = null)
-     field    = prop: int = 1 (sp = frameInlineFunCallInsideInlineFunKotlinVariables.kt, 11)
-   local    = element: double = 1.0 (sp = frameInlineFunCallInsideInlineFunKotlinVariables.kt, 7)
+KotlinStackFrame (frameInlineFunCallInsideInlineFunKotlinVariables.kt:8)
+    JavaValue[local] this: frameInlineFunCallInsideInlineFunKotlinVariables.A
+        JavaValue[field] prop: int = 1 (frameInlineFunCallInsideInlineFunKotlinVariables.kt:11)
+    JavaValue[local] element: double = 1.0 (frameInlineFunCallInsideInlineFunKotlinVariables.kt:7)
 Disconnected from the target VM
 
 Process finished with exit code 0

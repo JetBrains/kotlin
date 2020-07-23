@@ -2,11 +2,10 @@ LineBreakpoint created at toStringRenderer.kt:6
 Run Java
 Connected to the target VM
 toStringRenderer.kt:6
-Compile bytecode for args.size
- frame    = main:6, ToStringRendererKt {toStringRenderer}
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = toStringRenderer.kt, 3)
-   local    = a: toStringRenderer.A = {toStringRenderer.A@uniqueID}myA (sp = toStringRenderer.kt, 4)
-              - Class has no fields
+KotlinStackFrame (toStringRenderer.kt:6)
+    JavaValue[local] args: java.lang.String[] (toStringRenderer.kt:3)
+    JavaValue[local] a: toStringRenderer.A = myA (toStringRenderer.kt:4)
+        DummyMessageValueNode = Class has no fields
 Disconnected from the target VM
 
 Process finished with exit code 0

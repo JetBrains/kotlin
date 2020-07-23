@@ -3,14 +3,14 @@ Run Java
 Connected to the target VM
 frameInlineArgument.kt:7
 Compile bytecode for element
- frame    = main:7, FrameInlineArgumentKt {frameInlineArgument}
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameInlineArgument.kt, 3)
-   local    = element: int = 1 (sp = frameInlineArgument.kt, 4)
-   local    = this_$iv: frameInlineArgument.A = {frameInlineArgument.A@uniqueID} (sp = null)
-     field    = prop: int = 1 (sp = frameInlineArgument.kt, 17)
-   local    = $i$f$inlineFun: int = undefined (sp = null)
-   local    = element$iv: double = 1.0 (sp = frameInlineArgument.kt, 4)
-   local    = $i$a$-inlineFun-FrameInlineArgumentKt$main$1: int = undefined (sp = null)
+KotlinStackFrame (frameInlineArgument.kt:7)
+    JavaValue[local] args: java.lang.String[] (frameInlineArgument.kt:3)
+    JavaValue[local] element: int = 1 (frameInlineArgument.kt:4)
+    JavaValue[local] this_$iv: frameInlineArgument.A
+        JavaValue[field] prop: int = 1 (frameInlineArgument.kt:17)
+    JavaValue[local] $i$f$inlineFun: int = undefined
+    JavaValue[local] element$iv: double = 1.0 (frameInlineArgument.kt:4)
+    JavaValue[local] $i$a$-inlineFun-FrameInlineArgumentKt$main$1: int = undefined
 Disconnected from the target VM
 
 Process finished with exit code 0

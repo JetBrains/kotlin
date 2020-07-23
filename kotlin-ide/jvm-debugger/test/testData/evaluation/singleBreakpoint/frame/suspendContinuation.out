@@ -3,9 +3,9 @@ Run Java
 Connected to the target VM
 suspendContinuation.kt:7
 Compile bytecode for a
- frame    = main:7, SuspendContinuationKt {suspendContinuation}
-   local    = $result: java.lang.Object = null (sp = null)
-   local    = a: int = 5 (sp = suspendContinuation.kt, 4)
+CoroutinePreflightFrame (suspendContinuation.kt:7)
+    JavaValue[local] $result: java.lang.Object = null
+    JavaValue[local] a: int = 5 (suspendContinuation.kt:4)
 Disconnected from the target VM
 
 Process finished with exit code 0

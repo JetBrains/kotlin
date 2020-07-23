@@ -2,16 +2,15 @@ LineBreakpoint created at evLineRange.kt:15
 Run Java
 Connected to the target VM
 evLineRange.kt:15
-Compile bytecode for a2.prop
- frame    = main:15, EvLineRangeKt {evLineRange}
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evLineRange.kt, 7)
-   local    = a1: evLineRange.A = {evLineRange.A@uniqueID} (sp = evLineRange.kt, 8)
-     field    = prop: int = 1 (sp = evLineRange.kt, 4)
-   local    = a2: evLineRange.A = {evLineRange.A@uniqueID} (sp = evLineRange.kt, 9)
-     field    = prop: int = 1 (sp = evLineRange.kt, 4)
-   local    = a3: evLineRange.A = {evLineRange.A@uniqueID} (sp = evLineRange.kt, 10)
-     field    = prop: int = 1 (sp = evLineRange.kt, 4)
-   local    = i1: int = 1 (sp = evLineRange.kt, 13)
+KotlinStackFrame (evLineRange.kt:15)
+    JavaValue[local] args: java.lang.String[] (evLineRange.kt:7)
+    JavaValue[local] a1: evLineRange.A (evLineRange.kt:8)
+        JavaValue[field] prop: int = 1 (evLineRange.kt:4)
+    JavaValue[local] a2: evLineRange.A (evLineRange.kt:9)
+        JavaValue[field] prop: int = 1 (evLineRange.kt:4)
+    JavaValue[local] a3: evLineRange.A (evLineRange.kt:10)
+        JavaValue[field] prop: int = 1 (evLineRange.kt:4)
+    JavaValue[local] i1: int = 1 (evLineRange.kt:13)
 Disconnected from the target VM
 
 Process finished with exit code 0

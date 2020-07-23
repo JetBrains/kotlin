@@ -2,17 +2,15 @@ LineBreakpoint created at createExpressionCastToBuiltIn.kt:7
 Run Java
 Connected to the target VM
 createExpressionCastToBuiltIn.kt:7
-Compile bytecode for args
-Compile bytecode for primitiveArray
-Compile bytecode for primitiveArray[0]
-Compile bytecode for stringArray
-Compile bytecode for stringArray[0]
- frame    = main
-   local    = args (expression = args)
-   local    = primitiveArray (expression = primitiveArray)
-     element  = 0 (expression = primitiveArray[0])
-   local    = stringArray (expression = stringArray)
-     element  = 0 (expression = stringArray[0])
+KotlinStackFrame (createExpressionCastToBuiltIn.kt:7)
+    JavaValue[local] args: java.lang.String[] (createExpressionCastToBuiltIn.kt:3)
+    JavaValue[local] primitiveArray: int[] (createExpressionCastToBuiltIn.kt:4)
+        JavaValue[element] 0 = 1
+    JavaValue[local] stringArray: java.lang.String[] (createExpressionCastToBuiltIn.kt:5)
+        JavaValue[element] 0 = a
+            JavaValue[field] value: char[] (String.!EXT!)
+                JavaValue[element] 0 = 'a' 97
+            JavaValue[field] hash: int = 0 (String.!EXT!)
 Disconnected from the target VM
 
 Process finished with exit code 0

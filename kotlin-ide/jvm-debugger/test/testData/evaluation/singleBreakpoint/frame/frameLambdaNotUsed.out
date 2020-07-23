@@ -3,9 +3,9 @@ Run Java
 Connected to the target VM
 frameLambdaNotUsed.kt:7
 Compile bytecode for val1
- frame    = invoke:7, FrameLambdaNotUsedKt$main$1 {frameLambdaNotUsed}
-   this     = this = {frameLambdaNotUsed.FrameLambdaNotUsedKt$main$1@uniqueID}Function0<kotlin.Unit>
-     field    = arity: int = 0 (sp = Lambda.!EXT!)
+KotlinStackFrame (frameLambdaNotUsed.kt:7)
+    JavaValue[this] this: FrameLambdaNotUsedKt$main$1@uniqueID = Function0<kotlin.Unit>
+        JavaValue[field] arity: int = 0 (Lambda.!EXT!)
 Disconnected from the target VM
 
 Process finished with exit code 0

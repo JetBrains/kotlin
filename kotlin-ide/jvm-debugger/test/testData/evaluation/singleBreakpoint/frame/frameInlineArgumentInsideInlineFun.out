@@ -3,20 +3,20 @@ Run Java
 Connected to the target VM
 frameInlineArgumentInsideInlineFun.kt:16
 Compile bytecode for element
- frame    = bar:16, C {frameInlineArgumentInsideInlineFun}
-   this     = this = {frameInlineArgumentInsideInlineFun.C@uniqueID}
-              - Class has no fields
-   local    = element: float = 1.0 (sp = frameInlineArgumentInsideInlineFun.kt, 13)
-   local    = this_$iv: frameInlineArgumentInsideInlineFun.B = {frameInlineArgumentInsideInlineFun.B@uniqueID} (sp = null)
-              - Class has no fields
-   local    = $i$f$foo: int = undefined (sp = null)
-   local    = element$iv: int = 1 (sp = frameInlineArgumentInsideInlineFun.kt, 13)
-   local    = this_$iv$iv: frameInlineArgumentInsideInlineFun.A = {frameInlineArgumentInsideInlineFun.A@uniqueID} (sp = null)
-              - Class has no fields
-   local    = $i$f$inlineFun: int = undefined (sp = null)
-   local    = element$iv$iv: double = 1.0 (sp = frameInlineArgumentInsideInlineFun.kt, 13)
-   local    = it$iv: int = 1 (sp = null)
-   local    = $i$a$-inlineFun-B$foo$1$iv: int = undefined (sp = null)
+KotlinStackFrame (frameInlineArgumentInsideInlineFun.kt:16)
+    JavaValue[this] this: C@uniqueID
+        DummyMessageValueNode = Class has no fields
+    JavaValue[local] element: float = 1.0 (frameInlineArgumentInsideInlineFun.kt:13)
+    JavaValue[local] this_$iv: frameInlineArgumentInsideInlineFun.B
+        DummyMessageValueNode = Class has no fields
+    JavaValue[local] $i$f$foo: int = undefined
+    JavaValue[local] element$iv: int = 1 (frameInlineArgumentInsideInlineFun.kt:13)
+    JavaValue[local] this_$iv$iv: frameInlineArgumentInsideInlineFun.A
+        DummyMessageValueNode = Class has no fields
+    JavaValue[local] $i$f$inlineFun: int = undefined
+    JavaValue[local] element$iv$iv: double = 1.0 (frameInlineArgumentInsideInlineFun.kt:13)
+    JavaValue[local] it$iv: int = 1
+    JavaValue[local] $i$a$-inlineFun-B$foo$1$iv: int = undefined
 Disconnected from the target VM
 
 Process finished with exit code 0

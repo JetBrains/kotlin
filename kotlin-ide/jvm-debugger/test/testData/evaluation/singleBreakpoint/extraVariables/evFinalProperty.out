@@ -2,10 +2,10 @@ LineBreakpoint created at evFinalProperty.kt:10
 Run Java
 Connected to the target VM
 evFinalProperty.kt:10
- frame    = main:10, EvFinalPropertyKt {evFinalProperty}
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evFinalProperty.kt, 7)
-   local    = a: evFinalProperty.A = {evFinalProperty.A@uniqueID} (sp = evFinalProperty.kt, 8)
-     field    = prop: int = 1 (sp = evFinalProperty.kt, 4)
+KotlinStackFrame (evFinalProperty.kt:10)
+    JavaValue[local] args: java.lang.String[] (evFinalProperty.kt:7)
+    JavaValue[local] a: evFinalProperty.A (evFinalProperty.kt:8)
+        JavaValue[field] prop: int = 1 (evFinalProperty.kt:4)
 Disconnected from the target VM
 
 Process finished with exit code 0

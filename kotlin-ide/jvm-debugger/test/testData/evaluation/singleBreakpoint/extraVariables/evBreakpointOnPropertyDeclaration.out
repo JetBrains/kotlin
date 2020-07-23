@@ -2,16 +2,15 @@ LineBreakpoint created at evBreakpointOnPropertyDeclaration.kt:14
 Run Java
 Connected to the target VM
 evBreakpointOnPropertyDeclaration.kt:14
-Compile bytecode for a2.prop
- frame    = main:14, EvBreakpointOnPropertyDeclarationKt {evBreakpointOnPropertyDeclaration}
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evBreakpointOnPropertyDeclaration.kt, 7)
-   local    = a1: evBreakpointOnPropertyDeclaration.A = {evBreakpointOnPropertyDeclaration.A@uniqueID} (sp = evBreakpointOnPropertyDeclaration.kt, 8)
-     field    = prop: int = 1 (sp = evBreakpointOnPropertyDeclaration.kt, 4)
-   local    = a2: evBreakpointOnPropertyDeclaration.A = {evBreakpointOnPropertyDeclaration.A@uniqueID} (sp = evBreakpointOnPropertyDeclaration.kt, 9)
-     field    = prop: int = 1 (sp = evBreakpointOnPropertyDeclaration.kt, 4)
-   local    = a3: evBreakpointOnPropertyDeclaration.A = {evBreakpointOnPropertyDeclaration.A@uniqueID} (sp = evBreakpointOnPropertyDeclaration.kt, 10)
-     field    = prop: int = 1 (sp = evBreakpointOnPropertyDeclaration.kt, 4)
-   local    = p1: int = 1 (sp = evBreakpointOnPropertyDeclaration.kt, 12)
+KotlinStackFrame (evBreakpointOnPropertyDeclaration.kt:14)
+    JavaValue[local] args: java.lang.String[] (evBreakpointOnPropertyDeclaration.kt:7)
+    JavaValue[local] a1: evBreakpointOnPropertyDeclaration.A (evBreakpointOnPropertyDeclaration.kt:8)
+        JavaValue[field] prop: int = 1 (evBreakpointOnPropertyDeclaration.kt:4)
+    JavaValue[local] a2: evBreakpointOnPropertyDeclaration.A (evBreakpointOnPropertyDeclaration.kt:9)
+        JavaValue[field] prop: int = 1 (evBreakpointOnPropertyDeclaration.kt:4)
+    JavaValue[local] a3: evBreakpointOnPropertyDeclaration.A (evBreakpointOnPropertyDeclaration.kt:10)
+        JavaValue[field] prop: int = 1 (evBreakpointOnPropertyDeclaration.kt:4)
+    JavaValue[local] p1: int = 1 (evBreakpointOnPropertyDeclaration.kt:12)
 Disconnected from the target VM
 
 Process finished with exit code 0

@@ -2,13 +2,12 @@ LineBreakpoint created at evDelegatedProperty.kt:13
 Run Java
 Connected to the target VM
 evDelegatedProperty.kt:13
- frame    = main:13, EvDelegatedPropertyKt {evDelegatedProperty}
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evDelegatedProperty.kt, 9)
-   local    = a: evDelegatedProperty.A = {evDelegatedProperty.A@uniqueID} (sp = evDelegatedProperty.kt, 10)
-     field    = prop$delegate: kotlin.properties.ReadWriteProperty = {kotlin.properties.NotNullVar@uniqueID} (sp = evDelegatedProperty.kt, 6)
-       field    = value: java.lang.Object = {java.lang.Integer@uniqueID}1 (sp = Delegates.!EXT!)
-         field    = value: int = 1 (sp = Integer.!EXT!)
-     field    = prop: int = 1 (sp = evDelegatedProperty.kt, 6)
+KotlinStackFrame (evDelegatedProperty.kt:13)
+    JavaValue[local] args: java.lang.String[] (evDelegatedProperty.kt:9)
+    JavaValue[local] a: evDelegatedProperty.A (evDelegatedProperty.kt:10)
+        JavaValue[field] prop$delegate: kotlin.properties.ReadWriteProperty (evDelegatedProperty.kt:6)
+            JavaValue[field] value: java.lang.Object = 1 (Delegates.!EXT!)
+                JavaValue[field] value: int = 1 (Integer.!EXT!)
 Disconnected from the target VM
 
 Process finished with exit code 0

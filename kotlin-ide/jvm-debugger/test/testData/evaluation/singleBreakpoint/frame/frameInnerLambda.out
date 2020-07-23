@@ -5,13 +5,13 @@ frameInnerLambda.kt:9
 Compile bytecode for val1
 Compile bytecode for val2
 Compile bytecode for val1 + val2
- frame    = invoke:9, FrameInnerLambdaKt$main$1$1 {frameInnerLambda}
-   this     = this = {frameInnerLambda.FrameInnerLambdaKt$main$1$1@uniqueID}Function0<kotlin.Unit>
-     field    = this$0: frameInnerLambda.FrameInnerLambdaKt$main$1 = {frameInnerLambda.FrameInnerLambdaKt$main$1@uniqueID}Function0<kotlin.Unit> (sp = null)
-       field    = $val1: int = 1 (sp = null)
-       field    = arity: int = 0 (sp = Lambda.!EXT!)
-     field    = $val2: int = 1 (sp = null)
-     field    = arity: int = 0 (sp = Lambda.!EXT!)
+KotlinStackFrame (frameInnerLambda.kt:9)
+    JavaValue[this] this: FrameInnerLambdaKt$main$1$1@uniqueID = Function0<kotlin.Unit>
+        JavaValue[field] this$0: frameInnerLambda.FrameInnerLambdaKt$main$1 = Function0<kotlin.Unit>
+            JavaValue[field] $val1: int = 1
+            JavaValue[field] arity: int = 0 (Lambda.!EXT!)
+        JavaValue[field] $val2: int = 1
+        JavaValue[field] arity: int = 0 (Lambda.!EXT!)
 Disconnected from the target VM
 
 Process finished with exit code 0

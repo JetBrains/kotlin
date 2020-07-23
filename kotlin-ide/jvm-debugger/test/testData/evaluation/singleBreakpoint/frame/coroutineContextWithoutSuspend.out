@@ -3,7 +3,7 @@ Run Java
 Connected to the target VM
 coroutineContextWithoutSuspend.kt:11
 Compile bytecode for coroutineContext
- frame    = foo:11, CoroutineContextWithoutSuspendKt {coroutineContextWithoutSuspend}
+KotlinStackFrame (coroutineContextWithoutSuspend.kt:11)
 Disconnected from the target VM
 
 Process finished with exit code 0

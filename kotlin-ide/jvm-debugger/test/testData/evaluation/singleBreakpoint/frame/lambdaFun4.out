@@ -4,13 +4,13 @@ Connected to the target VM
 lambdaFun4.kt:8
 Compile bytecode for this
 Compile bytecode for this@Foo
- frame    = invoke:8, Foo$foo$1 {lambdaFun4}
-   local    = this: java.lang.String = abc (sp = null)
-     field    = value: char[] = {char[3]@uniqueID} (sp = String.!EXT!)
-       element  = 0 = 'a' 97
-       element  = 1 = 'b' 98
-       element  = 2 = 'c' 99
-     field    = hash: int = 0 (sp = String.!EXT!)
+KotlinStackFrame (lambdaFun4.kt:8)
+    JavaValue[local] this: java.lang.String = abc
+        JavaValue[field] value: char[] (String.!EXT!)
+            JavaValue[element] 0 = 'a' 97
+            JavaValue[element] 1 = 'b' 98
+            JavaValue[element] 2 = 'c' 99
+        JavaValue[field] hash: int = 0 (String.!EXT!)
 Disconnected from the target VM
 
 Process finished with exit code 0

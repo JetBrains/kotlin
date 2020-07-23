@@ -2,13 +2,11 @@ LineBreakpoint created at delegatedPropertyInClassWithToString.kt:8
 Run Java
 Connected to the target VM
 delegatedPropertyInClassWithToString.kt:8
-Compile bytecode for args.size
- frame    = main:8, DelegatedPropertyInClassWithToStringKt {delegatedPropertyInClassWithToString}
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClassWithToString.kt, 5)
-   local    = a: delegatedPropertyInClassWithToString.A = {delegatedPropertyInClassWithToString.A@uniqueID}KotlinTest (sp = delegatedPropertyInClassWithToString.kt, 6)
-     field    = prop$delegate: delegatedPropertyInClassWithToString.MyDelegate = {delegatedPropertyInClassWithToString.MyDelegate@uniqueID} (sp = delegatedPropertyInClassWithToString.kt, 12)
-                - Class has no fields
-     field    = prop: int = 1 (sp = delegatedPropertyInClassWithToString.kt, 12)
+KotlinStackFrame (delegatedPropertyInClassWithToString.kt:8)
+    JavaValue[local] args: java.lang.String[] (delegatedPropertyInClassWithToString.kt:5)
+    JavaValue[local] a: delegatedPropertyInClassWithToString.A = KotlinTest (delegatedPropertyInClassWithToString.kt:6)
+        JavaValue[field] prop$delegate: delegatedPropertyInClassWithToString.MyDelegate (delegatedPropertyInClassWithToString.kt:12)
+            DummyMessageValueNode = Class has no fields
 Disconnected from the target VM
 
 Process finished with exit code 0

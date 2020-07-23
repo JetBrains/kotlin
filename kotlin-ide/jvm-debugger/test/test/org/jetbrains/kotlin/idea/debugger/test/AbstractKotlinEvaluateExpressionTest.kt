@@ -11,10 +11,12 @@ import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilderImpl
-import com.intellij.debugger.engine.events.SuspendContextCommandImpl
+import com.intellij.debugger.engine.managerThread.DebuggerCommand
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.DebuggerContextImpl.createDebuggerContext
 import com.intellij.debugger.ui.impl.watch.NodeDescriptorImpl
+import com.intellij.execution.process.ProcessOutputTypes
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.xdebugger.impl.ui.tree.ValueMarkup
@@ -24,6 +26,7 @@ import org.jetbrains.eval4j.Value
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
+import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 import org.jetbrains.kotlin.idea.debugger.test.util.FramePrinter
 import org.jetbrains.kotlin.idea.debugger.test.util.FramePrinterDelegate
@@ -54,8 +57,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
         get() = super.debuggerContext
 
     private var isMultipleBreakpointsTest = false
-
-    private var framePrinter: FramePrinter? = null
+    private var isFrameTest = false
 
     fun doSingleBreakpointTest(path: String) {
         isMultipleBreakpointsTest = false
@@ -77,20 +79,13 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
 
         val data = EvaluationTestData(instructions, expressions + blocks, debugLabels)
 
-        framePrinter = FramePrinter(myDebuggerSession, this, preferences, testRootDisposable)
+        isFrameTest = preferences[DebuggerPreferenceKeys.PRINT_FRAME]
 
         if (isMultipleBreakpointsTest) {
             performMultipleBreakpointTest(data)
         } else {
             performSingleBreakpointTest(data)
         }
-    }
-
-    override fun tearDown() {
-        framePrinter?.close()
-        framePrinter = null
-
-        super.tearDown()
     }
 
     private fun performSingleBreakpointTest(data: EvaluationTestData) {
@@ -107,10 +102,10 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
                 }
             }
 
-            val completion = { resume(this) }
-            framePrinter?.printFrame(completion) ?: completion()
-
-            checkExceptions(exceptions)
+            printFrame {
+                resume(this)
+                checkExceptions(exceptions)
+            }
         }
 
         finish()
@@ -125,8 +120,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
                     try {
                         evaluate(this, expression, CodeFragmentKind.EXPRESSION, expected)
                     } finally {
-                        val completion = { resume(this) }
-                        framePrinter?.printFrame(completion) ?: completion()
+                        printFrame { resume(this) }
                     }
                 }
             }
@@ -134,6 +128,30 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
 
         checkExceptions(exceptions)
         finish()
+    }
+
+    private fun printFrame(completion: () -> Unit) {
+        if (!isFrameTest) {
+            completion()
+            return
+        }
+
+        val frameProxy = debuggerContext.frameProxy ?: error("Frame proxy is absent")
+        val debugProcess = debuggerContext.debugProcess ?: error("Debug process is absent")
+        val nodeManager = debugProcess.xdebugProcess!!.nodeManager
+        val descriptor = nodeManager.getStackFrameDescriptor(null, frameProxy)
+        val stackFrame = debugProcess.positionManager.createStackFrame(descriptor) ?: error("Can't create stack frame for $descriptor")
+
+        ApplicationManager.getApplication().executeOnPooledThread {
+            val result = FramePrinter(debugProcess, frameProxy).print(stackFrame)
+            print(result, ProcessOutputTypes.SYSTEM)
+
+            assert(descriptor.debugProcess.isAttached)
+            descriptor.debugProcess.managerThread.invokeCommand(object : DebuggerCommand {
+                override fun action() = completion()
+                override fun commandCancelled() = error(message = "Test was cancelled")
+            })
+        }
     }
 
     override fun evaluate(suspendContext: SuspendContextImpl, textWithImports: TextWithImportsImpl) {

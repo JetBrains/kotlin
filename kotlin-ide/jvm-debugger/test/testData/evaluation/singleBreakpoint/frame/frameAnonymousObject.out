@@ -2,12 +2,12 @@ LineBreakpoint created at frameAnonymousObject.kt:11
 Run Java
 Connected to the target VM
 frameAnonymousObject.kt:11
- frame    = invoke:11, FrameAnonymousObjectKt$main$o$1$run$1 {frameAnonymousObject}
-   this     = this = {frameAnonymousObject.FrameAnonymousObjectKt$main$o$1$run$1@uniqueID}Function0<kotlin.Unit>
-     field    = this$0: frameAnonymousObject.FrameAnonymousObjectKt$main$o$1 = {frameAnonymousObject.FrameAnonymousObjectKt$main$o$1@uniqueID} (sp = null)
-       field    = obProp: int = 1 (sp = frameAnonymousObject.kt, 6)
-       field    = $val1: int = 1 (sp = null)
-     field    = arity: int = 0 (sp = Lambda.!EXT!)
+KotlinStackFrame (frameAnonymousObject.kt:11)
+    JavaValue[this] this: FrameAnonymousObjectKt$main$o$1$run$1@uniqueID = Function0<kotlin.Unit>
+        JavaValue[field] this$0: frameAnonymousObject.FrameAnonymousObjectKt$main$o$1
+            JavaValue[field] obProp: int = 1 (frameAnonymousObject.kt:6)
+            JavaValue[field] $val1: int = 1
+        JavaValue[field] arity: int = 0 (Lambda.!EXT!)
 Disconnected from the target VM
 
 Process finished with exit code 0

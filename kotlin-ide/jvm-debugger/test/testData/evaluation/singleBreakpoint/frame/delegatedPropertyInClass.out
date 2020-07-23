@@ -2,18 +2,13 @@ LineBreakpoint created at delegatedPropertyInClass.kt:9
 Run Java
 Connected to the target VM
 delegatedPropertyInClass.kt:9
-Compile bytecode for args.size
- frame    = main:9, DelegatedPropertyInClassKt {delegatedPropertyInClass}
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClass.kt, 6)
-   local    = a: delegatedPropertyInClass.A = {delegatedPropertyInClass.A@uniqueID} (sp = delegatedPropertyInClass.kt, 7)
-     field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID} (sp = delegatedPropertyInClass.kt, 13)
-                - Class has no fields
-     field    = prop: int = 1 (sp = delegatedPropertyInClass.kt, 13)
-     field    = propEx$delegate: delegatedPropertyInClass.MyDelegateThrowsException = {delegatedPropertyInClass.MyDelegateThrowsException@uniqueID} (sp = delegatedPropertyInClass.kt, 14)
-                - Class has no fields
-     field    = propEx: int = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = delegatedPropertyInClass.kt, 14)
-       field    = detailMessage: java.lang.String = null (sp = Throwable.!EXT!)
-       field    = cause: java.lang.Throwable = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = Throwable.!EXT!)
+KotlinStackFrame (delegatedPropertyInClass.kt:9)
+    JavaValue[local] args: java.lang.String[] (delegatedPropertyInClass.kt:6)
+    JavaValue[local] a: delegatedPropertyInClass.A (delegatedPropertyInClass.kt:7)
+        JavaValue[field] prop$delegate: delegatedPropertyInClass.MyDelegate (delegatedPropertyInClass.kt:13)
+            DummyMessageValueNode = Class has no fields
+        JavaValue[field] propEx$delegate: delegatedPropertyInClass.MyDelegateThrowsException (delegatedPropertyInClass.kt:14)
+            DummyMessageValueNode = Class has no fields
 Disconnected from the target VM
 
 Process finished with exit code 0

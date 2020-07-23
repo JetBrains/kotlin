@@ -4,26 +4,26 @@ Connected to the target VM
 destructuringParam.kt:12
 Compile bytecode for x
 Compile bytecode for y
- frame    = invoke:12, DestructuringParamKt$main$1 {destructuringParam}
-   this     = this = {destructuringParam.DestructuringParamKt$main$1@uniqueID}Function1<destructuringParam.A, java.lang.String>
-     field    = arity: int = 1 (sp = Lambda.!EXT!)
-   local    = $dstr$x$y: destructuringParam.A = {destructuringParam.A@uniqueID}A(x=O, y=K) (sp = null)
-     field    = x: java.lang.String = O (sp = destructuringParam.kt, 2)
-       field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
-         element  = 0 = 'O' 79
-       field    = hash: int = 0 (sp = String.!EXT!)
-     field    = y: java.lang.String = K (sp = destructuringParam.kt, 2)
-       field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
-         element  = 0 = 'K' 75
-       field    = hash: int = 0 (sp = String.!EXT!)
-   local    = x: java.lang.String = O (sp = destructuringParam.kt, 12)
-     field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
-       element  = 0 = 'O' 79
-     field    = hash: int = 0 (sp = String.!EXT!)
-   local    = y: java.lang.String = K (sp = destructuringParam.kt, 12)
-     field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
-       element  = 0 = 'K' 75
-     field    = hash: int = 0 (sp = String.!EXT!)
+KotlinStackFrame (destructuringParam.kt:12)
+    JavaValue[this] this: DestructuringParamKt$main$1@uniqueID = Function1<destructuringParam.A, java.lang.String>
+        JavaValue[field] arity: int = 1 (Lambda.!EXT!)
+    JavaValue[local] $dstr$x$y: destructuringParam.A = A(x=O, y=K)
+        JavaValue[field] x: java.lang.String = O (destructuringParam.kt:2)
+            JavaValue[field] value: char[] (String.!EXT!)
+                JavaValue[element] 0 = 'O' 79
+            JavaValue[field] hash: int = 0 (String.!EXT!)
+        JavaValue[field] y: java.lang.String = K (destructuringParam.kt:2)
+            JavaValue[field] value: char[] (String.!EXT!)
+                JavaValue[element] 0 = 'K' 75
+            JavaValue[field] hash: int = 0 (String.!EXT!)
+    JavaValue[local] x: java.lang.String = O (destructuringParam.kt:12)
+        JavaValue[field] value: char[] (String.!EXT!)
+            JavaValue[element] 0 = 'O' 79
+        JavaValue[field] hash: int = 0 (String.!EXT!)
+    JavaValue[local] y: java.lang.String = K (destructuringParam.kt:12)
+        JavaValue[field] value: char[] (String.!EXT!)
+            JavaValue[element] 0 = 'K' 75
+        JavaValue[field] hash: int = 0 (String.!EXT!)
 Disconnected from the target VM
 
 Process finished with exit code 0

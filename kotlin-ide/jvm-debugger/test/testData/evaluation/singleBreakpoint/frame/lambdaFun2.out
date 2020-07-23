@@ -3,9 +3,9 @@ Run Java
 Connected to the target VM
 lambdaFun2.kt:7
 Compile bytecode for this
- frame    = invoke:7, Foo$foo$1 {lambdaFun2}
-   unknown  = this = {lambdaFun2.Foo@uniqueID}
-              - Class has no fields
+KotlinStackFrame (lambdaFun2.kt:7)
+    JavaValue this: Foo@uniqueID
+        DummyMessageValueNode = Class has no fields
 Disconnected from the target VM
 
 Process finished with exit code 0

@@ -2,13 +2,12 @@ LineBreakpoint created at evSkipAnonymousObject.kt:12
 Run Java
 Connected to the target VM
 evSkipAnonymousObject.kt:12
-Compile bytecode for a1.prop
- frame    = main:12, EvSkipAnonymousObjectKt {evSkipAnonymousObject}
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evSkipAnonymousObject.kt, 7)
-   local    = a1: evSkipAnonymousObject.A = {evSkipAnonymousObject.A@uniqueID} (sp = evSkipAnonymousObject.kt, 8)
-     field    = prop: int = 1 (sp = evSkipAnonymousObject.kt, 4)
-   local    = a2: evSkipAnonymousObject.A = {evSkipAnonymousObject.A@uniqueID} (sp = evSkipAnonymousObject.kt, 9)
-     field    = prop: int = 1 (sp = evSkipAnonymousObject.kt, 4)
+KotlinStackFrame (evSkipAnonymousObject.kt:12)
+    JavaValue[local] args: java.lang.String[] (evSkipAnonymousObject.kt:7)
+    JavaValue[local] a1: evSkipAnonymousObject.A (evSkipAnonymousObject.kt:8)
+        JavaValue[field] prop: int = 1 (evSkipAnonymousObject.kt:4)
+    JavaValue[local] a2: evSkipAnonymousObject.A (evSkipAnonymousObject.kt:9)
+        JavaValue[field] prop: int = 1 (evSkipAnonymousObject.kt:4)
 Disconnected from the target VM
 
 Process finished with exit code 0

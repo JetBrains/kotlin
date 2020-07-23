@@ -6,11 +6,11 @@ Compile bytecode for prop1
 Compile bytecode for prop2
 Compile bytecode for myFun1()
 Compile bytecode for myFun2()
- frame    = test:17, A$Inner {frameInnerClass}
-   this     = this = {frameInnerClass.A$Inner@uniqueID}
-     field    = prop2: int = 1 (sp = frameInnerClass.kt, 12)
-     field    = this$0: frameInnerClass.A = {frameInnerClass.A@uniqueID} (sp = null)
-       field    = prop1: int = 1 (sp = frameInnerClass.kt, 8)
+KotlinStackFrame (frameInnerClass.kt:17)
+    JavaValue[this] this: A$Inner@uniqueID
+        JavaValue[field] prop2: int = 1 (frameInnerClass.kt:12)
+        JavaValue[field] this$0: frameInnerClass.A
+            JavaValue[field] prop1: int = 1 (frameInnerClass.kt:8)
 Disconnected from the target VM
 
 Process finished with exit code 0

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.idea.debugger.stepping.*
 import org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.*
 import org.jetbrains.kotlin.idea.debugger.test.util.SteppingInstruction
 import org.jetbrains.kotlin.idea.debugger.test.util.SteppingInstructionKind
-import org.jetbrains.kotlin.idea.debugger.test.util.renderSourcePosition
+import org.jetbrains.kotlin.idea.debugger.test.util.render
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -123,7 +123,7 @@ abstract class KotlinDescriptorTestCaseWithStepping : KotlinDescriptorTestCase()
             }
 
             val sourcePosition = PositionUtil.getSourcePosition(this)
-            println(renderSourcePosition(sourcePosition), ProcessOutputTypes.SYSTEM)
+            println(sourcePosition?.render() ?: "null", ProcessOutputTypes.SYSTEM)
         }
     }
 

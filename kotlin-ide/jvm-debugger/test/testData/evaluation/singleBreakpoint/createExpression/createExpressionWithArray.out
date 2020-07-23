@@ -2,23 +2,15 @@ LineBreakpoint created at createExpressionWithArray.kt:12
 Run Java
 Connected to the target VM
 createExpressionWithArray.kt:12
-Compile bytecode for args
-Compile bytecode for baseArray
-Compile bytecode for baseArray[0]
-Compile bytecode for baseArray[0].i2
-Compile bytecode for innerArray
-Compile bytecode for innerArray[0]
-Compile bytecode for (innerArray[0] as InnerClass).i
-Compile bytecode for (innerArray[0] as InnerClass).i2
- frame    = main
-   local    = args (expression = args)
-   local    = baseArray (expression = baseArray)
-     element  = 0 (expression = baseArray[0])
-       field    = i2 (expression = baseArray[0].i2)
-   local    = innerArray (expression = innerArray)
-     element  = 0 (expression = innerArray[0])
-       field    = i (expression = (innerArray[0] as InnerClass).i)
-       field    = i2 (expression = (innerArray[0] as InnerClass).i2)
+KotlinStackFrame (createExpressionWithArray.kt:12)
+    JavaValue[local] args: java.lang.String[] (createExpressionWithArray.kt:8)
+    JavaValue[local] baseArray: forTests.MyJavaClass$BaseClass[] (createExpressionWithArray.kt:9)
+        JavaValue[element] 0: MyJavaClass$BaseClass@uniqueID
+            JavaValue[field] i2: int = 1 (MyJavaClass.java:9)
+    JavaValue[local] innerArray: forTests.MyJavaClass$BaseClass[] (createExpressionWithArray.kt:10)
+        JavaValue[element] 0: MyJavaClass$InnerClass@uniqueID
+            JavaValue[field] i: int = 1 (MyJavaClass.java:20)
+            JavaValue[field] i2: int = 1 (MyJavaClass.java:9)
 Disconnected from the target VM
 
 Process finished with exit code 0

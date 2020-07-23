@@ -2,13 +2,13 @@ LineBreakpoint created at hideSyntheticThis.kt:6
 Run Java
 Connected to the target VM
 hideSyntheticThis.kt:6
- frame    = invoke
-   local    = this (expression = this)
-     field    = value (expression = this.value)
-       element  = 0 (expression = this.value[0])
-       element  = 1 (expression = this.value[1])
-       element  = 2 (expression = this.value[2])
-     field    = hash (expression = this.hash)
+KotlinStackFrame (hideSyntheticThis.kt:6)
+    JavaValue[local] this: java.lang.String = foo
+        JavaValue[field] value: char[] (String.!EXT!)
+            JavaValue[element] 0 = 'f' 102
+            JavaValue[element] 1 = 'o' 111
+            JavaValue[element] 2 = 'o' 111
+        JavaValue[field] hash: int = 0 (String.!EXT!)
 Disconnected from the target VM
 
 Process finished with exit code 0

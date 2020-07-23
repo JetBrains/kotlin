@@ -3,11 +3,11 @@ Run Java
 Connected to the target VM
 frameSharedVar.kt:7
 Compile bytecode for var1
- frame    = invoke:7, FrameSharedVarKt$main$1 {frameSharedVar}
-   this     = this = {frameSharedVar.FrameSharedVarKt$main$1@uniqueID}Function0<kotlin.Unit>
-     field    = $var1: kotlin.jvm.internal.Ref$IntRef = {kotlin.jvm.internal.Ref$IntRef@uniqueID}1 (sp = null)
-       field    = element: int = 1 (sp = Ref.!EXT!)
-     field    = arity: int = 0 (sp = Lambda.!EXT!)
+KotlinStackFrame (frameSharedVar.kt:7)
+    JavaValue[this] this: FrameSharedVarKt$main$1@uniqueID = Function0<kotlin.Unit>
+        JavaValue[field] $var1: kotlin.jvm.internal.Ref$IntRef = 1
+            JavaValue[field] element: int = 1 (Ref.!EXT!)
+        JavaValue[field] arity: int = 0 (Lambda.!EXT!)
 Disconnected from the target VM
 
 Process finished with exit code 0

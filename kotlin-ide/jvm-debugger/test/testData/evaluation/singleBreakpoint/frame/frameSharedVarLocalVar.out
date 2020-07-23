@@ -3,11 +3,11 @@ Run Java
 Connected to the target VM
 frameSharedVarLocalVar.kt:7
 Compile bytecode for var1
- frame    = main:7, FrameSharedVarLocalVarKt {frameSharedVarLocalVar}
-   local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameSharedVarLocalVar.kt, 3)
-   local    = var1: int = 1 (sp = frameSharedVarLocalVar.kt, 4)
-   local    = $i$f$foo: int = undefined (sp = null)
-   local    = $i$a$-foo-FrameSharedVarLocalVarKt$main$1: int = undefined (sp = null)
+KotlinStackFrame (frameSharedVarLocalVar.kt:7)
+    JavaValue[local] args: java.lang.String[] (frameSharedVarLocalVar.kt:3)
+    JavaValue[local] var1: int = 1 (frameSharedVarLocalVar.kt:4)
+    JavaValue[local] $i$f$foo: int = undefined
+    JavaValue[local] $i$a$-foo-FrameSharedVarLocalVarKt$main$1: int = undefined
 Disconnected from the target VM
 
 Process finished with exit code 0
