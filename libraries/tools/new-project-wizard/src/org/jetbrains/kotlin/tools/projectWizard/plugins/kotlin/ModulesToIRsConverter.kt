@@ -28,6 +28,11 @@ data class ModulesToIrConversionData(
     val isSingleRootModuleMode = rootModules.size == 1
 
     val moduleByPath = rootModules.withAllSubModules(includeSourcesets = true).associateBy(Module::path)
+
+    fun getDependentModules(from: Module): TaskResult<List<Module>> =
+        from.dependencies.mapSequence { to ->
+            moduleByPath[to.path].toResult { InvalidModuleDependencyError(from.name, to.path.toString()) }
+        }
 }
 
 private data class ModulesToIrsState(

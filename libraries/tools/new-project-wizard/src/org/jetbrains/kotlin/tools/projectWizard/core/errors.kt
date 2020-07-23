@@ -69,7 +69,9 @@ data class ProjectImportingError(val kotlinVersion: String, @Nls val reason: Str
         """.trimMargin()
 }
 
-data class InvalidModuleDependencyError(val from: Module, val to: Module, @Nls val reason: String? = null) : Error() {
+data class InvalidModuleDependencyError(val from: String, val to: String, @Nls val reason: String? = null) : Error() {
+    constructor(from: Module, to: Module, reason: String? = null) : this(from.name, to.name, reason)
+
     override val message: String
-        get() = KotlinNewProjectWizardBundle.message("error.invalid.module.dependency", from.name, to.name) + reason?.let { ": $it" }
+        get() = KotlinNewProjectWizardBundle.message("error.invalid.module.dependency", from, to) + reason?.let { ": $it" }
 }

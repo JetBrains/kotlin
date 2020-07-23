@@ -35,7 +35,8 @@ abstract class TemplateEngineService : WizardService {
             is FileTemplateDescriptor -> renderTemplate(descriptor, template.data)
             is FileTextDescriptor -> descriptor.text
         }
-        val text = formatter.formatFile(unformattedText, template.descriptor.relativePath.fileName.toString())
+        val fileName = template.descriptor.relativePath?.fileName?.toString()
+        val text = fileName?.let { formatter.formatFile(unformattedText, it) } ?: unformattedText
         return service<FileSystemWizardService>().createFile(template.rootPath / template.descriptor.relativePath, text)
     }
 }

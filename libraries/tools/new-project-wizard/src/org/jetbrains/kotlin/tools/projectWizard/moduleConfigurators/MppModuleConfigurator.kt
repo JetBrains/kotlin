@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugi
 import org.jetbrains.kotlin.tools.projectWizard.settings.JavaPackage
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
+import org.jetbrains.kotlin.tools.projectWizard.templates.FileDescriptor
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
+import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptorWithPath
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTextDescriptor
 import java.nio.file.Path
 
@@ -43,23 +46,33 @@ object MppModuleConfigurator : ModuleConfigurator,
             version = configurationData.kotlinVersion
         )
 
-    val mppFiles by listProperty<MppFile>()
+    val mppSources by listProperty<MppSources>()
 
     override fun getConfiguratorProperties(): List<ModuleConfiguratorProperty<*>> =
-        listOf(mppFiles)
+        listOf(mppSources)
 
     override fun Writer.runArbitraryTask(
         configurationData: ModulesToIrConversionData,
         module: Module,
         modulePath: Path,
+    ): TaskResult<Unit> = compute {
+        createMppFiles(module, modulePath).ensure()
+        createSimpleFiles(module, modulePath).ensure()
+    }
+
+    private fun Writer.createMppFiles(
+        module: Module,
+        modulePath: Path
     ): TaskResult<Unit> = inContextOfModuleConfigurator(module) {
-        val mppFiles = mppFiles.reference.propertyValue.distinctBy { it.fileNameWithPackage } // todo merge files with the same name here
+        val mppFiles = mppSources.reference.propertyValue.flatMap { it.mppFiles }
+            .distinctBy { it.fileNameWithPackage } // todo merge files with the same name here
         mppFiles.mapSequenceIgnore { file ->
             module.subModules.mapSequenceIgnore mapTargets@{ target ->
                 val moduleSubType = //TODO handle for non-simple target configurator
                     target.configurator.safeAs<SimpleTargetConfigurator>()?.moduleSubType ?: return@mapTargets UNIT_SUCCESS
+                val path = pathForFileInTarget(modulePath, module, file.javaPackage, file.filename, target, SourcesetType.main)
                 val fileTemplate = FileTemplate(
-                    FileTextDescriptor(file.printForModuleSubType(moduleSubType), pathForFileInTarget(modulePath, module, file, target)),
+                    FileTextDescriptor(file.printForModuleSubType(moduleSubType), path),
                     projectPath,
                 )
                 TemplatesPlugin.fileTemplatesToRender.addValues(fileTemplate)
@@ -67,13 +80,38 @@ object MppModuleConfigurator : ModuleConfigurator,
         }
     }
 
-    private fun pathForFileInTarget(mppModulePath: Path, mppModule: Module, file: MppFile, target: Module) =
-        mppModulePath /
-                Defaults.SRC_DIR /
-                "${target.name}Main" /
-                mppModule.configurator.kotlinDirectoryName /
-                file.javaPackage?.asPath() /
-                file.filename
+    private fun Writer.createSimpleFiles(
+        module: Module,
+        modulePath: Path
+    ): TaskResult<Unit> = inContextOfModuleConfigurator(module) {
+        val mppFiles = mppSources.reference.propertyValue
+        module.subModules.mapSequenceIgnore mapTargets@{ target ->
+            val moduleSubType = //TODO handle for non-simple target configurator
+                target.configurator.safeAs<SimpleTargetConfigurator>()?.moduleSubType ?: return@mapTargets UNIT_SUCCESS
+            val files = mppFiles.flatMap { it.getFilesFor(moduleSubType) }.distinctBy { it.uniqueIdentifier }
+            val fileTemplates = files.map { file ->
+                FileTemplate(
+                    file.fileDescriptor,
+                    projectPath / pathForFileInTarget(modulePath, module, file.javaPackage, file.filename, target, file.type),
+                )
+            }
+            TemplatesPlugin.fileTemplatesToRender.addValues(fileTemplates)
+        }
+    }
+
+    private fun pathForFileInTarget(
+        mppModulePath: Path,
+        mppModule: Module,
+        javaPackage: JavaPackage?,
+        filename: String,
+        target: Module,
+        sourcesetType: SourcesetType,
+    ) = mppModulePath /
+            Defaults.SRC_DIR /
+            "${target.name}${sourcesetType.name.capitalize()}" /
+            mppModule.configurator.kotlinDirectoryName /
+            javaPackage?.asPath() /
+            filename
 }
 
 
@@ -123,19 +161,55 @@ data class MppFile(
     }
 }
 
+
 @ExpectFileDSL
-class MppFilesListBuilder {
-    private val expectFiles = mutableListOf<MppFile>()
+class MppSources(val mppFiles: List<MppFile>, val simpleFiles: List<SimpleFiles>) {
 
-    fun mppfile(filename: String, init: MppFile.Builder.() -> Unit) {
-        expectFiles += MppFile.Builder(filename).apply(init).build()
+    fun getFilesFor(moduleSubType: ModuleSubType): List<SimpleFile> =
+        simpleFiles.filter { moduleSubType in it.moduleSubTypes }.flatMap { it.files }
+
+    class Builder {
+        private val mppFiles = mutableListOf<MppFile>()
+        private val simpleFiles = mutableListOf<SimpleFiles>()
+
+        fun mppFile(filename: String, init: MppFile.Builder.() -> Unit) {
+            mppFiles += MppFile.Builder(filename).apply(init).build()
+        }
+
+        fun filesFor(vararg moduleSubTypes: ModuleSubType, init: SimpleFiles.Builder.() -> Unit) {
+            simpleFiles += SimpleFiles.Builder(moduleSubTypes.toList()).apply(init).build()
+        }
+
+        fun build() = MppSources(mppFiles, simpleFiles)
     }
-
-    fun build(): List<MppFile> = expectFiles
 }
 
-fun mppFiles(init: MppFilesListBuilder.() -> Unit): List<MppFile> =
-    MppFilesListBuilder().apply(init).build()
+
+data class SimpleFiles(val moduleSubTypes: List<ModuleSubType>, val files: List<SimpleFile>) {
+    class Builder(private val moduleSubTypes: List<ModuleSubType>) {
+        private val files = mutableListOf<SimpleFile>()
+
+        fun file(fileDescriptor: FileDescriptor, filename: String, type: SourcesetType, init: SimpleFile.Builder.() -> Unit = {}) {
+            files += SimpleFile.Builder(fileDescriptor, filename, type).apply(init).build()
+        }
+
+        fun build() = SimpleFiles(moduleSubTypes, files)
+    }
+}
+
+data class SimpleFile(val fileDescriptor: FileDescriptor, val javaPackage: JavaPackage?, val filename: String, val type: SourcesetType) {
+    val uniqueIdentifier get() = "${type}/${javaPackage}/${filename}"
+
+    class Builder(private val fileDescriptor: FileDescriptor, private val filename: String, private val type: SourcesetType) {
+        var javaPackage: JavaPackage? = null
+
+        fun build() = SimpleFile(fileDescriptor, javaPackage, filename, type)
+    }
+}
+
+
+fun mppSources(init: MppSources.Builder.() -> Unit): MppSources =
+    MppSources.Builder().apply(init).build()
 
 sealed class MppDeclaration {
     @Suppress("SpellCheckingInspection")
