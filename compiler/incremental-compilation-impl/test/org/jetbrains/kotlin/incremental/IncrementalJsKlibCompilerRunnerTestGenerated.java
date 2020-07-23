@@ -314,7 +314,7 @@ public class IncrementalJsKlibCompilerRunnerTestGenerated extends AbstractIncrem
 
         @TestMetadata("innerClassesFromSupertypes")
         public void testInnerClassesFromSupertypes() throws Exception {
-            runTest("jps-plugin/testData/incremental/pureKotlin/innerClassesFromSupertypes/");
+            runTest("compiler/incremental-compilation-impl/testData/incremental/pureKotlin/innerClassesFromSupertypes/");
         }
 
         @TestMetadata("internalClassChanged")
@@ -753,7 +753,7 @@ public class IncrementalJsKlibCompilerRunnerTestGenerated extends AbstractIncrem
 
         @TestMetadata("interfaceAnyMethods")
         public void testInterfaceAnyMethods() throws Exception {
-            runTest("jps-plugin/testData/incremental/classHierarchyAffected/interfaceAnyMethods/");
+            runTest("compiler/incremental-compilation-impl/testData/incremental/classHierarchyAffected/interfaceAnyMethods/");
         }
 
         @TestMetadata("lambdaParameterAffected")
