@@ -58,17 +58,22 @@ class TrailingCommaInspection(
             val first = TrailingCommaHelper.elementBeforeFirstElement(commaOwner)
             if (first?.nextLeaf(true)?.isLineBreak() == false) {
                 first.nextSibling?.let {
-                    registerProblemForLineBreak(commaOwner, it, ProblemHighlightType.INFORMATION)
+                    if (isOnTheFly) { // INFORMATION shouldn't be reported in batch mode
+                        registerProblemForLineBreak(commaOwner, it, ProblemHighlightType.INFORMATION)
+                    }
                 }
             }
 
             val last = TrailingCommaHelper.elementAfterLastElement(commaOwner)
             if (last?.prevLeaf(true)?.isLineBreak() == false) {
-                registerProblemForLineBreak(
-                    commaOwner,
-                    last,
-                    if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION,
-                )
+                val highlightType = if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
+                if (isOnTheFly || highlightType != ProblemHighlightType.INFORMATION) { // INFORMATION shouldn't be reported in batch mode
+                    registerProblemForLineBreak(
+                        commaOwner,
+                        last,
+                        highlightType,
+                    )
+                }
             }
         }
 
@@ -88,12 +93,16 @@ class TrailingCommaInspection(
             when (trailingCommaContext.state) {
                 TrailingCommaState.MISSING -> {
                     if (!trailingCommaAllowedInModule(commaOwner)) return
-                    reportProblem(
-                        trailingCommaOrLastElement,
-                        KotlinBundle.message("inspection.trailing.comma.missing.trailing.comma"),
-                        KotlinBundle.message("inspection.trailing.comma.add.trailing.comma"),
-                        if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION,
-                    )
+                    val highlightType =
+                        if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
+                    if (isOnTheFly || highlightType != ProblemHighlightType.INFORMATION) { // INFORMATION shouldn't be reported in batch mode
+                        reportProblem(
+                            trailingCommaOrLastElement,
+                            KotlinBundle.message("inspection.trailing.comma.missing.trailing.comma"),
+                            KotlinBundle.message("inspection.trailing.comma.add.trailing.comma"),
+                            highlightType,
+                        )
+                    }
                 }
                 TrailingCommaState.REDUNDANT -> {
                     reportProblem(
