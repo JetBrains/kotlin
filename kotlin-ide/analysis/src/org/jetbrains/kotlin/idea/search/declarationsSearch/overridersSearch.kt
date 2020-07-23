@@ -121,6 +121,7 @@ private fun forEachKotlinOverride(
     ktClass: KtClass,
     members: List<KtNamedDeclaration>,
     scope: SearchScope,
+    searchDeeply: Boolean,
     processor: (superMember: PsiElement, overridingMember: PsiElement) -> Boolean
 ): Boolean {
     val baseClassDescriptor = runReadAction { ktClass.unsafeResolveToDescriptor() as ClassDescriptor }
@@ -128,7 +129,7 @@ private fun forEachKotlinOverride(
         runReadAction { members.mapNotNull { it.unsafeResolveToDescriptor() as? CallableMemberDescriptor }.filter { it.isOverridable } }
     if (baseDescriptors.isEmpty()) return true
 
-    HierarchySearchRequest(ktClass, scope, true).searchInheritors().forEach(Processor { psiClass ->
+    HierarchySearchRequest(ktClass, scope, searchDeeply).searchInheritors().forEach(Processor { psiClass ->
         val inheritor = psiClass.unwrapped as? KtClassOrObject ?: return@Processor true
         runReadAction {
             val inheritorDescriptor = inheritor.unsafeResolveToDescriptor() as ClassDescriptor
@@ -153,15 +154,22 @@ private fun forEachKotlinOverride(
 
 fun KtNamedDeclaration.forEachOverridingElement(
     scope: SearchScope = runReadAction { useScope },
+    searchDeeply: Boolean = true,
     processor: (superMember: PsiElement, overridingMember: PsiElement) -> Boolean
 ): Boolean {
     val ktClass = runReadAction { containingClassOrObject as? KtClass } ?: return true
-
     toLightMethods().forEach { baseMethod ->
-        if (!OverridingMethodsSearch.search(baseMethod, scope.excludeKotlinSources(), true).all { processor(baseMethod, it) }) return false
+        if (!OverridingMethodsSearch.search(baseMethod, scope.excludeKotlinSources(), searchDeeply).all { processor(baseMethod, it) }) {
+            return false
+        }
     }
 
-    return forEachKotlinOverride(ktClass, listOf(this), scope) { baseElement, overrider -> processor(baseElement, overrider) }
+    return forEachKotlinOverride(ktClass, listOf(this), scope, searchDeeply) { baseElement, overrider ->
+        processor(
+            baseElement,
+            overrider
+        )
+    }
 }
 
 fun PsiMethod.forEachOverridingMethod(
@@ -169,12 +177,12 @@ fun PsiMethod.forEachOverridingMethod(
     processor: (PsiMethod) -> Boolean
 ): Boolean {
     if (this !is KtFakeLightMethod) {
-        if (!OverridingMethodsSearch.search(this, scope.excludeKotlinSources(), true).forEach(processor)) return false
+        if (!OverridingMethodsSearch.search(this, scope.excludeKotlinSources(), true).forEach(Processor { processor(it) })) return false
     }
 
     val ktMember = this.unwrapped as? KtNamedDeclaration ?: return true
     val ktClass = runReadAction { ktMember.containingClassOrObject as? KtClass } ?: return true
-    return forEachKotlinOverride(ktClass, listOf(ktMember), scope) { _, overrider ->
+    return forEachKotlinOverride(ktClass, listOf(ktMember), scope, searchDeeply = true) { _, overrider ->
         val lightMethods = runReadAction { overrider.toPossiblyFakeLightMethods().distinctBy { it.unwrapped } }
         lightMethods.all { processor(it) }
     }
@@ -183,10 +191,10 @@ fun PsiMethod.forEachOverridingMethod(
 fun PsiMethod.forEachImplementation(
     scope: SearchScope = runReadAction { useScope },
     processor: (PsiElement) -> Boolean
-): Boolean {
-    return forEachOverridingMethod(scope, processor)
-            && FunctionalExpressionSearch.search(this, scope.excludeKotlinSources()).forEach(processor)
-}
+): Boolean = forEachOverridingMethod(scope, processor) && FunctionalExpressionSearch.search(
+    this,
+    scope.excludeKotlinSources()
+).forEach(Processor { processor(it) })
 
 fun PsiClass.forEachDeclaredMemberOverride(processor: (superMember: PsiElement, overridingMember: PsiElement) -> Boolean) {
     val scope = runReadAction { useScope }
@@ -198,12 +206,11 @@ fun PsiClass.forEachDeclaredMemberOverride(processor: (superMember: PsiElement, 
     val ktClass = unwrapped as? KtClass ?: return
     val members = ktClass.declarations.filterIsInstance<KtNamedDeclaration>() +
             ktClass.primaryConstructorParameters.filter { it.hasValOrVar() }
-    forEachKotlinOverride(ktClass, members, scope, processor)
+    forEachKotlinOverride(ktClass, members, scope, searchDeeply = true, processor)
 }
 
 fun findDeepestSuperMethodsNoWrapping(method: PsiElement): List<PsiElement> {
-    val element = method.unwrapped
-    return when (element) {
+    return when (val element = method.unwrapped) {
         is PsiMethod -> element.findDeepestSuperMethods().toList()
         is KtCallableDeclaration -> {
             val descriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return emptyList()

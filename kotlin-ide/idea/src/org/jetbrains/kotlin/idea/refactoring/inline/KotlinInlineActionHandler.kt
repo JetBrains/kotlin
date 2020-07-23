@@ -10,7 +10,7 @@ import com.intellij.lang.refactoring.InlineActionHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -26,10 +26,7 @@ abstract class KotlinInlineActionHandler : InlineActionHandler() {
         inlineKotlinElement(project, editor, kotlinElement)
     }
 
-    protected fun unwrapKotlinElement(element: PsiElement): KtElement? = if (element is KtLightElement<*, *>)
-        element.kotlinOrigin
-    else
-        element as? KtElement
+    protected fun unwrapKotlinElement(element: PsiElement): KtElement? = element.unwrapped as? KtElement
 
     abstract fun canInlineKotlinElement(element: KtElement): Boolean
     abstract fun inlineKotlinElement(project: Project, editor: Editor?, element: KtElement)
